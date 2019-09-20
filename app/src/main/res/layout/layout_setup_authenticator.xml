@@ -35,7 +35,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/connect_authenticator"
+                        android:text="@string/pair_safe_with_two_fa"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -44,7 +44,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/setup_authenticator_description1"
+                        android:id="@+id/setup_authenticator_description"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -53,41 +53,23 @@
                         android:fontFamily="sans-serif"
                         android:gravity="center_horizontal"
                         android:lineSpacingExtra="7sp"
-                        android:text="@string/use_phrase_on_next_screen"
+                        android:text="@string/pair_safe_with_two_fa_description"
                         android:textColor="#5d6d74"
                         android:textSize="13sp"
                         android:textStyle="normal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_phone_drop_image" />
-
-                    <TextView
-                        android:id="@+id/setup_authenticator_description2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center_horizontal"
-                        android:lineSpacingExtra="7sp"
-                        android:text="@string/we_recommend_password_manager"
-                        android:textColor="#5d6d74"
-                        android:textSize="13sp"
-                        android:textStyle="normal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_description1" />
+                        app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_image" />
 
                     <ImageView
-                        android:id="@+id/setup_authenticator_phone_drop_image"
+                        android:id="@+id/setup_authenticator_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="22dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_title"
-                        app:srcCompat="@drawable/img_backup_phrase" />
+                        app:srcCompat="@drawable/two_fa_setup" />
 
                     <TextView
                         android:id="@+id/setup_authenticator_setup"
@@ -97,8 +79,8 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="@string/connect_authenticator"
-                        app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_description2"
+                        android:text="@string/setup_2fa"
+                        app:layout_constraintTop_toBottomOf="@+id/setup_authenticator_description"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 

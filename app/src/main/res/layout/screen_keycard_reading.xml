@@ -13,26 +13,27 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Hold the Keycard to your phone"
+        android:text="@string/hold_keycard"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/keycard_reading_img"
         android:layout_width="wrap_content"
-        app:srcCompat="@drawable/onboarding_1"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/keycard_reading_title"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keycard_reading_title"
+        app:srcCompat="@drawable/status_keycard_hold" />
 
     <TextView
         android:id="@+id/keycard_reading_txt"
         style="@style/Content"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:gravity="center"
         android:text="@string/waiting_for_keycard"
         app:layout_constraintTop_toBottomOf="@id/keycard_reading_img" />
 
@@ -42,8 +43,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:textAllCaps="true"
         android:text="@string/cancel"
+        android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/keycard_reading_txt" />
 

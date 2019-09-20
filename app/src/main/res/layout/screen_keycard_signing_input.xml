@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Keycard authentiation"
+        android:text="@string/keycard_authentiation"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Enter the PIN of your Keycard."
+        android:text="@string/enter_pin"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_title" />
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:hint="PIN"
+        android:hint="@string/pin"
         android:inputType="number"
         android:singleLine="true"
         app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_subtitle" />

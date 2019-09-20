@@ -43,7 +43,7 @@
                 android:layout_margin="16dp"
                 app:layout_constraintStart_toEndOf="@id/select_authenticator_keycard_radio"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/img_app" />
+                app:srcCompat="@drawable/status_keycard_icon" />
 
             <TextView
                 android:id="@+id/select_authenticator_keycard_lbl"
@@ -52,7 +52,7 @@
                 android:layout_margin="16dp"
                 android:gravity="center"
                 android:minHeight="32dp"
-                android:text="Status Keycard"
+                android:text="@string/status_keycard"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/select_authenticator_keycard_img"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="The Keycard is a smartcard you can use to safely receive, store and send cryptocurrencies."
+                android:text="@string/status_keycard_description"
                 app:layout_constraintTop_toBottomOf="@+id/select_authenticator_keycard_lbl" />
 
             <View
@@ -97,7 +97,7 @@
                 android:layout_margin="16dp"
                 app:layout_constraintStart_toEndOf="@id/select_authenticator_extension_radio"
                 app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider"
-                app:srcCompat="@drawable/img_app" />
+                app:srcCompat="@drawable/gnosis_authenticator_icon" />
 
             <TextView
                 android:id="@+id/select_authenticator_extension_lbl"
@@ -106,7 +106,7 @@
                 android:layout_margin="16dp"
                 android:gravity="center"
                 android:minHeight="32dp"
-                android:text="Gnosis Safe Authenticator"
+                android:text="@string/gnosis_safe_authenticator"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/select_authenticator_extension_img"
                 app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider" />
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="The Authenticator is an extension for Google Chrome connected to the Safe."
+                android:text="@string/gnosis_safe_authenticator_description"
                 app:layout_constraintTop_toBottomOf="@+id/select_authenticator_extension_lbl" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
