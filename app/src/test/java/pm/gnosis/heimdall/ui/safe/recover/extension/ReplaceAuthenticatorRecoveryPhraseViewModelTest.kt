@@ -10,11 +10,17 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.asOwner
+import pm.gnosis.utils.asEthereumAddressString
 
 @RunWith(MockitoJUnitRunner::class)
 class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
@@ -40,8 +46,13 @@ class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
             retry = Observable.just(Unit),
             create = Observable.just(Unit)
         )
+        val safeOwner = 34.toBigInteger().let { Solidity.Address(it) }.asOwner()
         val safeAddress = 35.toBigInteger().let { Solidity.Address(it) }
         val extensionAddress = 36.toBigInteger().let { Solidity.Address(it) }
+        val authenticatorInfo = AuthenticatorSetupInfo(
+            safeOwner,
+            AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, extensionAddress)
+        )
         val viewUpdate = InputRecoveryPhraseContract.ViewUpdate.ValidMnemonic
 
         given(
@@ -50,9 +61,9 @@ class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
             )
         ).willReturn(Observable.just(viewUpdate))
 
-        viewModel.process(input, safeAddress, extensionAddress).subscribe(testObserver)
+        viewModel.process(input, safeAddress, authenticatorInfo).subscribe(testObserver)
 
-        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, null)
+        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, safeOwner)
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(viewUpdate)
     }
@@ -86,8 +97,13 @@ class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
             retry = Observable.just(Unit),
             create = Observable.just(Unit)
         )
+        val safeOwner = 34.toBigInteger().let { Solidity.Address(it) }.asOwner()
         val safeAddress = 35.toBigInteger().let { Solidity.Address(it) }
         val extensionAddress = 36.toBigInteger().let { Solidity.Address(it) }
+        val authenticatorInfo = AuthenticatorSetupInfo(
+            safeOwner,
+            AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, extensionAddress)
+        )
         val exception = Exception()
 
         given(
@@ -96,9 +112,9 @@ class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
             )
         ).willReturn(Observable.error(exception))
 
-        viewModel.process(input, safeAddress, extensionAddress).subscribe(testObserver)
+        viewModel.process(input, safeAddress, authenticatorInfo).subscribe(testObserver)
 
-        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, null)
+        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, safeOwner)
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertFailure(Exception::class.java)
     }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature

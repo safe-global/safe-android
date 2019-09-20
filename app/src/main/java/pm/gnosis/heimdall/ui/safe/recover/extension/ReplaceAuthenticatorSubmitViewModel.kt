@@ -35,7 +35,7 @@ class ReplaceAuthenticatorSubmitViewModel @Inject constructor(
     private lateinit var operationalGas: BigInteger
     private lateinit var gasPrice: BigInteger
     private lateinit var gasToken: Solidity.Address
-    private lateinit var authenticatorSetupInfo: AuthenticatorSetupInfo
+    private lateinit var authenticatorInfo: AuthenticatorSetupInfo
     private lateinit var txHash: ByteArray
 
     override fun setup(
@@ -47,7 +47,7 @@ class ReplaceAuthenticatorSubmitViewModel @Inject constructor(
         operationalGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        authenticatorSetupInfo: AuthenticatorSetupInfo,
+        authenticatorInfo: AuthenticatorSetupInfo,
         txHash: ByteArray
     ) {
         this.safeTransaction = safeTransaction
@@ -58,7 +58,7 @@ class ReplaceAuthenticatorSubmitViewModel @Inject constructor(
         this.operationalGas = operationalGas
         this.gasPrice = gasPrice
         this.gasToken = gasToken
-        this.authenticatorSetupInfo = authenticatorSetupInfo
+        this.authenticatorInfo = authenticatorInfo
         this.txHash = txHash
     }
 
@@ -136,9 +136,9 @@ class ReplaceAuthenticatorSubmitViewModel @Inject constructor(
                     }
             }
             .flatMapCompletable {
-                gnosisSafeRepository.saveAuthenticatorInfo(authenticatorSetupInfo.authenticator)
-                if (authenticatorSetupInfo.authenticator.type == AuthenticatorInfo.Type.EXTENSION) {
-                    pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(authenticatorSetupInfo.authenticator.address))
+                gnosisSafeRepository.saveAuthenticatorInfo(authenticatorInfo.authenticator)
+                if (authenticatorInfo.authenticator.type == AuthenticatorInfo.Type.EXTENSION) {
+                    pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(authenticatorInfo.authenticator.address))
                         .onErrorComplete()
                 } else {
                     Completable.complete()

@@ -75,15 +75,15 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
 
     override fun process(
         input: InputRecoveryPhraseContract.Input,
-        authenticatorAddress: Solidity.Address,
-        extensionAddress: Solidity.Address?,
+        safeAddress: Solidity.Address,
+        authenticatorAddress: Solidity.Address?,
         safeOwner: AccountsRepository.SafeOwner?
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
         input.retry
             .subscribeOn(AndroidSchedulers.mainThread())
             .startWith(Unit)
             .switchMap {
-                safeRepository.loadInfo(authenticatorAddress)
+                safeRepository.loadInfo(safeAddress)
                     .onErrorResumeNext { error: Throwable -> errorHandler.observable(error) }
                     .mapToResult()
             }
@@ -97,7 +97,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     is DataResult ->
                         // We have the safe info so lets show the mnemonic input
                         Observable.just<InputRecoveryPhraseContract.ViewUpdate>(InputRecoveryPhraseContract.ViewUpdate.InputMnemonic)
-                            .concatWith(processRecoveryPhrase(input, it.data, extensionAddress, safeOwner))
+                            .concatWith(processRecoveryPhrase(input, it.data, authenticatorAddress, safeOwner))
                 }
             }
 

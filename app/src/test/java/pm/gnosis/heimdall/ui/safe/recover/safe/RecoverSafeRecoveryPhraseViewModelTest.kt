@@ -23,6 +23,8 @@ import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -59,14 +61,14 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         viewModel = RecoverSafeRecoveryPhraseViewModel(accountsRepositoryMock, helperMock, safeRepoMock)
     }
 
-    private fun process(extension: Solidity.Address?, signingOwner: AccountsRepository.SafeOwner?) {
+    private fun process(authenticatorInfo: AuthenticatorSetupInfo?) {
         val safeOwner: AccountsRepository.SafeOwner
-        if (signingOwner == null) {
+        if (authenticatorInfo == null) {
             val pk = encryptedByteArrayConverter.fromStorage("owner_pk")
             safeOwner = AccountsRepository.SafeOwner(TEST_OWNER, pk)
             given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         } else {
-            safeOwner = signingOwner
+            safeOwner = authenticatorInfo.safeOwner
         }
         val helperSubject = PublishSubject.create<ViewUpdate>()
 
@@ -86,11 +88,10 @@ class RecoverSafeRecoveryPhraseViewModelTest {
 
         val observer = TestObserver<ViewUpdate>()
         val input = Input(Observable.empty(), Observable.empty(), Observable.empty())
-        viewModel.setup(signingOwner)
         viewModel.process(
             input,
             TEST_SAFE,
-            extension
+            authenticatorInfo
         ).subscribe(observer)
 
         var tests = 0
@@ -156,35 +157,22 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         then(helperMock).should().process(
             input,
             TEST_SAFE,
-            extension,
+            authenticatorInfo?.authenticator?.address,
             safeOwner
         )
         then(helperMock).shouldHaveNoMoreInteractions()
 
     }
-
     @Test
-    fun processWithExtension() {
-        process(TEST_EXTENSION, null)
+    fun processWithoutAuthenticator() {
+        process(null)
     }
 
     @Test
-    fun processWithoutExtension() {
-        process(null, null)
-    }
-
-    @Test
-    fun processWithExtensionAndWithOwner() {
+    fun processWithAuthenticator() {
         val pk = encryptedByteArrayConverter.fromStorage("another_pk")
         val signingOwner = AccountsRepository.SafeOwner("0xbadad".asEthereumAddress()!!, pk)
-        process(TEST_EXTENSION, signingOwner)
-    }
-
-    @Test
-    fun processWithoutExtensionAndWithOwner() {
-        val pk = encryptedByteArrayConverter.fromStorage("another_pk")
-        val signingOwner = AccountsRepository.SafeOwner("0xbadad".asEthereumAddress()!!, pk)
-        process(null, signingOwner)
+        process(AuthenticatorSetupInfo(signingOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, TEST_EXTENSION)))
     }
 
     companion object {

@@ -50,17 +50,12 @@ class CreateSafePaymentTokenViewModelTest {
     @Mock
     lateinit var tokenRepositoryMock: TokenRepository
 
-    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
-
     private lateinit var viewModel: CreateSafePaymentTokenViewModel
 
     @Before
     fun setup() {
         viewModel = CreateSafePaymentTokenViewModel(contextMock, testAppDispatchers, accountsRepositoryMock, safeRepositoryMock, tokenRepositoryMock)
     }
-
-    private fun Solidity.Address.asOwner() =
-        AccountsRepository.SafeOwner(this, encryptedByteArrayConverter.fromStorage(asEthereumAddressString()))
 
     @Test
     fun loadPaymentTokenTokenTwice() {

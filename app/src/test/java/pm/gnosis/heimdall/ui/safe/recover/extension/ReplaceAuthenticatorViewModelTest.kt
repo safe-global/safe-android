@@ -21,6 +21,8 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.helpers.CryptoHelper
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -30,6 +32,8 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.asOwner
+import pm.gnosis.tests.utils.testRecoveringSafe
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -80,7 +84,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         val testObserver = TestObserver<ERC20TokenWithBalance>()
@@ -103,7 +107,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         val testObserver = TestObserver<ERC20TokenWithBalance>()
@@ -145,7 +149,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.observeSubmitStatus().subscribe(testObserver)
@@ -196,7 +200,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.observeSubmitStatus().subscribe(testObserver)
@@ -232,7 +236,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.observeSubmitStatus().subscribe(testObserver)
@@ -257,14 +261,14 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         assertEquals(SAFE_TRANSACTION, viewModel.getSafeTransaction())
     }
 
     @Test
-    fun loadSafe() {
+    fun loadInfo() {
         val testObserver = TestObserver<Safe>()
         val safe = Safe(SAFE_TRANSACTION.wrapped.address)
         given(gnosisSafeRepositoryMock.loadSafe(MockUtils.any())).willReturn(Single.just(safe))
@@ -278,7 +282,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.loadSafe().subscribe(testObserver)
@@ -303,7 +307,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.loadSafe().subscribe(testObserver)
@@ -373,7 +377,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -410,12 +414,118 @@ class ReplaceAuthenticatorViewModelTest {
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
             SAFE_TRANSACTION.wrapped.address, setOf(
-                NEW_CHROME_EXTENSION_ADDRESS
+                NEW_AUTHENTICATOR_INFO.authenticator.address
             )
         )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).should().saveAuthenticatorInfo(NEW_AUTHENTICATOR_INFO.authenticator)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertResult(DataResult(Unit))
+    }
+
+    @Test
+    fun submitTransactionKeycard() {
+        val testObserver = TestObserver.create<Result<Unit>>()
+        given(
+            transactionExecutionRepositoryMock.calculateHash(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.just(TX_HASH))
+
+        given(
+            cryptoHelper.recover(
+                TX_HASH,
+                SIGNATURE_1
+            )
+        ).willReturn("0x0a".asEthereumAddress()!!)
+        given(
+            cryptoHelper.recover(
+                TX_HASH,
+                SIGNATURE_2
+            )
+        ).willReturn("0x14".asEthereumAddress()!!)
+
+        given(
+            transactionExecutionRepositoryMock.submit(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                anyBoolean(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                anyBoolean(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.just("RANDOM_TX_HASH"))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
+
+        val authenticator = NEW_AUTHENTICATOR_INFO.authenticator.copy(type = AuthenticatorInfo.Type.KEYCARD, keyIndex = 1105)
+        viewModel.setup(
+            SAFE_TRANSACTION,
+            SIGNATURE_1,
+            SIGNATURE_2,
+            TX_GAS,
+            DATA_GAS,
+            OPERATIONAL_GAS,
+            GAS_PRICE,
+            GAS_TOKEN.address,
+            NEW_AUTHENTICATOR_INFO.copy(authenticator = authenticator),
+            TX_HASH
+        )
+        viewModel.submitTransaction().subscribe(testObserver)
+
+        then(transactionExecutionRepositoryMock).should()
+            .calculateHash(
+                SAFE_TRANSACTION.wrapped.address,
+                SAFE_TRANSACTION,
+                TX_GAS,
+                DATA_GAS,
+                GAS_PRICE,
+                GAS_TOKEN.address,
+                VERSION
+            )
+        then(cryptoHelper).should().recover(
+            TX_HASH,
+            SIGNATURE_1
+        )
+        then(cryptoHelper).should().recover(
+            TX_HASH,
+            SIGNATURE_2
+        )
+        then(transactionExecutionRepositoryMock).should().submit(
+            SAFE_TRANSACTION.wrapped.address,
+            SAFE_TRANSACTION,
+            mapOf(Solidity.Address(10.toBigInteger()) to SIGNATURE_1, Solidity.Address(20.toBigInteger()) to SIGNATURE_2),
+            false,
+            TX_GAS,
+            DATA_GAS,
+            GAS_PRICE,
+            GAS_TOKEN.address,
+            VERSION,
+            true
+        )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).should().saveAuthenticatorInfo(authenticator)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelper).shouldHaveNoMoreInteractions()
+        then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver.assertResult(DataResult(Unit))
     }
@@ -480,7 +590,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -517,9 +627,12 @@ class ReplaceAuthenticatorViewModelTest {
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
             SAFE_TRANSACTION.wrapped.address, setOf(
-                NEW_CHROME_EXTENSION_ADDRESS
+                NEW_AUTHENTICATOR_INFO.authenticator.address
             )
         )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).should().saveAuthenticatorInfo(NEW_AUTHENTICATOR_INFO.authenticator)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
@@ -585,7 +698,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -620,6 +733,8 @@ class ReplaceAuthenticatorViewModelTest {
             VERSION,
             true
         )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -669,7 +784,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -692,6 +807,8 @@ class ReplaceAuthenticatorViewModelTest {
             TX_HASH,
             SIGNATURE_2
         )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -727,7 +844,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -742,6 +859,8 @@ class ReplaceAuthenticatorViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -778,7 +897,7 @@ class ReplaceAuthenticatorViewModelTest {
             OPERATIONAL_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
-            NEW_CHROME_EXTENSION_ADDRESS,
+            NEW_AUTHENTICATOR_INFO,
             TX_HASH
         )
         viewModel.submitTransaction().subscribe(testObserver)
@@ -793,6 +912,8 @@ class ReplaceAuthenticatorViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
+        then(gnosisSafeRepositoryMock).should().loadInfo(SAFE_TRANSACTION.wrapped.address)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(cryptoHelper).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -815,7 +936,10 @@ class ReplaceAuthenticatorViewModelTest {
         private val OPERATIONAL_GAS = 7000.toBigInteger()
         private val GAS_PRICE = 1000.toBigInteger()
         private val GAS_TOKEN = ERC20Token("0x1337".asEthereumAddress()!!, "Golden Wishing Spheres", "DBZ", 7)
-        private val NEW_CHROME_EXTENSION_ADDRESS = 42.toBigInteger().let { Solidity.Address(it) }
+        private val NEW_AUTHENTICATOR_INFO = AuthenticatorSetupInfo(
+            "0xbaddad".asEthereumAddress()!!.asOwner(),
+            AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, 42.toBigInteger().let { Solidity.Address(it) })
+        )
         private val VERSION = SemVer(1, 0, 0)
         private val TX_HASH = byteArrayOf(0, 1, 2, 3, 4, 5)
     }

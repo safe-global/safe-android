@@ -18,6 +18,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.asOwner
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.lang.IllegalStateException
@@ -31,8 +32,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
     @Mock
     private lateinit var accountsRepositoryMock: AccountsRepository
 
-    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
-
     private lateinit var viewModel: CreateSafeConfirmRecoveryPhraseViewModel
 
     @Before
@@ -43,9 +42,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         // Setup parent class
         viewModel.setup(RECOVERY_PHRASE)
     }
-
-    private fun Solidity.Address.asOwner() =
-        AccountsRepository.SafeOwner(this, encryptedByteArrayConverter.fromStorage(asEthereumAddressString()))
 
     @Test
     fun loadOwnerDataNoBrowserExtensionNoOwner() {
