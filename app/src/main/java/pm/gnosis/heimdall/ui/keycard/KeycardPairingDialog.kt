@@ -120,9 +120,7 @@ class KeycardPairingViewModel @Inject constructor(
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
-                        val safeOwner =
-                            // TODO: fix this for recpvery
-                            (safe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner()).await()
+                        val safeOwner = (safe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner()).await()
                         val keyIndex = safeOwner.address.toKeyIndex()
                         // TODO: add proper exceptions to handle different cases
                         val cardAddress =

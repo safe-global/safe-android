@@ -69,11 +69,11 @@ open class SelectAuthenticatorActivity : BaseActivity() {
     companion object {
         private const val AUTHENTICATOR_REQUEST_CODE = 4242
 
+        private const val EXTRA_SAFE = "extra.string.safe"
         fun Intent.addSelectAuthenticatorExtras(safe: Solidity.Address?): Intent = apply {
             putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
         }
 
-        private const val EXTRA_SAFE = "extra.string.safe"
         fun createIntent(context: Context, safe: Solidity.Address?) =
             Intent(context, SelectAuthenticatorActivity::class.java).addSelectAuthenticatorExtras(safe)
     }

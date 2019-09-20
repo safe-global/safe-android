@@ -136,6 +136,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         observer.assertValueAt(tests, ViewUpdate.RecoverData(executionInfo, signatures, safeOwner))
         then(safeRepoMock).should(times(2)).addRecoveringSafe(TEST_SAFE, null, null, executionInfo, signatures)
         then(safeRepoMock).should(times(2)).saveOwner(TEST_SAFE, safeOwner)
+        authenticatorInfo?.let { then(safeRepoMock).should().saveAuthenticatorInfo(it.authenticator) }
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         tests++
 
