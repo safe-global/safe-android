@@ -36,7 +36,7 @@ open class SelectAuthenticatorActivity : BaseActivity() {
         select_authenticator_setup.setOnClickListener { startSetupForSelectedAuthenticator() }
     }
 
-    protected fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()
+    protected fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
 
     private fun startSetupForSelectedAuthenticator() {
         val intent = when (selectedAuthenticator) {

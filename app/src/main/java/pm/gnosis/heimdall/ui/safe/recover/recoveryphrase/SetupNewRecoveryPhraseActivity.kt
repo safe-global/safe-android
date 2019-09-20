@@ -17,7 +17,7 @@ class SetupNewRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupRecovery
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
+        safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!! } ?: run { finish(); return }
         intent.getStringExtra(EXTRA_AUTHENTICATOR_ADDRESS)?.let { authenticatorAddress = it.asEthereumAddress()!! }
     }
 

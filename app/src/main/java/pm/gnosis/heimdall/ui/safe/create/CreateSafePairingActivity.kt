@@ -26,7 +26,7 @@ class CreateSafePairingActivity : PairingActivity() {
         finish()
     }
 
-    override fun signingSafe(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()
+    override fun signingSafe(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
 
     companion object {
         private const val EXTRA_SAFE = "extra.string.safe"

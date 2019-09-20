@@ -26,7 +26,7 @@ class SetupAuthenticatorActivity : BaseActivity() {
         setup_authenticator_skip.setOnClickListener { onAuthenticatorSelected(null) }
         setup_authenticator_setup.setOnClickListener {
             startActivityForResult(
-                SelectAuthenticatorActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()),
+                SelectAuthenticatorActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()),
                 AUTHENTICATOR_REQUEST_CODE
             )
         }

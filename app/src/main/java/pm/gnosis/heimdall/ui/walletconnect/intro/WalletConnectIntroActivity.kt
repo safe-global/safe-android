@@ -79,7 +79,7 @@ class WalletConnectIntroActivity : ViewModelActivity<WalletConnectIntroContract>
             }
             .subscribeBy {
                 if (it) {
-                    val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!
+                    val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
                     startActivity(WalletConnectSessionsActivity.createIntent(this, safeAddress))
                     finish()
                 } else

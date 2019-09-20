@@ -26,7 +26,7 @@ class KeycardIntroActivity : BaseActivity(), KeycardPairingDialog.PairingCallbac
 
         keycard_intro_back_button.setOnClickListener { onBackPressed() }
         keycard_intro_setup.setOnClickListener {
-            KeycardPairingDialog.create(intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()).show(supportFragmentManager, null)
+            KeycardPairingDialog.create(intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()).show(supportFragmentManager, null)
         }
     }
     override fun onPaired(authenticatorInfo: AuthenticatorSetupInfo) {

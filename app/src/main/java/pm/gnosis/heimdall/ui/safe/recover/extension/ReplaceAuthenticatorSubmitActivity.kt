@@ -57,7 +57,7 @@ class ReplaceAuthenticatorSubmitActivity : ViewModelActivity<ReplaceAuthenticato
         val operationalGas = nullOnThrow { intent.getStringExtra(EXTRA_DATA_GAS)?.toBigInteger() } ?: run { finish(); return }
         val gasPrice = nullOnThrow { intent.getStringExtra(EXTRA_GAS_PRICE)?.toBigInteger() } ?: run { finish(); return }
         val gasToken =
-            nullOnThrow { intent.getStringExtra(EXTRA_GAS_TOKEN).asEthereumAddress()!! } ?: run { finish(); return }
+            nullOnThrow { intent.getStringExtra(EXTRA_GAS_TOKEN)?.asEthereumAddress()!! } ?: run { finish(); return }
         val safeTransaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_SAFE_TRANSACTION) ?: run { finish(); return }
         val signature1 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_1)) } ?: run { finish(); return }
         val signature2 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_2)) } ?: run { finish(); return }

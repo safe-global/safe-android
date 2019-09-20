@@ -56,7 +56,7 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
                         layout_input_recovery_phrase_progress.visible(true)
                     }
             ),
-            intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!,
+            intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!,
             intent.getAuthenticatorInfo()
         )
             .observeOn(AndroidSchedulers.mainThread())

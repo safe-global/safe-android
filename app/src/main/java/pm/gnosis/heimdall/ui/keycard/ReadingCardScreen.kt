@@ -11,7 +11,7 @@ interface ReadingCardScreen {
     val screen: View
 
     fun setupView(cancelListener: (View) -> Unit) {
-        screen.setOnClickListener(cancelListener)
+        screen.keycard_reading_cancel_button.setOnClickListener(cancelListener)
     }
 
     fun updateView(reading: Boolean, error: String?) {

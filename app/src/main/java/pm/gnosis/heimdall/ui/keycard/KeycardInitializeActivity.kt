@@ -91,7 +91,7 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
             if (state.pin != null && state.puk != null && state.pairingKey != null)
                 keycard_initialize_continue.setOnClickListener {
                     KeycardInitializeDialog.create(
-                        intent.getStringExtra(EXTRA_SAFE).asEthereumAddress(), state.pin, state.puk, state.pairingKey
+                        intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress(), state.pin, state.puk, state.pairingKey
                     ).show(supportFragmentManager, null)
                 }
             else

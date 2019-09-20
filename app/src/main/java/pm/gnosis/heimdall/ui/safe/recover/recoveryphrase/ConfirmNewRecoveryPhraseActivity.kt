@@ -26,7 +26,7 @@ class ConfirmNewRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<ConfirmNe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
+        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!! } ?: run { finish(); return }
         val authenticatorAddress = intent.getStringExtra(EXTRA_AUTHENTICATOR_ADDRESS)?.let { it.asEthereumAddress()!! }
         viewModel.setup(safeAddress, authenticatorAddress)
     }
