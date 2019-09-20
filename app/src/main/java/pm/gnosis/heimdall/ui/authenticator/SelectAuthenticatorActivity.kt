@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.authenticator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.nfc.NfcManager
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +20,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
+
 @ExperimentalCoroutinesApi
 open class SelectAuthenticatorActivity : BaseActivity() {
 
@@ -31,9 +33,24 @@ open class SelectAuthenticatorActivity : BaseActivity() {
         setContentView(R.layout.layout_select_authenticator)
 
         select_authenticator_back_button.setOnClickListener { onBackPressed() }
-        select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
         select_authenticator_extension_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.EXTENSION) }
         select_authenticator_setup.setOnClickListener { startSetupForSelectedAuthenticator() }
+        initKeyCardViews()
+    }
+
+    private fun initKeyCardViews() {
+        val manager = getSystemService(Context.NFC_SERVICE) as NfcManager
+        val adapter = manager.defaultAdapter
+        val nfcAvailable = adapter != null && adapter.isEnabled
+        onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
+        if (nfcAvailable) select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
+        val alpha = if (nfcAvailable) 1f else 0.6f
+        select_authenticator_keycard_background.isClickable = nfcAvailable
+        select_authenticator_keycard_background.alpha = alpha
+        select_authenticator_keycard_radio.alpha = alpha
+        select_authenticator_keycard_img.alpha = alpha
+        select_authenticator_keycard_lbl.alpha = alpha
+        select_authenticator_keycard_description.alpha = alpha
     }
 
     protected fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
