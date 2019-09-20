@@ -39,7 +39,6 @@ import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorActivity
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
@@ -76,8 +75,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     private var screenActive: Boolean = false
 
     private val safeSubject = BehaviorSubject.create<AbstractSafe>()
-
-    private var isConnectedToAuthenticator: Boolean = false
 
     override fun screenId() = ScreenId.SAFE_MAIN
 
@@ -382,11 +379,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     }
                     R.id.safe_details_menu_replace_recovery_phrase -> selectedSafe?.let { safe ->
                         startActivity(
-                            if (isConnectedToAuthenticator) {
-                                ScanExtensionAddressActivity.createIntent(this, safe.address())
-                            } else {
-                                SetupNewRecoveryPhraseIntroActivity.createIntent(this, browserExtensionAddress = null, safeAddress = safe.address())
-                            }
+                            SetupNewRecoveryPhraseIntroActivity.createIntent(this, safeAddress = safe.address())
                         )
                     }
                     R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
@@ -416,7 +409,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     @ExperimentalCoroutinesApi
     private fun handleSafeConfig(newMasterCopy: Solidity.Address?, isConnected: Boolean) {
-        isConnectedToAuthenticator = isConnected
         val safe = safeSubject.value as? Safe
         val canUpgrade = safe != null && newMasterCopy != null
         layout_safe_main_upgrade_warning_container.visible(canUpgrade)

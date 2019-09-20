@@ -79,6 +79,7 @@ class UpgradeMasterCopyViewModel @Inject constructor(
         viewModelScope.launch { updateState { copy(loading = false) } }
         coroutineErrorHandler.handleException(context, e)
     }
+    private fun loadingLaunch(block: suspend CoroutineScope.() -> Unit) = safeLaunch(loadingErrorHandler, block)
 
     private lateinit var safe: Solidity.Address
     override fun setup(safe: Solidity.Address) {
@@ -140,8 +141,6 @@ class UpgradeMasterCopyViewModel @Inject constructor(
             updateState { copy(viewAction = ViewAction.StartActivity(PaymentTokensActivity.createIntent(context, safe))) }
         }
     }
-
-    private fun loadingLaunch(block: suspend CoroutineScope.() -> Unit) = safeLaunch(loadingErrorHandler, block)
 
     override fun initialState() = State(null, null, null, null, null, false, false, null)
 }

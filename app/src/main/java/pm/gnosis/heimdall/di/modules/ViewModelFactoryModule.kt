@@ -45,10 +45,7 @@ import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecovery
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitContract
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitViewModel
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressViewModel
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.*
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeViewModel
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
@@ -273,6 +270,12 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SetupRecoveryPhraseContract::class)
     abstract fun bindsSetupRecoveryPhraseContract(viewModel: SetupRecoveryPhraseViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(SetupNewRecoveryPhraseIntroContract::class)
+    abstract fun bindsSetupNewRecoveryPhraseIntroContract(viewModel: SetupNewRecoveryPhraseIntroViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -35,6 +35,7 @@ import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitAc
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseActivity
@@ -136,6 +137,8 @@ interface ViewComponent {
     fun inject(activity: ScanExtensionAddressActivity)
     fun inject(activity: SelectTokenActivity)
     fun inject(activity: SetupNewRecoveryPhraseActivity)
+    @ExperimentalCoroutinesApi
+    fun inject(activity: SetupNewRecoveryPhraseIntroActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)

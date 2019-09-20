@@ -36,6 +36,7 @@ import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecovery
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
@@ -211,6 +212,10 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     fun providesSetupRecoveryPhraseContract(provider: ViewModelProvider) = provider[SetupRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSetupNewRecoveryPhraseIntroContract(provider: ViewModelProvider) = provider[SetupNewRecoveryPhraseIntroContract::class.java]
 
     @Provides
     @ForView

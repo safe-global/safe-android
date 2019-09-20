@@ -64,13 +64,7 @@ class ScanExtensionAddressActivity : ViewModelActivity<ScanExtensionAddressContr
     }
 
     private fun onValidBrowserExtension(browserExtensionAddress: Solidity.Address) {
-        startActivity(
-            SetupNewRecoveryPhraseIntroActivity.createIntent(
-                this,
-                safeAddress = viewModel.getSafeAddress(),
-                browserExtensionAddress = browserExtensionAddress
-            )
-        )
+        startActivity(SetupNewRecoveryPhraseActivity.createIntent(this, viewModel.getSafeAddress(), browserExtensionAddress))
     }
 
     private fun onBrowserExtensionValidationError(throwable: Throwable) {

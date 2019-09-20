@@ -41,7 +41,7 @@ open class SelectAuthenticatorActivity : BaseActivity() {
     private fun startSetupForSelectedAuthenticator() {
         val intent = when (selectedAuthenticator) {
             AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, getSelectAuthenticatorExtras())
-            AuthenticatorInfo.Type.EXTENSION -> CreateSafePairingActivity.createIntent(this)
+            AuthenticatorInfo.Type.EXTENSION -> CreateSafePairingActivity.createIntent(this, getSelectAuthenticatorExtras())
         }
         startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
     }

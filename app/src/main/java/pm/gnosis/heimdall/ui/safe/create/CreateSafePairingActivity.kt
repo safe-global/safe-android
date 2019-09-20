@@ -5,11 +5,14 @@ import android.content.Context
 import android.content.Intent
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.ui.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 // TODO: merge with abstract class (title could be parameter)
 class CreateSafePairingActivity : PairingActivity() {
@@ -23,9 +26,12 @@ class CreateSafePairingActivity : PairingActivity() {
         finish()
     }
 
-    override fun signingSafe(): Solidity.Address? = null
+    override fun signingSafe(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, CreateSafePairingActivity::class.java)
+        private const val EXTRA_SAFE = "extra.string.safe"
+        fun createIntent(context: Context, safe: Solidity.Address?) = Intent(context, CreateSafePairingActivity::class.java).apply {
+            putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+        }
     }
 }
