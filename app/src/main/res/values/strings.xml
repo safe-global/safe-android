@@ -520,7 +520,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="pair_keycard">Pair Keycard</string>
     <string name="i_don_t_have_a_password">I don\'t have a password</string>
     <string name="hold_keycard">Hold the Keycard to your phone</string>
-    <string name="transaction_has_been_submitted">Your transaction has been submitted.</string>
     <string name="keycard_authentiation">Keycard authentiation</string>
     <string name="enter_pin">Enter the PIN of your Keycard.</string>
 </resources>
