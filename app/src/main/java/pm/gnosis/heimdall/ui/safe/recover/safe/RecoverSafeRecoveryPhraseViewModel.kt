@@ -30,7 +30,10 @@ class RecoverSafeRecoveryPhraseViewModel @Inject constructor(
                             it.signatures
                         )
                             .andThen(safeRepository.saveOwner(safeAddress, it.safeOwner))
-                            .andThen(Single.just<ViewUpdate>(it))
+                            .andThen(Single.fromCallable {
+                                authenticatorInfo?.let { info -> safeRepository.saveAuthenticatorInfo(info.authenticator) }
+                                it
+                            })
                             .onErrorReturn(ViewUpdate::RecoverDataError)
                     }
                     is ViewUpdate.NoRecoveryNecessary -> {

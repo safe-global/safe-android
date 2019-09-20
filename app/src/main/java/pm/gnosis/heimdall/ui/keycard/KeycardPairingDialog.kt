@@ -41,6 +41,7 @@ import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.nullOnThrow
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -119,7 +120,9 @@ class KeycardPairingViewModel @Inject constructor(
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
-                        val safeOwner = (safe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner()).await()
+                        val safeOwner =
+                            // TODO: fix this for recpvery
+                            (safe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner()).await()
                         val keyIndex = safeOwner.address.toKeyIndex()
                         // TODO: add proper exceptions to handle different cases
                         val cardAddress =
@@ -242,7 +245,7 @@ class KeycardPairingInputFragment private constructor() : KeycardPairingBaseFrag
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingDialog private constructor(): DialogFragment() {
+class KeycardPairingDialog private constructor() : DialogFragment() {
 
     @Inject
     lateinit var viewModel: KeycardPairingContract

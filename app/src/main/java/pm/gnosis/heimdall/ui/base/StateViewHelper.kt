@@ -10,6 +10,6 @@ fun View.handleViewAction(action: BaseStateViewModel.ViewAction?, closeScreenAct
     when (action) {
         is BaseStateViewModel.ViewAction.ShowError -> errorSnackbar(this, action.error)
         is BaseStateViewModel.ViewAction.StartActivity -> context.startActivity(action.intent)
-        BaseStateViewModel.ViewAction.CloseScreen -> closeScreenAction
+        is BaseStateViewModel.ViewAction.CloseScreen -> closeScreenAction
     }
 }
