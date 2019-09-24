@@ -5,10 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import pm.gnosis.heimdall.data.db.daos.AddressBookDao
-import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
-import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
-import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
+import pm.gnosis.heimdall.data.db.daos.*
 import pm.gnosis.heimdall.data.db.models.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
@@ -17,6 +14,7 @@ import pm.gnosis.utils.asEthereumAddressString
 @Database(
     entities = [
         AddressBookEntryDb::class,
+        AuthenticatorInfoDb::class,
         ERC20TokenDb::class,
         GnosisSafeInfoDb::class,
         GnosisSafeDb::class,
@@ -24,7 +22,7 @@ import pm.gnosis.utils.asEthereumAddressString
         RecoveringGnosisSafeDb::class,
         TransactionDescriptionDb::class,
         TransactionPublishStatusDb::class
-    ], version = 3
+    ], version = 4
 )
 @TypeConverters(BigIntegerConverter::class, SolidityAddressConverter::class, WeiConverter::class, EncryptedByteArray.Converter::class)
 abstract class ApplicationDb : RoomDatabase() {
@@ -77,9 +75,21 @@ abstract class ApplicationDb : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `${AuthenticatorInfoDb.TABLE_NAME}`
+                            (`${AuthenticatorInfoDb.COL_ADDRESS}` TEXT NOT NULL,
+                            `${AuthenticatorInfoDb.COL_TYPE}` INTEGER NOT NULL,
+                            `${AuthenticatorInfoDb.COL_KEY_INDEX}` INTEGER,
+                            PRIMARY KEY(`${AuthenticatorInfoDb.COL_ADDRESS}`))"""
+                )
+            }
+        }
     }
 
     abstract fun addressBookDao(): AddressBookDao
+    abstract fun authenticatorInfoDao(): AuthenticatorInfoDao
     abstract fun descriptionsDao(): DescriptionsDao
     abstract fun erc20TokenDao(): ERC20TokenDao
     abstract fun gnosisSafeDao(): GnosisSafeDao

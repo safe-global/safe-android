@@ -120,13 +120,13 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
             VALID_SAFE_WITHOUT_EXTENSION -> {
                 setCheckIcon(R.drawable.ic_green_check)
                 layout_check_safe_address_info.text = null
-                nextIntent = currentAddress?.let { RecoverSafeRecoveryPhraseActivity.createIntent(this, it, null, null) }
+                nextIntent = currentAddress?.let { RecoverSafeRecoveryPhraseActivity.createIntent(this, it, null) }
                 layout_check_safe_next.isEnabled = true
             }
             VALID_SAFE_WITH_EXTENSION -> {
                 setCheckIcon(R.drawable.ic_green_check)
                 layout_check_safe_address_info.text = null
-                nextIntent = currentAddress?.let { RecoverSafePairingActivity.createIntent(this, it) }
+                nextIntent = currentAddress?.let { RecoverSafeAuthenticatorActivity.createIntent(this, it) }
                 layout_check_safe_next.isEnabled = true
             }
         }

@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.layout_create_safe_intro.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.authenticator.SetupAuthenticatorActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
@@ -38,7 +39,7 @@ class CreateSafeIntroActivity : BaseActivity() {
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_create_safe_intro_next.clicks()
-            .subscribeBy(onNext = { startActivity(CreateSafePairingActivity.createIntent(this)) }, onError = Timber::e)
+            .subscribeBy(onNext = { startActivity(SetupAuthenticatorActivity.createIntent(this, null)) }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_create_safe_intro_toolbar_shadow, layout_create_safe_intro_content_scroll)
     }

@@ -1,5 +1,6 @@
 package pm.gnosis.tests.utils
 
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -8,6 +9,8 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 fun testRecoveringSafe(
@@ -44,4 +47,10 @@ fun testSafeTransaction(
     operation: TransactionExecutionRepository.Operation = TransactionExecutionRepository.Operation.CALL
 ) =
     SafeTransaction(transaction, operation)
+
+
+private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
+
+fun Solidity.Address.asOwner() =
+    AccountsRepository.SafeOwner(this, encryptedByteArrayConverter.fromStorage(asEthereumAddressString()))
 

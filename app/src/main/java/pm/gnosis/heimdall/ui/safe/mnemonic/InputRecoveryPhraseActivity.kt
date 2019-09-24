@@ -11,7 +11,10 @@ import kotlinx.android.synthetic.main.layout_input_recovery_phrase.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -53,8 +56,8 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
                         layout_input_recovery_phrase_progress.visible(true)
                     }
             ),
-            intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!,
-            intent.getStringExtra(EXTRA_EXTENSION_ADDRESS)?.run{ asEthereumAddress()!! }
+            intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!,
+            intent.getAuthenticatorInfo()
         )
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = ::updateView, onError = Timber::e)
@@ -111,10 +114,9 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
 
     companion object {
         const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        const val EXTRA_EXTENSION_ADDRESS = "extra.string.extension_address"
-        fun addExtras(intent: Intent, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?) = intent.apply {
+        fun addExtras(intent: Intent, safeAddress: Solidity.Address, authenticatorInfo: AuthenticatorSetupInfo?) = intent.apply {
             putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
-            putExtra(EXTRA_EXTENSION_ADDRESS, extensionAddress?.asEthereumAddressString())
+            authenticatorInfo.put(this)
         }
     }
 }

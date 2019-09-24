@@ -6,12 +6,13 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 
-abstract class ReplaceExtensionSubmitContract : ViewModel() {
+abstract class ReplaceAuthenticatorSubmitContract : ViewModel() {
     abstract fun setup(
         safeTransaction: SafeTransaction,
         signature1: Signature,
@@ -21,7 +22,7 @@ abstract class ReplaceExtensionSubmitContract : ViewModel() {
         operationalGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        newChromeExtension: Solidity.Address,
+        authenticatorInfo: AuthenticatorSetupInfo,
         txHash: ByteArray
     )
 

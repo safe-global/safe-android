@@ -12,8 +12,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
+import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
+import pm.gnosis.heimdall.ui.keycard.KeycardCredentialsContract
+import pm.gnosis.heimdall.ui.keycard.KeycardInitializeContract
+import pm.gnosis.heimdall.ui.keycard.KeycardPairingContract
+import pm.gnosis.heimdall.ui.keycard.KeycardSigningContract
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -27,10 +32,11 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
@@ -68,10 +74,6 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
 
     @Provides
     @ForView
-    fun providesConfirmSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmRecoveryPhraseContract::class.java]
-
-    @Provides
-    @ForView
     fun providesChangePasswordContract(provider: ViewModelProvider) = provider[ChangePasswordContract::class.java]
 
     @Provides
@@ -84,7 +86,15 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
 
     @Provides
     @ForView
+    fun providesConfirmSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
     fun providesConfirmTransactionContract(provider: ViewModelProvider) = provider[ConfirmTransactionContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesConnectAuthenticatorContract(provider: ViewModelProvider) = provider[ConnectAuthenticatorContract::class.java]
 
     @Provides
     @ForView
@@ -121,6 +131,21 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
 
     @Provides
     @ForView
+    fun providesKeycardCredentialsContract(provider: ViewModelProvider) = provider[KeycardCredentialsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeycardInitializeContract(provider: ViewModelProvider) = provider[KeycardInitializeContract::class.java]
+    @Provides
+    @ForView
+    fun providesKeycardPairingContract(provider: ViewModelProvider) = provider[KeycardPairingContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeycardSigningContract(provider: ViewModelProvider) = provider[KeycardSigningContract::class.java]
+
+    @Provides
+    @ForView
     fun providesManageTokensContract(provider: ViewModelProvider) = provider[ManageTokensContract::class.java]
 
     @Provides
@@ -145,12 +170,12 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
 
     @Provides
     @ForView
-    fun providesReplaceExtensionContract(provider: ViewModelProvider) = provider[ReplaceExtensionSubmitContract::class.java]
+    fun providesReplaceExtensionContract(provider: ViewModelProvider) = provider[ReplaceAuthenticatorSubmitContract::class.java]
 
     @Provides
     @ForView
     fun providesReplaceExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
-        provider[ReplaceExtensionRecoveryPhraseContract::class.java]
+        provider[ReplaceAuthenticatorRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView
@@ -187,6 +212,10 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     fun providesSetupRecoveryPhraseContract(provider: ViewModelProvider) = provider[SetupRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSetupNewRecoveryPhraseIntroContract(provider: ViewModelProvider) = provider[SetupNewRecoveryPhraseIntroContract::class.java]
 
     @Provides
     @ForView

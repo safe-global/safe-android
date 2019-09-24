@@ -26,9 +26,9 @@ class ConfirmNewRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<ConfirmNe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
-        val browserExtension = intent.getStringExtra(EXTRA_BROWSER_ADDRESS)?.let { it.asEthereumAddress()!! }
-        viewModel.setup(safeAddress, browserExtension)
+        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!! } ?: run { finish(); return }
+        val authenticatorAddress = intent.getStringExtra(EXTRA_AUTHENTICATOR_ADDRESS)?.let { it.asEthereumAddress()!! }
+        viewModel.setup(safeAddress, authenticatorAddress)
     }
 
     override fun isRecoveryPhraseConfirmed() {
@@ -60,12 +60,12 @@ class ConfirmNewRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<ConfirmNe
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        private const val EXTRA_BROWSER_ADDRESS = "extra.string.browser_address"
+        private const val EXTRA_AUTHENTICATOR_ADDRESS = "extra.string.authenticator_address"
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address, browserAddress: Solidity.Address?, recoveryPhrase: String) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address, authenticatorAddress: Solidity.Address?, recoveryPhrase: String) =
             Intent(context, ConfirmNewRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
-                putExtra(EXTRA_BROWSER_ADDRESS, browserAddress?.asEthereumAddressString())
+                putExtra(EXTRA_AUTHENTICATOR_ADDRESS, authenticatorAddress?.asEthereumAddressString())
                 putExtra(EXTRA_RECOVERY_PHRASE, recoveryPhrase)
             }
     }

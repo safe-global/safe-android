@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -81,8 +80,8 @@
             style="@style/NormalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="4dp"
+            android:layout_marginBottom="8dp"
             android:paddingTop="12dp"
             android:text="@string/tip_link"
             android:textColor="@color/link"
@@ -96,8 +95,8 @@
             style="@style/NormalText"
             android:layout_width="0dp"
             android:layout_height="27dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="monospace-medium"
             android:gravity="end"
             android:paddingTop="12dp"
@@ -140,8 +139,8 @@
             style="@style/NormalText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="monospace-medium"
             android:gravity="start"
             android:paddingBottom="4dp"
@@ -172,10 +171,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="16dp"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
             android:paddingTop="24dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="16dp"
             android:text="@string/awaiting_confirmations"
             android:textAllCaps="true"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_data_container_divider"
@@ -186,8 +185,8 @@
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="12dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:indeterminate="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -210,76 +209,162 @@
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress"
             tools:visibility="visible" />
 
-        <androidx.constraintlayout.widget.Group
+        <androidx.cardview.widget.CardView
             android:id="@+id/include_transaction_submit_info_confirmations_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:constraint_referenced_ids="include_transaction_submit_info_confirmations_image,include_transaction_submit_info_confirmations_info,include_transaction_submit_info_confirmations_timer,include_transaction_submit_info_request_button" />
-
-        <ImageView
-            android:id="@+id/include_transaction_submit_info_confirmations_image"
-            android:layout_width="62dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_confirmations_waiting"
-            app:layout_constraintEnd_toStartOf="@+id/include_transaction_submit_info_confirmations_info"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress" />
-
-        <TextView
-            android:id="@+id/include_transaction_submit_info_confirmations_info"
-            style="@style/DarkText"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:fontFamily="monospace-medium"
-            android:text="@string/confirm_with_extension"
-            app:layout_constraintBottom_toBottomOf="@+id/include_transaction_submit_info_confirmations_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_confirmations_image"
-            app:layout_constraintTop_toTopOf="@+id/include_transaction_submit_info_confirmations_image" />
-
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/include_transaction_submit_info_confirmations_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="include_transaction_submit_info_confirmations_info,include_transaction_submit_info_confirmations_image" />
-
-        <TextView
-            android:id="@+id/include_transaction_submit_info_confirmations_timer"
-            style="@style/NormalText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="monospace-medium"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_barrier"
-            tools:text="@string/request_confirmation_wait_x_s" />
-
-        <TextView
-            android:id="@+id/include_transaction_submit_info_request_button"
-            style="@style/PrimaryButton.White"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="monospace-medium"
-            android:gravity="center"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:text="@string/request_confirmation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_timer" />
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            tools:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_confirmations_info"
+                    style="@style/BoldContent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/authentication_required"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_confirmations_hint"
+                    style="@style/Content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:text="@string/authentication_explanation"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/include_transaction_submit_info_confirmations_info" />
+
+                <ImageView
+                    android:id="@+id/include_transaction_submit_info_confirmations_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/gnosis_authenticator_confirmation"
+                    app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_hint"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_confirmations_timer"
+                    style="@style/NormalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="monospace-medium"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_image"
+                    tools:text="@string/request_confirmation_wait_x_s" />
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_request_button"
+                    style="@style/PrimaryButton.White"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:gravity="center"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/request_confirmation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_timer" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/include_transaction_submit_info_keycard_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_keycard_info"
+                    style="@style/BoldContent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/authentication_required"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_keycard_hint"
+                    style="@style/Content"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:text="@string/authentication_keycard_explanation"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/include_transaction_submit_info_keycard_info" />
+
+                <ImageView
+                    android:id="@+id/include_transaction_submit_info_keycard_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/status_keycard_confirmation"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_keycard_hint" />
+
+                <TextView
+                    android:id="@+id/include_transaction_submit_info_keycard_button"
+                    style="@style/PrimaryButton.Green"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:gravity="center"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_keycard_image" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

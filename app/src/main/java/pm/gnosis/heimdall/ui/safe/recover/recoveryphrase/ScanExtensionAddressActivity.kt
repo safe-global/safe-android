@@ -38,7 +38,7 @@ class ScanExtensionAddressActivity : ViewModelActivity<ScanExtensionAddressContr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress() } ?: run { finish(); return }
+        val safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() } ?: run { finish(); return }
         viewModel.setup(safeAddress)
 
         qrCodeResultSubscription = qrCodeResultSubject
@@ -64,13 +64,7 @@ class ScanExtensionAddressActivity : ViewModelActivity<ScanExtensionAddressContr
     }
 
     private fun onValidBrowserExtension(browserExtensionAddress: Solidity.Address) {
-        startActivity(
-            SetupNewRecoveryPhraseIntroActivity.createIntent(
-                this,
-                safeAddress = viewModel.getSafeAddress(),
-                browserExtensionAddress = browserExtensionAddress
-            )
-        )
+        startActivity(SetupNewRecoveryPhraseActivity.createIntent(this, viewModel.getSafeAddress(), browserExtensionAddress))
     }
 
     private fun onBrowserExtensionValidationError(throwable: Throwable) {

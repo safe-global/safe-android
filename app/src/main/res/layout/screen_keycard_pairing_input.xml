@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/keycard_pairing_input_title"
+        style="@style/BoldContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/keycard_pairing"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/keycard_pairing_input_pairing_key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="@string/pairing_password"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_title" />
+
+    <TextView
+        android:id="@+id/keycard_pairing_input_pairing_key_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/tomato"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_pairing_key" />
+
+    <EditText
+        android:id="@+id/keycard_pairing_input_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="@string/pin"
+        android:inputType="number"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_pairing_key_error" />
+
+    <TextView
+        android:id="@+id/keycard_pairing_input_pin_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/tomato"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_pin" />
+
+    <TextView
+        android:id="@+id/keycard_pairing_input_pair_button"
+        style="@style/PrimaryButton.Green"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/pair_keycard"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_pin_error" />
+
+    <TextView
+        android:id="@+id/keycard_pairing_input_init_button"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/i_don_t_have_a_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keycard_pairing_input_pair_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

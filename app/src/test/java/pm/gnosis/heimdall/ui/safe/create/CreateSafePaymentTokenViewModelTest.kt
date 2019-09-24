@@ -19,6 +19,8 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeDeployment
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract.ViewAction.*
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.*
@@ -48,17 +50,12 @@ class CreateSafePaymentTokenViewModelTest {
     @Mock
     lateinit var tokenRepositoryMock: TokenRepository
 
-    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
-
     private lateinit var viewModel: CreateSafePaymentTokenViewModel
 
     @Before
     fun setup() {
         viewModel = CreateSafePaymentTokenViewModel(contextMock, testAppDispatchers, accountsRepositoryMock, safeRepositoryMock, tokenRepositoryMock)
     }
-
-    private fun Solidity.Address.asOwner() =
-        AccountsRepository.SafeOwner(this, encryptedByteArrayConverter.fromStorage(asEthereumAddressString()))
 
     @Test
     fun loadPaymentTokenTokenTwice() {
@@ -251,8 +248,9 @@ class CreateSafePaymentTokenViewModelTest {
 
     @Test
     fun createSafeWithOwner() {
-        val owner = DEVICE_OWNER_ADDRESS.asOwner()
-        viewModel.setup(owner, listOf( MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
+        val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
+        val info = AuthenticatorSetupInfo(deviceOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS))
+        viewModel.setup(info, listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
         val testObserver = TestLiveDataObserver<ViewState>()
         viewModel.state.observe(lifecycleRule, testObserver)
@@ -272,7 +270,8 @@ class CreateSafePaymentTokenViewModelTest {
         then(safeRepositoryMock).should()
             .triggerSafeDeployment(listOf(DEVICE_OWNER_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS), 1)
         then(safeRepositoryMock).should().addPendingSafe(TEST_SAFE, null, BigInteger.TEN, TEST_TOKEN.address)
-        then(safeRepositoryMock).should().saveOwner(TEST_SAFE, owner)
+        then(safeRepositoryMock).should().saveOwner(TEST_SAFE, info.safeOwner)
+        then(safeRepositoryMock).should().saveAuthenticatorInfo(info.authenticator)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
@@ -281,7 +280,7 @@ class CreateSafePaymentTokenViewModelTest {
     @Test
     fun createSafeError() {
         contextMock.mockGetString()
-        viewModel.setup(null, listOf( MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
+        viewModel.setup(null, listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
         val error = UnknownHostException()
         given(accountsRepositoryMock.createOwner()).willReturn(Single.error(error))

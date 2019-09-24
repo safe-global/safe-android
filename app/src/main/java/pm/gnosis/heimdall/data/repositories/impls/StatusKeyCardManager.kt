@@ -64,7 +64,8 @@ class StatusKeyCardManager(private val cmdSet: KeycardCommandSet) : CardReposito
     }
 
     override fun sign(hash: ByteArray, keyPath: String): Pair<Solidity.Address, ECDSASignature> {
-        val signature = RecoverableSignature(hash, cmdSet.signWithPath(hash, keyPath, false).checkOK().data)
+        cmdSet.deriveKey(keyPath).checkOK() // TODO: check why it is not working with signWithPath
+        val signature = RecoverableSignature(hash, cmdSet.sign(hash).checkOK().data)
         val walletPublicKey = BIP32KeyPair(null, null, signature.publicKey)
         return walletPublicKey.toEthereumAddress().toHexString().asEthereumAddress()!! to
                 signature.run { ECDSASignature(r.asBigInteger(), s.asBigInteger()).apply { v = (recId + 27).toByte() } }

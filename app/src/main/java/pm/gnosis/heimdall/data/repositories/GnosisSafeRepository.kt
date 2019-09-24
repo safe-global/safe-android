@@ -4,11 +4,10 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 
@@ -34,8 +33,8 @@ interface GnosisSafeRepository {
     fun loadAbstractSafe(address: Solidity.Address): Single<AbstractSafe>
 
     // Deployed Safes
-    fun observeSafes(): Flowable<List<Safe>>
 
+    fun observeSafes(): Flowable<List<Safe>>
     fun observeSafe(address: Solidity.Address): Flowable<Safe>
     fun loadSafe(address: Solidity.Address): Single<Safe>
     fun addSafe(address: Solidity.Address, name: String? = null): Completable
@@ -43,8 +42,8 @@ interface GnosisSafeRepository {
     fun updateSafe(safe: Safe): Completable
 
     // Pending Safes
-    fun observePendingSafe(address: Solidity.Address): Flowable<PendingSafe>
 
+    fun observePendingSafe(address: Solidity.Address): Flowable<PendingSafe>
     fun loadPendingSafe(address: Solidity.Address): Single<PendingSafe>
     fun addPendingSafe(
         address: Solidity.Address,
@@ -57,8 +56,8 @@ interface GnosisSafeRepository {
     fun updatePendingSafe(pendingSafe: PendingSafe): Completable
 
     // Recovering Safes
-    fun observeRecoveringSafe(address: Solidity.Address): Flowable<RecoveringSafe>
 
+    fun observeRecoveringSafe(address: Solidity.Address): Flowable<RecoveringSafe>
     fun loadRecoveringSafe(address: Solidity.Address): Single<RecoveringSafe>
     fun addRecoveringSafe(
         safeAddress: Solidity.Address,
@@ -72,19 +71,23 @@ interface GnosisSafeRepository {
     fun updateRecoveringSafe(recoveringSafe: RecoveringSafe): Completable
 
     // Safe Creation/ Recovery
-    fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable
 
+    fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable
     fun recoveringSafeToDeployedSafe(recoveringSafe: RecoveringSafe): Completable
     fun sendSafeCreationPush(safeAddress: Solidity.Address): Completable
 
     // Transactions
-    fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
 
+    fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
     fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
 
     // Safe owner
 
     fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner): Completable
-
     fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature>
+
+    // Authenticator info
+
+    fun saveAuthenticatorInfo(info: AuthenticatorInfo)
+    fun loadAuthenticatorInfo(address: Solidity.Address): AuthenticatorInfo
 }

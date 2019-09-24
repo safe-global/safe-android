@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
@@ -27,6 +27,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.Asserts.assertThrow
@@ -58,15 +59,20 @@ class TransactionSubmitInfoViewHelperTest {
     fun resetConfirmationViews() {
         contextMock.mockGetStringWithArgs()
 
-        val confirmationsGroup = mock(Group::class.java)
+        val keycardGroup = mock(CardView::class.java)
+        val confirmationsGroup = mock(CardView::class.java)
         val requestButton = mock(TextView::class.java)
         val confirmationsTimer = mock(TextView::class.java)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_group, keycardGroup)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_request_button, requestButton)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_timer, confirmationsTimer)
 
         helper.bind(containerView)
         helper.resetConfirmationViews()
+
+        then(keycardGroup).should().visibility = View.GONE
+        then(keycardGroup).shouldHaveNoMoreInteractions()
 
         then(confirmationsGroup).should().visibility = View.GONE
         then(confirmationsGroup).shouldHaveNoMoreInteractions()
@@ -293,7 +299,6 @@ class TransactionSubmitInfoViewHelperTest {
         val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val dataError = mock(TextView::class.java)
-        val confirmationsGroup = mock(Group::class.java)
         val retryButton = mock(TextView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_label, dataAssetBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_value, dataAssetBalance)
@@ -301,7 +306,6 @@ class TransactionSubmitInfoViewHelperTest {
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_gas_token_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_error, dataError)
-        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
 
         val data = SubmitTransactionHelper.ViewUpdate.Estimate(
@@ -332,9 +336,6 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataError).should().visibility = View.GONE
         then(dataError).shouldHaveNoMoreInteractions()
 
-        then(confirmationsGroup).should().visibility = View.VISIBLE
-        then(confirmationsGroup).shouldHaveNoMoreInteractions()
-
         then(retryButton).should().visibility = View.GONE
         then(retryButton).shouldHaveNoMoreInteractions()
     }
@@ -349,7 +350,6 @@ class TransactionSubmitInfoViewHelperTest {
         val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val dataError = mock(TextView::class.java)
-        val confirmationsGroup = mock(Group::class.java)
         val retryButton = mock(TextView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_value, dataAssetBalance)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_label, dataAssetBalanceLabel)
@@ -357,7 +357,6 @@ class TransactionSubmitInfoViewHelperTest {
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_gas_token_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_error, dataError)
-        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
 
         val testToken = ERC20Token("0x1337".asEthereumAddress()!!, "Test Token", "TT", 0)
@@ -390,9 +389,6 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataError).should().visibility = View.VISIBLE
         then(dataError).shouldHaveNoMoreInteractions()
 
-        then(confirmationsGroup).should().visibility = View.GONE
-        then(confirmationsGroup).shouldHaveNoMoreInteractions()
-
         then(retryButton).should().visibility = View.VISIBLE
         then(retryButton).shouldHaveNoMoreInteractions()
     }
@@ -407,7 +403,6 @@ class TransactionSubmitInfoViewHelperTest {
         val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val dataError = mock(TextView::class.java)
-        val confirmationsGroup = mock(Group::class.java)
         val retryButton = mock(TextView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_label, dataAssetBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_asset_balance_value, dataAssetBalance)
@@ -415,7 +410,6 @@ class TransactionSubmitInfoViewHelperTest {
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_gas_token_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_error, dataError)
-        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
 
         val testGasToken = ERC20Token("0x1337".asEthereumAddress()!!, "Gas Token", "GT", 0)
@@ -448,9 +442,6 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataError).should().visibility = View.GONE
         then(dataError).shouldHaveNoMoreInteractions()
 
-        then(confirmationsGroup).should().visibility = View.VISIBLE
-        then(confirmationsGroup).shouldHaveNoMoreInteractions()
-
         then(retryButton).should().visibility = View.GONE
         then(retryButton).shouldHaveNoMoreInteractions()
     }
@@ -475,12 +466,58 @@ class TransactionSubmitInfoViewHelperTest {
         then(confirmationsProgress).shouldHaveNoMoreInteractions()
     }
 
+    @Test
+    fun applyUpdateRequireConfirmationsKeycard() {
+        val keycardGroup = mock(CardView::class.java)
+        val keycardButton = mock(TextView::class.java)
+        val confirmationsGroup = mock(CardView::class.java)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_group, keycardGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_button, keycardButton)
+
+        val authenticatorInfo = AuthenticatorInfo(AuthenticatorInfo.Type.KEYCARD, "0xdeadbeef".asEthereumAddress()!!, 32L)
+        val data = SubmitTransactionHelper.ViewUpdate.RequireConfirmations(authenticatorInfo, "somehash")
+        helper.bind(containerView)
+        assertNull(helper.applyUpdate(data))
+
+        then(confirmationsGroup).should().visibility = View.GONE
+        then(confirmationsGroup).shouldHaveNoMoreInteractions()
+        then(keycardGroup).should().visibility = View.VISIBLE
+        then(keycardGroup).shouldHaveNoMoreInteractions()
+        then(keycardButton).should().setOnClickListener(MockUtils.any())
+        then(keycardButton).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun applyUpdateRequireConfirmationsExtension() {
+        val keycardGroup = mock(CardView::class.java)
+        val keycardButton = mock(TextView::class.java)
+        val confirmationsGroup = mock(CardView::class.java)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_group, keycardGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_button, keycardButton)
+
+        val authenticatorInfo = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, "0xdeadbeef".asEthereumAddress()!!)
+        val data = SubmitTransactionHelper.ViewUpdate.RequireConfirmations(authenticatorInfo, "somehash")
+        helper.bind(containerView)
+        assertNull(helper.applyUpdate(data))
+
+        then(confirmationsGroup).should().visibility = View.VISIBLE
+        then(confirmationsGroup).shouldHaveNoMoreInteractions()
+        then(keycardGroup).should().visibility = View.GONE
+        then(keycardGroup).shouldHaveNoMoreInteractions()
+        then(keycardButton).should().setOnClickListener(null)
+        then(keycardButton).shouldHaveNoMoreInteractions()
+    }
+
     private fun testApplyUpdateConfirmations(isReady: Boolean) {
         contextMock.mockGetString()
 
         val viewMocks = mockReadyStateViews()
-        val confirmationsGroup = mock(Group::class.java)
+        val keycardGroup = mock(CardView::class.java)
+        val confirmationsGroup = mock(CardView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_keycard_group, keycardGroup)
 
         val data = SubmitTransactionHelper.ViewUpdate.Confirmations(isReady)
         helper.bind(containerView)
@@ -488,8 +525,12 @@ class TransactionSubmitInfoViewHelperTest {
 
         assertReadySate(viewMocks, isReady, null)
 
-        then(confirmationsGroup).should().visibility = if (isReady) View.GONE else View.VISIBLE
+        if (isReady) {
+            then(confirmationsGroup).should().visibility = View.GONE
+            then(keycardGroup).should().visibility = View.GONE
+        }
         then(confirmationsGroup).shouldHaveNoMoreInteractions()
+        then(keycardGroup).shouldHaveNoMoreInteractions()
     }
 
     @Test

@@ -236,6 +236,7 @@ class ApplicationModule(private val application: Application) {
         Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
             .addMigrations(ApplicationDb.MIGRATION_1_2)
             .addMigrations(ApplicationDb.MIGRATION_2_3)
+            .addMigrations(ApplicationDb.MIGRATION_3_4)
             .build()
 
     @Provides

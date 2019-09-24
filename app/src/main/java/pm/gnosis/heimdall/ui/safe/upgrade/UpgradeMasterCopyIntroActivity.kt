@@ -74,7 +74,7 @@ class UpgradeMasterCopyIntroActivity : BaseActivity() {
         upgrade_master_copy_intro_indicator.setViewPager(upgrade_master_copy_intro_pager)
         upgrade_master_copy_intro_button.setOnClickListener {
             if (upgrade_master_copy_intro_pager.currentItem == (layouts.size - 1)) {
-                val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!
+                val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
                 startActivity(UpgradeMasterCopyActivity.createIntent(this, safeAddress))
             } else
                 upgrade_master_copy_intro_pager.currentItem = upgrade_master_copy_intro_pager.currentItem + 1

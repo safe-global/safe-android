@@ -13,28 +13,28 @@ import pm.gnosis.utils.nullOnThrow
 
 class SetupNewRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupRecoveryPhraseContract>() {
     private lateinit var safeAddress: Solidity.Address
-    private var browserAddress: Solidity.Address? = null
+    private var authenticatorAddress: Solidity.Address? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
-        intent.getStringExtra(EXTRA_BROWSER_ADDRESS)?.let { browserAddress = it.asEthereumAddress()!! }
+        safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!! } ?: run { finish(); return }
+        intent.getStringExtra(EXTRA_AUTHENTICATOR_ADDRESS)?.let { authenticatorAddress = it.asEthereumAddress()!! }
     }
 
     override fun onConfirmedRecoveryPhrase(recoveryPhrase: String) {
-        startActivity(ConfirmNewRecoveryPhraseActivity.createIntent(this, safeAddress, browserAddress, recoveryPhrase))
+        startActivity(ConfirmNewRecoveryPhraseActivity.createIntent(this, safeAddress, authenticatorAddress, recoveryPhrase))
     }
 
     override fun inject(component: ViewComponent) = viewComponent().inject(this)
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        private const val EXTRA_BROWSER_ADDRESS = "extra.string.browser_address"
+        private const val EXTRA_AUTHENTICATOR_ADDRESS = "extra.string.authenticator_address"
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address, browserAddress: Solidity.Address?) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address, authenticatorAddress: Solidity.Address?) =
             Intent(context, SetupNewRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
-                putExtra(EXTRA_BROWSER_ADDRESS, browserAddress?.asEthereumAddressString())
+                putExtra(EXTRA_AUTHENTICATOR_ADDRESS, authenticatorAddress?.asEthereumAddressString())
             }
     }
 }

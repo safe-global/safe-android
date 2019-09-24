@@ -2,30 +2,23 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.data.repositories.CardRepository
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
-import pm.gnosis.heimdall.utils.SolidityAddressParceler
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.*
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import java.math.BigInteger
 
 @ExperimentalCoroutinesApi
@@ -125,7 +118,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.PairingParams::class.java)
         val label = "My;cool;card"
-        val index = BigInteger.valueOf(9517538246)
+        val index = 9517538246L
         val hash = Sha3Utils.keccak("Gnosis".toByteArray())
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Initialized("myNewCard"))
@@ -160,7 +153,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.PairingParams::class.java)
         val label = "My;cool;card"
-        val index = BigInteger.valueOf(9517538246)
+        val index = 9517538246L
         val hash = Sha3Utils.keccak("Gnosis".toByteArray())
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Initialized("someOtherId"))
@@ -191,7 +184,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.PairingParams::class.java)
         val label = "My;cool;card"
-        val index = BigInteger.valueOf(9517538246)
+        val index = 9517538246L
         val hash = Sha3Utils.keccak("Gnosis".toByteArray())
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Initialized("someOtherId"))
@@ -238,7 +231,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.PairingParams::class.java)
         val label = "My;cool;card"
-        val index = BigInteger.valueOf(9517538246)
+        val index = 9517538246L
         val hash = Sha3Utils.keccak("Gnosis".toByteArray())
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Initialized("someOtherId"))
@@ -277,7 +270,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.PairingParams::class.java)
         val label = "My;cool;card"
-        val index = BigInteger.valueOf(9517538246)
+        val index = 9517538246L
 
         testPreferences.putString("someOtherId", "coolshit".toByteArray().toHex() + "####1b")
 
@@ -311,7 +304,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.UnlockParams::class.java)
         val hash = "9b8bc77908c0b0ebe93e897e43f594b811f5d7130d86a5708403ddb417dc111b".hexToByteArray()
-        val index = BigInteger.valueOf(9517538264)
+        val index = 9517538264L
 
         val expected = "0x42".asEthereumAddress()!! to ECDSASignature(BigInteger.ONE, BigInteger.TEN)
         given(manager.sign(MockUtils.any(), anyString())).willReturn(expected)
@@ -333,7 +326,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.UnlockParams::class.java)
         val hash = "9b8bc77908c0b0ebe93e897e43f594b811f5d7130d86a5708403ddb417dc111b".hexToByteArray()
-        val index = BigInteger.valueOf(9517538264)
+        val index = 9517538264L
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Initialized("someOtherId"))
 
@@ -354,7 +347,7 @@ class DefaultCardRepositoryTest {
         val manager = mock(CardRepository.CardManager::class.java)
         val params = mock(CardRepository.CardManager.UnlockParams::class.java)
         val hash = "9b8bc77908c0b0ebe93e897e43f594b811f5d7130d86a5708403ddb417dc111b".hexToByteArray()
-        val index = BigInteger.valueOf(9517538264)
+        val index = 9517538264L
 
         given(manager.start()).willReturn(CardRepository.CardManager.CardStatus.Uninitialized)
 

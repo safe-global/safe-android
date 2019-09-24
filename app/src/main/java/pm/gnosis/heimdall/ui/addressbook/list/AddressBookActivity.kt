@@ -100,7 +100,7 @@ class AddressBookActivity : ViewModelActivity<AddressBookContract>() {
 
         fun parseResult(intent: Intent?): AddressBookEntry? {
             intent ?: return null
-            val address = intent.getStringExtra(RESULT_ENTRY_ADDRESS).asEthereumAddress() ?: return null
+            val address = intent.getStringExtra(RESULT_ENTRY_ADDRESS)?.asEthereumAddress() ?: return null
             val name = intent.getStringExtra(RESULT_ENTRY_NAME) ?: return null
             val description = intent.getStringExtra(RESULT_ENTRY_DESCRIPTION) ?: return null
             return AddressBookEntry(address, name, description)

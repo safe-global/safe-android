@@ -5,6 +5,7 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -14,15 +15,9 @@ class RecoverSafeRecoveryPhraseViewModel @Inject constructor(
     private val safeRepository: GnosisSafeRepository
 ) : RecoverSafeRecoveryPhraseContract() {
 
-    private var signingOwner: AccountsRepository.SafeOwner? = null
-
-    override fun setup(safeOwner: AccountsRepository.SafeOwner?) {
-        signingOwner = safeOwner
-    }
-
-    override fun process(input: Input, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?): Observable<ViewUpdate> =
-        (signingOwner?.let { Single.just(it) } ?: accountsRepository.createOwner())
-            .flatMapObservable { recoverSafeOwnersHelper.process(input, safeAddress, extensionAddress, it) }
+    override fun process(input: Input, safeAddress: Solidity.Address, authenticatorInfo: AuthenticatorSetupInfo?): Observable<ViewUpdate> =
+        (authenticatorInfo?.let { Single.just(it.safeOwner) } ?: accountsRepository.createOwner())
+            .flatMapObservable { recoverSafeOwnersHelper.process(input, safeAddress, authenticatorInfo?.authenticator?.address, it) }
             .flatMapSingle {
                 when (it) {
                     is ViewUpdate.RecoverData -> {
@@ -35,7 +30,10 @@ class RecoverSafeRecoveryPhraseViewModel @Inject constructor(
                             it.signatures
                         )
                             .andThen(safeRepository.saveOwner(safeAddress, it.safeOwner))
-                            .andThen(Single.just<ViewUpdate>(it))
+                            .andThen(Single.fromCallable {
+                                authenticatorInfo?.let { info -> safeRepository.saveAuthenticatorInfo(info.authenticator) }
+                                it
+                            })
                             .onErrorReturn(ViewUpdate::RecoverDataError)
                     }
                     is ViewUpdate.NoRecoveryNecessary -> {

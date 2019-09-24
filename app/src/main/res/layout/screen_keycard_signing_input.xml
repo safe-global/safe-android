@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/keycard_signing_input_title"
+        style="@style/BoldContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/keycard_authentiation"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/keycard_signing_input_subtitle"
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/enter_pin"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_title" />
+
+    <EditText
+        android:id="@+id/keycard_signing_input_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:hint="@string/pin"
+        android:inputType="number"
+        android:singleLine="true"
+        app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_subtitle" />
+
+    <TextView
+        android:id="@+id/keycard_signing_input_pin_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/tomato"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_pin" />
+
+    <TextView
+        android:id="@+id/keycard_signing_input_confirm_button"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textAllCaps="true"
+        android:text="@string/confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_pin_error" />
+
+    <TextView
+        android:id="@+id/keycard_signing_input_cancel_button"
+        style="@style/TextButton"
+        android:textAllCaps="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/cancel"
+        app:layout_constraintEnd_toStartOf="@id/keycard_signing_input_confirm_button"
+        app:layout_constraintTop_toBottomOf="@id/keycard_signing_input_pin_error" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="24dp"
-        android:text="Your transaction has been submitted."
+        android:text="@string/transaction_has_been_submitted"
         app:layout_constraintBottom_toTopOf="@+id/congratulations_continue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

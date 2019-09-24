@@ -423,8 +423,7 @@ class UpgradeMasterCopyViewModelTest {
         stateObserver
             .assertValueCount(8)
         viewModel.next()
-        
-        println(stateObserver.values())
+
         stateObserver
             .assertValueCount(9)
             .assertValueAt(8) { assertTrue(it.viewAction is BaseStateViewModel.ViewAction.StartActivity) }
