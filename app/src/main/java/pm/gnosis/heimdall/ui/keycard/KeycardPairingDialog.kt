@@ -87,7 +87,7 @@ abstract class KeycardPairingContract(
 
 @ExperimentalCoroutinesApi
 class KeycardPairingViewModel @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext private val context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
     private val accountsRepository: AccountsRepository,
     private val cardRepository: CardRepository
@@ -115,6 +115,14 @@ class KeycardPairingViewModel @Inject constructor(
 
     override fun startPairing(pin: String, pairingKey: String) {
         safeLaunch {
+            val invalidPin = pin.length != 6 && pin.toLongOrNull() != null
+            val invalidPairingKey = pairingKey.isEmpty()
+            if (invalidPin || invalidPairingKey) {
+                val pinError = if (invalidPin) context.getString(R.string.pairing_failed_pin) else null
+                val pairingKeyError = if (invalidPairingKey) context.getString(R.string.pairing_failed_password) else null
+                updateState { State.WaitingForInput(pinError, pairingKeyError, null) }
+                return@safeLaunch
+            }
             updateState { State.ReadingCard(false, null, null) }
             manager.performOnChannel {
                 safeLaunch {

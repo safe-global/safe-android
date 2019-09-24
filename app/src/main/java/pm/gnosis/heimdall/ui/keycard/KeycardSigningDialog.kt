@@ -32,6 +32,7 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.*
@@ -183,10 +184,13 @@ class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
         view.keycard_signing_input_cancel_button.setOnClickListener {
             viewModel.stopSigning()
         }
+
         view.keycard_signing_input_confirm_button.setOnClickListener {
             val pin = view.keycard_signing_input_pin.text.toString()
             viewModel.startSigning(pin)
         }
+
+        view.keycard_signing_input_pin.showKeyboardForView()
     }
 
     override fun updateState(state: KeycardSigningContract.State) {

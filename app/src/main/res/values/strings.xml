@@ -522,4 +522,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="hold_keycard">Hold the Keycard to your phone</string>
     <string name="keycard_authentiation">Keycard authentiation</string>
     <string name="enter_pin">Enter the PIN of your Keycard.</string>
+    <string name="pairing_failed_pin">Pairing failed: Incorrect PIN code.</string>
+    <string name="pairing_failed_password">Pairing failed: Incorrect pairing password.</string>
 </resources>
