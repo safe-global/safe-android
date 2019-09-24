@@ -203,6 +203,7 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.setCanceledOnTouchOutside(false)
         viewModel.state.observe(this, Observer { updateState(it) })
     }
 
