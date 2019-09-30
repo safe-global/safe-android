@@ -39,7 +39,7 @@
                     app:number="2"
                     app:label="@string/three_steps_2"
                     android:layout_height="wrap_content"
-                    app:stepState="uncompleted_inactive" />
+                    app:stepState="uncompleted_active" />
 
                 <pm.gnosis.heimdall.views.Step
                     android:id="@+id/step3"
