@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/steps_back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/steps_title"
+        style="@style/WhiteTheme.ToolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:text="@string/create_safe_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/steps_back_arrow"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/steps_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/steps_title"
+        tools:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/steps_content_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/steps_botton_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/steps_title"
+        android:background="@color/pale_grey_two">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/pending_safe_qr_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="@dimen/primary_button_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/steps_step_indicator">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="18dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="18dp">
+
+                    <TextView
+                        android:id="@+id/steps_sub_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center"
+                        android:text="@string/three_steps"
+                        android:textColor="@color/blue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="9sp"
+                        android:text="@string/three_steps_1_desc"
+                        android:textColor="#5d6d74"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="9sp"
+                        android:text="@string/three_steps_2_desc"
+                        android:textColor="#5d6d74"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="9sp"
+                        android:text="@string/three_steps_3_desc"
+                        android:textColor="#5d6d74"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <pm.gnosis.heimdall.views.StepIndicator
+                android:id="@+id/steps_step_indicator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <pm.gnosis.heimdall.views.Step
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    app:label="@string/three_steps_1"
+                    app:number="1"
+                    app:stepState="completed" />
+
+                <pm.gnosis.heimdall.views.Step
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    app:label="@string/three_steps_2"
+                    app:number="2"
+                    app:stepState="uncompleted_inactive" />
+
+                <pm.gnosis.heimdall.views.Step
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    app:label="@string/three_steps_3"
+                    app:number="3"
+                    app:stepState="uncompleted_inactive" />
+
+            </pm.gnosis.heimdall.views.StepIndicator>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/steps_botton_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        app:backVisible="false"
+        app:disabled="false"
+        app:forwardLabel="@string/next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

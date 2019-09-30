@@ -178,6 +178,11 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
+            android:name=".ui.safe.create.CreateSafeStepsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
             android:name=".ui.tokens.manage.ManageTokensActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"

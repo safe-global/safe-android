@@ -535,6 +535,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
 
     <string name="create_safe_intro_page_1_title">What is the Gnosis Safe?</string>
     <string name="create_safe_intro_page_1_text_1">Your Safe is a smart contract wallet that allows you to safely manage your crypto funds and connect to Dapps.</string>
+    <string name="create_safe_intro_page_1_text_2"></string>
 
     <string name="create_safe_intro_page_2_title">Secure by design</string>
     <string name="create_safe_intro_page_2_text_1">While our code is always audited, we\'ve also formally verified the Gnosis Safe smart contracts.</string>
