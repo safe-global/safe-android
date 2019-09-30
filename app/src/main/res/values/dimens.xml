@@ -36,4 +36,6 @@
     <dimen name="safe_logo_size">72dp</dimen>
     <dimen name="horizontal_offset">0dp</dimen>
     <dimen name="vertical_offset">8dp</dimen>
+
+    <dimen name="step_indicator_edge_width">2dp</dimen>
 </resources>

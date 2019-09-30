@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/pale_grey_two"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,77 +17,125 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_toolbar_background">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/layout_recovery_phrase_intro_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:gravity="center"
-                android:text="@string/backup_recovery"
-                android:textColor="@color/blue"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/layout_recovery_phrase_intro_description1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
-                android:lineSpacingExtra="7sp"
-                android:text="@string/use_phrase_on_next_screen"
-
-
-                android:textColor="#5d6d74"
-                android:textSize="13sp"
-                android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_phone_drop_image" />
-
-            <TextView
-                android:id="@+id/layout_recovery_phrase_intro_description2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-
-
-                android:layout_marginStart="16dp"
+            <pm.gnosis.heimdall.views.StepIndicator
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
-                android:lineSpacingExtra="7sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                android:text="@string/we_recommend_password_manager"
-                android:textColor="#5d6d74"
-                android:textSize="13sp"
-                android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_description1" />
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step1"
+                    android:layout_width="100dp"
+                    app:number="1"
+                    app:label="@string/three_steps_1"
+                    android:layout_height="wrap_content"
+                    app:stepState="completed" />
 
-            <ImageView
-                android:id="@+id/layout_recovery_phrase_intro_phone_drop_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_title"
-                app:srcCompat="@drawable/img_backup_phrase" />
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step2"
+                    android:layout_width="100dp"
+                    app:number="2"
+                    app:label="@string/three_steps_2"
+                    android:layout_height="wrap_content"
+                    app:stepState="uncompleted_active" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step3"
+                    android:layout_width="100dp"
+                    app:number="3"
+                    app:label="@string/three_steps_3"
+                    android:layout_height="wrap_content"
+                    app:stepState="uncompleted_active" />
+
+            </pm.gnosis.heimdall.views.StepIndicator>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:id="@+id/layout_recovery_phrase_intro_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/backup_recovery"
+                        android:textColor="@color/blue"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/layout_recovery_phrase_intro_description1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/use_phrase_on_next_screen"
+
+
+                        android:textColor="#5d6d74"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_phone_drop_image" />
+
+                    <TextView
+                        android:id="@+id/layout_recovery_phrase_intro_description2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="7sp"
+
+                        android:text="@string/we_recommend_password_manager"
+                        android:textColor="#5d6d74"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_description1" />
+
+                    <ImageView
+                        android:id="@+id/layout_recovery_phrase_intro_phone_drop_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="22dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_recovery_phrase_intro_title"
+                        app:srcCompat="@drawable/img_backup_phrase" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+
 
     </androidx.core.widget.NestedScrollView>
 
