@@ -27,10 +27,8 @@ class StepIndicator @JvmOverloads constructor(
 
     private val backgroundPaint: Paint
 
-    private val inactiveInactiveEdgeColor: Pair<Int, Int>
-    private val inactiveActiveEdgeColor: Pair<Int, Int>
-    private val activeInactiveEdgeColor: Pair<Int, Int>
-    private val activeActiveEdgeColor: Pair<Int, Int>
+    private val inactiveEdgeColor = ContextCompat.getColor(context, R.color.disabled_button)
+    private val activeEdgeColor = ContextCompat.getColor(context, R.color.safe_green)
 
     private val edgeShaders: SparseArray<LinearGradient> = SparseArray()
 
@@ -40,15 +38,6 @@ class StepIndicator @JvmOverloads constructor(
         backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         backgroundPaint.style = Paint.Style.FILL_AND_STROKE
         backgroundPaint.strokeWidth = resources.getDimension(R.dimen.step_indicator_edge_width)
-
-        inactiveInactiveEdgeColor =
-            ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.disabled_button)
-        inactiveActiveEdgeColor =
-            ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.safe_green)
-        activeInactiveEdgeColor =
-            ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.disabled_button)
-        activeActiveEdgeColor =
-            ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.safe_green)
     }
 
     fun updateStep(index: Int, stepState: StepState) {
@@ -82,28 +71,10 @@ class StepIndicator @JvmOverloads constructor(
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-        var colorPair: Pair<Int, Int>
-
         for (i in 0 until childCount - 1) {
 
             val child1 = getChildAt(i) as Step
             val child2 = getChildAt(i + 1) as Step
-
-            colorPair =
-                if (child1.state == StepState.UNCOMPLETED_INACTIVE || child1.state == StepState.SKIPPED) {
-
-                    if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        inactiveInactiveEdgeColor
-                    else
-                        inactiveActiveEdgeColor
-
-                } else {
-
-                    if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        activeInactiveEdgeColor
-                    else
-                        activeActiveEdgeColor
-                }
 
             if (edgeShaders.size() <= i) {
                 edgeShaders.put(
@@ -112,8 +83,8 @@ class StepIndicator @JvmOverloads constructor(
                         child1.getCircleCenter().y,
                         child2.getCircleCenter().x - child2.radius(),
                         child2.getCircleCenter().y,
-                        colorPair.first,
-                        colorPair.second,
+                        if (child1.isActive) activeEdgeColor else inactiveEdgeColor,
+                        if (child2.isActive) activeEdgeColor else inactiveEdgeColor,
                         TileMode.CLAMP
                     )
                 )
@@ -166,6 +137,9 @@ class Step @JvmOverloads constructor(
             }
             field = value
         }
+
+    val isActive: Boolean
+        get() = state == StepState.UNCOMPLETED_ACTIVE || state == StepState.COMPLETED
 
     var number: Int = 1
         set(value) {
