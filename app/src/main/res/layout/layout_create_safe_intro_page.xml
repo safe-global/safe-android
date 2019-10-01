@@ -51,7 +51,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingLeft="24dp"
-            android:paddingTop="12dp"
             android:paddingRight="24dp"
             android:paddingBottom="12dp"
             android:text="@string/more_info_in_our_blog"
