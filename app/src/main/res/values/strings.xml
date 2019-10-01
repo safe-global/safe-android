@@ -524,7 +524,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="enter_pin">Enter the PIN of your Keycard.</string>
     <string name="pairing_failed_pin">Pairing failed: Incorrect PIN code.</string>
     <string name="pairing_failed_password">Pairing failed: Incorrect pairing password.</string>
-
     <string name="three_steps">The three steps to security</string>
     <string name="three_steps_1">Password protected app</string>
     <string name="three_steps_2">2FA device (Optional)</string>
@@ -532,4 +531,12 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="three_steps_1_desc">1. Set up password to protect this app</string>
     <string name="three_steps_2_desc">2. (Optional) Set up a two-factor authentication method</string>
     <string name="three_steps_3_desc">2. Securely store your recovery phrase to restore your Safe in case you loose access to this device</string>
+    <string name="what_is_the_gnosis_safe">What is the Gnosis Safe?</string>
+    <string name="your_safe_is_a_smart_contract">Your Safe is a smart contract wallet that allows you to safely manage your crypto funds and connect to Dapps.</string>
+    <string name="secure_by_design">Secure by design</string>
+    <string name="while_our_code_is_always_audited">While our code is always audited, we\'ve also formally verified the Gnosis Safe smart contracts.\n\nUse two-factor authentication to further increase the security of your wallet.</string>
+    <string name="crypto_without_the_hassle">Crypto without the hassle</string>
+    <string name="with_walletconnect_you_can_connect">With WalletConnect you can connect to Dapps securely within seconds.\n\nGnosis Safe allows you to safe your ETH and pay network fees with ERC-20 tokens.</string>
+    <string name="you_are_in_control">You\'re in control</string>
+    <string name="your_funds_are_held_securely">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis.\n\nLost or changed your phone? Regain access anytime using the Safe\'s recovery methods.</string>
 </resources>
