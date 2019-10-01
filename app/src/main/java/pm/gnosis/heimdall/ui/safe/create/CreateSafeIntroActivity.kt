@@ -29,8 +29,7 @@ class CreateSafeIntroActivity : BaseActivity() {
             val layout = inflater.inflate(layoutId, container, false)
             val page = SafeIntroPage.values()[position]
             layout.intro_page_title.text = getString(page.titleResId)
-            layout.intro_page_text_1.text = getString(page.textLine1ResId)
-            layout.intro_page_text_2.text = getString(page.textLine2ResId)
+            layout.intro_page_text.text = getString(page.textResId)
             layout.intro_page_image.setImageResource(page.imgResId)
             container.addView(layout)
             return layout
@@ -91,32 +90,28 @@ class CreateSafeIntroActivity : BaseActivity() {
 
 enum class SafeIntroPage(
     val titleResId: Int,
-    val textLine1ResId: Int,
-    val textLine2ResId: Int,
-    val imgResId: Int) {
+    val textResId: Int,
+    val imgResId: Int
+) {
 
     WHAT_IS_SAFE(
-        R.string.create_safe_intro_page_1_title,
-        R.string.create_safe_intro_page_1_text_1,
-        R.string.create_safe_intro_page_1_text_2,
+        R.string.what_is_the_gnosis_safe,
+        R.string.your_safe_is_a_smart_contract,
         R.drawable.img_safe_intro_what_is_safe
     ),
     CONTRACT(
-        R.string.create_safe_intro_page_2_title,
-        R.string.create_safe_intro_page_2_text_1,
-        R.string.create_safe_intro_page_2_text_2,
+        R.string.secure_by_design,
+        R.string.while_our_code_is_always_audited,
         R.drawable.img_safe_intro_contract
     ),
     CONNECT(
-        R.string.create_safe_intro_page_3_title,
-        R.string.create_safe_intro_page_3_text_1,
-        R.string.create_safe_intro_page_3_text_2,
+        R.string.crypto_without_the_hassle,
+        R.string.with_walletconnect_you_can_connect,
         R.drawable.img_safe_intro_connect
     ),
     CONTROL(
-        R.string.create_safe_intro_page_4_title,
-        R.string.create_safe_intro_page_4_text_1,
-        R.string.create_safe_intro_page_4_text_2,
+        R.string.you_are_in_control,
+        R.string.your_funds_are_held_securely,
         R.drawable.img_safe_intro_control
     )
 }

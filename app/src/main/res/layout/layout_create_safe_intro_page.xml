@@ -31,7 +31,7 @@
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/intro_page_text_1"
+            android:id="@+id/intro_page_text"
             style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,18 +44,6 @@
             android:textSize="15sp"
             app:lineHeight="24sp" />
 
-        <TextView
-            android:id="@+id/intro_page_text_2"
-            style="@style/Content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingBottom="12dp"
-            android:text="@string/more_info_in_our_blog"
-            android:textSize="15sp"
-            app:lineHeight="24sp" />
     </LinearLayout>
 
 </ScrollView>
