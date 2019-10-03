@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/keycard_blocked_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/keycard_blocked_title"
+        style="@style/BoldContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_error"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/keycard_blocked"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/keycard_blocked_txt"
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/keycard_unblock_get_in_touch"
+        app:layout_constraintTop_toBottomOf="@id/keycard_blocked_title"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/keycard_blocked_ok_button"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/get_in_touch"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keycard_blocked_txt" />
+
+    <TextView
+        android:id="@+id/keycard_blocked_cancel_button"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/cancel"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/keycard_blocked_ok_button"
+        app:layout_constraintTop_toBottomOf="@+id/keycard_blocked_txt" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

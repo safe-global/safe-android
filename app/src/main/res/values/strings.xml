@@ -539,4 +539,9 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="with_walletconnect_you_can_connect">With WalletConnect you can connect to Dapps securely within seconds.\n\nGnosis Safe allows you to safe your ETH and pay network fees with ERC-20 tokens.</string>
     <string name="you_are_in_control">You\'re in control</string>
     <string name="your_funds_are_held_securely">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis.\n\nLost or changed your phone? Regain access anytime using the Safe\'s recovery methods.</string>
+    <string name="no_slots_available">No free slots available on Keycard</string>
+    <string name="all_slots_in_use">Your card currently uses all pairing slots. Please free up a slot with the Keycard\'s management app or tool and try again.</string>
+    <string name="keycard_blocked">Keycard blocked</string>
+    <string name="keycard_unblock_get_in_touch">To restore the Keycard please get in touch with us.</string>
+    <string name="keycard_blocked_subject">Keycard blocked (%1$s)</string>
 </resources>
