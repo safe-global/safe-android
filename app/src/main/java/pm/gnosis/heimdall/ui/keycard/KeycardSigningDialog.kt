@@ -10,12 +10,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
 import im.status.keycard.applet.KeycardCommandSet
 import kotlinx.android.synthetic.main.screen_keycard_signing_input.view.*
 import kotlinx.android.synthetic.main.screen_single_fragment.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -254,7 +252,7 @@ class KeycardSigningDialog private constructor() : DialogFragment() {
         when (state) {
             is KeycardSigningContract.State.WaitingForInput -> KeycardSigningInputFragment()
             is KeycardSigningContract.State.ReadingCard -> KeycardSigningReadingCardFragment()
-            is KeycardSigningContract.State.CardBlocked -> TODO()
+            is KeycardSigningContract.State.CardBlocked -> KeycardBlockedFragment()
             is KeycardSigningContract.State.SigningDone -> {
                 ((activity ?: context) as? SigningCallback)?.onSigned(state.signature)
                 dismiss()

@@ -87,6 +87,10 @@ interface ViewComponent {
     fun inject(fragment: KeycardSigningReadingCardFragment)
     @ExperimentalCoroutinesApi
     fun inject(fragment: KeycardSigningInputFragment)
+
+    fun inject(fragment: KeycardNoSlotsFragment)
+    fun inject(fragment: KeycardBlockedFragment)
+
     fun inject(fragment: NoSafesFragment)
     fun inject(fragment: RecoveringSafeFragment)
     fun inject(fragment: RecoveringSafeFundFragment)
