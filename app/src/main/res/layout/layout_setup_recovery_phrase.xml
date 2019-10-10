@@ -59,7 +59,6 @@
                     android:layout_marginEnd="24dp"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="40dp"
-                    app:layout_constraintBottom_toTopOf="@+id/layout_setup_recovery_phrase_waves"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_setup_recovery_phrase_tip"
