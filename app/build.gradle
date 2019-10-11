@@ -111,7 +111,7 @@ android {
 
         release {
             minifyEnabled true
-            multiDexEnabled false
+            multiDexEnabled true
             signingConfig signingConfigs.release
             buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
