@@ -81,3 +81,8 @@
 }
 # Ignore annotation used for build tooling.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+####################################################################################################
+# BouncyCastle
+####################################################################################################
+-keep class org.bouncycastle.** { *; }
