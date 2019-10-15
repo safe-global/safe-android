@@ -4,7 +4,6 @@ set -e
 
 if [[ $TRAVIS_BRANCH == 'master' ]]
 then
-    ./gradlew assembleInternal crashlyticsUploadDistributionInternal
-    ./gradlew assembleRinkeby crashlyticsUploadDistributionRinkeby
-    ./gradlew assembleRelease crashlyticsUploadDistributionRelease
+    ./gradlew assembleInternal assembleRinkeby assembleRelease
+    ./gradlew crashlyticsUploadDistributionInternal crashlyticsUploadDistributionRinkeby crashlyticsUploadDistributionInternal
 fi
