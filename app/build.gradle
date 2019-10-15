@@ -220,7 +220,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 
     // Firebase
-    implementation "com.google.firebase:firebase-core:$versions.firebase_core"
+    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
     implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
 
