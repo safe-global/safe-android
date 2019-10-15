@@ -37,7 +37,7 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
         }
     }
 
-    override fun onNewToken(token: String?) {
+    override fun onNewToken(token: String) {
         super.onNewToken(token)
         pushRepository.syncAuthentication()
     }
