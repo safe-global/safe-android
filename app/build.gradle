@@ -203,7 +203,7 @@ dependencies {
     implementation "androidx.cardview:cardview:$versions.androidx_card_view"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
-    kapt "androidx.lifecycle:lifecycle-compiler:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
     kapt "androidx.room:room-compiler:$versions.androidx_room"
     implementation "androidx.room:room-runtime:$versions.androidx_room"
@@ -220,7 +220,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 
     // Firebase
-    implementation "com.google.firebase:firebase-core:$versions.firebase_core"
+    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
     implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
 
@@ -294,7 +294,7 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
-    testImplementation "androidx.arch.core:core-testing:2.0.0"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
