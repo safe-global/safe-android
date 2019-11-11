@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
+import pm.gnosis.heimdall.ui.base.NfcViewModelActivity
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
@@ -184,7 +185,16 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        adapter.enableReaderMode(activity!!, viewModel.callback(), NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+        activity?.let {
+            (it as? NfcViewModelActivity<*>)?.registerNfcCallback(viewModel.callback()) ?: run {
+                adapter.enableReaderMode(
+                    activity!!,
+                    viewModel.callback(),
+                    NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
+                    null
+                )
+            }
+        }
         val pin = arguments?.getString(ARGUMENTS_PIN) ?: return
         val puk = arguments?.getString(ARGUMENTS_PUK) ?: return
         val pairingKey = arguments?.getString(ARGUMENTS_PAIRING_KEY) ?: return
@@ -192,7 +202,11 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
     }
 
     override fun onStop() {
-        activity?.let { adapter.disableReaderMode(it) }
+        activity?.let {
+            (it as? NfcViewModelActivity<*>)?.unregisterNfcCallback(viewModel.callback()) ?: run {
+                adapter.disableReaderMode(it)
+            }
+        }
         super.onStop()
     }
 
