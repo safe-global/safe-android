@@ -8,11 +8,13 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.heimdall.views.AddressTooltip
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +40,10 @@ class AddressHelper @Inject constructor(
                 }
             }
             .flatMap {
-                addressBookRepository.loadAddressBookEntry(address).map { it.name }
+                if (address == BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!)
+                    Single.just("MultiSend contract")
+                else
+                    addressBookRepository.loadAddressBookEntry(address).map { it.name }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {

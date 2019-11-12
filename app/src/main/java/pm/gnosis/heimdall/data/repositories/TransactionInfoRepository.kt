@@ -52,6 +52,10 @@ sealed class TransactionData : Parcelable {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class UpdateMasterCopy(val masterCopy: Solidity.Address) : TransactionData()
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
+    data class MultiSend(val transactions: List<SafeTransaction>) : TransactionData()
+
     fun addToBundle(bundle: Bundle) =
         bundle.let {
             it.putInt(EXTRA_DATA_TYPE, getType())
@@ -65,6 +69,7 @@ sealed class TransactionData : Parcelable {
             is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
             is ConnectAuthenticator -> TYPE_CONNECT_EXTENSION
             is UpdateMasterCopy -> TYPE_UPDATE_MASTER_COPY
+            is MultiSend -> TYPE_MULTI_SEND
         }
 
     companion object {
@@ -76,6 +81,7 @@ sealed class TransactionData : Parcelable {
         private const val TYPE_REPLACE_RECOVERY_PHRASE = 2
         private const val TYPE_CONNECT_EXTENSION = 3
         private const val TYPE_UPDATE_MASTER_COPY = 4
+        private const val TYPE_MULTI_SEND = 5
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
@@ -85,6 +91,7 @@ sealed class TransactionData : Parcelable {
                     TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<ReplaceRecoveryPhrase>(EXTRA_DATA)
                     TYPE_CONNECT_EXTENSION -> getParcelable<ConnectAuthenticator>(EXTRA_DATA)
                     TYPE_UPDATE_MASTER_COPY -> getParcelable<UpdateMasterCopy>(EXTRA_DATA)
+                    TYPE_MULTI_SEND -> getParcelable<MultiSend>(EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
             }

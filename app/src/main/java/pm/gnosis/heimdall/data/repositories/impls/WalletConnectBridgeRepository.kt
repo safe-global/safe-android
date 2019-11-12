@@ -36,12 +36,11 @@ import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.*
 import retrofit2.http.Body
 import retrofit2.http.POST
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -195,24 +194,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                                 session.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
                             }
                         is Session.MethodCall.Custom ->
-                            call.apply {
-                                sessionRequests[id] = sessionId
-                                try {
-                                    rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
-                                        .subscribeBy(onError = { t ->
-                                            rejectRequest(id, 42, t.message ?: "Could not handle custom call")
-                                        }) { result ->
-                                            result.error?.let { error ->
-                                                rejectRequest(id, error.code.toLong(), error.message).subscribe()
-                                            } ?: run {
-                                                approveRequest(id, result.result ?: "").subscribe()
-                                            }
-                                        }
-                                } catch (e: Exception) {
-                                    Timber.e(e)
-                                    rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
-                                }
-                            }
+                            handleCustomCall(sessionId, session, call)
                     }
                 }
 
@@ -242,6 +224,50 @@ class WalletConnectBridgeRepository @Inject constructor(
             sessionUpdates.onNext(Unit)
             config.handshakeTopic
         }
+
+    private fun handleCustomCall(sessionId: String, session: Session, call: Session.MethodCall.Custom) {
+        sessionRequests[call.id] = sessionId
+        try {
+            when (call.method) {
+                "gs_multi_send" -> {
+                    handleMultiSend(sessionId, session, call)
+                }
+                else ->
+                    call.apply {
+                        rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
+                            .subscribeBy(onError = { t ->
+                                rejectRequest(id, 42, t.message ?: "Could not handle custom call")
+                            }) { result ->
+                                result.error?.let { error ->
+                                    rejectRequest(id, error.code.toLong(), error.message).subscribe()
+                                } ?: run {
+                                    approveRequest(id, result.result ?: "").subscribe()
+                                }
+                            }
+                    }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            rejectRequest(call.id, 42, "Could not handle custom call: $e").subscribe()
+        }
+    }
+
+    private fun handleMultiSend(sessionId: String, session: Session, call: Session.MethodCall.Custom) {
+        val safe = session.approvedAccounts()?.firstOrNull()?.asEthereumAddress() ?: throw IllegalArgumentException("No whitelisted Safe!")
+        val params = (call.params as? List<Map<String, String>>) ?: emptyList()
+        val txs = params.map {
+            val txTo = it["to"]?.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: ${it["to"]}")
+            val txValue =
+                it["value"]?.run {
+                    (if (startsWith("0x")) hexAsBigIntegerOrNull() else decimalAsBigIntegerOrNull())
+                        ?: throw IllegalArgumentException("Invalid to value: $this")
+                } ?: BigInteger.ZERO
+            val txData = it["data"]?.apply { hexStringToByteArray() }?.addHexPrefix() // Check that it is valid hex data
+            SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), TransactionExecutionRepository.Operation.CALL)
+        }
+        val txData = TransactionData.MultiSend(txs)
+        showSendTransactionNotification(session.peerMeta(), safe, txData, call.id, sessionId)
+    }
 
     private fun showSendTransactionNotification(
         peerMeta: Session.PeerMeta?,

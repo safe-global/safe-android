@@ -58,6 +58,7 @@ import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
+import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity
@@ -124,6 +125,7 @@ interface ViewComponent {
     @ExperimentalCoroutinesApi
     fun inject(activity: KeycardInitializeActivity)
     fun inject(activity: ManageTokensActivity)
+    fun inject(activity: MultiSendDetailsActivity)
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
     fun inject(activity: PasswordSetupActivity)
