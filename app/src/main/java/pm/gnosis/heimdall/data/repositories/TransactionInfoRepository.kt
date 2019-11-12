@@ -17,13 +17,13 @@ interface TransactionInfoRepository {
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
 
-sealed class RestrictedTransactionException : IllegalArgumentException() {
-    object DelegateCall : RestrictedTransactionException()
-    object ModifyOwners : RestrictedTransactionException()
-    object ModifyModules : RestrictedTransactionException()
-    object ChangeThreshold : RestrictedTransactionException()
-    object ChangeMasterCopy : RestrictedTransactionException()
-    object DataCallToSafe : RestrictedTransactionException()
+sealed class RestrictedTransactionException(msg: String) : IllegalArgumentException(msg) {
+    object DelegateCall : RestrictedTransactionException("Delegate calls are not allowed")
+    object ModifyOwners : RestrictedTransactionException("Changing owners is not allowed")
+    object ModifyModules : RestrictedTransactionException("Changing modules is not allowed")
+    object ChangeThreshold : RestrictedTransactionException("Changing the threshold is not allowed")
+    object ChangeMasterCopy : RestrictedTransactionException("Changing the master copy is not allowed")
+    object DataCallToSafe : RestrictedTransactionException("Interaction with the Safe are not allowed")
 }
 
 data class TransactionInfo(

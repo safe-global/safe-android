@@ -252,6 +252,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun handleMultiSend(sessionId: String, session: Session, call: Session.MethodCall.Custom) {
         val safe = session.approvedAccounts()?.firstOrNull()?.asEthereumAddress() ?: throw IllegalArgumentException("No whitelisted Safe!")
         val params = (call.params as? List<Map<String, String>>) ?: emptyList()
@@ -265,8 +266,18 @@ class WalletConnectBridgeRepository @Inject constructor(
             val txData = it["data"]?.apply { hexStringToByteArray() }?.addHexPrefix() // Check that it is valid hex data
             SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), TransactionExecutionRepository.Operation.CALL)
         }
-        val txData = TransactionData.MultiSend(txs)
-        showSendTransactionNotification(session.peerMeta(), safe, txData, call.id, sessionId)
+        Observable.fromIterable(txs).flatMapSingle {
+            infoRepository.checkRestrictedTransaction(safe, it)
+        }
+            .toList()
+            .subscribeBy(
+                onSuccess = { checkedTxs ->
+                    showSendTransactionNotification(session.peerMeta(), safe, TransactionData.MultiSend(checkedTxs), call.id, sessionId)
+                },
+                onError = { e ->
+                    Timber.e(e)
+                    rejectRequest(call.id, 42, "Could not handle gs_multi_send: $e").subscribe()
+                })
     }
 
     private fun showSendTransactionNotification(
