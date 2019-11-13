@@ -99,10 +99,10 @@ class SafeTransactionsAdapter @Inject constructor(
             itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.blue))
             disposables += viewModel.loadTransactionInfo(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateInfo, {
+                .subscribe(::updateInfo) {
                     Timber.e(it)
                     itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
-                })
+                }
             disposables += viewModel.observeTransactionStatus(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateStatus, Timber::e)
