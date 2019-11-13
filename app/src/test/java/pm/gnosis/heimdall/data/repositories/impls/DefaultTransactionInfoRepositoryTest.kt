@@ -12,6 +12,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
@@ -26,6 +27,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 import java.util.*
 
@@ -305,6 +307,7 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
+        private val MULTI_SEND_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
 
         private const val REPLACE_RECOVERY_PHRASE_DATA =
             "0x8d80ff0a" + // Multi send method
@@ -331,10 +334,45 @@ class DefaultTransactionInfoRepositoryTest {
                     "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
                     "00000000000000000000000000000000000000000000000000000000" // Padding
 
+        private const val MULTI_SEND_SWAP_OWNER_DATA =
+            "e318b52b" + // Swap owner method
+                    "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000f" // New Owner
+
+        private const val MULTI_SEND_1_DATA =
+            "8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "000000000000000000000000A7e15e2e76Ab469F8681b576cFF168F37Aa246EC" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    MULTI_SEND_SWAP_OWNER_DATA +
+                    "00000000000000000000000000000000000000000000000000000000" // Padding
+
+        private const val MULTI_SEND_2_DATA =
+            "8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    "0000000000000000000000000000000000000000000000000000000000000001" + // Operation
+                    "000000000000000000000000e74d6af1670fb6560dd61ee29eb57c7bc027ce4e" + // MultiSend address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000164" +
+                    MULTI_SEND_1_DATA +
+                    "00000000000000000000000000000000000000000000000000000000"+  // Padding
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "000000000000000000000000c257274276a4e539741ca11b590b9447b26a8051" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000010" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000000"
+
         private val REPLACE_RECOVERY_PHRASE_TX =
             SafeTransaction(
                 Transaction(
-                    address = TEST_SAFE,
+                    address = MULTI_SEND_LIB,
                     value = Wei.ZERO,
                     data = REPLACE_RECOVERY_PHRASE_DATA,
                     nonce = BigInteger.ZERO
@@ -419,6 +457,49 @@ class DefaultTransactionInfoRepositoryTest {
                                     TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(TEST_ADDRESS)
                                 ), operation = CALL
                             ), expected = TransactionData.UpdateMasterCopy(TEST_ADDRESS)
+                        )
+                    ),
+            TransactionData.MultiSend::class to
+                    listOf(
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = MultiSend.MultiSend.encode(Solidity.Bytes(byteArrayOf()))
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(emptyList())
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_1_DATA"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(
+                                listOf(
+                                    SafeTransaction(
+                                        Transaction(TEST_SAFE, value = Wei.ZERO, data = "0x$MULTI_SEND_SWAP_OWNER_DATA"),
+                                        CALL
+                                    )
+                                )
+                            )
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_2_DATA"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(
+                                listOf(
+                                    SafeTransaction(
+                                        Transaction(MULTI_SEND_LIB, value = Wei.ZERO, data = "0x$MULTI_SEND_1_DATA".toLowerCase()),
+                                        DELEGATE_CALL
+                                    ),
+
+                                    SafeTransaction(
+                                        Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16)), data = "0x"),
+                                        CALL
+                                    )
+                                )
+                            )
                         )
                     )
         )

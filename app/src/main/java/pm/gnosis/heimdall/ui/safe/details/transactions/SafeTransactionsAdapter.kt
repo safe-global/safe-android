@@ -165,7 +165,6 @@ class SafeTransactionsAdapter @Inject constructor(
         }
 
         override fun unbind() {
-            stop()
             currentData = null
             super.unbind()
         }

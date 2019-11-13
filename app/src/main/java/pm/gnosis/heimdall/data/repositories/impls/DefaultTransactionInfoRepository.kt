@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
@@ -79,6 +80,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
     // TODO: This need to be adjusted for the new MultiSend
     private fun isMultiSend(safeTransaction: SafeTransaction) =
         safeTransaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL &&
+                safeTransaction.wrapped.address == MULTI_SEND_LIB &&
                 safeTransaction.wrapped.data != null &&
                 safeTransaction.wrapped.data!!.isSolidityMethod(MultiSend.MultiSend.METHOD_ID)
 
@@ -156,6 +158,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
         )
 
     companion object {
+        private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
         // These additional costs are hardcoded in the smart contract
         private val SAFE_TX_BASE_COSTS = BigInteger.valueOf(32000)
     }
