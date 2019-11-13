@@ -546,4 +546,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="keycard_blocked_subject">Keycard blocked (%1$s)</string>
     <string name="multi_send">Batched transaction</string>
     <string name="this_will_perform_x_transactions">This will perform %s transactions</string>
+    <string name="multi_send_contract">MultiSend contract</string>
 </resources>

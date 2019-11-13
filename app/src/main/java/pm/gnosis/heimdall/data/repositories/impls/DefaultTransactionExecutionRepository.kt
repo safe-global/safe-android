@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -232,7 +231,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val threshold = GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
                 val owners = GnosisSafe.GetOwners.decode(info.owners.mapped()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
-                val txGas = estimate.safeTxGas.decimalAsBigInteger() + BigInteger.valueOf(10000)
+                val txGas = estimate.safeTxGas.decimalAsBigInteger()
                 val dataGas = estimate.dataGas.decimalAsBigInteger()
                 val operationalGas = estimate.operationalGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()

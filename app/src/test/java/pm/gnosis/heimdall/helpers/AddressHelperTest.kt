@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.helpers
 
+import android.content.Context
 import android.view.View
 import android.widget.TextView
 import io.reactivex.Single
@@ -12,11 +13,16 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.BuildConfig
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.utils.asMiddleEllipsized
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
@@ -26,6 +32,9 @@ class AddressHelperTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
+
+    @Mock
+    lateinit var contextMock: Context
 
     @Mock
     lateinit var addressBookRepository: AddressBookRepository
@@ -61,6 +70,27 @@ class AddressHelperTest {
 
         then(addressBookRepository).should().loadAddressBookEntry(testAddress)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testMultiSendAddress() {
+        given(addressView.context).willReturn(contextMock)
+        contextMock.mockGetString()
+        val testAddress = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
+        given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+
+        helper.populateAddressInfo(addressView, nameView, null, testAddress)
+
+        then(imageView).shouldHaveNoMoreInteractions()
+        then(addressView).should().text = testAddress.asEthereumAddressChecksumString().asMiddleEllipsized(4)
+        then(addressView).should().setOnClickListener(MockUtils.any())
+        then(addressView).should().context
+        then(addressView).shouldHaveNoMoreInteractions()
+        then(nameView).should().text = "${R.string.multi_send_contract}"
+        then(nameView).should().visibility = View.VISIBLE
+        then(nameView).shouldHaveNoMoreInteractions()
+
+        then(addressBookRepository).shouldHaveZeroInteractions()
     }
 
     @Test

@@ -60,10 +60,13 @@ object UpdateMasterCopyTransactionBuilder {
 
 
 object MultiSendTransactionBuilder {
+
+    private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
+
     fun build(data: TransactionData.MultiSend): SafeTransaction =
         SafeTransaction(
             Transaction(
-                BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!, data = MultiSend.MultiSend.encode(
+                MULTI_SEND_LIB, data = MultiSend.MultiSend.encode(
                     Solidity.Bytes(
                         data.transactions.joinToString(separator = "") {
                             SolidityBase.encodeFunctionArguments(

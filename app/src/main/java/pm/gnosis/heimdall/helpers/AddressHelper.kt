@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.heimdall.views.AddressTooltip
@@ -40,8 +41,8 @@ class AddressHelper @Inject constructor(
                 }
             }
             .flatMap {
-                if (address == BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!)
-                    Single.just("MultiSend contract")
+                if (address == MULTI_SEND_LIB)
+                    Single.just(addressView.context.getString(R.string.multi_send_contract))
                 else
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }
             }
@@ -59,5 +60,9 @@ class AddressHelper @Inject constructor(
     ): List<Disposable> {
         imageView?.setAddress(address)
         return listOf(buildAddressInfoSingle(addressView, nameView, address).subscribeBy(onError = Timber::e))
+    }
+
+    companion object {
+        private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
     }
 }
