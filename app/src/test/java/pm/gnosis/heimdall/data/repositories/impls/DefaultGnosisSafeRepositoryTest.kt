@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -650,8 +649,6 @@ class DefaultGnosisSafeRepositoryTest {
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(safeDaoMock).shouldHaveZeroInteractions()
     }
-
-    fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 
     companion object {
         private val TEST_SAFE = "0xdeadfeedbeaf".asEthereumAddress()!!

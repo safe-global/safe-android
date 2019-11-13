@@ -316,7 +316,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
-        <activity android:name=".ui.transactions.view.MultiSendDetailsActivity"
+        <activity android:name=".ui.transactions.view.details.MultiSendDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"  />
 

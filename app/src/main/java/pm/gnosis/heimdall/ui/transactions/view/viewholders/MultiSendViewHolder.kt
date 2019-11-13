@@ -7,7 +7,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import com.gojuno.koptional.None
 import com.gojuno.koptional.Optional
-import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -20,8 +19,8 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.builder.MultiSendTransactionBuilder
-import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsActivity
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.details.MultiSendDetailsActivity
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
@@ -46,7 +45,8 @@ class MultiSendViewHolder(
         val view = view ?: return
 
         view.multi_send_transaction_info_safe_image.setAddress(safe)
-        view.multi_send_transaction_info_description.text = "This will perform ${data.transactions.size} transactions"
+        view.multi_send_transaction_info_description.text =
+            view.context.getString(R.string.this_will_perform_x_transactions, data.transactions.size.toString())
         disposables +=
             addressHelper.buildAddressInfoSingle(
                 addressView = view.multi_send_transaction_info_safe_address,
@@ -55,8 +55,15 @@ class MultiSendViewHolder(
             )
                 .subscribeBy(onError = Timber::e)
 
-        disposables += view.multi_send_transaction_info_details_btn.clicks()
-            .subscribeBy { view.context.startActivity(MultiSendDetailsActivity.createIntent(view.context, safe, data)) }
+        view.multi_send_transaction_info_details_btn.setOnClickListener {
+            view.context.startActivity(
+                MultiSendDetailsActivity.createIntent(
+                    view.context,
+                    safe,
+                    data
+                )
+            )
+        }
     }
 
     override fun inflate(inflater: LayoutInflater, root: ViewGroup) {

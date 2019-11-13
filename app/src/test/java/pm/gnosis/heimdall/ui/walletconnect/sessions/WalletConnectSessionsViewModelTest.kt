@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -302,8 +301,6 @@ class WalletConnectSessionsViewModelTest {
     private fun toAdapterEntries(entries: List<BridgeRepository.SessionMeta>) =
             listOf(WalletConnectSessionsContract.AdapterEntry.Header(R.string.active_sessions.toString())) +
                     entries.map { WalletConnectSessionsContract.AdapterEntry.Session(it) }
-
-    fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 
     companion object {
         private val TEST_SAFE = "0xbaddad".asEthereumAddress()!!

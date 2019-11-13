@@ -72,8 +72,8 @@ import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferViewModel
-import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsContract
-import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.view.details.MultiSendDetailsContract
+import pm.gnosis.heimdall.ui.transactions.view.details.MultiSendDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract

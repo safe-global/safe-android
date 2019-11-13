@@ -31,6 +31,7 @@ import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.capture
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
@@ -387,8 +388,6 @@ class SafeAccountRepositoryTest {
         ERC20Token.ETHER_TOKEN.decimals,
         paymentTokenIcon
     )
-
-    private fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 
     companion object {
         private val TEST_DECRYPTED_VALUE = "some decrypted value".toByteArray()

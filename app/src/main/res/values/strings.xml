@@ -545,4 +545,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="keycard_unblock_get_in_touch">To restore the Keycard please get in touch with us.</string>
     <string name="keycard_blocked_subject">Keycard blocked (%1$s)</string>
     <string name="multi_send">Batched transaction</string>
+    <string name="this_will_perform_x_transactions">This will perform %s transactions</string>
 </resources>

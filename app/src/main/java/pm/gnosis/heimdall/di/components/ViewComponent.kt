@@ -58,7 +58,7 @@ import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
-import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsActivity
+import pm.gnosis.heimdall.ui.transactions.view.details.MultiSendDetailsActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity

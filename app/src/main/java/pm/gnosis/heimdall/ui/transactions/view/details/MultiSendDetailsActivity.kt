@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.view
+package pm.gnosis.heimdall.ui.transactions.view.details
 
 import android.content.Context
 import android.content.Intent
@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.layout_safe_transactions_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction

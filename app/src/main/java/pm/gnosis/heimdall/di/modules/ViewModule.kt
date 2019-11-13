@@ -50,7 +50,7 @@ import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensContract
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
-import pm.gnosis.heimdall.ui.transactions.view.MultiSendDetailsContract
+import pm.gnosis.heimdall.ui.transactions.view.details.MultiSendDetailsContract
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract

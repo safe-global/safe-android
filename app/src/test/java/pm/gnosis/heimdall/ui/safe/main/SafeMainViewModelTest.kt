@@ -31,7 +31,6 @@ import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.impls.capture
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.SafeContractUtils
@@ -76,7 +75,7 @@ class SafeMainViewModelTest {
 
     @Before
     fun setUp() {
-        BDDMockito.given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
+        given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         safePreferences = PreferencesSafe(application)
         viewModel = SafeMainViewModel(context, addressBookRepository, bridgeRepository, safePreferences, safeRepository)
     }
