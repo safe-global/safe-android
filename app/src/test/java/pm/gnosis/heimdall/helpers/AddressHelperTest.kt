@@ -77,7 +77,6 @@ class AddressHelperTest {
         given(addressView.context).willReturn(contextMock)
         contextMock.mockGetString()
         val testAddress = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
-        given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
 
         helper.populateAddressInfo(addressView, nameView, null, testAddress)
 
