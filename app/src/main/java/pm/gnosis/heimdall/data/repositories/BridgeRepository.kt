@@ -48,4 +48,8 @@ interface BridgeRepository {
     fun shouldShowIntro(): Single<Boolean>
     fun markIntroDone(): Completable
     fun init()
+
+    companion object {
+        const val MULTI_SEND_RPC = "gs_multi_send"
+    }
 }

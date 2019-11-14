@@ -27,6 +27,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.BridgeRepository.Companion.MULTI_SEND_RPC
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
@@ -179,13 +180,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                                             .flatMap(infoRepository::parseTransactionData)
                                             .map { txData -> safe to txData }
                                     }
-                                    .subscribeBy(onError = { t ->
-                                        val message = when (t) {
-                                            is RestrictedTransactionException -> "This transaction is not allowed"
-                                            else -> t.message ?: "Could not handle transaction"
-                                        }
-                                        rejectRequest(id, 42, message).subscribe()
-                                    }) { (safe, txData) ->
+                                    .subscribeBy(onError = { t -> rejectWithThrowable(call.id, t) }) { (safe, txData) ->
                                         showSendTransactionNotification(session.peerMeta(), safe, txData, id, sessionId)
                                     }
                             }
@@ -229,15 +224,13 @@ class WalletConnectBridgeRepository @Inject constructor(
         sessionRequests[call.id] = sessionId
         try {
             when (call.method) {
-                "gs_multi_send" -> {
+                MULTI_SEND_RPC -> {
                     handleMultiSend(sessionId, session, call)
                 }
                 else ->
                     call.apply {
                         rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
-                            .subscribeBy(onError = { t ->
-                                rejectRequest(id, 42, t.message ?: "Could not handle custom call")
-                            }) { result ->
+                            .subscribeBy(onError = { t -> rejectWithThrowable(call.id, t) }) { result ->
                                 result.error?.let { error ->
                                     rejectRequest(id, error.code.toLong(), error.message).subscribe()
                                 } ?: run {
@@ -247,8 +240,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                     }
             }
         } catch (e: Exception) {
-            Timber.e(e)
-            rejectRequest(call.id, 42, "Could not handle custom call: $e").subscribe()
+            rejectWithThrowable(call.id, e)
         }
     }
 
@@ -274,10 +266,12 @@ class WalletConnectBridgeRepository @Inject constructor(
                 onSuccess = { checkedTxs ->
                     showSendTransactionNotification(session.peerMeta(), safe, TransactionData.MultiSend(checkedTxs), call.id, sessionId)
                 },
-                onError = { e ->
-                    Timber.e(e)
-                    rejectRequest(call.id, 42, "Could not handle gs_multi_send: $e").subscribe()
-                })
+                onError = { t -> rejectWithThrowable(call.id, t, MULTI_SEND_RPC) })
+    }
+
+    private fun rejectWithThrowable(id: Long, t: Throwable, method: String = "custom call") {
+        Timber.e(t)
+        rejectRequest(id, 42, "Could not handle $method: $t").subscribe()
     }
 
     private fun showSendTransactionNotification(
