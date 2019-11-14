@@ -142,7 +142,11 @@ class DefaultPushServiceRepository @Inject constructor(
             .flatMap { pushServiceApi.pair(it.first).andThen(Single.just(it.second)) }
 
     override fun propagateSafeCreation(safeAddress: Solidity.Address, targets: Set<Solidity.Address>): Completable =
-        Single.fromCallable { ServiceMessage.SafeCreation(safe = safeAddress.asEthereumAddressString()) }
+        Single.fromCallable {
+            ServiceMessage.SafeCreation(
+                safe = safeAddress.asEthereumAddressString(),
+                owners = targets.joinToString(",") { it.asEthereumAddressChecksumString() })
+        }
             .subscribeOn(Schedulers.io())
             .flatMapCompletable {
                 sendNotification(it, safeAddress, targets)
