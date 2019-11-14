@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.ui.transactions.builder
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -10,6 +10,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 
 class TransactionBuilderTest {
@@ -54,7 +55,71 @@ class TransactionBuilderTest {
         )
     }
 
+    @Test
+    fun testMultiSendTransactionBuilder() {
+        assertEquals(
+            SafeTransaction(
+                Transaction(MULTI_SEND_ADDRESS, data = MultiSend.MultiSend.encode(Solidity.Bytes(byteArrayOf()))),
+                TransactionExecutionRepository.Operation.DELEGATE_CALL
+            ),
+            MultiSendTransactionBuilder.build(TransactionData.MultiSend(emptyList()))
+        )
+
+        assertEquals(
+            SafeTransaction(
+                Transaction(
+                    MULTI_SEND_ADDRESS, data = MultiSend.MultiSend.encode(
+                        Solidity.Bytes(
+                            ("" +
+                                    // Tx 1
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                                    "000000000000000000000000a7e15e2e76ab469f8681b576cff168f37aa246ec" + // To
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Value
+                                    "0000000000000000000000000000000000000000000000000000000000000080" + // Data position
+                                    "0000000000000000000000000000000000000000000000000000000000000024" + // Data length
+                                    "7de7edef" +
+                                    "000000000000000000000000c257274276a4e539741ca11b590b9447b26a8051" +
+                                    "00000000000000000000000000000000000000000000000000000000" + // Data padding
+                                    // Tx 2
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                                    "000000000000000000000000c257274276a4e539741ca11b590b9447b26a8051" + // To
+                                    "0000000000000000000000000000000000000000000000000000000000000010" + // Value
+                                    "0000000000000000000000000000000000000000000000000000000000000080" + // Data position
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Data length
+                                    // Tx 3
+                                    "0000000000000000000000000000000000000000000000000000000000000001" + // Operation
+                                    "000000000000000000000000e74d6af1670fb6560dd61ee29eb57c7bc027ce4e" + // To
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Value
+                                    "0000000000000000000000000000000000000000000000000000000000000080" + // Data position
+                                    "0000000000000000000000000000000000000000000000000000000000000004" + // Data length
+                                    "deadbeef" +
+                                    "00000000000000000000000000000000000000000000000000000000" // Data padding
+                                    ).hexStringToByteArray()
+                        )
+                    )
+                ),
+                TransactionExecutionRepository.Operation.DELEGATE_CALL
+            ),
+            MultiSendTransactionBuilder.build(
+                TransactionData.MultiSend(
+                    listOf(
+                        SafeTransaction(
+                            Transaction(TEST_TOKEN, data = "0x7de7edef${TEST_ADDRESS.value.toString(16).padStart(64, '0')}"),
+                            TransactionExecutionRepository.Operation.CALL
+                        ),
+                        SafeTransaction(Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16))), TransactionExecutionRepository.Operation.CALL),
+                        SafeTransaction(
+                            Transaction(MULTI_SEND_ADDRESS, data = "0xdeadbeef"),
+                            TransactionExecutionRepository.Operation.DELEGATE_CALL
+                        )
+                    )
+                )
+            )
+        )
+    }
+
     companion object {
+        private val MULTI_SEND_ADDRESS = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
         private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
         private val ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
         private val TEST_TOKEN = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!

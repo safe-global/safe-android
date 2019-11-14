@@ -1407,5 +1407,3 @@ class DefaultPushServiceRepositoryTest {
         override fun getToken() = "testToken"
     }
 }
-
-fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()

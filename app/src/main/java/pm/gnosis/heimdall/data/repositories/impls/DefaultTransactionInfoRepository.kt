@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
@@ -11,12 +12,11 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
+import pm.gnosis.model.SolidityBase
 import pm.gnosis.model.SolidityBase.PADDED_HEX_LENGTH
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.removeHexPrefix
-import pm.gnosis.utils.removeSolidityMethodPrefix
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,6 +68,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
                 tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) -> // There should be no ether transfer with the token transfer
                     parseTokenTransfer(tx)
                 isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
+                isMultiSend(transaction) -> parseMultiSend(transaction)
                 data.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
                 data.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) -> parseChangeMasterCopy(tx)
                 else ->
@@ -76,10 +77,35 @@ class DefaultTransactionInfoRepository @Inject constructor(
         }
             .subscribeOn(Schedulers.io())
 
+    // TODO: This need to be adjusted for the new MultiSend
     private fun isMultiSend(safeTransaction: SafeTransaction) =
         safeTransaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL &&
+                safeTransaction.wrapped.address == MULTI_SEND_LIB &&
                 safeTransaction.wrapped.data != null &&
                 safeTransaction.wrapped.data!!.isSolidityMethod(MultiSend.MultiSend.METHOD_ID)
+
+    // TODO: This need to be adjusted for the new MultiSend
+    private fun parseMultiSend(transaction: SafeTransaction): TransactionData.MultiSend {
+        val payload =
+            transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return TransactionData.MultiSend(emptyList())
+
+        val transactions = mutableListOf<SafeTransaction>()
+        val partitions = SolidityBase.PartitionData.of(payload)
+        nullOnThrow { partitions.consume() } ?: throw IllegalArgumentException("Missing multisend data position")
+        nullOnThrow { partitions.consume() } ?: throw IllegalArgumentException("Missing multisend data length")
+        var current: String? = nullOnThrow { partitions.consume() }
+        while (current != null) {
+            val operation = TransactionExecutionRepository.Operation.fromInt(current.hexAsBigInteger().toInt())
+            val to = nullOnThrow { partitions.consume().asEthereumAddress() } ?: throw IllegalArgumentException("Illegal to")
+            val value = nullOnThrow { Wei(partitions.consume().hexAsBigInteger()) } ?: throw IllegalArgumentException("Illegal value")
+            nullOnThrow { partitions.consume().hexAsBigInteger() } ?: throw IllegalArgumentException("Missing data position")
+            val data = nullOnThrow { SolidityBase.decodeBytes(partitions) }
+            transactions.add(SafeTransaction(Transaction(to, value = value, data = data?.toHex()?.addHexPrefix()), operation))
+            current = nullOnThrow { partitions.consume() }
+        }
+
+        return TransactionData.MultiSend(transactions)
+    }
 
     private fun isReplaceRecoveryPhrase(transaction: SafeTransaction): Boolean {
         val payload = transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return false
@@ -132,6 +158,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
         )
 
     companion object {
+        private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
         // These additional costs are hardcoded in the smart contract
         private val SAFE_TX_BASE_COSTS = BigInteger.valueOf(32000)
     }

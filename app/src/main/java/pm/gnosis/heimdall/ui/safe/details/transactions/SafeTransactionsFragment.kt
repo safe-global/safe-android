@@ -46,7 +46,7 @@ class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        layoutInflater?.inflate(R.layout.layout_safe_transactions, container, false)
+        layoutInflater.inflate(R.layout.layout_safe_transactions, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

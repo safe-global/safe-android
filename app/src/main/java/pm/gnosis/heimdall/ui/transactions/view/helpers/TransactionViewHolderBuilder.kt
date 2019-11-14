@@ -48,6 +48,12 @@ class DefaultTransactionViewHolderBuilder @Inject constructor(
                         data = transactionData,
                         safe = safe
                     )
+                is TransactionData.MultiSend ->
+                    MultiSendViewHolder(
+                        addressHelper = addressHelper,
+                        data = transactionData,
+                        safe = safe
+                    )
             }
         }
 }

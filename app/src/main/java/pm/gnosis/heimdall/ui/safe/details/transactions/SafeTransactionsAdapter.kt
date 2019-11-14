@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfo
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.helpers.AddressHelper
@@ -75,15 +77,11 @@ class SafeTransactionsAdapter @Inject constructor(
     }
 
     class TransactionViewHolder(
-        private val addressHelper: AddressHelper,
+        addressHelper: AddressHelper,
         private val viewModel: SafeTransactionsContract,
         private val selectionSubject: Subject<String>,
         itemView: View
-    ) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
-
-        private val context = itemView.context
-
-        private val disposables = CompositeDisposable()
+    ) : BaseTransactionViewHolder<SafeTransactionsContract.AdapterEntry>(addressHelper, itemView) {
 
         private var currentData: Transaction? = null
         private var cachedDetails: TransactionInfo? = null
@@ -101,10 +99,10 @@ class SafeTransactionsAdapter @Inject constructor(
             itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.blue))
             disposables += viewModel.loadTransactionInfo(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateInfo, {
+                .subscribe(::updateInfo) {
                     Timber.e(it)
                     itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
-                })
+                }
             disposables += viewModel.observeTransactionStatus(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateStatus, Timber::e)
@@ -147,88 +145,7 @@ class SafeTransactionsAdapter @Inject constructor(
                 currentData?.let { selectionSubject.onNext(it.id) }
             }
             updateTimestamp()
-            when (info.data) {
-                is TransactionData.Generic -> {
-                    updateViews(
-                        address = info.data.to,
-                        infoText = context.getString(R.string.x_data_bytes, (info.data.data?.removeHexPrefix()?.length ?: 0) / 2),
-                        valueText = "- ${Wei(info.data.value).displayString(context)}",
-                        valueColor = R.color.tomato,
-                        iconRes = R.drawable.ic_transaction_outgoing
-                    )
-                }
-                is TransactionData.AssetTransfer -> {
-                    updateViews(
-                        address = info.data.receiver,
-                        infoText = null,
-                        valueText = null,
-                        valueColor = R.color.tomato,
-                        iconRes = R.drawable.ic_transaction_outgoing
-                    )
-
-                    loadTokenInfo(info.data.token, info.data.amount)
-                }
-                is TransactionData.ReplaceRecoveryPhrase -> {
-                    updateViews(
-                        address = info.safe,
-                        infoText = context.getString(R.string.replaced_recovery_phrase),
-                        valueText = null,
-                        valueColor = R.color.blue,
-                        iconRes = R.drawable.ic_transaction_settings
-                    )
-                }
-                is TransactionData.ConnectAuthenticator -> {
-                    updateViews(
-                        address = info.safe,
-                        infoText = context.getString(R.string.connect_authenticator),
-                        valueText = null,
-                        valueColor = R.color.blue,
-                        iconRes = R.drawable.ic_transaction_settings
-                    )
-                }
-                is TransactionData.UpdateMasterCopy -> {
-                    updateViews(
-                        address = info.safe,
-                        infoText = context.getString(R.string.contract_upgrade),
-                        valueText = null,
-                        valueColor = R.color.blue,
-                        iconRes = R.drawable.ic_transaction_settings
-                    )
-                }
-            }
-        }
-
-        private fun updateViews(address: Solidity.Address, infoText: String?, valueText: String?, valueColor: Int, @DrawableRes iconRes: Int) {
-            itemView.layout_safe_transactions_item_type_icon.setImageResource(iconRes)
-            itemView.layout_safe_transactions_item_value.text = valueText
-            itemView.layout_safe_transactions_item_value.visible(valueText != null)
-            itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(valueColor))
-
-            itemView.layout_safe_transactions_item_info.visible(infoText != null)
-            itemView.layout_safe_transactions_item_info.text = infoText
-
-            addressHelper.populateAddressInfo(
-                itemView.layout_safe_transactions_item_target_label,
-                itemView.layout_safe_transactions_item_target_label,
-                itemView.layout_safe_transactions_item_target_image,
-                address
-            ).forEach { disposables += it }
-        }
-
-        private fun loadTokenInfo(token: Solidity.Address, amount: BigInteger) {
-            disposables += viewModel.loadTokenInfo(token)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        itemView.layout_safe_transactions_item_value.text = "- ${it.displayString(amount)}"
-                        itemView.layout_safe_transactions_item_value.visible(true)
-                    },
-                    onError = {
-                        Timber.e(it)
-                        itemView.layout_safe_transactions_item_value.text = "- ${amount.asDecimalString()}"
-                        itemView.layout_safe_transactions_item_value.visible(true)
-                    }
-                )
+            updateData(info.safe, info.data)
         }
 
         private fun updateTimestamp() {
@@ -237,15 +154,17 @@ class SafeTransactionsAdapter @Inject constructor(
             }
         }
 
+        override fun tokenInfo(token: Solidity.Address): Single<ERC20Token> =
+            viewModel.loadTokenInfo(token)
+
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-        fun stop() {
-            disposables.clear()
+        override fun stop() {
+            super.stop()
             cachedDetails = null
             itemView.setOnClickListener(null)
         }
 
         override fun unbind() {
-            stop()
             currentData = null
             super.unbind()
         }

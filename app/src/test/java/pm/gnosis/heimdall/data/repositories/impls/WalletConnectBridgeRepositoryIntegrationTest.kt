@@ -108,7 +108,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
 
     private fun rejectRequest(repo: WalletConnectBridgeRepository, requestId: Long, errorMessage: String) {
         System.out.println("Reject request")
-        repo.rejectRequest(requestId, 42, errorMessage).subscribeBy(
+        repo.rejectRequest(requestId, BridgeRepository.RejectionReason.RPCError(42, errorMessage)).subscribeBy(
             onError = {
                 System.out.println("Reject request error $it")
             },
