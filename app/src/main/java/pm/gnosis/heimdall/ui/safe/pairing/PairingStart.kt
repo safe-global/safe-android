@@ -31,7 +31,7 @@ abstract class PairingStartContract : ViewModel() {
 
     abstract fun setup(safeAddress: Solidity.Address)
 
-    abstract fun loadAuthenticatorInfo()
+    abstract fun loadAuthenticatorInfo(safeInfo: SafeInfo? = null)
 
     abstract fun estimate()
 
@@ -48,6 +48,10 @@ abstract class PairingStartContract : ViewModel() {
         data class Authenticator(
             val info: AuthenticatorSetupInfo
         ) : ViewUpdate()
+
+        data class Error(
+            val error: Throwable
+        ) : ViewUpdate()
     }
 }
 
@@ -62,6 +66,9 @@ class PairingStartViewModel @Inject constructor(
 
     private val errorHandler = CoroutineExceptionHandler { _, e ->
         viewModelScope.launch {
+            _state.postValue(
+                ViewUpdate.Error(e)
+            )
             Timber.e(e)
         }
     }
@@ -110,13 +117,15 @@ class PairingStartViewModel @Inject constructor(
         }
     }
 
-    override fun loadAuthenticatorInfo() {
+    override fun loadAuthenticatorInfo(safeInfo: SafeInfo?) {
 
         viewModelScope.launch(appDispatcher.background + errorHandler) {
 
+            val owners = safeInfo?.let { it.owners } ?: this@PairingStartViewModel.safeInfo.owners
+
             val owner = accountsRepository.signingOwner(safeAddress).await()
 
-            val info = findAuthenticatorInfoFromOwners(safeInfo.owners - owner.address)
+            val info = findAuthenticatorInfoFromOwners(owners - owner.address)
 
             val setupInfo = AuthenticatorSetupInfo(owner, info)
 

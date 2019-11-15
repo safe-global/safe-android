@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.underline
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -28,6 +29,7 @@ import kotlinx.android.synthetic.main.screen_2fa_pairing_start.pairing_swipe_to_
 import kotlinx.android.synthetic.main.screen_2fa_pairing_start.pairing_title as toolbarTitle
 import kotlinx.android.synthetic.main.screen_2fa_pairing_start.pairing_info as infoText
 import kotlinx.android.synthetic.main.screen_2fa_pairing_start.pairing_image as infoImage
+import kotlinx.android.synthetic.main.screen_2fa_pairing_start.pairing_coordinator
 
 abstract class PairingStartActivity : ViewModelActivity<PairingStartContract>() {
 
@@ -88,6 +90,10 @@ abstract class PairingStartActivity : ViewModelActivity<PairingStartContract>() 
 
                 is PairingStartContract.ViewUpdate.Authenticator -> {
                     onAuthenticatorInfoLoaded(it.info)
+                }
+
+                is PairingStartContract.ViewUpdate.Error -> {
+                    errorSnackbar(pairing_coordinator, it.error)
                 }
             }
 
