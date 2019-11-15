@@ -51,20 +51,15 @@ class ConnectAuthenticatorViewModel @Inject constructor(
             updateState(true) {
                 apply {
                     viewAction = ViewAction.StartActivity(
+                        /*TODO: adjust layout of review transaction ativity
+                                use PairinSubmitActivity for pairing transactions
+                        */
                         ReviewTransactionActivity.createIntent(
                             context = context,
                             safe = safe,
                             txData = TransactionData.ConnectAuthenticator(info.authenticator.address)
                         )
                     )
-//                    viewAction = ViewAction.StartActivity(
-//                        PairingSubmitActivity.createIntent(
-//                            this,
-//                            PairingAction.CONNECT,
-//                            info
-//
-//                        )
-//                    )
                 }
             }
         }
