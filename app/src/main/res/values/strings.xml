@@ -561,4 +561,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="tx_submitted_replace_be">Replacing the 2FA device is in progress. The transaction has been submitted and should take a couple of minutes.</string>
     <string name="tx_submitted_pairing_be">Pairing the 2FA device is in progress. The transaction has been submitted and should take a couple of minutes.</string>
     <string name="tx_submitted_remove_be">Disabling 2FA is in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="authenticator_url">Authenticator URL</string>
 </resources>

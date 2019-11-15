@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.layout_pairing.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
-import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.remote.models.push.PushServiceTemporaryAuthorization
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
@@ -62,7 +61,7 @@ class PairingAuthenticatorActivity : ViewModelActivity<PairingAuthenticatorContr
             this.text = SpannableStringBuilder(Html.fromHtml(getString(R.string.pairing_first_step)))
                 .append(" ")
                 .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
-            setOnClickListener { shareExternalText(BuildConfig.CHROME_EXTENSION_URL, "Browser Extension URL") }
+            setOnClickListener { shareExternalText(getString(R.string.authenticator_link), getString(R.string.authenticator_url)) }
         }
 
 
