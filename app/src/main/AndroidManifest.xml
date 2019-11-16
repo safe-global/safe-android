@@ -123,13 +123,12 @@
         <activity
             android:name=".ui.two_factor.authenticator.PairingAuthenticatorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.safe.pairing.PairingSubmitActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.safe.recover.safe.CheckSafeActivity"
@@ -204,17 +203,17 @@
         <activity
             android:name=".ui.safe.pairing.connect.Connect2FaStartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.safe.pairing.replace.Replace2FaStartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.safe.pairing.remove.Remove2FaStartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
+            android:theme="@style/GreyBackgroundTheme" />
 
 
         <activity
@@ -316,12 +315,12 @@
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name="pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity"
+            android:name=".ui.two_factor.keycard.KeycardIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name="pm.gnosis.heimdall.ui.two_factor.keycard.KeycardInitializeActivity"
+            android:name=".ui.two_factor.keycard.KeycardInitializeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 

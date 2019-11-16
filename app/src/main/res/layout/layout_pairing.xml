@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pairing_coordinator"
-    android:background="@color/pale_grey_two"
+    tools:background="@color/pale_grey_two"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
