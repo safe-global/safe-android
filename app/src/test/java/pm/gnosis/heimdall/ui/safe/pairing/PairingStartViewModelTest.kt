@@ -142,6 +142,27 @@ class PairingStartViewModelTest {
         )
     }
 
+    @Test
+    fun authenticatorInfoMissing() {
+
+        val signingOwner = AccountsRepository.SafeOwner(PHONE_ADDRESS, encryptedByteArrayConverter.fromStorage("encrypted key"))
+        val exception = NullPointerException()
+
+        given(accountsRepository.signingOwner(SAFE_ADDRESS)).willReturn(Single.just(signingOwner))
+        given(gnosisSafeRepository.loadAuthenticatorInfo(MockUtils.any())).willThrow(exception)
+
+        val testObserver = TestLiveDataObserver<PairingStartContract.ViewUpdate>()
+        viewModel.observableState.observe(lifecycleRule, testObserver)
+
+        viewModel.loadAuthenticatorInfo(SAFE_INFO)
+
+        testObserver.assertValues(
+            PairingStartContract.ViewUpdate.Authenticator(
+                AuthenticatorSetupInfo(signingOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, FACTOR_ADDRESS))
+            )
+        )
+    }
+
     companion object {
 
         private val SAFE_ADDRESS = "0xdeadbeef".asEthereumAddress()!!
