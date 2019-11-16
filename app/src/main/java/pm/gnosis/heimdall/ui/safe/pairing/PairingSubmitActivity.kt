@@ -87,10 +87,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
 
         when (pairingAction) {
 
-            PairingAction.CONNECT -> {
-                review_transaction_info_value.text = getString(R.string.connect_2fa)
-                review_transaction_info_description.text = getString(R.string.connect_extension_description)
-            }
             PairingAction.REPLACE -> {
                 review_transaction_info_value.text = getString(R.string.replace_2fa)
                 review_transaction_info_description.text = getString(R.string.replace_2fa_desc, pairingName)
@@ -143,10 +139,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
 
                 when (pairingAction) {
 
-                    PairingAction.CONNECT -> {
-                        ConfirmationDialog.create(R.drawable.img_authenticator_connect, R.string.tx_submitted_pairing_be)
-                            .show(supportFragmentManager, null)
-                    }
                     PairingAction.REPLACE -> {
                         ConfirmationDialog.create(R.drawable.img_2fa_replace, R.string.tx_submitted_replace_be)
                             .show(supportFragmentManager, null)
@@ -156,8 +148,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
                             .show(supportFragmentManager, null)
                     }
                 }
-
-
 
             }, onError = ::onSubmitTransactionError)
 
@@ -215,7 +205,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
         fun createIntent(
             context: Context,
             action: PairingAction,
-
             safeTransaction: SafeTransaction,
             signature1: Signature,
             signature2: Signature,
@@ -312,7 +301,6 @@ class PairingSubmitViewModel @Inject constructor(
         this.authenticatorInfo = authenticatorInfo
         this.txHash = txHash
     }
-
 
     override fun loadFeeInfo(): Single<ERC20TokenWithBalance> =
         tokenRepository.loadToken(gasToken).map {

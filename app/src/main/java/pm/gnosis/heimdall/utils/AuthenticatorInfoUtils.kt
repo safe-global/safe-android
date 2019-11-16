@@ -14,7 +14,6 @@ private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
 
 
 enum class PairingAction {
-    CONNECT,
     REPLACE,
     REMOVE
 }
