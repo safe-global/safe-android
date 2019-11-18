@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.onboarding.fingerprint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -14,6 +13,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.utils.colorStatusBar
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.startActivity
 import pm.gnosis.svalinn.common.utils.toast
@@ -27,7 +27,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        colorStatusBar(R.color.safe_green)
+        window.colorStatusBar(R.color.safe_green)
         super.onCreate(savedInstanceState)
     }
 

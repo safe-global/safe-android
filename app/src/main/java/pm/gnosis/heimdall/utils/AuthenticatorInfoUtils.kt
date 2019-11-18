@@ -12,6 +12,12 @@ private const val EXTRA_AUTHENTICATOR_ADDRESS = "extra.string.authenticator_addr
 private const val EXTRA_AUTHENTICATOR_KEY_INDEX = "extra.string.authenticator_key_index"
 private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
 
+
+enum class PairingAction {
+    REPLACE,
+    REMOVE
+}
+
 data class AuthenticatorSetupInfo(
     val safeOwner: AccountsRepository.SafeOwner,
     val authenticator: AuthenticatorInfo

@@ -10,13 +10,13 @@ import pm.gnosis.heimdall.di.ViewModelFactory
 import pm.gnosis.heimdall.di.ViewModelKey
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
-import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorContract
-import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorViewModel
+import pm.gnosis.heimdall.ui.two_factor.ConnectAuthenticatorContract
+import pm.gnosis.heimdall.ui.two_factor.ConnectAuthenticatorViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputViewModel
-import pm.gnosis.heimdall.ui.keycard.*
+import pm.gnosis.heimdall.ui.two_factor.keycard.*
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
@@ -25,6 +25,8 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.pairing.remove.Remove2FaRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.pairing.remove.Remove2FaRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract
@@ -35,16 +37,13 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainViewModel
-import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
-import pm.gnosis.heimdall.ui.safe.pairing.PairingViewModel
+import pm.gnosis.heimdall.ui.safe.pairing.*
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitViewModel
+import pm.gnosis.heimdall.ui.safe.pairing.replace.Replace2FaRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.pairing.replace.Replace2FaRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.*
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeViewModel
@@ -80,6 +79,10 @@ import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusViewModel
+import pm.gnosis.heimdall.ui.safe.pairing.PairingStartContract
+import pm.gnosis.heimdall.ui.safe.pairing.PairingStartViewModel
+import pm.gnosis.heimdall.ui.two_factor.authenticator.PairingAuthenticatorContract
+import pm.gnosis.heimdall.ui.two_factor.authenticator.PairingAuthenticatorViewModel
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroContract
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroViewModel
 import pm.gnosis.heimdall.ui.walletconnect.link.WalletConnectLinkContract
@@ -204,11 +207,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(PairingContract::class)
-    abstract fun bindsPairingContract(viewModel: PairingViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
 
@@ -235,13 +233,28 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceAuthenticatorSubmitContract::class)
-    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceAuthenticatorSubmitViewModel): ViewModel
+    @ViewModelKey(PairingAuthenticatorContract::class)
+    abstract fun bindsPairingAuthenticatorContract(viewModel: PairingAuthenticatorViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceAuthenticatorRecoveryPhraseContract::class)
-    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceAuthenticatorRecoveryPhraseViewModel): ViewModel
+    @ViewModelKey(PairingStartContract::class)
+    abstract fun bindsPairingStartContract(viewModel: PairingStartViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PairingSubmitContract::class)
+    abstract fun bindsPairingSubmitContract(viewModel: PairingSubmitViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(Replace2FaRecoveryPhraseContract::class)
+    abstract fun bindsReplace2FaRecoveryPhraseContract(viewModel: Replace2FaRecoveryPhraseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(Remove2FaRecoveryPhraseContract::class)
+    abstract fun bindsRemove2FaRecoveryPhraseContract(viewModel: Remove2FaRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

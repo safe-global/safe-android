@@ -35,7 +35,6 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
-import pm.gnosis.tests.utils.Asserts
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
@@ -132,57 +131,6 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
         then(accountsRepoMock).shouldHaveZeroInteractions()
-    }
-
-    private fun testProcessInvalidOwnerCount(
-        extension: Solidity.Address?,
-        owners: List<Solidity.Address>
-    ) {
-        val phraseSubject = PublishSubject.create<CharSequence>()
-        val retrySubject = PublishSubject.create<Unit>()
-        val createSubject = PublishSubject.create<Unit>()
-        val input = Input(phraseSubject, retrySubject, createSubject)
-
-        given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(
-                Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
-                )
-            )
-
-        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
-        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
-            .willReturn(
-                Single.just(
-                    listOf(
-                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
-                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
-                    )
-                )
-            )
-
-        val observer = TestObserver<ViewUpdate>()
-        helper.process(input, TEST_SAFE, extension, null).subscribe(observer)
-
-        phraseSubject.onNext("this is not a valid mnemonic!")
-        observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
-
-        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().loadInfo(TEST_SAFE)
-        then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).shouldHaveZeroInteractions()
-    }
-
-    @Test
-    fun processInvalidOwnerCountWithExtension() {
-        testProcessInvalidOwnerCount(TEST_EXTENSION, listOf(TEST_OWNER, TEST_RECOVER_1, TEST_RECOVER_2))
-    }
-
-    @Test
-    fun processInvalidOwnerCountWithoutExtension() {
-        testProcessInvalidOwnerCount(null, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2))
     }
 
     @Test
