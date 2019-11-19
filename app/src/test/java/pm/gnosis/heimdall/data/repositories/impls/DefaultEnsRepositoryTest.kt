@@ -35,10 +35,14 @@ class DefaultEnsRepositoryTest {
     @Mock
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
+    @Mock
+    private lateinit var normalizerMock: EnsNormalizer
+
 
     @Before
     fun setUp() {
-        repository = DefaultEnsRepository(ethereumRepositoryMock)
+        given(normalizerMock.normalize(MockUtils.any())).willAnswer { it.arguments.first() as String }
+        repository = DefaultEnsRepository(normalizerMock, ethereumRepositoryMock)
     }
 
     @Test
@@ -63,6 +67,8 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -106,6 +112,8 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -149,6 +157,8 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     private class CallMatcher(private val expected: EthCall) : ArgumentMatcher<EthCall> {
