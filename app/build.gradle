@@ -20,8 +20,8 @@ android {
         // Debug Settings
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
         // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x12302fE9c02ff50939BaAaaf415fc226C078613C"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
