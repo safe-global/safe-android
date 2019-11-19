@@ -10,17 +10,20 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
+import java.net.IDN
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 // TODO Maybe move to Svalinn
 @Singleton
 class DefaultEnsRepository @Inject constructor(
+    private val ensNormalizer: EnsNormalizer,
     private val ethereumRepository: EthereumRepository
 ) : EnsRepository {
     override fun resolve(url: String): Single<Solidity.Address> =
         Single.fromCallable {
-            url.split(".").foldRight<String, ByteArray?>(null) { part, node ->
+            ensNormalizer.normalize(url).split(".").foldRight<String, ByteArray?>(null) { part, node ->
                 if (node == null && part.isEmpty()) ByteArray(32)
                 else Sha3Utils.keccak((node ?: ByteArray(32)) + Sha3Utils.keccak(part.toByteArray()))
             } ?: ByteArray(32)
@@ -41,4 +44,13 @@ class DefaultEnsRepository @Inject constructor(
         private const val GET_ADDRESS = "0x3b3b57de"
         private const val GET_RESOLVER = "0x0178b8bf"
     }
+}
+
+interface EnsNormalizer {
+    fun normalize(name: String): String
+}
+
+@Singleton
+class IDNEnsNormalizer @Inject constructor() : EnsNormalizer {
+    override fun normalize(name: String) = IDN.toASCII(name, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.getDefault())
 }

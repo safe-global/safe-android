@@ -57,7 +57,15 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsAppPreferencesManager(manager: WrappedAppPreferencesManager): AppPreferencesManager
+
+    @Binds
+    @Singleton
     abstract fun bindsCryptoHelper(manager: SvalinnCryptoHelper): CryptoHelper
+
+    @Binds
+    @Singleton
+    abstract fun bindsEnsNormalizer(normalizer: IDNEnsNormalizer): EnsNormalizer
 
     @Binds
     @Singleton
@@ -66,10 +74,6 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsTransactionTriggerManager(manager: DefaultTransactionTriggerManager): TransactionTriggerManager
-
-    @Binds
-    @Singleton
-    abstract fun bindsAppPreferencesManager(manager: WrappedAppPreferencesManager): AppPreferencesManager
 
     @Binds
     @Singleton
