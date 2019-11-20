@@ -195,6 +195,7 @@ class PairingAuthenticatorViewModel @Inject constructor(
                         PairingResult.PairingError(e)
                     )
                 )
+                Timber.e(e)
             }
         }
     }
