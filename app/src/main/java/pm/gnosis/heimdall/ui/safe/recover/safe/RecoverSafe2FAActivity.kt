@@ -13,18 +13,18 @@ import pm.gnosis.utils.asEthereumAddressString
 class RecoverSafe2FAActivity : Select2FaActivity() {
 
     override fun onAuthenticatorSetupInfo(info: AuthenticatorSetupInfo) {
-        val safeAddress = intent.getStringExtra(EXTRA_SAFE)!!.asEthereumAddress()!!
+        val safeAddress = intent.getStringExtra(EXTRA_RECOVERING_SAFE)!!.asEthereumAddress()!!
         startActivity(RecoverSafeRecoveryPhraseActivity.createIntent(this, safeAddress, info))
     }
 
     companion object {
-        private const val EXTRA_SAFE = "extra.string.safe"
+        private const val EXTRA_RECOVERING_SAFE = "extra.string.recovering_safe"
 
         fun createIntent(context: Context, recoveringSafe: Solidity.Address) =
             Intent(context, RecoverSafe2FAActivity::class.java)
                 .addSelectAuthenticatorExtras(null)
                 .apply {
-                    putExtra(EXTRA_SAFE, recoveringSafe.asEthereumAddressString())
+                    putExtra(EXTRA_RECOVERING_SAFE, recoveringSafe.asEthereumAddressString())
                 }
     }
 }
