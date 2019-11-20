@@ -383,7 +383,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                             SetupNewRecoveryPhraseIntroActivity.createIntent(this, safeAddress = safe.address())
                         )
                     }
-                    R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
+                    R.id.safe_details_menu_replace_2fa -> selectedSafe?.let { safe ->
                         startActivity(Replace2FaStartActivity.createIntent(this, safe.address()))
                     }
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
@@ -407,7 +407,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun hideMenuOptions() {
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = false
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_2fa).isVisible = false
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
         popupMenu.menu.findItem(R.id.safe_details_menu_remove_2fa).isVisible = false
     }
@@ -428,7 +428,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             }
         }
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_2fa).isVisible = isConnected && selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected && selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_remove_2fa).isVisible = isConnected && selectedSafe is Safe
     }

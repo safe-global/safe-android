@@ -23,6 +23,7 @@
             android:orientation="vertical">
 
             <pm.gnosis.heimdall.views.StepIndicator
+                android:id="@+id/layout_recovery_phrase_intro_step_indicator"
                 android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

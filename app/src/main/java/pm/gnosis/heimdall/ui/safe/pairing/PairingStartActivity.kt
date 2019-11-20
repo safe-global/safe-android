@@ -131,8 +131,8 @@ abstract class PairingStartActivity : ViewModelActivity<PairingStartContract>() 
     }
 
     private fun startEstimation() {
-        viewModel.estimate()
         onLoading(true)
+        viewModel.estimate()
     }
 
     private fun onLoading(isLoading: Boolean) {
@@ -140,6 +140,7 @@ abstract class PairingStartActivity : ViewModelActivity<PairingStartContract>() 
         progressBar.visible(isLoading)
         swipeToRefresh.isRefreshing = false
         swipeToRefresh.isActivated = !isLoading
+        swipeToRefresh.isEnabled = !isLoading
     }
 
     companion object {
