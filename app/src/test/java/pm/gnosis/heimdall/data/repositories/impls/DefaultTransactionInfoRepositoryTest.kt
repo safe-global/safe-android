@@ -438,10 +438,10 @@ class DefaultTransactionInfoRepositoryTest {
                         TestData(
                             SafeTransaction(
                                 Transaction(
-                                    TEST_ADDRESS, value = TEST_ETH_AMOUNT
+                                    TEST_ADDRESS, value = TEST_ETH_AMOUNT, data = ""
                                 ), DELEGATE_CALL
                             ),
-                            TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, null, DELEGATE_CALL)
+                            TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, "", DELEGATE_CALL)
                         ),
                         TestData(
                             SafeTransaction(

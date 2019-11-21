@@ -268,8 +268,8 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
             .toList()
             .subscribeBy(
-                onSuccess = { checkedTxs ->
-                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(checkedTxs), call.id, sessionId)
+                onSuccess = {
+                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(txs), call.id, sessionId)
                 },
                 onError = { t -> rejectRequest(call.id, RejectionReason.AppError(t, MULTI_SEND_RPC)).subscribe() })
     }
