@@ -9,14 +9,14 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
 import javax.inject.Inject
 
-abstract class RecoveryPhraseIntroActivity : BaseActivity() {
+abstract class RecoveryPhraseIntroActivity : NfcActivity() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 

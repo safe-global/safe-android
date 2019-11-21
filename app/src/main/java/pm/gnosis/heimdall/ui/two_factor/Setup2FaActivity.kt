@@ -6,8 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_setup_authenticator.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
@@ -15,7 +15,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
-class Setup2FaActivity : BaseActivity() {
+class Setup2FaActivity : NfcActivity() {
     override fun screenId() = ScreenId.SETUP_AUTHENTICATOR
 
     override fun onCreate(savedInstanceState: Bundle?) {

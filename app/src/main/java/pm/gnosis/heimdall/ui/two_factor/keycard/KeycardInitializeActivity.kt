@@ -12,10 +12,9 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
+import pm.gnosis.heimdall.helpers.NfcViewModelActivity
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
-import pm.gnosis.heimdall.ui.base.NfcViewModelActivity
-import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put

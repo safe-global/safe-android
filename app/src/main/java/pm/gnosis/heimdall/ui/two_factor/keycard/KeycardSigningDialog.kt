@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
@@ -27,6 +26,7 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.NfcDialog
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.model.Solidity
@@ -201,37 +201,25 @@ class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
 }
 
 @ExperimentalCoroutinesApi
-class KeycardSigningDialog private constructor() : DialogFragment() {
+class KeycardSigningDialog private constructor() : NfcDialog() {
 
     @Inject
     lateinit var viewModel: KeycardSigningContract
 
     private var currentState: KeycardSigningContract.State? = null
 
-    private lateinit var adapter: NfcAdapter
+    override fun nfcCallback(): NfcAdapter.ReaderCallback = viewModel.callback()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
-        val adapter = context?.let { NfcAdapter.getDefaultAdapter(it) }
         val address = arguments?.getString(ARGUMENTS_ADDRESS)?.asEthereumAddress()
         val hash = arguments?.getString(ARGUMENTS_HASH)
-        if (adapter == null || address == null || hash == null) {
+        if (address == null || hash == null) {
             dismiss()
             return
         }
-        this.adapter = adapter
         viewModel.setup(address, hash)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        adapter.enableReaderMode(activity!!, viewModel.callback(), NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
-    }
-
-    override fun onStop() {
-        activity?.let { adapter.disableReaderMode(it) }
-        super.onStop()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =

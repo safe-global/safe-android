@@ -26,6 +26,7 @@ import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import timber.log.Timber
 import java.lang.ref.WeakReference
 
 
@@ -130,3 +131,10 @@ fun TextView.setupLink(url: String, text: String) {
 }
 
 fun <T> weak(value: T) = WeakReference(value)
+
+//Map functions that throw exceptions into optional types
+inline fun loggedTry(func: () -> Unit) = try {
+    func()
+} catch (e: Exception) {
+    Timber.e(e)
+}

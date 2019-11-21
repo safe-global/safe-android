@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.NfcViewModelActivity
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
@@ -37,7 +38,7 @@ import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 
-class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback, ConfirmationDialog.OnDismissListener {
+class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback, ConfirmationDialog.OnDismissListener {
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper

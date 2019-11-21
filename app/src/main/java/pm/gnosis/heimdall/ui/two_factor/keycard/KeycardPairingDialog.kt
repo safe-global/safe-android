@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
@@ -32,6 +31,7 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.NfcDialog
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
@@ -302,35 +302,22 @@ class KeycardPairingInputFragment private constructor() : KeycardPairingBaseFrag
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingDialog private constructor() : DialogFragment() {
+class KeycardPairingDialog private constructor() : NfcDialog() {
 
     @Inject
     lateinit var viewModel: KeycardPairingContract
 
     private var currentState: KeycardPairingContract.State? = null
 
-    private lateinit var adapter: NfcAdapter
     private var safe: Solidity.Address? = null
+
+    override fun nfcCallback(): NfcAdapter.ReaderCallback = viewModel.callback()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
         safe = arguments?.getString(ARGUMENTS_SAFE)?.asEthereumAddress()
         viewModel.setup(safe)
-        adapter = context?.let { NfcAdapter.getDefaultAdapter(it) } ?: run {
-            dismiss()
-            return
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        adapter.enableReaderMode(activity!!, viewModel.callback(), NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
-    }
-
-    override fun onStop() {
-        activity?.let { adapter.disableReaderMode(it) }
-        super.onStop()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
