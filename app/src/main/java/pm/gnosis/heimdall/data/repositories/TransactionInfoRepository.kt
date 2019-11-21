@@ -5,6 +5,7 @@ import android.os.Parcelable
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.utils.SolidityAddressParceler
 import pm.gnosis.model.Solidity
@@ -34,7 +35,8 @@ data class TransactionInfo(
 sealed class TransactionData : Parcelable {
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?) : TransactionData()
+    data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?, val operation: Operation = Operation.CALL) :
+        TransactionData()
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>

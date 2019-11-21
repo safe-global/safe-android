@@ -19,6 +19,7 @@ android {
 
         // Debug Settings
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
+        buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
         // Contracts
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
@@ -95,6 +96,7 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.debug
             buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
+            buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))

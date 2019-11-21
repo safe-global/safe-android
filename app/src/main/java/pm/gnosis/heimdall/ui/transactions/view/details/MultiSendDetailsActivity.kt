@@ -10,7 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_multi_send_details.*
@@ -46,7 +48,7 @@ abstract class MultiSendDetailsContract : ViewModel() {
 class MultiSendDetailsViewModel @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val transactionInfoRepository: TransactionInfoRepository
-): MultiSendDetailsContract() {
+) : MultiSendDetailsContract() {
     override fun loadTransactionData(tx: SafeTransaction): Single<TransactionData> =
         transactionInfoRepository.parseTransactionData(tx)
 
@@ -129,12 +131,18 @@ class MultiSendTransactionsAdapter @Inject constructor(
             disposables.clear()
             val data = currentData ?: return
             disposables += viewModel.loadTransactionData(data)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = { updateData(safe, it) },
                     onError = {
                         updateData(
                             safe,
-                            TransactionData.Generic(data.wrapped.address, data.wrapped.value?.value ?: BigInteger.ZERO, data.wrapped.data)
+                            TransactionData.Generic(
+                                data.wrapped.address,
+                                data.wrapped.value?.value ?: BigInteger.ZERO,
+                                data.wrapped.data,
+                                data.operation
+                            )
                         )
                     }
                 )

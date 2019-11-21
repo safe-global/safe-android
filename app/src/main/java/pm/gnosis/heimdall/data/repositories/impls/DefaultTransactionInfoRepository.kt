@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
@@ -31,8 +32,10 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     override fun checkRestrictedTransaction(safe: Solidity.Address, transaction: SafeTransaction): Single<SafeTransaction> =
         Single.fromCallable {
+            @Suppress("ConstantConditionIf")
+            if (BuildConfig.ALLOW_RESTRICTED_TX) return@fromCallable transaction
             when {
-                transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
+                transaction.operation == Operation.DELEGATE_CALL ->
                     throw RestrictedTransactionException.DelegateCall
                 checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.AddOwnerWithThreshold.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyOwners
@@ -61,25 +64,33 @@ class DefaultTransactionInfoRepository @Inject constructor(
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
             val tx = transaction.wrapped
-            val data = tx.data?.removeHexPrefix()
             when {
-                data.isNullOrBlank() -> // If we have no data we default to ether transfer
-                    TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
-                tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) -> // There should be no ether transfer with the token transfer
-                    parseTokenTransfer(tx)
+                transaction.isCall() -> tx.parseCall()
                 isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
                 isMultiSend(transaction) -> parseMultiSend(transaction)
-                data.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
-                data.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) -> parseChangeMasterCopy(tx)
                 else ->
-                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
+                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, transaction.operation)
             }
         }
             .subscribeOn(Schedulers.io())
 
+    private fun SafeTransaction.isCall() = this.operation == Operation.CALL
+
+    private fun Transaction.parseCall() =
+        when {
+            data?.removeHexPrefix().isNullOrBlank() -> // If we have no data we default to ether transfer
+                TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, value?.value ?: BigInteger.ZERO, address)
+            value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data!!.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) -> // There should be no ether transfer with the token transfer
+                parseTokenTransfer(this)
+            data!!.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(this)
+            data!!.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) -> parseChangeMasterCopy(this)
+            else ->
+                TransactionData.Generic(address, value?.value ?: BigInteger.ZERO, data, Operation.CALL)
+        }
+
     // TODO: This need to be adjusted for the new MultiSend
     private fun isMultiSend(safeTransaction: SafeTransaction) =
-        safeTransaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL &&
+        safeTransaction.operation == Operation.DELEGATE_CALL &&
                 safeTransaction.wrapped.address == MULTI_SEND_LIB &&
                 safeTransaction.wrapped.data != null &&
                 safeTransaction.wrapped.data!!.isSolidityMethod(MultiSend.MultiSend.METHOD_ID)
@@ -95,7 +106,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
         nullOnThrow { partitions.consume() } ?: throw IllegalArgumentException("Missing multisend data length")
         var current: String? = nullOnThrow { partitions.consume() }
         while (current != null) {
-            val operation = TransactionExecutionRepository.Operation.fromInt(current.hexAsBigInteger().toInt())
+            val operation = Operation.fromInt(current.hexAsBigInteger().toInt())
             val to = nullOnThrow { partitions.consume().asEthereumAddress() } ?: throw IllegalArgumentException("Illegal to")
             val value = nullOnThrow { Wei(partitions.consume().hexAsBigInteger()) } ?: throw IllegalArgumentException("Illegal value")
             nullOnThrow { partitions.consume().hexAsBigInteger() } ?: throw IllegalArgumentException("Missing data position")
@@ -154,7 +165,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
     private fun TransactionDescriptionDb.toTransaction(): SafeTransaction =
         SafeTransaction(
             Transaction(to, value = Wei(value), data = data, nonce = nonce),
-            TransactionExecutionRepository.Operation.values()[operation.toInt()]
+            Operation.values()[operation.toInt()]
         )
 
     companion object {

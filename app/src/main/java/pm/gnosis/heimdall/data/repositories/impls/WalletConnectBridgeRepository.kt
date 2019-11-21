@@ -29,6 +29,8 @@ import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.BridgeRepository.Companion.MULTI_SEND_RPC
 import pm.gnosis.heimdall.data.repositories.BridgeRepository.RejectionReason
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
@@ -173,7 +175,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                                     val txValue = value.hexAsBigIntegerOrNull() ?: throw IllegalArgumentException("Invalid to value: $value")
                                     safe to SafeTransaction(
                                         Transaction(txTo, value = Wei(txValue), data = data),
-                                        TransactionExecutionRepository.Operation.CALL
+                                        Operation.CALL
                                     )
                                 }
                                     .flatMap { (safe, tx) ->
@@ -250,6 +252,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         val safe = session.approvedAccounts()?.firstOrNull()?.asEthereumAddress() ?: throw IllegalArgumentException("No whitelisted Safe!")
         val params = (call.params as? List<Map<String, String>>) ?: emptyList()
         val txs = params.map {
+            val txOperation = it["operation"]?.toInt()?.let { op -> Operation.fromInt(op) } ?: Operation.CALL
             val txTo = it["to"]?.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: ${it["to"]}")
             val txValue =
                 it["value"]?.run {
@@ -257,7 +260,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                         ?: throw IllegalArgumentException("Invalid to value: $this")
                 } ?: BigInteger.ZERO
             val txData = it["data"]?.apply { hexStringToByteArray() }?.addHexPrefix() // Check that it is valid hex data
-            SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), TransactionExecutionRepository.Operation.CALL)
+            SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), txOperation)
         }
         val peerMeta = session.peerMeta()
         Observable.fromIterable(txs).flatMapSingle {
@@ -265,8 +268,8 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
             .toList()
             .subscribeBy(
-                onSuccess = { checkedTxs ->
-                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(checkedTxs), call.id, sessionId)
+                onSuccess = {
+                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(txs), call.id, sessionId)
                 },
                 onError = { t -> rejectRequest(call.id, RejectionReason.AppError(t, MULTI_SEND_RPC)).subscribe() })
     }

@@ -14,6 +14,8 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
@@ -41,9 +43,14 @@ abstract class BaseTransactionViewHolder<T>(
     protected fun updateData(safe: Solidity.Address, data: TransactionData) {
         when (data) {
             is TransactionData.Generic -> {
+                val infoRes = when (data.operation) {
+                    Operation.CALL -> R.string.x_data_bytes
+                    Operation.DELEGATE_CALL -> R.string.x_data_bytes_delegate_call
+                    Operation.CREATE -> R.string.x_data_bytes_creation
+                }
                 updateViews(
                     address = data.to,
-                    infoText = context.getString(R.string.x_data_bytes, (data.data?.removeHexPrefix()?.length ?: 0) / 2),
+                    infoText = context.getString(infoRes, (data.data?.removeHexPrefix()?.length ?: 0) / 2),
                     valueText = "- ${Wei(data.value).displayString(context)}",
                     valueColor = R.color.tomato,
                     iconRes = R.drawable.ic_transaction_outgoing
