@@ -9,41 +9,54 @@ import androidx.lifecycle.ViewModel
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.loggedTry
+import pm.gnosis.utils.nullOnThrow
 
 interface NfcHost {
     fun registerNfcCallback(callback: NfcAdapter.ReaderCallback)
     fun unregisterNfcCallback(callback: NfcAdapter.ReaderCallback)
 }
 
-class NfcHelper {
+interface NfcAdapterProvider {
+    fun get(context: Context): NfcAdapter?
+}
+
+object DefaultNfcAdapterProvider : NfcAdapterProvider {
+    override fun get(context: Context): NfcAdapter? = NfcAdapter.getDefaultAdapter(context)
+}
+
+class NfcHelper(
+    private val nfcAdapterProvider: NfcAdapterProvider = DefaultNfcAdapterProvider
+) {
     private var context: Context? = null
     private var adapter: NfcAdapter? = null
     fun init(context: Context?): Boolean {
         this.context = context
-        adapter = context?.let { NfcAdapter.getDefaultAdapter(it) }
+        adapter = context?.let { nullOnThrow { nfcAdapterProvider.get(it) } }
         return adapter != null
     }
 
     fun enable(activity: Activity?, callback: NfcAdapter.ReaderCallback) {
-        activity ?: return
         val context = context
         when {
             activity is NfcHost -> activity.registerNfcCallback(callback)
             context is NfcHost -> context.registerNfcCallback(callback)
             else -> loggedTry {
-                adapter?.enableReaderMode(activity, callback, NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                activity?.let {
+                    adapter?.enableReaderMode(activity, callback, NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
+                }
             }
         }
     }
 
     fun disable(activity: Activity?, callback: NfcAdapter.ReaderCallback) {
-        activity ?: return
         val context = context
         when {
             activity is NfcHost -> activity.unregisterNfcCallback(callback)
             context is NfcHost -> context.unregisterNfcCallback(callback)
             else -> loggedTry {
-                adapter?.disableForegroundDispatch(activity)
+                activity?.let {
+                    adapter?.disableForegroundDispatch(activity)
+                }
             }
         }
 
@@ -74,7 +87,9 @@ abstract class NfcDialog : DialogFragment() {
 
 }
 
-class NfcActivityDelegate : NfcHost {
+class NfcActivityDelegate(
+    private val nfcAdapterProvider: NfcAdapterProvider = DefaultNfcAdapterProvider
+) : NfcHost {
     private var nfcAdapter: NfcAdapter? = null
 
     private var tagDelegate: NfcAdapter.ReaderCallback? = null
@@ -86,7 +101,7 @@ class NfcActivityDelegate : NfcHost {
     }
 
     fun init(context: Context) {
-        nfcAdapter = NfcAdapter.getDefaultAdapter(context)
+        nfcAdapter = nfcAdapterProvider.get(context)
     }
 
     fun enable(activity: Activity) {
