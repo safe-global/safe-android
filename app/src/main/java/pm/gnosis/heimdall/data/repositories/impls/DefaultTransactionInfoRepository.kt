@@ -74,7 +74,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
                 data.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
                 data.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) -> parseChangeMasterCopy(tx)
                 else ->
-                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
+                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, transaction.operation)
             }
         }
             .subscribeOn(Schedulers.io())
