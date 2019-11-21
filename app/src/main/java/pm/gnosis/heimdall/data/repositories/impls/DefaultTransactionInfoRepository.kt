@@ -31,6 +31,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     override fun checkRestrictedTransaction(safe: Solidity.Address, transaction: SafeTransaction): Single<SafeTransaction> =
         Single.fromCallable {
+            @Suppress("ConstantConditionIf")
+            if (BuildConfig.ALLOW_RESTRICTED_TX) return@fromCallable transaction
             when {
                 transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
                     throw RestrictedTransactionException.DelegateCall
