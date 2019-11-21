@@ -309,6 +309,9 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
         private val MULTI_SEND_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
 
+        private val TOKEN_TRANSFER_DATA =
+            ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+
         private const val REPLACE_RECOVERY_PHRASE_DATA =
             "0x8d80ff0a" + // Multi send method
                     "0000000000000000000000000000000000000000000000000000000000000020" +
@@ -393,7 +396,7 @@ class DefaultTransactionInfoRepositoryTest {
                         TestData(
                             SafeTransaction(
                                 Transaction(
-                                    TEST_TOKEN_ADDRESS, data = ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+                                    TEST_TOKEN_ADDRESS, data = TOKEN_TRANSFER_DATA
                                 ), CALL
                             ),
                             TransactionData.AssetTransfer(TEST_TOKEN_ADDRESS, TEST_TOKEN_AMOUNT, TEST_ADDRESS)
@@ -414,13 +417,13 @@ class DefaultTransactionInfoRepositoryTest {
                                 Transaction(
                                     TEST_TOKEN_ADDRESS,
                                     value = TEST_ETH_AMOUNT,
-                                    data = ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+                                    data = TOKEN_TRANSFER_DATA
                                 ), CALL
                             ),
                             TransactionData.Generic(
                                 TEST_TOKEN_ADDRESS,
                                 TEST_ETH_AMOUNT.value,
-                                ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+                                TOKEN_TRANSFER_DATA
                             )
                         ),
                         TestData(
@@ -429,7 +432,24 @@ class DefaultTransactionInfoRepositoryTest {
                                     TEST_ADDRESS, value = TEST_ETH_AMOUNT, data = "0x468721a7", nonce = BigInteger.valueOf(23)
                                 ), DELEGATE_CALL
                             ),
-                            TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, "0x468721a7")
+                            TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, "0x468721a7", DELEGATE_CALL)
+                        ),
+                        // Asset transfer but with delegate call
+                        TestData(
+                            SafeTransaction(
+                                Transaction(
+                                    TEST_ADDRESS, value = TEST_ETH_AMOUNT
+                                ), DELEGATE_CALL
+                            ),
+                            TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, null, DELEGATE_CALL)
+                        ),
+                        TestData(
+                            SafeTransaction(
+                                Transaction(
+                                    TEST_TOKEN_ADDRESS, data = TOKEN_TRANSFER_DATA
+                                ), DELEGATE_CALL
+                            ),
+                            TransactionData.Generic(TEST_TOKEN_ADDRESS, BigInteger.ZERO, TOKEN_TRANSFER_DATA, DELEGATE_CALL)
                         )
                     ),
             TransactionData.ReplaceRecoveryPhrase::class to
