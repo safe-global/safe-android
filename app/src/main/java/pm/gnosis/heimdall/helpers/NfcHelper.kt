@@ -101,7 +101,7 @@ class NfcActivityDelegate(
     }
 
     fun init(context: Context) {
-        nfcAdapter = nfcAdapterProvider.get(context)
+        nfcAdapter = nullOnThrow { nfcAdapterProvider.get(context) }
     }
 
     fun enable(activity: Activity) {
