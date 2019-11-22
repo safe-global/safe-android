@@ -15,12 +15,12 @@ object SafeContractUtils {
     fun isSupported(masterCopy: Solidity.Address?) =
         supportedContracts.contains(masterCopy)
 
-    fun currentMasterCopy() = safeMasterCopy_1_0_0
+    fun currentMasterCopy() = safeMasterCopy_1_1_0
 
     private val safeMasterCopy_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
     private val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
     private val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
-    private val safeMasterCopy_1_1_0 = BuildConfig.SAFE_MASTER_COPY_1_1_0.asEthereumAddress()!!
+    val safeMasterCopy_1_1_0 = BuildConfig.SAFE_MASTER_COPY_1_1_0.asEthereumAddress()!!
 
     private val supportedContracts = listOf(
         safeMasterCopy_0_0_2,

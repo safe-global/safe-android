@@ -113,7 +113,8 @@ class DefaultGnosisSafeRepositoryTest {
         owners: List<Solidity.Address>,
         payment: BigInteger = BigInteger.ZERO,
         paymentToken: ERC20Token = ETHER_TOKEN,
-        funder: Solidity.Address = TX_ORIGIN_ADDRESS
+        funder: Solidity.Address = TX_ORIGIN_ADDRESS,
+        fallbackHandler: Solidity.Address = DEFAULT_FALLBACK_HANDLER
     ): String = GnosisSafe.Setup.encode(
         _owners = SolidityBase.Vector(owners),
         _threshold = Solidity.UInt256(if (owners.size == 3) BigInteger.ONE else 2.toBigInteger()),
@@ -121,7 +122,8 @@ class DefaultGnosisSafeRepositoryTest {
         data = Solidity.Bytes(byteArrayOf()),
         paymentToken = paymentToken.address,
         payment = Solidity.UInt256(payment),
-        paymentReceiver = funder
+        paymentReceiver = funder,
+        fallbackHandler = fallbackHandler
     ) + "0000000000000000000000000000000000000000000000000000000000000000"
 
     @Test
@@ -654,12 +656,12 @@ class DefaultGnosisSafeRepositoryTest {
         private val TEST_SAFE = "0xdeadfeedbeaf".asEthereumAddress()!!
         private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
         private val MASTER_COPY_ADDRESS = SafeContractUtils.currentMasterCopy()
-        private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val ETHER_TOKEN = ERC20Token.ETHER_TOKEN
         private val PAYMENT_TOKEN = ERC20Token("0xdeadbeef".asEthereumAddress()!!, "Payment Token", "PT", 18)
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
         private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!
-        private const val RECOVERY_PHRASE = "degree media athlete harvest rocket plate minute obey head toward coach senior"
+        private val PROXY_FACTORY_ADDRESS = "0x".asEthereumAddress()!!
+        private val DEFAULT_FALLBACK_HANDLER = "0x".asEthereumAddress()!!
         private const val PROXY_CODE =
             "0x608060405234801561001057600080fd5b506040516020806101a88339810180604052602081101561003057600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100c7576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260248152602001806101846024913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050606e806101166000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054163660008037600080366000845af43d6000803e6000811415603d573d6000fd5b3d6000f3fea165627a7a723058201e7d648b83cfac072cbccefc2ffc62a6999d4a050ee87a721942de1da9670db80029496e76616c6964206d617374657220636f707920616464726573732070726f7669646564"
     }

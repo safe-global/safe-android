@@ -76,6 +76,17 @@ class DefaultTransactionInfoRepositoryTest {
                                 )
                             )
                     ),
+            RestrictedTransactionException.SetFallbackHandler::class to (
+                    RestrictedTransactionException.SetFallbackHandler to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = TEST_SAFE,
+                                        data = GnosisSafe.SetFallbackHandler.encode("0x1".asEthereumAddress()!!)
+                                    ), CALL
+                                )
+                            )
+                    ),
             RestrictedTransactionException.ModifyOwners::class to (
                     RestrictedTransactionException.ModifyOwners to
                             listOf(

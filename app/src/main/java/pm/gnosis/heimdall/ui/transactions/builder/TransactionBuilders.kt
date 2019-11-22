@@ -50,13 +50,24 @@ object AssetTransferTransactionBuilder {
 
 
 object UpdateMasterCopyTransactionBuilder {
+
+    private val DEFAULT_FALLBACK = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
+
     fun build(safe: Solidity.Address, data: TransactionData.UpdateMasterCopy): SafeTransaction =
-        SafeTransaction(
-            Transaction(
-                safe,
-                data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
-            ), TransactionExecutionRepository.Operation.CALL
-        )
+        MultiSendTransactionBuilder.build(TransactionData.MultiSend(listOf(
+            SafeTransaction(
+                Transaction(
+                    safe,
+                    data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
+                ), TransactionExecutionRepository.Operation.CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    safe,
+                    data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_FALLBACK)
+                ), TransactionExecutionRepository.Operation.CALL
+            )
+        )))
 }
 
 

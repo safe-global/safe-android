@@ -24,6 +24,7 @@ sealed class RestrictedTransactionException(msg: String) : IllegalArgumentExcept
     object ModifyModules : RestrictedTransactionException("Changing modules is not allowed")
     object ChangeThreshold : RestrictedTransactionException("Changing the threshold is not allowed")
     object ChangeMasterCopy : RestrictedTransactionException("Changing the master copy is not allowed")
+    object SetFallbackHandler : RestrictedTransactionException("Setting the fallback handler is not allowed")
     object DataCallToSafe : RestrictedTransactionException("Interaction with the Safe are not allowed")
 }
 
