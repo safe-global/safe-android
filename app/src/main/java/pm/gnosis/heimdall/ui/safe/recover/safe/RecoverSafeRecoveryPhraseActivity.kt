@@ -41,8 +41,6 @@ class RecoverSafeRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverSaf
 
     companion object {
 
-        const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-
         fun createIntent(
             context: Context,
             safeAddress: Solidity.Address,
