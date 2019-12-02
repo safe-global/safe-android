@@ -22,6 +22,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.lang.IllegalArgumentException
 import java.net.UnknownHostException
 
 @RunWith(MockitoJUnitRunner::class)
@@ -35,14 +36,32 @@ class DefaultEnsRepositoryTest {
     @Mock
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
+    @Mock
+    private lateinit var normalizerMock: EnsNormalizer
+
 
     @Before
     fun setUp() {
-        repository = DefaultEnsRepository(ethereumRepositoryMock)
+        repository = DefaultEnsRepository(normalizerMock, ethereumRepositoryMock)
+    }
+
+    @Test
+    fun processNormalizeFail() {
+        given(normalizerMock.normalize(MockUtils.any())).willThrow(IllegalArgumentException())
+        val address = ""
+        val testObserver = TestObserver<Solidity.Address>()
+        repository.resolve(address).subscribe(testObserver)
+
+        testObserver.assertFailure(IllegalArgumentException::class.java)
+
+        then(ethereumRepositoryMock).shouldHaveZeroInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun processGetResolverFail() {
+        given(normalizerMock.normalize(MockUtils.any())).willAnswer { it.arguments.first() as String }
         given(ethereumRepositoryMock.request(MockUtils.any<EthRequest<*>>())).willReturn(Observable.error(UnknownHostException()))
         val address = ""
         val testObserver = TestObserver<Solidity.Address>()
@@ -63,10 +82,13 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun processGetAddressFail() {
+        given(normalizerMock.normalize(MockUtils.any())).willAnswer { it.arguments.first() as String }
         given(ethereumRepositoryMock.request(MockUtils.any<EthRequest<*>>())).will {
             val request = it.arguments.first() as EthCall
             if (request.transaction?.address == ENS_ADDRESS) {
@@ -106,10 +128,13 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun process() {
+        given(normalizerMock.normalize(MockUtils.any())).willAnswer { it.arguments.first() as String }
         given(ethereumRepositoryMock.request(MockUtils.any<EthRequest<*>>())).will {
             val request = it.arguments.first() as EthCall
             request.response = if (request.transaction?.address == ENS_ADDRESS)
@@ -149,6 +174,8 @@ class DefaultEnsRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(normalizerMock).should().normalize(address)
+        then(normalizerMock).shouldHaveNoMoreInteractions()
     }
 
     private class CallMatcher(private val expected: EthCall) : ArgumentMatcher<EthCall> {
@@ -167,7 +194,7 @@ class DefaultEnsRepositoryTest {
         private val TEST_ADDRESS = "0xbaddad".asEthereumAddress()!!
         private val TEST_SAFE = "0xdadada".asEthereumAddress()!!
         private val ENS_ADDRESS = BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
-        private val GET_ADDRESS = "0x3b3b57de"
-        private val GET_RESOLVER = "0x0178b8bf"
+        private const val GET_ADDRESS = "0x3b3b57de"
+        private const val GET_RESOLVER = "0x0178b8bf"
     }
 }
