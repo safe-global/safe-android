@@ -7,260 +7,163 @@
     android:layout_height="match_parent"
     tools:background="@color/pale_grey_two">
 
-    <TextView
-        android:id="@+id/layout_recovering_safe_submit_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:gravity="center"
-        android:paddingBottom="24dp"
-        android:paddingEnd="24dp"
-        android:paddingStart="24dp"
-        android:paddingTop="20dp"
-        android:text="@string/review_safe_recovery"
-        android:textColor="@color/blue"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <View
+        android:id="@+id/recover_safe_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/recover_safe_swipe_to_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_title">
+        app:layout_constraintTop_toBottomOf="@+id/recover_safe_toolbar_shadow"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/recover_safe_progress_bar">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:paddingBottom="8dp">
 
-            <pm.gnosis.blockies.BlockiesImageView
-                android:id="@+id/layout_recovering_safe_submit_info_safe_image"
-                android:layout_width="@dimen/info_blockies"
-                android:layout_height="@dimen/info_blockies"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:background="@drawable/circle_settings" />
-
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_info_safe_name"
-                style="@style/DarkText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                app:layout_constraintBottom_toTopOf="@+id/layout_recovering_safe_submit_info_safe_address"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_info_safe_image"
-                app:layout_constraintTop_toTopOf="@+id/layout_recovering_safe_submit_info_safe_image"
-                tools:text="My Safe" />
-
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_info_safe_address"
-                style="@style/LightText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_recovering_safe_submit_info_safe_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_info_safe_image"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_info_safe_name"
-                tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
-
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_info_action"
-                style="@style/DarkText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/recover_existing_safe"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_info_safe_address" />
-
-            <ImageView
-                android:id="@+id/layout_generic_transaction_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:src="@drawable/ic_tx_arrow_down"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_generic_transaction_divider"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/layout_generic_transaction_divider" />
-
-            <View
-                android:id="@+id/layout_generic_transaction_divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="16dp"
-                android:background="@color/divider"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_recovering_safe_submit_info_action"
-                app:layout_constraintLeft_toRightOf="@+id/layout_generic_transaction_arrow"
-                app:layout_constraintRight_toLeftOf="@+id/layout_recovering_safe_submit_info_action"
-                app:layout_constraintTop_toTopOf="@+id/layout_recovering_safe_submit_info_action" />
-
-            <TextView
-                android:id="@+id/layout_generic_transaction_description"
-                style="@style/NormalText"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:paddingBottom="16dp"
-                android:text="@string/recover_safe_description"
-                android:textSize="13sp"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_info_action" />
+                android:layout_height="wrap_content">
 
-            <View
-                android:id="@+id/layout_recovering_safe_submit_data_container_estimate_background"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@color/pale_grey"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_recovering_safe_submit_data_estimate_barrier"
-                app:layout_constraintTop_toTopOf="@+id/layout_recovering_safe_submit_data_fees_label" />
+                <pm.gnosis.blockies.BlockiesImageView
+                    android:id="@+id/recover_safe_submit_info_safe_image"
+                    android:layout_width="@dimen/info_blockies"
+                    android:layout_height="@dimen/info_blockies"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@drawable/circle_settings" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_fees_label"
-                style="@style/NormalText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:fontFamily="monospace-medium"
-                android:paddingTop="12dp"
-                android:text="@string/transaction_fee"
-                android:textColor="@color/battleship_grey_light"
-                app:layout_constraintEnd_toStartOf="@+id/layout_recovering_safe_submit_data_fees_value"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description" />
+                <TextView
+                    android:id="@+id/recover_safe_submit_info_safe_name"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toTopOf="@+id/recover_safe_submit_info_safe_address"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/recover_safe_submit_info_safe_image"
+                    app:layout_constraintTop_toTopOf="@+id/recover_safe_submit_info_safe_image"
+                    tools:text="My Safe" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_fees_value"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="monospace-medium"
-                android:gravity="end"
-                android:paddingTop="12dp"
-                android:text=""
-                android:textColor="@color/battleship_grey_light"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_data_fees_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description"
-                tools:text="0.0023 ETH" />
+                <TextView
+                    android:id="@+id/recover_safe_submit_info_safe_address"
+                    style="@style/LightText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/recover_safe_submit_info_safe_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/recover_safe_submit_info_safe_image"
+                    app:layout_constraintTop_toBottomOf="@+id/recover_safe_submit_info_safe_name"
+                    tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_balance_label"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/balance_after_transfer"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/layout_recovering_safe_submit_data_balance_value"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_label" />
+                <TextView
+                    android:id="@+id/recover_safe_submit_info_action"
+                    style="@style/DarkText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/recover_existing_safe"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recover_safe_submit_info_safe_address" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_balance_value"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:gravity="end"
-                android:text="-"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_data_balance_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_value"
-                tools:text="42.4242 ETH" />
+                <ImageView
+                    android:id="@+id/layout_generic_transaction_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:src="@drawable/ic_tx_arrow_down"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_generic_transaction_divider"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_generic_transaction_divider" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_fees_error"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:fontFamily="monospace-medium"
-                android:gravity="start"
-                android:text="@string/exceeds_funds"
-                android:textColor="@color/tomato"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_balance_value"
-                tools:visibility="visible" />
+                <View
+                    android:id="@+id/layout_generic_transaction_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@color/divider"
+                    app:layout_constraintBottom_toBottomOf="@+id/recover_safe_submit_info_action"
+                    app:layout_constraintLeft_toRightOf="@+id/layout_generic_transaction_arrow"
+                    app:layout_constraintRight_toLeftOf="@+id/recover_safe_submit_info_action"
+                    app:layout_constraintTop_toTopOf="@+id/recover_safe_submit_info_action" />
 
-            <View
-                android:id="@+id/layout_recovering_safe_submit_data_estimate_barrier"
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_error" />
+                <TextView
+                    android:id="@+id/recover_safe_transaction_description"
+                    style="@style/NormalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/recover_safe_description"
+                    android:textSize="13sp"
+                    app:layout_constraintTop_toBottomOf="@+id/recover_safe_submit_info_action" />
 
-            <View
-                android:id="@+id/layout_recovering_safe_submit_data_container_divider"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_container_estimate_background" />
+                <include
+                    layout="@layout/include_transfer_summary_final"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recover_safe_transaction_description" />
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_retry"
-                style="@style/PrimaryButton.White"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:paddingEnd="32dp"
-                android:paddingStart="32dp"
-                android:text="@string/retry"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_container_divider"
-                tools:visibility="gone" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_button"
-                style="@style/PrimaryButton.Green.Round"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/submit"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_container_divider"
-                tools:visibility="visible" />
+        </androidx.core.widget.NestedScrollView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-    <View
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/recover_safe_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:background="@drawable/toolbar_dropshadow"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:minHeight="4dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/recover_safe_bottom_panel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_title" />
+        app:mpb_indeterminateTint="@color/safe_green"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_setBothDrawables="true"
+        app:mpb_useIntrinsicPadding="false" />
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/recover_safe_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        app:backVisible="false"
+        app:forwardLabel="@string/submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:step="none" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
