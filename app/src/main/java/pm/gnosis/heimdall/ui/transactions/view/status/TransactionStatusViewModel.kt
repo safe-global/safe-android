@@ -51,5 +51,6 @@ class TransactionStatusViewModel @Inject constructor(
             is TransactionData.ReplaceRecoveryPhrase -> R.string.settings_change
             is TransactionData.ConnectAuthenticator -> R.string.settings_change
             is TransactionData.UpdateMasterCopy -> R.string.contract_upgrade
+            is TransactionData.MultiSend -> R.string.multi_send
         }
 }

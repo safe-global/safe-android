@@ -26,8 +26,8 @@
         android:visible="false"
         app:showAsAction="never" />
     <item
-        android:id="@+id/safe_details_menu_replace_browser_extension"
-        android:title="@string/replace_browser_extension"
+        android:id="@+id/safe_details_menu_replace_2fa"
+        android:title="@string/replace_2fa"
         android:visible="false"
         app:showAsAction="never" />
     <item
@@ -37,6 +37,11 @@
     <item
         android:id="@+id/safe_details_menu_sync"
         android:title="@string/sync_with_extension"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/safe_details_menu_remove_2fa"
+        android:title="@string/disable_2fa"
         android:visible="false"
         app:showAsAction="never" />
     <item

@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.ui.recoveryphrase.RecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
@@ -109,6 +110,7 @@ class SetupNewRecoveryPhraseIntroActivity : RecoveryPhraseIntroActivity() {
         val safe = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.let { it.asEthereumAddress()!! } }
             ?: run { finish(); return }
         viewModel.setup(safe)
+        layout_recovery_phrase_intro_step_indicator.visible(false)
         layout_recovery_phrase_intro_next.isEnabled = false
         viewModel.state.observe(this, Observer {
             layout_recovery_phrase_intro_next.isEnabled = !it.loading

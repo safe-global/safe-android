@@ -16,6 +16,8 @@
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_address">Share address</string>
     <string name="x_data_bytes">%d bytes included</string>
+    <string name="x_data_bytes_delegate_call">Delegate call with %d bytes</string>
+    <string name="x_data_bytes_creation">Contract creation with %d bytes</string>
     <string name="submit_transaction">Submit Transaction</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
@@ -321,7 +323,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="incorrect_seed">Incorrect recovery phrase</string>
     <string name="enter_recovery">Enter recovery phrase</string>
     <string name="transaction_details_here">View transaction details here</string>
-    <string name="tx_submitted_replace_be">The transaction has been submitted and should take a couple of minutes. Replacing the Authenticator is in progress.</string>
     <string name="new_entry">New Entry</string>
     <string name="enter_name">Enter name</string>
     <string name="what_is_network_fee">What is the network fee?</string>
@@ -373,7 +374,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="cancel_safe_creation">Cancel Safe creation?</string>
     <string name="cancel_creation_warning">If you cancel, all progress will be lost and you won\'t be able to use this address.</string>
     <string name="enable_2fa">Enable 2-factor authentication by connecting your Safe to the Authenticator.</string>
-    <string name="open_be_link">1. Open the <a href="https://chrome.google.com/webstore/detail/gnosis-safe-mainnet-beta/iecodoenhaghdlpodmhooppdhjhmibde?hl=en" target="_blank">link to the Authenticator</a> on your desktop computer.</string>
+    <string name="open_be_link">1. Open the <a href="https://chrome.google.com/webstore/detail/gnosis-safe-mainnet-beta/iecodoenhaghdlpodmhooppdhjhmibde?hl=en" target="_blank">Gnosis Safe Authenticator link</a> on your desktop computer.</string>
     <string name="install_browser_extension">2. Install the Authenticator on your desktop computer and scan its QR code.</string>
     <string name="skip_setup_later">Skip and setup later</string>
     <string name="scan">Scan</string>
@@ -391,7 +392,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="amount_received">Amount received</string>
     <string name="share_your_address">Share your address with contracts or enable senders to scan your QR code to receive Ether and tokens.</string>
     <string name="share_your_address_to_receive_funds">Share your address with contacts or scan your QR code to receive Ether and tokens.</string>
-    <string name="once_process_is_complete">Once this process is complete, you can only use the new Authenticator to confirm transactions. Please have your Safe recovery phrase ready to confirm the recovery.</string>
+    <string name="once_process_is_complete">Once this process is complete, you can only use the new 2FA device to confirm transactions. Please have your Safe recovery phrase ready to confirm the replacement.</string>
     <string name="future_tx_approved_by_both">All future transactions will need to be approved by both devices.</string>
     <string name="disconnect_browser_extension">Disconnect Authenticator</string>
     <string name="layout_recovered_safe_info_description">The existing Safe was recovered.</string>
@@ -536,7 +537,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="secure_by_design">Secure by design</string>
     <string name="while_our_code_is_always_audited">While our code is always audited, we\'ve also formally verified the Gnosis Safe smart contracts.\n\nUse two-factor authentication to further increase the security of your wallet.</string>
     <string name="crypto_without_the_hassle">Crypto without the hassle</string>
-    <string name="with_walletconnect_you_can_connect">With WalletConnect you can connect to Dapps securely within seconds.\n\nGnosis Safe allows you to safe your ETH and pay network fees with ERC-20 tokens.</string>
+    <string name="with_walletconnect_you_can_connect">With WalletConnect you can connect to Dapps securely within seconds.\n\nGnosis Safe allows you to save your ETH and pay network fees with ERC-20 tokens.</string>
     <string name="you_are_in_control">You\'re in control</string>
     <string name="your_funds_are_held_securely">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis.\n\nLost or changed your phone? Regain access anytime using the Safe\'s recovery methods.</string>
     <string name="no_slots_available">No free slots available on Keycard</string>
@@ -544,4 +545,23 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="keycard_blocked">Keycard blocked</string>
     <string name="keycard_unblock_get_in_touch">To restore the Keycard please get in touch with us.</string>
     <string name="keycard_blocked_subject">Keycard blocked (%1$s)</string>
+    <string name="multi_send">Batched transaction</string>
+    <string name="this_will_perform_x_transactions">This will perform %s transactions</string>
+    <string name="multi_send_contract">MultiSend contract</string>
+    <string name="show_details">Show details</string>
+    <string name="batched_transaction_details">Batched transaction details</string>
+    <string name="replace_2fa_device">Replace 2FA device</string>
+    <string name="replace_2fa">Replace 2FA</string>
+    <string name="replace_2fa_desc">The existing 2FA device connection will be replaced by the new 2FA device: %1$s</string>
+    <string name="connect_2fa">Connect 2FA</string>
+    <string name="remove_2fa">Remove 2FA</string>
+    <string name="security_2fa">2FA security</string>
+    <string name="pick_2fa">Pick 2FA device</string>
+    <string name="disable_2fa">Disable 2FA</string>
+    <string name="disable_2fa_desc">This transaction removes the existing 2FA device from your Safe: %1$s. No 2FA device will be paired with your Safe afterwards.</string>
+    <string name="disable_2fa_description">Once this process is complete, your existing 2FA device will be removed from this Safe and thus 2FA will be disabled. You will be able to set up 2FA again in the Safe menu.\n\nPlease have your recovery phrase ready to disable 2FA.</string>
+    <string name="tx_submitted_replace_be">Replacing the 2FA device is in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="tx_submitted_pairing_be">Pairing the 2FA device is in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="tx_submitted_remove_be">Disabling 2FA is in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="authenticator_url">Authenticator URL</string>
 </resources>

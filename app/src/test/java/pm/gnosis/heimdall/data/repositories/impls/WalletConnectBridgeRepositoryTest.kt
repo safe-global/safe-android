@@ -26,10 +26,7 @@ import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.util.*

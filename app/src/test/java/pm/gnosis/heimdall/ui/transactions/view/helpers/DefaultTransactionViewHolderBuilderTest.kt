@@ -114,7 +114,9 @@ class DefaultTransactionViewHolderBuilderTest {
             TransactionData.ConnectAuthenticator::class to
                     TestData(TransactionData.ConnectAuthenticator(TEST_ADDRESS)) { it is ConnectAuthenticatorViewHolder },
             TransactionData.UpdateMasterCopy::class to
-                    TestData(TransactionData.UpdateMasterCopy(TEST_ADDRESS)) { it is UpdateMasterCopyViewHolder }
+                    TestData(TransactionData.UpdateMasterCopy(TEST_ADDRESS)) { it is UpdateMasterCopyViewHolder },
+            TransactionData.MultiSend::class to
+                    TestData(TransactionData.MultiSend(emptyList())) { it is MultiSendViewHolder }
         )
     }
 }

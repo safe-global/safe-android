@@ -3,12 +3,16 @@ package pm.gnosis.heimdall.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,13 +23,27 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.svalinn.common.utils.appendText
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import timber.log.Timber
 import java.lang.ref.WeakReference
+
+
+fun Window.colorStatusBar(@ColorRes color: Int = R.color.primary) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        statusBarColor = context.getColorCompat(color)
+        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+    }
+}
 
 fun errorSnackbar(
     view: View,
@@ -113,3 +131,10 @@ fun TextView.setupLink(url: String, text: String) {
 }
 
 fun <T> weak(value: T) = WeakReference(value)
+
+//Map functions that throw exceptions into optional types
+inline fun loggedTry(func: () -> Unit) = try {
+    func()
+} catch (e: Exception) {
+    Timber.e(e)
+}

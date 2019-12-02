@@ -112,6 +112,9 @@ class DefaultTransactionTriggerManagerTest {
             ),
             TransactionData.UpdateMasterCopy::class to SubmittedTestData(
                 TransactionData.UpdateMasterCopy(TEST_ADDRESS)
+            ),
+            TransactionData.MultiSend::class to SubmittedTestData(
+                TransactionData.MultiSend(emptyList())
             )
         )
     }

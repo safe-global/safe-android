@@ -3,143 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_pairing_coordinator"
+    android:id="@+id/pairing_coordinator"
+    tools:background="@color/pale_grey_two"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/layout_pairing_content_scroll"
+    <View
+        android:id="@+id/pairing_toolbar_background"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_progress_bar"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_pairing_title">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp">
-
-            <TextView
-                android:id="@+id/layout_pairing_browser_extension_label"
-                style="@style/WhiteTheme.SubtitleBold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:gravity="center"
-                android:text="@string/set_up_your_browser_extension"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/layout_pairing_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                app:srcCompat="@drawable/img_authenticator_qr"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pairing_browser_extension_label" />
-
-            <TextView
-                android:id="@+id/layout_pairing_info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="8dp"
-                android:lineSpacingExtra="5sp"
-                android:text="@string/pairing_info"
-                android:textColor="@color/dark_grey"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pairing_image" />
-
-            <TextView
-                android:id="@+id/layout_pairing_extension_link"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:lineSpacingExtra="12sp"
-                android:textColor="@color/dark_grey"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pairing_info"
-                tools:text="1. Share browser extension download link." />
-
-            <TextView
-                android:id="@+id/layout_pairing_second_bullet_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:lineSpacingExtra="12sp"
-                android:text="@string/pairing_second_step"
-                android:textColor="@color/dark_grey"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pairing_extension_link" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <TextView
-        android:id="@+id/layout_pairing_scan"
-        style="@style/PrimaryButton.Green.Round"
-        android:layout_width="0dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/scan_qr_code"
-        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_later"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/layout_pairing_later"
-        style="@style/PrimaryButton.White.Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/selectable_background"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/later"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/layout_pairing_progress_bar"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_scan"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:mpb_indeterminateTint="@color/safe_green"
-        tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/layout_create_safe_intro_back_arrow"
+        android:id="@+id/pairing_back_arrow"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/toolbar_height"
         android:background="@drawable/selectable_circle_background"
@@ -150,22 +30,205 @@
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
     <TextView
-        android:id="@+id/layout_pairing_title"
+        android:id="@+id/pairing_title"
         style="@style/WhiteTheme.ToolbarTitle"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
         android:gravity="center_vertical"
+        android:text="@string/pair_2fa_device"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_back_arrow"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/connect" />
+        app:layout_constraintStart_toEndOf="@+id/pairing_back_arrow"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <View
-        android:id="@+id/layout_pairing_toolbar_shadow"
+        android:id="@+id/pairing_toolbar_shadow"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/layout_pairing_title"
+        app:layout_constraintTop_toBottomOf="@id/pairing_title"
         tools:visibility="visible" />
+
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/pairing_content_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/pairing_bottom_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pairing_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <pm.gnosis.heimdall.views.StepIndicator
+                android:id="@+id/step_indicator"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step1"
+                    android:layout_width="100dp"
+                    app:number="1"
+                    app:label="@string/three_steps_1"
+                    android:layout_height="wrap_content"
+                    app:stepState="completed" />
+
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step2"
+                    android:layout_width="100dp"
+                    app:number="2"
+                    app:label="@string/three_steps_2"
+                    android:layout_height="wrap_content"
+                    app:stepState="uncompleted_active" />
+
+                <pm.gnosis.heimdall.views.Step
+                    android:id="@+id/step3"
+                    android:layout_width="100dp"
+                    app:number="3"
+                    app:label="@string/three_steps_3"
+                    android:layout_height="wrap_content"
+                    app:stepState="uncompleted_inactive" />
+
+            </pm.gnosis.heimdall.views.StepIndicator>
+
+            <androidx.cardview.widget.CardView
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/pairing_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pairing_authenticator"
+                        app:srcCompat="@drawable/img_authenticator_connect" />
+
+                    <TextView
+                        android:id="@+id/pairing_extension_link"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:autoLink="web"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/open_be_link"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pairing_info_1" />
+
+                    <TextView
+                        android:id="@+id/pairing_info_3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/install_browser_extension"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pairing_extension_link" />
+
+                    <TextView
+                        android:id="@+id/pairing_info_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/enable_2fa"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pairing_image" />
+
+                    <TextView
+                        android:id="@+id/pairing_authenticator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:textStyle="bold"
+                        android:textColor="#001428"
+                        android:lineSpacingExtra="4sp"
+
+                        android:text="@string/connect_authenticator"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/pairing_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:minHeight="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/pairing_bottom_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:mpb_indeterminateTint="@color/safe_green"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_setBothDrawables="true"
+        app:mpb_useIntrinsicPadding="false" />
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/pairing_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        app:backVisible="false"
+        app:forwardLabel="@string/scan_qr_code"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:step="none" />
+
+    <View
+        android:id="@+id/keycard_intro_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/pairing_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

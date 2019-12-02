@@ -19,11 +19,10 @@ android {
 
         // Debug Settings
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
-        // External Link
-        buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
+        buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
         // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x12302fE9c02ff50939BaAaaf415fc226C078613C"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
@@ -97,6 +96,7 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.debug
             buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
+            buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
@@ -203,7 +203,7 @@ dependencies {
     implementation "androidx.cardview:cardview:$versions.androidx_card_view"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
-    kapt "androidx.lifecycle:lifecycle-compiler:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
     kapt "androidx.room:room-compiler:$versions.androidx_room"
     implementation "androidx.room:room-runtime:$versions.androidx_room"
@@ -220,7 +220,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 
     // Firebase
-    implementation "com.google.firebase:firebase-core:$versions.firebase_core"
+    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
     implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
 
@@ -244,6 +244,7 @@ dependencies {
 
     // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
 
     // RxBinding
     implementation("com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding") {
@@ -281,6 +282,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 
     // Testing
@@ -294,7 +296,7 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
-    testImplementation "androidx.arch.core:core-testing:2.0.0"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"

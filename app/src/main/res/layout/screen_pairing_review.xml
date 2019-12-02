@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/review_coordinator"
+    android:layout_width="match_parent"
+    tools:background="@color/pale_grey_two"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/review_toolbar_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/white" />
+
+    <ImageView
+        android:id="@+id/review_back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/review_title"
+        style="@style/WhiteTheme.ToolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:gravity="center_vertical"
+        android:text="@string/review"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/review_back_arrow"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/review_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/review_title"
+        tools:visibility="visible" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/review_swipe_to_refresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/review_progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/review_title">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/review_content_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <View
+                    android:id="@+id/review_divider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/pale_grey_two"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/review_transaction_info_container" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/review_transaction_info_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <pm.gnosis.blockies.BlockiesImageView
+                        android:id="@+id/review_transaction_info_safe_image"
+                        android:layout_width="@dimen/info_blockies"
+                        android:layout_height="@dimen/info_blockies"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:background="@drawable/circle_settings" />
+
+                    <TextView
+                        android:id="@+id/review_transaction_info_safe_name"
+                        style="@style/DarkText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        app:layout_constraintBottom_toTopOf="@+id/review_transaction_info_safe_address"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/review_transaction_info_safe_image"
+                        app:layout_constraintTop_toTopOf="@+id/review_transaction_info_safe_image"
+                        tools:text="My Safe" />
+
+                    <TextView
+                        android:id="@+id/review_transaction_info_safe_address"
+                        style="@style/LightText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        app:layout_constraintBottom_toBottomOf="@+id/review_transaction_info_safe_image"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/review_transaction_info_safe_name"
+                        app:layout_constraintTop_toBottomOf="@+id/review_transaction_info_safe_name"
+                        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/review_transaction_top_barrier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="top"
+                        app:constraint_referenced_ids="review_transaction_divider,review_transaction_arrow,review_transaction_info_value" />
+
+                    <ImageView
+                        android:id="@+id/review_transaction_arrow"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:src="@drawable/ic_tx_arrow_down"
+                        app:layout_constraintEnd_toEndOf="@+id/review_transaction_info_safe_image"
+                        app:layout_constraintStart_toStartOf="@+id/review_transaction_info_safe_image"
+                        app:layout_constraintTop_toBottomOf="@+id/review_transaction_info_safe_image" />
+
+                    <View
+                        android:id="@+id/review_transaction_divider"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@color/divider"
+                        app:layout_constraintBottom_toBottomOf="@+id/review_transaction_arrow"
+                        app:layout_constraintEnd_toStartOf="@+id/review_transaction_info_value"
+                        app:layout_constraintStart_toEndOf="@+id/review_transaction_arrow"
+                        app:layout_constraintTop_toTopOf="@+id/review_transaction_arrow" />
+
+                    <TextView
+                        android:id="@+id/review_transaction_info_value"
+                        style="@style/LightText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="1"
+                        android:text="@string/replace_2fa"
+                        android:textColor="@color/blue"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/review_transaction_divider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/review_transaction_divider"
+                        app:layout_constraintTop_toTopOf="@+id/review_transaction_divider" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/review_transaction_bottom_barrier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="review_transaction_divider,review_transaction_arrow,review_transaction_info_value" />
+
+                    <TextView
+                        android:id="@+id/review_transaction_info_description"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:lineSpacingExtra="3sp"
+                        android:text="@string/replace_2fa_desc"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/review_transaction_bottom_barrier" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <include
+                    layout="@layout/include_transfer_summary_final"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/review_divider" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/review_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:minHeight="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/review_bottom_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:mpb_indeterminateTint="@color/safe_green"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_setBothDrawables="true"
+        app:mpb_useIntrinsicPadding="false" />
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/review_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        app:backVisible="false"
+        app:forwardLabel="@string/submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:step="none" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

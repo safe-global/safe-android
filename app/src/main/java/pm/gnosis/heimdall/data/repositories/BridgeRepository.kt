@@ -42,10 +42,21 @@ interface BridgeRepository {
     fun closeSession(sessionId: String): Completable
     fun activateSession(sessionId: String): Completable
     fun approveRequest(requestId: Long, response: Any): Completable
-    fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable
+    fun rejectRequest(requestId: Long, reason: RejectionReason): Completable
     fun observeActiveSessionInfo(): Observable<List<SessionIdAndSafe>>
     fun observeSessions(safe: Solidity.Address?): Observable<List<SessionMeta>>
     fun shouldShowIntro(): Single<Boolean>
     fun markIntroDone(): Completable
     fun init()
+
+    companion object {
+        const val MULTI_SEND_RPC = "gs_multi_send"
+    }
+
+    sealed class RejectionReason(val code: Long, val message: String) {
+        class RPCError(code: Long, message: String) : RejectionReason(code, message)
+        class AppError(val error: Throwable, val method: String = "custom call") : RejectionReason(42, "Could not handle $method: $error")
+        object Rejected : RejectionReason(4567, "Transaction rejected")
+        class Unsupported(val method: String) : RejectionReason(1122, "$method is not supported")
+    }
 }

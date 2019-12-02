@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/multi_send_transaction_info_safe_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/circle_settings" />
+
+    <TextView
+        android:id="@+id/multi_send_transaction_info_safe_name"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/multi_send_transaction_info_safe_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/multi_send_transaction_info_safe_image"
+        app:layout_constraintTop_toTopOf="@+id/multi_send_transaction_info_safe_image"
+        tools:text="My Safe" />
+
+    <TextView
+        android:id="@+id/multi_send_transaction_info_safe_address"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/multi_send_transaction_info_safe_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/multi_send_transaction_info_safe_name"
+        app:layout_constraintTop_toBottomOf="@+id/multi_send_transaction_info_safe_name"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/multi_send_transaction_info_top_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="multi_send_transaction_info_divider,multi_send_transaction_info_arrow,multi_send_transaction_info_value" />
+
+    <ImageView
+        android:id="@+id/multi_send_transaction_info_arrow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/ic_tx_arrow_down"
+        app:layout_constraintEnd_toEndOf="@+id/multi_send_transaction_info_safe_image"
+        app:layout_constraintStart_toStartOf="@+id/multi_send_transaction_info_safe_image"
+        app:layout_constraintTop_toBottomOf="@+id/multi_send_transaction_info_safe_image" />
+
+    <View
+        android:id="@+id/multi_send_transaction_info_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="@+id/multi_send_transaction_info_arrow"
+        app:layout_constraintEnd_toStartOf="@+id/multi_send_transaction_info_value"
+        app:layout_constraintStart_toEndOf="@+id/multi_send_transaction_info_arrow"
+        app:layout_constraintTop_toTopOf="@+id/multi_send_transaction_info_arrow" />
+
+    <TextView
+        android:id="@+id/multi_send_transaction_info_value"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:text="@string/multi_send"
+        android:textColor="@color/blue"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/multi_send_transaction_info_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/multi_send_transaction_info_divider"
+        app:layout_constraintTop_toTopOf="@+id/multi_send_transaction_info_divider" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/multi_send_transaction_info_bottom_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="multi_send_transaction_info_divider,multi_send_transaction_info_arrow,multi_send_transaction_info_value" />
+
+    <TextView
+        android:id="@+id/multi_send_transaction_info_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:lineSpacingExtra="3sp"
+        android:text=""
+        android:textColor="@color/dark_grey"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/multi_send_transaction_info_bottom_barrier" />
+
+    <TextView
+        android:id="@+id/multi_send_transaction_info_details_btn"
+        style="@style/PrimaryButton.Green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:lineSpacingExtra="3sp"
+        android:text="@string/show_details"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/multi_send_transaction_info_description" />
+</merge>

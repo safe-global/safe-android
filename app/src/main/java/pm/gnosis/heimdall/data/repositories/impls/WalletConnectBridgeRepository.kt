@@ -27,6 +27,10 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.BridgeRepository.Companion.MULTI_SEND_RPC
+import pm.gnosis.heimdall.data.repositories.BridgeRepository.RejectionReason
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
@@ -36,12 +40,11 @@ import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.*
 import retrofit2.http.Body
 import retrofit2.http.POST
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,7 +71,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
 
     override fun onTransactionRejected(referenceId: Long) {
-        sessionForRequest(referenceId)?.rejectRequest(referenceId, 4567, "Transaction rejected")
+        rejectRequest(referenceId, RejectionReason.Rejected).subscribe()
     }
 
     override fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String, referenceId: Long?) {
@@ -172,7 +175,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                                     val txValue = value.hexAsBigIntegerOrNull() ?: throw IllegalArgumentException("Invalid to value: $value")
                                     safe to SafeTransaction(
                                         Transaction(txTo, value = Wei(txValue), data = data),
-                                        TransactionExecutionRepository.Operation.CALL
+                                        Operation.CALL
                                     )
                                 }
                                     .flatMap { (safe, tx) ->
@@ -181,38 +184,15 @@ class WalletConnectBridgeRepository @Inject constructor(
                                             .map { txData -> safe to txData }
                                     }
                                     .subscribeBy(onError = { t ->
-                                        val message = when (t) {
-                                            is RestrictedTransactionException -> "This transaction is not allowed"
-                                            else -> t.message ?: "Could not handle transaction"
-                                        }
-                                        rejectRequest(id, 42, message).subscribe()
+                                        rejectRequest(call.id, RejectionReason.AppError(t)).subscribe()
                                     }) { (safe, txData) ->
                                         showSendTransactionNotification(session.peerMeta(), safe, txData, id, sessionId)
                                     }
                             }
                         is Session.MethodCall.SignMessage ->
-                            call.apply {
-                                session.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
-                            }
+                            session.rejectRequest(call.id, RejectionReason.Unsupported("eth_sign"))
                         is Session.MethodCall.Custom ->
-                            call.apply {
-                                sessionRequests[id] = sessionId
-                                try {
-                                    rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
-                                        .subscribeBy(onError = { t ->
-                                            rejectRequest(id, 42, t.message ?: "Could not handle custom call")
-                                        }) { result ->
-                                            result.error?.let { error ->
-                                                rejectRequest(id, error.code.toLong(), error.message).subscribe()
-                                            } ?: run {
-                                                approveRequest(id, result.result ?: "").subscribe()
-                                            }
-                                        }
-                                } catch (e: Exception) {
-                                    Timber.e(e)
-                                    rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
-                                }
-                            }
+                            handleCustomCall(sessionId, session, call)
                     }
                 }
 
@@ -242,6 +222,57 @@ class WalletConnectBridgeRepository @Inject constructor(
             sessionUpdates.onNext(Unit)
             config.handshakeTopic
         }
+
+    private fun handleCustomCall(sessionId: String, session: Session, call: Session.MethodCall.Custom) {
+        sessionRequests[call.id] = sessionId
+        try {
+            when (call.method) {
+                MULTI_SEND_RPC -> {
+                    handleMultiSend(sessionId, session, call)
+                }
+                else ->
+                    call.apply {
+                        rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
+                            .subscribeBy(onError = { t -> rejectRequest(call.id, RejectionReason.AppError(t)).subscribe() }) { result ->
+                                result.error?.let { error ->
+                                    rejectRequest(id, RejectionReason.RPCError(error.code.toLong(), error.message)).subscribe()
+                                } ?: run {
+                                    approveRequest(id, result.result ?: "").subscribe()
+                                }
+                            }
+                    }
+            }
+        } catch (e: Exception) {
+            rejectRequest(call.id, RejectionReason.AppError(e)).subscribe()
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun handleMultiSend(sessionId: String, session: Session, call: Session.MethodCall.Custom) {
+        val safe = session.approvedAccounts()?.firstOrNull()?.asEthereumAddress() ?: throw IllegalArgumentException("No whitelisted Safe!")
+        val params = (call.params as? List<Map<String, String>>) ?: emptyList()
+        val txs = params.map {
+            val txOperation = it["operation"]?.toInt()?.let { op -> Operation.fromInt(op) } ?: Operation.CALL
+            val txTo = it["to"]?.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: ${it["to"]}")
+            val txValue =
+                it["value"]?.run {
+                    (if (startsWith("0x")) hexAsBigIntegerOrNull() else decimalAsBigIntegerOrNull())
+                        ?: throw IllegalArgumentException("Invalid to value: $this")
+                } ?: BigInteger.ZERO
+            val txData = it["data"]?.apply { hexStringToByteArray() }?.addHexPrefix() // Check that it is valid hex data
+            SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), txOperation)
+        }
+        val peerMeta = session.peerMeta()
+        Observable.fromIterable(txs).flatMapSingle {
+            infoRepository.checkRestrictedTransaction(safe, it)
+        }
+            .toList()
+            .subscribeBy(
+                onSuccess = {
+                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(txs), call.id, sessionId)
+                },
+                onError = { t -> rejectRequest(call.id, RejectionReason.AppError(t, MULTI_SEND_RPC)).subscribe() })
+    }
 
     private fun showSendTransactionNotification(
         peerMeta: Session.PeerMeta?,
@@ -388,9 +419,12 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
         .subscribeOn(Schedulers.io())
 
-    override fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable = Completable.fromAction {
+    private fun Session.rejectRequest(requestId: Long, reason: RejectionReason) =
+        rejectRequest(requestId, reason.code, reason.message)
+
+    override fun rejectRequest(requestId: Long, reason: RejectionReason): Completable = Completable.fromAction {
         val session = sessionForRequest(requestId) ?: throw IllegalArgumentException("Session not found")
-        session.rejectRequest(requestId, errorCode, errorMsg)
+        session.rejectRequest(requestId, reason)
     }
         .subscribeOn(Schedulers.io())
 

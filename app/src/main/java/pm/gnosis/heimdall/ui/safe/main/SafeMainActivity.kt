@@ -29,16 +29,17 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
-import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
+import pm.gnosis.heimdall.ui.safe.pairing.connect.Connect2FaStartActivity
+import pm.gnosis.heimdall.ui.safe.pairing.remove.Remove2FaStartActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorActivity
+import pm.gnosis.heimdall.ui.safe.pairing.replace.Replace2FaStartActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
@@ -382,14 +383,17 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                             SetupNewRecoveryPhraseIntroActivity.createIntent(this, safeAddress = safe.address())
                         )
                     }
-                    R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
-                        startActivity(ReplaceAuthenticatorActivity.createIntent(this, safe.address()))
+                    R.id.safe_details_menu_replace_2fa -> selectedSafe?.let { safe ->
+                        startActivity(Replace2FaStartActivity.createIntent(this, safe.address()))
                     }
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
                     }
                     R.id.safe_details_menu_connect -> selectedSafe?.let { safe ->
-                        startActivity(ConnectAuthenticatorActivity.createIntent(this, safe.address()))
+                        startActivity(Connect2FaStartActivity.createIntent(this, safe.address()))
+                    }
+                    R.id.safe_details_menu_remove_2fa -> selectedSafe?.let { safe ->
+                        startActivity(Remove2FaStartActivity.createIntent(this, safe.address()))
                     }
                 }
             }, onError = Timber::e)
@@ -403,9 +407,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun hideMenuOptions() {
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = false
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_2fa).isVisible = false
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_remove_2fa).isVisible = false
     }
+
 
     @ExperimentalCoroutinesApi
     private fun handleSafeConfig(newMasterCopy: Solidity.Address?, isConnected: Boolean) {
@@ -422,8 +428,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             }
         }
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_2fa).isVisible = isConnected && selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_remove_2fa).isVisible = isConnected && selectedSafe is Safe
     }
 
     private fun renameSafe(safe: AbstractSafe) {

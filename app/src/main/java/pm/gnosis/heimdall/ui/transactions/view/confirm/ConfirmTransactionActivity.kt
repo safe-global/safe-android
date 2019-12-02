@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.layout_confirm_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.NfcViewModelActivity
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
@@ -36,7 +37,7 @@ import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
-class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>(), UnlockDialog.UnlockCallback {
+class ConfirmTransactionActivity : NfcViewModelActivity<ConfirmTransactionContract>(), UnlockDialog.UnlockCallback {
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper

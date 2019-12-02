@@ -7,6 +7,7 @@ sealed class ServiceMessage {
     @JsonClass(generateAdapter = true)
     data class SafeCreation(
         @Json(name = "safe") val safe: String,
+        @Json(name = "owners") val owners: String,
         @Json(name = "type") val type: String = "safeCreation" // Workaround since moshi is not parsing parent or non-constructor fields
     ) : ServiceMessage()
 

@@ -151,7 +151,7 @@
         android:gravity="center_vertical"
         android:minHeight="@dimen/toolbar_height"
         android:paddingEnd="16dp"
-        android:text="@string/connect_authenticator"
+        android:text="@string/pick_2fa"
         android:textColor="@color/blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

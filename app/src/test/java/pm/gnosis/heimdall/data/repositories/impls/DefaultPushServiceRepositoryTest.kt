@@ -479,7 +479,10 @@ class DefaultPushServiceRepositoryTest {
     fun propagateSafeCreation() {
         val testObserver = TestObserver.create<Unit>()
         val json = "{}"
-        val message = ServiceMessage.SafeCreation(safe = TEST_SAFE_ADDRESS.asEthereumAddressString())
+        val message = ServiceMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
+            owners = TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()
+        )
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
         given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
@@ -512,7 +515,10 @@ class DefaultPushServiceRepositoryTest {
     fun propagateSafeCreationErrorNotifying() {
         val testObserver = TestObserver.create<Unit>()
         val json = "{}"
-        val message = ServiceMessage.SafeCreation(safe = TEST_SAFE_ADDRESS.asEthereumAddressString())
+        val message = ServiceMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
+            owners = "${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()},${TEST_ACCOUNT_2_ADDRESS.asEthereumAddressChecksumString()}"
+        )
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
@@ -521,7 +527,7 @@ class DefaultPushServiceRepositoryTest {
 
         pushServiceRepository.propagateSafeCreation(
             safeAddress = TEST_SAFE_ADDRESS,
-            targets = setOf(TEST_EXTENSION_ADDRESS)
+            targets = setOf(TEST_EXTENSION_ADDRESS, TEST_ACCOUNT_2_ADDRESS)
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.SafeCreation::class.java)
@@ -529,7 +535,7 @@ class DefaultPushServiceRepositoryTest {
         then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
-                devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
+                devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString(), TEST_ACCOUNT_2_ADDRESS.asEthereumAddressChecksumString()),
                 message = json,
                 signature = ServiceSignature.fromSignature(TEST_ACCOUNT_SIGNATURE)
             )
@@ -546,7 +552,10 @@ class DefaultPushServiceRepositoryTest {
     fun propagateSafeCreationErrorSigning() {
         val testObserver = TestObserver.create<Unit>()
         val json = "{}"
-        val message = ServiceMessage.SafeCreation(safe = TEST_SAFE_ADDRESS.asEthereumAddressString())
+        val message = ServiceMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
+            owners = TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()
+        )
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
@@ -571,7 +580,10 @@ class DefaultPushServiceRepositoryTest {
     @Test
     fun propagateSafeCreationErrorParsing() {
         val testObserver = TestObserver.create<Unit>()
-        val message = ServiceMessage.SafeCreation(safe = TEST_SAFE_ADDRESS.asEthereumAddressString())
+        val message = ServiceMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
+            owners = TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()
+        )
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willThrow(exception)
@@ -1310,6 +1322,7 @@ class DefaultPushServiceRepositoryTest {
 
     companion object {
         private val TEST_ACCOUNT_ADDRESS = "0x42".asEthereumAddress()!!
+        private val TEST_ACCOUNT_2_ADDRESS = "0xaE32496491b53841efb51829d6f886387708F99B".asEthereumAddress()!!
         private val TEST_SAFE_ADDRESS = "0x40".asEthereumAddress()!!
         private val TEST_EXTENSION_ADDRESS = "0x43".asEthereumAddress()!!
         private val TEST_ACCOUNT_SIGNATURE = Signature(
@@ -1394,5 +1407,3 @@ class DefaultPushServiceRepositoryTest {
         override fun getToken() = "testToken"
     }
 }
-
-fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
