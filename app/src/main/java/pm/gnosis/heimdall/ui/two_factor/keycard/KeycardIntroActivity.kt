@@ -7,6 +7,7 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_keycard_intro.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
@@ -17,7 +18,7 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 @ExperimentalCoroutinesApi
-class KeycardIntroActivity : BaseActivity(), KeycardPairingDialog.PairingCallback {
+class KeycardIntroActivity : NfcActivity(), KeycardPairingDialog.PairingCallback {
 
     override fun screenId() = ScreenId.KEYCARD_INTRO
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
@@ -24,6 +23,7 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.NfcDialog
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
@@ -163,37 +163,27 @@ class KeycardInitializeReadingCardFragment : KeycardInitializeBaseFragment(), Re
 }
 
 @ExperimentalCoroutinesApi
-class KeycardInitializeDialog private constructor() : DialogFragment() {
+class KeycardInitializeDialog private constructor() : NfcDialog() {
 
     @Inject
     lateinit var viewModel: KeycardInitializeContract
 
     private var currentState: KeycardInitializeContract.State? = null
 
-    private lateinit var adapter: NfcAdapter
+    override fun nfcCallback() = viewModel.callback()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
         viewModel.setup(arguments?.getString(ARGUMENTS_SAFE)?.asEthereumAddress())
-        adapter = context?.let { NfcAdapter.getDefaultAdapter(it) } ?: run {
-            dismiss()
-            return
-        }
     }
 
     override fun onStart() {
         super.onStart()
-        adapter.enableReaderMode(activity!!, viewModel.callback(), NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null)
         val pin = arguments?.getString(ARGUMENTS_PIN) ?: return
         val puk = arguments?.getString(ARGUMENTS_PUK) ?: return
         val pairingKey = arguments?.getString(ARGUMENTS_PAIRING_KEY) ?: return
         viewModel.startInitialization(pin, puk, pairingKey)
-    }
-
-    override fun onStop() {
-        activity?.let { adapter.disableReaderMode(it) }
-        super.onStop()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =

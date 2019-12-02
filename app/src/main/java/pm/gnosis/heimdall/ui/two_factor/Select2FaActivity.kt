@@ -3,15 +3,15 @@ package pm.gnosis.heimdall.ui.two_factor
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.nfc.NfcManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.ui.two_factor.authenticator.PairingAuthenticatorActivity
+import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
@@ -22,7 +22,7 @@ import pm.gnosis.utils.asEthereumAddressString
 
 
 @ExperimentalCoroutinesApi
-open class Select2FaActivity : BaseActivity() {
+open class Select2FaActivity : NfcActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD
 
@@ -39,9 +39,7 @@ open class Select2FaActivity : BaseActivity() {
     }
 
     private fun initKeyCardViews() {
-        val manager = getSystemService(Context.NFC_SERVICE) as NfcManager
-        val adapter = manager.defaultAdapter
-        val nfcAvailable = adapter != null && adapter.isEnabled
+        val nfcAvailable = NfcAdapter.getDefaultAdapter(this)?.isEnabled == true
         onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
         if (nfcAvailable) select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
         val alpha = if (nfcAvailable) 1f else 0.6f
