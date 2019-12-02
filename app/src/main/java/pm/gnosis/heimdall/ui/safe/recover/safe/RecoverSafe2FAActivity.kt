@@ -17,8 +17,6 @@ class RecoverSafe2FAActivity : Select2FaActivity() {
         startActivity(RecoverSafeRecoveryPhraseActivity.createIntent(this, safeAddress, info))
     }
 
-    override fun getSelectAuthenticatorExtras(): Solidity.Address? = null
-
     companion object {
         private const val EXTRA_RECOVERING_SAFE = "extra.string.recovering_safe"
 
