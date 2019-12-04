@@ -77,7 +77,7 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
         disposables += layout_check_safe_next.clicks()
             .subscribeBy {
                 nextIntent?.let {
-                    startActivity(PaymentTokensActivity.createIntent(context = this, safeAddress = currentAddress, nextAction = it))
+                    startActivity(PaymentTokensActivity.createIntent(context = this, safeAddress = currentAddress, hint = getString(R.string.choose_how_to_pay_recovery_fee), nextAction = it))
                 }
             }
 
