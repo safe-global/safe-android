@@ -2,25 +2,17 @@ package pm.gnosis.heimdall.ui.safe.recover.safe
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_input_recovery_phrase.*
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddress
 
 class RecoverSafeRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverSafeRecoveryPhraseContract>() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        startActivity(PaymentTokensActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!))
-    }
 
     override fun noRecoveryNecessary(safe: Solidity.Address) = onSuccess(safe)
 
