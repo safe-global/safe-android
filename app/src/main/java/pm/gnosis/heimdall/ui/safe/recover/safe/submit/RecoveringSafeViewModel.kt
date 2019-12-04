@@ -69,7 +69,7 @@ class RecoveringSafeViewModel @Inject constructor(
                         .flatMap { (success) ->
                             if (success)
                                 safeRepository.recoveringSafeToDeployedSafe(safe).andThen(Single.just(safe.address))
-                            else throw IllegalStateException() // TODO: proper error here
+                            else throw TransactionExecutionException("transaction execution failed")
                         }
                 } ?: throw IllegalStateException()
             }

@@ -34,4 +34,6 @@ abstract class RecoveringSafeContract : ViewModel() {
     data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20TokenWithBalance?, val paymentAmount: BigInteger, val qrCode: Bitmap?)
     data class RecoveryExecuteInfo(val balance: BigInteger, val paymentAmount: BigInteger, val paymentToken: ERC20Token, val canSubmit: Boolean)
 
+    class TransactionExecutionException(message: String? = null) : IllegalStateException(message)
+
 }
