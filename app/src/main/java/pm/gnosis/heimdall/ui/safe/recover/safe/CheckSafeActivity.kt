@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract.CheckResult.*
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.model.Solidity
@@ -75,7 +76,9 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
 
         disposables += layout_check_safe_next.clicks()
             .subscribeBy {
-                nextIntent?.let { startActivity(it) }
+                nextIntent?.let {
+                    startActivity(PaymentTokensActivity.createIntent(context = this, safeAddress = currentAddress, hint = getString(R.string.choose_how_to_pay_recovery_fee), nextAction = it))
+                }
             }
 
         disposables += layout_check_safe_back_arrow.clicks().subscribeBy { onBackPressed() }

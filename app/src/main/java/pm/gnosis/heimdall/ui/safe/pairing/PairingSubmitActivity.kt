@@ -188,7 +188,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
         errorSnackbar(review_coordinator, throwable)
     }
 
-
     companion object {
         private const val EXTRA_PAIRING_ACTION = "extra.parcelable.pairingAction"
 
@@ -218,7 +217,6 @@ class PairingSubmitActivity : ViewModelActivity<PairingSubmitContract>(), Confir
         ) =
             Intent(context, PairingSubmitActivity::class.java).apply {
                 putExtra(EXTRA_PAIRING_ACTION, action)
-
                 putExtra(EXTRA_SAFE_TRANSACTION, safeTransaction)
                 putExtra(EXTRA_SIGNATURE_1, signature1.toString())
                 putExtra(EXTRA_SIGNATURE_2, signature2.toString())

@@ -162,7 +162,7 @@ class PairingStartViewModelTest {
             )
         )
     }
-
+    
     companion object {
 
         private val SAFE_ADDRESS = "0xdeadbeef".asEthereumAddress()!!

@@ -215,7 +215,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
-
         <activity
             android:name=".ui.safe.pairing.replace.Replace2FaRecoveryPhraseActivity"
             android:screenOrientation="portrait"
