@@ -38,13 +38,15 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
 
     override fun screenId(): ScreenId = ScreenId.SELECT_PAYMENT_TOKEN
 
+    private var nextAction: Intent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         payment_tokens_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         payment_tokens_recycler_view.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
         payment_tokens_recycler_view.adapter = adapter
 
-        val nextAction = intent.getParcelableExtra<Intent?>(EXTRA_NEXT_ACTION)
+        nextAction = intent.getParcelableExtra<Intent?>(EXTRA_NEXT_ACTION)
         val safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.let { it.asEthereumAddress()!! }
         val transaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION)
         val metricType = when {
@@ -75,7 +77,7 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
         )
 
         if (nextAction != null) {
-            payment_token_bottom_panel.visible(nextAction != null)
+            payment_token_bottom_panel.visible(true)
             viewModel.paymentToken.observe(this, Observer {
                 payment_token_bottom_panel.forwardLabel = getString(R.string.pay_with, it.symbol)
             })
@@ -84,8 +86,10 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
 
     override fun onStart() {
         super.onStart()
-        disposables += payment_token_bottom_panel.forwardClicks.subscribeBy {
-            startActivity(intent.getParcelableExtra(EXTRA_NEXT_ACTION) as Intent)
+        nextAction?.let { nextAction ->
+            disposables += payment_token_bottom_panel.forwardClicks.subscribeBy {
+                startActivity(nextAction)
+            }
         }
     }
 
