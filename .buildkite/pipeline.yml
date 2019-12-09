@@ -1,4 +1,8 @@
 steps:
+
+  - label: 'Unit Tests'
+    command: 'ci/run_unit_tests.sh'
+
   - label: ':the_horns: UI Tests'
     command: 'ci/run_ui_tests.sh'
 
