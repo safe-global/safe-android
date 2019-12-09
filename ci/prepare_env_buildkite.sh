@@ -15,3 +15,4 @@ export APP_RELEASE_NOTES=$BUILDKITE_MESSAGE
 
 # Setup fake google service json
 cp ci/google-services.json.sample app/google-services.json
+

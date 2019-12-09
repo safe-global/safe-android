@@ -1,10 +1,21 @@
 steps:
 
-  - label: 'Unit Tests'
-    command: 'ci/run_unit_tests.sh'
+#  - label: 'Unit Tests'
+#    command: 'ci/run_unit_tests.sh'
 
-  - label: ':the_horns: UI Tests'
-    command: 'ci/run_ui_tests.sh'
+#  - label: ':the_horns: UI Tests'
+#    command: 'ci/run_ui_tests.sh'
 
-  - label: ':eyes: Obfuscate/Minify build'
-    command: 'ci/transform_with_R8.sh'
+#  - label: ':eyes: Obfuscate/Minify build'
+#    command: 'ci/transform_with_R8.sh'
+
+#  - label: 'Upload Crashlytics Versions'
+#    key: 'upload-crashlytics'
+#    command: 'ci/upload_crashlytics_versions_buildkite.sh'
+
+  - label: 'Uploading Artifacts'
+    key: 'upload-github'
+    command: 'ci/upload_to_github.sh'
+    artifact_paths:
+      - "app/build/outputs/apk/*/*-rinkeby.apk"
+      - "app/build/outputs/apk/*/*-release.apk"
