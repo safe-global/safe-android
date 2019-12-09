@@ -269,7 +269,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             .toList()
             .subscribeBy(
                 onSuccess = {
-                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(txs), call.id, sessionId)
+                    showSendTransactionNotification(peerMeta, safe, TransactionData.MultiSend(txs, MULTI_SEND_LIB), call.id, sessionId)
                 },
                 onError = { t -> rejectRequest(call.id, RejectionReason.AppError(t, MULTI_SEND_RPC)).subscribe() })
     }
@@ -453,6 +453,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     companion object {
         private const val CHANNEL_WALLET_CONNECT_REQUESTS = "channel_wallet_connect_requests"
+        private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
     }
 }
 

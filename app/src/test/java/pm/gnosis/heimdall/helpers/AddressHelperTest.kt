@@ -93,6 +93,26 @@ class AddressHelperTest {
     }
 
     @Test
+    fun testMultiSendOldAddress() {
+        given(addressView.context).willReturn(contextMock)
+        contextMock.mockGetString()
+        val testAddress = BuildConfig.MULTI_SEND_OLD_ADDRESS.asEthereumAddress()!!
+
+        helper.populateAddressInfo(addressView, nameView, null, testAddress)
+
+        then(imageView).shouldHaveNoMoreInteractions()
+        then(addressView).should().text = testAddress.asEthereumAddressChecksumString().asMiddleEllipsized(4)
+        then(addressView).should().setOnClickListener(MockUtils.any())
+        then(addressView).should().context
+        then(addressView).shouldHaveNoMoreInteractions()
+        then(nameView).should().text = "${R.string.multi_send_contract}"
+        then(nameView).should().visibility = View.VISIBLE
+        then(nameView).shouldHaveNoMoreInteractions()
+
+        then(addressBookRepository).shouldHaveZeroInteractions()
+    }
+
+    @Test
     fun testAddressBookAddress() {
         val testAddress = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
         val addressBookEntry = AddressBookEntry(testAddress, "I need more Mate!", "Mate has sugar! Sugar = Energy! That gets me going!")
