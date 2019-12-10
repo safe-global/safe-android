@@ -66,15 +66,18 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
-            val tx = transaction.wrapped
             when {
-                transaction.isCall() -> tx.parseCall()
+                transaction.isCall() -> transaction.wrapped.parseCall()
                 isMultiSend(transaction) -> parseMultiSend(transaction)
-                else ->
-                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, transaction.operation)
+                else -> transaction.toGenericTransactionData()
             }
         }
             .subscribeOn(Schedulers.io())
+
+    private fun SafeTransaction.toGenericTransactionData() =
+        wrapped.let { tx ->
+            TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, operation)
+        }
 
     private fun SafeTransaction.isCall() = this.operation == Operation.CALL
 
@@ -103,7 +106,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
         val multiSend = when (transaction.wrapped.address) {
             MULTI_SEND_LIB -> parseMultiSendNew(payload)
             MULTI_SEND_OLD_LIB -> parseMultiSendOld(payload)
-            else -> nullOnThrow { parseMultiSendOld(payload) } ?: parseMultiSendNew(payload)
+            else -> return transaction.toGenericTransactionData()
+
         }
         return processMultiSend(transaction, multiSend)
     }

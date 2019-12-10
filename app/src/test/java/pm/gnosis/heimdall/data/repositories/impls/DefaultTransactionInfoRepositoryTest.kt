@@ -387,7 +387,7 @@ class DefaultTransactionInfoRepositoryTest {
                     "0000000000000000000000000000000000000000000000000000000000000080" +
                     "0000000000000000000000000000000000000000000000000000000000000164" +
                     MULTI_SEND_1_DATA_OLD +
-                    "00000000000000000000000000000000000000000000000000000000"+  // Padding
+                    "00000000000000000000000000000000000000000000000000000000" +  // Padding
                     "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
                     "000000000000000000000000c257274276a4e539741ca11b590b9447b26a8051" + // Safe address
                     "0000000000000000000000000000000000000000000000000000000000000010" +
@@ -506,6 +506,21 @@ class DefaultTransactionInfoRepositoryTest {
                                 ), DELEGATE_CALL
                             ),
                             TransactionData.Generic(TEST_TOKEN_ADDRESS, BigInteger.ZERO, TOKEN_TRANSFER_DATA, DELEGATE_CALL)
+                        ),
+                        // Unknown multisend contracts
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_NEW"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_NEW", DELEGATE_CALL)
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_OLD"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_OLD", DELEGATE_CALL)
                         )
                     ),
             TransactionData.ReplaceRecoveryPhrase::class to
@@ -540,6 +555,7 @@ class DefaultTransactionInfoRepositoryTest {
                         )
                     ),
             TransactionData.MultiSend::class to
+                    // Old multisend contract
                     listOf(
                         TestData(
                             transaction = SafeTransaction(
@@ -583,6 +599,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 MULTI_SEND_OLD_LIB
                             )
                         ),
+                        // New multisend contract
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
