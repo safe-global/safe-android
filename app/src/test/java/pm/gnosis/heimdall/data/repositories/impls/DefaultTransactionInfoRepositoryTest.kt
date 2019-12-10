@@ -307,7 +307,7 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
-        private val MULTI_SEND_LIB = "0xB522a9f781924eD250A11C54105E51840B138AdD".asEthereumAddress()!!
+        private val MULTI_SEND_LIB = "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!
         private val MULTI_SEND_OLD_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
 
         private val TOKEN_TRANSFER_DATA =
@@ -409,7 +409,7 @@ class DefaultTransactionInfoRepositoryTest {
                     "0000000000000000000000000000000000000000000000000000000000000020" +
                     "0000000000000000000000000000000000000000000000000000000000000240" +
                     "01" + // Operation
-                    "B522a9f781924eD250A11C54105E51840B138AdD" + // MultiSend address
+                    "8D29bE29923b68abfDD21e541b9374737B49cdAD" + // MultiSend address
                     "0000000000000000000000000000000000000000000000000000000000000000" +
                     "00000000000000000000000000000000000000000000000000000000000000fd" +
                     MULTI_SEND_1_DATA_NEW +

@@ -85,7 +85,7 @@ class TransactionBuilderTest {
                                     "0000000000000000000000000000000000000000000000000000000000000000" + // Data length
                                     // Tx 3
                                     "01" + // Operation
-                                    "B522a9f781924eD250A11C54105E51840B138AdD" + // To
+                                    "8D29bE29923b68abfDD21e541b9374737B49cdAD" + // To
                                     "0000000000000000000000000000000000000000000000000000000000000000" + // Value
                                     "0000000000000000000000000000000000000000000000000000000000000004" + // Data length
                                     "deadbeef"
@@ -115,7 +115,7 @@ class TransactionBuilderTest {
     }
 
     companion object {
-        private val MULTI_SEND_ADDRESS = "0xB522a9f781924eD250A11C54105E51840B138AdD".asEthereumAddress()!!
+        private val MULTI_SEND_ADDRESS = "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!
         private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
         private val ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
         private val TEST_TOKEN = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!

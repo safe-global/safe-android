@@ -430,7 +430,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         testRecoverPayload(
             AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
             TEST_NEW_EXTENSION,
-            "0xB522a9f781924eD250A11C54105E51840B138AdD".asEthereumAddress()!!, // MultiSend address
+            "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!, // MultiSend address
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
             "0x8d80ff0a" +
                     "0000000000000000000000000000000000000000000000000000000000000020" +
@@ -493,7 +493,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         testRecoverPayload(
             AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
             TEST_NEW_EXTENSION,
-            "0xB522a9f781924eD250A11C54105E51840B138AdD".asEthereumAddress()!!, // MultiSend address
+            "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!, // MultiSend address
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
             "0x8d80ff0a" +
                     "0000000000000000000000000000000000000000000000000000000000000020" +
