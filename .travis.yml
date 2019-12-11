@@ -45,7 +45,7 @@ before_install:
 script:
   - . ./ci/prepare_env_travis.sh
   - ./ci/run_unit_tests.sh
-  - ./ci/upload_crashlytic_versions.sh
+#  - ./ci/upload_crashlytic_versions.sh
 
 before_deploy:
   - ./ci/build_production_versions.sh
