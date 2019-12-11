@@ -104,20 +104,18 @@ class DefaultTransactionInfoRepository @Inject constructor(
                 ?: return TransactionData.MultiSend(emptyList(), transaction.wrapped.address)
 
         val multiSend = when (transaction.wrapped.address) {
-            MULTI_SEND_LIB -> parseMultiSendNew(payload)
-            MULTI_SEND_OLD_LIB -> parseMultiSendOld(payload)
-            else -> return transaction.toGenericTransactionData()
-
-        }
+            MULTI_SEND_LIB -> nullOnThrow { parseMultiSendNew(payload) }
+            MULTI_SEND_OLD_LIB -> nullOnThrow { parseMultiSendOld(payload) }
+            else -> null
+        } ?: return transaction.toGenericTransactionData()
         return processMultiSend(transaction, multiSend)
     }
 
     private fun parseMultiSendNew(payload: String): TransactionData.MultiSend {
         val transactions = mutableListOf<SafeTransaction>()
-        val reader = PayloadReader(payload)
-        nullOnThrow { reader.read(32) } ?: throw IllegalArgumentException("Missing multisend data position")
-        nullOnThrow { reader.read(32) } ?: throw IllegalArgumentException("Missing multisend data length")
-        while (reader.hasMore()) {
+        val data = MultiSend.MultiSend.decodeArguments(payload).transactions.items.toHexString()
+        val reader = PayloadReader(data)
+        while (reader.hasAdditional(85)) {
             val operation = Operation.fromInt(reader.readAsHexInt(1))
             val to = nullOnThrow { reader.read(20).asEthereumAddress() } ?: throw IllegalArgumentException("Illegal to")
             val value = nullOnThrow { Wei(reader.readAsHexBigInteger(32)) } ?: throw IllegalArgumentException("Illegal value")
@@ -217,7 +215,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
         fun readAsHexInt(bytes: Int) = read(bytes).toInt(16)
 
-        fun hasMore() = index < payload.length
+        fun hasAdditional(bytes: Int) = (index + bytes * 2) <= payload.length
     }
 
     companion object {
