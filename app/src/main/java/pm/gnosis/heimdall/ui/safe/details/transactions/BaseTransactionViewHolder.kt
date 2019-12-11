@@ -96,7 +96,7 @@ abstract class BaseTransactionViewHolder<T>(
             }
             is TransactionData.MultiSend -> {
                 updateViews(
-                    address = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!,
+                    address = data.contract,
                     infoText = "${data.transactions.size} batched transaction",
                     valueText = null,
                     valueColor = R.color.blue,

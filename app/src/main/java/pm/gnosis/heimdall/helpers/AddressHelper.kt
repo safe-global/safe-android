@@ -41,7 +41,7 @@ class AddressHelper @Inject constructor(
                 }
             }
             .flatMap {
-                if (address == MULTI_SEND_LIB)
+                if (address == MULTI_SEND_LIB || address == MULTI_SEND_OLD_LIB)
                     Single.just(addressView.context.getString(R.string.multi_send_contract))
                 else
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }
@@ -64,5 +64,6 @@ class AddressHelper @Inject constructor(
 
     companion object {
         private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
+        private val MULTI_SEND_OLD_LIB = BuildConfig.MULTI_SEND_OLD_ADDRESS.asEthereumAddress()!!
     }
 }

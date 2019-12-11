@@ -15,6 +15,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexStringToByteArray
+import pm.gnosis.utils.toHex
 import java.math.BigInteger
 
 
@@ -64,17 +65,20 @@ object MultiSendTransactionBuilder {
     private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
 
     fun build(data: TransactionData.MultiSend): SafeTransaction =
+        build(data.transactions)
+
+    fun build(transactions: List<SafeTransaction>) =
         SafeTransaction(
             Transaction(
                 MULTI_SEND_LIB, data = MultiSend.MultiSend.encode(
                     Solidity.Bytes(
-                        data.transactions.joinToString(separator = "") {
-                            SolidityBase.encodeFunctionArguments(
-                                Solidity.UInt8(it.operation.toInt().toBigInteger()), // Operation
-                                it.wrapped.address, // To
-                                Solidity.UInt256(it.wrapped.value?.value ?: BigInteger.ZERO), // Value
-                                Solidity.Bytes(it.wrapped.data?.hexStringToByteArray() ?: byteArrayOf()) // Data
-                            )
+                        transactions.joinToString(separator = "") {
+                            val data = (it.wrapped.data?.hexStringToByteArray() ?: byteArrayOf())
+                            Solidity.UInt8(it.operation.toInt().toBigInteger()).encodePacked() + // Operation
+                                    it.wrapped.address.encodePacked() + // To
+                                    Solidity.UInt256(it.wrapped.value?.value ?: BigInteger.ZERO).encodePacked() + // Value
+                                    Solidity.UInt256(data.size.toBigInteger()).encodePacked() + // Data length
+                                    Solidity.Bytes(data).encodePacked() // Data
                         }.hexStringToByteArray()
                     )
                 )

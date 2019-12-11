@@ -78,7 +78,7 @@ class MultiSendViewHolderTest {
 
     @Test
     fun loadTransaction() {
-        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList()), TEST_SAFE)
+        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList(), MULTI_SEND), TEST_SAFE)
         val testObserver = TestObserver.create<SafeTransaction>()
         val expectedTransaction = SafeTransaction(
             Transaction(
@@ -94,7 +94,7 @@ class MultiSendViewHolderTest {
 
     @Test
     fun loadAssetChange() {
-        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList()), TEST_SAFE)
+        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList(), MULTI_SEND), TEST_SAFE)
         val testObserver = TestObserver.create<Optional<ERC20TokenWithBalance>>()
         viewHolder.loadAssetChange().subscribe(testObserver)
         testObserver.assertResult(None)
@@ -102,7 +102,7 @@ class MultiSendViewHolderTest {
 
     @Test
     fun testNoInteractionWithoutView() {
-        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList()), TEST_SAFE)
+        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList(), MULTI_SEND), TEST_SAFE)
         viewHolder.start()
         then(addressHelperMock).shouldHaveZeroInteractions()
     }
@@ -118,7 +118,7 @@ class MultiSendViewHolderTest {
                 Transaction(TEST_SAFE),
                 TransactionExecutionRepository.Operation.CALL
             )
-        })
+        }, MULTI_SEND)
         viewHolder = MultiSendViewHolder(addressHelperMock, data, TEST_SAFE)
         given(layoutInflaterMock.inflate(anyInt(), MockUtils.any(), anyBoolean())).willReturn(viewHolderViewMock)
         viewHolder.inflate(layoutInflaterMock, containerViewMock)
@@ -156,7 +156,7 @@ class MultiSendViewHolderTest {
 
     @Test
     fun detach() {
-        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList()), TEST_SAFE)
+        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList(), MULTI_SEND), TEST_SAFE)
         given(viewHolderViewMock.context).willReturn(contextMock)
         // Set view
         given(layoutInflaterMock.inflate(anyInt(), MockUtils.any(), anyBoolean())).willReturn(viewHolderViewMock)
@@ -191,7 +191,7 @@ class MultiSendViewHolderTest {
 
     @Test
     fun stop() {
-        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList()), TEST_SAFE)
+        viewHolder = MultiSendViewHolder(addressHelperMock, TransactionData.MultiSend(emptyList(), MULTI_SEND), TEST_SAFE)
         given(viewHolderViewMock.context).willReturn(contextMock)
         // Set view
         given(layoutInflaterMock.inflate(anyInt(), MockUtils.any(), anyBoolean())).willReturn(viewHolderViewMock)

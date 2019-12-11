@@ -246,7 +246,7 @@ class DefaultTransactionInfoRepositoryTest {
             TEST_DATA_TRANSACTION_INFO[klass]?.let { tests ->
                 if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${klass.simpleName}")
                 tests.forEach {
-                    val testId = UUID.randomUUID().toString()
+                    val testId = "$klass ${UUID.randomUUID()}"
                     val testSubmitDate = System.currentTimeMillis()
                     given(descriptionsDaoMock.loadDescription(testId)).willReturn(
                         Single.just(
@@ -307,12 +307,13 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
-        private val MULTI_SEND_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
+        private val MULTI_SEND_LIB = "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!
+        private val MULTI_SEND_OLD_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
 
         private val TOKEN_TRANSFER_DATA =
             ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
 
-        private const val REPLACE_RECOVERY_PHRASE_DATA =
+        private const val REPLACE_RECOVERY_PHRASE_DATA_OLD_MULTISEND =
             "0x8d80ff0a" + // Multi send method
                     "0000000000000000000000000000000000000000000000000000000000000020" +
                     "0000000000000000000000000000000000000000000000000000000000000240" +
@@ -337,13 +338,35 @@ class DefaultTransactionInfoRepositoryTest {
                     "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
                     "00000000000000000000000000000000000000000000000000000000" // Padding
 
+        private const val REPLACE_RECOVERY_PHRASE_DATA_NEW_MULTISEND =
+            "0x8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000172" +
+                    "00" + // Operation
+                    "1f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000f" + // New Owner
+                    "00" + // Operation
+                    "1f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "0000000000000000000000000000000000000000000000000000000000000001" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000a" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000e" +  // New Owner
+                    "0000000000000000000000000000" // Padding
+
         private const val MULTI_SEND_SWAP_OWNER_DATA =
             "e318b52b" + // Swap owner method
                     "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
                     "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
                     "000000000000000000000000000000000000000000000000000000000000000f" // New Owner
 
-        private const val MULTI_SEND_1_DATA =
+        private const val MULTI_SEND_1_DATA_OLD =
             "8d80ff0a" + // Multi send method
                     "0000000000000000000000000000000000000000000000000000000000000020" +
                     "0000000000000000000000000000000000000000000000000000000000000240" +
@@ -355,7 +378,7 @@ class DefaultTransactionInfoRepositoryTest {
                     MULTI_SEND_SWAP_OWNER_DATA +
                     "00000000000000000000000000000000000000000000000000000000" // Padding
 
-        private const val MULTI_SEND_2_DATA =
+        private const val MULTI_SEND_2_DATA_OLD =
             "8d80ff0a" + // Multi send method
                     "0000000000000000000000000000000000000000000000000000000000000020" +
                     "0000000000000000000000000000000000000000000000000000000000000240" +
@@ -364,20 +387,56 @@ class DefaultTransactionInfoRepositoryTest {
                     "0000000000000000000000000000000000000000000000000000000000000000" +
                     "0000000000000000000000000000000000000000000000000000000000000080" +
                     "0000000000000000000000000000000000000000000000000000000000000164" +
-                    MULTI_SEND_1_DATA +
-                    "00000000000000000000000000000000000000000000000000000000"+  // Padding
+                    MULTI_SEND_1_DATA_OLD +
+                    "00000000000000000000000000000000000000000000000000000000" +  // Padding
                     "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
                     "000000000000000000000000c257274276a4e539741ca11b590b9447b26a8051" + // Safe address
                     "0000000000000000000000000000000000000000000000000000000000000010" +
                     "0000000000000000000000000000000000000000000000000000000000000080" +
                     "0000000000000000000000000000000000000000000000000000000000000000"
 
-        private val REPLACE_RECOVERY_PHRASE_TX =
+        private const val MULTI_SEND_1_DATA_NEW =
+            "8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "00000000000000000000000000000000000000000000000000000000000000b9" +
+                    "00" + // Operation
+                    "A7e15e2e76Ab469F8681b576cFF168F37Aa246EC" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    MULTI_SEND_SWAP_OWNER_DATA +
+                    "00000000000000" // Multi send padding
+
+        private const val MULTI_SEND_2_DATA_NEW =
+            "8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "00000000000000000000000000000000000000000000000000000000000001ae" +
+                    "01" + // Operation
+                    "8D29bE29923b68abfDD21e541b9374737B49cdAD" + // MultiSend address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000104" +
+                    MULTI_SEND_1_DATA_NEW +
+                    "00" + // Operation
+                    "c257274276a4e539741ca11b590b9447b26a8051" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000010" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "000000000000000000000000000000000000" // Multi send padding
+
+        private val REPLACE_RECOVERY_PHRASE_TX_NEW_MULTISEND =
             SafeTransaction(
                 Transaction(
                     address = MULTI_SEND_LIB,
                     value = Wei.ZERO,
-                    data = REPLACE_RECOVERY_PHRASE_DATA,
+                    data = REPLACE_RECOVERY_PHRASE_DATA_NEW_MULTISEND,
+                    nonce = BigInteger.ZERO
+                ), DELEGATE_CALL
+            )
+
+        private val REPLACE_RECOVERY_PHRASE_TX_OLD_MULTISEND =
+            SafeTransaction(
+                Transaction(
+                    address = MULTI_SEND_OLD_LIB,
+                    value = Wei.ZERO,
+                    data = REPLACE_RECOVERY_PHRASE_DATA_OLD_MULTISEND,
                     nonce = BigInteger.ZERO
                 ), DELEGATE_CALL
             )
@@ -450,13 +509,32 @@ class DefaultTransactionInfoRepositoryTest {
                                 ), DELEGATE_CALL
                             ),
                             TransactionData.Generic(TEST_TOKEN_ADDRESS, BigInteger.ZERO, TOKEN_TRANSFER_DATA, DELEGATE_CALL)
+                        ),
+                        // Unknown multisend contracts
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_NEW"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_NEW", DELEGATE_CALL)
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_OLD"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_OLD", DELEGATE_CALL)
                         )
                     ),
             TransactionData.ReplaceRecoveryPhrase::class to
                     listOf(
                         TestData(
-                            REPLACE_RECOVERY_PHRASE_TX,
-                            TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
+                            REPLACE_RECOVERY_PHRASE_TX_OLD_MULTISEND,
+                            TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX_OLD_MULTISEND)
+                        ),
+                        TestData(
+                            REPLACE_RECOVERY_PHRASE_TX_NEW_MULTISEND,
+                            TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX_NEW_MULTISEND)
                         )
                     ),
             TransactionData.ConnectAuthenticator::class to
@@ -480,18 +558,19 @@ class DefaultTransactionInfoRepositoryTest {
                         )
                     ),
             TransactionData.MultiSend::class to
+                    // Old multisend contract
                     listOf(
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
-                                    MULTI_SEND_LIB, data = MultiSend.MultiSend.encode(Solidity.Bytes(byteArrayOf()))
+                                    MULTI_SEND_OLD_LIB, data = MultiSend.MultiSend.encode(Solidity.Bytes(byteArrayOf()))
                                 ), operation = DELEGATE_CALL
-                            ), expected = TransactionData.MultiSend(emptyList())
+                            ), expected = TransactionData.MultiSend(emptyList(), MULTI_SEND_OLD_LIB)
                         ),
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
-                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_1_DATA"
+                                    MULTI_SEND_OLD_LIB, data = "0x$MULTI_SEND_1_DATA_OLD"
                                 ), operation = DELEGATE_CALL
                             ), expected = TransactionData.MultiSend(
                                 listOf(
@@ -499,18 +578,19 @@ class DefaultTransactionInfoRepositoryTest {
                                         Transaction(TEST_SAFE, value = Wei.ZERO, data = "0x$MULTI_SEND_SWAP_OWNER_DATA"),
                                         CALL
                                     )
-                                )
+                                ),
+                                MULTI_SEND_OLD_LIB
                             )
                         ),
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
-                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_2_DATA"
+                                    MULTI_SEND_OLD_LIB, data = "0x$MULTI_SEND_2_DATA_OLD"
                                 ), operation = DELEGATE_CALL
                             ), expected = TransactionData.MultiSend(
                                 listOf(
                                     SafeTransaction(
-                                        Transaction(MULTI_SEND_LIB, value = Wei.ZERO, data = "0x$MULTI_SEND_1_DATA".toLowerCase()),
+                                        Transaction(MULTI_SEND_OLD_LIB, value = Wei.ZERO, data = "0x$MULTI_SEND_1_DATA_OLD".toLowerCase()),
                                         DELEGATE_CALL
                                     ),
 
@@ -518,7 +598,51 @@ class DefaultTransactionInfoRepositoryTest {
                                         Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16)), data = "0x"),
                                         CALL
                                     )
-                                )
+                                ),
+                                MULTI_SEND_OLD_LIB
+                            )
+                        ),
+                        // New multisend contract
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = MultiSend.MultiSend.encode(Solidity.Bytes(byteArrayOf()))
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(emptyList(), MULTI_SEND_LIB)
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_1_DATA_NEW"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(
+                                listOf(
+                                    SafeTransaction(
+                                        Transaction(TEST_SAFE, value = Wei.ZERO, data = "0x$MULTI_SEND_SWAP_OWNER_DATA"),
+                                        CALL
+                                    )
+                                ),
+                                MULTI_SEND_LIB
+                            )
+                        ),
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    MULTI_SEND_LIB, data = "0x$MULTI_SEND_2_DATA_NEW"
+                                ), operation = DELEGATE_CALL
+                            ), expected = TransactionData.MultiSend(
+                                listOf(
+                                    SafeTransaction(
+                                        Transaction(MULTI_SEND_LIB, value = Wei.ZERO, data = "0x$MULTI_SEND_1_DATA_NEW".toLowerCase()),
+                                        DELEGATE_CALL
+                                    ),
+
+                                    SafeTransaction(
+                                        Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16)), data = "0x"),
+                                        CALL
+                                    )
+                                ),
+                                MULTI_SEND_LIB
                             )
                         )
                     )

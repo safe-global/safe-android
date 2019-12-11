@@ -8,8 +8,11 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
+import pm.gnosis.heimdall.data.repositories.TransactionInfo
+import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
@@ -63,16 +66,18 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
-            val tx = transaction.wrapped
             when {
-                transaction.isCall() -> tx.parseCall()
-                isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
+                transaction.isCall() -> transaction.wrapped.parseCall()
                 isMultiSend(transaction) -> parseMultiSend(transaction)
-                else ->
-                    TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, transaction.operation)
+                else -> transaction.toGenericTransactionData()
             }
         }
             .subscribeOn(Schedulers.io())
+
+    private fun SafeTransaction.toGenericTransactionData() =
+        wrapped.let { tx ->
+            TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data, operation)
+        }
 
     private fun SafeTransaction.isCall() = this.operation == Operation.CALL
 
@@ -88,18 +93,41 @@ class DefaultTransactionInfoRepository @Inject constructor(
                 TransactionData.Generic(address, value?.value ?: BigInteger.ZERO, data, Operation.CALL)
         }
 
-    // TODO: This need to be adjusted for the new MultiSend
     private fun isMultiSend(safeTransaction: SafeTransaction) =
         safeTransaction.operation == Operation.DELEGATE_CALL &&
-                safeTransaction.wrapped.address == MULTI_SEND_LIB &&
                 safeTransaction.wrapped.data != null &&
                 safeTransaction.wrapped.data!!.isSolidityMethod(MultiSend.MultiSend.METHOD_ID)
 
-    // TODO: This need to be adjusted for the new MultiSend
-    private fun parseMultiSend(transaction: SafeTransaction): TransactionData.MultiSend {
+    private fun parseMultiSend(transaction: SafeTransaction): TransactionData {
         val payload =
-            transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return TransactionData.MultiSend(emptyList())
+            transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID)
+                ?: return TransactionData.MultiSend(emptyList(), transaction.wrapped.address)
 
+        val multiSend = when (transaction.wrapped.address) {
+            MULTI_SEND_LIB -> nullOnThrow { parseMultiSendNew(payload) }
+            MULTI_SEND_OLD_LIB -> nullOnThrow { parseMultiSendOld(payload) }
+            else -> null
+        } ?: return transaction.toGenericTransactionData()
+        return processMultiSend(transaction, multiSend)
+    }
+
+    private fun parseMultiSendNew(payload: String): TransactionData.MultiSend {
+        val transactions = mutableListOf<SafeTransaction>()
+        val data = MultiSend.MultiSend.decodeArguments(payload).transactions.items.toHexString()
+        val reader = PayloadReader(data)
+        while (reader.hasAdditional(85)) {
+            val operation = Operation.fromInt(reader.readAsHexInt(1))
+            val to = nullOnThrow { reader.read(20).asEthereumAddress() } ?: throw IllegalArgumentException("Illegal to")
+            val value = nullOnThrow { Wei(reader.readAsHexBigInteger(32)) } ?: throw IllegalArgumentException("Illegal value")
+            val dataSize = nullOnThrow { reader.readAsHexBigInteger(32) } ?: throw IllegalArgumentException("Missing data size")
+            val data = nullOnThrow { reader.read(dataSize.toInt()).hexToByteArray() }
+            transactions.add(SafeTransaction(Transaction(to, value = value, data = data?.toHex()?.addHexPrefix()), operation))
+        }
+
+        return TransactionData.MultiSend(transactions, MULTI_SEND_LIB)
+    }
+
+    private fun parseMultiSendOld(payload: String): TransactionData.MultiSend {
         val transactions = mutableListOf<SafeTransaction>()
         val partitions = SolidityBase.PartitionData.of(payload)
         nullOnThrow { partitions.consume() } ?: throw IllegalArgumentException("Missing multisend data position")
@@ -115,21 +143,29 @@ class DefaultTransactionInfoRepository @Inject constructor(
             current = nullOnThrow { partitions.consume() }
         }
 
-        return TransactionData.MultiSend(transactions)
+        return TransactionData.MultiSend(transactions, MULTI_SEND_OLD_LIB)
     }
 
-    private fun isReplaceRecoveryPhrase(transaction: SafeTransaction): Boolean {
-        val payload = transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return false
+    private fun processMultiSend(transaction: SafeTransaction, multiSend: TransactionData.MultiSend) =
+        parseReplaceRecoveryPhrase(transaction, multiSend)
+            ?: multiSend
 
-        val noPrefix = payload.removeHexPrefix()
-        if (noPrefix.length.rem(PADDED_HEX_LENGTH) != 0) throw IllegalArgumentException("Data is not a multiple of $PADDED_HEX_LENGTH")
-        val partitions = noPrefix.chunked(PADDED_HEX_LENGTH)
-        if (partitions.size != 20) return false
-        if (partitions[3] != partitions[12]) return false
+    private fun parseReplaceRecoveryPhrase(transaction: SafeTransaction, multiSend: TransactionData.MultiSend): TransactionData? {
+        if (multiSend.transactions.size != 2) return null
 
-        if (!partitions[7].startsWith(GnosisSafe.SwapOwner.METHOD_ID)) return false
-        if (!partitions[16].startsWith(GnosisSafe.SwapOwner.METHOD_ID)) return false
-        return true
+        // Needs to be a valid owner swap tx
+        val firstOwnerSwap = multiSend.transactions[0]
+        if (firstOwnerSwap.operation != Operation.CALL || firstOwnerSwap.wrapped.data?.isSolidityMethod(GnosisSafe.SwapOwner.METHOD_ID) != true)
+            return null
+
+        // Needs to be a valid owner swap tx
+        val secondOwnerSwap = multiSend.transactions[1]
+        if (secondOwnerSwap.operation != Operation.CALL || secondOwnerSwap.wrapped.data?.isSolidityMethod(GnosisSafe.SwapOwner.METHOD_ID) != true)
+            return null
+
+        // We need to swap owners at the same Safe
+        if (firstOwnerSwap.wrapped.address != secondOwnerSwap.wrapped.address) return null
+        return TransactionData.ReplaceRecoveryPhrase(transaction)
     }
 
     private fun parseTokenTransfer(transaction: Transaction): TransactionData.AssetTransfer {
@@ -168,8 +204,23 @@ class DefaultTransactionInfoRepository @Inject constructor(
             Operation.values()[operation.toInt()]
         )
 
+    private class PayloadReader(private val payload: String) {
+        private var index = 0
+
+        fun read(bytes: Int) = payload.substring(index, index + bytes * 2).apply {
+            index += bytes * 2
+        }
+
+        fun readAsHexBigInteger(bytes: Int) = read(bytes).hexAsBigInteger()
+
+        fun readAsHexInt(bytes: Int) = read(bytes).toInt(16)
+
+        fun hasAdditional(bytes: Int) = (index + bytes * 2) <= payload.length
+    }
+
     companion object {
         private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
+        private val MULTI_SEND_OLD_LIB = BuildConfig.MULTI_SEND_OLD_ADDRESS.asEthereumAddress()!!
         // These additional costs are hardcoded in the smart contract
         private val SAFE_TX_BASE_COSTS = BigInteger.valueOf(32000)
     }

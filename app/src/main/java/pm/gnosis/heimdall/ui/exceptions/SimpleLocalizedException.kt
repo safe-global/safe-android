@@ -87,7 +87,7 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
                 (throwable as HttpException).let {
                     @Suppress("ConstantConditionIf")
                     if (BuildConfig.VERBOSE_EXCEPTIONS) {
-                        return@add "${throwable.code()} (${throwable.message()}): ${throwable.response().errorBody()?.string()}"
+                        return@add "${throwable.code()} (${throwable.message()}): ${throwable.response()?.errorBody()?.string()}"
                     }
                     when (throwable.code()) {
                         HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> c.getString(R.string.error_not_authorized_for_action)

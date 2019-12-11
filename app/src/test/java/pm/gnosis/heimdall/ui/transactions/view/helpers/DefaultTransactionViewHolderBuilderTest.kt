@@ -116,7 +116,7 @@ class DefaultTransactionViewHolderBuilderTest {
             TransactionData.UpdateMasterCopy::class to
                     TestData(TransactionData.UpdateMasterCopy(TEST_ADDRESS)) { it is UpdateMasterCopyViewHolder },
             TransactionData.MultiSend::class to
-                    TestData(TransactionData.MultiSend(emptyList())) { it is MultiSendViewHolder }
+                    TestData(TransactionData.MultiSend(emptyList(), TEST_ADDRESS)) { it is MultiSendViewHolder }
         )
     }
 }

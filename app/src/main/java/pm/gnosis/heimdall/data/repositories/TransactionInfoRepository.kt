@@ -56,7 +56,7 @@ sealed class TransactionData : Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class MultiSend(val transactions: List<SafeTransaction>) : TransactionData()
+    data class MultiSend(val transactions: List<SafeTransaction>, val contract: Solidity.Address) : TransactionData()
 
     fun addToBundle(bundle: Bundle) =
         bundle.let {

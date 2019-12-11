@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.transactions.builder.MultiSendTransactionBuilder
 import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
@@ -223,21 +224,8 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                 TransactionExecutionRepository.Operation.CALL
             )
             else ->
-                SafeTransaction(
-                    Transaction(
-                        BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!, data = MultiSend.MultiSend.encode(
-                            Solidity.Bytes(
-                                payloads.joinToString(separator = "") {
-                                    SolidityBase.encodeFunctionArguments(
-                                        Solidity.UInt8(BigInteger.ZERO),
-                                        safeInfo.address,
-                                        Solidity.UInt256(BigInteger.ZERO),
-                                        Solidity.Bytes(it.hexStringToByteArray())
-                                    )
-                                }.hexStringToByteArray()
-                            )
-                        )
-                    ), TransactionExecutionRepository.Operation.DELEGATE_CALL
+                MultiSendTransactionBuilder.build(
+                    payloads.map { SafeTransaction(Transaction(safeInfo.address, data=it), TransactionExecutionRepository.Operation.CALL) }
                 )
         }
 
