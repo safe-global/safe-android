@@ -495,8 +495,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 else {
                     // If we have a failure event then the transaction failed
                     receipt.logs.none {
-                        it.topics.getOrNull(0) == GnosisSafe.Events.ExecutionFailure.EVENT_ID ||
-                                it.topics.getOrNull(0) == GnosisSafeV1.Events.ExecutionFailed.EVENT_ID
+                        it.topics.getOrNull(0)?.removeHexPrefix() == GnosisSafe.Events.ExecutionFailure.EVENT_ID ||
+                                it.topics.getOrNull(0)?.removeHexPrefix() == GnosisSafeV1.Events.ExecutionFailed.EVENT_ID
                     }
                 }
                 executed to time
