@@ -10,12 +10,10 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
-import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexStringToByteArray
-import pm.gnosis.utils.toHex
 import java.math.BigInteger
 
 
@@ -54,20 +52,22 @@ object UpdateMasterCopyTransactionBuilder {
     private val DEFAULT_FALLBACK = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
     fun build(safe: Solidity.Address, data: TransactionData.UpdateMasterCopy): SafeTransaction =
-        MultiSendTransactionBuilder.build(TransactionData.MultiSend(listOf(
-            SafeTransaction(
-                Transaction(
-                    safe,
-                    data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
-                ), TransactionExecutionRepository.Operation.CALL
-            ),
-            SafeTransaction(
-                Transaction(
-                    safe,
-                    data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_FALLBACK)
-                ), TransactionExecutionRepository.Operation.CALL
+        MultiSendTransactionBuilder.build(
+            listOf(
+                SafeTransaction(
+                    Transaction(
+                        safe,
+                        data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
+                    ), TransactionExecutionRepository.Operation.CALL
+                ),
+                SafeTransaction(
+                    Transaction(
+                        safe,
+                        data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_FALLBACK)
+                    ), TransactionExecutionRepository.Operation.CALL
+                )
             )
-        )))
+        )
 }
 
 
@@ -76,7 +76,8 @@ object MultiSendTransactionBuilder {
     private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
 
     fun build(data: TransactionData.MultiSend): SafeTransaction =
-        build(data.transactions)
+        if (data.contract == MULTI_SEND_LIB) build(data.transactions)
+        else throw IllegalArgumentException("Cannot create transaction for old multi send")
 
     fun build(transactions: List<SafeTransaction>) =
         SafeTransaction(

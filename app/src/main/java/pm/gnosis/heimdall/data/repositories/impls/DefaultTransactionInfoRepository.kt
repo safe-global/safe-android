@@ -165,7 +165,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
             GnosisSafe.ChangeMasterCopy.decodeArguments(changeMasterCopy.wrapped.data!!.removeSolidityMethodPrefix(GnosisSafe.ChangeMasterCopy.METHOD_ID))
 
         // Check correct master copy
-        if (masterCopy._mastercopy != SafeContractUtils.safeMasterCopy_1_1_0) return null
+        if (masterCopy._mastercopy != SafeContractUtils.safeMasterCopy_1_1_1) return null
 
         // Needs to be a valid owner swap tx
         val setFallbackHandler = multiSend.transactions[1]
@@ -180,7 +180,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
         // We need to swap owners at the same Safe
         if (changeMasterCopy.wrapped.address != setFallbackHandler.wrapped.address) return null
-        return TransactionData.UpdateMasterCopy(SafeContractUtils.safeMasterCopy_1_1_0)
+        return TransactionData.UpdateMasterCopy(SafeContractUtils.safeMasterCopy_1_1_1)
     }
 
     private fun parseReplaceRecoveryPhrase(transaction: SafeTransaction, multiSend: TransactionData.MultiSend): TransactionData? {
