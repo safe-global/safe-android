@@ -4,9 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
 import io.reactivex.observers.TestObserver
 import org.junit.Before
 import org.junit.Rule
@@ -17,7 +14,6 @@ import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.GnosisSafe
@@ -29,12 +25,11 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.helpers.AddressHelper
-import pm.gnosis.model.Solidity
+import pm.gnosis.heimdall.ui.transactions.builder.MultiSendTransactionBuilder
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
-import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class UpdateMasterCopyViewHolderTest {
@@ -76,17 +71,27 @@ class UpdateMasterCopyViewHolderTest {
 
     @Before
     fun setUp() {
-        viewHolder = UpdateMasterCopyViewHolder(addressHelperMock, TransactionData.UpdateMasterCopy(TEST_MASTER_COPY), TEST_SAFE)
+        viewHolder = UpdateMasterCopyViewHolder(addressHelperMock, TransactionData.UpdateMasterCopy(MASTER_COPY), TEST_SAFE)
     }
 
     @Test
     fun loadTransaction() {
         val testObserver = TestObserver.create<SafeTransaction>()
-        val expectedTransaction = SafeTransaction(
-            Transaction(
-                address = SAFE_INFO.address,
-                data = GnosisSafe.ChangeMasterCopy.encode(TEST_MASTER_COPY)
-            ), operation = TransactionExecutionRepository.Operation.CALL
+        val expectedTransaction = MultiSendTransactionBuilder.build(
+            listOf(
+                SafeTransaction(
+                    Transaction(
+                        address = SAFE_INFO.address,
+                        data = GnosisSafe.ChangeMasterCopy.encode(MASTER_COPY)
+                    ), operation = TransactionExecutionRepository.Operation.CALL
+                ),
+                SafeTransaction(
+                    Transaction(
+                        address = SAFE_INFO.address,
+                        data = GnosisSafe.SetFallbackHandler.encode(FALLBACK_HANDLER)
+                    ), operation = TransactionExecutionRepository.Operation.CALL
+                )
+            )
         )
 
         viewHolder.loadTransaction().subscribe(testObserver)
@@ -214,7 +219,8 @@ class UpdateMasterCopyViewHolderTest {
 
     companion object {
         private val TEST_PHONE = "0x41".asEthereumAddress()!!
-        private val TEST_MASTER_COPY = "0x42".asEthereumAddress()!!
+        private val MASTER_COPY = "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F".asEthereumAddress()!!
+        private val FALLBACK_HANDLER = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
         private val TEST_SAFE = "0x43".asEthereumAddress()!!
         private val SAFE_INFO = SafeInfo(
             address = TEST_SAFE,

@@ -119,6 +119,7 @@
     <string name="restricted_transaction_modify_modules">It is not allowed to modify the modules of the Safe</string>
     <string name="restricted_transaction_change_threshold">It is not allowed to change the threshold of the Safe</string>
     <string name="restricted_transaction_modify_proxy">It is not allowed to modify the proxy of the Safe</string>
+    <string name="restricted_transaction_set_fallback_handler">It is not allowed to modify the fallback handler of the Safe</string>
     <string name="restricted_transaction_data_call_to_safe">It is not allowed to directly call a function on the Safe</string>
     <string name="error_loading_transaction">Error loading transaction</string>
     <string name="transaction_type_generic">Contract interaction</string>

@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -52,22 +53,24 @@ object UpdateMasterCopyTransactionBuilder {
     private val DEFAULT_FALLBACK = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
     fun build(safe: Solidity.Address, data: TransactionData.UpdateMasterCopy): SafeTransaction =
-        MultiSendTransactionBuilder.build(
-            listOf(
-                SafeTransaction(
-                    Transaction(
-                        safe,
-                        data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
-                    ), TransactionExecutionRepository.Operation.CALL
-                ),
-                SafeTransaction(
-                    Transaction(
-                        safe,
-                        data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_FALLBACK)
-                    ), TransactionExecutionRepository.Operation.CALL
+        if (data.masterCopy == SafeContractUtils.safeMasterCopy_1_1_1)
+            MultiSendTransactionBuilder.build(
+                listOf(
+                    SafeTransaction(
+                        Transaction(
+                            safe,
+                            data = GnosisSafe.ChangeMasterCopy.encode(SafeContractUtils.safeMasterCopy_1_1_1)
+                        ), TransactionExecutionRepository.Operation.CALL
+                    ),
+                    SafeTransaction(
+                        Transaction(
+                            safe,
+                            data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_FALLBACK)
+                        ), TransactionExecutionRepository.Operation.CALL
+                    )
                 )
             )
-        )
+        else throw IllegalArgumentException("Can only update to version 1.1.1")
 }
 
 
