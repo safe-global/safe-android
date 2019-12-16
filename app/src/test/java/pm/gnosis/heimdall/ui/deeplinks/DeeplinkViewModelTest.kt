@@ -88,8 +88,6 @@ class DeeplinkViewModelTest {
             .willReturn(
                 safeTransaction to null
             )
-        given(transactionRepositoryMock.checkRestrictedTransaction(MockUtils.any(), MockUtils.any()))
-            .willReturn(Single.just(safeTransaction))
 
         given(transactionRepositoryMock.parseTransactionData(MockUtils.any()))
             .willReturn(
