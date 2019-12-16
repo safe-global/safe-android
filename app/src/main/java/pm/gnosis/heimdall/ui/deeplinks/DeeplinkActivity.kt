@@ -13,7 +13,10 @@ import kotlinx.android.synthetic.main.screen_wallet_connect_safe_selection.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.awaitFirst
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -159,7 +162,7 @@ class DeeplinkViewModel @Inject constructor(
         loadingLaunch {
             updateState { copy(loading = true) }
             if (!parseTransactionData()) return@loadingLaunch
-            val safes = safeRepository.observeSafes().firstOrError().await()
+            val safes = safeRepository.observeSafes().awaitFirst()
             when {
                 safes.isEmpty() -> {
                     finishWithErrorMessage("No Safe available")

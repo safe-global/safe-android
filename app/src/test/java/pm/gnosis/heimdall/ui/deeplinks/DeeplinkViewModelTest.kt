@@ -32,6 +32,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestLifecycleRule
+import pm.gnosis.tests.utils.TestLiveDataObserver
 import pm.gnosis.tests.utils.testAppDispatchers
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
