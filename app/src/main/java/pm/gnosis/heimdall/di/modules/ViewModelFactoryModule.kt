@@ -14,6 +14,8 @@ import pm.gnosis.heimdall.ui.two_factor.ConnectAuthenticatorContract
 import pm.gnosis.heimdall.ui.two_factor.ConnectAuthenticatorViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
+import pm.gnosis.heimdall.ui.deeplinks.DeeplinkContract
+import pm.gnosis.heimdall.ui.deeplinks.DeeplinkViewModel
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputViewModel
 import pm.gnosis.heimdall.ui.two_factor.keycard.*
@@ -124,7 +126,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(ConfirmTransactionContract::class)
     abstract fun bindsConfirmTransactionContract(viewModel: ConfirmTransactionViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(ConnectAuthenticatorContract::class)
@@ -140,7 +141,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(CreateSafeConfirmRecoveryPhraseContract::class)
     abstract fun bindsCreateSafeConfirmRecoveryPhraseContract(viewModel: CreateSafeConfirmRecoveryPhraseViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(CreateSafePaymentTokenContract::class)
@@ -150,6 +150,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(DebugSettingsContract::class)
     abstract fun bindsDebugSettingsContract(viewModel: DebugSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DeeplinkContract::class)
+    abstract fun bindsDeeplinkContract(viewModel: DeeplinkViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -171,25 +176,21 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(GeneralSettingsContract::class)
     abstract fun bindsGeneralSettingsContract(viewModel: GeneralSettingsViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(KeycardCredentialsContract::class)
     abstract fun bindsKeycardCredentialsContract(viewModel: KeycardCredentialsViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(KeycardInitializeContract::class)
     abstract fun bindsKeycardInitializeContract(viewModel: KeycardInitializeViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(KeycardPairingContract::class)
     abstract fun bindsKeycardPairingContract(viewModel: KeycardPairingViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(KeycardSigningContract::class)
@@ -210,7 +211,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(PaymentTokensContract::class)
@@ -291,7 +291,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(SetupRecoveryPhraseContract::class)
     abstract fun bindsSetupRecoveryPhraseContract(viewModel: SetupRecoveryPhraseViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(SetupNewRecoveryPhraseIntroContract::class)
@@ -317,7 +316,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(UnlockContract::class)
     abstract fun bindsUnlockContract(viewModel: UnlockViewModel): ViewModel
 
-    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(UpgradeMasterCopyContract::class)

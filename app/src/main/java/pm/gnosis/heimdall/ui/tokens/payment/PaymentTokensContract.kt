@@ -48,7 +48,6 @@ abstract class PaymentTokensContract : ViewModel() {
 }
 
 
-@ExperimentalCoroutinesApi
 class PaymentTokensViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: ApplicationModule.AppCoroutineDispatchers,

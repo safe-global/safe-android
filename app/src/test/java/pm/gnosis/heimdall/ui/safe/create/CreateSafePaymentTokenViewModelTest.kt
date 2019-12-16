@@ -30,7 +30,6 @@ import java.math.BigInteger
 import java.net.UnknownHostException
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract.State as ViewState
 
-@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class CreateSafePaymentTokenViewModelTest {
 

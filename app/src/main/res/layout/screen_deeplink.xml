@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wallet_connect_safe_selection_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/wallet_connect_safe_selection_toolbar_background"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/wallet_connect_safe_selection_close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            app:layout_constraintStart_toStartOf="@+id/wallet_connect_safe_selection_toolbar_background"
+            app:layout_constraintTop_toTopOf="@+id/wallet_connect_safe_selection_toolbar_background"
+            app:srcCompat="@drawable/ic_close_24dp" />
+
+        <TextView
+            android:id="@+id/wallet_connect_safe_selection_title_label"
+            style="@style/WhiteTheme.ToolbarTitle"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:gravity="center_vertical"
+            android:text="@string/select_safe_for_deeplink"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/wallet_connect_safe_selection_close_btn"
+            app:layout_constraintTop_toTopOf="@+id/wallet_connect_safe_selection_toolbar_background" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wallet_connect_safe_selection_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wallet_connect_safe_selection_title_label"
+            tools:itemCount="3"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:background="@drawable/toolbar_dropshadow"
+            app:layout_constraintTop_toBottomOf="@+id/wallet_connect_safe_selection_title_label" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

@@ -33,7 +33,6 @@ import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class UpgradeMasterCopyContract(
     context: Context,
     appDispatcher: ApplicationModule.AppCoroutineDispatchers
@@ -61,7 +60,6 @@ abstract class UpgradeMasterCopyContract(
     ) : BaseStateViewModel.State
 }
 
-@ExperimentalCoroutinesApi
 class UpgradeMasterCopyViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     appDispatcher: ApplicationModule.AppCoroutineDispatchers,
@@ -145,7 +143,6 @@ class UpgradeMasterCopyViewModel @Inject constructor(
     override fun initialState() = State(null, null, null, null, null, false, false, null)
 }
 
-@ExperimentalCoroutinesApi
 class UpgradeMasterCopyActivity : ViewModelActivity<UpgradeMasterCopyContract>() {
 
     override fun screenId() = ScreenId.UPGRADE_MASTER_COPY

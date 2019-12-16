@@ -9,7 +9,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
-@ExperimentalCoroutinesApi
 class RecoverSafe2FAActivity : Select2FaActivity() {
 
     override fun onAuthenticatorSetupInfo(info: AuthenticatorSetupInfo) {

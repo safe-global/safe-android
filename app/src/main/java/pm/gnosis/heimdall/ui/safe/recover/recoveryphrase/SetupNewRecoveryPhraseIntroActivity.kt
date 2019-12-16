@@ -27,7 +27,6 @@ import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class SetupNewRecoveryPhraseIntroContract(context: Context, appDispatcher: ApplicationModule.AppCoroutineDispatchers) :
     BaseStateViewModel<SetupNewRecoveryPhraseIntroContract.State>(context, appDispatcher) {
 
@@ -41,7 +40,6 @@ abstract class SetupNewRecoveryPhraseIntroContract(context: Context, appDispatch
     ) : BaseStateViewModel.State
 }
 
-@ExperimentalCoroutinesApi
 class SetupNewRecoveryPhraseIntroViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     appDispatcher: ApplicationModule.AppCoroutineDispatchers,
@@ -98,7 +96,6 @@ class SetupNewRecoveryPhraseIntroViewModel @Inject constructor(
 
 }
 
-@ExperimentalCoroutinesApi
 class SetupNewRecoveryPhraseIntroActivity : RecoveryPhraseIntroActivity() {
 
     @Inject

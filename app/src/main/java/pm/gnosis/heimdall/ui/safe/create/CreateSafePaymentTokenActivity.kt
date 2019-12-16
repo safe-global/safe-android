@@ -51,7 +51,6 @@ abstract class CreateSafePaymentTokenContract : ViewModel() {
     abstract fun createSafe()
 }
 
-@ExperimentalCoroutinesApi
 class CreateSafePaymentTokenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: ApplicationModule.AppCoroutineDispatchers,

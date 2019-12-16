@@ -35,7 +35,6 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class KeycardInitializeContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
@@ -62,7 +61,6 @@ abstract class KeycardInitializeContract(
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardInitializeViewModel @Inject constructor(
     @ApplicationContext context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
@@ -131,14 +129,12 @@ class KeycardInitializeViewModel @Inject constructor(
     override fun initialState(): State = State.ReadingCard(false, null, null)
 }
 
-@ExperimentalCoroutinesApi
 abstract class KeycardInitializeBaseFragment : KeycardBaseFragment<KeycardInitializeContract.State, KeycardInitializeContract>() {
 
     @Inject
     override lateinit var viewModel: KeycardInitializeContract
 }
 
-@ExperimentalCoroutinesApi
 class KeycardInitializeReadingCardFragment : KeycardInitializeBaseFragment(), ReadingCardScreen {
     override val layout = R.layout.screen_keycard_reading
 
@@ -162,7 +158,6 @@ class KeycardInitializeReadingCardFragment : KeycardInitializeBaseFragment(), Re
     override fun inject(component: ViewComponent) = component.inject(this)
 }
 
-@ExperimentalCoroutinesApi
 class KeycardInitializeDialog private constructor() : NfcDialog() {
 
     @Inject

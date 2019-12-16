@@ -413,7 +413,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
 
-    @ExperimentalCoroutinesApi
     private fun handleSafeConfig(newMasterCopy: Solidity.Address?, isConnected: Boolean) {
         val safe = safeSubject.value as? Safe
         val canUpgrade = safe != null && newMasterCopy != null

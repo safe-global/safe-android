@@ -7,7 +7,6 @@ import pm.gnosis.heimdall.ui.safe.pairing.replace.Replace2FaRecoveryPhraseActivi
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 
-@ExperimentalCoroutinesApi
 class Replace2FaActivity : Select2FaActivity() {
 
     override fun onAuthenticatorSetupInfo(info: AuthenticatorSetupInfo) {

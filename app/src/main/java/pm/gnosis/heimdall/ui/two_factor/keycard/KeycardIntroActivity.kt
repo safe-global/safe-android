@@ -17,7 +17,6 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
-@ExperimentalCoroutinesApi
 class KeycardIntroActivity : NfcActivity(), KeycardPairingDialog.PairingCallback {
 
     override fun screenId() = ScreenId.KEYCARD_INTRO

@@ -21,7 +21,6 @@ import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
-@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class DefaultCardRepositoryTest {
 

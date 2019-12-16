@@ -394,7 +394,7 @@ class DefaultSubmitTransactionHelperTest {
             )
         ).willReturn(Single.error(error))
         submitEvents.onNext(Unit)
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(false)) }
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(null)) }
         updates += { it == ErrorResult<SubmitTransactionHelper.ViewUpdate>(error) }
         testObserver.assertUpdates(updates)
         then(signaturePushRepository).shouldHaveNoMoreInteractions()
@@ -421,7 +421,7 @@ class DefaultSubmitTransactionHelperTest {
             signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), MockUtils.any(), anySet())
         ).willReturn(Completable.error(TimeoutException()))
         submitEvents.onNext(Unit)
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(TEST_CHAIN_HASH)) }
         testObserver.assertUpdates(updates)
         then(signaturePushRepository).should()
             .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, TEST_SAFE, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
@@ -448,7 +448,7 @@ class DefaultSubmitTransactionHelperTest {
             signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), MockUtils.any(), anySet())
         ).willReturn(Completable.complete())
         submitEvents.onNext(Unit)
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(TEST_CHAIN_HASH)) }
         testObserver.assertUpdates(updates)
         then(signaturePushRepository).should(times(2))
             .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, TEST_SAFE, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))

@@ -1,8 +1,10 @@
 package pm.gnosis.heimdall.ui.transactions.view.review
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.widget.NestedScrollView
 import com.jakewharton.rxbinding2.view.clicks
@@ -30,15 +32,19 @@ import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.V
 import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionSubmitInfoViewHelper
 import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.loggedTry
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 
-class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback, ConfirmationDialog.OnDismissListener {
+class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback,
+    ConfirmationDialog.OnDismissListener {
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper
@@ -52,6 +58,8 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
     private var referenceId: Long? = null
+
+    private var submittedTxChainHash: String? = null
 
     private val unlockStatusSubject = PublishSubject.create<Unit>()
 
@@ -158,7 +166,8 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
             is ViewUpdate.TransactionInfo ->
                 setupViewHolder(update.viewHolder)
             is ViewUpdate.TransactionSubmitted -> {
-                if (update.success) {
+                submittedTxChainHash = update.txHash
+                if (update.txHash != null) {
                     ConfirmationDialog.create(R.drawable.ic_congratulations, R.string.transaction_submitted).show(supportFragmentManager, null)
                 } else {
                     infoViewHelper.toggleReadyState(true)
@@ -170,8 +179,11 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
     }
 
     override fun onConfirmationDialogDismiss() {
-        // If we have a reference id then we have been opened from a external request and should just close the screen without opening a new one
-        referenceId?.let {
+        intent.getStringExtra(EXTRA_REFERRER)?.let {
+            nullOnThrow { openUrl(it + submittedTxChainHash) }
+            finish()
+        } ?: referenceId?.let {
+            // If we have a reference id then we have been opened from a external request and should just close the screen without opening a new one
             finish()
         } ?: run {
             startActivity(
@@ -214,11 +226,20 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_REFERENCE_ID = "extra.long.reference_id"
         private const val EXTRA_SESSION_ID = "extra.string.session_id"
-        fun createIntent(context: Context, safe: Solidity.Address, txData: TransactionData, referenceId: Long? = null, sessionId: String? = null) =
+        private const val EXTRA_REFERRER = "extra.string.referrer"
+        fun createIntent(
+            context: Context,
+            safe: Solidity.Address,
+            txData: TransactionData,
+            referenceId: Long? = null,
+            sessionId: String? = null,
+            referrer: String? = null
+        ) =
             Intent(context, ReviewTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safe.value.toHexString())
                 referenceId?.let { putExtra(EXTRA_REFERENCE_ID, it) }
                 putExtra(EXTRA_SESSION_ID, sessionId)
+                putExtra(EXTRA_REFERRER, referrer)
                 putExtras(Bundle().apply {
                     txData.addToBundle(this)
                 })

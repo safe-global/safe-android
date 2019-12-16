@@ -46,7 +46,6 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class KeycardPairingContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
@@ -87,7 +86,6 @@ abstract class KeycardPairingContract(
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardPairingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
@@ -166,7 +164,6 @@ class KeycardPairingViewModel @Inject constructor(
     override fun initialState(): State = State.WaitingForInput(null, null, null)
 }
 
-@ExperimentalCoroutinesApi
 abstract class KeycardPairingBaseFragment : KeycardBaseFragment<KeycardPairingContract.State, KeycardPairingContract>() {
 
     @Inject
@@ -222,7 +219,6 @@ class KeycardNoSlotsFragment : KeycardPairingBaseFragment() {
     override fun updateState(state: KeycardPairingContract.State) {}
 }
 
-@ExperimentalCoroutinesApi
 class KeycardPairingReadingCardFragment : KeycardPairingBaseFragment(), ReadingCardScreen {
     override val layout = R.layout.screen_keycard_reading
 
@@ -245,7 +241,6 @@ class KeycardPairingReadingCardFragment : KeycardPairingBaseFragment(), ReadingC
     override fun inject(component: ViewComponent) = component.inject(this)
 }
 
-@ExperimentalCoroutinesApi
 class KeycardPairingInputFragment private constructor() : KeycardPairingBaseFragment() {
 
     override val layout = R.layout.screen_keycard_pairing_input
@@ -301,7 +296,6 @@ class KeycardPairingInputFragment private constructor() : KeycardPairingBaseFrag
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardPairingDialog private constructor() : NfcDialog() {
 
     @Inject
