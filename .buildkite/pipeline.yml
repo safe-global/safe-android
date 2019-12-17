@@ -1,7 +1,7 @@
 steps:
 
-#  - label: 'Unit Tests'
-#    command: 'ci/run_unit_tests.sh'
+  - label: 'Unit Tests'
+    command: 'ci/run_unit_tests.sh'
 
 #  - label: ':the_horns: UI Tests'
 #    if: !build.pull_request.draft
@@ -14,10 +14,16 @@ steps:
 #    key: 'upload-crashlytics'
 #    command: 'ci/upload_crashlytics_versions_buildkite.sh'
 
-  - label: 'Uploading Artifacts'
-    if: build.branch == 'master' && build.tag ~= /^v[0-9]+/
-    key: 'upload-github'
-    command: 'ci/upload_to_github.sh'
-    artifact_paths:
-      - "app/build/outputs/apk/*/*-rinkeby.apk"
-      - "app/build/outputs/apk/*/*-release.apk"
+  - trigger: "gnosis-safe-deployment"
+    label: ":rocket: Deploy"
+#    branches: "master"
+    async: true
+    build:
+      message: "${BUILDKITE_MESSAGE}"
+      commit: "${BUILDKITE_COMMIT}"
+      branch: "${BUILDKITE_BRANCH}"
+      env:
+        BUILDKITE_PULL_REQUEST: "${BUILDKITE_PULL_REQUEST}"
+        BUILDKITE_PULL_REQUEST_BASE_BRANCH: "${BUILDKITE_PULL_REQUEST_BASE_BRANCH}"
+        BUILDKITE_PULL_REQUEST_REPO: "${BUILDKITE_PULL_REQUEST_REPO}"
+
