@@ -179,7 +179,13 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
     }
 
     override fun onConfirmationDialogDismiss() {
-        intent.getStringExtra(EXTRA_REFERRER)?.let {
+        callingActivity?.let {
+            setResult(Activity.RESULT_OK, Intent().apply {
+                data = Uri.Builder().scheme("ethereum").authority("tx-$submittedTxChainHash").build()
+                putExtra(RESULT_TX_HASH, submittedTxChainHash)
+            })
+            finish()
+        } ?: intent.getStringExtra(EXTRA_REFERRER)?.let {
             nullOnThrow { openUrl(it + submittedTxChainHash) }
             finish()
         } ?: referenceId?.let {
@@ -223,6 +229,7 @@ class ReviewTransactionActivity : NfcViewModelActivity<ReviewTransactionContract
     }
 
     companion object {
+        const val RESULT_TX_HASH = "result.string.ethereum_tx_hash"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_REFERENCE_ID = "extra.long.reference_id"
         private const val EXTRA_SESSION_ID = "extra.string.session_id"

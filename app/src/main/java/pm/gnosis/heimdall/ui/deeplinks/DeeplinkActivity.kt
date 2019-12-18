@@ -193,6 +193,15 @@ class DeeplinkActivity : ViewModelActivity<DeeplinkContract>() {
 
     override fun inject(component: ViewComponent) = component.inject(this)
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE_RESULT_PROXY) {
+            setResult(resultCode, data)
+            finish()
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.action != Intent.ACTION_VIEW || intent.data == null) {
@@ -214,6 +223,14 @@ class DeeplinkActivity : ViewModelActivity<DeeplinkContract>() {
                 errorToast(viewAction.error)
                 finish()
             }
+            is BaseStateViewModel.ViewAction.StartActivity -> {
+                if (callingActivity != null) {
+                    startActivityForResult(viewAction.intent, REQUEST_CODE_RESULT_PROXY)
+                } else {
+                    startActivity(viewAction.intent)
+                    finish()
+                }
+            }
             else -> wallet_connect_safe_selection_list.handleViewAction(viewAction) { finish() }
         }
     }
@@ -226,6 +243,10 @@ class DeeplinkActivity : ViewModelActivity<DeeplinkContract>() {
             .subscribeBy(onError = Timber::e) {
                 viewModel.selectSafe(it.address())
             }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_RESULT_PROXY = 9658
     }
 
 }
