@@ -5,8 +5,8 @@ set -e
 # Buildkite uses a clean state for each step (for concurrency)
 ./ci/prepare_env_buildkite.sh
 
-#if [[ $BUILDKITE_BRANCH == 'master' ]]
-#then
+if [[ $BUILDKITE_BRANCH == 'master' ]]
+then
     echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
     echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
 
@@ -14,4 +14,4 @@ set -e
 
     ./gradlew assembleInternal assembleRinkeby assembleRelease
     ./gradlew crashlyticsUploadDistributionInternal crashlyticsUploadDistributionRinkeby crashlyticsUploadDistributionRelease
-#fi
+fi
