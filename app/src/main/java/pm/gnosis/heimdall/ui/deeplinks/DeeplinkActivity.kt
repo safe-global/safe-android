@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -14,9 +16,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.rx2.awaitFirst
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -52,7 +52,7 @@ interface DeeplinkTransactionParser {
 @Singleton
 class AndroidDeeplinkTransactionParser @Inject constructor() : DeeplinkTransactionParser {
     override fun parse(link: String): Pair<SafeTransaction, String?> =
-        Uri.parse(link).run {
+        Uri.parse(prepareLink(link)).run {
             SafeTransaction(Transaction(
                 host!!.asEthereumAddress()!!,
                 value = Wei(getQueryParameter(KEY_VALUE)?.run { if (startsWith("0x")) hexAsBigInteger() else toBigInteger() }
@@ -61,7 +61,16 @@ class AndroidDeeplinkTransactionParser @Inject constructor() : DeeplinkTransacti
             ), TransactionExecutionRepository.Operation.CALL) to getQueryParameter(KEY_REFERRER)
         }
 
+    private fun prepareLink(link: String): String {
+        var localLink: String = link
+        if (localLink.startsWith(ETHEREUM_SCHEME) && !localLink.startsWith("$ETHEREUM_SCHEME//")) {
+            localLink = localLink.replace(ETHEREUM_SCHEME, "$ETHEREUM_SCHEME//")
+        }
+        return localLink
+    }
+
     companion object {
+        private const val ETHEREUM_SCHEME = "ethereum:"
         private const val KEY_DATA = "data"
         private const val KEY_VALUE = "value"
         private const val KEY_REFERRER = "referrer"
