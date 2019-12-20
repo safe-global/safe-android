@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
 import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
-import pm.gnosis.heimdall.ui.deeplinks.AndroidDeeplinkTransactionParser
+import pm.gnosis.heimdall.ui.deeplinks.EIP681DeeplinkTransactionParser
 import pm.gnosis.heimdall.ui.deeplinks.DeeplinkTransactionParser
 import pm.gnosis.heimdall.ui.safe.helpers.DefaultRecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
@@ -87,7 +87,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsDeeplinkTransactionParser(provider: AndroidDeeplinkTransactionParser): DeeplinkTransactionParser
+    abstract fun bindsDeeplinkTransactionParser(provider: EIP681DeeplinkTransactionParser): DeeplinkTransactionParser
 
     /*
         Repositories
