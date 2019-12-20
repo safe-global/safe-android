@@ -41,10 +41,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexToByteArray
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -109,11 +106,14 @@ class EIP681DeeplinkTransactionParser @Inject constructor() : DeeplinkTransactio
                 type == "address" ->
                     value.asEthereumAddress()!!
                 type.startsWith("int") ->
-                    Solidity.Int256(if (value.startsWith("0x")) SolidityBase.decodeInt(value) else value.parseToBigInteger())
+                    Solidity.Int256(if (value.startsWith("0x")) SolidityBase.decodeInt(value.removeHexPrefix()) else value.parseToBigInteger())
                 type.startsWith("uint") ->
                     Solidity.Int256(value.parseToBigInteger())
                 type == "string" ->
-                    Solidity.String(String(value.hexToByteArray()))
+                    if (value.startsWith("0x"))
+                        Solidity.String(String(value.hexToByteArray()))
+                    else
+                        Solidity.String(value)
                 type == "bytes" ->
                     Solidity.Bytes(value.hexToByteArray())
                 type.startsWith("bytes") ->
@@ -123,7 +123,7 @@ class EIP681DeeplinkTransactionParser @Inject constructor() : DeeplinkTransactio
                         when (value) {
                             "true" -> true
                             "false" -> false
-                            else -> SolidityBase.decodeBool(value)
+                            else -> SolidityBase.decodeBool(value.removeHexPrefix())
                         }
                     )
                 else -> throw IllegalArgumentException("Unknown value type")
@@ -184,7 +184,7 @@ class EIP681DeeplinkTransactionParser @Inject constructor() : DeeplinkTransactio
         private const val KEY_GAS = "gas"
         private const val KEY_GAS_LIMIT = "gasLimit"
         private const val KEY_GAS_PRICE = "gasPrice"
-        private const val KEY_DEEPLINK_REFERRER = "deeplink_referrer"
+        private const val KEY_DEEPLINK_REFERRER = "referrer"
     }
 }
 
