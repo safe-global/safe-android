@@ -14,7 +14,7 @@ echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 ./gradlew assembleRinkeby assembleRelease
 
 
-# Define variables.$APP_VERSION_CODE$APP_VERSION_CODE
+# -------- Upload to github ----------
 REPO="https://api.github.com/repos/gnosis/safe-android"
 TAGS="$REPO/releases/tags/$BUILDKITE_BRANCH"
 AUTH="Authorization: token $GITHUB_API_KEY"
@@ -29,7 +29,7 @@ eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:al
 [ "$id" ] || { echo "Error: Failed to get release id for tag: $BUILDKITE_BRANCH"; echo "$response" | awk 'length($0)<100' >&2; exit 1; }
 
 # Upload asset
-echo "Uploading asset... $localAssetPath" >&2
+echo "Uploading assets..." >&2
 
 # Construct url
 ASSET="https://uploads.github.com/repos/gnosis/safe-android/releases/$id/assets"
