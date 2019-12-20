@@ -3,7 +3,7 @@
 set -e
 
 # Buildkite uses a clean state for each step (for concurrency)
-#./ci/prepare_env_buildkite.sh
+./ci/prepare_env_buildkite.sh
 
 #if [[ $BUILDKITE_BRANCH == 'master' ]]
 #then

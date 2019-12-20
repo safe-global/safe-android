@@ -1,23 +1,19 @@
 steps:
 
   - label: 'Unit Tests'
-    command: 'ci/run_unit_tests.sh'
+    commands:
+      - 'ci/prepare_env_buildkite.sh'
+      - 'ci/run_unit_tests.sh'
 
-#  - label: ':the_horns: UI Tests'
-#    if: !build.pull_request.draft
-#    command: 'ci/run_ui_tests.sh'
-
-#  - label: ':eyes: Obfuscate/Minify build'
-#    command: 'ci/transform_with_R8.sh'
-
-#  - label: 'Upload Crashlytics Versions'
-#    key: 'upload-crashlytics'
-#    command: 'ci/upload_crashlytics_versions_buildkite.sh'
+  - label: ':the_horns: UI Tests'
+    if: !build.pull_request.draft
+    commands:
+      - 'ci/prepare_env_buildkite.sh'
+      - 'ci/run_ui_tests.sh'
 
   - trigger: "gnosis-safe-deployment"
     label: ":rocket: Deploy"
-#    branches: "master"
-    async: true
+    async: false
     build:
       message: "${BUILDKITE_MESSAGE}"
       commit: "${BUILDKITE_COMMIT}"

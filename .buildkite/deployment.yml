@@ -1,13 +1,12 @@
 steps:
 
-#  - label: 'Upload Crashlytics Versions'
-#    key: 'upload-crashlytics'
-#    command: 'ci/upload_crashlytics_versions_buildkite.sh'
+  - label: 'Upload Crashlytics Versions'
+    key: 'upload-crashlytics'
+    command: 'ci/upload_crashlytics_versions.sh'
 
   - label: 'Upload Github Release'
     if: build.branch =~ /^v[0-9]+.*/
     key: 'upload-github'
-    command: 'ci/upload_to_github.sh'
-    artifact_paths:
-      - "app/build/outputs/apk/*/*-rinkeby.apk"
-      - "app/build/outputs/apk/*/*-release.apk"
+    commands:
+      - 'ci/prepare_env_buildkite.sh'
+      - 'ci/upload_to_github.sh'
