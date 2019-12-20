@@ -477,6 +477,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="safe_recovery_fee">Safe recovery fee</string>
     <string name="safe_recovery_fee_required">A network fee will be deducted from your Safe balance to recover your Safe.</string>
     <string name="select_safe_to_connect">Select a Safe to connect</string>
+    <string name="select_safe_for_deeplink">Select a Safe for transaction</string>
     <string name="this_payment_will_be_used">This payment method will be used to pay network fees in all transactions.</string>
     <string name="fee_method">Fee Payment Method</string>
     <string name="fee">Fee</string>

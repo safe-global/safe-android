@@ -13,7 +13,6 @@ import org.junit.Assert.assertEquals
 import org.junit.runner.Description
 import java.util.concurrent.CopyOnWriteArrayList
 
-@ExperimentalCoroutinesApi
 class TestLifecycleRule: InstantTaskExecutorRule(), LifecycleOwner {
 
     private val lifecycle = LifecycleRegistry(this)

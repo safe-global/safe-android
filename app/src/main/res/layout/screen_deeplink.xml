@@ -36,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/toolbar_height"
             android:gravity="center_vertical"
-            android:text="@string/select_safe_to_connect"
+            android:text="@string/select_safe_for_deeplink"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/wallet_connect_safe_selection_close_btn"
@@ -50,7 +50,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wallet_connect_safe_selection_title_label"
-            tools:listitem="@layout/layout_safe_item"
             tools:itemCount="3"/>
 
         <View

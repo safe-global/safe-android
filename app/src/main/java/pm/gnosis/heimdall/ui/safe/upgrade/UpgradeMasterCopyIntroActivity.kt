@@ -23,7 +23,6 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 
-@ExperimentalCoroutinesApi
 class UpgradeMasterCopyIntroActivity : BaseActivity() {
 
     private val layouts =

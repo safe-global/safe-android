@@ -280,7 +280,7 @@ class TransactionSubmitInfoViewHelperTest {
         val viewHolder = mock(TransactionInfoViewHolder::class.java)
         helper.bind(containerView)
         assertThrow({
-            helper.applyUpdate(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true))
+            helper.applyUpdate(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted("some transaction hash"))
         })
         assertThrow({
             helper.applyUpdate(SubmitTransactionHelper.ViewUpdate.TransactionInfo(viewHolder))

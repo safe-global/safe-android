@@ -52,6 +52,17 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.deeplinks.DeeplinkActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="ethereum" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.onboarding.password.PasswordSetupActivity"
             android:screenOrientation="portrait"

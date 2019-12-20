@@ -11,7 +11,6 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import timber.log.Timber
 
-@ExperimentalCoroutinesApi
 abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
     context: Context,
     private val appDispatcher: ApplicationModule.AppCoroutineDispatchers
@@ -26,10 +25,10 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
         var viewAction: ViewAction?
     }
 
-    sealed class ViewAction {
-        data class ShowError(val error: Throwable) : ViewAction()
-        data class StartActivity(val intent: Intent) : ViewAction()
-        object CloseScreen : ViewAction()
+    interface ViewAction {
+        data class ShowError(val error: Throwable) : ViewAction
+        data class StartActivity(val intent: Intent) : ViewAction
+        object CloseScreen : ViewAction
     }
 
     @Suppress("LeakingThis")

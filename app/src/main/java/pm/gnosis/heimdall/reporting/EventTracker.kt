@@ -90,6 +90,7 @@ enum class ScreenId {
     WELCOME,
     WELCOME_TERMS,
     DIALOG_SHARE_ADDRESS,
+    DEEPLINK
 }
 
 enum class ButtonId

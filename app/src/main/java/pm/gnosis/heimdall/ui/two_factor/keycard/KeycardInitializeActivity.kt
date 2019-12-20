@@ -25,7 +25,6 @@ import java.security.SecureRandom
 import javax.inject.Inject
 
 
-@ExperimentalCoroutinesApi
 abstract class KeycardCredentialsContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
@@ -33,7 +32,6 @@ abstract class KeycardCredentialsContract(
     data class State(val pin: String?, val puk: String?, val pairingKey: String?, override var viewAction: ViewAction?) : BaseStateViewModel.State
 }
 
-@ExperimentalCoroutinesApi
 class KeycardCredentialsViewModel @Inject constructor(
     @ApplicationContext context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
@@ -70,7 +68,6 @@ class KeycardCredentialsViewModel @Inject constructor(
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardInitializeActivity : NfcViewModelActivity<KeycardCredentialsContract>(), KeycardInitializeDialog.PairingCallback {
 
     override fun screenId() = ScreenId.KEYCARD_INITIALIZE

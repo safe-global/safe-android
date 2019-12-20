@@ -147,8 +147,8 @@ class ConfirmTransactionActivity : NfcViewModelActivity<ConfirmTransactionContra
         when (update) {
             is ViewUpdate.TransactionInfo ->
                 setupViewHolder(update.viewHolder)
-            is SubmitTransactionHelper.ViewUpdate.TransactionSubmitted -> {
-                if (update.success) {
+            is ViewUpdate.TransactionSubmitted -> {
+                if (update.txHash != null) {
                     finish()
                 } else {
                     infoViewHelper.toggleReadyState(true)

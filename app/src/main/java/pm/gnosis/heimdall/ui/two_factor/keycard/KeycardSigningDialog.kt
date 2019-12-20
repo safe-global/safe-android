@@ -36,7 +36,6 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.*
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class KeycardSigningContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
@@ -71,7 +70,6 @@ abstract class KeycardSigningContract(
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardSigningViewModel @Inject constructor(
     @ApplicationContext context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
@@ -140,14 +138,12 @@ class KeycardSigningViewModel @Inject constructor(
 
 }
 
-@ExperimentalCoroutinesApi
 abstract class KeycardSigningBaseFragment : KeycardBaseFragment<KeycardSigningContract.State, KeycardSigningContract>() {
 
     @Inject
     override lateinit var viewModel: KeycardSigningContract
 }
 
-@ExperimentalCoroutinesApi
 class KeycardSigningReadingCardFragment : KeycardSigningBaseFragment(), ReadingCardScreen {
     override val layout = R.layout.screen_keycard_reading
 
@@ -170,7 +166,6 @@ class KeycardSigningReadingCardFragment : KeycardSigningBaseFragment(), ReadingC
     override fun inject(component: ViewComponent) = component.inject(this)
 }
 
-@ExperimentalCoroutinesApi
 class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
 
     override val layout = R.layout.screen_keycard_signing_input
@@ -200,7 +195,6 @@ class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
     }
 }
 
-@ExperimentalCoroutinesApi
 class KeycardSigningDialog private constructor() : NfcDialog() {
 
     @Inject
