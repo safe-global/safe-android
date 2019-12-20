@@ -1,13 +1,12 @@
 package pm.gnosis.heimdall.ui.deeplinks
 
-import kotlinx.android.synthetic.main.popup_address_tooltip.view.*
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -21,7 +20,7 @@ class EIP681DeeplinkTransactionParserTest {
     @Test
     fun parseValueTransfer() {
         assertEquals(
-            parser.parse("ethereum:${TEST_SAFE.asEthereumAddressChecksumString()}@1?value=42"),
+            parser.parse("ethereum:${TEST_SAFE.asEthereumAddressChecksumString()}@${BuildConfig.BLOCKCHAIN_CHAIN_ID}?value=42"),
             SafeTransaction(
                 Transaction(
                     TEST_SAFE,
@@ -60,6 +59,11 @@ class EIP681DeeplinkTransactionParserTest {
                 TransactionExecutionRepository.Operation.CALL
             ) to "some_referrer_url"
         )
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun throwWrongChainID() {
+        parser.parse("ethereum:${TEST_SAFE.asEthereumAddressChecksumString()}@${BuildConfig.BLOCKCHAIN_CHAIN_ID + 1}?value=42")
     }
 
     @Test

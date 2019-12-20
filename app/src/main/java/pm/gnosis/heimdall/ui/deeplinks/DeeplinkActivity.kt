@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.rx2.await
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -43,6 +44,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
 import timber.log.Timber
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -138,6 +140,9 @@ class EIP681DeeplinkTransactionParser @Inject constructor() : DeeplinkTransactio
     ) {
         if (currentIndex > state.currentIndex) {
             when (state.currentType) {
+                Type.CHAIN_ID ->
+                    if (data.substring(state.currentIndex, currentIndex).toLong() != BuildConfig.BLOCKCHAIN_CHAIN_ID)
+                        throw IllegalStateException("Wrong network")
                 Type.ADDRESS ->
                     state.address = data.substring(state.currentIndex, currentIndex).asEthereumAddress()!!
                 Type.FUNCTION ->
