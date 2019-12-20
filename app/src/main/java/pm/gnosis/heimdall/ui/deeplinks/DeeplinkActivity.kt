@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.deeplinks
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
@@ -17,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.rx2.await
+import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -36,10 +36,15 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.errorToast
+import pm.gnosis.heimdall.utils.parseToBigInteger
 import pm.gnosis.model.Solidity
+import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -50,32 +55,136 @@ interface DeeplinkTransactionParser {
 }
 
 @Singleton
-class AndroidDeeplinkTransactionParser @Inject constructor() : DeeplinkTransactionParser {
-    override fun parse(link: String): Pair<SafeTransaction, String?> =
-        Uri.parse(prepareLink(link)).run {
-            SafeTransaction(Transaction(
-                host!!.asEthereumAddress()!!,
-                value = Wei(getQueryParameter(KEY_VALUE)?.run { if (startsWith("0x")) hexAsBigInteger() else toBigInteger() }
-                    ?: BigInteger.ZERO),
-                data = getQueryParameter(KEY_DATA)?.hexStringToByteArray()?.toHex()?.addHexPrefix()
-            ), TransactionExecutionRepository.Operation.CALL) to getQueryParameter(KEY_REFERRER)
+class EIP681DeeplinkTransactionParser @Inject constructor() : DeeplinkTransactionParser {
+    override fun parse(link: String): Pair<SafeTransaction, String?> {
+        if (!link.startsWith(ETHEREUM_SCHEME)) throw IllegalArgumentException("Not an ethereum url")
+        val data = link.removePrefix(ERC67_PREFIX).removePrefix("//") // In case a normal url scheme was used
+        val state = ParserState()
+        for (i in data.indices) {
+            when (data[i]) {
+                Type.ADDRESS.separator -> parseSegment(state, data, Type.ADDRESS, i)
+                Type.CHAIN_ID.separator -> parseSegment(state, data, Type.CHAIN_ID, i)
+                Type.FUNCTION.separator -> parseSegment(state, data, Type.FUNCTION, i)
+                Type.PARAMS.separator -> parseSegment(state, data, Type.PARAMS, i)
+            }
+        }
+        parseSegment(state, data, Type.PARAMS, data.length)
+        cleanParams(state)
+        return state.run {
+            SafeTransaction(
+                Transaction(
+                    address ?: throw IllegalArgumentException("No to address provided"),
+                    value = state.value?.let { Wei(it) },
+                    data = state.encodeData()
+                ),
+                operation = TransactionExecutionRepository.Operation.CALL
+            ) to state.referrer
+        }
+    }
+
+    private data class ParserState(
+        var currentType: Type = Type.ADDRESS,
+        var currentIndex: Int = 0,
+        var address: Solidity.Address? = null,
+        var value: BigInteger? = null,
+        var function: String? = null,
+        var referrer: String? = null,
+        var functionParams: MutableList<Pair<String, String>>? = null
+    ) {
+        fun encodeData(): String? =
+            function?.let {
+                val signatureBuilder = StringBuilder()
+                val encodedData = functionParams?.map { (key, value) ->
+                    if (signatureBuilder.isNotEmpty()) signatureBuilder.append(",")
+                    signatureBuilder.append(key)
+                    parseValue(key, value)
+                }?.let {
+                    SolidityBase.encodeTuple(it)
+                }
+                "0x" + Sha3Utils.keccak("$function($signatureBuilder)".toByteArray()).toHexString().substring(0, 8) + encodedData
+            }
+
+        private fun parseValue(type: String, value: String) =
+            when {
+                type == "address" ->
+                    value.asEthereumAddress()!!
+                type.startsWith("int") ->
+                    Solidity.Int256(if (value.startsWith("0x")) SolidityBase.decodeInt(value) else value.parseToBigInteger())
+                type.startsWith("uint") ->
+                    Solidity.Int256(value.parseToBigInteger())
+                type == "string" ->
+                    Solidity.String(String(value.hexToByteArray()))
+                type == "bytes" ->
+                    Solidity.Bytes(value.hexToByteArray())
+                type.startsWith("bytes") ->
+                    Solidity.Bytes32(value.hexToByteArray())
+                type == "bool" ->
+                    Solidity.Bool(
+                        when (value) {
+                            "true" -> true
+                            "false" -> false
+                            else -> SolidityBase.decodeBool(value)
+                        }
+                    )
+                else -> throw IllegalArgumentException("Unknown value type")
+            }
+    }
+
+    private fun parseSegment(
+        state: ParserState,
+        data: String,
+        nextType: Type,
+        currentIndex: Int
+    ) {
+        if (currentIndex > state.currentIndex) {
+            when (state.currentType) {
+                Type.ADDRESS ->
+                    state.address = data.substring(state.currentIndex, currentIndex).asEthereumAddress()!!
+                Type.FUNCTION ->
+                    state.function = data.substring(state.currentIndex, currentIndex)
+                Type.PARAMS ->
+                    state.functionParams = data.substring(state.currentIndex, currentIndex).split("&").mapTo(mutableListOf()) {
+                        it.split("=", limit = 2).run { first() to get(1) }
+                    }
+            }
+        }
+        state.currentType = nextType
+        state.currentIndex = currentIndex + 1 // Skip separator
+    }
+
+    private fun cleanParams(state: ParserState) {
+        state.functionParams?.filter { (key, value) ->
+            when (key) {
+                KEY_GAS, KEY_GAS_LIMIT, KEY_GAS_PRICE -> false
+                KEY_DEEPLINK_REFERRER -> {
+                    state.referrer = value
+                    false
+                }
+                KEY_VALUE -> {
+                    state.value = value.parseToBigInteger()
+                    false
+                }
+                else -> true
+            }
         }
 
-    private fun prepareLink(link: String): String {
-        var localLink: String = link
-        if (localLink.startsWith(ERC67_PREFIX, true) && !localLink.startsWith(ETHEREUM_URI_PREFIX, true)) {
-            localLink = localLink.replaceFirst(ERC67_PREFIX, ETHEREUM_URI_PREFIX, true)
-        }
-        return localLink
+    }
+
+    enum class Type(val separator: Char) {
+        ADDRESS(':'),
+        CHAIN_ID('@'),
+        FUNCTION('/'),
+        PARAMS('?'),
     }
 
     companion object {
         private const val ETHEREUM_SCHEME = "ethereum"
         private const val ERC67_PREFIX = "$ETHEREUM_SCHEME:"
-        private const val ETHEREUM_URI_PREFIX = "$ERC67_PREFIX//"
-        private const val KEY_DATA = "data"
         private const val KEY_VALUE = "value"
-        private const val KEY_REFERRER = "referrer"
+        private const val KEY_GAS = "gas"
+        private const val KEY_GAS_LIMIT = "gasLimit"
+        private const val KEY_GAS_PRICE = "gasPrice"
+        private const val KEY_DEEPLINK_REFERRER = "deeplink_referrer"
     }
 }
 
