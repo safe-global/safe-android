@@ -2,6 +2,10 @@
 # fail if any commands fails
 set -e
 
+
+# Buildkite uses a clean state for each step (for concurrency)
+source ./ci/prepare_env_buildkite.sh
+
 echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
 echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
 
@@ -33,4 +37,4 @@ ASSET="https://uploads.github.com/repos/gnosis/safe-android/releases/$id/assets"
 curl --data-binary @"app/build/outputs/apk/rinkeby/gnosis-safe-${APP_VERSION_CODE}-rinkeby.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=gnosis-safe-${APP_VERSION_CODE}-rinkeby.apk
 curl --data-binary @"app/build/outputs/apk/release/gnosis-safe-${APP_VERSION_CODE}-release.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=gnosis-safe-${APP_VERSION_CODE}-release.apk
 
-
+ci/notify_slack.sh
