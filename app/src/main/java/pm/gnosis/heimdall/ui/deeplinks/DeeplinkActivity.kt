@@ -63,14 +63,16 @@ class AndroidDeeplinkTransactionParser @Inject constructor() : DeeplinkTransacti
 
     private fun prepareLink(link: String): String {
         var localLink: String = link
-        if (localLink.startsWith(ETHEREUM_SCHEME) && !localLink.startsWith("$ETHEREUM_SCHEME//")) {
-            localLink = localLink.replace(ETHEREUM_SCHEME, "$ETHEREUM_SCHEME//")
+        if (localLink.startsWith(ERC67_PREFIX, true) && !localLink.startsWith(ETHEREUM_URI_PREFIX, true)) {
+            localLink = localLink.replaceFirst(ERC67_PREFIX, ETHEREUM_URI_PREFIX, true)
         }
         return localLink
     }
 
     companion object {
-        private const val ETHEREUM_SCHEME = "ethereum:"
+        private const val ETHEREUM_SCHEME = "ethereum"
+        private const val ERC67_PREFIX = "$ETHEREUM_SCHEME:"
+        private const val ETHEREUM_URI_PREFIX = "$ERC67_PREFIX//"
         private const val KEY_DATA = "data"
         private const val KEY_VALUE = "value"
         private const val KEY_REFERRER = "referrer"
