@@ -34,7 +34,6 @@ class WrappedManager : CardListener {
     fun removeListener(listener: CardListener) =
         listeners.remove(listener)
 
-    @ExperimentalCoroutinesApi
     suspend fun performOnChannel(action: (channel: CardChannel) -> Unit) {
         suspendCancellableCoroutine<Unit> { cont ->
             val listener = object : CardListener {

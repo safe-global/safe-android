@@ -60,7 +60,7 @@ interface SubmitTransactionHelper {
         object ConfirmationsRequested : ViewUpdate()
         object ConfirmationsError : ViewUpdate()
         object TransactionRejected : ViewUpdate()
-        data class TransactionSubmitted(val success: Boolean) : ViewUpdate()
+        data class TransactionSubmitted(val txHash: String?) : ViewUpdate()
     }
 }
 
@@ -291,30 +291,27 @@ class DefaultSubmitTransactionHelper @Inject constructor(
             safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken, params.safeVersion,
             referenceId = referenceId
         )
-            .flatMapCompletable {
+            .flatMap { txHash ->
                 val targets = (params.owners - params.sender).toSet()
                 if (targets.isEmpty()) {
                     // Nothing to push
-                    return@flatMapCompletable Completable.complete()
+                    return@flatMap Single.just(txHash)
                 }
-                return@flatMapCompletable signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, safe, targets)
+                return@flatMap signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, txHash, safe, targets)
                     // Ignore error here ... if push fails ... it fails
                     .doOnError(Timber::e)
                     .onErrorComplete()
+                    .andThen(Single.just(txHash))
             }
-            .andThen(
+            .flatMapObservable {
                 Observable.just<ViewUpdate>(
-                    ViewUpdate.TransactionSubmitted(
-                        true
-                    )
+                    ViewUpdate.TransactionSubmitted(it)
                 )
-            )
+            }
             .onErrorResumeNext { t: Throwable ->
                 // Propagate error to display snackbar then propagate status
                 Observable.just<ViewUpdate>(
-                    ViewUpdate.TransactionSubmitted(
-                        false
-                    )
+                    ViewUpdate.TransactionSubmitted(null)
                 ).concatWith(Observable.error(t))
             }
             .mapToResult()

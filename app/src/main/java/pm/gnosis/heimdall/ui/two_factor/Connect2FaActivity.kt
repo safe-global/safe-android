@@ -18,7 +18,6 @@ import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 abstract class ConnectAuthenticatorContract(context: Context, appDispatcher: ApplicationModule.AppCoroutineDispatchers) :
     BaseStateViewModel<ConnectAuthenticatorContract.State>(context, appDispatcher) {
 
@@ -29,7 +28,6 @@ abstract class ConnectAuthenticatorContract(context: Context, appDispatcher: App
     data class State(override var viewAction: ViewAction?) : BaseStateViewModel.State
 }
 
-@ExperimentalCoroutinesApi
 class ConnectAuthenticatorViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     appDispatcher: ApplicationModule.AppCoroutineDispatchers,
@@ -69,7 +67,6 @@ class ConnectAuthenticatorViewModel @Inject constructor(
 
 }
 
-@ExperimentalCoroutinesApi
 class Connect2FaActivity : Select2FaActivity() {
     @Inject
     lateinit var viewModel: ConnectAuthenticatorContract

@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.two_factor.ConnectAuthenticatorContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
+import pm.gnosis.heimdall.ui.deeplinks.DeeplinkContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardCredentialsContract
 import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardInitializeContract
@@ -115,6 +116,10 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     fun providesDebugSettingsContract(provider: ViewModelProvider) = provider[DebugSettingsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesDeeplinkContract(provider: ViewModelProvider) = provider[DeeplinkContract::class.java]
 
     @Provides
     @ForView
@@ -250,7 +255,6 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @ForView
     fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
 
-    @ExperimentalCoroutinesApi
     @Provides
     @ForView
     fun provideUpgradeMasterCopyContract(provider: ViewModelProvider) = provider[UpgradeMasterCopyContract::class.java]

@@ -7,7 +7,6 @@ import pm.gnosis.heimdall.utils.errorSnackbar
 /**
  * View should be root view for notifications
  */
-@ExperimentalCoroutinesApi
 fun View.handleViewAction(action: BaseStateViewModel.ViewAction?, closeScreenAction: () -> Unit) {
     when (action) {
         is BaseStateViewModel.ViewAction.ShowError -> errorSnackbar(this, action.error)

@@ -4,6 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonQualifier
 import com.squareup.moshi.ToJson
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.utils.parseToBigInteger
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
@@ -18,10 +19,7 @@ class WeiAdapter {
 
     @FromJson
     fun fromJson(wei: String): Wei {
-        if (wei.startsWith("0x")) {
-            return Wei(wei.hexAsBigInteger())
-        }
-        return Wei(BigInteger(wei))
+        return Wei(wei.parseToBigInteger())
     }
 }
 

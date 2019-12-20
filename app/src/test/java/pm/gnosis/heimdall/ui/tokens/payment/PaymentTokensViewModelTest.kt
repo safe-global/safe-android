@@ -27,7 +27,6 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import java.net.UnknownHostException
 
-@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class PaymentTokensViewModelTest {
 

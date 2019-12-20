@@ -21,7 +21,6 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 
-@ExperimentalCoroutinesApi
 open class Select2FaActivity : NfcActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD

@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 
-@ExperimentalCoroutinesApi
 abstract class KeycardBaseFragment<S: BaseStateViewModel.State, T: BaseStateViewModel<S>>: Fragment() {
     abstract var viewModel: T
 

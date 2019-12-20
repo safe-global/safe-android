@@ -30,12 +30,13 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.BridgeRepository.Companion.MULTI_SEND_RPC
 import pm.gnosis.heimdall.data.repositories.BridgeRepository.RejectionReason
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.utils.parseToBigInteger
+import pm.gnosis.heimdall.utils.parseToBigIntegerOrNull
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -256,8 +257,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             val txTo = it["to"]?.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: ${it["to"]}")
             val txValue =
                 it["value"]?.run {
-                    (if (startsWith("0x")) hexAsBigIntegerOrNull() else decimalAsBigIntegerOrNull())
-                        ?: throw IllegalArgumentException("Invalid to value: $this")
+                    parseToBigIntegerOrNull() ?: throw IllegalArgumentException("Invalid to value: $this")
                 } ?: BigInteger.ZERO
             val txData = it["data"]?.apply { hexStringToByteArray() }?.addHexPrefix() // Check that it is valid hex data
             SafeTransaction(Transaction(txTo, value = Wei(txValue), data = txData), txOperation)
