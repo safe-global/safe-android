@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:src="@drawable/contract_upgrade_glass" />
+            app:srcCompat="@drawable/img_safe_intro_what_is_safe" />
 
         <TextView
             android:id="@+id/intro_page_title"
@@ -40,7 +40,7 @@
             android:paddingTop="12dp"
             android:paddingRight="24dp"
             android:paddingBottom="12dp"
-            android:text="@string/we_performed_formal_verification"
+            android:text="@string/your_safe_is_a_smart_contract"
             android:textSize="15sp"
             app:lineHeight="24sp" />
 

@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:src="@drawable/contract_upgrade_glass" />
+            android:src="@drawable/contract_upgrade_nf_ts" />
 
         <TextView
             style="@style/BoldContent"
@@ -36,7 +36,7 @@
             android:paddingTop="12dp"
             android:paddingRight="24dp"
             android:paddingBottom="12dp"
-            android:text="@string/we_performed_formal_verification"
+            android:text="@string/added_support_for_erc1155"
             android:textSize="15sp"
             app:lineHeight="24sp" />
 

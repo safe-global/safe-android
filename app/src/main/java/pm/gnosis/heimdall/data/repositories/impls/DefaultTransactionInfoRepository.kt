@@ -149,11 +149,11 @@ class DefaultTransactionInfoRepository @Inject constructor(
     }
 
     private fun processMultiSend(transaction: SafeTransaction, multiSend: TransactionData.MultiSend) =
-        parseUpgradeV110(multiSend)
+        parseUpgradeV111(multiSend)
             ?: parseReplaceRecoveryPhrase(transaction, multiSend)
             ?: multiSend
 
-    private fun parseUpgradeV110(multiSend: TransactionData.MultiSend): TransactionData? {
+    private fun parseUpgradeV111(multiSend: TransactionData.MultiSend): TransactionData? {
         if (multiSend.transactions.size != 2) return null
 
         // Needs to be a valid owner swap tx
