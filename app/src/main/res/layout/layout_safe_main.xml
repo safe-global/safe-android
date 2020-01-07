@@ -70,6 +70,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon">
 
                 <androidx.cardview.widget.CardView
@@ -83,9 +84,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:drawableStart="@drawable/ic_error"
+                        android:drawableStart="@drawable/ic_info_outline_16dp"
                         android:drawablePadding="4dp"
-                        android:text="@string/upgrade_required"
+                        android:text="@string/contract_upgrade_available"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
@@ -276,6 +277,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider">
 
                     <LinearLayout
@@ -294,9 +296,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:drawableStart="@drawable/ic_error"
+                            android:drawableStart="@drawable/ic_info_outline_16dp"
                             android:drawablePadding="4dp"
-                            android:text="@string/upgrade_required"
+                            android:text="@string/contract_upgrade_available"
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
@@ -306,7 +308,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:gravity="center"
-                            android:text="@string/security_upgrade_required"
+                            android:text="@string/in_the_new_version_we_added_support_of_erc1155"
                             android:textSize="13sp" />
 
                         <TextView

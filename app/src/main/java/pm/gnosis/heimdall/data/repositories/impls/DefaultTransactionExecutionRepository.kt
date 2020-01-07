@@ -9,6 +9,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.GnosisSafeV1
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
@@ -494,7 +495,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 else {
                     // If we have a failure event then the transaction failed
                     receipt.logs.none {
-                        it.topics.getOrNull(0) == GnosisSafe.Events.ExecutionFailed.EVENT_ID
+                        it.topics.getOrNull(0)?.removeHexPrefix() == GnosisSafe.Events.ExecutionFailure.EVENT_ID ||
+                                it.topics.getOrNull(0)?.removeHexPrefix() == GnosisSafeV1.Events.ExecutionFailed.EVENT_ID
                     }
                 }
                 executed to time

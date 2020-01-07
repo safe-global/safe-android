@@ -206,6 +206,9 @@ class ConfirmTransactionViewModelTest {
             RestrictedTransactionException.ChangeMasterCopy::class to
                     (RestrictedTransactionException.ChangeMasterCopy to
                             ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_proxy)),
+            RestrictedTransactionException.SetFallbackHandler::class to
+                    (RestrictedTransactionException.SetFallbackHandler to
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_set_fallback_handler)),
             RestrictedTransactionException.DataCallToSafe::class to
                     (RestrictedTransactionException.DataCallToSafe to
                             ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_data_call_to_safe))

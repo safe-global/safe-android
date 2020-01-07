@@ -16,5 +16,5 @@
     <string name="licenses_link" translatable="false">https://safe.gnosis.io/licenses#android</string>
     <string name="tip_link" translatable="false">[?]</string>
     <string name="authenticator_link" translatable="false">https://chrome.google.com/webstore/detail/gnosis-safe-rinkeby/gkiklnclpcbphbiaickiepnnnahefkoc</string>
-    <string name="blog_link" translatable="false">https://blog.gnosis.pm/formal-verification-a-journey-deep-into-the-gnosis-safe-smart-contracts-b00daf354a9c</string>
+    <string name="blog_link" translatable="false">https://blog.gnosis.pm/announcing-the-gnosis-safe-contract-update-1-1-0-bug-bounty-fd2850204963</string>
 </resources>

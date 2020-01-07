@@ -15,9 +15,9 @@ import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
-import pm.gnosis.model.SolidityBase.PADDED_HEX_LENGTH
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
@@ -54,6 +54,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
                     throw RestrictedTransactionException.ChangeThreshold
                 checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.ChangeMasterCopy.METHOD_ID) ->
                     throw RestrictedTransactionException.ChangeMasterCopy
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.SetFallbackHandler.METHOD_ID) ->
+                    throw RestrictedTransactionException.SetFallbackHandler
                 transaction.wrapped.address == safe && !transaction.wrapped.data?.removeHexPrefix().isNullOrEmpty() ->
                     throw RestrictedTransactionException.DataCallToSafe
             }
@@ -147,8 +149,39 @@ class DefaultTransactionInfoRepository @Inject constructor(
     }
 
     private fun processMultiSend(transaction: SafeTransaction, multiSend: TransactionData.MultiSend) =
-        parseReplaceRecoveryPhrase(transaction, multiSend)
+        parseUpgradeV111(multiSend)
+            ?: parseReplaceRecoveryPhrase(transaction, multiSend)
             ?: multiSend
+
+    private fun parseUpgradeV111(multiSend: TransactionData.MultiSend): TransactionData? {
+        if (multiSend.transactions.size != 2) return null
+
+        // Needs to be a valid owner swap tx
+        val changeMasterCopy = multiSend.transactions[0]
+        if (changeMasterCopy.operation != Operation.CALL || changeMasterCopy.wrapped.data?.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) != true)
+            return null
+
+        val masterCopy =
+            GnosisSafe.ChangeMasterCopy.decodeArguments(changeMasterCopy.wrapped.data!!.removeSolidityMethodPrefix(GnosisSafe.ChangeMasterCopy.METHOD_ID))
+
+        // Check correct master copy
+        if (masterCopy._mastercopy != SafeContractUtils.safeMasterCopy_1_1_1) return null
+
+        // Needs to be a valid owner swap tx
+        val setFallbackHandler = multiSend.transactions[1]
+        if (setFallbackHandler.operation != Operation.CALL || setFallbackHandler.wrapped.data?.isSolidityMethod(GnosisSafe.SetFallbackHandler.METHOD_ID) != true)
+            return null
+
+        val fallbackHandler =
+            GnosisSafe.SetFallbackHandler.decodeArguments(setFallbackHandler.wrapped.data!!.removeSolidityMethodPrefix(GnosisSafe.SetFallbackHandler.METHOD_ID))
+
+        // Check correct master copy
+        if (fallbackHandler.handler != DEFAULT_FALLBACK_HANDLER) return null
+
+        // We need to swap owners at the same Safe
+        if (changeMasterCopy.wrapped.address != setFallbackHandler.wrapped.address) return null
+        return TransactionData.UpdateMasterCopy(SafeContractUtils.safeMasterCopy_1_1_1)
+    }
 
     private fun parseReplaceRecoveryPhrase(transaction: SafeTransaction, multiSend: TransactionData.MultiSend): TransactionData? {
         if (multiSend.transactions.size != 2) return null
@@ -221,6 +254,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
     companion object {
         private val MULTI_SEND_LIB = BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!
         private val MULTI_SEND_OLD_LIB = BuildConfig.MULTI_SEND_OLD_ADDRESS.asEthereumAddress()!!
+        private val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
         // These additional costs are hardcoded in the smart contract
         private val SAFE_TX_BASE_COSTS = BigInteger.valueOf(32000)
     }
