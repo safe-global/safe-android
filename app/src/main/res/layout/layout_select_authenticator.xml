@@ -119,6 +119,13 @@
                 android:text="@string/gnosis_safe_authenticator_description"
                 app:layout_constraintTop_toBottomOf="@+id/select_authenticator_extension_lbl" />
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/select_authenticator_extension"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="select_authenticator_extension_img,select_authenticator_extension_background,select_authenticator_extension_radio,select_authenticator_extension_lbl,select_authenticator_extension_description" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -24,6 +23,7 @@ import pm.gnosis.utils.asEthereumAddressString
 open class Select2FaActivity : NfcActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD
+    private var nfcAvailable = false
 
     override fun screenId() = ScreenId.SELECT_AUTHENTICATOR
 
@@ -38,8 +38,9 @@ open class Select2FaActivity : NfcActivity() {
     }
 
     private fun initKeyCardViews() {
-        val nfcAvailable = NfcAdapter.getDefaultAdapter(this)?.isEnabled == true
-        onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
+        nfcAvailable = NfcAdapter.getDefaultAdapter(this)?.isEnabled == true
+        //onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
+        onSelected(AuthenticatorInfo.Type.KEYCARD)
         if (nfcAvailable) select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
         val alpha = if (nfcAvailable) 1f else 0.6f
         select_authenticator_keycard_background.isClickable = nfcAvailable
@@ -66,6 +67,8 @@ open class Select2FaActivity : NfcActivity() {
         selectedAuthenticator = type
         select_authenticator_keycard_radio.isChecked = type == AuthenticatorInfo.Type.KEYCARD
         select_authenticator_extension_radio.isChecked = type == AuthenticatorInfo.Type.EXTENSION
+
+        select_authenticator_setup.isEnabled = type == AuthenticatorInfo.Type.EXTENSION || nfcAvailable
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
