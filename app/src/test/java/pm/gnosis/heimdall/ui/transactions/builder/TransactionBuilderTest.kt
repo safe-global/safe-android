@@ -6,6 +6,7 @@ import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -48,11 +49,37 @@ class TransactionBuilderTest {
     fun testUpdateMasterCopyTransactionBuilder() {
         assertEquals(
             SafeTransaction(
-                Transaction(TEST_TOKEN, data = "0x7de7edef${TEST_ADDRESS.value.toString(16).padStart(64, '0')}"),
-                TransactionExecutionRepository.Operation.CALL
+                Transaction(
+                    MULTI_SEND_ADDRESS, data = MultiSend.MultiSend.encode(
+                        Solidity.Bytes(
+                            ("" +
+                                    // Update master copy
+                                    "00" + // Operation
+                                    "a7e15e2e76ab469f8681b576cff168f37aa246ec" + // To
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Value
+                                    "0000000000000000000000000000000000000000000000000000000000000024" + // Data length
+                                    "7de7edef" +
+                                    "00000000000000000000000034CfAC646f301356fAa8B21e94227e3583Fe3F5F" +
+                                    // Set fallback handler
+                                    "00" + // Operation
+                                    "a7e15e2e76ab469f8681b576cff168f37aa246ec" + // To
+                                    "0000000000000000000000000000000000000000000000000000000000000000" + // Value
+                                    "0000000000000000000000000000000000000000000000000000000000000024" + // Data length
+                                    "f08a0323" +
+                                    "000000000000000000000000d5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44"
+                                    ).hexStringToByteArray()
+                        )
+                    )
+                ),
+                TransactionExecutionRepository.Operation.DELEGATE_CALL
             ),
-            UpdateMasterCopyTransactionBuilder.build(TEST_TOKEN, TransactionData.UpdateMasterCopy(TEST_ADDRESS))
+            UpdateMasterCopyTransactionBuilder.build(TEST_TOKEN, TransactionData.UpdateMasterCopy(SafeContractUtils.safeMasterCopy_1_1_1))
         )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testUpdateMasterCopyTransactionBuilderInvalidContract() {
+        UpdateMasterCopyTransactionBuilder.build(TEST_TOKEN, TransactionData.UpdateMasterCopy(TEST_ADDRESS))
     }
 
     @Test
@@ -102,7 +129,10 @@ class TransactionBuilderTest {
                             Transaction(TEST_TOKEN, data = "0x7de7edef${TEST_ADDRESS.value.toString(16).padStart(64, '0')}"),
                             TransactionExecutionRepository.Operation.CALL
                         ),
-                        SafeTransaction(Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16))), TransactionExecutionRepository.Operation.CALL),
+                        SafeTransaction(
+                            Transaction(TEST_ADDRESS, value = Wei(BigInteger.valueOf(16))),
+                            TransactionExecutionRepository.Operation.CALL
+                        ),
                         SafeTransaction(
                             Transaction(MULTI_SEND_ADDRESS, data = "0xdeadbeef"),
                             TransactionExecutionRepository.Operation.DELEGATE_CALL
@@ -112,6 +142,11 @@ class TransactionBuilderTest {
                 )
             )
         )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun testMultiSendTransactionBuilderInvalidContract() {
+        MultiSendTransactionBuilder.build(TransactionData.MultiSend(emptyList(), TEST_ADDRESS))
     }
 
     companion object {

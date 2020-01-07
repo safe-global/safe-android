@@ -14,8 +14,14 @@ interface RelayServiceApi {
     @POST("v1/safes/{address}/transactions/estimate/")
     fun estimate(@Path("address") address: String, @Body params: EstimateParams): Single<RelayEstimate>
 
-    @POST("v2/safes/")
-    fun safeCreation(@Body params: RelaySafeCreationParams): Single<RelaySafeCreation>
+    @GET("v1/tokens/?limit=1000&ordering=relevance,name&gas=true")
+    fun paymentTokens(): Single<PaginatedResults<TokenInfo>>
+
+    @GET("v1/tokens/?limit=1000&ordering=relevance,name")
+    fun tokens(@Query("search") search: String): Single<PaginatedResults<TokenInfo>>
+
+    @POST("v1/safes/{address}/transactions/estimates/")
+    fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimates>
 
     @PUT("v2/safes/{address}/funded/")
     fun notifySafeFunded(@Path("address") address: String): Completable
@@ -23,15 +29,9 @@ interface RelayServiceApi {
     @GET("v2/safes/{address}/funded/")
     fun safeFundStatus(@Path("address") address: String): Single<RelaySafeFundStatus>
 
-    @GET("v1/tokens/?limit=1000&ordering=relevance,name&gas=true")
-    fun paymentTokens(): Single<PaginatedResults<TokenInfo>>
-
-    @GET("v1/tokens/?limit=1000&ordering=relevance,name")
-    fun tokens(@Query("search") search: String): Single<PaginatedResults<TokenInfo>>
-
-    @POST("v2/safes/estimates/")
+    @POST("v3/safes/estimates/")
     fun creationEstimates(@Body params: CreationEstimatesParams): Single<List<CreationEstimate>>
 
-    @POST("v1/safes/{address}/transactions/estimates/")
-    fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimates>
+    @POST("v3/safes/")
+    fun safeCreation(@Body params: RelaySafeCreationParams): Single<RelaySafeCreation>
 }

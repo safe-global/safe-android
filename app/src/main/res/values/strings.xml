@@ -119,6 +119,7 @@
     <string name="restricted_transaction_modify_modules">It is not allowed to modify the modules of the Safe</string>
     <string name="restricted_transaction_change_threshold">It is not allowed to change the threshold of the Safe</string>
     <string name="restricted_transaction_modify_proxy">It is not allowed to modify the proxy of the Safe</string>
+    <string name="restricted_transaction_set_fallback_handler">It is not allowed to modify the fallback handler of the Safe</string>
     <string name="restricted_transaction_data_call_to_safe">It is not allowed to directly call a function on the Safe</string>
     <string name="error_loading_transaction">Error loading transaction</string>
     <string name="transaction_type_generic">Contract interaction</string>
@@ -487,12 +488,12 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="choose_input_method">Choose input method</string>
     <string name="contract_upgrade">Contract upgrade</string>
     <string name="this_will_upgrade">This will upgrade \'%s\' to the latest version of the Gnosis Safe contract.</string>
-    <string name="upgrade_required">Security upgrade required</string>
-    <string name="security_upgrade_required">Upgrade to the latest audited smart contract version and make your funds even more secure!</string>
+    <string name="contract_upgrade_available">Contract upgrade available</string>
+    <string name="added_support_for_erc1155">In this version of the smart contract we added support for ERC1155 tokens and secure token transfer of NFTs (ERC721). Upgrade now to take advantage of the highest security standards available.</string>
+    <string name="in_the_new_version_we_added_support_of_erc1155">In the new version we added support for ERC1155 tokens and secure token transfer of NFTs (ERC721).</string>
     <string name="upgrade_now">Upgrade now</string>
     <string name="insufficient_funds_please_add_tokenpayment">Insufficient funds. Please add %s to your Safe or choose a different token as the payment method.</string>
     <string name="what_is_this_about">What is this about?</string>
-    <string name="we_performed_formal_verification">We performed formal verification of our smart contract. Upgrade now to take advantage of the highest security standards available.</string>
     <string name="more_info_in_our_blog"><![CDATA[More info in our <font color=#008c73><u>blog.</u></font>]]></string>
     <string name="why_upgrade">Why upgrade?</string>
     <string name="current_version">The current version of your smart contract is outdated. If you don’t upgrade you’ll still be able to use your Safe, but we recommend upgrading now to enjoy the latest security updates.</string>

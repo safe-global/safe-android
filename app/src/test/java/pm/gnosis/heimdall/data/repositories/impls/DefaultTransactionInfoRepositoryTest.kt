@@ -17,17 +17,20 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.CALL
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.DELEGATE_CALL
+import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.toInt
+import pm.gnosis.heimdall.ui.transactions.builder.MultiSendTransactionBuilder
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 import java.util.*
 
@@ -72,6 +75,17 @@ class DefaultTransactionInfoRepositoryTest {
                                     Transaction(
                                         address = TEST_SAFE,
                                         data = GnosisSafe.ChangeMasterCopy.encode("0x1".asEthereumAddress()!!)
+                                    ), CALL
+                                )
+                            )
+                    ),
+            RestrictedTransactionException.SetFallbackHandler::class to (
+                    RestrictedTransactionException.SetFallbackHandler to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = TEST_SAFE,
+                                        data = GnosisSafe.SetFallbackHandler.encode("0x1".asEthereumAddress()!!)
                                     ), CALL
                                 )
                             )
@@ -307,6 +321,8 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
+        private val SAFE_MASTER_COPY_1_1_1 = "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F".asEthereumAddress()!!
+        private val DEFAULT_CALLBACK_HANDLER = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
         private val MULTI_SEND_LIB = "0x8D29bE29923b68abfDD21e541b9374737B49cdAD".asEthereumAddress()!!
         private val MULTI_SEND_OLD_LIB = "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!
 
@@ -516,14 +532,14 @@ class DefaultTransactionInfoRepositoryTest {
                                 Transaction(
                                     TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_NEW"
                                 ), operation = DELEGATE_CALL
-                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_NEW", DELEGATE_CALL)
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO, "0x$MULTI_SEND_1_DATA_NEW", DELEGATE_CALL)
                         ),
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
                                     TEST_ADDRESS, data = "0x$MULTI_SEND_1_DATA_OLD"
                                 ), operation = DELEGATE_CALL
-                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO,  "0x$MULTI_SEND_1_DATA_OLD", DELEGATE_CALL)
+                            ), expected = TransactionData.Generic(TEST_ADDRESS, BigInteger.ZERO, "0x$MULTI_SEND_1_DATA_OLD", DELEGATE_CALL)
                         )
                     ),
             TransactionData.ReplaceRecoveryPhrase::class to
@@ -555,6 +571,31 @@ class DefaultTransactionInfoRepositoryTest {
                                     TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(TEST_ADDRESS)
                                 ), operation = CALL
                             ), expected = TransactionData.UpdateMasterCopy(TEST_ADDRESS)
+                        )
+                    ),
+            TransactionData.UpdateMasterCopy::class to
+                    listOf(
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(TEST_ADDRESS)
+                                ), operation = CALL
+                            ), expected = TransactionData.UpdateMasterCopy(TEST_ADDRESS)
+                        ),
+                        TestData(
+                            transaction = MultiSendTransactionBuilder.build(
+                                listOf(
+                                    SafeTransaction(
+                                        Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1)),
+                                        CALL
+                                    ),
+                                    SafeTransaction(
+                                        Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_CALLBACK_HANDLER)),
+                                        CALL
+                                    )
+                                )
+                            ),
+                            expected = TransactionData.UpdateMasterCopy(SAFE_MASTER_COPY_1_1_1)
                         )
                     ),
             TransactionData.MultiSend::class to
@@ -644,8 +685,82 @@ class DefaultTransactionInfoRepositoryTest {
                                 ),
                                 MULTI_SEND_LIB
                             )
+                        ),
+                        // Unknown master copy updates
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1), value = Wei.ZERO),
+                                    CALL
+                                )
+                            )
+                        ),
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1), value = Wei.ZERO),
+                                    DELEGATE_CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_CALLBACK_HANDLER), value = Wei.ZERO),
+                                    CALL
+                                )
+                            )
+                        ),
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1), value = Wei.ZERO),
+                                    CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_CALLBACK_HANDLER), value = Wei.ZERO),
+                                    DELEGATE_CALL
+                                )
+                            )
+                        ),
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(TEST_ADDRESS), value = Wei.ZERO),
+                                    CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_CALLBACK_HANDLER), value = Wei.ZERO),
+                                    CALL
+                                )
+                            )
+                        ),
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1), value = Wei.ZERO),
+                                    CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(TEST_ADDRESS), value = Wei.ZERO),
+                                    CALL
+                                )
+                            )
+                        ),
+                        buildUnknownSafeUpdate(
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(TEST_ADDRESS, data = GnosisSafe.ChangeMasterCopy.encode(SAFE_MASTER_COPY_1_1_1), value = Wei.ZERO),
+                                    CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(TEST_SAFE, data = GnosisSafe.SetFallbackHandler.encode(DEFAULT_CALLBACK_HANDLER), value = Wei.ZERO),
+                                    CALL
+                                )
+                            )
                         )
                     )
         )
+
+        private fun buildUnknownSafeUpdate(txs: List<SafeTransaction>) =
+            TestData(
+                transaction = MultiSendTransactionBuilder.build(txs), expected = TransactionData.MultiSend(txs, MULTI_SEND_LIB)
+            )
     }
 }

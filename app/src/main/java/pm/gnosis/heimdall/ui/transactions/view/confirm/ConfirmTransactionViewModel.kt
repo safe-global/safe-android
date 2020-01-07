@@ -110,6 +110,8 @@ class ConfirmTransactionViewModel @Inject constructor(
                             InvalidTransactionException(R.string.restricted_transaction_change_threshold)
                         is RestrictedTransactionException.ChangeMasterCopy ->
                             InvalidTransactionException(R.string.restricted_transaction_modify_proxy)
+                        is RestrictedTransactionException.SetFallbackHandler ->
+                            InvalidTransactionException(R.string.restricted_transaction_set_fallback_handler)
                         is RestrictedTransactionException.DataCallToSafe ->
                             InvalidTransactionException(R.string.restricted_transaction_data_call_to_safe)
                         else ->
