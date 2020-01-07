@@ -53,8 +53,6 @@ class PairingAuthenticatorActivity : ViewModelActivity<PairingAuthenticatorContr
         val safe = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
         viewModel.setup(safe)
 
-        step_indicator.visible(intent.getBooleanExtra(EXTRA_ONBOARDING, false))
-
         pairing_extension_link.apply {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
             linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
@@ -63,7 +61,6 @@ class PairingAuthenticatorActivity : ViewModelActivity<PairingAuthenticatorContr
                 .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
             setOnClickListener { shareExternalText(getString(R.string.authenticator_link), getString(R.string.authenticator_url)) }
         }
-
 
         viewModel.observableState.observe(this, Observer {
 
