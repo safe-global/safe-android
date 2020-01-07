@@ -1,6 +1,25 @@
 steps:
-  - label: ':the_horns: UI Tests'
-    command: 'ci/run_ui_tests.sh'
 
-  - label: ':eyes: Obfuscate/Minify build'
-    command: 'ci/transform_with_R8.sh'
+  - label: 'Unit Tests'
+    commands:
+      - 'ci/prepare_env_buildkite.sh'
+      - 'ci/run_unit_tests.sh'
+
+  - label: ':the_horns: UI Tests'
+    if: !build.pull_request.draft
+    commands:
+      - 'ci/prepare_env_buildkite.sh'
+      - 'ci/run_ui_tests.sh'
+
+  - trigger: "gnosis-safe-deployment"
+    label: ":rocket: Deploy"
+    async: false
+    build:
+      message: "${BUILDKITE_MESSAGE}"
+      commit: "${BUILDKITE_COMMIT}"
+      branch: "${BUILDKITE_BRANCH}"
+      env:
+        BUILDKITE_PULL_REQUEST: "${BUILDKITE_PULL_REQUEST}"
+        BUILDKITE_PULL_REQUEST_BASE_BRANCH: "${BUILDKITE_PULL_REQUEST_BASE_BRANCH}"
+        BUILDKITE_PULL_REQUEST_REPO: "${BUILDKITE_PULL_REQUEST_REPO}"
+

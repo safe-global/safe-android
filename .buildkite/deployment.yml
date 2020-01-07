@@ -1,0 +1,12 @@
+steps:
+
+  - label: 'Upload Crashlytics Versions'
+    if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
+    key: 'upload-crashlytics'
+    command: 'ci/upload_crashlytics_versions.sh'
+
+  - label: 'Upload Github Release'
+    if: build.branch =~ /^v[0-9]+.*/
+    key: 'upload-github'
+    command: 'ci/upload_to_github.sh'
+
