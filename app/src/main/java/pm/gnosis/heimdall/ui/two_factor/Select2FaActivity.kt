@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
@@ -37,11 +38,17 @@ open class Select2FaActivity : NfcActivity() {
         initKeyCardViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        select_authenticator_nfc_required.visible(!nfcAvailable)
+    }
+
     private fun initKeyCardViews() {
         nfcAvailable = NfcAdapter.getDefaultAdapter(this)?.isEnabled == true
         //onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
         onSelected(AuthenticatorInfo.Type.KEYCARD)
-        if (nfcAvailable) select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
+        if (nfcAvailable)
+            select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
         val alpha = if (nfcAvailable) 1f else 0.6f
         select_authenticator_keycard_background.isClickable = nfcAvailable
         select_authenticator_keycard_background.alpha = alpha

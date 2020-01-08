@@ -126,6 +126,16 @@
                 android:visibility="gone"
                 app:constraint_referenced_ids="select_authenticator_extension_img,select_authenticator_extension_background,select_authenticator_extension_radio,select_authenticator_extension_lbl,select_authenticator_extension_description" />
 
+
+            <include
+                android:id="@+id/select_authenticator_nfc_required"
+                layout="@layout/layout_nfc_required"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_extension_background" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
