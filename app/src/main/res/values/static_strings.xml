@@ -19,4 +19,5 @@
     <string name="blog_link" translatable="false">https://blog.gnosis.pm/announcing-the-gnosis-safe-contract-update-1-1-0-bug-bounty-fd2850204963</string>
     <string name="gnosis_telegram_id">GnosisSafe</string>
     <string name="gnosis_gitter_url">https://gitter.im/gnosis/Safe</string>
+    <string name="keycard_link">https://keycard.tech/</string>
 </resources>

@@ -58,12 +58,27 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/select_authenticator_keycard_nfc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:text="@string/requires_nfc_support"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/select_authenticator_keycard_lbl" />
+
+            <TextView
                 android:id="@+id/select_authenticator_keycard_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                app:layout_goneMarginTop="16dp"
                 android:text="@string/status_keycard_description"
-                app:layout_constraintTop_toBottomOf="@+id/select_authenticator_keycard_lbl" />
+                app:layout_constraintTop_toBottomOf="@+id/select_authenticator_keycard_nfc" />
 
             <View
                 android:id="@+id/select_authenticator_keycard_divider"
