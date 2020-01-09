@@ -569,4 +569,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="authenticator_url">Authenticator URL</string>
     <string name="nfc_support_required">NFC Support required</string>
     <string name="nfc_required_description">Pairing with a two-factor authentication (2FA) device is not possible because your phone does not support NFC.\nWould you prefer a different 2FA option?</string>
+    <string name="telegram">Telegram</string>
+    <string name="email">E-mail</string>
+    <string name="gitter">Gitter</string>
 </resources>

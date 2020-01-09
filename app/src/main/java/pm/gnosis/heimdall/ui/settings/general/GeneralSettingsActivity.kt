@@ -72,7 +72,7 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
 
         disposables += layout_general_settings_feedback_background.clicks()
             .subscribeBy(onNext = {
-                createFeedback()
+                startActivity(GetInTouchActivity.newIntent(this))
             }, onError = Timber::e)
 
         disposables += layout_general_settings_licenses_background.clicks()
