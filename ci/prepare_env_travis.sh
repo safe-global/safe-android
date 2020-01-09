@@ -8,6 +8,3 @@ export APP_VERSION_CODE=$TRAVIS_BUILD_NUMBER
 description="$(git describe --tags --always)"
 export APP_VERSION_NAME=${description:1}
 export APP_RELEASE_NOTES=$TRAVIS_COMMIT_MESSAGE
-
-echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
-echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
