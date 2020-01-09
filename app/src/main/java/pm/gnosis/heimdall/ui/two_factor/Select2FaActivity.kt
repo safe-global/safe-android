@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import kotlinx.android.synthetic.main.layout_nfc_required.*
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.settings.general.GetInTouchActivity
 import pm.gnosis.heimdall.ui.two_factor.authenticator.PairingAuthenticatorActivity
 import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
@@ -24,7 +26,7 @@ import pm.gnosis.utils.asEthereumAddressString
 open class Select2FaActivity : NfcActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD
-    private var nfcAvailable = false
+    protected var nfcAvailable = false
 
     override fun screenId() = ScreenId.SELECT_AUTHENTICATOR
 
@@ -38,17 +40,17 @@ open class Select2FaActivity : NfcActivity() {
         initKeyCardViews()
     }
 
-    override fun onResume() {
-        super.onResume()
-        select_authenticator_nfc_required.visible(!nfcAvailable)
-    }
-
     private fun initKeyCardViews() {
-        nfcAvailable = NfcAdapter.getDefaultAdapter(this)?.isEnabled == true
-        //onSelected(if (nfcAvailable) AuthenticatorInfo.Type.KEYCARD else AuthenticatorInfo.Type.EXTENSION)
+        nfcAvailable = NfcAdapter.getDefaultAdapter(this) != null
         onSelected(AuthenticatorInfo.Type.KEYCARD)
-        if (nfcAvailable)
+        if (nfcAvailable) {
             select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
+        } else {
+            select_authenticator_nfc_required.visible(true)
+            nfc_required_get_in_touch.setOnClickListener {
+                startActivity(GetInTouchActivity.newIntent(this))
+            }
+        }
         val alpha = if (nfcAvailable) 1f else 0.6f
         select_authenticator_keycard_background.isClickable = nfcAvailable
         select_authenticator_keycard_background.alpha = alpha
@@ -70,7 +72,7 @@ open class Select2FaActivity : NfcActivity() {
         startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
     }
 
-    private fun onSelected(type: AuthenticatorInfo.Type) {
+    protected fun onSelected(type: AuthenticatorInfo.Type) {
         selectedAuthenticator = type
         select_authenticator_keycard_radio.isChecked = type == AuthenticatorInfo.Type.KEYCARD
         select_authenticator_extension_radio.isChecked = type == AuthenticatorInfo.Type.EXTENSION
