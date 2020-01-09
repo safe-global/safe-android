@@ -189,7 +189,7 @@
                     android:layout_height="0dp"
                     android:background="@drawable/selectable_background"
                     android:clickable="false"
-                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_info"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_title"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_feedback_title"
                     app:layout_constraintVertical_bias="1.0"
                     tools:layout_editor_absoluteX="-151dp" />
@@ -198,7 +198,7 @@
                     android:id="@+id/layout_general_settings_feedback_icon"
                     android:layout_width="18dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_info"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_title"
                     app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_feedback_title"
@@ -210,26 +210,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginTop="8dp"
                     android:paddingTop="16dp"
-                    android:text="@string/give_feedback"
+                    android:layout_marginBottom="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/get_in_touch"
                     android:textSize="14sp"
+                    android:gravity="center_vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_main_divider" />
-
-                <TextView
-                    android:id="@+id/layout_general_settings_feedback_info"
-                    style="@style/NormalText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:paddingBottom="16dp"
-                    android:text="@string/open_mail_client"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_feedback_title" />
-
 
                 <!-- Rate Button -->
                 <View
@@ -264,7 +254,7 @@
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_feedback_info" />
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_feedback_title" />
 
                 <TextView
                     android:id="@+id/layout_general_settings_rate_info"
