@@ -1,13 +1,17 @@
 package pm.gnosis.heimdall.ui.settings.general
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import kotlinx.android.synthetic.main.screen_get_in_touch.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.svalinn.common.utils.toast
+import com.google.android.material.snackbar.Snackbar
+import pm.gnosis.svalinn.common.utils.snackbar
+
 
 class GetInTouchActivity : BaseActivity() {
 
@@ -17,15 +21,55 @@ class GetInTouchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.screen_get_in_touch)
 
+        touch_toolbar_back_arrow.setOnClickListener {
+            onBackPressed()
+        }
+
         touch_telegram.setOnClickListener {
-            toast("blb")
+            openTelegramChannel()
         }
         touch_email.setOnClickListener {
-            toast("blb")
+            sendEmail()
         }
         touch_gitter.setOnClickListener {
-            toast("blb")
+            openGitterChannel()
         }
+    }
+
+    private fun openTelegramChannel() {
+
+        var intent = try {
+            try {
+                //Check for Telegram Messenger App
+                packageManager.getPackageInfo("org.telegram.messenger", 0)
+            } catch (e: Exception) {
+                //Check for Telegram X App
+                packageManager.getPackageInfo("org.thunderdog.challegram", 0)
+            }
+            Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=${getString(R.string.gnosis_telegram_id)}"))
+        } catch (e: Exception) { //App not found open in browser
+            Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/${getString(R.string.gnosis_telegram_id)}"))
+        }
+
+        startActivity(intent)
+    }
+
+    //FIXME: send safe addresses?
+    private fun sendEmail() {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.type = "text/html"
+        intent.data = Uri.parse("mailto:${getString(R.string.feedback_email)}")
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject, getString(R.string.app_name)))
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            snackbar(touch_toolbar_background, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
+        }
+    }
+
+    private fun openGitterChannel() {
+        var intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.gnosis_gitter_url)))
+        startActivity(intent)
     }
 
     companion object {
