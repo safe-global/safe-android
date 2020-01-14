@@ -54,7 +54,6 @@ class GetInTouchActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    //FIXME: send safe addresses?
     private fun sendEmail() {
         val intent = Intent(Intent.ACTION_SENDTO)
         intent.type = "text/html"
