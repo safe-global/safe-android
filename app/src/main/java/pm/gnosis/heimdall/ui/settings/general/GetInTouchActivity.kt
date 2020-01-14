@@ -37,20 +37,11 @@ class GetInTouchActivity : BaseActivity() {
     }
 
     private fun openTelegramChannel() {
-
         var intent = try {
-            try {
-                //Check for Telegram Messenger App
-                packageManager.getPackageInfo("org.telegram.messenger", 0)
-            } catch (e: Exception) {
-                //Check for Telegram X App
-                packageManager.getPackageInfo("org.thunderdog.challegram", 0)
-            }
             Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=${getString(R.string.gnosis_telegram_id)}"))
         } catch (e: Exception) { //App not found open in browser
             Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/${getString(R.string.gnosis_telegram_id)}"))
         }
-
         startActivity(intent)
     }
 
