@@ -11,6 +11,7 @@ then
     export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 fi
 
+export FABRIC_GROUP_INTERNAL_BETA="internal-beta"
 echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
 echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
 
