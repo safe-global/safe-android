@@ -3,29 +3,22 @@ package pm.gnosis.heimdall.ui.two_factor
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.text.SpannableStringBuilder
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.layout_nfc_required.*
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
-import kotlinx.android.synthetic.main.layout_select_authenticator.select_authenticator_keycard_description
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.NfcActivity
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.settings.general.GetInTouchActivity
 import pm.gnosis.heimdall.ui.two_factor.authenticator.PairingAuthenticatorActivity
 import pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
-import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
-import pm.gnosis.heimdall.utils.getAuthenticatorInfo
-import pm.gnosis.heimdall.utils.put
+import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -66,17 +59,15 @@ open class Select2FaActivity : NfcActivity() {
         select_authenticator_keycard_description.apply {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
             linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-            text = SpannableStringBuilder()
-                .appendText(getString(R.string.status_keycard_description),
-                    ForegroundColorSpan(Color.argb(if(nfcAvailable) 255 else 99, Color.red(currentTextColor), Color.green(currentTextColor), Color.blue(currentTextColor))))
-                .append(" ")
-                .appendText(getString(R.string.learn_more), ForegroundColorSpan(getColorCompat(R.color.link)))
-                .append(" ")
-                .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
-            setOnClickListener {
-                var intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.keycard_link)))
-                startActivity(intent)
-            }
+            val spannable = SpannableString(getString(R.string.status_keycard_description))
+            spannable.setSpan(
+                ForegroundColorSpan(getColorCompat(if (nfcAvailable) R.color.dark_grey else R.color.dark_grey_disabled)),
+                0,
+                text.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            text = spannable
+            appendLink(getString(R.string.keycard_link), getString(R.string.learn_more))
         }
 
         val alpha = if (nfcAvailable) 1f else 0.6f

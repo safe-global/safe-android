@@ -36,6 +36,7 @@
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
     <color name="dark_grey">#5d6d74</color>
+    <color name="dark_grey_disabled">#965d6d74</color>
     <color name="pale_grey_two">#f4f4f9</color>
     <color name="battleship_grey_light">#64707f</color>
     <color name="tomato">#ff3b30</color>

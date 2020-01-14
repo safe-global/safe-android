@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Build
 import android.text.Html
 import android.text.SpannableStringBuilder
+import android.text.SpannedString
+import android.text.style.ForegroundColorSpan
 import android.text.style.ImageSpan
 import android.view.View
 import android.view.Window
@@ -125,6 +127,21 @@ fun TextView.setupLink(url: String, text: String) {
     val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
     this.text = SpannableStringBuilder(Html.fromHtml(text))
+        .append(" ")
+        .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
+    setOnClickListener { this.context.openUrl(url) }
+}
+
+fun TextView.appendLink(url: String, urlText: String) {
+    var colorSpans: Array<ForegroundColorSpan> =
+        (text as SpannedString).getSpans(0, text.length, ForegroundColorSpan::class.java)
+
+    val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
+    linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
+    this.text = SpannableStringBuilder()
+        .appendText(Html.fromHtml(text.toString()), colorSpans[0])
+        .append(" ")
+        .appendText(urlText, ForegroundColorSpan(context.getColorCompat(R.color.link)))
         .append(" ")
         .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }
