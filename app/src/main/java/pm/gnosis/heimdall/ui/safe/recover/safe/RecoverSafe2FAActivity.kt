@@ -16,7 +16,7 @@ class RecoverSafe2FAActivity : Select2FaActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //FIXME: allow to select Gnosis Authenticator when recovering for now
+        // allow to select Gnosis Authenticator when recovering for now
         select_authenticator_extension.visible(true)
         if (!nfcAvailable)
             onSelected(AuthenticatorInfo.Type.EXTENSION)
