@@ -10,7 +10,7 @@
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
-    <color name="disabled_button">#9b9b9b</color>
+    <color name="disabled_button">#80008c73</color>
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
@@ -36,6 +36,7 @@
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
     <color name="dark_grey">#5d6d74</color>
+    <color name="dark_grey_disabled">#965d6d74</color>
     <color name="pale_grey_two">#f4f4f9</color>
     <color name="battleship_grey_light">#64707f</color>
     <color name="tomato">#ff3b30</color>

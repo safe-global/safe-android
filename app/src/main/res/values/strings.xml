@@ -567,4 +567,11 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="tx_submitted_pairing_be">Pairing the 2FA device is in progress. The transaction has been submitted and should take a couple of minutes.</string>
     <string name="tx_submitted_remove_be">Disabling 2FA is in progress. The transaction has been submitted and should take a couple of minutes.</string>
     <string name="authenticator_url">Authenticator URL</string>
+    <string name="nfc_support_required">NFC Support required</string>
+    <string name="requires_nfc_support">requires NFC support</string>
+    <string name="nfc_required_description">Pairing with a two-factor authentication (2FA) device is not possible because your phone does not support NFC.\nWould you prefer a different 2FA option?</string>
+    <string name="learn_more">Learn more</string>
+    <string name="telegram">Telegram</string>
+    <string name="email">E-mail</string>
+    <string name="gitter">Gitter</string>
 </resources>

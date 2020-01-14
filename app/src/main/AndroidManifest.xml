@@ -119,6 +119,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
+        <activity
+            android:name=".ui.settings.general.GetInTouchActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
         <activity android:name=".ui.qrscan.QRCodeScanActivity" />
 
         <activity
