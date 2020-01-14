@@ -34,7 +34,7 @@ import pm.gnosis.utils.asEthereumAddressString
 
 open class Select2FaActivity : NfcActivity() {
 
-    private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD
+    private var selectedAuthenticator: AuthenticatorInfo.Type? = null
     protected var nfcAvailable = false
 
     override fun screenId() = ScreenId.SELECT_AUTHENTICATOR
@@ -51,10 +51,11 @@ open class Select2FaActivity : NfcActivity() {
 
     private fun initKeyCardViews() {
         nfcAvailable = NfcAdapter.getDefaultAdapter(this) != null
-        onSelected(AuthenticatorInfo.Type.KEYCARD)
         if (nfcAvailable) {
+            onSelected(AuthenticatorInfo.Type.KEYCARD)
             select_authenticator_keycard_background.setOnClickListener { onSelected(AuthenticatorInfo.Type.KEYCARD) }
         } else {
+            onSelected(null)
             select_authenticator_nfc_required.visible(true)
             select_authenticator_keycard_nfc.visible(true)
             nfc_required_get_in_touch.setOnClickListener {
@@ -92,14 +93,17 @@ open class Select2FaActivity : NfcActivity() {
     protected fun isOnboarding(): Boolean = intent.getBooleanExtra(EXTRA_ONBOARDING, false)
 
     private fun startSetupForSelectedAuthenticator() {
-        val intent = when (selectedAuthenticator) {
-            AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, getSelectAuthenticatorExtras(), isOnboarding())
-            AuthenticatorInfo.Type.EXTENSION -> PairingAuthenticatorActivity.createIntent(this, getSelectAuthenticatorExtras(), isOnboarding())
+
+        selectedAuthenticator?.let {
+            val intent = when (it) {
+                AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, getSelectAuthenticatorExtras(), isOnboarding())
+                AuthenticatorInfo.Type.EXTENSION -> PairingAuthenticatorActivity.createIntent(this, getSelectAuthenticatorExtras(), isOnboarding())
+            }
+            startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
         }
-        startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
     }
 
-    protected fun onSelected(type: AuthenticatorInfo.Type) {
+    protected fun onSelected(type: AuthenticatorInfo.Type?) {
         selectedAuthenticator = type
         select_authenticator_keycard_radio.isChecked = type == AuthenticatorInfo.Type.KEYCARD
         select_authenticator_extension_radio.isChecked = type == AuthenticatorInfo.Type.EXTENSION
