@@ -1,7 +1,7 @@
 steps:
 
   - label: 'Upload Crashlytics Versions'
-    if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
+    if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/ || true
     key: 'upload-crashlytics'
     command: 'ci/upload_crashlytics_versions.sh'
 
