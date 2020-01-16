@@ -313,7 +313,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
 2. Its Authenticator.\n
 3. A recovery phrase.</string>
     <string name="funds_held_securely">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
-    <string name="loose_or_change_phone">If you lose or change your phone, use the Safe address and recovery phrase to recover access to your digital assets.</string>
+    <string name="lose_or_change_phone">If you lose or change your phone, use the Safe address and recovery phrase to recover access to your digital assets.</string>
     <string name="add_token">Add Token</string>
     <string name="transactions">Transactions</string>
     <string name="assets">Assets</string>
@@ -534,7 +534,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="three_steps_3">Recovery phrase</string>
     <string name="three_steps_1_desc">1. Set up password to protect this app</string>
     <string name="three_steps_2_desc">2. (Optional) Set up a two-factor authentication method</string>
-    <string name="three_steps_3_desc">2. Securely store your recovery phrase to restore your Safe in case you loose access to this device</string>
+    <string name="three_steps_3_desc">2. Securely store your recovery phrase to restore your Safe in case you lose access to this device</string>
     <string name="what_is_the_gnosis_safe">What is the Gnosis Safe?</string>
     <string name="your_safe_is_a_smart_contract">Your Safe is a smart contract wallet that allows you to safely manage your crypto funds and connect to Dapps.</string>
     <string name="secure_by_design">Secure by design</string>
