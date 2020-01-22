@@ -43,7 +43,7 @@ android {
         // Blockchain settings
         buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "4")
         // Certificates
-        buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm,*gnosis.io"))
+        buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm,*.gnosis.io"))
         buildConfigField javaTypes.STRING, "PINNED_ROOT_CERTIFICATE_HASHES", asString(getKey("ROOT_CERTIFICATE_HASH",
                 "sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=," +
                         "sha256/f0KW/FtqTjs108NpYj42SrGvOB2PpxIVM8nWxjPqJGE=," +
