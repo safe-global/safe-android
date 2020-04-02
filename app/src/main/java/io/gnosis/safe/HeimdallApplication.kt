@@ -1,26 +1,27 @@
-package io.gnosis.tests
+package io.gnosis.safe
 
+import android.content.Context
 import androidx.multidex.MultiDexApplication
-import androidx.test.platform.app.InstrumentationRegistry
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.mockito.Mockito
-import pm.gnosis.crypto.LinuxSecureRandom
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
 import io.gnosis.safe.di.modules.ApplicationModule
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import java.security.Security
 
-open class TestApplication : MultiDexApplication(), ComponentProvider {
+class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
-    private var component: ApplicationComponent = DaggerApplicationComponent.builder()
+    private val component: ApplicationComponent = DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this)).build()
 
     override fun get(): ApplicationComponent = component
 
     override fun onCreate() {
         super.onCreate()
+
+        component.appInitManager().init()
 
         try {
             LinuxSecureRandom()
@@ -31,10 +32,8 @@ open class TestApplication : MultiDexApplication(), ComponentProvider {
     }
 
     companion object Companion {
-        fun mockComponent(): ApplicationComponent =
-            (InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as _root_ide_package_.io.gnosis.tests.TestApplication).run {
-                component = Mockito.mock(ApplicationComponent::class.java)
-                component
-            }
+        operator fun get(context: Context): ApplicationComponent {
+            return (context.applicationContext as ComponentProvider).get()
+        }
     }
 }
