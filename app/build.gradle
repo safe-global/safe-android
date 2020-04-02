@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'bivrost'
 apply plugin: 'io.fabric'
 apply from: '../buildsystem/coverageReport.gradle'
 
@@ -165,6 +164,7 @@ dependencies {
     testImplementation "junit:junit:$versions.junit"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(":data")
 
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
@@ -185,9 +185,6 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
-
-    // Gnosis Bivrost
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     // AndroidX
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
