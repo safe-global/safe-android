@@ -32,7 +32,7 @@ open class TestApplication : MultiDexApplication(), ComponentProvider {
 
     companion object Companion {
         fun mockComponent(): ApplicationComponent =
-            (InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as _root_ide_package_.io.gnosis.tests.TestApplication).run {
+            (InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestApplication).run {
                 component = Mockito.mock(ApplicationComponent::class.java)
                 component
             }
