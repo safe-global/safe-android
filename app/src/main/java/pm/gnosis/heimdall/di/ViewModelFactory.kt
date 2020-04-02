@@ -23,7 +23,7 @@ class ViewModelFactory @Inject constructor(
         }
         creator ?: throw IllegalArgumentException("Unknown model class $modelClass")
         try {
-            return modelClass.cast(creator.get())
+            return modelClass.cast(creator.get())!!
         } catch (e: Exception) {
             throw RuntimeException(e)
         }

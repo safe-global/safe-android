@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Gnosis Safe</string>
-    <string name="currency_eth" translatable="false">ETH</string>
-    <string name="currency_gwei" translatable="false">GWei</string>
-    <string name="currency_wei" translatable="false">Wei</string>
-    <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>
-    <string name="etherscan_address_url" translatable="false">https://rinkeby.etherscan.io/address/%s</string>
-    <string name="empty_screen_title" translatable="false">¯\\_(ツ)_/¯</string>
-    <string name="tos_link" translatable="false">https://safe.gnosis.io/terms</string>
-    <string name="privacy_link" translatable="false">https://safe.gnosis.io/privacy</string>
-    <string name="x_ether" translatable="false">%s ETH</string>
-    <string name="x_wei" translatable="false">%s Wei</string>
-    <string name="x_gwei" translatable="false">%s GWei</string>
-    <string name="feedback_email" translatable="false">safe@gnosis.io</string>
-    <string name="licenses_link" translatable="false">https://safe.gnosis.io/licenses#android</string>
-    <string name="tip_link" translatable="false">[?]</string>
-    <string name="authenticator_link" translatable="false">https://chrome.google.com/webstore/detail/gnosis-safe-rinkeby/gkiklnclpcbphbiaickiepnnnahefkoc</string>
-    <string name="blog_link" translatable="false">https://blog.gnosis.pm/announcing-the-gnosis-safe-contract-update-1-1-0-bug-bounty-fd2850204963</string>
-    <string name="gnosis_telegram_id">GnosisSafe</string>
-    <string name="gnosis_gitter_url">https://gitter.im/gnosis/Safe</string>
-    <string name="keycard_link">https://keycard.tech/</string>
 </resources>

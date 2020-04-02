@@ -16,6 +16,7 @@ import timber.log.Timber
 import java.security.Security
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
+
     private val component: ApplicationComponent = DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this)).build()
 
@@ -23,18 +24,6 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     override fun onCreate() {
         super.onCreate()
-
-        // Init crash tracker to track unhandled exceptions
-        component.crashTracker().init()
-
-        RxJavaPlugins.setErrorHandler(Timber::e)
-
-        // Enable RxAndroid's new async api
-        // this prevents unnecessary handler.post calls on main thread for scheduling new messages
-        // which is done by default by RxAndroid main thread scheduler
-        // and thus improves frame rate by avoiding unnecessary waiting for the next frame due to VSYNC locking
-        val asyncMainThreadScheduler = AndroidSchedulers.from(Looper.getMainLooper(), true)
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler { asyncMainThreadScheduler }
 
         component.appInitManager().init()
 

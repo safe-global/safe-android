@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import pm.gnosis.heimdall.di.modules.ApplicationModule
-import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import timber.log.Timber
 
 abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
@@ -17,7 +16,7 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
 ) : ViewModel() {
     abstract val state: LiveData<T>
 
-    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+//    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
     protected abstract fun initialState(): T
 
@@ -36,7 +35,7 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
 
     protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
-        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
+//        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
     }
 
     protected fun currentState(): T = stateChannel.value
