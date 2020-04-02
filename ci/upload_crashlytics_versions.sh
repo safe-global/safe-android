@@ -10,10 +10,6 @@ if [[ $BUILKITE_BRANCH  =~ ^v[0-9]+.* ]]; then
     export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 fi
 
-export FABRIC_GROUP_INTERNAL_BETA="internal-beta"
-echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
-echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
-
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
 ./gradlew assembleInternal assembleRinkeby assembleRelease

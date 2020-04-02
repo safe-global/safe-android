@@ -2,12 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 apply from: '../buildsystem/coverageReport.gradle'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
 
 android {
     defaultConfig {
@@ -20,10 +15,14 @@ android {
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
         buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
         // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F")) // Version 1.1.1 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2"))
+        // Version 0.0.2-alpha (Mainnet)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"))
+        // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"))
+        // Version 1.0.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F"))
+        // Version 1.1.1 (All networks)
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_OLD_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x8D29bE29923b68abfDD21e541b9374737B49cdAD"))
@@ -55,7 +54,6 @@ android {
 
         project.ext.set("archivesBaseName", String.format("gnosis-safe-%s", defaultConfig.versionCode))
 
-        ext.betaDistributionGroupAliases = System.getenv("FABRIC_GROUP_INTERNAL_BETA")
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
 
         javaCompileOptions {
@@ -199,11 +197,6 @@ dependencies {
     // Google Material
     implementation "com.google.android.material:material:$versions.material"
 
-    // Firebase
-    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
-    implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
-    implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
-
     // String formatting
     implementation "com.squareup.phrase:phrase:$versions.phrase"
 
@@ -268,5 +261,3 @@ dependencies {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
     kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]
 }
-
-apply plugin: 'com.google.gms.google-services'
