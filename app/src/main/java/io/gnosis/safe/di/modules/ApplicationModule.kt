@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.di.ApplicationContext
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
@@ -18,7 +17,6 @@ import pm.gnosis.ethereum.rpc.RpcEthereumRepository
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -64,14 +62,16 @@ class ApplicationModule(private val application: Application) {
             .client(client)
             .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
             .create(RetrofitEthereumRpcApi::class.java)
 
     @Provides
     @Singleton
     @Named(INFURA_REST_CLIENT)
-    fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient =
+    fun providesInfuraOkHttpClient(
+        okHttpClient: OkHttpClient,
+        @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
+    ): OkHttpClient =
         okHttpClient.newBuilder().apply {
             interceptors.forEach {
                 addInterceptor(it)
