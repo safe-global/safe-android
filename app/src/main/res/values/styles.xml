@@ -1,46 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:editTextStyle">@style/Input</item>
-        <item name="android:textViewStyle">@style/Text</item>
-        <item name="editTextStyle">@style/Input</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
-        <item name="popupMenuStyle">@style/PopupMenu</item>
     </style>
-
-    <style name="PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
-        <item name="overlapAnchor">true</item>
-    </style>
-
-    <style name="GreyBackgroundThemeBase" parent="WhiteTheme">
-        <item name="android:windowBackground">@color/pale_grey_two</item>
-    </style>
-
-    <style name="GreyBackgroundTheme" parent="GreyBackgroundThemeBase">
-        <item name="android:windowBackground">@color/pale_grey_two</item>
-    </style>
-
-    <!-- Mountain theme. -->
 
     <style name="MountainThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/mountain_background</item>
     </style>
 
     <style name="MountainTheme" parent="MountainThemeBase" />
-
-    <style name="SmallFlatButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/safe_green</item>
-        <item name="android:textColor">@color/safe_green</item>
-    </style>
-
-    <!-- White theme (will be the main theme for the app) -->
 
     <style name="WhiteThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
@@ -49,213 +24,4 @@
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
-    <style name="WhiteTheme.FloatingLabel" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/safe_green</item>
-    </style>
-
-    <style name="FullScreenDialogStyle" parent="WhiteTheme">
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">false</item>
-        <item name="android:windowIsFloating">false</item>
-    </style>
-
-    <style name="TabLayout" parent="Widget.Design.TabLayout">
-        <item name="android:background">@color/white</item>
-        <item name="tabIndicatorColor">@color/safe_green</item>
-        <item name="tabIndicatorHeight">2dp</item>
-        <item name="tabMode">fixed</item>
-        <item name="tabInlineLabel">true</item>
-        <item name="tabIconTint">@color/tab_item</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">36dp</item>
-        <item name="tabSelectedTextColor">@color/safe_green</item>
-        <item name="tabTextAppearance">@style/TabText</item>
-    </style>
-
-    <style name="TabText" parent="TextAppearance.Design.Tab">
-        <item name="android:textColor">@color/medium_grey</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">13sp</item>
-    </style>
-
-    <style name="PrimaryButton">
-        <item name="android:textSize">@dimen/primary_button_text_size</item>
-        <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingEnd">24dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="PrimaryButton.Green">
-        <item name="android:background">@drawable/primary_button_green</item>
-        <item name="android:textColor">@color/primary_white_text</item>
-        <item name="android:textSize">@dimen/primary_button_text_size</item>
-    </style>
-
-    <style name="PrimaryButton.Green.Round">
-        <item name="android:background">@drawable/round_button_fill</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingEnd">24dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="WhiteTheme.ToolbarTitle">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/blue</item>
-    </style>
-
-    <style name="WhiteTheme.SubtitleBold">
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:textColor">@color/blue</item>
-    </style>
-
-    <style name="WhiteTheme.FlatTextCenter">
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:lineSpacingExtra">7sp</item>
-        <item name="android:textColor">@color/dark_grey</item>
-    </style>
-
-    <!-- Start: Button styles -->
-
-    <style name="PrimaryButton.White.Text" parent="Text">
-        <item name="android:textColor">@color/primary_button_white_text</item>
-        <item name="android:textSize">@dimen/primary_button_text_size</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="PrimaryButton.White">
-        <item name="android:background">@drawable/primary_button_white</item>
-        <item name="android:textColor">@color/primary_button_white_text</item>
-        <item name="android:textSize">@dimen/primary_button_text_size</item>
-    </style>
-
-    <style name="PrimaryButton.Green.FullWidth">
-        <item name="android:background">@drawable/primary_button_full_width</item>
-        <item name="android:minHeight">@dimen/primary_button_height</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-    </style>
-
-    <style name="SecondaryButton">
-        <item name="android:background">@drawable/secondary_button_inline</item>
-        <item name="android:textColor">@color/secondary_button_text</item>
-        <item name="android:textSize">@dimen/secondary_button_text_size</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="TextButton" parent="TextAppearance.AppCompat.Button">
-        <item name="android:textColor">@color/safe_green</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:background">@drawable/selectable_background</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-    </style>
-
-    <!-- End: Button styles -->
-    
-    <!-- Start: Text styles -->
-
-    <style name="Text" parent="TextAppearance.AppCompat">
-        <!--
-        Only use this to set font.
-        All other attributes will overwrite default values for EVERY view
-        -->
-    </style>
-
-    <style name="Content" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/light_text</item>
-    </style>
-
-    <style name="DarkContent" parent="Content">
-        <item name="android:textColor">@color/default_text</item>
-    </style>
-
-    <style name="BoldContent" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/default_text</item>
-    </style>
-
-    <style name="CapsText">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/medium_grey</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="SpacedCapsText" parent="CapsText" />
-
-    <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/default_text</item>
-        <item name="android:textColorHint">@color/light_text</item>
-        <item name="android:background">@drawable/input_background</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingTop">4dp</item>
-    </style>
-
-    <style name="InlineInput" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/default_text</item>
-        <item name="android:textColorHint">@color/light_text</item>
-        <item name="android:background">@null</item>
-        <item name="android:inputType">textMultiLine</item>
-        <item name="android:gravity">start|center_vertical</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:maxLines">2</item>
-    </style>
-
-    <style name="CurrencyInput" parent="InlineInput">
-        <item name="android:gravity">start|center_vertical</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:drawablePadding">8dp</item>
-    </style>
-
-    <style name="LightText" parent="Text">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/medium_grey</item>
-    </style>
-
-    <style name="NormalText" parent="Text">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/dark_grey</item>
-    </style>
-
-    <style name="DarkText" parent="Text">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/blue</item>
-    </style>
-
-    <style name="NavigationText" parent="DarkText">
-        <item name="android:textSize">14sp</item>
-        <item name="android:drawablePadding">32dp</item>
-        <item name="android:padding">@dimen/navigation_item_padding</item>
-        <item name="android:background">@drawable/selectable_background</item>
-    </style>
-
-    <!-- End: Text styles -->
 </resources>

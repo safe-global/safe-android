@@ -2,29 +2,27 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'bivrost'
-apply plugin: 'io.fabric'
 apply from: '../buildsystem/coverageReport.gradle'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
 
 android {
     defaultConfig {
-        applicationId "pm.gnosis.heimdall"
+        applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
-        testInstrumentationRunner "pm.gnosis.tests.MockTestRunner"
+        testInstrumentationRunner "io.gnosis.tests.MockTestRunner"
 
         // Debug Settings
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
         buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
         // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F")) // Version 1.1.1 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2"))
+        // Version 0.0.2-alpha (Mainnet)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"))
+        // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"))
+        // Version 1.0.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F"))
+        // Version 1.1.1 (All networks)
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_OLD_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x8D29bE29923b68abfDD21e541b9374737B49cdAD"))
@@ -56,7 +54,6 @@ android {
 
         project.ext.set("archivesBaseName", String.format("gnosis-safe-%s", defaultConfig.versionCode))
 
-        ext.betaDistributionGroupAliases = System.getenv("FABRIC_GROUP_INTERNAL_BETA")
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
 
         javaCompileOptions {
@@ -130,7 +127,6 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/rxjava.properties'
         exclude 'META-INF/extensions.kotlin_module'
         exclude 'META-INF/LICENSE'
     }
@@ -166,6 +162,7 @@ dependencies {
     testImplementation "junit:junit:$versions.junit"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(":data")
 
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
@@ -187,45 +184,18 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
-    // Gnosis Bivrost
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
-
-    // Fabric
-    implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") {
-        transitive = true
-    }
-
-    // Kethereum RLP
-    implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
-
-    // Wallet Connect
-    implementation "com.github.WalletConnect:kotlin-walletconnect-lib:$versions.wallet_connect"
-
     // AndroidX
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
-    implementation "androidx.cardview:cardview:$versions.androidx_card_view"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
     kapt "androidx.room:room-compiler:$versions.androidx_room"
     implementation "androidx.room:room-runtime:$versions.androidx_room"
-    implementation "androidx.room:room-rxjava2:$versions.androidx_room"
     implementation "androidx.multidex:multidex:$versions.multidex"
 
     // Google Material
     implementation "com.google.android.material:material:$versions.material"
-
-    // Rx
-    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
-    implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
-    implementation "com.gojuno.koptional:koptional:$versions.koptional"
-    implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
-
-    // Firebase
-    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
-    implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
-    implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
 
     // String formatting
     implementation "com.squareup.phrase:phrase:$versions.phrase"
@@ -243,38 +213,14 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:$versions.retrofit") {
         exclude group: "com.squareup.moshi", module: "moshi"
     }
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
 
     // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
 
-    // RxBinding
-    implementation("com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding") {
-        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
-    }
-    implementation("com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:$versions.rxbinding") {
-        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
-    }
-    implementation("com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:$versions.rxbinding") {
-        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
-    }
-    implementation("com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:$versions.rxbinding") {
-        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
-    }
-    implementation("com.jakewharton.rxbinding2:rxbinding-design-kotlin:$versions.rxbinding") {
-        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
-    }
-
     implementation "com.squareup.picasso:picasso:$versions.picasso"
 
     // More
-    implementation "com.github.status-im.status-keycard-java:android:$versions.status_keycard"
-    implementation "com.google.zxing:core:$versions.zxing"
-    implementation "com.github.clans:fab:$versions.floating_action_button"
-    implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-    }
     implementation("org.bouncycastle:bcprov-jdk15on:$versions.bouncycastle", {
         exclude group: 'junit', module: 'junit'
     })
@@ -282,7 +228,6 @@ dependencies {
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
@@ -316,5 +261,3 @@ dependencies {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
     kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]
 }
-
-apply plugin: 'com.google.gms.google-services'

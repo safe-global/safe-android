@@ -14,16 +14,6 @@ INFURA_API_KEY=<YOUR_API_KEY>
 
 Replace `<YOUR_API_KEY>` with the key that you get from Infura.
 
-### Fabric
-This project is integrated with Fabric by default so you need to create a file named `fabric.properties` inside the `app` module with the following contents:
-```
-apiSecret=<YOUR_FABRIC_API_SECRET>
-apiKey=<YOUR_FABRIC_API_KEY>
-```
-Replace each field with the respective information (found in Fabric).
-
-**If you don't want to setup Fabric for this project you can follow the steps present in this [page](https://docs.fabric.io/android/crashlytics/build-tools.html) to disable the integration. We will improve this integration in the future so it can be easily enabled/disabled**
-
 ### Firebase
 The Gnosis Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
 
