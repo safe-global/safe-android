@@ -1,28 +1,41 @@
 package io.gnosis.safe.ui.base
 
+import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.gnosis.safe.di.modules.ApplicationModule
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
-//TODO cover with unit tests and refactor. For complete version of the class check branch safe_v1
-abstract class BaseStateViewModel<T : ViewState>(
+abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
+    context: Context,
     private val appDispatcher: ApplicationModule.AppCoroutineDispatchers
 ) : ViewModel() {
     abstract val state: LiveData<T>
 
+//    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+
     protected abstract fun initialState(): T
 
-    @Suppress("LeakingThis")
-    private val stateChannel = ConflatedBroadcastChannel(initialState())
+    interface State {
+        var viewAction: ViewAction?
+    }
 
-    private val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
+    interface ViewAction {
+        data class ShowError(val error: Throwable) : ViewAction
+        data class StartActivity(val intent: Intent) : ViewAction
+        object CloseScreen : ViewAction
+    }
+
+    @Suppress("LeakingThis")
+    protected val stateChannel = ConflatedBroadcastChannel(initialState())
+
+    protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
+//        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
     }
 
     protected fun currentState(): T = stateChannel.value
@@ -32,12 +45,14 @@ abstract class BaseStateViewModel<T : ViewState>(
             val currentState = currentState()
             val nextState = currentState.run(update)
             // Reset view action if the same
-            takeUnless { !forceViewAction && nextState === currentState }?.run {
-                stateChannel.send(nextState)
-            }
+            if (!forceViewAction && nextState.viewAction === currentState.viewAction) nextState.viewAction = null
+            stateChannel.send(nextState)
         } catch (e: Exception) {
+            // Could not submit update
             Timber.e(e)
         }
     }
 
+    protected fun safeLaunch(errorHandler: CoroutineExceptionHandler = coroutineErrorHandler, block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(appDispatcher.background + errorHandler, block = block)
 }
