@@ -3,10 +3,8 @@
 buildscript {
     apply from: 'buildsystem/constants.gradle'
     apply from: 'buildsystem/helpers.gradle'
-    apply from: 'buildsystem/dependencies.gradle'
-    ext {
-        kotlin_version = '1.3.71'
-    }
+    apply from: 'buildsystem/versions.gradle'
+
     repositories {
         google()
         jcenter()
@@ -16,6 +14,7 @@ buildscript {
         classpath "com.android.tools.build:gradle:$versions.android_tools"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath "com.github.gnosis.bivrost-kotlin:bivrost-gradle-plugin:$versions.bivrost"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$versions.androidx_navigation"
         classpath "com.google.gms:google-services:$versions.google_services"
     }
 }

@@ -3,6 +3,7 @@ package io.gnosis.safe.di.components
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewbinding.ViewBinding
 import dagger.Component
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.modules.ApplicationBindingsModule
