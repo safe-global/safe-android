@@ -43,5 +43,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.StartActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 </manifest>
