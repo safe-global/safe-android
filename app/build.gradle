@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply from: '../buildsystem/coverageReport.gradle'
 
 android {
@@ -188,15 +189,20 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
-    // AndroidX
+    // Appcompat, views
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
+    implementation "androidx.multidex:multidex:$versions.multidex"
+    // Lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
-    kapt "androidx.room:room-compiler:$versions.androidx_room"
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$versions.androidx_navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$versions.androidx_navigation"
+    // Room
     implementation "androidx.room:room-runtime:$versions.androidx_room"
-    implementation "androidx.multidex:multidex:$versions.multidex"
+    kapt "androidx.room:room-compiler:$versions.androidx_room"
 
     // Google Material
     implementation "com.google.android.material:material:$versions.material"
