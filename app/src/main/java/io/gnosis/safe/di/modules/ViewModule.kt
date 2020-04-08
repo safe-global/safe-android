@@ -13,7 +13,9 @@ import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.splash.SplashViewModel
 
 @Module
-class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
+class ViewModule(
+    private val context: Context,
+    private val viewModelProvider: Any? = null) {
 
     @Provides
     @ForView
@@ -33,8 +35,8 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @ForView
     fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {
         return when (val provider = viewModelProvider ?: context) {
-            is Fragment -> ViewModelProviders.of(provider, factory)
-            is FragmentActivity -> ViewModelProviders.of(provider, factory)
+            is Fragment -> ViewModelProvider(provider, factory)
+            is FragmentActivity -> ViewModelProvider(provider, factory)
             else -> throw IllegalArgumentException("Unsupported context $provider")
         }
     }
