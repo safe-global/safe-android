@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply from: '../buildsystem/coverageReport.gradle'
+apply from: '../buildsystem/test_dependencies.gradle'
+apply from: '../buildsystem/test_android_dependencies.gradle'
 
 android {
     defaultConfig {
@@ -242,30 +244,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
-
-    // Testing
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
-    testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
-    testImplementation "org.mockito:mockito-core:$versions.mockito"
-    testImplementation "org.mockito:mockito-inline:$versions.mockito"
-    testImplementation "org.powermock:powermock-module-junit4:$versions.powermock"
-    testImplementation "org.powermock:powermock-api-mockito2:$versions.powermock"
-    testImplementation "org.powermock:powermock-core:$versions.powermock"
-    testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
-
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
-    testImplementation "androidx.arch.core:core-testing:2.1.0"
-
-    // UI tests
-    androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
-    androidTestImplementation("androidx.test.espresso:espresso-intents:$versions.espresso")
-    androidTestImplementation("androidx.test.espresso:espresso-core:$versions.espresso", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation "androidx.test.ext:junit:$versions.androidx_test_ext"
-
-    androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
-
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
