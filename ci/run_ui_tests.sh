@@ -25,7 +25,7 @@ adb shell settings put global animator_duration_scale 0
 ./gradlew installDebug --stacktrace
 
 # Start app (this is required on some emulators to get the app in a valid state -> Signature failure)
-adb shell am start -n pm.gnosis.heimdall.debug/pm.gnosis.heimdall.ui.splash.SplashActivity
+adb shell am start -n io.gnosis.heimdall.debug/pm.gnosis.heimdall.ui.splash.SplashActivity
 
 echo "Execute UI tests"
 ./gradlew createDebugTestCoverage --stacktrace
