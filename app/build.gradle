@@ -7,12 +7,13 @@ apply from: '../buildsystem/coverageReport.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
 apply from: '../buildsystem/test_android_dependencies.gradle'
 
+
 android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
-        testInstrumentationRunner "io.gnosis.tests.MockTestRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Debug Settings
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
@@ -166,8 +167,6 @@ jacoco {
 dependencies {
     // We specify junit before anything else to make sure that this version is prioritized over the
     // one bundled in the android.jar
-    testImplementation "junit:junit:$versions.junit"
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(":data")
 
@@ -245,6 +244,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 }
+
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
     kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]
