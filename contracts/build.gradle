@@ -1,4 +1,4 @@
-apply from: '../buildsystem/android_library.gradle'
+apply plugin: 'kotlin'
 apply plugin: 'bivrost'
 
 dependencies {
