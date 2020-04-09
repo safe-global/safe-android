@@ -50,5 +50,6 @@ ext {
             junit                     : '4.12',
             mockito                   : '2.26.0',
             powermock                 : '2.0.2',
+            mockk                     : '1.9.3'
     ]
 }

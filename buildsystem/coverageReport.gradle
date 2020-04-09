@@ -54,9 +54,9 @@ if (variants != null) {
                 html.enabled = true
             }
 
-            sourceDirectories = files([mainSrc])
-            classDirectories = files([debugTree], [kotlinTree])
-            executionData = fileTree(dir: "$buildDir", includes: [
+            sourceDirectories.from = files([mainSrc])
+            classDirectories.from = files([debugTree], [kotlinTree])
+            executionData.from = fileTree(dir: "$buildDir", includes: [
                     "jacoco/test${variantName}UnitTest.exec",
                     "outputs/code-coverage/connected/*coverage.ec"
             ])
