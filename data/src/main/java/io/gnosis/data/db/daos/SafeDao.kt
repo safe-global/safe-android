@@ -13,5 +13,5 @@ interface SafeDao {
     suspend fun delete(safe: Safe)
 
     @Query("SELECT * FROM ${Safe.TABLE_NAME}")
-    suspend fun loadAll(): List<Safe>
+    suspend fun loadAll(): Array<Safe>
 }
