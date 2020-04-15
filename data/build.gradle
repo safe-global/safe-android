@@ -1,5 +1,6 @@
 apply from: '../buildsystem/android_library.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
+apply from: '../buildsystem/test_android_dependencies.gradle'
 apply plugin: 'kotlin-kapt'
 
 dependencies {

@@ -1,5 +1,6 @@
 dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation "androidx.test.ext:junit:${versions.androidx_test_ext}"
     androidTestImplementation("androidx.test.espresso:espresso-intents:${versions.espresso}")
     androidTestImplementation("androidx.test.espresso:espresso-core:${versions.espresso}", {
