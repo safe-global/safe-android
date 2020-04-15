@@ -1,6 +1,18 @@
 apply from: '../buildsystem/android_library.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
+apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation project(":contracts")
+
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+
+    // Room
+    implementation "androidx.room:room-runtime:$versions.androidx_room"
+    implementation "androidx.room:room-ktx:$versions.androidx_room"
+    kapt "androidx.room:room-compiler:$versions.androidx_room"
+
+    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+
+    testImplementation "androidx.room:room-testing:$versions.androidx_room"
 }
