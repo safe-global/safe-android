@@ -5,10 +5,15 @@ import android.content.SharedPreferences
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.mockk.*
+import io.reactivex.Observable
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import pm.gnosis.ethereum.Block
+import pm.gnosis.ethereum.EthGetStorageAt
+import pm.gnosis.ethereum.EthRequest
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.TestPreferences
@@ -18,6 +23,7 @@ import java.math.BigInteger
 class SafeRepositoryTest {
 
     private val safeDao = mockk<SafeDao>()
+    private val ethereumRepository = mockk<EthereumRepository>()
 
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
@@ -29,7 +35,7 @@ class SafeRepositoryTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         val preferencesManager = PreferencesManager(application)
-        safeRepository = SafeRepository(safeDao, preferencesManager)
+        safeRepository = SafeRepository(safeDao, preferencesManager, ethereumRepository)
     }
 
     @Test
@@ -101,4 +107,20 @@ class SafeRepositoryTest {
         }
     }
 
+    @Test
+    fun `isValidSafe - (safe with master copy v0_0_2) should return true`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.safeMasterCopy_0_0_2)
+        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns Observable.just(ethRequest)
+
+        val actual = safeRepository.isValidSafe(safeAddress)
+
+        assertEquals(true, actual)
+        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
+    }
+
+    private fun buildSuccessfulEthRequest(from: Solidity.Address, masterCopy: Solidity.Address) =
+        EthGetStorageAt(from, BigInteger.ZERO, block = Block.LATEST).apply {
+            response = EthRequest.Response.Success(masterCopy.asEthereumAddressString())
+        }
 }

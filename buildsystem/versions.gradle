@@ -37,6 +37,7 @@ ext {
             play_services_auth        : '17.0.0',
             retrofit                  : '2.6.2',
             rxandroid                 : '2.1.1',
+            rxjava                    : '2.2.1',
             rxbinding                 : '2.1.1',
             status_keycard            : '3.0.1',
             svalinn                   : 'v0.10.0',
