@@ -27,14 +27,10 @@ class SafeRepository(
 
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
-    @WorkerThread
     suspend fun isValidSafe(safeAddress: Solidity.Address): Boolean =
-        ethereumRepository.request(EthGetStorageAt(from = safeAddress, location = BigInteger.ZERO, block = Block.LATEST))
-            .blockingFirst()
-            .let { result ->
-                isSupported(result.checkedResult().asEthereumAddress())
-            }
-
+        ethereumRepository.request(EthGetStorageAt(from = safeAddress, location = BigInteger.ZERO, block = Block.LATEST)).let { request ->
+            isSupported(request.checkedResult().asEthereumAddress())
+        }
 
     suspend fun setActiveSafe(safe: Safe) {
         preferenceManager.prefs.edit {

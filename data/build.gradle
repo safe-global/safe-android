@@ -15,6 +15,11 @@ android {
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F"))
         // Version 1.1.1 (All networks)
     }
+
+    packagingOptions {
+        exclude 'META-INF/extensions.kotlin_module'
+        exclude 'META-INF/LICENSE'
+    }
 }
 
 dependencies {
@@ -35,9 +40,6 @@ dependencies {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
-
-    //TODO kill with fire, as soon as we release rpc with coroutines in svalinn
-    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
 
     testImplementation "androidx.room:room-testing:$versions.androidx_room"
 }
