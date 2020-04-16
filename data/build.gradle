@@ -14,6 +14,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$versions.androidx_room"
 
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
 
     testImplementation "androidx.room:room-testing:$versions.androidx_room"
 }

@@ -136,4 +136,37 @@ class SafeDatabaseTest {
 
         assertEquals(true, safeDao.loadAll().isEmpty())
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun loadByAddress__safe_address_present__should_return_safe() = runBlocking {
+        val testSafe1 = Safe(Solidity.Address(BigInteger.ZERO), "zero")
+        val testSafe2 = Safe(Solidity.Address(BigInteger.ONE), "one")
+        val testSafe3 = Safe(Solidity.Address(BigInteger.TEN), "ten")
+
+        safeDao.insert(testSafe1)
+        safeDao.insert(testSafe2)
+        safeDao.insert(testSafe3)
+
+        val actual = safeDao.loadByAddress(testSafe2.address)
+
+        assertEquals(testSafe2, actual)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun loadByAddress__safe_address_not_found__should_return_null() = runBlocking {
+        val testSafe1 = Safe(Solidity.Address(BigInteger.ZERO), "zero")
+        val testSafe2 = Safe(Solidity.Address(BigInteger.ONE), "one")
+        val testSafe3 = Safe(Solidity.Address(BigInteger.TEN), "ten")
+        val testSafe4 = Safe(Solidity.Address(BigInteger.valueOf(4)), "four")
+
+        safeDao.insert(testSafe1)
+        safeDao.insert(testSafe2)
+        safeDao.insert(testSafe3)
+
+        val actual = safeDao.loadByAddress(testSafe4.address)
+
+        assertEquals(null, actual)
+    }
 }
