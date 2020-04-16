@@ -29,7 +29,7 @@ class SafeRepository(
 
     suspend fun isValidSafe(safeAddress: Solidity.Address): Boolean =
         ethereumRepository.request(EthGetStorageAt(from = safeAddress, location = BigInteger.ZERO, block = Block.LATEST)).let { request ->
-            isSupported(request.checkedResult().asEthereumAddress())
+            isSupported(request.checkedResult("Valid safe check failed").asEthereumAddress())
         }
 
     suspend fun setActiveSafe(safe: Safe) {
