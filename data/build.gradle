@@ -3,25 +3,6 @@ apply from: '../buildsystem/test_dependencies.gradle'
 apply from: '../buildsystem/test_android_dependencies.gradle'
 apply plugin: 'kotlin-kapt'
 
-android {
-    defaultConfig {
-        // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_0_0_2", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2"))
-        // Version 0.0.2-alpha (Mainnet)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_0_1_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"))
-        // Version 0.1.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"))
-        // Version 1.0.0 (All networks)
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_1_1", asString(getKey("SAFE_MASTER_COPY_1_1_1", "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F"))
-        // Version 1.1.1 (All networks)
-    }
-
-    packagingOptions {
-        exclude 'META-INF/extensions.kotlin_module'
-        exclude 'META-INF/LICENSE'
-    }
-}
-
 dependencies {
     implementation project(":contracts")
 

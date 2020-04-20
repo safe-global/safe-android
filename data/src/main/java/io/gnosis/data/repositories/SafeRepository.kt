@@ -1,6 +1,6 @@
 package io.gnosis.data.repositories
 
-import io.gnosis.data.BuildConfig
+import io.gnosis.contracts.BuildConfig
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import pm.gnosis.ethereum.Block
