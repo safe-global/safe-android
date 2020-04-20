@@ -99,7 +99,7 @@ android {
         }
 
         rinkeby {
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ".rinkeby"
             versionNameSuffix "-rinkeby"
             minifyEnabled true
             signingConfig signingConfigs.release
