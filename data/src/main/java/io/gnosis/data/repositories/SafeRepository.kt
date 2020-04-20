@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.WorkerThread
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
@@ -52,19 +51,19 @@ class SafeRepository(
         @VisibleForTesting
         const val ACTIVE_SAFE = "prefs.string.active_safe"
 
-        val safeMasterCopy_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
-        val safeMasterCopy_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
-        val safeMasterCopy_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
-        val safeMasterCopy_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+        val SAFE_MASTER_COPY_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
+        val SAFE_MASTER_COPY_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
+        val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
+        val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
 
         fun isSupported(masterCopy: Solidity.Address?) =
             supportedContracts.contains(masterCopy)
 
         private val supportedContracts = listOf(
-            safeMasterCopy_0_0_2,
-            safeMasterCopy_0_1_0,
-            safeMasterCopy_1_0_0,
-            safeMasterCopy_1_1_1
+            SAFE_MASTER_COPY_0_0_2,
+            SAFE_MASTER_COPY_0_1_0,
+            SAFE_MASTER_COPY_1_0_0,
+            SAFE_MASTER_COPY_1_1_1
         )
     }
 }

@@ -105,7 +105,7 @@ class SafeRepositoryTest {
     @Test
     fun `isValidSafe - (safe with master copy v0_0_2) should return true`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.safeMasterCopy_0_0_2)
+        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_0_0_2)
         coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
 
         val actual = safeRepository.isValidSafe(safeAddress)
@@ -117,7 +117,7 @@ class SafeRepositoryTest {
     @Test
     fun `isValidSafe - (safe with master copy v0_1_0) should return true`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.safeMasterCopy_0_1_0)
+        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_0_1_0)
         coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
 
         val actual = safeRepository.isValidSafe(safeAddress)
@@ -129,7 +129,7 @@ class SafeRepositoryTest {
     @Test
     fun `isValidSafe - (safe with master copy v1_0_0) should return true`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.safeMasterCopy_1_0_0)
+        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_1_0_0)
         coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
 
         val actual = safeRepository.isValidSafe(safeAddress)
@@ -141,7 +141,7 @@ class SafeRepositoryTest {
     @Test
     fun `isValidSafe - (safe with master copy v1_1_1) should return true`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.safeMasterCopy_1_1_1)
+        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_1_1_1)
         coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
 
         val actual = safeRepository.isValidSafe(safeAddress)
