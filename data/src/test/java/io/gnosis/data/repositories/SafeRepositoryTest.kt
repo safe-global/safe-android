@@ -74,7 +74,7 @@ class SafeRepositoryTest {
 
         safeRepository.setActiveSafe(safe)
 
-        coVerify(exactly = 1) { preferences.putString(SafeRepository.ACTIVE_SAFE, safe.address.asEthereumAddressString()) }
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString()) }
     }
 
     @Test
@@ -83,7 +83,7 @@ class SafeRepositoryTest {
 
         assertEquals(null, actual)
 
-        coVerify(exactly = 1) { preferences.getString(SafeRepository.ACTIVE_SAFE, null) }
+        coVerify(exactly = 1) { preferences.getString(ACTIVE_SAFE, null) }
     }
 
     @Test
@@ -96,8 +96,8 @@ class SafeRepositoryTest {
 
         assertEquals(safe, actual)
         coVerify(ordering = Ordering.ORDERED) {
-            preferences.putString(SafeRepository.ACTIVE_SAFE, safe.address.asEthereumAddressString())
-            preferences.getString(SafeRepository.ACTIVE_SAFE, null)
+            preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
+            preferences.getString(ACTIVE_SAFE, null)
             safeDao.loadByAddress(safe.address)
         }
     }
@@ -204,4 +204,7 @@ class SafeRepositoryTest {
             response = EthRequest.Response.Success(masterCopy.asEthereumAddressString())
         }
 
+    companion object {
+        private const val ACTIVE_SAFE = "prefs.string.active_safe"
+    }
 }
