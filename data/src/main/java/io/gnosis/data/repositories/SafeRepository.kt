@@ -1,6 +1,5 @@
 package io.gnosis.data.repositories
 
-import androidx.annotation.VisibleForTesting
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
@@ -48,8 +47,7 @@ class SafeRepository(
 
     companion object {
 
-        @VisibleForTesting
-        const val ACTIVE_SAFE = "prefs.string.active_safe"
+        private const val ACTIVE_SAFE = "prefs.string.active_safe"
 
         val SAFE_MASTER_COPY_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
         val SAFE_MASTER_COPY_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
