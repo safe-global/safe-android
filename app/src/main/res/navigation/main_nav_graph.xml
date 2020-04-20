@@ -6,9 +6,18 @@
     android:id="@+id/main_nav_graph.xml"
     app:startDestination="@id/safeOverviewFragment">
 
+
+    <include app:graph="@navigation/add_safe_nav" />
+
     <fragment
         android:id="@+id/safeOverviewFragment"
         android:name="io.gnosis.safe.ui.safe.overview.SafeOverviewFragment"
         android:label="SafeOverviewFragment"
-        tools:layout="@layout/fragment_safe_overview" />
+        tools:layout="@layout/fragment_safe_overview">
+        <action
+            android:id="@+id/action_safeOverviewFragment_to_add_safe_nav"
+            app:destination="@id/add_safe_nav"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/safeOverviewFragment" />
+    </fragment>
 </navigation>

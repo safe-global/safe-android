@@ -158,6 +158,9 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(":data")
 
+    // Gnosis Bivrost
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
@@ -229,6 +232,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
+
+    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
 }
 
 

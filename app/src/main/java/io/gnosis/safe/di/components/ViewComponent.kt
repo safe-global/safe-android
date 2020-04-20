@@ -2,7 +2,9 @@ package io.gnosis.safe.di.components
 
 import dagger.Component
 import io.gnosis.safe.di.ForView
+import io.gnosis.safe.di.modules.RepositoryModule
 import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.overview.SafeOverviewFragment
 import io.gnosis.safe.ui.splash.SplashActivity
 
@@ -16,4 +18,6 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
 
     fun inject(fragment: SafeOverviewFragment)
+
+    fun inject(fragment: AddSafeFragment)
 }

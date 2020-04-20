@@ -26,11 +26,6 @@ class ViewModule(
     @ForView
     fun providesLinearLayoutManager() = LinearLayoutManager(context)
 
-
-    @Provides
-    @ForView
-    fun providesSplashViewModel(provider: ViewModelProvider) = provider[SplashViewModel::class.java]
-
     @Provides
     @ForView
     fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {

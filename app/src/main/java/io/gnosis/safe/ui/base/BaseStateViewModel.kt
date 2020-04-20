@@ -1,19 +1,18 @@
 package io.gnosis.safe.ui.base
 
-import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.gnosis.safe.di.modules.ApplicationModule
-import kotlinx.coroutines.*
+import androidx.navigation.NavDirections
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
-    context: Context,
-    private val appDispatcher: ApplicationModule.AppCoroutineDispatchers
-) : ViewModel() {
+abstract class BaseStateViewModel<T> : ViewModel() where T : BaseStateViewModel.State {
     abstract val state: LiveData<T>
 
 //    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -27,6 +26,7 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
     interface ViewAction {
         data class ShowError(val error: Throwable) : ViewAction
         data class StartActivity(val intent: Intent) : ViewAction
+        data class NavigateTo(val navDirections: NavDirections) : ViewAction
         object CloseScreen : ViewAction
     }
 
@@ -54,5 +54,5 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
     }
 
     protected fun safeLaunch(errorHandler: CoroutineExceptionHandler = coroutineErrorHandler, block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch(appDispatcher.background + errorHandler, block = block)
+        viewModelScope.launch(Dispatchers.IO + errorHandler, block = block)
 }
