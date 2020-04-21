@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.di.modules.ApplicationModule
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.launch
@@ -13,8 +14,10 @@ import javax.inject.Inject
 
 class AddSafeViewModel
 @Inject constructor(
-    private val safeRepository: SafeRepository
+    repositories: Repositories
 ) : BaseStateViewModel<AddSafeState>() {
+
+    private val safeRepository = repositories.safeRepository()
 
     fun submitAddress(safeAddress: Solidity.Address) {
         viewModelScope.launch {

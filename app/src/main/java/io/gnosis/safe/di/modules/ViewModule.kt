@@ -4,13 +4,11 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
-import io.gnosis.safe.ui.splash.SplashViewModel
 
 @Module
 class ViewModule(
