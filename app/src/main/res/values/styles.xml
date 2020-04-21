@@ -97,4 +97,30 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
+        <item name="android:background">@color/background</item>
+        <item name="tabIndicatorColor">@color/safe_green</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabInlineLabel">true</item>
+        <item name="tabIconTint">@drawable/tab_item_text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="tabSelectedTextColor">@color/safe_green</item>
+        <item name="tabTextAppearance">@style/TabText</item>
+    </style>
+
+    <style name="TabText" parent="TextAppearance.Design.Tab">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@drawable/tab_item_text</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:gravity">start</item>
+        <item name="singleLine">true</item>
+    </style>
+
 </resources>
