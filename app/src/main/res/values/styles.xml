@@ -5,7 +5,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/safe_green</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
@@ -16,14 +16,7 @@
     </style>
 
     <style name="MountainTheme" parent="MountainThemeBase" />
-
-    <style name="WhiteThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@color/white</item>
-        <item name="colorAccent">@color/safe_green</item>
-    </style>
-
-    <style name="WhiteTheme" parent="WhiteThemeBase" />
-
+    
     <style name="PrimaryButton">
         <item name="android:layout_height">54dp</item>
         <item name="android:background">@drawable/primary_button</item>
