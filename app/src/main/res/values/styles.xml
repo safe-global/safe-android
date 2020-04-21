@@ -24,4 +24,53 @@
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
+    <style name="PrimaryButton">
+        <item name="android:layout_height">54dp</item>
+        <item name="android:background">@drawable/primary_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@drawable/primary_button_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="Text" parent="TextAppearance.AppCompat">
+        <!--
+        Only use this to set font.
+        All other attributes will overwrite default values for EVERY view
+        -->
+    </style>
+
+    <style name="Text.Title">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="theme">?attr/actionBarTheme</item>
+        <item name="background">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+    </style>
+
+    <style name="Toolbar.Title">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Toolbar.Subtitle">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
 </resources>
