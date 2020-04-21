@@ -16,7 +16,11 @@
     </style>
 
     <style name="MountainTheme" parent="MountainThemeBase" />
-    
+
+    <style name="WhiteThemeBase" parent="AppTheme" />
+
+    <style name="WhiteTheme" parent="WhiteThemeBase" />
+
     <style name="PrimaryButton">
         <item name="android:layout_height">54dp</item>
         <item name="android:background">@drawable/primary_button</item>
