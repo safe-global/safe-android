@@ -1,15 +1,12 @@
 package io.gnosis.safe.ui.safe.add
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.di.Repositories
-import io.gnosis.safe.di.modules.ApplicationModule
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.launch
-import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class AddSafeViewModel
@@ -19,9 +16,23 @@ class AddSafeViewModel
 
     private val safeRepository = repositories.safeRepository()
 
-    fun submitAddress(safeAddress: Solidity.Address) {
+    fun submitAddress(address: String) {
         viewModelScope.launch {
-            safeRepository.isValidSafe(safeAddress)
+            runCatching {
+                val validSafe = safeRepository.isValidSafe(address.asEthereumAddress()!!)
+                updateState {
+                    if (validSafe) {
+                        CaptureSafe(
+                            ViewAction.NavigateTo(
+                                AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
+                            )
+                        )
+
+                    } else {
+                        InvalidAddress
+                    }
+                }
+            }
         }
     }
 
@@ -38,3 +49,7 @@ sealed class AddSafeState : BaseStateViewModel.State
 data class CaptureSafe(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : AddSafeState()
+
+object InvalidAddress : AddSafeState() {
+    override var viewAction: BaseStateViewModel.ViewAction? = null
+}

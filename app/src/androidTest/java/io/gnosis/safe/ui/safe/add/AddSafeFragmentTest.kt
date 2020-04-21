@@ -3,11 +3,13 @@ package io.gnosis.safe.ui.safe.add
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.gnosis.safe.ui.BaseRobot
 import org.junit.Assert.*
+import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class AddSafeFragmentTest : BaseRobot() {
+class AddSafeFragmentTest {
 
-    override val navigationGraphId: Int = io.gnosis.safe.R.navigation.add_safe_nav
+//    @Test
+//    fun
 
 }

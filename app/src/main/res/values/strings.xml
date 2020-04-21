@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="load_safe_multisig_start">Get started by loading your Safe Multisig</string>
     <string name="load_safe_multisig">Load Safe Multisig</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
+    <string name="address">Address</string>
+    <string name="next">Next</string>
+    <string name="add_safe_label_top">Enter your Safe Multisig address.</string>
+    <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at https://gnosis-safe.io</string>
+    <string name="back">Back</string>
 </resources>

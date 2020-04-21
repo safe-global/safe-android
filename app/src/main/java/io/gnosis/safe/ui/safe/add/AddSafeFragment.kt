@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
@@ -23,5 +27,13 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            nextButton.setOnClickListener { viewModel.submitAddress(addSafeAddressInputEntry.text.toString()) }
+            backButton.setOnClickListener { findNavController().navigateUp() }
+        }
+
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+
+        })
     }
 }

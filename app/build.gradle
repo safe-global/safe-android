@@ -233,7 +233,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
 
-    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
+//    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
 }
 
 
