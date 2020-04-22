@@ -10,4 +10,9 @@
     <string name="add_safe_label_top">Enter your Safe Multisig address.</string>
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at https://gnosis-safe.io</string>
     <string name="back">Back</string>
+    <string name="choose_input_method">Choose input method</string>
+    <string name="address_input_ens">ENS name</string>
+    <string name="address_input_qr_code">Scan QR code</string>
+    <string name="address_input_clipboard">Paste from clipboard</string>
+    <string name="address_input_address_book">Address book</string>
 </resources>

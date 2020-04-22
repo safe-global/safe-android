@@ -157,6 +157,7 @@ dependencies {
     // one bundled in the android.jar
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(":data")
+    implementation project(":qrscanner")
 
     // Gnosis Bivrost
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
