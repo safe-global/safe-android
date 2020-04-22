@@ -1,10 +1,12 @@
 package io.gnosis.safe.ui.safe.add
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.ShowError
 import kotlinx.coroutines.launch
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
@@ -12,14 +14,15 @@ import javax.inject.Inject
 class AddSafeViewModel
 @Inject constructor(
     repositories: Repositories
-) : BaseStateViewModel<AddSafeState>() {
+) : BaseStateViewModel<BaseStateViewModel.State>() {
 
     private val safeRepository = repositories.safeRepository()
 
     fun submitAddress(address: String) {
         viewModelScope.launch {
             runCatching {
-                val validSafe = safeRepository.isValidSafe(address.asEthereumAddress()!!)
+                updateState { CaptureSafe(ViewAction.Loading(true)) }
+                val validSafe = safeRepository.isValidSafe(address.asEthereumAddress() ?: throw InvalidSafeAddress())
                 updateState {
                     if (validSafe) {
                         CaptureSafe(
@@ -29,27 +32,25 @@ class AddSafeViewModel
                         )
 
                     } else {
-                        InvalidAddress
+                        CaptureSafe(ViewAction.ShowError(InvalidSafeAddress()))
                     }
                 }
+            }.onFailure {
+                updateState { CaptureSafe(ViewAction.ShowError(it)) }
             }
         }
     }
 
-    override val state: LiveData<AddSafeState> = liveData {
+    override val state: LiveData<State> = liveData {
         for (event in stateChannel.openSubscription()) emit(event)
     }
 
-    override fun initialState(): AddSafeState = CaptureSafe(null)
+    override fun initialState(): State = CaptureSafe(ViewAction.Loading(false))
 
 }
 
-sealed class AddSafeState : BaseStateViewModel.State
+class InvalidSafeAddress : Throwable()
 
 data class CaptureSafe(
     override var viewAction: BaseStateViewModel.ViewAction?
-) : AddSafeState()
-
-object InvalidAddress : AddSafeState() {
-    override var viewAction: BaseStateViewModel.ViewAction? = null
-}
+) : BaseStateViewModel.State

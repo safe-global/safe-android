@@ -1,4 +1,4 @@
-package io.gnosis.safe
+package io.gnosis.safe.utils
 
 import android.text.SpannableString
 import android.text.style.UnderlineSpan

@@ -3,7 +3,7 @@ package io.gnosis.safe.di
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonQualifier
 import com.squareup.moshi.ToJson
-import io.gnosis.safe.parseToBigInteger
+import io.gnosis.safe.utils.parseToBigInteger
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei

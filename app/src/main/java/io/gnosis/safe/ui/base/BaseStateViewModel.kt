@@ -24,6 +24,7 @@ abstract class BaseStateViewModel<T> : ViewModel() where T : BaseStateViewModel.
     }
 
     interface ViewAction {
+        data class Loading(val isLoading: Boolean) : ViewAction
         data class ShowError(val error: Throwable) : ViewAction
         data class StartActivity(val intent: Intent) : ViewAction
         data class NavigateTo(val navDirections: NavDirections) : ViewAction
@@ -35,7 +36,7 @@ abstract class BaseStateViewModel<T> : ViewModel() where T : BaseStateViewModel.
 
     protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
-//        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
+        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(e); this } }
     }
 
     protected fun currentState(): T = stateChannel.value
