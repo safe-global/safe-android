@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_shadow_size">1dp</dimen>
+    <dimen name="primary_button_radius">16dp</dimen>
+    <dimen name="safe_blockie_size">36dp</dimen>
+</resources>

@@ -5,7 +5,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/safe_green</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
@@ -17,11 +17,107 @@
 
     <style name="MountainTheme" parent="MountainThemeBase" />
 
-    <style name="WhiteThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@color/white</item>
-        <item name="colorAccent">@color/safe_green</item>
-    </style>
+    <style name="WhiteThemeBase" parent="AppTheme" />
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
+
+    <style name="PrimaryButton">
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">@drawable/primary_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@drawable/primary_button_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="Text" parent="TextAppearance.AppCompat">
+        <!--
+        Only use this to set font.
+        All other attributes will overwrite default values for EVERY view
+        -->
+    </style>
+
+    <style name="TextTitle" parent="Text">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextTitleSection" parent="Text">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextDark" parent="Text">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextLight" parent="Text">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="theme">?attr/actionBarTheme</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+    </style>
+
+    <style name="Toolbar.Title">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Toolbar.Subtitle">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
+        <item name="android:background">@color/background</item>
+        <item name="tabIndicatorColor">@color/safe_green</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabInlineLabel">true</item>
+        <item name="tabIconTint">@drawable/tab_item_text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="tabSelectedTextColor">@color/safe_green</item>
+        <item name="tabTextAppearance">@style/TabText</item>
+    </style>
+
+    <style name="TabText" parent="TextAppearance.Design.Tab">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@drawable/tab_item_text</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:lineSpacingExtra">3sp</item>
+        <item name="android:ellipsize">middle</item>
+        <item name="android:gravity">start</item>
+        <item name="singleLine">true</item>
+    </style>
 
 </resources>

@@ -3,8 +3,10 @@
     <color name="primary">@color/safe_green</color>
     <color name="primary_dark">@color/safe_green_dark</color>
     <color name="accent">@color/blue</color>
-    <color name="window_background">@color/white</color>
+    <color name="window_background">@color/background</color>
     <color name="toolbar_action">@color/blue</color>
+
+    <color name="background">@color/very_light_pink_two</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
@@ -46,6 +48,7 @@
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
+    <color name="very_light_pink_two">#f7f5f5</color>
 
     <color name="word_recovery_phrase">@color/safe_green</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
