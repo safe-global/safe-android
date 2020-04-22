@@ -1,4 +1,4 @@
-package io.gnosis.kouban.qrscanner
+package io.gnosis.safe.qrscanner
 
 import android.Manifest
 import android.app.Activity
@@ -8,6 +8,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.screen_scan.*
+import io.gnosis.safe.qrscanner.R
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -54,8 +55,8 @@ class QRCodeScanActivity : AppCompatActivity() {
 
     companion object {
         const val RESULT_EXTRA = "extra.string.scan_result"
-        private const val REQUEST_CODE = 0
-        private const val DESCRIPTION_EXTRA = "extra.string.description"
+        const val REQUEST_CODE = 0
+        const val DESCRIPTION_EXTRA = "extra.string.description"
 
         fun startForResult(activity: Activity, description: String? = null) =
             activity.startActivityForResult(createIntent(activity, description), REQUEST_CODE)

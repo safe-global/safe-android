@@ -1,4 +1,4 @@
-package io.gnosis.kouban.qrscanner
+package io.gnosis.safe.qrscanner
 
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.LuminanceSource

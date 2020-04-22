@@ -3,6 +3,7 @@ package io.gnosis.safe.utils
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 

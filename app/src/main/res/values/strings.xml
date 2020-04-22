@@ -15,4 +15,8 @@
     <string name="address_input_qr_code">Scan QR code</string>
     <string name="address_input_clipboard">Paste from clipboard</string>
     <string name="address_input_address_book">Address book</string>
+    <string name="invalid_ethereum_address">Invalid ethereum address</string>
+    <string name="ens_input_title">Input ENS Name</string>
+    <string name="error_resolve_ens">Could not load address</string>
+    <string name="ok">OK</string>
 </resources>

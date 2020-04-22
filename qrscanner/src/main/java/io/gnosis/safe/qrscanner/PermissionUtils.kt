@@ -1,4 +1,4 @@
-package io.gnosis.kouban.qrscanner
+package io.gnosis.safe.qrscanner
 
 import android.app.Activity
 import android.content.pm.PackageManager

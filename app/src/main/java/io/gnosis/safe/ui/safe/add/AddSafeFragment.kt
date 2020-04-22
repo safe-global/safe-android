@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.helpers.AddressInputHelper
+import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.setOnCompoundDrawableClicked
 import kotlinx.android.synthetic.main.fragment_add_safe.*
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,6 +27,10 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
 
     @Inject
     lateinit var viewModel: AddSafeViewModel
+
+    private val addressInputHelper by lazy {
+        AddressInputHelper(this, ::updateAddress, allowAddressBook = false)
+    }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -41,7 +50,7 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
             addSafeAddressInputEntry.setOnCompoundDrawableClicked {
-                Toast.makeText(context, "CLICK", Toast.LENGTH_SHORT).show()
+                addressInputHelper.showDialog()
             }
         }
 
@@ -62,5 +71,14 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
                 }
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        addressInputHelper.handleResult(requestCode, resultCode, data)
+    }
+
+    private fun updateAddress(address: Solidity.Address) {
+        binding.addSafeAddressInputEntry.setText(address.asEthereumAddressString())
     }
 }

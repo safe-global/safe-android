@@ -19,7 +19,6 @@ android {
         buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
         buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
 
-        buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"))
         // Safe creation params
         buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
         buildConfigField javaTypes.STRING, "PROXY_INIT_DATA_HASH", asString(getKey("PROXY_INIT_DATA_HASH", "edf1810f1a9b5415ef81722254f125afaa5165f526077a7d7da91687cdfbc98b"))

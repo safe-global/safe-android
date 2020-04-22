@@ -2,6 +2,9 @@ package io.gnosis.safe.utils
 
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
@@ -21,3 +24,8 @@ fun String.parseToBigIntegerOrNull(): BigInteger? =
 
 fun String.parseToBigInteger(): BigInteger =
     if (startsWith("0x")) hexAsBigInteger() else decimalAsBigInteger()
+
+fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
+
+fun Solidity.Address.shortChecksumString() =
+    asEthereumAddressChecksumString().asMiddleEllipsized(4)
