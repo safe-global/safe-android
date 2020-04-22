@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.safe.add
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -13,6 +12,7 @@ import io.gnosis.safe.databinding.FragmentAddSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.utils.setOnCompoundDrawableClicked
 import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -40,19 +40,8 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
                 viewModel.submitAddress(addSafeAddressInputEntry.text.toString())
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
-            addSafeAddressInputEntry.setOnTouchListener { _, event ->
-                val DRAWABLE_LEFT = 0
-                val DRAWABLE_TOP = 1
-                val DRAWABLE_RIGHT = 2;
-                val DRAWABLE_BOTTOM = 3;
-
-                if (event.action == MotionEvent.ACTION_UP &&
-                    event.rawX >= (addSafeAddressInputEntry.right - addSafeAddressInputEntry.compoundDrawables[DRAWABLE_RIGHT].bounds.width())
-                ) {
-                    Toast.makeText(context, "CLICK", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                false
+            addSafeAddressInputEntry.setOnCompoundDrawableClicked {
+                Toast.makeText(context, "CLICK", Toast.LENGTH_SHORT).show()
             }
         }
 
