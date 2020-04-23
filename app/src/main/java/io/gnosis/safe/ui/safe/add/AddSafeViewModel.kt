@@ -1,12 +1,10 @@
 package io.gnosis.safe.ui.safe.add
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.ShowError
 import kotlinx.coroutines.launch
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject

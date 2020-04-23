@@ -33,6 +33,12 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:drawableTint">@color/primary</item>
+        <item name="android:foreground">@drawable/background_selectable</item>
+    </style>
+
     <style name="Text" parent="TextAppearance.AppCompat">
         <!--
         Only use this to set font.

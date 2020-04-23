@@ -22,9 +22,12 @@
 
         <TextView
             android:id="@+id/back_button"
+            style="@style/TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:drawableStart="@drawable/ic_keyboard_arrow_left_black_24dp"
+            android:gravity="center_vertical"
             android:text="@string/back" />
 
         <TextView
@@ -37,11 +40,19 @@
 
         <TextView
             android:id="@+id/next_button"
+            style="@style/TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="@string/next" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
     <TextView
         android:id="@+id/add_safe_label_top"
