@@ -52,6 +52,7 @@ class EnsInputDialog : BaseDialog() {
         alertDialog = CustomAlertDialogBuilder.build(context!!, getString(R.string.ens_input_title), dialogView, R.string.ok, {
             onClick.offer(Unit)
         })
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         return alertDialog
     }
 
@@ -62,7 +63,6 @@ class EnsInputDialog : BaseDialog() {
 
     override fun onStart() {
         super.onStart()
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         processInput()
         lifecycleScope.launch {
             onClick.asFlow().collect {
