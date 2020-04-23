@@ -104,7 +104,6 @@
 
         <EditText
             android:id="@+id/add_safe_name_entry"
-            style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lines="1"

@@ -8,7 +8,6 @@ import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class AddSafeNameViewModel
@@ -20,9 +19,13 @@ class AddSafeNameViewModel
 
     fun submitAddressAndName(address: Solidity.Address, localName: String) {
         viewModelScope.launch {
+            localName.takeUnless { it.isBlank() } ?: run {
+                updateState { CaptureSafeName(ViewAction.ShowError(InvalidName())) }
+                return@launch
+            }
             updateState { CaptureSafeName(ViewAction.Loading(true)) }
             runCatching {
-                safeRepository.addSafe(Safe(address, localName))
+                safeRepository.addSafe(Safe(address, localName.trim()))
             }.onFailure {
                 updateState { CaptureSafeName(ViewAction.ShowError(it)) }
             }.onSuccess {
@@ -39,6 +42,7 @@ class AddSafeNameViewModel
 
 }
 
+class InvalidName : Throwable()
 
 data class CaptureSafeName(
     override var viewAction: BaseStateViewModel.ViewAction?

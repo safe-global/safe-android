@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -17,7 +16,6 @@ import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,7 +40,10 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
             newAddressBlockies.setAddress(newAddress)
             newAddressHex.text = newAddress.formatEthAddress(context!!, addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
-            nextButton.setOnClickListener { viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString()) }
+            nextButton.setOnClickListener {
+                addSafeNameLayout.isErrorEnabled = false
+                viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString())
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -54,7 +55,8 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                             is BaseStateViewModel.ViewAction.ShowError -> {
                                 progress.visible(false)
-                                binding.addSafeNameEntry.error = "Error adding safe"
+                                binding.addSafeNameLayout.isErrorEnabled = true
+                                binding.addSafeNameLayout.error = getString(R.string.error_invalid_name)
                                 Timber.e(action.error)
                             }
                             else -> Timber.i("Unsupported action by view: $action")
