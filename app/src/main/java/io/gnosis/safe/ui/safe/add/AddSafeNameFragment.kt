@@ -13,6 +13,7 @@ import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -39,7 +40,7 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             newAddressBlockies.setAddress(newAddress)
-            newAddressHex.text = newAddress.asEthereumAddressString()
+            newAddressHex.text = newAddress.formatEthAddress(context!!, addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener { viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString()) }
         }
