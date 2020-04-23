@@ -13,5 +13,7 @@ class EnsInputViewModel
 
     private val ensRepository: EnsRepository by lazy { repositories.ensRepository() }
 
-    suspend fun processEnsInput(input: CharSequence): Solidity.Address? = ensRepository.resolve(input.toString())
+    suspend fun processEnsInput(input: CharSequence): Solidity.Address = ensRepository.resolve(input.toString()) ?: throw AddressNotFound()
 }
+
+class AddressNotFound : Throwable()

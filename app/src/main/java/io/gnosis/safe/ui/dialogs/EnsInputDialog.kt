@@ -19,13 +19,11 @@ import io.gnosis.safe.ui.base.BaseDialog
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import io.gnosis.safe.utils.debounce
 import kotlinx.android.synthetic.main.dialog_ens_input.view.*
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class EnsInputDialog : BaseDialog() {
@@ -50,9 +48,9 @@ class EnsInputDialog : BaseDialog() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ens_input, null)
+
         alertDialog = CustomAlertDialogBuilder.build(context!!, getString(R.string.ens_input_title), dialogView, R.string.ok, {
-//            propagateResult(addressHelper)
-            dismiss()
+            onClick.offer(Unit)
         })
         return alertDialog
     }
@@ -66,16 +64,15 @@ class EnsInputDialog : BaseDialog() {
         super.onStart()
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         processInput()
-//        lifecycleScope.launch { combine(,) }
-//        Observable.combineLatest(
-//            processInput(),
-//            confirmSubject,
-//            BiFunction { address: Result<Solidity.Address>, _: Unit -> address }
-//        ).subscribeForResult(::propagateResult) {
-//            Timber.e(it)
-//            dismiss()
-//        }
+        lifecycleScope.launch {
+            onClick.asFlow().collect {
+                onNewAddress.valueOrNull?.let { propagateResult(it) }
+            }
+        }
     }
+
+    private val onNewAddress = ConflatedBroadcastChannel<Solidity.Address?>()
+    private val onClick = ConflatedBroadcastChannel<Unit>()
 
     private fun onUrlAvailable(string: String) {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
@@ -84,6 +81,7 @@ class EnsInputDialog : BaseDialog() {
         lifecycleScope.launch {
             runCatching { viewModel.processEnsInput(string) }
                 .onSuccess { address ->
+                    dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1f
                     dialogView.dialog_ens_input_name.visible(false)
@@ -92,10 +90,12 @@ class EnsInputDialog : BaseDialog() {
                         dialogView.dialog_ens_input_address,
 //                        dialogView.dialog_ens_input_name,
                         dialogView.dialog_ens_input_address_image,
-                        address!!
+                        address
                     )
+                    onNewAddress.offer(address)
                 }
                 .onFailure {
+                    dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
                     dialogView.dialog_ens_input_name.visible(true)
@@ -103,6 +103,7 @@ class EnsInputDialog : BaseDialog() {
                     dialogView.dialog_ens_input_address.text = null
                     dialogView.dialog_ens_input_address_image.setAddress(null)
                     dialogView.dialog_ens_input_name.text = getString(R.string.error_resolve_ens)
+                    onNewAddress.offer(null)
                 }
         }
     }
@@ -117,6 +118,8 @@ class EnsInputDialog : BaseDialog() {
 
     private fun propagateResult(state: Solidity.Address) {
         callback?.invoke(state)
+        onNewAddress.close()
+        onClick.close()
         dismiss()
     }
 
