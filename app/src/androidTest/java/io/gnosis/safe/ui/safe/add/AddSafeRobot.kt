@@ -14,6 +14,6 @@ class AddSafeRobot : BaseRobot() {
     }
 
     fun submitClick() {
-        clickButton(R.id.add_safe_address_input_button)
+//        clickButton(R.id.add_safe_address_input_button)
     }
 }
