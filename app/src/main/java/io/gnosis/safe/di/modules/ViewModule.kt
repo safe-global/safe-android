@@ -9,6 +9,11 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
+import io.gnosis.safe.ui.adapter.BaseAdapter
+import io.gnosis.safe.ui.safe.SafeSelectionAdapter
+import io.gnosis.safe.ui.safe.SafeSelectionViewModel
+import io.gnosis.safe.ui.splash.SplashViewModel
+import java.lang.ref.WeakReference
 
 @Module
 class ViewModule(
@@ -33,4 +38,8 @@ class ViewModule(
             else -> throw IllegalArgumentException("Unsupported context $provider")
         }
     }
+
+    @Provides
+    @ForView
+    fun providesSafeSelectionAdapter(safeSelectionViewModel: SafeSelectionViewModel) = SafeSelectionAdapter(WeakReference(safeSelectionViewModel))
 }

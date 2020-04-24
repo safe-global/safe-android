@@ -8,6 +8,8 @@ import dagger.multibindings.IntoMap
 import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
+import io.gnosis.safe.ui.safe.SafeOverviewViewModel
+import io.gnosis.safe.ui.safe.SafeSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import javax.inject.Singleton
 
@@ -27,4 +29,14 @@ abstract class ViewModelFactoryModule {
     @Binds
     @Singleton
     abstract fun bindsViewModelFactory(viewModel: ViewModelFactory): ViewModelProvider.Factory
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SafeOverviewViewModel::class)
+    abstract fun bindsSafeOverviewViewModel(viewModel: SafeOverviewViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SafeSelectionViewModel::class)
+    abstract fun bindsSafeSelectionViewModel(viewModel: SafeSelectionViewModel): ViewModel
 }
