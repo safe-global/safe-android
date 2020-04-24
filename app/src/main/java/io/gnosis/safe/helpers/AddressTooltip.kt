@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import io.gnosis.safe.R
+import io.gnosis.safe.utils.formatEthAddressBold
 
 class AddressTooltip(
     val context: Context,
@@ -25,12 +26,7 @@ class AddressTooltip(
 
         contentView = LayoutInflater.from(context).inflate(R.layout.popup_address_tooltip, null)
 
-        //make first & last 4 characters bold
-        val addressString=  SpannableStringBuilder(address.substring(0, address.length / 2) + "\n" + address.substring(address.length / 2, address.length))
-        addressString.setSpan(StyleSpan(Typeface.BOLD), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        addressString.setSpan(StyleSpan(Typeface.BOLD), addressString.length - 4, addressString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        contentView.findViewById<TextView>(R.id.address).text = addressString
+        contentView.findViewById<TextView>(R.id.address).text = address.formatEthAddressBold()
         height = ViewGroup.LayoutParams.WRAP_CONTENT
         width = ViewGroup.LayoutParams.WRAP_CONTENT
 

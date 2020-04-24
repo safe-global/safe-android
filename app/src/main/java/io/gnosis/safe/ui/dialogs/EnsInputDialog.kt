@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.dialogs
 
-
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -9,24 +8,25 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.helpers.AddressHelper
-import io.gnosis.safe.ui.base.BaseDialog
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import io.gnosis.safe.utils.debounce
 import kotlinx.android.synthetic.main.dialog_ens_input.view.*
-import kotlinx.coroutines.channels.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class EnsInputDialog : BaseDialog() {
+class EnsInputDialog : DialogFragment() {
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
