@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/safeOverviewFragment"
-        android:name="io.gnosis.safe.ui.safe.overview.SafeOverviewFragment"
+        android:name="io.gnosis.safe.ui.safe.SafeOverviewFragment"
         android:label="SafeOverviewFragment"
         tools:layout="@layout/fragment_safe_overview">
         <action
