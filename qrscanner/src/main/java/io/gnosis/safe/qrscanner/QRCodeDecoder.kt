@@ -28,6 +28,7 @@ class QRCodeDecoder {
         val top = centerY - halfSize
 
         val source = PlanarYUVLuminanceSource(data, width, height, left, top, size, size, false)
+        // This is necessary for when the code colors are inverted, namely black background and white elements. Use Uniswap in dark mode for testing
         return nullOnThrow { source.decode() } ?: source.invert().decode()
     }
 }

@@ -46,7 +46,6 @@ class QRCodeScanActivity : AppCompatActivity() {
         handlePermissionsResultRequest(requestCode, CAMERA_REQUEST_CODE, grantResults, onPermissionDenied = { finish() })
     }
 
-    // TODO: We can use Rx to listen for successful events and finish instead of passing a callback
     private fun finishWithResult(value: String) {
         val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
         setResult(Activity.RESULT_OK, result)

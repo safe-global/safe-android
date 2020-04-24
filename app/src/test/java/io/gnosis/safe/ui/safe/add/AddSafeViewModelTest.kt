@@ -22,6 +22,6 @@ class AddSafeViewModelTest {
     fun `submitAddress - valid address should return true`() {
         val safeAddress = Solidity.Address(BigInteger.ONE)
 
-        viewModel.submitAddress(safeAddress)
+//        viewModel.submitAddress(safeAddress)
     }
 }

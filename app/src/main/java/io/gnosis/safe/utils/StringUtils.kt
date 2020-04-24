@@ -27,12 +27,6 @@ fun String.underline(): CharSequence =
         it.setSpan(UnderlineSpan(), 0, length, 0)
     }
 
-fun String.parseToBigIntegerOrNull(): BigInteger? =
-    nullOnThrow { parseToBigInteger() }
-
-fun String.parseToBigInteger(): BigInteger =
-    if (startsWith("0x")) hexAsBigInteger() else decimalAsBigInteger()
-
 fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
 
 fun Solidity.Address.shortChecksumString() =
