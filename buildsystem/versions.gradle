@@ -37,7 +37,7 @@ ext {
             play_services_auth        : '17.0.0',
             retrofit                  : '2.6.2',
             status_keycard            : '3.0.1',
-            svalinn                   : 'v0.11.0',
+            svalinn                   : 'v0.12.0',
             timber                    : '4.7.1',
             wallet_connect            : '0.9.6',
             zxing                     : '3.3.1',

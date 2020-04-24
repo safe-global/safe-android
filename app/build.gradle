@@ -184,6 +184,7 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
 
     // Appcompat, views
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"

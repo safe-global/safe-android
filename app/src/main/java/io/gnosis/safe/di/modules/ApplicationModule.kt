@@ -10,6 +10,7 @@ import io.gnosis.safe.di.*
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import pm.gnosis.common.adapters.moshi.MoshiBuilderFactory
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
@@ -47,13 +48,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesMoshi(): Moshi {
-        return Moshi.Builder()
-            .add(WeiAdapter())
-            .add(HexNumberAdapter())
-            .add(DecimalNumberAdapter())
-            .add(DefaultNumberAdapter())
-            .add(SolidityAddressAdapter())
-            .build()
+        return MoshiBuilderFactory.makeMoshiBuilder().build()
     }
 
     @Provides
