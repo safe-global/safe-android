@@ -170,6 +170,8 @@ dependencies {
     // Gnosis Bivrost
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
@@ -190,6 +192,8 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
+
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     // Appcompat, views
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"

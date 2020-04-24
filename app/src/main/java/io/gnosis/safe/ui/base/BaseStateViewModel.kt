@@ -6,7 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 data class AppDispatchers(
@@ -15,6 +19,7 @@ data class AppDispatchers(
 )
 
 abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
+
     abstract val state: LiveData<T>
 
 //    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -38,7 +43,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
 
     protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
-        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(e); this } }
+        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(e); this} }
     }
 
     protected fun currentState(): T = stateChannel.value
