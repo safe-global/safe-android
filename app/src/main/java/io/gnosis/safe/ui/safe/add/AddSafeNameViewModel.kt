@@ -18,10 +18,10 @@ class AddSafeNameViewModel
     private val safeRepository = repositories.safeRepository()
 
     fun submitAddressAndName(address: Solidity.Address, localName: String) {
-        viewModelScope.launch {
+        safeLaunch {
             localName.takeUnless { it.isBlank() } ?: run {
                 updateState { CaptureSafeName(ViewAction.ShowError(InvalidName())) }
-                return@launch
+                return@safeLaunch
             }
             updateState { CaptureSafeName(ViewAction.Loading(true)) }
             runCatching {

@@ -17,7 +17,7 @@ class AddSafeViewModel
     private val safeRepository = repositories.safeRepository()
 
     fun submitAddress(address: String) {
-        viewModelScope.launch {
+        safeLaunch {
             runCatching {
                 updateState { CaptureSafe(ViewAction.Loading(true)) }
                 val validSafe = safeRepository.isValidSafe(address.asEthereumAddress() ?: throw InvalidSafeAddress())
