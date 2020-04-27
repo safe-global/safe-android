@@ -69,7 +69,7 @@ class AddSafeViewModelTest {
         viewModel.state.observeForever(stateObserver)
         stateObserver
             .assertValues(
-                CaptureSafe(BaseStateViewModel.ViewAction.ShowError(exception))
+                AddSafeSate(BaseStateViewModel.ViewAction.ShowError(exception))
             )
         coVerify(exactly = 1) { safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) }
     }
@@ -101,7 +101,7 @@ class AddSafeViewModelTest {
         viewModel.state.observeForever(stateObserver)
         stateObserver
             .assertValues(
-                CaptureSafe(
+                AddSafeSate(
                     BaseStateViewModel.ViewAction.NavigateTo(
                         AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
                     )

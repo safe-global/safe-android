@@ -48,7 +48,7 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                is CaptureSafeName -> {
+                is AddSafeNameState -> {
                     state.viewAction?.let { action ->
                         when (action) {
                             is BaseStateViewModel.ViewAction.CloseScreen -> findNavController().navigateUp()
