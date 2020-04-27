@@ -3,7 +3,7 @@ dependencies {
     // one bundled in the android.jar
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "io.mockk:mockk:${versions.mockk}"
-    testImplementation 'com.jraska.livedata:testing-ktx:1.1.0'
+    testImplementation 'com.jraska.livedata:testing-ktx:1.1.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinx_coroutines}"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 

@@ -28,7 +28,6 @@ class AddSafeViewModel
                                 AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
                             )
                         )
-
                     } else {
                         CaptureSafe(ViewAction.ShowError(InvalidSafeAddress()))
                     }
