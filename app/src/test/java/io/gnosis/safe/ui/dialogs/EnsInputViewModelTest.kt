@@ -2,12 +2,15 @@ package io.gnosis.safe.ui.dialogs
 
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.di.Repositories
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -37,7 +40,7 @@ class EnsInputViewModelTest {
 
     @Test
     fun `processEnsInput (invalid input) should throw`() = runBlocking {
-        coEvery { ensRepository.resolve(any()) } returns null
+        coEvery { ensRepository.resolve(any()) } answers { nothing }
 
         val actual = runCatching { viewModel.processEnsInput("") }
 
