@@ -36,7 +36,7 @@ class AddSafeViewModelTest {
     }
 
     @After
-    fun cleanUp() {
+    fun teardown() {
         Dispatchers.resetMain()
     }
 

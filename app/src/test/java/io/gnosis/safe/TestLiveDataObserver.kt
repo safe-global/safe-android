@@ -1,8 +1,14 @@
 package io.gnosis.safe
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import org.junit.Assert
 import java.util.concurrent.CopyOnWriteArrayList
+
+fun <T> LiveData<T>.test(observer: TestLiveDataObserver<T> = TestLiveDataObserver()) = run {
+    observeForever(observer)
+    return@run observer
+}
 
 open class TestLiveDataObserver<E> : Observer<E> {
 
