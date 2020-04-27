@@ -1,16 +1,21 @@
 package io.gnosis.safe.ui.dialogs
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.di.Repositories
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import java.lang.IllegalStateException
 import java.math.BigInteger
 
 class EnsInputViewModelTest {
+
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
 
     private val ensRepository = mockk<EnsRepository>()
     private val repositories = mockk<Repositories>().apply {
