@@ -5,14 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class BaseStateViewModel<T> : ViewModel() where T : BaseStateViewModel.State {
+data class AppDispatchers(
+    val main: CoroutineDispatcher = Dispatchers.Main,
+    val background: CoroutineDispatcher = Dispatchers.IO
+)
+
+abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
     abstract val state: LiveData<T>
 
 //    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -55,5 +57,5 @@ abstract class BaseStateViewModel<T> : ViewModel() where T : BaseStateViewModel.
     }
 
     protected fun safeLaunch(errorHandler: CoroutineExceptionHandler = coroutineErrorHandler, block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch(Dispatchers.IO + errorHandler, block = block)
+        viewModelScope.launch(dispatchers.background + errorHandler, block = block)
 }

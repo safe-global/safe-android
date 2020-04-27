@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import io.gnosis.safe.di.Repositories
+import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.launch
 import pm.gnosis.utils.asEthereumAddress
@@ -11,8 +12,9 @@ import javax.inject.Inject
 
 class AddSafeViewModel
 @Inject constructor(
-    repositories: Repositories
-) : BaseStateViewModel<BaseStateViewModel.State>() {
+    repositories: Repositories,
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
 

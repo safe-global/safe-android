@@ -8,6 +8,7 @@ import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
+import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseActivity
 import javax.inject.Singleton
 
@@ -33,6 +34,8 @@ interface ApplicationComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun repositories(): Repositories
+
+    fun appDispatchers(): AppDispatchers
 
     // Base injects
     fun inject(activity: BaseActivity)

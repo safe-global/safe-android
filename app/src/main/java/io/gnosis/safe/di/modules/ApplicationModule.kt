@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.di.*
+import io.gnosis.safe.ui.base.AppDispatchers
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -35,6 +36,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesApplication(): Application = application
+
+    @Provides
+    @Singleton
+    fun providesAppDispatchers(): AppDispatchers = AppDispatchers()
 
     @Provides
     @Singleton
