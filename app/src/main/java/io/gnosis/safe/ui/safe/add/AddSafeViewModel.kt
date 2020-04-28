@@ -19,21 +19,21 @@ class AddSafeViewModel
     fun submitAddress(address: String) {
         safeLaunch {
             runCatching {
-                updateState { AddSafeSate(ViewAction.Loading(true)) }
+                updateState { AddSafeState(ViewAction.Loading(true)) }
                 val validSafe = safeRepository.isValidSafe(address.asEthereumAddress() ?: throw InvalidSafeAddress())
                 updateState {
                     if (validSafe) {
-                        AddSafeSate(
+                        AddSafeState(
                             ViewAction.NavigateTo(
                                 AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
                             )
                         )
                     } else {
-                        AddSafeSate(ViewAction.ShowError(InvalidSafeAddress()))
+                        AddSafeState(ViewAction.ShowError(InvalidSafeAddress()))
                     }
                 }
             }.onFailure {
-                updateState { AddSafeSate(ViewAction.ShowError(it)) }
+                updateState { AddSafeState(ViewAction.ShowError(it)) }
             }
         }
     }
@@ -42,12 +42,12 @@ class AddSafeViewModel
         for (event in stateChannel.openSubscription()) emit(event)
     }
 
-    override fun initialState(): State = AddSafeSate(ViewAction.Loading(false))
+    override fun initialState(): State = AddSafeState(ViewAction.Loading(false))
 
 }
 
 class InvalidSafeAddress : Throwable()
 
-data class AddSafeSate(
+data class AddSafeState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State

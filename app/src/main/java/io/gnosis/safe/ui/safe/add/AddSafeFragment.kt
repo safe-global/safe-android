@@ -50,7 +50,7 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                is AddSafeSate -> {
+                is AddSafeState -> {
                     state.viewAction?.let { action ->
                         when (action) {
                             is BaseStateViewModel.ViewAction.NavigateTo -> findNavController().navigate((action.navDirections))
