@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1061818612352:android:cff8b42092db2e74790465",
+        "android_client_info": {
+          "package_name": "io.gnosis.safe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1061818612352-mm4qci6vp8gbk1uvute5d4rbrd9al6j2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6P0gZSqPFRokgc8tes0HxiXrWAab6vaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061818612352-mm4qci6vp8gbk1uvute5d4rbrd9al6j2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1061818612352:android:ea6c451d8ae8005d790465",
         "android_client_info": {
           "package_name": "io.gnosis.safe.debug"
@@ -59,6 +88,35 @@
             "certificate_hash": "a8de8a8010e9aa9d807ad64a0cd9c462112701ed"
           }
         },
+        {
+          "client_id": "1061818612352-mm4qci6vp8gbk1uvute5d4rbrd9al6j2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6P0gZSqPFRokgc8tes0HxiXrWAab6vaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061818612352-mm4qci6vp8gbk1uvute5d4rbrd9al6j2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061818612352:android:640352ad50a461ef790465",
+        "android_client_info": {
+          "package_name": "io.gnosis.safe.rinkeby"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "1061818612352-mm4qci6vp8gbk1uvute5d4rbrd9al6j2.apps.googleusercontent.com",
           "client_type": 3
