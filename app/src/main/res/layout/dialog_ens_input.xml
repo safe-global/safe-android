@@ -18,6 +18,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dialog_ens_input_url_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/address_input_ens"
@@ -25,7 +26,6 @@
 
             <EditText
                 android:id="@+id/dialog_ens_input_url"
-                style="@style/Input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textUri" />
