@@ -87,7 +87,7 @@ class SafeSelectionViewModel @Inject constructor(
 
     private val safeRepository = repositories.safeRepository()
 
-    private var safes: List<Safe> = listOf()
+    private val items: MutableList<Any> = mutableListOf()
 
     override val state: LiveData<SafeSelectionState> = liveData {
         for (event in stateChannel.openSubscription())
@@ -100,21 +100,26 @@ class SafeSelectionViewModel @Inject constructor(
 
     fun loadSafes() {
         safeLaunch {
-            safes = safeRepository.getSafes()
+            val safes = safeRepository.getSafes()
             val activeSafe = safeRepository.getActiveSafe()
 
-            val listItems = mutableListOf<Any>()
-            listItems.add(AddSafeHeader())
-            listItems.addAll(safes)
+            items.clear()
+            items.add(AddSafeHeader())
+            items.addAll(safes)
 
-            updateState { SafeSelectionState(listItems, activeSafe, null) }
+            updateState { SafeSelectionState(items, activeSafe, null) }
         }
     }
 
-    override fun onSafeClicked(safe: Safe?) {
+    fun selectSafe(safe: Safe) {
         safeLaunch {
-            updateState { SafeSelectionState(safes, safe, null) }
+            safeRepository.setActiveSafe(safe)
+            updateState { SafeSelectionState(items, safe, null) }
         }
+    }
+
+    override fun onSafeClicked(safe: Safe) {
+        selectSafe(safe)
     }
 }
 
@@ -177,7 +182,7 @@ class SafeSelectionAdapter(
     }
 
     interface OnSafeClickedListener {
-        fun onSafeClicked(safe: Safe?)
+        fun onSafeClicked(safe: Safe)
     }
 }
 

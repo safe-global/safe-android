@@ -57,6 +57,9 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
 //                            childFragmentManager.transaction {
 //                                replace(R.id.content, NoSafeFragment())
 //                            }
+                            bottomNavigation.menu.findItem(R.id.safeBalancesFragment).isEnabled = false
+                            bottomNavigation.menu.findItem(R.id.safeSettingsFragment).isEnabled = false
+                            safeSelection.isEnabled = false
                         } else {
                             safeImage.setAddress(it.safe?.address)
                             safeName.text = it.safe?.localName

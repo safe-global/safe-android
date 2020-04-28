@@ -10,6 +10,7 @@ import io.gnosis.safe.di.ViewModelKey
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewViewModel
 import io.gnosis.safe.ui.safe.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.settings.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import javax.inject.Singleton
 
@@ -39,4 +40,9 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeSelectionViewModel::class)
     abstract fun bindsSafeSelectionViewModel(viewModel: SafeSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SafeSettingsViewModel::class)
+    abstract fun bindsSafeSettingsViewModel(viewModel: SafeSettingsViewModel): ViewModel
 }

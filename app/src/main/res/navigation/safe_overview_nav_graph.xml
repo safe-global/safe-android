@@ -24,5 +24,9 @@
             android:id="@+id/action_safeBalancesFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/safeSettingsFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.SafeSettingsFragment"
+        android:label="SafeSettingsFragment" />
 
 </navigation>

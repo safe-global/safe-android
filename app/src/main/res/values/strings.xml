@@ -28,4 +28,5 @@
     <string name="balances">Balances</string>
     <string name="transactions">Transactions</string>
     <string name="settigns">Settings</string>
+    <string name="remove_safe">Remove safe</string>
 </resources>

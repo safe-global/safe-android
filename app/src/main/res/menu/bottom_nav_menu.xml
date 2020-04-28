@@ -14,7 +14,7 @@
         android:title="@string/transactions"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/safeSettingsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_settings_24dp"
         android:title="@string/settigns"
