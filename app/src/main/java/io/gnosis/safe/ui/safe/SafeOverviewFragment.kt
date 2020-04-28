@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSafeOverviewBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -30,6 +33,13 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        with(findNavController(activity!!, R.id.safe_overview_content)) {
+            binding.bottomNavigation.setupWithNavController(this)
+            addOnDestinationChangedListener { _, destination, _ ->
+               // binding.toolbar.title = destination.label
+            }
+        }
+
 
         with(binding) {
             safeSelection.setOnClickListener {
@@ -43,9 +53,10 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
                 is SafeOverviewState.ActiveSafe -> {
                     with(binding) {
                         if (it.safe == null) {
-                            childFragmentManager.transaction {
-                                replace(R.id.content, NoSafeFragment())
-                            }
+                            //findNavController().navigate(NoSafeTo)
+//                            childFragmentManager.transaction {
+//                                replace(R.id.content, NoSafeFragment())
+//                            }
                         } else {
                             safeImage.setAddress(it.safe?.address)
                             safeName.text = it.safe?.localName
