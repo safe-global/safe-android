@@ -2,7 +2,7 @@
 
     <!-- Base application theme. -->
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/safe_green</item>
@@ -31,6 +31,12 @@
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">sans-serif-medium</item>
         <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:drawableTint">@color/primary</item>
+        <item name="android:foreground">@drawable/background_selectable</item>
     </style>
 
     <style name="Text" parent="TextAppearance.AppCompat">
@@ -118,6 +124,16 @@
         <item name="android:ellipsize">middle</item>
         <item name="android:gravity">start</item>
         <item name="singleLine">true</item>
+    </style>
+
+    <style name="Input" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColorHint">@color/light_text</item>
+        <item name="android:background">@drawable/background_input</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingTop">4dp</item>
     </style>
 
 </resources>

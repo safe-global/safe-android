@@ -163,7 +163,7 @@ class SafeRepositoryTest {
     }
 
     @Test
-    fun `isValidSafe - (safe with mastercopy but request failure) should return throw`() = runBlocking {
+    fun `isValidSafe - (safe with mastercopy but request failure) should throw`() = runBlocking {
         val errorMessage = "Error message"
         val safeAddress = Solidity.Address(BigInteger.ZERO)
         val ethRequest = EthGetStorageAt(safeAddress, BigInteger.ZERO, block = Block.LATEST).apply {
@@ -182,7 +182,7 @@ class SafeRepositoryTest {
     }
 
     @Test
-    fun `isValidSafe - (safe with mastercopy but request response is null) should return throw`() = runBlocking {
+    fun `isValidSafe - (safe with mastercopy but request response is null) should throw`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
         val ethRequest = EthGetStorageAt(safeAddress, BigInteger.ZERO, block = Block.LATEST).apply {
             response = null

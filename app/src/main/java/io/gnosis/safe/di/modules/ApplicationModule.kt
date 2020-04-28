@@ -6,14 +6,13 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.di.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
+import io.gnosis.safe.di.*
+import io.gnosis.safe.ui.base.AppDispatchers
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.common.adapters.moshi.MoshiBuilderFactory
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
-import pm.gnosis.ethereum.rpc.RpcEthereumRepository
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -29,14 +28,6 @@ class ApplicationModule(private val application: Application) {
         const val INFURA_REST_CLIENT = "infuraRestClient"
     }
 
-    data class AppCoroutineDispatchers(
-        val background: CoroutineDispatcher,
-        val database: CoroutineDispatcher,
-        val disk: CoroutineDispatcher,
-        val network: CoroutineDispatcher,
-        val main: CoroutineDispatcher
-    )
-
     @Provides
     @Singleton
     @ApplicationContext
@@ -48,17 +39,22 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesPreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
+    fun providesAppDispatchers(): AppDispatchers = AppDispatchers()
 
     @Provides
     @Singleton
-    fun providesEthereumRepository(ethereumRpcConnector: EthereumRpcConnector): EthereumRepository =
-        RpcEthereumRepository(ethereumRpcConnector)
+    fun providesPreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
 
     @Provides
     @Singleton
     fun providesEthereumRpcConnector(retrofitEthereumRpcApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
         RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
+
+    @Provides
+    @Singleton
+    fun providesMoshi(): Moshi {
+        return MoshiBuilderFactory.makeMoshiBuilder().build()
+    }
 
     @Provides
     @Singleton

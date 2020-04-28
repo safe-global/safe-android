@@ -17,6 +17,7 @@ android {
         buildConfigField javaTypes.STRING, "MULTI_SEND_OLD_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x8D29bE29923b68abfDD21e541b9374737B49cdAD"))
         buildConfigField javaTypes.STRING, "DEFAULT_FALLBACK_HANDLER", asString(getKey("DEFAULT_FALLBACK_HANDLER", "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44"))
+        buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"))
     }
 }
 

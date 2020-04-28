@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_safe_nav"
+    app:startDestination="@id/addSafeFragment">
+
+    <fragment
+        android:id="@+id/addSafeFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeFragment"
+        android:label="AddSafeFragment"
+        tools:layout="@layout/fragment_add_safe">
+        <action
+            android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
+            app:destination="@id/addSafeNameFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/addSafeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSafeNameFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeNameFragment"
+        android:label="AddSafeNameFragment"
+        tools:layout="@layout/fragment_add_safe_name">
+        <argument
+            android:name="newAddress"
+            app:argType="string" />
+    </fragment>
+</navigation>

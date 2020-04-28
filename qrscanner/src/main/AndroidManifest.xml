@@ -1,0 +1,13 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.gnosis.safe.qrscanner">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application tools:ignore="GoogleAppIndexingWarning,MissingApplicationIcon">
+        <activity
+            android:name=".QRCodeScanActivity"
+            android:screenOrientation="portrait" />
+    </application>
+</manifest>

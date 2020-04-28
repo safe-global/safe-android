@@ -1,0 +1,15 @@
+apply from: '../buildsystem/android_library.gradle'
+apply from: '../buildsystem/constants.gradle'
+apply from: '../buildsystem/helpers.gradle'
+apply from: '../buildsystem/test_dependencies.gradle'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+
+    implementation "com.google.zxing:core:$versions.zxing"
+}

@@ -5,8 +5,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import io.gnosis.safe.di.ApplicationContext
+import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
+import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseActivity
 import javax.inject.Singleton
 
@@ -14,7 +16,6 @@ import javax.inject.Singleton
 @Component(
     modules = [
         ApplicationModule::class,
-        ApplicationBindingsModule::class,
         InterceptorsModule::class,
         ViewModelFactoryModule::class,
         DatabaseModule::class,
@@ -31,6 +32,10 @@ interface ApplicationComponent {
     fun appInitManager(): AppInitManager
 
     fun viewModelFactory(): ViewModelProvider.Factory
+
+    fun repositories(): Repositories
+
+    fun appDispatchers(): AppDispatchers
 
     // Base injects
     fun inject(activity: BaseActivity)
