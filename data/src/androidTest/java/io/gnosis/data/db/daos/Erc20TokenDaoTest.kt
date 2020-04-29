@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.gnosis.data.db.HeimdallDatabase
 import io.gnosis.data.models.Erc20Token
-import io.gnosis.data.models.Safe
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -41,7 +40,7 @@ class Erc20TokenDaoTest {
     fun insert__single_erc20Token__should_succeed() = runBlocking {
         val testToken = buildFakeToken(1)
 
-        erc20TokenDao.insertERC20Token(testToken)
+        erc20TokenDao.insertToken(testToken)
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(1, size)
@@ -55,8 +54,8 @@ class Erc20TokenDaoTest {
         val testToken1 = buildFakeToken(1)
         val testToken2 = buildFakeToken(2)
 
-        erc20TokenDao.insertERC20Token(testToken1)
-        erc20TokenDao.insertERC20Token(testToken2)
+        erc20TokenDao.insertToken(testToken1)
+        erc20TokenDao.insertToken(testToken2)
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(2, size)
@@ -71,8 +70,8 @@ class Erc20TokenDaoTest {
         val testToken1 = buildFakeToken(1)
         val testToken2 = buildFakeToken(2).copy(address = testToken1.address)
 
-        erc20TokenDao.insertERC20Token(testToken1)
-        erc20TokenDao.insertERC20Token(testToken2)
+        erc20TokenDao.insertToken(testToken1)
+        erc20TokenDao.insertToken(testToken2)
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(1, size)
@@ -86,7 +85,7 @@ class Erc20TokenDaoTest {
         val testToken1 = buildFakeToken(1)
         val testToken2 = buildFakeToken(2)
 
-        erc20TokenDao.insertERC20Tokens(listOf(testToken1, testToken2))
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2))
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(2, size)
@@ -106,8 +105,8 @@ class Erc20TokenDaoTest {
         val testToken5 = buildFakeToken(5).copy(address = testToken2.address)
         val testToken6 = buildFakeToken(6).copy(address = testToken3.address)
 
-        erc20TokenDao.insertERC20Tokens(listOf(testToken1, testToken2, testToken3, testToken4))
-        erc20TokenDao.insertERC20Tokens(listOf(testToken5, testToken6))
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2, testToken3, testToken4))
+        erc20TokenDao.insertTokens(listOf(testToken5, testToken6))
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(4, size)
@@ -115,6 +114,78 @@ class Erc20TokenDaoTest {
             assertEquals(testToken4, get(1))
             assertEquals(testToken5, get(2))
             assertEquals(testToken6, get(3))
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun loadTokens__multiple__should_return_list() = runBlocking {
+        val testToken1 = buildFakeToken(1)
+        val testToken2 = buildFakeToken(2)
+        val testToken3 = buildFakeToken(3)
+
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+
+        with(erc20TokenDao.loadTokens()) {
+            assertEquals(3, size)
+            assertEquals(testToken1, get(0))
+            assertEquals(testToken2, get(1))
+            assertEquals(testToken3, get(2))
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun loadToken__inserted_address__should_return_token() = runBlocking {
+        val testToken1 = buildFakeToken(1)
+        val testToken2 = buildFakeToken(2)
+        val testToken3 = buildFakeToken(3)
+
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+
+        with(erc20TokenDao.loadToken(testToken2.address)) {
+            assertEquals(testToken2, this)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun loadToken__missing_address__should_return_null() = runBlocking {
+        val testToken1 = buildFakeToken(1)
+        val testToken2 = buildFakeToken(2)
+        val testToken3 = buildFakeToken(3)
+
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+
+        with(erc20TokenDao.loadToken(Solidity.Address(BigInteger.ZERO))) {
+            assertEquals(null, this)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun deleteToken__inserted_address__should_succeed() = runBlocking {
+        val testToken1 = buildFakeToken(1)
+
+        erc20TokenDao.insertToken(testToken1)
+        erc20TokenDao.deleteToken(testToken1.address)
+
+        with(erc20TokenDao.loadTokens()) {
+            assertEquals(0, size)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun deleteToken__missing_address__should_do_nothing() = runBlocking {
+        val testToken1 = buildFakeToken(1)
+
+        erc20TokenDao.insertToken(testToken1)
+        erc20TokenDao.deleteToken(Solidity.Address(BigInteger.ZERO))
+
+        with(erc20TokenDao.loadTokens()) {
+            assertEquals(1, size)
+            assertEquals(testToken1, get(0))
         }
     }
 
