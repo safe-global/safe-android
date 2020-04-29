@@ -49,12 +49,6 @@ android {
 
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
