@@ -1,7 +1,9 @@
 package io.gnosis.data.db
 
 import android.content.ContentValues
+import android.system.Os.close
 import androidx.room.OnConflictStrategy
+import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,6 +31,27 @@ class HeimdallDatabaseTest {
         HeimdallDatabase::class.java.canonicalName,
         FrameworkSQLiteOpenHelperFactory()
     )
+
+    @Test
+    @Throws(IOException::class)
+    fun migrateAll() {
+        // Create earliest version of the database.
+        helper.createDatabase(TEST_DB, 1).apply {
+            close()
+        }
+        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2)
+
+        // Open latest version of the database. Room will validate the schema
+        // once all migrations execute.
+        Room.databaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            HeimdallDatabase::class.java,
+            TEST_DB
+        ).addMigrations(*allMigrations).build().apply {
+            openHelper.writableDatabase
+            close()
+        }
+    }
 
     @Test
     @Throws(IOException::class)

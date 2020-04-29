@@ -50,7 +50,7 @@ class SafeDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun insert__2_safes_different__address__should_replace_existent() = runBlocking {
+    fun insert__2_safes_different__address__should_insert_both() = runBlocking {
         val testSafe1 = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         val testSafe2 = Safe(Solidity.Address(BigInteger.ONE), "one")
 
