@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "1234-2342-somefakeid.apps.googleusercontent.com",
+          "client_id": "1234-somefakeid.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
