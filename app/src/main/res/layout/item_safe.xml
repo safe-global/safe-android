@@ -23,13 +23,14 @@
     <TextView
         android:id="@+id/safe_name"
         style="@style/ToolbarTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="2dp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/safe_address"
+        app:layout_constraintEnd_toStartOf="@+id/safe_selection"
         app:layout_constraintStart_toEndOf="@+id/safe_image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="My Company Funds" />
@@ -37,26 +38,27 @@
     <TextView
         android:id="@+id/safe_address"
         style="@style/ToolbarSubtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/safe_selection"
         app:layout_constraintStart_toEndOf="@+id/safe_image"
         app:layout_constraintTop_toBottomOf="@+id/safe_name"
         tools:text="0xAB...146F" />
 
     <ImageView
         android:id="@+id/safe_selection"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:tint="@color/safe_green"
-        android:visibility="gone"
-        tools:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_check_black_24dp" />
+        app:srcCompat="@drawable/ic_check_black_24dp"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
