@@ -1,16 +1,15 @@
 package io.gnosis.safe.ui.safe
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.MainCoroutineScopeRule
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
-import io.gnosis.safe.utils.MainCoroutineScopeRule
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -20,7 +19,7 @@ class SafeOverviewViewModelTest {
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
     @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
     private val repositories = mockk<Repositories>().apply {
@@ -31,7 +30,7 @@ class SafeOverviewViewModelTest {
 
     @Before
     fun setup() {
-        safeOverviewViewModel = SafeOverviewViewModel(repositories)
+        safeOverviewViewModel = SafeOverviewViewModel(repositories, appDispatchers)
     }
 
 

@@ -1,13 +1,17 @@
 package io.gnosis.safe.ui.safe
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.MainCoroutineScopeRule
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.utils.MainCoroutineScopeRule
-import io.gnosis.safe.utils.TestLiveDataObserver
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -20,7 +24,7 @@ class SafeSelectionViewModelTest {
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
     @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
     private val repositories = mockk<Repositories>().apply {
@@ -31,7 +35,7 @@ class SafeSelectionViewModelTest {
 
     @Before
     fun setup() {
-        safeSelectionViewModel = SafeSelectionViewModel(repositories)
+        safeSelectionViewModel = SafeSelectionViewModel(repositories, appDispatchers)
     }
 
     @Test
@@ -47,7 +51,7 @@ class SafeSelectionViewModelTest {
 
         // check initial state
         stateObserver.assertValueAt(0) {
-            it is SafeSelectionState &&
+            it is SafeSelectionState.SafeListState &&
                     it.listItems == listOf(AddSafeHeader()) &&
                     it.activeSafe == null
         }
@@ -56,7 +60,7 @@ class SafeSelectionViewModelTest {
         val selectionItemsList = mutableListOf<Any>(AddSafeHeader())
         selectionItemsList.addAll(SAFES)
         stateObserver.assertValueAt(0) {
-            it is SafeSelectionState &&
+            it is SafeSelectionState.SafeListState &&
                     it.listItems == selectionItemsList &&
                     it.activeSafe == ACTIVE_SAFE
         }
