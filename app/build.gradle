@@ -167,11 +167,11 @@ dependencies {
     implementation project(":data")
     implementation project(":qrscanner")
 
+    implementation "com.google.code.findbugs:jsr305:$versions.findbugs"
+
     // Gnosis Bivrost
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
-
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
+    
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
