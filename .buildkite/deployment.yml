@@ -2,7 +2,7 @@ steps:
   - label: 'Upload App Distribution'
     if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
     #TODO: rename key here and on build server to upload-app-distribution (buildkite agent hooks)
-    key: 'upload-crashlytics'
+    key: 'upload-firebase'
     command: 'ci/upload_app_distribution.sh'
 
   - label: 'Upload Github Release'
