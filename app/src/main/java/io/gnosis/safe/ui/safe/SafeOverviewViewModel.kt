@@ -4,14 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.di.Repositories
+import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import javax.inject.Inject
 
 class SafeOverviewViewModel @Inject constructor(
-    repositories: Repositories
-) : BaseStateViewModel<SafeOverviewState>() {
+    repositories: Repositories,
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<SafeOverviewState>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
+
+    private var activeSafe: Safe? = null
 
     override val state: LiveData<SafeOverviewState> = liveData {
         for (event in stateChannel.openSubscription())
@@ -22,8 +26,17 @@ class SafeOverviewViewModel @Inject constructor(
 
     fun loadSafe() {
         safeLaunch {
-            val activeSafe = safeRepository.getActiveSafe()
+            activeSafe = safeRepository.getActiveSafe()
             updateState { SafeOverviewState.ActiveSafe(activeSafe, null) }
+        }
+    }
+
+    fun removeSafe() {
+        safeLaunch {
+            activeSafe?.let {
+                safeRepository.removeSafe(it)
+            }
+            updateState { SafeOverviewState.ActiveSafe(null, null) }
         }
     }
 }

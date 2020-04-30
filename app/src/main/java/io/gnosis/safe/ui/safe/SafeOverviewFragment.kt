@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSafeOverviewBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
-import pm.gnosis.svalinn.common.utils.transaction
+import io.gnosis.safe.ui.safe.settings.SafeSettingsFragmentDirections
+import io.gnosis.safe.utils.asMiddleEllipsized
+import io.gnosis.safe.utils.navigateFromChild
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
@@ -36,10 +38,8 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
         with(findNavController(activity!!, R.id.safe_overview_content)) {
             binding.bottomNavigation.setupWithNavController(this)
             addOnDestinationChangedListener { _, destination, _ ->
-               // binding.toolbar.title = destination.label
             }
         }
-
 
         with(binding) {
             safeSelection.setOnClickListener {
@@ -53,17 +53,34 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
                 is SafeOverviewState.ActiveSafe -> {
                     with(binding) {
                         if (it.safe == null) {
-                            //findNavController().navigate(NoSafeTo)
-//                            childFragmentManager.transaction {
-//                                replace(R.id.content, NoSafeFragment())
-//                            }
+
+                            navigateFromChild(childFragmentManager, SafeSettingsFragmentDirections.actionSafeSettingsFragmentToNoSafeFragment())
+
                             bottomNavigation.menu.findItem(R.id.safeBalancesFragment).isEnabled = false
+                            bottomNavigation.menu.findItem(R.id.safeBalancesFragment).isChecked = true
                             bottomNavigation.menu.findItem(R.id.safeSettingsFragment).isEnabled = false
+
                             safeSelection.isEnabled = false
+
+                            safeImage.setAddress(null)
+                            safeImage.setImageResource(R.drawable.ic_no_safe_loaded_36dp)
+                            safeName.visible(false)
+                            safeAddress.text = getString(R.string.no_safes_loaded)
+
+
                         } else {
-                            safeImage.setAddress(it.safe?.address)
-                            safeName.text = it.safe?.localName
-                            safeAddress.text = it.safe?.address?.asEthereumAddressString()
+
+                            navigateFromChild(childFragmentManager, NoSafeFragmentDirections.actionNoSafeFragmentToSafeBalancesFragment())
+
+                            bottomNavigation.menu.findItem(R.id.safeBalancesFragment).isEnabled = true
+                            bottomNavigation.menu.findItem(R.id.safeSettingsFragment).isEnabled = true
+
+                            safeSelection.isEnabled = true
+
+                            safeImage.setAddress(it.safe.address)
+                            safeName.visible(true)
+                            safeName.text = it.safe.localName
+                            safeAddress.text = it.safe.address.asEthereumAddressString().asMiddleEllipsized(4)
                         }
                     }
                 }
