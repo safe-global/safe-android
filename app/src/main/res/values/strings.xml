@@ -23,4 +23,10 @@
     <string name="error_invalid_safe">Invalid safe address</string>
     <string name="error_invalid_name">Invalid name</string>
     <string name="ok">OK</string>
+    <string name="terms_first_bullet">We do not collect demographic data such as age or gender.</string>
+    <string name="terms_second_bullet">We collect anonymized app usage data and crash reports to ensure the quality of our app.</string>
+    <string name="terms_third_bullet"><![CDATA[ <a href=\"https://safe.gnosis.io/privacy\">Privacy Policy</a>  <a href=\"https://safe.gnosis.io/terms\">Terms of Use</a> ]]></string>
+    <string name="please_review_terms_and_privacy_policy">Please review our Terms of Use and Privacy Policy.</string>
+    <string name="no_thanks">No Thanks</string>
+    <string name="agree">Agree</string>
 </resources>
