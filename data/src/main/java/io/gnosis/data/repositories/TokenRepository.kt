@@ -1,6 +1,5 @@
 package io.gnosis.data.repositories
 
-import android.location.Address
 import io.gnosis.data.backend.RelayServiceApi
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.Erc20TokenDao
