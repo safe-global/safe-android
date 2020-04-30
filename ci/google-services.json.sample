@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1:android:1",
         "android_client_info": {
-          "package_name": "pm.gnosis.heimdall.debug"
+          "package_name": "io.gnosis.safe.debug"
         }
       },
       "oauth_client": [
@@ -41,7 +41,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1:android:1",
         "android_client_info": {
-          "package_name": "pm.gnosis.heimdall.dev"
+          "package_name": "io.gnosis.safe.rinkeby"
         }
       },
       "oauth_client": [
@@ -72,7 +72,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1:android:1",
         "android_client_info": {
-          "package_name": "pm.gnosis.heimdall"
+          "package_name": "io.gnosis.safe"
         }
       },
       "oauth_client": [
