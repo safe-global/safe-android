@@ -18,7 +18,6 @@ data class ServiceBalance(
     data class ServiceTokenMeta(
         @Json(name = "decimals") val decimals: Int,
         @Json(name = "symbol") val symbol: String,
-        @Json(name = "name") val name: String,
-        @Json(name = "logoUri") val logoUri: String?
+        @Json(name = "name") val name: String
     )
 }

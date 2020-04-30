@@ -13,6 +13,8 @@ class TokenRepositoryTest {
 
     @Test
     fun `loadTokens (token addresses) should return list balances`() = runBlockingTest {
-//        tokenRepository.load
+
+
+        tokenRepository.loadTokens()
     }
 }
