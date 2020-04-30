@@ -43,7 +43,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
 
     protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
-        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(e); this} }
+        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(e); this } }
     }
 
     protected fun currentState(): T = stateChannel.value
