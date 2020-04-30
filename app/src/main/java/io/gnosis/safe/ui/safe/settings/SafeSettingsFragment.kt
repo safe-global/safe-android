@@ -11,13 +11,17 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.FragmentSafeSettingsBinding
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.ShowError
+import io.gnosis.safe.ui.safe.SafeOverviewViewModel
 import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
 
 class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
+
+    @Inject
+    lateinit var safeOverviewViewModel: SafeOverviewViewModel
 
     @Inject
     lateinit var viewModel: SafeSettingsViewModel
@@ -32,7 +36,7 @@ class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button.setOnClickListener {
-            viewModel.removeSafe()
+            safeOverviewViewModel.removeSafe()
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
 
@@ -64,8 +68,9 @@ class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
 
 
 class SafeSettingsViewModel @Inject constructor(
-    repositories: Repositories
-) : BaseStateViewModel<SafeSettingsState>() {
+    repositories: Repositories,
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
 
@@ -85,15 +90,6 @@ class SafeSettingsViewModel @Inject constructor(
             safe = safeRepository.getActiveSafe()!!
 
             updateState { SafeSettingsState.SafeSettings(safe.localName, null) }
-        }
-    }
-
-    fun removeSafe() {
-        safeLaunch {
-
-            safeRepository.removeSafe(safe)
-
-            updateState { SafeSettingsState.SafeRemoved(null) }
         }
     }
 }
