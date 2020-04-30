@@ -3,16 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/safe_overview_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/background">
+    tools:background="@color/background" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar"
         style="@style/Toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <pm.gnosis.blockies.BlockiesImageView
             android:id="@+id/safe_image"
@@ -26,11 +27,12 @@
         <TextView
             android:id="@+id/safe_name"
             style="@style/ToolbarTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/safe_address"
+            app:layout_constraintEnd_toStartOf="@+id/safe_selection"
             app:layout_constraintStart_toEndOf="@+id/safe_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="My Company Funds" />
@@ -38,10 +40,11 @@
         <TextView
             android:id="@+id/safe_address"
             style="@style/ToolbarSubtitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/safe_selection"
             app:layout_constraintStart_toEndOf="@+id/safe_image"
             app:layout_constraintTop_toBottomOf="@+id/safe_name"
             tools:text="0xAB...146F" />
@@ -65,15 +68,6 @@
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/content"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar_shadow" />-->
-
     <fragment
         android:id="@+id/safe_overview_content"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -85,7 +79,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_shadow"
         app:navGraph="@navigation/safe_overview_nav_graph" />
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
