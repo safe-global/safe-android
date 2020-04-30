@@ -11,7 +11,7 @@ steps:
       - 'ci/prepare_env_buildkite.sh'
       - 'ci/run_ui_tests.sh'
 
-  - trigger: "gnosis-safe-deployment"
+  - trigger: "safe-multisig-deployment"
     label: ":rocket: Deploy"
     async: false
     build:
