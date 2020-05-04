@@ -14,13 +14,14 @@ import io.gnosis.safe.databinding.FragmentSafeOverviewBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.bottom_sheet_terms_and_conditions.*
-import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.svalinn.common.utils.edit
+import javax.inject.Inject
 
 class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
 
     private lateinit var termsBottomSheetDialog: TermsBottomSheetDialog
-//    private val preferencesManager =
+
+    @Inject
+    lateinit var viewModel: SafeOverviewViewModel
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -32,7 +33,7 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.addSafeButton.setOnClickListener {
-            if (termsAgreed()) {
+            if (viewModel.getTermsAgreed()) {
                 findNavController().navigate(SafeOverviewFragmentDirections.actionSafeOverviewFragmentToAddSafeNav())
             } else {
                 termsBottomSheetDialog = TermsBottomSheetDialog(this.requireContext()).apply {
@@ -43,11 +44,12 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
                     movementMethod = LinkMovementMethod.getInstance()
                 }
                 termsBottomSheetDialog.bottom_sheet_terms_and_conditions_agree.setOnClickListener {
-                    setTermsAgreed(true)
+                    viewModel.setTermsAgreed(true)
                     termsBottomSheetDialog.dismiss()
+                    findNavController().navigate(SafeOverviewFragmentDirections.actionSafeOverviewFragmentToAddSafeNav())
                 }
                 termsBottomSheetDialog.bottom_sheet_terms_and_conditions_reject.setOnClickListener {
-                    setTermsAgreed(false)
+                    viewModel.setTermsAgreed(false)
                     termsBottomSheetDialog.dismiss()
                 }
                 termsBottomSheetDialog.show()
@@ -55,21 +57,5 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
         }
     }
 
-    private fun termsAgreed(): Boolean {
-        return getTermsAgreed()
-    }
-
-    fun setTermsAgreed(value: Boolean) {
-        PreferencesManager(this.requireContext()).prefs.edit {
-            putBoolean(TERMS_AGREED, value)
-        }
-    }
-
-    fun getTermsAgreed(): Boolean = PreferencesManager(this.requireContext()).prefs.getBoolean(TERMS_AGREED, false)
-
     class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context)
-
-    companion object {
-        private const val TERMS_AGREED = "prefs.boolean.terms_agreed"
-    }
 }
