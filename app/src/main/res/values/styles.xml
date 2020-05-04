@@ -57,7 +57,7 @@
 
     <style name="TextTitleSection" parent="Text">
         <item name="fontFamily">sans-serif</item>
-        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/gnosis_dark_blue</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
@@ -65,15 +65,20 @@
 
     <style name="TextDark" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/gnosis_dark_blue</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextDark.Bold" parent="TextDark">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextLight" parent="Text">
         <item name="fontFamily">sans-serif</item>
-        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/dark_grey</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
@@ -88,7 +93,7 @@
 
     <style name="Toolbar.Title">
         <item name="fontFamily">sans-serif</item>
-        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/gnosis_dark_blue</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
