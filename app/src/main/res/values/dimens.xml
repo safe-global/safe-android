@@ -3,4 +3,6 @@
     <dimen name="toolbar_shadow_size">1dp</dimen>
     <dimen name="primary_button_radius">16dp</dimen>
     <dimen name="safe_blockie_size">36dp</dimen>
+    <dimen name="default_horizontal_margin">16dp</dimen>
+    <dimen name="default_line_spacing">6sp</dimen>
 </resources>
