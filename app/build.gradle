@@ -3,10 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.appdistribution'
 apply from: '../buildsystem/coverageReport.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
 apply from: '../buildsystem/test_android_dependencies.gradle'
-
 
 android {
     defaultConfig {
@@ -91,6 +92,10 @@ android {
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
+            firebaseAppDistribution {
+                releaseNotes=getKey("APP_RELEASE_NOTES")
+                groups=getKey("FIREBASE_GROUP")
+            }
         }
 
         rinkeby {
@@ -197,6 +202,8 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.androidx_navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.androidx_navigation"
+    implementation "androidx.fragment:fragment-ktx:$versions.androidx_fragment"
+    implementation "androidx.fragment:fragment:$versions.androidx_fragment"
     // Room
     implementation "androidx.room:room-runtime:$versions.androidx_room"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
