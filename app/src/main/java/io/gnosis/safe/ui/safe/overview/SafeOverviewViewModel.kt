@@ -27,9 +27,9 @@ constructor(
 
     private fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TERMS_AGREED, false)
 
-    fun checkTerms(context: Context, agreed: () -> Unit) {
+    fun checkTerms(context: Context, onUserAgrees: () -> Unit) {
         if (getTermsAgreed()) {
-            agreed()
+            onUserAgrees()
         } else {
             termsBottomSheetDialog = TermsBottomSheetDialog(context).apply {
                 setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
@@ -41,7 +41,7 @@ constructor(
             termsBottomSheetDialog.bottom_sheet_terms_and_conditions_agree.setOnClickListener {
                 setTermsAgreed(true)
                 termsBottomSheetDialog.dismiss()
-                agreed()
+                onUserAgrees()
             }
             termsBottomSheetDialog.bottom_sheet_terms_and_conditions_reject.setOnClickListener {
                 setTermsAgreed(false)
