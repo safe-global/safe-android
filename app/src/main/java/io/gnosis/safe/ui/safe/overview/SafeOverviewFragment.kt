@@ -23,8 +23,9 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.termsBottomSheetDialog = TermsBottomSheetDialog(this.requireContext())
         binding.addSafeButton.setOnClickListener {
-            viewModel.checkTerms(this.requireContext()) {
+            viewModel.checkTerms {
                 findNavController().navigate(SafeOverviewFragmentDirections.actionSafeOverviewFragmentToAddSafeNav())
             }
         }
