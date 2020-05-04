@@ -15,7 +15,7 @@ import java.math.BigInteger
 
 class SafeRepository(
     private val safeDao: SafeDao,
-    private val preferenceManager: PreferencesManager,
+    private val preferencesManager: PreferencesManager,
     private val ethereumRepository: EthereumRepository
 ) {
 
@@ -31,13 +31,13 @@ class SafeRepository(
         }
 
     suspend fun setActiveSafe(safe: Safe) {
-        preferenceManager.prefs.edit {
+        preferencesManager.prefs.edit {
             putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
         }
     }
 
     suspend fun getActiveSafe(): Safe? =
-        preferenceManager.prefs.getString(ACTIVE_SAFE, null)
+        preferencesManager.prefs.getString(ACTIVE_SAFE, null)
             ?.asEthereumAddress()
             ?.let { address ->
                 getSafeBy(address)
