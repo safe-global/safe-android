@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
-import androidx.navigation.Navigation
-import io.gnosis.safe.R
+import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.FragmentNoSafesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
 
-class NoSafeFragment : BaseFragment<FragmentNoSafesBinding>() {
+class NoSafeFragment : SafeOverviewBaseFragment<FragmentNoSafesBinding>() {
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -22,8 +20,13 @@ class NoSafeFragment : BaseFragment<FragmentNoSafesBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navHandler?.setSafeData(null)
         binding.loadSafeButton.setOnClickListener {
-            Navigation.findNavController(activity as FragmentActivity, R.id.safe_overview_root).navigate(SafeOverviewFragmentDirections.actionSafeOverviewFragmentToAddSafeNav())
+            findNavController().navigate(NoSafeFragmentDirections.actionNoSafeFragmentToAddSafeNav())
         }
+    }
+
+    override fun handleActiveSafe(safe: Safe?) {
+        TODO("Not yet implemented")
     }
 }

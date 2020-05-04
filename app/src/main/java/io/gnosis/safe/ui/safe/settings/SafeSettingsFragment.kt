@@ -4,24 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.liveData
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.FragmentSafeSettingsBinding
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.AppDispatchers
-import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.SafeOverviewViewModel
+import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
 
-class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
-
-    @Inject
-    lateinit var safeOverviewViewModel: SafeOverviewViewModel
+class SafeSettingsFragment : SafeOverviewBaseFragment<FragmentSafeSettingsBinding>() {
 
     @Inject
     lateinit var viewModel: SafeSettingsViewModel
@@ -36,7 +28,7 @@ class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button.setOnClickListener {
-            safeOverviewViewModel.removeSafe()
+            viewModel.removeSafe()
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
 
@@ -50,63 +42,20 @@ class SafeSettingsFragment : BaseFragment<FragmentSafeSettingsBinding>() {
 
                 }
                 is SafeSettingsState.SafeSettings -> {
-                    binding.name.text = it.name
+                    handleActiveSafe(it.safe)
+                    binding.name.text = it.safe.localName
                 }
                 is SafeSettingsState.SafeRemoved -> {
 
                 }
             }
-
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadSafe()
+    override fun handleActiveSafe(safe: Safe?) {
+        navHandler?.setSafeData(safe)
     }
 }
 
 
-class SafeSettingsViewModel @Inject constructor(
-    repositories: Repositories,
-    appDispatchers: AppDispatchers
-) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
-
-    private val safeRepository = repositories.safeRepository()
-
-    private lateinit var safe: Safe
-
-    override val state: LiveData<SafeSettingsState> = liveData {
-        for (event in stateChannel.openSubscription())
-            emit(event)
-    }
-
-    override fun initialState(): SafeSettingsState = SafeSettingsState.SafeLoading(null)
-
-    fun loadSafe() {
-
-        safeLaunch {
-
-            safe = safeRepository.getActiveSafe()!!
-
-            updateState { SafeSettingsState.SafeSettings(safe.localName, null) }
-        }
-    }
-}
-
-sealed class SafeSettingsState : BaseStateViewModel.State {
-
-    data class SafeLoading(
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SafeSettingsState()
-
-    data class SafeSettings(
-        val name: String,
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SafeSettingsState()
-
-    data class SafeRemoved(
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SafeSettingsState()
-}
 

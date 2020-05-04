@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
-import io.gnosis.safe.di.components.ApplicationComponent
 
 abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
 

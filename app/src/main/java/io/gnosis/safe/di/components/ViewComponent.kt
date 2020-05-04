@@ -7,9 +7,8 @@ import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.NoSafeFragment
-import io.gnosis.safe.ui.safe.SafeBalancesFragment
-import io.gnosis.safe.ui.safe.SafeOverviewFragment
-import io.gnosis.safe.ui.safe.SafeSelectionDialog
+import io.gnosis.safe.ui.safe.balances.SafeBalancesFragment
+import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SafeSettingsFragment
 import io.gnosis.safe.ui.splash.SplashActivity
 
@@ -24,8 +23,6 @@ interface ViewComponent {
 
     // Fragments
 
-    fun inject(fragment: SafeOverviewFragment)
-
     fun inject(fragment: AddSafeFragment)
 
     fun inject(fragment: AddSafeNameFragment)
@@ -35,6 +32,7 @@ interface ViewComponent {
     fun inject(fragment: NoSafeFragment)
 
     fun inject(fragment: SafeBalancesFragment)
+
     fun inject(fragment: SafeSettingsFragment)
 
     // Dialogs

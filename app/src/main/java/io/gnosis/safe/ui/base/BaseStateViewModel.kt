@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.base
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import kotlinx.coroutines.*
@@ -20,9 +21,10 @@ data class AppDispatchers(
 
 abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
 
-    abstract val state: LiveData<T>
-
-//    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+    val state: LiveData<T> = liveData {
+        for (event in stateChannel.openSubscription())
+            emit(event)
+    }
 
     protected abstract fun initialState(): T
 

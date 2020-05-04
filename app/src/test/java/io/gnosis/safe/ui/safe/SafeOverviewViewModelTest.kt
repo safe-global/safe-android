@@ -6,6 +6,7 @@ import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
+import io.gnosis.safe.ui.safe.overview.SafeOverviewViewModel
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before

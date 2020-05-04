@@ -8,6 +8,9 @@ import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.safe.selection.AddSafeHeader
+import io.gnosis.safe.ui.safe.selection.SafeSelectionState
+import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

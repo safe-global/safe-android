@@ -36,12 +36,7 @@ class AddSafeNameViewModel
         }
     }
 
-    override val state: LiveData<State> = liveData {
-        for (event in stateChannel.openSubscription()) emit(event)
-    }
-
     override fun initialState(): State = AddSafeNameState(ViewAction.Loading(false))
-
 }
 
 class InvalidName : Throwable()

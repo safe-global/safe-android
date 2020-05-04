@@ -4,21 +4,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph.xml"
-    app:startDestination="@id/safeOverviewFragment">
+    app:startDestination="@id/safeBalancesFragment">
 
     <include app:graph="@navigation/add_safe_nav" />
 
+    <action
+        android:id="@+id/action_to_add_safe_nav"
+        app:destination="@id/add_safe_nav"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/safeBalancesFragment" />
+
     <fragment
-        android:id="@+id/safeOverviewFragment"
-        android:name="io.gnosis.safe.ui.safe.SafeOverviewFragment"
-        android:label="SafeOverviewFragment"
-        tools:layout="@layout/fragment_safe_overview">
+        android:id="@+id/noSafeFragment"
+        android:name="io.gnosis.safe.ui.safe.NoSafeFragment"
+        android:label="NoSafeFragment"
+        tools:layout="@layout/fragment_no_safes">
 
         <action
-            android:id="@+id/action_safeOverviewFragment_to_add_safe_nav"
-            app:destination="@id/add_safe_nav"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/safeOverviewFragment" />
+            android:id="@+id/action_noSafeFragment_to_safeBalancesFragment"
+            app:destination="@id/safeBalancesFragment" />
+        <action
+            android:id="@+id/action_noSafeFragment_to_add_safe_nav"
+            app:destination="@id/add_safe_nav" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/safeBalancesFragment"
+        android:name="io.gnosis.safe.ui.safe.balances.SafeBalancesFragment"
+        android:label="SafeBalancesFragment"
+        tools:layout="@layout/fragment_safe_balances">
+
+        <action
+            android:id="@+id/action_safeBalancesFragment_to_noSafeFragment"
+            app:destination="@id/noSafeFragment" />
+        <!--        <action-->
+        <!--            android:id="@+id/action_safeBalancesFragment_to_add_safe_nav"-->
+        <!--            app:destination="@id/add_safe_nav"-->
+        <!--            app:launchSingleTop="true"-->
+        <!--            app:popUpTo="@id/safeBalancesFragment" />-->
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/safeSettingsFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.SafeSettingsFragment"
+        android:label="SafeSettingsFragment"
+        tools:layout="@layout/fragment_safe_settings">
+
+        <action
+            android:id="@+id/action_safeSettingsFragment_to_noSafeFragment"
+            app:destination="@id/noSafeFragment" />
+
+        <!--        <action-->
+        <!--            android:id="@+id/action_safeSettingsFragment_to_add_safe_nav"-->
+        <!--            app:destination="@id/add_safe_nav"-->
+        <!--            app:launchSingleTop="true"-->
+        <!--            app:popUpTo="@id/safeBalancesFragment" />-->
 
     </fragment>
 

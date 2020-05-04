@@ -9,9 +9,8 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
-import io.gnosis.safe.ui.safe.SafeOverviewViewModel
-import io.gnosis.safe.ui.safe.SafeSelectionAdapter
-import io.gnosis.safe.ui.safe.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
+import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import java.lang.ref.WeakReference
 
 @Module
@@ -40,9 +39,10 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesSafeOverviewViewModel(provider: ViewModelProvider) = provider[SafeOverviewViewModel::class.java]
+    fun providesSafeSelectionViewModel(provider: ViewModelProvider) = provider[SafeSelectionViewModel::class.java]
 
     @Provides
     @ForView
-    fun providesSafeSelectionAdapter(safeSelectionViewModel: SafeSelectionViewModel) = SafeSelectionAdapter(WeakReference(safeSelectionViewModel))
+    fun providesSafeSelectionAdapter(safeSelectionViewModel: SafeSelectionViewModel) =
+        SafeSelectionAdapter(WeakReference(safeSelectionViewModel))
 }
