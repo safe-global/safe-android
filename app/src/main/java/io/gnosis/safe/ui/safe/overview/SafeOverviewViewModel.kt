@@ -34,8 +34,12 @@ constructor(
             termsBottomSheetDialog = TermsBottomSheetDialog(context).apply {
                 setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
             }
-            termsBottomSheetDialog.bottom_sheet_terms_and_conditions_third_bullet_text.apply {
-                text = Html.fromHtml(context.getString(R.string.terms_third_bullet))
+            termsBottomSheetDialog.bottom_sheet_terms_and_conditions_privacy_policy_link.apply {
+                text = Html.fromHtml(context.getString(R.string.terms_privacy_link))
+                movementMethod = LinkMovementMethod.getInstance()
+            }
+            termsBottomSheetDialog.bottom_sheet_terms_and_conditions_terms_of_use_link.apply {
+                text = Html.fromHtml(context.getString(R.string.terms_terms_of_use_link))
                 movementMethod = LinkMovementMethod.getInstance()
             }
             termsBottomSheetDialog.bottom_sheet_terms_and_conditions_agree.setOnClickListener {
