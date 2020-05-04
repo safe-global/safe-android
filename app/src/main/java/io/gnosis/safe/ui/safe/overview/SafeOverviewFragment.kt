@@ -46,6 +46,10 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
                     setTermsAgreed(true)
                     termsBottomSheetDialog.dismiss()
                 }
+                termsBottomSheetDialog.bottom_sheet_terms_and_conditions_reject.setOnClickListener {
+                    setTermsAgreed(false)
+                    termsBottomSheetDialog.dismiss()
+                }
                 termsBottomSheetDialog.show()
             }
         }
@@ -62,7 +66,6 @@ class SafeOverviewFragment : BaseFragment<FragmentSafeOverviewBinding>() {
     }
 
     fun getTermsAgreed(): Boolean = PreferencesManager(this.requireContext()).prefs.getBoolean(TERMS_AGREED, false)
-
 
     class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context)
 
