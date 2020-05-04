@@ -18,7 +18,9 @@ class TokenRepository(
 
     suspend fun loadBalancesOf(safe: Solidity.Address, forceRefetch: Boolean = false): List<Balance> =
         transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString())
-            .associateWith { erc20TokenDao.loadToken(it.tokenAddress!!) }
+            .associateWith {
+                it.tokenAddress?.let { tokenAddress -> erc20TokenDao.loadToken(tokenAddress) }
+            }
             .map { (balance, tokenFromDao) ->
                 val token = when {
                     tokenFromDao != null && !forceRefetch -> tokenFromDao
