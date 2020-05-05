@@ -29,7 +29,7 @@ class NoSafeFragment : SafeOverviewBaseFragment<FragmentNoSafesBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loadSafeButton.setOnClickListener {
-            findNavController().navigate(NoSafeFragmentDirections.actionNoSafeFragmentToAddSafeNav())
+            findNavController().navigate(NoSafeFragmentDirections.actionToAddSafeNav())
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

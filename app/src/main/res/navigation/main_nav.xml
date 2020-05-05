@@ -8,13 +8,6 @@
 
     <include app:graph="@navigation/add_safe_nav" />
 
-    <action
-        android:id="@+id/action_to_add_safe_nav"
-        app:destination="@id/add_safe_nav"
-        app:launchSingleTop="true"
-        app:popUpTo="@id/safeBalancesFragment"
-        app:popUpToInclusive="false"/>
-
     <fragment
         android:id="@+id/noSafeFragment"
         android:name="io.gnosis.safe.ui.safe.empty.NoSafeFragment"
@@ -28,8 +21,9 @@
             app:popUpToInclusive="false"/>
 
         <action
-            android:id="@+id/action_noSafeFragment_to_add_safe_nav"
+            android:id="@+id/action_to_add_safe_nav"
             app:destination="@id/add_safe_nav"
+            app:launchSingleTop="true"
             app:popUpTo="@id/safeBalancesFragment"
             app:popUpToInclusive="false"/>
 
@@ -45,6 +39,13 @@
             android:id="@+id/action_safeBalancesFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
 
+        <action
+            android:id="@+id/action_to_add_safe_nav"
+            app:destination="@id/add_safe_nav"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/safeBalancesFragment"
+            app:popUpToInclusive="false"/>
+
     </fragment>
 
     <fragment
@@ -56,6 +57,13 @@
         <action
             android:id="@+id/action_safeSettingsFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
+
+        <action
+            android:id="@+id/action_to_add_safe_nav"
+            app:destination="@id/add_safe_nav"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/safeBalancesFragment"
+            app:popUpToInclusive="false"/>
 
     </fragment>
 

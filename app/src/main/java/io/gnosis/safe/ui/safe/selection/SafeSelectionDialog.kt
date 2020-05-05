@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.HeimdallApplication
-import io.gnosis.safe.R
 import io.gnosis.safe.databinding.DialogSafeSelectionBinding
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.modules.ViewModule
@@ -73,7 +72,7 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
                     state.viewAction?.let {
                         val action = it as BaseStateViewModel.ViewAction.NavigateTo
                         dismiss()
-                        findNavController().navigate(R.id.action_to_add_safe_nav)
+                        findNavController().navigate(action.navDirections)
                     }
                 }
             }

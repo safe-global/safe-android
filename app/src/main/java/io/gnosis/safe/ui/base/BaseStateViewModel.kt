@@ -27,7 +27,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
             emit(event)
     }
 
-    fun onStateSubscribed() {
+    open fun onStateSubscribed() {
     }
 
     protected abstract fun initialState(): T

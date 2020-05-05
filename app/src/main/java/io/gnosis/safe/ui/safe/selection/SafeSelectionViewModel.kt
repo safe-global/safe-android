@@ -1,12 +1,12 @@
 package io.gnosis.safe.ui.safe.selection
 
-import android.os.Bundle
-import androidx.navigation.NavDirections
+import androidx.navigation.ActionOnlyNavDirections
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.safe.empty.NoSafeFragmentDirections
 import javax.inject.Inject
 
 
@@ -64,10 +64,7 @@ class SafeSelectionViewModel @Inject constructor(
             updateState {
                 SafeSelectionState.AddSafeState(
                     ViewAction.NavigateTo(
-                        object : NavDirections {
-                            override fun getArguments() = Bundle()
-                            override fun getActionId() = R.id.action_to_add_safe_nav
-                        }
+                        ActionOnlyNavDirections(R.id.action_to_add_safe_nav)
                     )
                 )
             }
