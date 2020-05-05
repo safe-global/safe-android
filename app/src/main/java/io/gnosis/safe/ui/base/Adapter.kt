@@ -56,3 +56,6 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
         open fun unbind() {}
     }
 }
+
+class UnsupportedViewType(message: String? = null) : Throwable(message)
+

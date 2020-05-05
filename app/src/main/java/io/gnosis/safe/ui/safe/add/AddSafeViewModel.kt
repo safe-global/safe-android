@@ -1,7 +1,5 @@
 package io.gnosis.safe.ui.safe.add
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -38,12 +36,7 @@ class AddSafeViewModel
         }
     }
 
-    override val state: LiveData<State> = liveData {
-        for (event in stateChannel.openSubscription()) emit(event)
-    }
-
     override fun initialState(): State = AddSafeState(ViewAction.Loading(false))
-
 }
 
 class InvalidSafeAddress : Throwable()

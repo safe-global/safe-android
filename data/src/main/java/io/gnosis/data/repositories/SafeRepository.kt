@@ -1,8 +1,11 @@
 package io.gnosis.data.repositories
 
+import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import pm.gnosis.ethereum.Block
 import pm.gnosis.ethereum.EthGetStorageAt
 import pm.gnosis.ethereum.EthereumRepository
@@ -18,6 +21,21 @@ class SafeRepository(
     private val preferenceManager: PreferencesManager,
     private val ethereumRepository: EthereumRepository
 ) {
+
+    private val keyFlow = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> offer(key) }
+        preferenceManager.prefs.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { preferenceManager.prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
+    fun activeSafeFlow() =
+        keyFlow
+            .filter { it == ACTIVE_SAFE }
+            .onStart { emit(ACTIVE_SAFE) }
+            .map { getActiveSafe() }
+            .conflate()
+
+
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAll().asList()
 

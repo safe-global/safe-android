@@ -77,6 +77,14 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextAction" parent="Text">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:textColor">@color/safe_green</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="Toolbar">
         <item name="theme">?attr/actionBarTheme</item>
         <item name="android:background">@color/white</item>
@@ -84,7 +92,7 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
     </style>
 
-    <style name="Toolbar.Title">
+    <style name="ToolbarTitle">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textColor">@color/gnosis_dark_blue</item>
@@ -92,7 +100,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Toolbar.Subtitle">
+    <style name="ToolbarSubtitle">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textColor">@color/medium_grey</item>
@@ -135,5 +143,16 @@
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingTop">4dp</item>
     </style>
+
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/background_bottom_sheet_rounded</item>
+    </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 </resources>
