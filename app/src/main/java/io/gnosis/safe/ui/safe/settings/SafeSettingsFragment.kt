@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.FragmentSafeSettingsBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -30,11 +31,11 @@ class SafeSettingsFragment : SafeOverviewBaseFragment<FragmentSafeSettingsBindin
         binding.button.setOnClickListener {
             viewModel.removeSafe()
         }
-        viewModel.state.observe(viewLifecycleOwner, Observer {
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
 
-            when(it) {
+            when(state) {
                 is SafeSettingsState.SafeLoading -> {
-                    when(it.viewAction) {
+                    when(state.viewAction) {
                         is BaseStateViewModel.ViewAction.ShowError -> {
                             snackbar(binding.root, "safe not loaded!")
                         }
@@ -42,11 +43,15 @@ class SafeSettingsFragment : SafeOverviewBaseFragment<FragmentSafeSettingsBindin
 
                 }
                 is SafeSettingsState.SafeSettings -> {
-                    handleActiveSafe(it.safe)
-                    binding.name.text = it.safe.localName
+                    handleActiveSafe(state.safe)
+                    binding.name.text = state.safe.localName
                 }
                 is SafeSettingsState.SafeRemoved -> {
-
+                    state.viewAction?.let { action ->
+                        when (action) {
+                            is BaseStateViewModel.ViewAction.NavigateTo -> findNavController().navigate(action.navDirections)
+                        }
+                    }
                 }
             }
         })

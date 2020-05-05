@@ -1,9 +1,6 @@
 package io.gnosis.safe.ui.safe.settings
 
-import android.os.Bundle
-import androidx.navigation.NavDirections
 import io.gnosis.data.models.Safe
-import io.gnosis.safe.R
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -32,13 +29,11 @@ class SafeSettingsViewModel @Inject constructor(
             val safe = safeRepository.getActiveSafe()!!
             safeRepository.removeSafe(safe)
             updateState {
-                SafeSettingsState.SafeRemoved(ViewAction.NavigateTo(
-                    object : NavDirections {
-                        override fun getArguments() = Bundle()
-
-                        override fun getActionId() = R.id.action_to_add_safe_nav
-                    }
-                ))
+                SafeSettingsState.SafeRemoved(
+                    ViewAction.NavigateTo(
+                        SafeSettingsFragmentDirections.actionSafeSettingsFragmentToNoSafeFragment()
+                    )
+                )
             }
         }
     }
