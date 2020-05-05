@@ -19,21 +19,23 @@ class SafeSettingsViewModel @Inject constructor(
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState { SafeSettingsState.SafeSettings(safe!!, null) }
+                updateState { SafeSettingsState.SafeSettings(safe, null) }
             }
         }
     }
 
     fun removeSafe() {
         safeLaunch {
-            val safe = safeRepository.getActiveSafe()!!
-            safeRepository.removeSafe(safe)
-            updateState {
-                SafeSettingsState.SafeRemoved(
-                    ViewAction.NavigateTo(
-                        SafeSettingsFragmentDirections.actionSafeSettingsFragmentToNoSafeFragment()
+            val safe = safeRepository.getActiveSafe()
+            safe?.let {
+                safeRepository.removeSafe(safe)
+                updateState {
+                    SafeSettingsState.SafeRemoved(
+                        ViewAction.NavigateTo(
+                            SafeSettingsFragmentDirections.actionSafeSettingsFragmentToNoSafeFragment()
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -46,7 +48,7 @@ sealed class SafeSettingsState : BaseStateViewModel.State {
     ) : SafeSettingsState()
 
     data class SafeSettings(
-        val safe: Safe,
+        val safe: Safe?,
         override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeSettingsState()
 

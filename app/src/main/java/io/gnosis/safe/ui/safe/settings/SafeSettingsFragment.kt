@@ -44,7 +44,11 @@ class SafeSettingsFragment : SafeOverviewBaseFragment<FragmentSafeSettingsBindin
                 }
                 is SafeSettingsState.SafeSettings -> {
                     handleActiveSafe(state.safe)
-                    binding.name.text = state.safe.localName
+                    if (state.safe == null) {
+                        findNavController().popBackStack()
+                    } else {
+                        binding.name.text = state.safe?.localName
+                    }
                 }
                 is SafeSettingsState.SafeRemoved -> {
                     state.viewAction?.let { action ->

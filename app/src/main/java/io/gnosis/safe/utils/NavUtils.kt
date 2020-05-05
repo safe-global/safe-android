@@ -1,14 +1,16 @@
 package io.gnosis.safe.utils
 
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavDirections
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import timber.log.Timber
 
-fun navigateFromChild(childFragmentManager: FragmentManager, directions: NavDirections) {
-    try {
-        (childFragmentManager.primaryNavigationFragment as NavHostFragment).navController.navigate(directions)
+
+fun FragmentManager.getParentNavController(): NavController? {
+    return try {
+        (primaryNavigationFragment as NavHostFragment).navController
     } catch (e: Exception) {
-        // ignore as current content is not start of the directions
+        Timber.e(e)
+        null
     }
 }
-
