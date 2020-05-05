@@ -54,7 +54,7 @@ class SafeOverviewViewModelTest {
         verify { viewModel.termsBottomSheetDialog.show() }
         verify(exactly = 0) { callback.invoke() }
     }
-    
+
     // TODO: Test if advance is called when user clicks agree
     // TODO: Test if preference is stored when user clicks agree
     // TODO: Test if termsBottomSheetDialog  is dismissed clicks agree or no_thanks

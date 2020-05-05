@@ -21,13 +21,21 @@ class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context) {
         bottom_sheet_terms_and_conditions_terms_of_use_link.movementMethod = LinkMovementMethod.getInstance()
 
         bottom_sheet_terms_and_conditions_agree.setOnClickListener {
-            dismiss()
-            onUserClicksAgree()
+            onAgree()
         }
 
         bottom_sheet_terms_and_conditions_reject.setOnClickListener {
-            dismiss()
+            onReject()
         }
+    }
+
+    private fun onAgree() {
+        dismiss()
+        onUserClicksAgree()
+    }
+
+    private fun onReject() {
+        dismiss()
     }
 
 }
