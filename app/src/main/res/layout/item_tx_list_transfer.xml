@@ -30,7 +30,8 @@
         android:id="@+id/ellipsized_address"
         style="@style/TextDark"
         tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
-        android:ellipsize="middle"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:layout_width="85dp"
         android:layout_height="22dp"
         android:layout_marginStart="12dp"
@@ -49,4 +50,72 @@
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
+
+    <TextView
+        android:id="@+id/nonce"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chevron" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Apr 27, 2020 — 1:01:42PM"
+        app:layout_constraintBottom_toBottomOf="@+id/nonce"
+        app:layout_constraintStart_toEndOf="@+id/nonce"
+        app:layout_constraintTop_toTopOf="@+id/nonce" />
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amount"
+        app:srcCompat="@drawable/tx_list_chevron_right" />
+
+    <TextView
+        android:id="@+id/final_status"
+        style="@style/TextMedium.Green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Success"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/final_status"
+        style="@style/TextMedium.Grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Cancelled"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/final_status"
+        style="@style/TextMedium.Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Failed"
+        android:visibility="visible"/>
+    
 </androidx.constraintlayout.widget.ConstraintLayout>
