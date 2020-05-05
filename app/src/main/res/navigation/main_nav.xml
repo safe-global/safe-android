@@ -11,12 +11,11 @@
     <action
         android:id="@+id/action_to_add_safe_nav"
         app:destination="@id/add_safe_nav"
-        app:launchSingleTop="true"
-        app:popUpTo="@id/safeBalancesFragment" />
+        app:launchSingleTop="true" />
 
     <fragment
         android:id="@+id/noSafeFragment"
-        android:name="io.gnosis.safe.ui.safe.NoSafeFragment"
+        android:name="io.gnosis.safe.ui.safe.empty.NoSafeFragment"
         android:label="NoSafeFragment"
         tools:layout="@layout/fragment_no_safes">
 

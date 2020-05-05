@@ -26,6 +26,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
+        toolbarBinding.safeSelection.setOnClickListener {
+            SafeSelectionDialog.show(this)
+        }
         setupNav()
     }
 
@@ -58,7 +61,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setNoSafe() {
         with(toolbarBinding) {
-            safeSelection.isEnabled = false
             safeImage.setAddress(null)
             safeImage.setImageResource(io.gnosis.safe.R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
@@ -72,11 +74,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setSafe(safe: Safe) {
         with(toolbarBinding) {
-            safeSelection.isEnabled = true
-            safeSelection.setOnClickListener {
-                SafeSelectionDialog.show(this@StartActivity)
-
-            }
             safeImage.setAddress(safe.address)
             safeName.visible(true)
             safeName.text = safe.localName

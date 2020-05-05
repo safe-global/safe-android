@@ -9,6 +9,7 @@ import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.balances.SafeBalancesViewModel
+import io.gnosis.safe.ui.safe.empty.NoSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.settings.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
@@ -35,6 +36,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeSelectionViewModel::class)
     abstract fun bindsSafeSelectionViewModel(viewModel: SafeSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NoSafeViewModel::class)
+    abstract fun bindsNoSafeViewModel(viewModel: NoSafeViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -38,6 +38,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
         data class StartActivity(val intent: Intent) : ViewAction
         data class NavigateTo(val navDirections: NavDirections) : ViewAction
         object CloseScreen : ViewAction
+        object None: ViewAction
     }
 
     @Suppress("LeakingThis")
