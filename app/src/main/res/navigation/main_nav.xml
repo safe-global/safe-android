@@ -11,7 +11,9 @@
     <action
         android:id="@+id/action_to_add_safe_nav"
         app:destination="@id/add_safe_nav"
-        app:launchSingleTop="true" />
+        app:launchSingleTop="true"
+        app:popUpTo="@id/safeBalancesFragment"
+        app:popUpToInclusive="false"/>
 
     <fragment
         android:id="@+id/noSafeFragment"
@@ -21,10 +23,15 @@
 
         <action
             android:id="@+id/action_noSafeFragment_to_safeBalancesFragment"
-            app:destination="@id/safeBalancesFragment" />
+            app:destination="@id/safeBalancesFragment"
+            app:popUpTo="@id/safeBalancesFragment"
+            app:popUpToInclusive="false"/>
+
         <action
             android:id="@+id/action_noSafeFragment_to_add_safe_nav"
-            app:destination="@id/add_safe_nav" />
+            app:destination="@id/add_safe_nav"
+            app:popUpTo="@id/safeBalancesFragment"
+            app:popUpToInclusive="false"/>
 
     </fragment>
 

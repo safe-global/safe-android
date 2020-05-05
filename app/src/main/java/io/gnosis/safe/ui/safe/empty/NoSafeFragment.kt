@@ -33,12 +33,9 @@ class NoSafeFragment : SafeOverviewBaseFragment<FragmentNoSafesBinding>() {
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-
+            handleActiveSafe(state.activeSafe)
             state.viewAction?.let { action ->
                 when(action) {
-                    is BaseStateViewModel.ViewAction.None -> {
-                        handleActiveSafe(null)
-                    }
                     is BaseStateViewModel.ViewAction.NavigateTo -> {
                         findNavController().navigate(action.navDirections)
                     }
