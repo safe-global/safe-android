@@ -37,11 +37,6 @@
         <action
             android:id="@+id/action_safeBalancesFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
-        <!--        <action-->
-        <!--            android:id="@+id/action_safeBalancesFragment_to_add_safe_nav"-->
-        <!--            app:destination="@id/add_safe_nav"-->
-        <!--            app:launchSingleTop="true"-->
-        <!--            app:popUpTo="@id/safeBalancesFragment" />-->
 
     </fragment>
 
@@ -54,13 +49,7 @@
         <action
             android:id="@+id/action_safeSettingsFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
-
-        <!--        <action-->
-        <!--            android:id="@+id/action_safeSettingsFragment_to_add_safe_nav"-->
-        <!--            app:destination="@id/add_safe_nav"-->
-        <!--            app:launchSingleTop="true"-->
-        <!--            app:popUpTo="@id/safeBalancesFragment" />-->
-
+        
     </fragment>
 
 </navigation>

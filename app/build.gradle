@@ -167,8 +167,6 @@ dependencies {
     implementation project(":data")
     implementation project(":qrscanner")
 
-    implementation "com.google.code.findbugs:jsr305:$versions.findbugs"
-
     // Gnosis Bivrost
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
     
