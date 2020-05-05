@@ -13,7 +13,7 @@
         app:destination="@id/add_safe_nav"
         app:launchSingleTop="true"
         app:popUpTo="@id/safeBalancesFragment"
-        app:popUpToInclusive="false"/>
+        app:popUpToInclusive="true"/>
 
     <fragment
         android:id="@+id/noSafeFragment"
