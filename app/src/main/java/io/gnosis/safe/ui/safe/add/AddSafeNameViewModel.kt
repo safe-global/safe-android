@@ -25,7 +25,9 @@ class AddSafeNameViewModel
             }
             updateState { AddSafeNameState(ViewAction.Loading(true)) }
             runCatching {
-                safeRepository.addSafe(Safe(address, localName.trim()))
+                val safe = Safe(address, localName.trim())
+                safeRepository.addSafe(safe)
+                safeRepository.setActiveSafe(safe)
             }.onFailure {
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
@@ -34,12 +36,7 @@ class AddSafeNameViewModel
         }
     }
 
-    override val state: LiveData<State> = liveData {
-        for (event in stateChannel.openSubscription()) emit(event)
-    }
-
     override fun initialState(): State = AddSafeNameState(ViewAction.Loading(false))
-
 }
 
 class InvalidName : Throwable()
