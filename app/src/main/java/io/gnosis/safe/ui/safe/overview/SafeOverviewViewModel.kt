@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.safe.overview
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit

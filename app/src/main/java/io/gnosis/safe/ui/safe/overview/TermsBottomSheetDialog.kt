@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.bottom_sheet_terms_and_conditions.*
 class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context) {
 
     lateinit var onUserClicksAgree: () -> Unit
-    val agree = bottom_sheet_terms_and_conditions_agree
 
     init {
         setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
@@ -22,7 +21,6 @@ class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context) {
         bottom_sheet_terms_and_conditions_terms_of_use_link.movementMethod = LinkMovementMethod.getInstance()
 
         bottom_sheet_terms_and_conditions_agree.setOnClickListener {
-            println("bottom_sheet_terms_and_conditions_agree")
             dismiss()
             onUserClicksAgree()
         }

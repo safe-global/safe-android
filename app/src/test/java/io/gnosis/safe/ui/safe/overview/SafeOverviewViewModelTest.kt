@@ -47,7 +47,6 @@ class SafeOverviewViewModelTest {
 
         val viewModel = SafeOverviewViewModel(preferencesManager)
         viewModel.termsBottomSheetDialog = mockk(relaxed = true)
-
         val callback: () -> Unit = mockk(relaxed = true)
 
         viewModel.checkTerms(callback)
@@ -55,19 +54,9 @@ class SafeOverviewViewModelTest {
         verify { viewModel.termsBottomSheetDialog.show() }
         verify(exactly = 0) { callback.invoke() }
     }
+    
+    // TODO: Test if advance is called when user clicks agree
+    // TODO: Test if preference is stored when user clicks agree
+    // TODO: Test if termsBottomSheetDialog  is dismissed clicks agree or no_thanks
 
-//    @Test
-//    fun `If terms not agreed, advance() method should be called when agree button hit`() {
-//        preferences.edit().putBoolean(SafeOverviewViewModel.TERMS_AGREED, false).apply()
-//
-//        val viewModel = SafeOverviewViewModel(preferencesManager)
-//        viewModel.termsBottomSheetDialog = mockk(relaxed = true)
-//
-//        val callback: () -> Unit = mockk(relaxed = true)
-//
-//        viewModel.checkTerms(callback)
-//        viewModel.termsBottomSheetDialog.agree.performClick()
-//
-//        verify { callback.invoke() }
-//    }
 }
