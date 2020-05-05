@@ -22,8 +22,12 @@ data class AppDispatchers(
 abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
 
     val state: LiveData<T> = liveData {
+        onStateSubscribed()
         for (event in stateChannel.openSubscription())
             emit(event)
+    }
+
+    fun onStateSubscribed() {
     }
 
     protected abstract fun initialState(): T

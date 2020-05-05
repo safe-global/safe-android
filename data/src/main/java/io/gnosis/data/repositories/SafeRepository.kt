@@ -22,7 +22,7 @@ class SafeRepository(
     private val ethereumRepository: EthereumRepository
 ) {
 
-    val keyFlow = callbackFlow {
+    private val keyFlow = callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> offer(key) }
         preferenceManager.prefs.registerOnSharedPreferenceChangeListener(listener)
         awaitClose { preferenceManager.prefs.unregisterOnSharedPreferenceChangeListener(listener) }

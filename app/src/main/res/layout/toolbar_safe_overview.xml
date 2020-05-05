@@ -50,8 +50,3 @@
         app:srcCompat="@drawable/ic_circle_dropdown_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
