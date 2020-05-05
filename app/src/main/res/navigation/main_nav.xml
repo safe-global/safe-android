@@ -49,7 +49,7 @@
         <action
             android:id="@+id/action_safeSettingsFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
-        
+
     </fragment>
 
 </navigation>
