@@ -6,7 +6,7 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.di.*
+import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
