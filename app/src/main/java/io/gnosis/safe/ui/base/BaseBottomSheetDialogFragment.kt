@@ -8,7 +8,11 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
+import io.gnosis.safe.di.components.DaggerViewComponent
+import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.di.modules.ViewModule
 
 abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
 
@@ -19,7 +23,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject()
+        inject(buildViewComponent())
     }
 
     override fun onCreateView(
@@ -43,5 +47,10 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
         _binding = null
     }
 
-    abstract fun inject()
+    private fun buildViewComponent() = DaggerViewComponent.builder()
+        .viewModule(ViewModule(context!!))
+        .applicationComponent(HeimdallApplication[context!!])
+        .build()
+
+    abstract fun inject(viewComponent: ViewComponent)
 }

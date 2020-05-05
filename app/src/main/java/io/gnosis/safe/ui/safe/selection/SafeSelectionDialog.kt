@@ -10,10 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.databinding.DialogSafeSelectionBinding
-import io.gnosis.safe.di.components.DaggerViewComponent
-import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseBottomSheetDialogFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
@@ -39,12 +37,8 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
         navHandler = null
     }
 
-    override fun inject() {
-        DaggerViewComponent.builder()
-            .viewModule(ViewModule(context!!))
-            .applicationComponent(HeimdallApplication[context!!])
-            .build()
-            .inject(this)
+    override fun inject(component: ViewComponent) {
+        component.inject(this)
     }
 
 
