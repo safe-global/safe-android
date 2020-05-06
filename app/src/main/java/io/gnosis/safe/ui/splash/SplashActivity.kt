@@ -23,7 +23,6 @@ class SplashActivity : BaseActivity() {
 
         continue_button.setOnClickListener {
             TermsBottomSheetDialog(this).checkTerms {
-                Timber.i("advance...")
                 startActivity(Intent(this, StartActivity::class.java))
             }
         }
