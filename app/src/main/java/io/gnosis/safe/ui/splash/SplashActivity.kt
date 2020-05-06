@@ -9,13 +9,14 @@ import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
+import io.gnosis.safe.ui.safe.terms.TermsViewModel
 import kotlinx.android.synthetic.main.activity_splash.*
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
 
     @Inject
-    lateinit var viewModel: SplashViewModel
+    lateinit var viewModel: TermsViewModel
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
 

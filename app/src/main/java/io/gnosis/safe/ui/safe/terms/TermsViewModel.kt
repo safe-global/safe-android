@@ -1,14 +1,12 @@
-package io.gnosis.safe.ui.splash
+package io.gnosis.safe.ui.safe.terms
 
 import androidx.lifecycle.ViewModel
-import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
 
-class SplashViewModel @Inject constructor(
+class TermsViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager
-
 ) : ViewModel() {
     lateinit var termsBottomSheetDialog: TermsBottomSheetDialog
 
