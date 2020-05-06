@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe.overview
+package io.gnosis.safe.ui.safe.terms
 
 import android.content.Context
 import android.text.Html

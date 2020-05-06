@@ -1,7 +1,8 @@
-package io.gnosis.safe.ui.safe.overview
+package io.gnosis.safe.ui.safe.splash
 
 import android.app.Application
 import android.content.Context
+import io.gnosis.safe.ui.splash.SplashViewModel
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -11,7 +12,7 @@ import org.junit.Test
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.TestPreferences
 
-class SafeOverviewViewModelTest {
+class SplashViewModelTest {
 
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
@@ -28,9 +29,9 @@ class SafeOverviewViewModelTest {
 
     @Test
     fun `If terms already agreed, advance() method should be called and bottom sheet should not be shown`() {
-        preferences.edit().putBoolean(SafeOverviewViewModel.TERMS_AGREED, true).apply()
+        preferences.edit().putBoolean(SplashViewModel.TERMS_AGREED, true).apply()
 
-        val viewModel = SafeOverviewViewModel(preferencesManager)
+        val viewModel = SplashViewModel(preferencesManager)
         viewModel.termsBottomSheetDialog = mockk(relaxed = true)
 
         val callback: () -> Unit = mockk(relaxed = true)
@@ -43,9 +44,9 @@ class SafeOverviewViewModelTest {
 
     @Test
     fun `If terms not agreed, advance() method should not be called when agree button not hit`() {
-        preferences.edit().putBoolean(SafeOverviewViewModel.TERMS_AGREED, false).apply()
+        preferences.edit().putBoolean(SplashViewModel.TERMS_AGREED, false).apply()
 
-        val viewModel = SafeOverviewViewModel(preferencesManager)
+        val viewModel = SplashViewModel(preferencesManager)
         viewModel.termsBottomSheetDialog = mockk(relaxed = true)
         val callback: () -> Unit = mockk(relaxed = true)
 
