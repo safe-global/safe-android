@@ -5,6 +5,7 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.db.HeimdallDatabase
+import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.safe.di.ApplicationContext
 import javax.inject.Singleton
@@ -20,4 +21,8 @@ class DatabaseModule {
     @Provides
     @Singleton
     fun provideSafeDao(heimdallDatabase: HeimdallDatabase): SafeDao = heimdallDatabase.safeDao()
+
+    @Provides
+    @Singleton
+    fun provideErc20Dao(heimdallDatabase: HeimdallDatabase): Erc20TokenDao = heimdallDatabase.erc20TokenDao()
 }

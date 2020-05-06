@@ -5,6 +5,7 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -70,6 +71,16 @@ class ApplicationModule(private val application: Application) {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(RetrofitEthereumRpcApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(io.gnosis.data.backend.TransactionServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(TransactionServiceApi::class.java)
 
     @Provides
     @Singleton

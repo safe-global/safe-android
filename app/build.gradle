@@ -192,6 +192,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versions.androidx_swipe_refresh"
     implementation "androidx.multidex:multidex:$versions.multidex"
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"

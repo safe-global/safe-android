@@ -5,17 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSafeBalancesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
@@ -40,10 +39,10 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
             balancesContent.adapter = adapter
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
                 if (position % 2 == 0) {
-                    tab.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_coins_24dp)
+                    tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
                     tab.text = getString(R.string.tab_title_coins)
                 } else {
-                    tab.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_collectibles_24dp)
+                    tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_collectibles_24dp)
                     tab.text = getString(R.string.tab_title_collectibles)
                 }
             }.attach()
@@ -70,6 +69,9 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
 
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
+        with(binding.balancesContent) {
+            (get(currentItem) as? ActiveSafeListener)?.onActiveSafeChanged()
+        }
     }
 }
 
@@ -80,4 +82,9 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun createFragment(position: Int): Fragment =
         if (position % 2 == 0) CoinsFragment.newInstance()
         else CoinsFragment.newInstance()
+}
+
+interface ActiveSafeListener {
+
+    fun onActiveSafeChanged()
 }
