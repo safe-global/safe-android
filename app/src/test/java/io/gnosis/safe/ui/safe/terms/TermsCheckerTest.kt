@@ -26,7 +26,7 @@ class TermsCheckerTest {
     }
 
     @Test
-    fun `When terms agreed preferences shoul contain true`() {
+    fun `When terms agreed preferences should contain true`() {
         val termsChecker = TermsChecker(preferencesManager)
 
         termsChecker.setTermsAgreed(true)
