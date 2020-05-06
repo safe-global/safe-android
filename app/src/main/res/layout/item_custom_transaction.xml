@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        app:srcCompat="@drawable/tx_list_red_arrow" />
+        app:srcCompat="@drawable/tx_list_code" />
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/blockies"
@@ -44,11 +44,13 @@
         style="@style/TextDark"
         android:layout_width="98dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
-        android:text="-0.00021 ETH"
+        android:layout_marginEnd="32dp"
+        android:text="0 ETH"
+        android:textAlignment="viewEnd"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
+        app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/nonce"
@@ -163,7 +165,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/confirmations_icon"
@@ -174,5 +176,28 @@
         app:layout_constraintEnd_toStartOf="@+id/confirmations"
         app:layout_constraintTop_toTopOf="@+id/status_awaiting_confirmation"
         app:srcCompat="@drawable/tx_list_confirmations_grey"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/confirmations"
+        style="@style/TextMedium.Green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:text="2 out of 2"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/confirmations_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/status_awaiting_confirmation"
+        app:layout_constraintEnd_toStartOf="@+id/confirmations"
+        app:layout_constraintTop_toTopOf="@+id/status_awaiting_confirmation"
+        app:srcCompat="@drawable/tx_list_confirmations_green"
         android:visibility="visible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

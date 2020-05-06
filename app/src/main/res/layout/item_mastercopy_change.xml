@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/transfer_direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        app:srcCompat="@drawable/tx_list_settings_change" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/blockies"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/transfer_direction"
+        app:layout_constraintTop_toTopOf="parent"
+        app:address="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
+        />
+
+    <TextView
+        android:id="@+id/version"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="22dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        tools:layout_editor_absoluteX="90dp"
+        tools:text="1.1.1" />
+
+    <TextView
+        android:id="@+id/ellipsized_address"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="22dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintTop_toBottomOf="@+id/version"
+        tools:layout_editor_absoluteX="90dp"
+        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0" />
+
+    <TextView
+        android:id="@+id/amount"
+        style="@style/TextDark"
+        android:layout_width="98dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="16dp"
+        android:text="Change mastercopy"
+        android:textAlignment="viewEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nonce"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chevron" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Apr 27, 2020 — 1:01:42PM"
+        app:layout_constraintBottom_toBottomOf="@+id/nonce"
+        app:layout_constraintStart_toEndOf="@+id/nonce"
+        app:layout_constraintTop_toTopOf="@+id/nonce" />
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/tx_list_chevron_right"
+        tools:layout_editor_absoluteY="68dp" />
+
+    <TextView
+        android:id="@+id/final_status_success"
+        style="@style/TextMedium.Green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Success"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/final_status_cancelled"
+        style="@style/TextMedium.Grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Cancelled"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/final_status_failed"
+        style="@style/TextMedium.Red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Failed"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/status_pending"
+        style="@style/TextMedium.Orange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="\u2022 Pending"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/status_awaiting_confirmation"
+        style="@style/TextMedium.Orange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_time"
+        tools:text="\u2022 Awaiting your confirmation"
+        android:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/status_awaiting_execution"
+        style="@style/TextMedium.Orange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_time"
+        tools:text="\u2022 Awaiting execution"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/confirmations"
+        style="@style/TextMedium.Grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:text="0 out of 2"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/confirmations_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/status_awaiting_confirmation"
+        app:layout_constraintEnd_toStartOf="@+id/confirmations"
+        app:layout_constraintTop_toTopOf="@+id/status_awaiting_confirmation"
+        app:srcCompat="@drawable/tx_list_confirmations_grey"
+        android:visibility="visible"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
