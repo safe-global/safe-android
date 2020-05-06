@@ -9,14 +9,10 @@ import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
-import io.gnosis.safe.ui.safe.terms.TermsViewModel
 import kotlinx.android.synthetic.main.activity_splash.*
-import javax.inject.Inject
+import timber.log.Timber
 
 class SplashActivity : BaseActivity() {
-
-    @Inject
-    lateinit var viewModel: TermsViewModel
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
 
@@ -24,9 +20,10 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         inject()
-        viewModel.termsBottomSheetDialog = TermsBottomSheetDialog(this)
+
         continue_button.setOnClickListener {
-            viewModel.checkTerms {
+            TermsBottomSheetDialog(this).checkTerms {
+                Timber.i("advance...")
                 startActivity(Intent(this, StartActivity::class.java))
             }
         }

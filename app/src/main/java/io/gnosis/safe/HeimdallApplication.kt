@@ -9,7 +9,9 @@ import io.gnosis.safe.di.modules.ApplicationModule
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
+import timber.log.Timber.DebugTree
 import java.security.Security
+
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
@@ -20,7 +22,9 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     override fun onCreate() {
         super.onCreate()
-
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
         component.appInitManager().init()
 
         try {

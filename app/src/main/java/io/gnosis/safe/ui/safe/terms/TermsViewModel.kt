@@ -1,33 +1,32 @@
 package io.gnosis.safe.ui.safe.terms
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
 
 class TermsViewModel @Inject constructor(
-    private val preferencesManager: PreferencesManager
+    private val termsChecker: TermsChecker
 ) : ViewModel() {
-    lateinit var termsBottomSheetDialog: TermsBottomSheetDialog
 
-    private fun setTermsAgreed(value: Boolean) {
-        preferencesManager.prefs.edit {
-            putBoolean(TERMS_AGREED, value)
+    lateinit var advance: () -> Unit
+
+    val show = MutableLiveData<Boolean>()
+    private fun showTermsBottomSheet() {
+        show.postValue(true)
+    }
+
+    fun checkTerms(advance: () -> Unit) {
+        if (termsChecker.getTermsAgreed()) {
+            advance()
+        } else {
+            this.advance = advance
+            showTermsBottomSheet()
         }
     }
 
-    private fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TERMS_AGREED, false)
-
-    fun checkTerms(advance: () -> Unit) {
-        if (getTermsAgreed()) {
-            advance()
-        } else {
-            termsBottomSheetDialog.onUserClicksAgree = {
-                advance()
-                setTermsAgreed(true)
-            }
-            termsBottomSheetDialog.show()
-        }
+    fun onAgreeClicked() {
+        termsChecker.setTermsAgreed(true)
+        advance()
     }
 
     companion object {

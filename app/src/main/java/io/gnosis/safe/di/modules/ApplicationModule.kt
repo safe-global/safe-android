@@ -8,6 +8,7 @@ import dagger.Provides
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
+import io.gnosis.safe.ui.safe.terms.TermsChecker
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -44,6 +45,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesPreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
+
+    @Provides
+    @Singleton
+    fun providesTermsChecker(preferencesManager: PreferencesManager): TermsChecker = TermsChecker(preferencesManager)
 
     @Provides
     @Singleton
