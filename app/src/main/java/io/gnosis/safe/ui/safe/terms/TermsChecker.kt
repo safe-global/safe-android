@@ -9,9 +9,13 @@ class TermsChecker @Inject constructor(
 ) {
     fun setTermsAgreed(value: Boolean) {
         preferencesManager.prefs.edit {
-            putBoolean(TermsViewModel.TERMS_AGREED, value)
+            putBoolean(TERMS_AGREED, value)
         }
     }
 
-    fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TermsViewModel.TERMS_AGREED, false)
+    fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TERMS_AGREED, false)
+
+    companion object {
+        const val TERMS_AGREED = "prefs.boolean.terms_agreed"
+    }
 }

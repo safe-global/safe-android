@@ -28,8 +28,4 @@ class TermsViewModel @Inject constructor(
         termsChecker.setTermsAgreed(true)
         advance()
     }
-
-    companion object {
-        const val TERMS_AGREED = "prefs.boolean.terms_agreed"
-    }
 }
