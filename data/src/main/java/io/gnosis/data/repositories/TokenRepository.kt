@@ -1,13 +1,12 @@
 package io.gnosis.data.repositories
 
-import io.gnosis.data.backend.RelayServiceApi
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.dto.tokenAsErc20Token
 import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.models.Balance
 import io.gnosis.data.models.Erc20Token
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 class TokenRepository(

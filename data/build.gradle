@@ -53,6 +53,7 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
 
     implementation "com.squareup.moshi:moshi:$versions.moshi"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
     api "com.squareup.retrofit2:retrofit:$versions.retrofit"
 

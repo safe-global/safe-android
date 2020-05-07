@@ -15,19 +15,20 @@ class CoinsViewModel
     private val tokenRepositories = repositories.tokenRepository()
     private val safeRepository = repositories.safeRepository()
 
-    override fun initialState(): CoinsState = CoinsState(false, null)
+    override fun initialState(): CoinsState = CoinsState(loading = false, refreshing = false, viewAction = null)
 
     fun loadFor(isRefresh: Boolean = false) {
         safeLaunch {
-            updateState { CoinsState(true, null) }
+            updateState { CoinsState(loading = !isRefresh, refreshing = isRefresh, viewAction = null) }
             val balances = tokenRepositories.loadBalanceOfNew(safeRepository.getActiveSafe()!!.address)
-            updateState { CoinsState(false, UpdateBalances(balances)) }
+            updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
         }
     }
 }
 
 data class CoinsState(
-    val isLoading: Boolean,
+    val loading: Boolean,
+    val refreshing: Boolean,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 

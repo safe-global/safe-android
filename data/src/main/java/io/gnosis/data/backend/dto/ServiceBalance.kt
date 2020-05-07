@@ -22,16 +22,16 @@ data class ServiceBalance(
         @Json(name = "decimals") val decimals: Int,
         @Json(name = "symbol") val symbol: String,
         @Json(name = "name") val name: String,
-        @Json(name = "logoUri") val logoUri: String
+        @Json(name = "logoUri") val logoUri: String?
     )
-
-    fun tokenAsErc20Token(): Erc20Token =
-        if (tokenAddress == null) ETH_TOKEN_INFO
-        else Erc20Token(
-            tokenAddress,
-            token?.name.orEmpty(),
-            token?.symbol.orEmpty(),
-            token?.decimals ?: 0,
-            token?.logoUri ?: "https://gnosis-safe-token-logos.s3.amazonaws.com/${tokenAddress.asEthereumAddressChecksumString()}.png"
-        )
 }
+
+fun ServiceBalance.tokenAsErc20Token(): Erc20Token =
+    if (tokenAddress == null) ETH_TOKEN_INFO
+    else Erc20Token(
+        tokenAddress,
+        token?.name.orEmpty(),
+        token?.symbol.orEmpty(),
+        token?.decimals ?: 0,
+        token?.logoUri ?: "https://gnosis-safe-token-logos.s3.amazonaws.com/${tokenAddress.asEthereumAddressChecksumString()}.png"
+    )

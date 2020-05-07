@@ -77,7 +77,7 @@ class ApplicationModule(private val application: Application) {
     fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
         Retrofit.Builder()
             .client(client)
-            .baseUrl(io.gnosis.data.backend.TransactionServiceApi.BASE_URL)
+            .baseUrl(TransactionServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(TransactionServiceApi::class.java)
