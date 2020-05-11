@@ -18,6 +18,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
+import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
 import javax.inject.Inject
 
 class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
@@ -81,5 +82,5 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     override fun createFragment(position: Int): Fragment =
         if (position % 2 == 0) CoinsFragment.newInstance()
-        else CoinsFragment.newInstance()
+        else CollectiblesFragment.newInstance()
 }

@@ -59,9 +59,7 @@ class CoinsFragment : BaseFragment<FragmentCoinsBinding>() {
 
     private fun handleError(throwable: Throwable) {
         snackbar(requireView(), R.string.error_loading_balances)
-        throwable.printStackTrace()
         Timber.e(throwable)
-//        when(throwable) { }
     }
 
     companion object {

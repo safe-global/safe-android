@@ -9,6 +9,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.safe.balances.SafeBalancesFragment
 import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
+import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SafeSettingsFragment
 import io.gnosis.safe.ui.splash.SplashActivity
@@ -37,6 +38,8 @@ interface ViewComponent {
     fun inject(fragment: SafeSettingsFragment)
 
     fun inject(fragment: CoinsFragment)
+
+    fun inject(fragment: CollectiblesFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)

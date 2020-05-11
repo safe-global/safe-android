@@ -32,4 +32,5 @@
     <string name="error_loading_balances">Unable to load balances</string>
     <string name="error_no_internet">No Internet connection</string>
     <string name="usd_balance">$ %1$s</string>
+    <string name="coming_soon">Coming soon</string>
 </resources>
