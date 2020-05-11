@@ -32,7 +32,6 @@
         <item name="fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="textAllCaps">false</item>
-        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
     </style>
 
     <style name="TextButton">
