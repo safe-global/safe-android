@@ -4,9 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.di.ApplicationContext
 import javax.inject.Inject
 
-class Tracker @Inject constructor(context: Context) {
+class Tracker @Inject constructor(@ApplicationContext context: Context) {
 
     private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
