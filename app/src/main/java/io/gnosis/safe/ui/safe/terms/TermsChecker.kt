@@ -3,7 +3,9 @@ package io.gnosis.safe.ui.safe.terms
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TermsChecker @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) {
