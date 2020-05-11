@@ -12,34 +12,15 @@ import java.math.BigInteger
 class TokenRepository(
     private val erc20TokenDao: Erc20TokenDao,
     private val transactionServiceApi: TransactionServiceApi
-//    private val relayServiceApi: RelayServiceApi
 ) {
 
-    suspend fun loadBalanceOfNew(safe: Solidity.Address): List<Balance> =
+    suspend fun loadBalanceOf(safe: Solidity.Address): List<Balance> =
         transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString())
-            .map { Balance(it.tokenAsErc20Token(), it.balance, it.balanceUsd) }
-
-
-    @Deprecated("Uses relay service")
-    suspend fun loadBalancesOf(safe: Solidity.Address, forceRefetch: Boolean = false): List<Balance> =
-        transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString())
-            .associateWith {
-                it.tokenAddress?.let { tokenAddress -> erc20TokenDao.loadToken(tokenAddress) }
+            .map {
+                val token = it.tokenAsErc20Token()
+                erc20TokenDao.insertToken(token)
+                Balance(token, it.balance, it.balanceUsd)
             }
-            .map { (balance, tokenFromDao) ->
-                val token = when {
-                    tokenFromDao != null && !forceRefetch -> tokenFromDao
-//                    balance.tokenAddress != null -> loadToken(balance.tokenAddress)
-                    else -> ETH_TOKEN_INFO
-                }
-                Balance(token, balance.balance, balance.balanceUsd)
-            }
-
-//    suspend fun loadToken(address: Solidity.Address): Erc20Token =
-//        relayServiceApi.tokenInfo(address.asEthereumAddressString()).let {
-//            it.toErc20Token().apply { erc20TokenDao.insertToken(this) }
-//        }
-
 
     companion object {
         val ETH_ADDRESS = Solidity.Address(BigInteger.ZERO)

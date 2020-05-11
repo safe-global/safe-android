@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 
+@Deprecated("Use transaction service API if available")
 interface RelayServiceApi {
 
     @GET("v1/tokens/{address}/")
