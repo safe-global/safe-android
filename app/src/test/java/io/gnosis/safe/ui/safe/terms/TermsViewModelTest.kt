@@ -30,7 +30,7 @@ class TermsViewModelTest {
     }
 
     @Test
-    fun `If terms already agreed, advance() method should be called and bottom sheet should not be shown`() {
+    fun `checkTerms (terms already agreed) should call advance() and not show bottom sheet`() {
         termsChecker = mockk(relaxed = true)
         every { termsChecker.getTermsAgreed() } returns true
 
@@ -44,7 +44,7 @@ class TermsViewModelTest {
     }
 
     @Test
-    fun `If terms not agreed, advance() method should not be called when agree button not hit`() {
+    fun `checkTerms (terms not agreed previously AND agree button not hit) should not call advance()`() {
         termsChecker = mockk(relaxed = true)
         every { termsChecker.getTermsAgreed() } returns false
 
@@ -57,7 +57,7 @@ class TermsViewModelTest {
     }
 
     @Test
-    fun `Test if advance is called when user clicks agree`() {
+    fun `checkTerms (user clicks agree) should call advance()`() {
         termsChecker = TermsChecker(preferencesManager)
         assertFalse(termsChecker.getTermsAgreed())
 
