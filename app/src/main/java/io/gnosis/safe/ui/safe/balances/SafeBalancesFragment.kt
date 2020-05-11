@@ -70,7 +70,7 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
         with(binding.balancesContent) {
-            (get(currentItem) as? ActiveSafeListener)?.onActiveSafeChanged()
+            adapter?.notifyItemChanged(currentItem)
         }
     }
 }
@@ -82,9 +82,4 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun createFragment(position: Int): Fragment =
         if (position % 2 == 0) CoinsFragment.newInstance()
         else CoinsFragment.newInstance()
-}
-
-interface ActiveSafeListener {
-
-    fun onActiveSafeChanged()
 }

@@ -12,13 +12,12 @@ import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.balances.ActiveSafeListener
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
-class CoinsFragment : BaseFragment<FragmentCoinsBinding>(), ActiveSafeListener {
+class CoinsFragment : BaseFragment<FragmentCoinsBinding>() {
 
     @Inject
     lateinit var viewModel: CoinsViewModel
@@ -38,7 +37,7 @@ class CoinsFragment : BaseFragment<FragmentCoinsBinding>(), ActiveSafeListener {
             coins.adapter = adapter
             coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             coins.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            refresh.setOnRefreshListener { viewModel.loadFor(true) }
+            refresh.setOnRefreshListener { viewModel.load(true) }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -55,15 +54,7 @@ class CoinsFragment : BaseFragment<FragmentCoinsBinding>(), ActiveSafeListener {
                 }
             }
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.loadFor()
-    }
-
-    override fun onActiveSafeChanged() {
-        viewModel.loadFor()
+        viewModel.load()
     }
 
     private fun handleError(throwable: Throwable) {

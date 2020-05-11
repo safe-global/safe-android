@@ -1,9 +1,12 @@
 package io.gnosis.safe.ui.safe.add
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -38,7 +41,7 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             newAddressBlockies.setAddress(newAddress)
-            newAddressHex.text = newAddress.formatEthAddress(context!!, addMiddleLinebreak = false)
+            newAddressHex.text = newAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener {
                 addSafeNameLayout.isErrorEnabled = false
@@ -51,7 +54,14 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
                 is AddSafeNameState -> {
                     state.viewAction?.let { action ->
                         when (action) {
-                            is BaseStateViewModel.ViewAction.CloseScreen -> findNavController().navigateUp()
+                            is BaseStateViewModel.ViewAction.CloseScreen -> {
+                                (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?)
+                                    ?.hideSoftInputFromWindow(
+                                        view.windowToken,
+                                        0
+                                    )
+                                findNavController().navigateUp()
+                            }
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                             is BaseStateViewModel.ViewAction.ShowError -> {
                                 progress.visible(false)
