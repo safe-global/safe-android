@@ -16,7 +16,8 @@ buildscript {
         classpath "com.github.gnosis.bivrost-kotlin:bivrost-gradle-plugin:$versions.bivrost"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$versions.androidx_navigation"
         classpath "com.google.gms:google-services:$versions.google_services"
-        classpath "com.google.firebase:firebase-appdistribution-gradle:$versions.firebase_app_distribution"
+        classpath "com.google.firebase:firebase-crashlytics-gradle:$versions.firebase_crashlytics_gradle"
+        classpath "com.google.firebase:firebase-appdistribution-gradle:$versions.firebase_app_distribution_gradle"
     }
 }
 
