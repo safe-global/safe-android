@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.gnosis.data.models.Balance
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.utils.loadTokenLogo
+import io.gnosis.safe.utils.shiftedString
 
 class CoinBalanceAdapter : RecyclerView.Adapter<CoinBalanceViewHolder>() {
 
@@ -29,7 +31,12 @@ class CoinBalanceAdapter : RecyclerView.Adapter<CoinBalanceViewHolder>() {
 
 class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : RecyclerView.ViewHolder(viewBinding.root) {
 
-    fun bind(balance: Balance) {
-        viewBinding.logoImage.loadTokenLogo(Picasso.get(), balance.token.logoUrl)
+    fun bind(balanceItem: Balance) {
+        with(viewBinding) {
+            logoImage.loadTokenLogo(Picasso.get(), balanceItem.token.logoUrl)
+            symbol.text = balanceItem.token.symbol
+            balance.text = balanceItem.balance.shiftedString(balanceItem.token.decimals, 5)
+            balanceUsd.text = viewBinding.root.context.getString(R.string.usd_balance, balanceItem.balanceUsd)
+        }
     }
 }

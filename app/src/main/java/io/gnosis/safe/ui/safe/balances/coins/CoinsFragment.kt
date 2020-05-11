@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentCoinsBinding
@@ -35,6 +36,7 @@ class CoinsFragment : BaseFragment<FragmentCoinsBinding>(), ActiveSafeListener {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             coins.adapter = adapter
+            coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             coins.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             refresh.setOnRefreshListener { viewModel.loadFor(true) }
         }

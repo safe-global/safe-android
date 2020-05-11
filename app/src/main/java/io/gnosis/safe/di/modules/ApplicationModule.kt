@@ -97,8 +97,11 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient =
+    fun providesOkHttpClient(
+        @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
+    ): OkHttpClient =
         OkHttpClient.Builder().apply {
+            addInterceptor(interceptors[1])
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)

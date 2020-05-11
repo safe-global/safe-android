@@ -43,6 +43,6 @@ class TokenRepository(
 
     companion object {
         val ETH_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = Erc20Token(ETH_ADDRESS, "ETH", "Ether", 18, "local::ethereum")
+        val ETH_TOKEN_INFO = Erc20Token(ETH_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
     }
 }
