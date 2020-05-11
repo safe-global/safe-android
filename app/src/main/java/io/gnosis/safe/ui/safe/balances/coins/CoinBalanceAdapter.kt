@@ -33,7 +33,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : R
 
     fun bind(balanceItem: Balance) {
         with(viewBinding) {
-            logoImage.loadTokenLogo(Picasso.get(), balanceItem.token.logoUrl)
+            logoImage.loadTokenLogo(balanceItem.token.logoUrl)
             symbol.text = balanceItem.token.symbol
             balance.text = balanceItem.balance.shiftedString(balanceItem.token.decimals, 5)
             balanceUsd.text = viewBinding.root.context.getString(R.string.usd_balance, balanceItem.balanceUsd)

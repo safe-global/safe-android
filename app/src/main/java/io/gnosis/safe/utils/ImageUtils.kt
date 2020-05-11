@@ -5,7 +5,7 @@ import androidx.core.view.setPadding
 import com.squareup.picasso.Picasso
 import io.gnosis.safe.R
 
-fun ImageView.loadTokenLogo(picasso: Picasso, icon: String?) {
+fun ImageView.loadTokenLogo(icon: String?) {
     setPadding(0)
     background = null
     setImageDrawable(null)
@@ -18,13 +18,14 @@ fun ImageView.loadTokenLogo(picasso: Picasso, icon: String?) {
 //            setImageResource(R.drawable.circle_background)
         }
         !icon.isNullOrBlank() ->
-            picasso
+            Picasso.get()
                 .load(icon)
 //                .placeholder(R.drawable.circle_background)
 //                .error(R.drawable.circle_background)
 //                .transform(CircleTransformation)
                 .into(this)
-        else -> {}
+        else -> {
+        }
 //            setImageResource(R.drawable.circle_background)
     }
 }
