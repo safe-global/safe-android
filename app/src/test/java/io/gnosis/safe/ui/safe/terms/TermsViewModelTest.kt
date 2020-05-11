@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.safe.terms
 
 import android.app.Application
-import android.content.Context
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -18,7 +17,6 @@ class TermsViewModelTest {
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var termsChecker: TermsChecker
-    private val context = mockk<Context>(relaxed = true)
 
     @Before
     fun setup() {
