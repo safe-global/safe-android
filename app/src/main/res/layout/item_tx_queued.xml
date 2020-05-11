@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        app:srcCompat="@drawable/tx_list_code" />
+        app:srcCompat="@drawable/tx_list_red_arrow" />
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/blockies"
@@ -44,13 +44,11 @@
         style="@style/TextDark"
         android:layout_width="98dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:text="0 ETH"
-        android:textAlignment="viewEnd"
+        android:layout_marginEnd="35dp"
+        android:text="-0.00021 ETH"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
 
     <TextView
         android:id="@+id/nonce"
@@ -124,7 +122,6 @@
         style="@style/TextMedium.Orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"
@@ -141,34 +138,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
         tools:text="\u2022 Awaiting your confirmation"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/status_awaiting_execution"
         style="@style/TextMedium.Orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
         tools:text="\u2022 Awaiting execution"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <TextView
-        android:id="@+id/confirmations"
+        android:id="@+id/confirmations_incomplete"
         style="@style/TextMedium.Grey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
-        android:text="0 out of 2"
+        tools:text="0 out of 2"
         app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
         android:visibility="gone"/>
 
     <ImageView
-        android:id="@+id/confirmations_icon"
+        android:id="@+id/confirmations_icon_incomplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="6dp"
@@ -184,7 +180,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
-        android:text="2 out of 2"
+        tools:text="2 out of 2"
         app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/confirmations_icon"

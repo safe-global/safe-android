@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/transfer_direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        app:srcCompat="@drawable/tx_list_settings_change" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/blockies"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:address="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
+        app:layout_constraintStart_toEndOf="@+id/transfer_direction"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/version"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        tools:text="1.1.1" />
+
+    <TextView
+        android:id="@+id/ellipsized_address"
+        style="@style/TextDark"
+        android:textColor="@color/medium_grey"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toBottomOf="@+id/version"
+        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0" />
+
+    <TextView
+        android:id="@+id/ellipsized_address2"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        tools:text="Change mastercopy"
+        android:textAlignment="viewEnd" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        tools:text="Apr 27, 2020 — 1:01:42PM"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ellipsized_address" />
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="42dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/tx_list_chevron_right" />
+
+    <TextView
+        android:id="@+id/final_status_success"
+        style="@style/TextMedium"
+        android:textColor="@color/safe_green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Success"
+        android:visibility="visible" />
+</androidx.constraintlayout.widget.ConstraintLayout>
