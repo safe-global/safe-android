@@ -11,7 +11,6 @@ import io.gnosis.safe.helpers.AppInitManager
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.terms.TermsChecker
-import pm.gnosis.svalinn.common.PreferencesManager
 import javax.inject.Singleton
 
 @Singleton
@@ -38,8 +37,6 @@ interface ApplicationComponent {
     fun repositories(): Repositories
 
     fun appDispatchers(): AppDispatchers
-
-    fun preferencesManager(): PreferencesManager
 
     fun termsChecker(): TermsChecker
 
