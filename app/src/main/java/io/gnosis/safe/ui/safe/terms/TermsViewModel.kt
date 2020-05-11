@@ -8,24 +8,26 @@ class TermsViewModel @Inject constructor(
     private val termsChecker: TermsChecker
 ) : ViewModel() {
 
-    lateinit var advance: () -> Unit
-
-    val show = MutableLiveData<Boolean>()
+    val state = MutableLiveData<ViewAction>()
     private fun showTermsBottomSheet() {
-        show.postValue(true)
+        state.postValue(ViewAction.ShowBottomSheet)
     }
 
-    fun checkTerms(advance: () -> Unit) {
+    fun checkTerms() {
         if (termsChecker.getTermsAgreed()) {
-            advance()
+            state.postValue(ViewAction.TermsAgreed)
         } else {
-            this.advance = advance
             showTermsBottomSheet()
         }
     }
 
     fun onAgreeClicked() {
         termsChecker.setTermsAgreed(true)
-        advance()
+        state.postValue(ViewAction.TermsAgreed)
+    }
+
+    interface ViewAction {
+        object ShowBottomSheet : ViewAction
+        object TermsAgreed : ViewAction
     }
 }

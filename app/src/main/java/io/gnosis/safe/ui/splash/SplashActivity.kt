@@ -10,7 +10,6 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import kotlinx.android.synthetic.main.activity_splash.*
-import timber.log.Timber
 
 class SplashActivity : BaseActivity() {
 
