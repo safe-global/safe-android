@@ -26,7 +26,7 @@ class TermsCheckerTest {
     }
 
     @Test
-    fun `When terms agreed preferences should contain true`() {
+    fun `setTermsAgreed (true) should save true under TERMS_AGREED`() {
         val termsChecker = TermsChecker(preferencesManager)
 
         termsChecker.setTermsAgreed(true)
@@ -35,7 +35,7 @@ class TermsCheckerTest {
     }
 
     @Test
-    fun `Default response for terms should be false`() {
+    fun `getTermsAgreed (initially) should return false`() {
         val termsChecker = TermsChecker(preferencesManager)
 
         val result = termsChecker.getTermsAgreed()
@@ -44,7 +44,7 @@ class TermsCheckerTest {
     }
 
     @Test
-    fun `Given terms agreed then response for terms should be true`() {
+    fun `getTermsAgreed (terms have been agreed previously) should return true`() {
         preferences.edit().putBoolean(TERMS_AGREED, true)
         val termsChecker = TermsChecker(preferencesManager)
 
