@@ -4,14 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import javax.inject.Inject
 
-class Tracker private constructor(context: Context) {
+class Tracker @Inject constructor(context: Context) {
 
-    private val firebaseAnalytics: FirebaseAnalytics
-
-    init {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-    }
+    private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     fun logSafeAdd(numSafes: Int) {
         logEvent(
@@ -74,16 +71,5 @@ class Tracker private constructor(context: Context) {
     object ParamValues {
         val PUSH_ENABLED = "enabled"
         val PUSH_DISABLED = "disabled"
-    }
-
-    companion object {
-
-        @Volatile
-        private var INSTANCE: Tracker? = null
-
-        fun getInstance(context: Context): Tracker =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Tracker(context).also { INSTANCE = it }
-            }
     }
 }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class SafeSettingsViewModel @Inject constructor(
     repositories: Repositories,
     appDispatchers: AppDispatchers,
-    val tracker: Tracker
+    private val tracker: Tracker
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()

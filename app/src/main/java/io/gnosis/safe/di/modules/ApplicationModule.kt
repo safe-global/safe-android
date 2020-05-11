@@ -48,7 +48,7 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesTracker(@ApplicationContext context: Context): Tracker = Tracker.getInstance(context)
+    fun providesTracker(@ApplicationContext context: Context): Tracker = Tracker(context)
 
     @Provides
     @Singleton

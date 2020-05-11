@@ -1,7 +1,5 @@
 package io.gnosis.safe.ui.safe.add
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.Repositories
@@ -14,7 +12,7 @@ class AddSafeNameViewModel
 @Inject constructor(
     repositories: Repositories,
     appDispatchers: AppDispatchers,
-    val tracker: Tracker
+    private val tracker: Tracker
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
