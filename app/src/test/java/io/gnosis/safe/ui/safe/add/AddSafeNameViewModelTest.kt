@@ -91,7 +91,10 @@ class AddSafeNameViewModelTest {
 
     @Test
     fun `submitAddressAndName (name) should succeed`() {
+        coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.addSafe(any()) } just Runs
+        coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
 
@@ -100,6 +103,7 @@ class AddSafeNameViewModelTest {
                 it.viewAction is BaseStateViewModel.ViewAction.CloseScreen
             }
         coVerify(exactly = 1) { safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
+        coVerify(exactly = 1) { tracker.setNumSafes(any()) }
     }
 
     @Test

@@ -5,10 +5,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -37,14 +34,16 @@ class SafeSettingsViewModelTest {
         safeSettingsViewModel = SafeSettingsViewModel(repositories, appDispatchers, tracker)
     }
 
-
     @Test
     fun `removeSafe - should remove safe`() = runBlockingTest {
 
         coEvery { safeRepository.getActiveSafe()} returnsMany  listOf(SAFE_1, null)
-        coEvery { safeRepository.getSafes() } returns listOf(SAFE_2)
-        coEvery { safeRepository.removeSafe(ACTIVE_SAFE) } returns Unit
-        coEvery { tracker.logSafeRemove(1) } returns Unit
+        coEvery { safeRepository.getSafes() } returnsMany listOf(SAFES, listOf(SAFE_2))
+        coEvery { safeRepository.removeSafe(ACTIVE_SAFE) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
+
+        val safeCount = safeRepository.getSafes().count()
+        assert(safeCount == 2)
 
         safeSettingsViewModel.removeSafe()
 
@@ -62,7 +61,7 @@ class SafeSettingsViewModelTest {
         coVerify(exactly = 1) { safeRepository.removeSafe(SAFE_1) }
 
         // verify SAFE_REMOVE event was tracked
-        coVerify(exactly = 1) { tracker.logSafeRemove(1) }
+        coVerify(exactly = 1) { tracker.setNumSafes(1) }
     }
 
     companion object {

@@ -13,28 +13,12 @@ class Tracker @Inject constructor(@ApplicationContext context: Context) {
 
     private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
-    fun logSafeAdd(numSafes: Int) {
-        logEvent(
-            Event.SAFE_ADD, mapOf(
-                Param.NUM_SAFES to numSafes
-            )
-        )
+    fun setNumSafes(numSafes: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
     }
 
-    fun logSafeRemove(numSafes: Int) {
-        logEvent(
-            Event.SAFE_REMOVE, mapOf(
-                Param.NUM_SAFES to numSafes
-            )
-        )
-    }
-
-    fun logPushSettings(enabled: Boolean) {
-        logEvent(
-            Event.PUSH_SETTING, mapOf(
-                Param.PUSH_INFO to if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED
-            )
-        )
+    fun setPushInfo(enabled: Boolean) {
+        firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
 
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
@@ -61,9 +45,7 @@ class Tracker @Inject constructor(@ApplicationContext context: Context) {
     }
 
     object Event {
-        val SAFE_ADD = "safe_add"
-        val SAFE_REMOVE = "safe_remove"
-        val PUSH_SETTING = "push_setting"
+        // Put event names here
     }
 
     object Param {

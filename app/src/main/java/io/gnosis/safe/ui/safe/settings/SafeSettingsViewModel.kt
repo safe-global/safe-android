@@ -43,7 +43,7 @@ class SafeSettingsViewModel @Inject constructor(
                         )
                     )
                 }
-                tracker.logSafeRemove(safeRepository.getSafes().count())
+                tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
     }
