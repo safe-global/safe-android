@@ -14,6 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class TokenRepositoryTest {
@@ -94,7 +95,7 @@ class TokenRepositoryTest {
                 "logo.uri.$index"
             ),
             BigInteger.valueOf(index),
-            "$index.00"
+            BigDecimal.valueOf(index)
         )
 
     private fun buildServiceTokenInfo(index: Long) =

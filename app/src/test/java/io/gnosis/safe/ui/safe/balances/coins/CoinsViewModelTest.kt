@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flow
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class CoinsViewModelTest {
@@ -133,7 +134,7 @@ class CoinsViewModelTest {
         Balance(
             buildErc20Token(index),
             BigInteger.valueOf(index),
-            "$index.0"
+            BigDecimal.valueOf(index)
         )
 
 }

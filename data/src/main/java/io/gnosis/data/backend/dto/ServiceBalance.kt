@@ -7,6 +7,7 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import pm.gnosis.common.adapters.moshi.DecimalNumber
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @JsonClass(generateAdapter = true)
@@ -15,7 +16,8 @@ data class ServiceBalance(
     @Json(name = "token") val token: ServiceTokenMeta?,
     @DecimalNumber
     @Json(name = "balance") val balance: BigInteger,
-    @Json(name = "balanceUsd") val balanceUsd: String?
+    @DecimalNumber
+    @Json(name = "balanceUsd") val balanceUsd: BigDecimal
 ) {
     @JsonClass(generateAdapter = true)
     data class ServiceTokenMeta(

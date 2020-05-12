@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.safe.balances.coins
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import io.gnosis.data.models.Balance
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
