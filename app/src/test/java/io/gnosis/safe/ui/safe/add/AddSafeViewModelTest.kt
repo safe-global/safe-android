@@ -48,11 +48,12 @@ class AddSafeViewModelTest {
         viewModel.submitAddress(address)
 
         viewModel.state.observeForever(stateObserver)
-        stateObserver
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                        (it.viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
-            }
+        with(stateObserver.values()[0]) {
+            assert(
+                viewAction is BaseStateViewModel.ViewAction.ShowError &&
+                        (viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
+            )
+        }
 
         coVerify { safeRepository wasNot Called }
     }
@@ -83,9 +84,11 @@ class AddSafeViewModelTest {
         viewModel.submitAddress(address)
 
         viewModel.state.observeForever(stateObserver)
-        stateObserver.assertValueAt(0) {
-            it.viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                    (it.viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
+        with(stateObserver.values()[0]) {
+            assert(
+                viewAction is BaseStateViewModel.ViewAction.ShowError &&
+                        (viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
+            )
         }
         coVerify(exactly = 1) { safeRepository.isValidSafe("0x0".asEthereumAddress()!!) }
     }

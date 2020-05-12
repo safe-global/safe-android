@@ -70,9 +70,6 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
 
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
-        with(binding.balancesContent) {
-            adapter?.notifyItemChanged(currentItem)
-        }
     }
 }
 

@@ -90,7 +90,7 @@ abstract class BaseSafeSelectionViewHolder(
     viewBinding: ViewBinding
 ) : RecyclerView.ViewHolder(viewBinding.root)
 
-class AddSafeHeader
+object AddSafeHeader
 
 class AddSafeHeaderViewHolder(
     private val binding: ItemAddSafeBinding,
