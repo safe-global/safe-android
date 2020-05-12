@@ -9,13 +9,13 @@ import javax.inject.Singleton
 class TermsChecker @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) {
-    fun setTermsAgreed(value: Boolean) {
+    suspend fun setTermsAgreed(value: Boolean) {
         preferencesManager.prefs.edit {
             putBoolean(TERMS_AGREED, value)
         }
     }
 
-    fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TERMS_AGREED, false)
+    suspend fun getTermsAgreed(): Boolean = preferencesManager.prefs.getBoolean(TERMS_AGREED, false)
 
     companion object {
         const val TERMS_AGREED = "prefs.boolean.terms_agreed"

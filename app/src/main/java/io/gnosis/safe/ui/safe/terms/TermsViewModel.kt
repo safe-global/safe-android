@@ -1,33 +1,47 @@
 package io.gnosis.safe.ui.safe.terms
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import io.gnosis.safe.ui.base.AppDispatchers
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import javax.inject.Inject
 
 class TermsViewModel @Inject constructor(
-    private val termsChecker: TermsChecker
-) : ViewModel() {
+    private val termsChecker: TermsChecker,
+    appDispatchers: AppDispatchers
 
-    val state = MutableLiveData<ViewAction>()
+) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
+
     private fun showTermsBottomSheet() {
-        state.postValue(ViewAction.ShowBottomSheet)
+        safeLaunch {
+            updateState { TermsOfUseState(ViewAction.ShowBottomSheet) }
+        }
     }
 
     fun checkTerms() {
-        if (termsChecker.getTermsAgreed()) {
-            state.postValue(ViewAction.TermsAgreed)
-        } else {
-            showTermsBottomSheet()
+        safeLaunch {
+            if (termsChecker.getTermsAgreed()) {
+                updateState { TermsOfUseState(ViewAction.TermsAgreed) }
+            } else {
+                showTermsBottomSheet()
+            }
         }
     }
 
     fun onAgreeClicked() {
-        termsChecker.setTermsAgreed(true)
-        state.postValue(ViewAction.TermsAgreed)
+        safeLaunch {
+            termsChecker.setTermsAgreed(true)
+            updateState { TermsOfUseState(ViewAction.TermsAgreed) }
+        }
     }
 
     interface ViewAction {
-        object ShowBottomSheet : ViewAction
-        object TermsAgreed : ViewAction
+        object ShowBottomSheet : BaseStateViewModel.ViewAction
+        object TermsAgreed : BaseStateViewModel.ViewAction
     }
+
+    override fun initialState(): State = TermsOfUseState(BaseStateViewModel.ViewAction.Loading(false))
+
+    data class TermsOfUseState(
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) : State
+
 }

@@ -40,8 +40,8 @@ class TermsBottomSheetDialog(val activity: AppCompatActivity) : BottomSheetDialo
             onReject()
         }
 
-        viewModel.state.observe(activity, Observer { viewAction ->
-            when (viewAction) {
+        viewModel.state.observe(activity, Observer { state ->
+            when (state.viewAction) {
                 ShowBottomSheet -> show()
                 TermsAgreed -> dismissAndAdvance()
             }

@@ -2,14 +2,12 @@ package io.gnosis.safe.ui.safe.terms
 
 import android.app.Application
 import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.TestLiveDataObserver
-import io.gnosis.safe.ui.safe.terms.TermsViewModel.ViewAction
-import io.gnosis.safe.ui.safe.terms.TermsViewModel.ViewAction.ShowBottomSheet
-import io.gnosis.safe.ui.safe.terms.TermsViewModel.ViewAction.TermsAgreed
+import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.test
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
-import junit.framework.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +22,6 @@ class TermsViewModelTest {
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
-    val observer = TestLiveDataObserver<ViewAction>()
 
     @Before
     fun setup() {
@@ -33,44 +30,51 @@ class TermsViewModelTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         preferencesManager = PreferencesManager(application)
-
     }
 
     @Test
     fun `checkTerms (terms already agreed) should call advance() and not show bottom sheet`() {
         termsChecker = mockk(relaxed = true)
-        every { termsChecker.getTermsAgreed() } returns true
-        val viewModel = TermsViewModel(termsChecker)
-        viewModel.state.observeForever(observer)
+        coEvery { termsChecker.getTermsAgreed() } returns true
+        val viewModel = TermsViewModel(termsChecker, appDispatchers)
 
         viewModel.checkTerms()
 
-        observer.assertValues(TermsAgreed)
+        viewModel.state.test().assertValues(
+            TermsViewModel.TermsOfUseState(TermsViewModel.ViewAction.TermsAgreed)
+        )
     }
 
     @Test
     fun `checkTerms (terms not agreed previously AND agree button not hit) should not call advance()`() {
         termsChecker = mockk(relaxed = true)
-        every { termsChecker.getTermsAgreed() } returns false
-        val viewModel = TermsViewModel(termsChecker)
-        viewModel.state.observeForever(observer)
+        coEvery { termsChecker.getTermsAgreed() } returns false
+        val viewModel = TermsViewModel(termsChecker, appDispatchers)
 
         viewModel.checkTerms()
 
-        observer.assertValues(ShowBottomSheet)
+        viewModel.state.test().assertValues(
+            TermsViewModel.TermsOfUseState(TermsViewModel.ViewAction.ShowBottomSheet)
+        )
     }
 
     @Test
-    fun `checkTerms (user clicks agree) should show bottom cheet and call advance()`() {
-        termsChecker = TermsChecker(preferencesManager)
-        assertFalse(termsChecker.getTermsAgreed())
+    fun `checkTerms (user clicks agree) should show bottom sheet and call advance()`() {
+        termsChecker = mockk(relaxed = true)
+        coEvery { termsChecker.getTermsAgreed() } returns false
 
-        val viewModel = TermsViewModel(termsChecker)
-        viewModel.state.observeForever(observer)
+        val viewModel = TermsViewModel(termsChecker, appDispatchers)
 
         viewModel.checkTerms()
+
+        viewModel.state.test().assertValues(
+            TermsViewModel.TermsOfUseState(TermsViewModel.ViewAction.ShowBottomSheet)
+        )
+
         viewModel.onAgreeClicked()
 
-        observer.assertValues(ShowBottomSheet, TermsAgreed)
+        viewModel.state.test().assertValues(
+            TermsViewModel.TermsOfUseState(TermsViewModel.ViewAction.TermsAgreed)
+        )
     }
 }
