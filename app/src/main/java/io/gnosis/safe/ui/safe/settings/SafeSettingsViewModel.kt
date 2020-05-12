@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.settings
 
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -9,7 +10,8 @@ import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
     repositories: Repositories,
-    appDispatchers: AppDispatchers
+    appDispatchers: AppDispatchers,
+    private val tracker: Tracker
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
@@ -26,9 +28,14 @@ class SafeSettingsViewModel @Inject constructor(
 
     fun removeSafe() {
         safeLaunch {
-            val safe = safeRepository.getActiveSafe()
-            safe?.let {
-                safeRepository.removeSafe(safe)
+            runCatching {
+                val safe = safeRepository.getActiveSafe()
+                safe?.let {
+                    safeRepository.removeSafe(safe)
+                }
+            }.onFailure {
+                updateState { SafeSettingsState.SafeRemoved(ViewAction.ShowError(it)) }
+            }.onSuccess {
                 updateState {
                     SafeSettingsState.SafeRemoved(
                         ViewAction.NavigateTo(
@@ -36,6 +43,7 @@ class SafeSettingsViewModel @Inject constructor(
                         )
                     )
                 }
+                tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
     }

@@ -6,6 +6,7 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
 import okhttp3.CertificatePinner
@@ -44,6 +45,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesPreferencesManager(@ApplicationContext context: Context): PreferencesManager = PreferencesManager(context)
+
+    @Provides
+    @Singleton
+    fun providesTracker(@ApplicationContext context: Context): Tracker = Tracker(context)
 
     @Provides
     @Singleton

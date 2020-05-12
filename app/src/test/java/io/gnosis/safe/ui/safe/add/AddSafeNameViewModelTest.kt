@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.safe.add
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.test
@@ -24,6 +25,7 @@ class AddSafeNameViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
+    private val tracker: Tracker = mockk<Tracker>()
     private val safeRepository = mockk<SafeRepository>()
     private val repositories = mockk<Repositories>().apply {
         every { safeRepository() } returns safeRepository
@@ -33,7 +35,7 @@ class AddSafeNameViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = AddSafeNameViewModel(repositories, appDispatchers)
+        viewModel = AddSafeNameViewModel(repositories, appDispatchers, tracker)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 
@@ -89,7 +91,10 @@ class AddSafeNameViewModelTest {
 
     @Test
     fun `submitAddressAndName (name) should succeed`() {
+        coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.addSafe(any()) } just Runs
+        coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
 
@@ -98,6 +103,7 @@ class AddSafeNameViewModelTest {
                 it.viewAction is BaseStateViewModel.ViewAction.CloseScreen
             }
         coVerify(exactly = 1) { safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
+        coVerify(exactly = 1) { tracker.setNumSafes(any()) }
     }
 
     @Test
