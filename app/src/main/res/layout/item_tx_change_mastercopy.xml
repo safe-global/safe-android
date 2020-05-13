@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="96dp">
 
     <ImageView
         android:id="@+id/transfer_direction"
@@ -44,25 +44,26 @@
         android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:ellipsize="middle"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toEndOf="@+id/blockies"
         app:layout_constraintTop_toBottomOf="@+id/version"
-        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0" />
+        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
+        android:singleLine="true" />
 
     <TextView
-        android:id="@+id/ellipsized_address2"
+        android:id="@+id/master_copy_label"
         style="@style/TextDark"
-        android:layout_width="85dp"
+        android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
+        android:layout_marginEnd="32dp"
         android:ellipsize="end"
         android:maxLines="2"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        tools:text="Change mastercopy"
+        android:lineSpacingExtra="6sp"
+        android:text="@string/change_mastercopy"
         android:textAlignment="viewEnd" />
 
     <TextView
@@ -81,11 +82,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="42dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/tx_list_chevron_right" />
-
+    <!-- change color and text accordingly:
+    Success / @color/safe_green
+    Canceled /  @color/dark_grey
+    Failed / @color/safe_failed_red
+    -->
     <TextView
         android:id="@+id/final_status"
         style="@style/TextMedium"

@@ -33,4 +33,5 @@
     <string name="error_no_internet">No Internet connection</string>
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="change_mastercopy">Change mastercopy</string>
 </resources>
