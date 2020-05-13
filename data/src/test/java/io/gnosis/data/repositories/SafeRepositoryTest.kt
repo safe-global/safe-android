@@ -5,7 +5,6 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
