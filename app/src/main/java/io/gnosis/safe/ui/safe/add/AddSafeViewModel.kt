@@ -18,17 +18,16 @@ class AddSafeViewModel
         safeLaunch {
             runCatching {
                 updateState { AddSafeState(ViewAction.Loading(true)) }
-                val validSafe = safeRepository.isValidSafe(address.asEthereumAddress() ?: throw InvalidSafeAddress())
+                val newAddress = address.asEthereumAddress() ?: throw InvalidSafeAddress
+                val validSafe = safeRepository.isValidSafe(newAddress)
+                val isAddressUsed = safeRepository.isSafeAddressUsed(newAddress)
+                val viewAction = when {
+                    isAddressUsed -> ViewAction.ShowError(UsedSafeAddress)
+                    validSafe -> ViewAction.NavigateTo(AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address))
+                    else -> ViewAction.ShowError(InvalidSafeAddress)
+                }
                 updateState {
-                    if (validSafe) {
-                        AddSafeState(
-                            ViewAction.NavigateTo(
-                                AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
-                            )
-                        )
-                    } else {
-                        AddSafeState(ViewAction.ShowError(InvalidSafeAddress()))
-                    }
+                    AddSafeState(viewAction)
                 }
             }.onFailure {
                 updateState { AddSafeState(ViewAction.ShowError(it)) }
@@ -39,7 +38,8 @@ class AddSafeViewModel
     override fun initialState(): State = AddSafeState(ViewAction.Loading(false))
 }
 
-class InvalidSafeAddress : Throwable()
+object InvalidSafeAddress : Throwable()
+object UsedSafeAddress : Throwable()
 
 data class AddSafeState(
     override var viewAction: BaseStateViewModel.ViewAction?
