@@ -17,29 +17,29 @@ import javax.inject.Inject
 class TermsBottomSheetDialog(activity: AppCompatActivity) : BottomSheetDialog(activity) {
 
     private lateinit var advance: () -> Unit
-    private var binding: BottomSheetTermsAndConditionsBinding
+    private val binding by lazy { BottomSheetTermsAndConditionsBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var viewModel: TermsViewModel
 
     init {
         inject()
-
-        binding = BottomSheetTermsAndConditionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_privacy_link))
-        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
+        with(binding) {
+            bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_privacy_link))
+            bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
 
-        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_terms_of_use_link))
-        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
+            bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_terms_of_use_link))
+            bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
 
-        binding.bottomSheetTermsAndConditionsAgree.setOnClickListener {
-            onAgree()
-        }
+            bottomSheetTermsAndConditionsAgree.setOnClickListener {
+                onAgree()
+            }
 
-        binding.bottomSheetTermsAndConditionsReject.setOnClickListener {
-            onReject()
+            bottomSheetTermsAndConditionsReject.setOnClickListener {
+                onReject()
+            }
         }
 
         viewModel.state.observe(activity, Observer { state ->
