@@ -30,14 +30,14 @@
         android:id="@+id/ellipsized_address"
         style="@style/TextDark"
         tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:ellipsize="middle"
         android:layout_width="85dp"
         android:layout_height="22dp"
         android:layout_marginStart="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies" />
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/amount"
@@ -45,31 +45,21 @@
         android:layout_width="98dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
-        android:text="-0.00021 ETH"
+        tools:text="-0.00021 ETH"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
 
-    <TextView
-        android:id="@+id/nonce"
-        style="@style/TextMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="10"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chevron" />
 
     <TextView
         android:id="@+id/date_time"
         style="@style/TextMedium"
-        android:layout_width="wrap_content"
+        android:layout_width="166dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Apr 27, 2020 — 1:01:42PM"
-        app:layout_constraintBottom_toBottomOf="@+id/nonce"
-        app:layout_constraintStart_toEndOf="@+id/nonce"
-        app:layout_constraintTop_toTopOf="@+id/nonce" />
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chevron"
+        tools:text="Apr 27, 2020 — 1:01:42PM" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -81,33 +71,14 @@
         app:layout_constraintTop_toBottomOf="@+id/amount"
         app:srcCompat="@drawable/tx_list_chevron_right" />
 
+    <!-- change color and text accordingly:
+    Success / @color/safe_green
+    Canceled /  @color/dark_grey
+    Failed / @color/safe_failed_red
+    -->
     <TextView
-        android:id="@+id/final_status_success"
-        style="@style/TextMedium.Green"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/date_time"
-        app:layout_constraintStart_toEndOf="@+id/date_time"
-        app:layout_constraintTop_toTopOf="@+id/date_time"
-        tools:text="Success"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/final_status_cancelled"
-        style="@style/TextMedium.Grey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/date_time"
-        app:layout_constraintStart_toEndOf="@+id/date_time"
-        app:layout_constraintTop_toTopOf="@+id/date_time"
-        tools:text="Cancelled"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/final_status_failed"
-        style="@style/TextMedium.Red"
+        android:id="@+id/final_status"
+        style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -115,87 +86,5 @@
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Failed"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/status_pending"
-        style="@style/TextMedium.Orange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/date_time"
-        app:layout_constraintStart_toEndOf="@+id/date_time"
-        app:layout_constraintTop_toTopOf="@+id/date_time"
-        tools:text="\u2022 Pending"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/status_awaiting_confirmation"
-        style="@style/TextMedium.Orange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_time"
-        tools:text="\u2022 Awaiting your confirmation"
-        android:visibility="visible"/>
-
-    <TextView
-        android:id="@+id/status_awaiting_execution"
-        style="@style/TextMedium.Orange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_time"
-        tools:text="\u2022 Awaiting execution"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/confirmations"
-        style="@style/TextMedium.Grey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
-        android:text="0 out of 2"
-        app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/confirmations_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/status_awaiting_confirmation"
-        app:layout_constraintEnd_toStartOf="@+id/confirmations"
-        app:layout_constraintTop_toTopOf="@+id/status_awaiting_confirmation"
-        app:srcCompat="@drawable/tx_list_confirmations_grey"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/confirmations"
-        style="@style/TextMedium.Green"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
-        android:text="2 out of 2"
-        app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
-        android:visibility="visible"/>
-
-    <ImageView
-        android:id="@+id/confirmations_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/status_awaiting_confirmation"
-        app:layout_constraintEnd_toStartOf="@+id/confirmations"
-        app:layout_constraintTop_toTopOf="@+id/status_awaiting_confirmation"
-        app:srcCompat="@drawable/tx_list_confirmations_green"
-        android:visibility="visible"/>
+        android:textColor="@color/safe_failed_red"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
