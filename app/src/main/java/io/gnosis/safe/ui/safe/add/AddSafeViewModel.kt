@@ -19,8 +19,13 @@ class AddSafeViewModel
             runCatching {
                 updateState { AddSafeState(ViewAction.Loading(true)) }
                 val newAddress = address.asEthereumAddress() ?: throw InvalidSafeAddress
-                val validSafe = safeRepository.isValidSafe(newAddress)
-                val isAddressUsed = safeRepository.isSafeAddressUsed(newAddress)
+                val (validSafe: Boolean, isAddressUsed: Boolean) =
+                    safeRepository.isSafeAddressUsed(newAddress).let { isAddressUsed ->
+                        val validSafe = takeUnless { isAddressUsed }
+                            ?.run { safeRepository.isValidSafe(newAddress) } ?: false
+                        validSafe to isAddressUsed
+                    }
+
                 val viewAction = when {
                     isAddressUsed -> ViewAction.ShowError(UsedSafeAddress)
                     validSafe -> ViewAction.NavigateTo(AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address))

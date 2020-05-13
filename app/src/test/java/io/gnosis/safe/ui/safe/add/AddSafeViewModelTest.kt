@@ -62,6 +62,7 @@ class AddSafeViewModelTest {
     fun `submitAddress (address safeRepository failure) should ShowError`() {
         val address = VALID_SAFE_ADDRESS
         val exception = IllegalStateException()
+        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
         coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } throws exception
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
@@ -72,7 +73,10 @@ class AddSafeViewModelTest {
             .assertValues(
                 AddSafeState(BaseStateViewModel.ViewAction.ShowError(exception))
             )
-        coVerify(exactly = 1) { safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) }
+        coVerifySequence {
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+        }
     }
 
     @Test
@@ -92,8 +96,8 @@ class AddSafeViewModelTest {
             )
         }
         coVerify {
-            safeRepository.isValidSafe("0x0".asEthereumAddress()!!)
             safeRepository.isSafeAddressUsed("0x0".asEthereumAddress()!!)
+            safeRepository.isValidSafe("0x0".asEthereumAddress()!!)
         }
     }
 
@@ -117,8 +121,8 @@ class AddSafeViewModelTest {
             )
 
         coVerifySequence {
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
             safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
         }
     }
 
@@ -135,8 +139,8 @@ class AddSafeViewModelTest {
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
 
         coVerifySequence {
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
             safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) wasNot Called
         }
     }
 
