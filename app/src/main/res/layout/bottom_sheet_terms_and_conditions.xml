@@ -18,7 +18,6 @@
         app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_title"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
 
-
     <ImageView
         android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet"
         android:layout_width="6dp"
@@ -49,8 +48,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
         android:text="@string/terms_second_bullet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_second_bullet"
@@ -62,8 +61,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="@dimen/default_horizontal_margin"
         android:text="@string/terms_first_bullet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
@@ -74,9 +73,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/default_horizontal_margin"
         android:fontFamily="sans-serif-medium"
-        android:lineSpacingExtra="6sp"
         android:textColor="@color/blue"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,13 +88,11 @@
         android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:layout_marginStart="40dp"
         android:fontFamily="sans-serif-medium"
-        android:lineSpacingExtra="@dimen/default_line_spacing"
         android:textColor="@color/blue"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-
         app:layout_constraintStart_toEndOf="@id/bottom_sheet_terms_and_conditions_privacy_policy_link"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
         tools:text="Terms of Use" />
@@ -107,7 +103,7 @@
         android:layout_width="0dp"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:layout_marginStart="@dimen/default_horizontal_margin"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="24dp"
         android:text="@string/agree"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,21 +114,13 @@
         style="@style/TextButton"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:layout_marginStart="@dimen/default_horizontal_margin"
-        android:fontFamily="sans-serif"
         android:gravity="center"
-        android:lineSpacingExtra="@dimen/default_line_spacing"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:text="@string/no_thanks"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_agree" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

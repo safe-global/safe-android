@@ -38,6 +38,9 @@
         <item name="android:textColor">@color/primary</item>
         <item name="android:drawableTint">@color/primary</item>
         <item name="android:foreground">@drawable/background_selectable</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Text" parent="TextAppearance.AppCompat">
