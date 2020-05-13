@@ -39,12 +39,15 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
             val adapter = BalancesPagerAdapter(this@SafeBalancesFragment)
             balancesContent.adapter = adapter
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
-                if (position % 2 == 0) {
-                    tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
-                    tab.text = getString(R.string.tab_title_coins)
-                } else {
-                    tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_collectibles_24dp)
-                    tab.text = getString(R.string.tab_title_collectibles)
+                when (BalancesPagerAdapter.Tabs.values()[position]) {
+                    BalancesPagerAdapter.Tabs.COINS -> {
+                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
+                        tab.text = getString(R.string.tab_title_coins)
+                    }
+                    BalancesPagerAdapter.Tabs.COLLECTIBLES -> {
+                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_collectibles_24dp)
+                        tab.text = getString(R.string.tab_title_collectibles)
+                    }
                 }
             }.attach()
         }
@@ -75,7 +78,7 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
 
 class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    private enum class Tabs { COINS, COLLECTIBLES }
+    enum class Tabs { COINS, COLLECTIBLES }
 
     override fun getItemCount(): Int = Tabs.values().size
 
@@ -83,6 +86,5 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
         when (Tabs.values()[position]) {
             Tabs.COINS -> CoinsFragment.newInstance()
             Tabs.COLLECTIBLES -> CollectiblesFragment()
-
         }
 }
