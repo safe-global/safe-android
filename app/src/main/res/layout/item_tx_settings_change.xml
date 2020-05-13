@@ -6,7 +6,7 @@
     android:layout_height="72dp">
 
     <ImageView
-        android:id="@+id/transfer_direction"
+        android:id="@+id/tx_type_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -23,9 +23,9 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintBottom_toBottomOf="@+id/transfer_direction"
-        app:layout_constraintStart_toEndOf="@+id/transfer_direction"
-        app:layout_constraintTop_toTopOf="@+id/transfer_direction"
+        app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
         tools:text="Remove owner" />
 
     <TextView
