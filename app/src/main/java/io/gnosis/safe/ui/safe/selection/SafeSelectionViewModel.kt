@@ -36,7 +36,7 @@ class SafeSelectionViewModel @Inject constructor(
 
     override fun initialState(): SafeSelectionState =
         SafeSelectionState.SafeListState(
-            listOf(AddSafeHeader()), null, null
+            listOf(AddSafeHeader), null, null
         )
 
     fun loadSafes() {
@@ -45,7 +45,7 @@ class SafeSelectionViewModel @Inject constructor(
             activeSafe = safeRepository.getActiveSafe()
 
             items.clear()
-            items.add(AddSafeHeader())
+            items.add(AddSafeHeader)
             items.addAll(safes)
 
             updateState { SafeSelectionState.SafeListState(items, activeSafe, null) }

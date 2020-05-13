@@ -16,6 +16,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,6 +27,7 @@ class SafeSelectionViewModelTest {
 
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
+
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
@@ -43,8 +45,7 @@ class SafeSelectionViewModelTest {
 
     @Test
     fun `loadSafes - should load safes and active safe`() = runBlockingTest {
-
-        coEvery { safeRepository.getActiveSafe()} returns ACTIVE_SAFE
+        coEvery { safeRepository.getActiveSafe() } returns ACTIVE_SAFE
         coEvery { safeRepository.getSafes() } returns SAFES
 
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
@@ -53,19 +54,18 @@ class SafeSelectionViewModelTest {
         safeSelectionViewModel.loadSafes()
 
         // check initial state
-        stateObserver.assertValueAt(0) {
-            it is SafeSelectionState.SafeListState &&
-                    it.listItems == listOf(AddSafeHeader()) &&
-                    it.activeSafe == null
+        with(stateObserver.values()[0] as SafeSelectionState.SafeListState) {
+            assertEquals(listItems.size, 1)
+            assertEquals(listItems[0], AddSafeHeader)
+            assertEquals(activeSafe, null)
         }
 
         // check updated state
-        val selectionItemsList = mutableListOf<Any>(AddSafeHeader())
+        val selectionItemsList = mutableListOf<Any>(AddSafeHeader)
         selectionItemsList.addAll(SAFES)
-        stateObserver.assertValueAt(0) {
-            it is SafeSelectionState.SafeListState &&
-                    it.listItems == selectionItemsList &&
-                    it.activeSafe == ACTIVE_SAFE
+        with(stateObserver.values()[1] as SafeSelectionState.SafeListState) {
+            assertEquals(listItems, selectionItemsList)
+            assertEquals(activeSafe, ACTIVE_SAFE)
         }
 
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }

@@ -2,11 +2,10 @@ package io.gnosis.safe.di.modules
 
 import dagger.Module
 import dagger.Provides
+import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.db.daos.SafeDao
-import io.gnosis.data.repositories.EnsNormalizer
-import io.gnosis.data.repositories.EnsRepository
-import io.gnosis.data.repositories.IDNEnsNormalizer
-import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.*
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
@@ -42,4 +41,13 @@ class RepositoryModule {
         ensNormalizer: EnsNormalizer
     ): EnsRepository =
         EnsRepository(ensNormalizer, ethereumRepository)
+
+    @Provides
+    @Singleton
+    fun providesTokenRepository(
+        erc20TokenDao: Erc20TokenDao,
+        transactionServiceApi: TransactionServiceApi
+    ): TokenRepository =
+        TokenRepository(erc20TokenDao, transactionServiceApi)
+
 }

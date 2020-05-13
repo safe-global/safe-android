@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.appdistribution'
 apply from: '../buildsystem/coverageReport.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
@@ -47,12 +48,6 @@ android {
         project.ext.set("archivesBaseName", String.format("gnosis-safe-%s", defaultConfig.versionCode))
 
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
 
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
@@ -197,6 +192,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
     implementation "androidx.recyclerview:recyclerview:$versions.androidx_recycler_view"
     implementation "androidx.constraintlayout:constraintlayout:$versions.androidx_constraint_layout"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versions.androidx_swipe_refresh"
     implementation "androidx.multidex:multidex:$versions.multidex"
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
@@ -247,6 +243,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
 
+
+    // Firebase
+    implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
+    implementation "com.google.firebase:firebase-crashlytics:$versions.firebase_crashlytics"
 //    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
 }
 

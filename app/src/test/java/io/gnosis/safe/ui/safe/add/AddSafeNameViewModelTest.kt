@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.safe.add
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.test
@@ -24,6 +25,7 @@ class AddSafeNameViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
+    private val tracker: Tracker = mockk<Tracker>()
     private val safeRepository = mockk<SafeRepository>()
     private val repositories = mockk<Repositories>().apply {
         every { safeRepository() } returns safeRepository
@@ -33,7 +35,7 @@ class AddSafeNameViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = AddSafeNameViewModel(repositories, appDispatchers)
+        viewModel = AddSafeNameViewModel(repositories, appDispatchers, tracker)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 
@@ -49,11 +51,13 @@ class AddSafeNameViewModelTest {
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
 
-        viewModel.state.test()
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                        (it.viewAction as BaseStateViewModel.ViewAction.ShowError).error == throwable
-            }
+        val actual = viewModel.state.test().values()
+
+        assert(actual.size == 1)
+        assert(
+            actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
+                    (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error == throwable
+        )
         coVerify(exactly = 1) { safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
     }
 
@@ -64,11 +68,13 @@ class AddSafeNameViewModelTest {
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "")
 
-        viewModel.state.test()
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                        (it.viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
-            }
+        val actual = viewModel.state.test().values()
+
+        assert(actual.size == 1)
+        assert(
+            actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
+                    (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
+        )
         coVerify { safeRepository wasNot Called }
     }
 
@@ -79,38 +85,56 @@ class AddSafeNameViewModelTest {
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "    ")
 
-        viewModel.state.test()
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                        (it.viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
-            }
+        val actual = viewModel.state.test().values()
+
+        assert(actual.size == 1)
+        assert(
+            actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
+                    (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
+        )
         coVerify { safeRepository wasNot Called }
     }
 
     @Test
     fun `submitAddressAndName (name) should succeed`() {
+        coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.addSafe(any()) } just Runs
+        coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
 
         viewModel.state.test()
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.CloseScreen
-            }
-        coVerify(exactly = 1) { safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
+            .assertValues(
+                AddSafeNameState(BaseStateViewModel.ViewAction.CloseScreen)
+            )
+        coVerifySequence {
+            safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.getSafes()
+            tracker.setNumSafes(0)
+        }
     }
 
     @Test
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
+        coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.addSafe(any()) } just Runs
+        coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "          Name          ")
 
         viewModel.state.test()
-            .assertValueAt(0) {
-                it.viewAction is BaseStateViewModel.ViewAction.CloseScreen
-            }
-        coVerify(exactly = 1) { safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
+            .assertValues(
+                AddSafeNameState(BaseStateViewModel.ViewAction.CloseScreen)
+            )
+        coVerifySequence {
+            safeRepository.addSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.getSafes()
+            tracker.setNumSafes(0)
+        }
     }
 
     companion object {

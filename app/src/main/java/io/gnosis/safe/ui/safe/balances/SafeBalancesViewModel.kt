@@ -21,11 +21,11 @@ class SafeBalancesViewModel @Inject constructor(
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState {
                     SafeBalancesState.ActiveSafe(
-                        safe, if (safe == null)
+                        safe, takeIf { safe == null }?.let {
                             ViewAction.NavigateTo(
                                 SafeBalancesFragmentDirections.actionSafeBalancesFragmentToNoSafeFragment()
                             )
-                        else null
+                        }
                     )
                 }
             }

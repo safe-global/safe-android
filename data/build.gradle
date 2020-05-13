@@ -3,6 +3,33 @@ apply from: '../buildsystem/test_dependencies.gradle'
 apply from: '../buildsystem/test_android_dependencies.gradle'
 apply plugin: 'kotlin-kapt'
 
+android {
+
+    defaultConfig {
+        javaCompileOptions {
+
+            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.rinkeby.gnosis.io/api/"))
+            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.rinkeby.gnosis.pm/api/"))
+
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+
+        mainnet {
+            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.gnosis.io/api/"))
+            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.gnosis.io/api/"))
+        }
+    }
+
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+}
+
 dependencies {
     implementation project(":contracts")
 
@@ -23,6 +50,12 @@ dependencies {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
+
+    implementation "com.squareup.moshi:moshi:$versions.moshi"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
+
+    api "com.squareup.retrofit2:retrofit:$versions.retrofit"
 
     testImplementation "androidx.room:room-testing:$versions.androidx_room"
 }
