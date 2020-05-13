@@ -1,8 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -12,7 +11,8 @@ import javax.inject.Inject
 class AddSafeNameViewModel
 @Inject constructor(
     repositories: Repositories,
-    appDispatchers: AppDispatchers
+    appDispatchers: AppDispatchers,
+    private val tracker: Tracker
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
     private val safeRepository = repositories.safeRepository()
@@ -32,6 +32,7 @@ class AddSafeNameViewModel
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
                 updateState { AddSafeNameState(ViewAction.CloseScreen) }
+                tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
     }

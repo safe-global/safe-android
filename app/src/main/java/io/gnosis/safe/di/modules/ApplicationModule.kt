@@ -5,7 +5,10 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.db.BigDecimalNumberAdapter
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.safe.terms.TermsChecker
@@ -52,13 +55,19 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun providesTracker(@ApplicationContext context: Context): Tracker = Tracker(context)
+
+    @Provides
+    @Singleton
     fun providesEthereumRpcConnector(retrofitEthereumRpcApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
         RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
 
     @Provides
     @Singleton
     fun providesMoshi(): Moshi {
-        return MoshiBuilderFactory.makeMoshiBuilder().build()
+        return MoshiBuilderFactory.makeMoshiBuilder()
+            .add(BigDecimalNumberAdapter())
+            .build()
     }
 
     @Provides
@@ -70,6 +79,16 @@ class ApplicationModule(private val application: Application) {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(RetrofitEthereumRpcApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(TransactionServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(TransactionServiceApi::class.java)
 
     @Provides
     @Singleton
@@ -86,8 +105,11 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient =
+    fun providesOkHttpClient(
+        @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
+    ): OkHttpClient =
         OkHttpClient.Builder().apply {
+            addInterceptor(interceptors[1])
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)

@@ -1,15 +1,15 @@
-package io.gnosis.data.db
+package io.gnosis.data.db.daos
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.db.HeimdallDatabase
 import io.gnosis.data.models.Safe
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
-import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import pm.gnosis.model.Solidity
@@ -17,22 +17,22 @@ import java.io.IOException
 import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
-class SafeDatabaseTest {
+class SafeDaoTest {
 
-    private lateinit var safeDatabase: SafeDatabase
+    private lateinit var heimdallDatabase: HeimdallDatabase
     private lateinit var safeDao: SafeDao
 
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        safeDatabase = Room.inMemoryDatabaseBuilder(context, SafeDatabase::class.java).build()
-        safeDao = safeDatabase.safeDao()
+        heimdallDatabase = Room.inMemoryDatabaseBuilder(context, HeimdallDatabase::class.java).build()
+        safeDao = heimdallDatabase.safeDao()
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        safeDatabase.close()
+        heimdallDatabase.close()
     }
 
     @Test
@@ -43,14 +43,14 @@ class SafeDatabaseTest {
         safeDao.insert(testSafe)
 
         with(safeDao.loadAll()) {
-            assertEquals(1, size)
-            assertEquals(testSafe, get(0))
+            Assert.assertEquals(1, size)
+            Assert.assertEquals(testSafe, get(0))
         }
     }
 
     @Test
     @Throws(Exception::class)
-    fun insert__2_safes_different__address__should_replace_existent() = runBlocking {
+    fun insert__2_safes_different__address__should_insert_both() = runBlocking {
         val testSafe1 = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         val testSafe2 = Safe(Solidity.Address(BigInteger.ONE), "one")
 
@@ -58,9 +58,9 @@ class SafeDatabaseTest {
         safeDao.insert(testSafe2)
 
         with(safeDao.loadAll()) {
-            assertEquals(2, size)
-            assertEquals(testSafe1, get(0))
-            assertEquals(testSafe2, get(1))
+            Assert.assertEquals(2, size)
+            Assert.assertEquals(testSafe1, get(0))
+            Assert.assertEquals(testSafe2, get(1))
         }
     }
 
@@ -74,8 +74,8 @@ class SafeDatabaseTest {
         safeDao.insert(testSafe2)
 
         with(safeDao.loadAll()) {
-            assertEquals(1, size)
-            assertEquals(testSafe2, get(0))
+            Assert.assertEquals(1, size)
+            Assert.assertEquals(testSafe2, get(0))
         }
     }
 
@@ -91,10 +91,10 @@ class SafeDatabaseTest {
         safeDao.insert(testSafe3)
 
         with(safeDao.loadAll()) {
-            assertEquals(3, size)
-            assertEquals(testSafe1, get(0))
-            assertEquals(testSafe2, get(1))
-            assertEquals(testSafe3, get(2))
+            Assert.assertEquals(3, size)
+            Assert.assertEquals(testSafe1, get(0))
+            Assert.assertEquals(testSafe2, get(1))
+            Assert.assertEquals(testSafe3, get(2))
         }
     }
 
@@ -107,8 +107,8 @@ class SafeDatabaseTest {
         safeDao.delete(testSafe)
 
         with(safeDao.loadAll()) {
-            assertEquals(0, size)
-            assertEquals(true, isEmpty())
+            Assert.assertEquals(0, size)
+            Assert.assertEquals(true, isEmpty())
         }
     }
 
@@ -122,8 +122,8 @@ class SafeDatabaseTest {
         safeDao.delete(testSafe2)
 
         with(safeDao.loadAll()) {
-            assertEquals(0, size)
-            assertEquals(true, isEmpty())
+            Assert.assertEquals(0, size)
+            Assert.assertEquals(true, isEmpty())
         }
     }
 
@@ -134,7 +134,7 @@ class SafeDatabaseTest {
 
         safeDao.delete(testSafe)
 
-        assertEquals(true, safeDao.loadAll().isEmpty())
+        Assert.assertEquals(true, safeDao.loadAll().isEmpty())
     }
 
     @Test
@@ -150,7 +150,7 @@ class SafeDatabaseTest {
 
         val actual = safeDao.loadByAddress(testSafe2.address)
 
-        assertEquals(testSafe2, actual)
+        Assert.assertEquals(testSafe2, actual)
     }
 
     @Test
@@ -167,6 +167,6 @@ class SafeDatabaseTest {
 
         val actual = safeDao.loadByAddress(testSafe4.address)
 
-        assertEquals(null, actual)
+        Assert.assertEquals(null, actual)
     }
 }
