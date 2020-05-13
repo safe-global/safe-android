@@ -58,7 +58,8 @@
         android:text="@string/change_mastercopy"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
+        app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
+        android:textAlignment="viewEnd"/>
 
     <TextView
         android:id="@+id/nonce"
