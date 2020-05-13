@@ -77,22 +77,6 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextMedium.Green" parent="TextMedium">
-        <item name="android:textColor">@color/safe_green</item>
-    </style>
-
-    <style name="TextMedium.Orange" parent="TextMedium">
-        <item name="android:textColor">@color/safe_pending_orange</item>
-    </style>
-
-    <style name="TextMedium.Red" parent="TextMedium">
-        <item name="android:textColor">@color/safe_failed_red</item>
-    </style>
-
-    <style name="TextMedium.Grey" parent="TextMedium">
-        <item name="android:textColor">@color/dark_grey_disabled</item>
-    </style>
-
     <style name="TextLight" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">6sp</item>
