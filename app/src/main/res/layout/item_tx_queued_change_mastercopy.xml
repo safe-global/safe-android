@@ -82,7 +82,7 @@
         app:srcCompat="@drawable/tx_list_chevron_right" />
 
     <TextView
-        android:id="@+id/final_status_success"
+        android:id="@+id/final_status"
         style="@style/TextMedium.Green"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
         android:visibility="gone"/>
 
     <TextView
-        android:id="@+id/status_awaiting_execution"
+        android:id="@+id/status"
         style="@style/TextMedium.Orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

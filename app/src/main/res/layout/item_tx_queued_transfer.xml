@@ -84,7 +84,7 @@
     <!-- When making status_pending visible, make status, confirmations, confirmations_icon "gone" -->
     <TextView
         android:id="@+id/status_pending"
-        style="@style/TextMedium.Orange"
+        style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -96,7 +96,7 @@
 
     <TextView
         android:id="@+id/status"
-        style="@style/TextMedium.Orange"
+        style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -107,7 +107,7 @@
 
     <TextView
         android:id="@+id/confirmations"
-        style="@style/TextMedium.Grey"
+        style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
