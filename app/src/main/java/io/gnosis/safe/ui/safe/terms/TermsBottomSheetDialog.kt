@@ -7,16 +7,17 @@ import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
+import io.gnosis.safe.databinding.BottomSheetTermsAndConditionsBinding
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.safe.terms.TermsViewModel.ViewAction.ShowBottomSheet
 import io.gnosis.safe.ui.safe.terms.TermsViewModel.ViewAction.TermsAgreed
-import kotlinx.android.synthetic.main.bottom_sheet_terms_and_conditions.*
 import javax.inject.Inject
 
-class TermsBottomSheetDialog(val activity: AppCompatActivity) : BottomSheetDialog(activity) {
+class TermsBottomSheetDialog(activity: AppCompatActivity) : BottomSheetDialog(activity) {
 
     private lateinit var advance: () -> Unit
+    private var binding: BottomSheetTermsAndConditionsBinding
 
     @Inject
     lateinit var viewModel: TermsViewModel
@@ -24,19 +25,20 @@ class TermsBottomSheetDialog(val activity: AppCompatActivity) : BottomSheetDialo
     init {
         inject()
 
-        setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
+        binding = BottomSheetTermsAndConditionsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        bottom_sheet_terms_and_conditions_privacy_policy_link.text = Html.fromHtml(activity.getString(R.string.terms_privacy_link))
-        bottom_sheet_terms_and_conditions_privacy_policy_link.movementMethod = LinkMovementMethod.getInstance()
+        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_privacy_link))
+        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
 
-        bottom_sheet_terms_and_conditions_terms_of_use_link.text = Html.fromHtml(activity.getString(R.string.terms_terms_of_use_link))
-        bottom_sheet_terms_and_conditions_terms_of_use_link.movementMethod = LinkMovementMethod.getInstance()
+        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.text = Html.fromHtml(activity.getString(R.string.terms_terms_of_use_link))
+        binding.bottomSheetTermsAndConditionsPrivacyPolicyLink.movementMethod = LinkMovementMethod.getInstance()
 
-        bottom_sheet_terms_and_conditions_agree.setOnClickListener {
+        binding.bottomSheetTermsAndConditionsAgree.setOnClickListener {
             onAgree()
         }
 
-        bottom_sheet_terms_and_conditions_reject.setOnClickListener {
+        binding.bottomSheetTermsAndConditionsReject.setOnClickListener {
             onReject()
         }
 
