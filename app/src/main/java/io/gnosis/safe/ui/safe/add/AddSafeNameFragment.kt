@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.android.synthetic.main.fragment_add_safe.*
+import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
@@ -55,11 +56,7 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
                     state.viewAction?.let { action ->
                         when (action) {
                             is BaseStateViewModel.ViewAction.CloseScreen -> {
-                                (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?)
-                                    ?.hideSoftInputFromWindow(
-                                        view.windowToken,
-                                        0
-                                    )
+                                requireActivity().hideSoftKeyboard()
                                 findNavController().navigateUp()
                             }
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)

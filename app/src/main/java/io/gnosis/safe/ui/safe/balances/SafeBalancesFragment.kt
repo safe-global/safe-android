@@ -75,9 +75,14 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
 
 class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 2
+    private enum class Tabs { COINS, COLLECTIBLES }
+
+    override fun getItemCount(): Int = Tabs.values().size
 
     override fun createFragment(position: Int): Fragment =
-        if (position % 2 == 0) CoinsFragment.newInstance()
-        else CollectiblesFragment.newInstance()
+        when (Tabs.values()[position]) {
+            Tabs.COINS -> CoinsFragment.newInstance()
+            Tabs.COLLECTIBLES -> CollectiblesFragment()
+
+        }
 }
