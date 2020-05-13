@@ -11,7 +11,7 @@ import io.gnosis.safe.databinding.BottomSheetTermsAndConditionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseBottomSheetDialogFragment
 
-class TermsBottomSheetDialog() : BaseBottomSheetDialogFragment<BottomSheetTermsAndConditionsBinding>() {
+class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAndConditionsBinding>() {
     lateinit var onAgreeClickListener: () -> Unit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
