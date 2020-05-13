@@ -11,7 +11,6 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.safe.terms.TermsChecker
-import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +26,7 @@ class SplashActivity : BaseActivity() {
         setContentView(binding.root)
         inject()
 
-        continue_button.setOnClickListener {
+        binding.continueButton.setOnClickListener {
             lifecycleScope.launch {
                 if (termsChecker.getTermsAgreed()) {
                     startStartActivity()
