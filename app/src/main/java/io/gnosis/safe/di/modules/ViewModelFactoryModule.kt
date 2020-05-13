@@ -12,16 +12,10 @@ import io.gnosis.safe.ui.safe.balances.SafeBalancesViewModel
 import io.gnosis.safe.ui.safe.empty.NoSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.settings.SafeSettingsViewModel
-import io.gnosis.safe.ui.safe.terms.TermsViewModel
 import javax.inject.Singleton
 
 @Module
 abstract class ViewModelFactoryModule {
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TermsViewModel::class)
-    abstract fun bindsSplashViewModel(viewModel: TermsViewModel): ViewModel
 
     @Binds
     @IntoMap
