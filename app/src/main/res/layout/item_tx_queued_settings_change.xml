@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/transfer_direction"
+        android:id="@+id/tx_type_icon"
         android:layout_width="14dp"
         android:layout_height="14dp"
         android:layout_marginStart="16dp"
@@ -21,9 +21,9 @@
         android:layout_width="0dp"
         android:layout_height="22dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/transfer_direction"
-        app:layout_constraintStart_toEndOf="@+id/transfer_direction"
-        app:layout_constraintTop_toTopOf="@+id/transfer_direction"
+        app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
         tools:text="Remove owner" />
 
     <TextView
