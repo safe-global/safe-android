@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="112dp">
+    android:minHeight="@dimen/item_tx_l_height">
 
     <ImageView
         android:id="@+id/tx_type_icon"
