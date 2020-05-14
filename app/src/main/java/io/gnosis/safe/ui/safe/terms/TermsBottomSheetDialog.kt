@@ -1,10 +1,7 @@
 package io.gnosis.safe.ui.safe.terms
 
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableStringBuilder
-import android.text.SpannedString
-import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +22,14 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            bottomSheetTermsAndConditionsPrivacyPolicyLink.appendLink(getString(R.string.link_terms_privacy), getString(R.string.terms_privacy_policy))
-            bottomSheetTermsAndConditionsTermsOfUseLink.appendLink(getString(R.string.link_terms_terms_of_use), getString(R.string.terms_terms_of_use))
+            bottomSheetTermsAndConditionsPrivacyPolicyLink.appendLink(
+                getString(R.string.link_terms_privacy),
+                getString(R.string.terms_privacy_policy)
+            )
+            bottomSheetTermsAndConditionsTermsOfUseLink.appendLink(
+                getString(R.string.link_terms_terms_of_use),
+                getString(R.string.terms_terms_of_use)
+            )
 
             bottomSheetTermsAndConditionsAgree.setOnClickListener {
                 onAgreeClickListener()
