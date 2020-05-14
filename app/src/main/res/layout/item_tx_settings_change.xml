@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/tx_list_settings_change" />
+        app:srcCompat="@drawable/ic_settings_change" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/tx_list_chevron_right" />
+        app:srcCompat="@drawable/ic_chevron_right" />
 
     <TextView
         android:id="@+id/date_time"

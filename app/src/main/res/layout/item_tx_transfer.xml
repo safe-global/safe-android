@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        app:srcCompat="@drawable/tx_list_red_arrow" />
+        app:srcCompat="@drawable/ic_red_arrow" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -24,7 +24,7 @@
         android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/amount"
-        app:srcCompat="@drawable/tx_list_chevron_right" />
+        app:srcCompat="@drawable/ic_chevron_right" />
 
     <TextView
         android:id="@+id/amount"
