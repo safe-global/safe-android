@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.safe.terms
 
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import io.gnosis.safe.databinding.BottomSheetTermsAndConditionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseBottomSheetDialogFragment
 import pm.gnosis.svalinn.common.utils.appendText
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.openUrl
 
 class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAndConditionsBinding>() {

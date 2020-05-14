@@ -24,7 +24,10 @@ class SplashActivity : BaseActivity() {
 
         viewModel.state.observe(this, Observer {
             when (val viewAction = it.viewAction) {
-                is ViewAction.StartActivity -> startActivity(viewAction.intent)
+                is ViewAction.StartActivity -> {
+                    startActivity(viewAction.intent)
+                    finish()
+                }
                 is SplashViewModel.ShowTerms -> {
                     termsBottomSheetDialog.apply {
                         onAgreeClickListener = {
