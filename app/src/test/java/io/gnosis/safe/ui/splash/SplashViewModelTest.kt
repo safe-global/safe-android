@@ -2,14 +2,13 @@ package io.gnosis.safe.ui.splash
 
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.test
-import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.terms.TermsChecker
 import io.mockk.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,20 +36,21 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun `onStartClicked (terms already agreed) should call advance() and not show bottom sheet`() {
+    fun `onStartClicked (terms already agreed) should emit StartActivity`() {
         coEvery { termsChecker.getTermsAgreed() } returns true
         val viewModel = SplashViewModel(termsChecker, appDispatchers, context)
 
         viewModel.onStartClicked()
 
+        with(viewModel.state.test().values()) {
+            assertEquals(1, size)
+            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+        }
         coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
-        viewModel.state.test().assertValues(
-            SplashViewModel.TermsAgreed(BaseStateViewModel.ViewAction.StartActivity(Intent(context, StartActivity::class.java)))
-        )
     }
 
     @Test
-    fun `onStartClicked (terms not agreed previously) should show terms`() {
+    fun `onStartClicked (terms not agreed previously) should emit ShowTerms`() {
         coEvery { termsChecker.getTermsAgreed() } returns false
         val viewModel = SplashViewModel(termsChecker, appDispatchers, context)
 
@@ -63,23 +63,15 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun `onStartClicked (terms not agreed & user clicks agree) should show bottom sheet and call advance()`() {
-        coEvery { termsChecker.getTermsAgreed() } returns false
-
+    fun `handleAgreeClicked (user clicks agree) should emit StartActivity`() {
         val viewModel = SplashViewModel(termsChecker, appDispatchers, context)
-
-        viewModel.onStartClicked()
-
-        viewModel.state.test().assertValues(
-            SplashViewModel.TermsAgreed(SplashViewModel.ShowTerms)
-        )
-        coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
 
         viewModel.handleAgreeClicked()
 
-        viewModel.state.test().assertValues(
-            SplashViewModel.TermsAgreed(BaseStateViewModel.ViewAction.StartActivity(Intent(context, StartActivity::class.java)))
-        )
-
+        with(viewModel.state.test().values()) {
+            assertEquals(1, size)
+            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+        }
+        coVerify(exactly = 1) { termsChecker.setTermsAgreed(true) }
     }
 }
