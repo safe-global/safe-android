@@ -78,6 +78,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TextLink" parent="Text">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/safe_green</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="TextLight" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>

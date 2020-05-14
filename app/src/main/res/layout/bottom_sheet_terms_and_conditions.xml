@@ -70,30 +70,25 @@
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+        style="@style/TextLink"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="@dimen/default_horizontal_margin"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/blue"
-        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_terms_and_conditions_second_bullet_text"
         tools:text="Privacy Policy" />
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_terms_of_use_link"
+        style="@style/TextLink"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
-        android:layout_marginStart="40dp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/blue"
-        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+        app:layout_constraintStart_toEndOf="@id/vertical_middle"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
         tools:text="Terms of Use" />
 
@@ -123,4 +118,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_agree" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_middle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
