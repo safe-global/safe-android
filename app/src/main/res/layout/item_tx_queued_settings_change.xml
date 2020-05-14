@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_settings_change" />
+        app:srcCompat="@drawable/ic_settings_change_14dp" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -34,7 +34,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/status"
         app:layout_constraintEnd_toStartOf="@+id/confirmations"
         app:layout_constraintTop_toTopOf="@+id/status"
-        app:srcCompat="@drawable/ic_grey_confirmations" />
+        app:srcCompat="@drawable/ic_confirmations_grey_16dp" />
 
     <TextView
         android:id="@+id/ellipsized_address"

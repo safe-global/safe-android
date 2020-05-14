@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        app:srcCompat="@drawable/ic_red_arrow" />
+        app:srcCompat="@drawable/ic_arrow_red_10dp" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/status"
         app:layout_constraintEnd_toStartOf="@+id/confirmations"
         app:layout_constraintTop_toTopOf="@+id/status"
-        app:srcCompat="@drawable/ic_grey_confirmations" />
+        app:srcCompat="@drawable/ic_confirmations_grey_16dp" />
 
     <TextView
         android:id="@+id/ellipsized_address"

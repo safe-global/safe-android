@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        app:srcCompat="@drawable/ic_settings_change" />
+        app:srcCompat="@drawable/ic_settings_change_14dp" />
 
     <ImageView
         android:id="@+id/chevron"
