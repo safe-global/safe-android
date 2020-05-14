@@ -50,11 +50,14 @@
     <TextView
         android:id="@+id/amount"
         style="@style/TextDark"
-        android:layout_width="98dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
+        app:layout_constraintStart_toEndOf="@+id/ellipsized_address"
         app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
         tools:text="-0.00021 ETH" />
 
