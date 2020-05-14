@@ -1,14 +1,11 @@
 package io.gnosis.safe.ui.splash
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import io.gnosis.safe.HeimdallApplication
+import androidx.lifecycle.Observer
 import io.gnosis.safe.databinding.ActivitySplashBinding
-import io.gnosis.safe.di.components.DaggerViewComponent
-import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.base.BaseActivity
-import io.gnosis.safe.ui.StartActivity
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
+import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
@@ -17,20 +14,32 @@ class SplashActivity : BaseActivity() {
     lateinit var viewModel: SplashViewModel
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
+    private val termsBottomSheetDialog = TermsBottomSheetDialog()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        inject()
-        Handler().postDelayed({
-            startActivity(Intent(this, StartActivity::class.java))
-        }, 500)
-    }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this])
-            .viewModule(ViewModule(this))
-            .build().inject(this)
+        viewComponent().inject(this)
+
+        viewModel.state.observe(this, Observer {
+            when (val viewAction = it.viewAction) {
+                is ViewAction.StartActivity -> {
+                    startActivity(viewAction.intent)
+                    finish()
+                }
+                is SplashViewModel.ShowTerms -> {
+                    termsBottomSheetDialog.apply {
+                        onAgreeClickListener = {
+                            viewModel.handleAgreeClicked()
+                        }
+                    }.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
+                }
+            }
+        })
+
+        binding.continueButton.setOnClickListener {
+            viewModel.onStartClicked()
+        }
     }
 }

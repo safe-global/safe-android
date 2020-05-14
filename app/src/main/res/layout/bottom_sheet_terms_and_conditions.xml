@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/white_circle"
+        android:tint="@color/safe_green"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_title"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
+
+    <ImageView
+        android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/white_circle"
+        android:tint="@color/safe_green"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_title"
+        style="@style/TextDark.Bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        android:layout_marginStart="@dimen/default_horizontal_margin"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:text="@string/please_review_terms_and_privacy_policy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet_text"
+        style="@style/TextDark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
+        android:text="@string/terms_second_bullet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_second_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet_text"
+        style="@style/TextDark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="@dimen/default_horizontal_margin"
+        android:text="@string/terms_first_bullet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+        style="@style/TextLink"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/default_horizontal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_terms_and_conditions_second_bullet_text"
+        tools:text="Privacy Policy" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_terms_of_use_link"
+        style="@style/TextLink"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@id/vertical_middle"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+        tools:text="Terms of Use" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_agree"
+        style="@style/PrimaryButton"
+        android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        android:layout_marginStart="@dimen/default_horizontal_margin"
+        android:layout_marginTop="24dp"
+        android:text="@string/agree"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_reject"
+        style="@style/TextButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="@dimen/default_small_margin"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
+        android:layout_marginStart="@dimen/default_horizontal_margin"
+        android:gravity="center"
+        android:text="@string/no_thanks"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_agree" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_middle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+</androidx.constraintlayout.widget.ConstraintLayout>

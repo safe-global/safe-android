@@ -24,6 +24,13 @@
     <string name="error_invalid_safe">Invalid safe address</string>
     <string name="error_invalid_name">Invalid name</string>
     <string name="ok">OK</string>
+    <string name="terms_first_bullet">We do not collect demographic data such as age or gender.</string>
+    <string name="terms_second_bullet">We collect anonymized app usage data and crash reports to ensure the quality of our app.</string>
+    <string name="terms_privacy_policy">Privacy Policy</string>
+    <string name="terms_terms_of_use">Terms of Use</string>
+    <string name="please_review_terms_and_privacy_policy">Please review our Terms of Use and Privacy Policy.</string>
+    <string name="no_thanks">No thanks</string>
+    <string name="agree">Agree</string>
     <string name="add_safe">Add Safe</string>
     <string name="switch_safes">Switch Safes</string>
     <string name="balances">Balances</string>
@@ -34,4 +41,5 @@
     <string name="error_no_internet">No Internet connection</string>
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="get_started">Get started</string>
 </resources>

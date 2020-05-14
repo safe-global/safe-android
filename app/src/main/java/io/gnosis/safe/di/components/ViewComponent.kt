@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
 import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SafeSettingsFragment
+import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.splash.SplashActivity
 
 @ForView
@@ -43,4 +44,6 @@ interface ViewComponent {
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)
+
+    fun inject(dialog: TermsBottomSheetDialog)
 }

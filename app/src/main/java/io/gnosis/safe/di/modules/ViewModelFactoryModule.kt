@@ -20,11 +20,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SplashViewModel::class)
-    abstract fun bindsSplashViewModel(viewModel: SplashViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(AddSafeViewModel::class)
     abstract fun bindsAddSafeViewModel(viewModel: AddSafeViewModel): ViewModel
 
@@ -51,4 +46,9 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeSettingsViewModel::class)
     abstract fun bindsSafeSettingsViewModel(viewModel: SafeSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SplashViewModel::class)
+    abstract fun bindsSplashViewModel(viewModel: SplashViewModel): ViewModel
 }

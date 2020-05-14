@@ -11,6 +11,7 @@ import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.splash.SplashViewModel
 import java.lang.ref.WeakReference
 
 @Module
@@ -40,6 +41,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesSafeSelectionViewModel(provider: ViewModelProvider) = provider[SafeSelectionViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesSplashViewModel(provider: ViewModelProvider) = provider[SplashViewModel::class.java]
 
     @Provides
     @ForView

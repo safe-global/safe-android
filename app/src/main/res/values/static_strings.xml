@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Gnosis Safe</string>
+    <string name="link_terms_privacy">https://safe.gnosis.io/privacy</string>
+    <string name="link_terms_terms_of_use">https://safe.gnosis.io/terms</string>
 </resources>

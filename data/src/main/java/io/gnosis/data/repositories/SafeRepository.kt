@@ -18,14 +18,14 @@ import java.math.BigInteger
 
 class SafeRepository(
     private val safeDao: SafeDao,
-    private val preferenceManager: PreferencesManager,
+    private val preferencesManager: PreferencesManager,
     private val ethereumRepository: EthereumRepository
 ) {
 
     private val keyFlow = callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key -> offer(key) }
-        preferenceManager.prefs.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { preferenceManager.prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+        preferencesManager.prefs.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { preferencesManager.prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
     fun activeSafeFlow() =
@@ -50,13 +50,13 @@ class SafeRepository(
         }
 
     suspend fun setActiveSafe(safe: Safe) {
-        preferenceManager.prefs.edit {
+        preferencesManager.prefs.edit {
             putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
         }
     }
 
     suspend fun getActiveSafe(): Safe? =
-        preferenceManager.prefs.getString(ACTIVE_SAFE, null)
+        preferencesManager.prefs.getString(ACTIVE_SAFE, null)
             ?.asEthereumAddress()
             ?.let { address ->
                 getSafeBy(address)
