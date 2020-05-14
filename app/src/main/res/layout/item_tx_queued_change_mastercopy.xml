@@ -23,7 +23,6 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="parent"
-        app:address="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
         />
 
     <TextView

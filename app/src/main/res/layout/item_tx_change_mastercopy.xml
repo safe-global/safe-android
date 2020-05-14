@@ -21,7 +21,6 @@
         android:layout_height="36dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        app:address="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
