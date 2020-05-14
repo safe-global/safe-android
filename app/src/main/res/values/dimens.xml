@@ -7,4 +7,7 @@
     <dimen name="default_small_margin">8dp</dimen>
     <dimen name="default_line_spacing">6sp</dimen>
     <dimen name="nav_bar_height">56dp</dimen>
+    <dimen name="item_tx_s_height">72dp</dimen>
+    <dimen name="item_tx_m_height">96dp</dimen>
+    <dimen name="item_tx_l_height">112dp</dimen>
 </resources>

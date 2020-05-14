@@ -69,4 +69,7 @@
 
     <color name="blue">#001e3b</color>
     <color name="blue_15">#27001e3b</color>
+
+    <color name="safe_pending_orange">#e8663d</color>
+    <color name="safe_failed_red">#f02525</color>
 </resources>

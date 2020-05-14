@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/item_tx_m_height">
+
+    <ImageView
+        android:id="@+id/tx_type_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        app:srcCompat="@drawable/ic_settings_change_14dp" />
+
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron_right" />
+
+    <TextView
+        android:id="@+id/ellipsized_address"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textColor="@color/medium_grey"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toBottomOf="@+id/version"
+        tools:text="0x5c...33D0" />
+
+    <TextView
+        android:id="@+id/master_copy_label"
+        style="@style/TextDark"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="6sp"
+        android:maxLines="2"
+        android:text="@string/change_mastercopy"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/blockies" />
+
+    <TextView
+        android:id="@+id/date_time"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ellipsized_address"
+        tools:text="Apr 27, 2020 — 1:01:42PM" />
+
+    <TextView
+        android:id="@+id/version"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        tools:text="1.1.1" />
+
+    <TextView
+        android:id="@+id/final_status"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textColor="@color/safe_green"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/date_time"
+        app:layout_constraintStart_toEndOf="@+id/date_time"
+        app:layout_constraintTop_toTopOf="@+id/date_time"
+        tools:text="Success" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/blockies"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
