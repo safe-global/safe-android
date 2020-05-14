@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,28 +16,15 @@
         app:layout_constraintTop_toTopOf="@+id/blockies"
         app:srcCompat="@drawable/tx_list_red_arrow" />
 
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/blockies"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <TextView
-        android:id="@+id/ellipsized_address"
-        style="@style/TextDark"
-        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
-        android:ellipsize="middle"
-        android:layout_width="85dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
-        android:singleLine="true" />
+    <ImageView
+        android:id="@+id/chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amount"
+        app:srcCompat="@drawable/tx_list_chevron_right" />
 
     <TextView
         android:id="@+id/amount"
@@ -44,11 +32,10 @@
         android:layout_width="98dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
-        tools:text="-0.00021 ETH"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ellipsized_address" />
-
+        app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
+        tools:text="-0.00021 ETH" />
 
     <TextView
         android:id="@+id/date_time"
@@ -60,30 +47,38 @@
         app:layout_constraintTop_toBottomOf="@+id/chevron"
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
-    <ImageView
-        android:id="@+id/chevron"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/amount"
-        app:srcCompat="@drawable/tx_list_chevron_right" />
 
-    <!-- change color and text accordingly:
-    Success / @color/safe_green
-    Canceled /  @color/dark_grey
-    Failed / @color/safe_failed_red
-    -->
+    <TextView
+        android:id="@+id/ellipsized_address"
+        style="@style/TextDark"
+        android:layout_width="85dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="12dp"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0" />
+
     <TextView
         android:id="@+id/final_status"
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
+        android:textColor="@color/safe_failed_red"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"
-        tools:text="Failed"
-        android:textColor="@color/safe_failed_red"/>
+        tools:text="Failed" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/blockies"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
