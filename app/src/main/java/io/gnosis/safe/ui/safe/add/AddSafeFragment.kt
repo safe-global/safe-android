@@ -55,17 +55,23 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
                         when (action) {
                             is BaseStateViewModel.ViewAction.NavigateTo -> findNavController().navigate((action.navDirections))
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
-                            is BaseStateViewModel.ViewAction.ShowError -> {
-                                progress.visible(false)
-                                binding.addSafeAddressInputLayout.isErrorEnabled = true
-                                binding.addSafeAddressInputLayout.error = getString(R.string.error_invalid_safe)
-                                Timber.e(action.error)
-                            }
+                            is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
                         }
                     }
                 }
             }
         })
+    }
+
+    private fun handleError(throwable: Throwable) {
+        Timber.e(throwable)
+        progress.visible(false)
+        binding.addSafeAddressInputLayout.isErrorEnabled = true
+        binding.addSafeAddressInputLayout.error =
+            when (throwable) {
+                is UsedSafeAddress -> getString(R.string.error_used_address)
+                else -> getString(R.string.error_invalid_safe)
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
