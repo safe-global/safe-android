@@ -199,6 +199,43 @@ class SafeRepositoryTest {
         }
     }
 
+    @Test
+    fun `isSafeAddressUsed - (contained address) should return true`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        coEvery { safeDao.loadByAddress(any()) } returns Safe(safeAddress, "safe_name")
+
+        val actual = safeRepository.isSafeAddressUsed(safeAddress)
+
+        assertEquals(true, actual)
+        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+    }
+
+    @Test
+    fun `isSafeAddressUsed - (new address) should return false`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        coEvery { safeDao.loadByAddress(any()) } returns null
+
+        val actual = safeRepository.isSafeAddressUsed(safeAddress)
+
+        assertEquals(false, actual)
+        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+    }
+
+    @Test
+    fun `isSafeAddressUsed - (DAO failure) should throw`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        val throwable = Throwable()
+        coEvery { safeDao.loadByAddress(any()) } throws throwable
+
+        val actual = runCatching { safeRepository.isSafeAddressUsed(safeAddress) }
+
+        with(actual) {
+            assertEquals(true, isFailure)
+            assertEquals(throwable, exceptionOrNull())
+        }
+        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+    }
+
     private fun buildSuccessfulEthRequest(from: Solidity.Address, masterCopy: Solidity.Address) =
         EthGetStorageAt(from, BigInteger.ZERO, block = Block.LATEST).apply {
             response = EthRequest.Response.Success(masterCopy.asEthereumAddressString())

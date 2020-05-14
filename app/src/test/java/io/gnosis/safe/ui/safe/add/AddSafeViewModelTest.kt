@@ -62,6 +62,7 @@ class AddSafeViewModelTest {
     fun `submitAddress (address safeRepository failure) should ShowError`() {
         val address = VALID_SAFE_ADDRESS
         val exception = IllegalStateException()
+        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
         coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } throws exception
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
@@ -72,13 +73,17 @@ class AddSafeViewModelTest {
             .assertValues(
                 AddSafeState(BaseStateViewModel.ViewAction.ShowError(exception))
             )
-        coVerify(exactly = 1) { safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) }
+        coVerifySequence {
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+        }
     }
 
     @Test
     fun `submitAddress (invalid address safeRepository works) should ShowError InvalidSafeAddress`() {
         val address = "0x0"
         coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns false
+        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
         viewModel.submitAddress(address)
@@ -90,13 +95,17 @@ class AddSafeViewModelTest {
                         (viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
             )
         }
-        coVerify(exactly = 1) { safeRepository.isValidSafe("0x0".asEthereumAddress()!!) }
+        coVerify {
+            safeRepository.isSafeAddressUsed("0x0".asEthereumAddress()!!)
+            safeRepository.isValidSafe("0x0".asEthereumAddress()!!)
+        }
     }
 
     @Test
-    fun `submitAddress (valid address) should NavigateTo`() {
+    fun `submitAddress (valid unused address) should NavigateTo`() {
         val address = VALID_SAFE_ADDRESS
         coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns true
+        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
         viewModel.submitAddress(address)
@@ -111,7 +120,28 @@ class AddSafeViewModelTest {
                 )
             )
 
-        coVerify(exactly = 1) { safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) }
+        coVerifySequence {
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+        }
+    }
+
+    @Test
+    fun `submitAddress (valid used address) should ShowError UsedSafeAddress `() {
+        val address = VALID_SAFE_ADDRESS
+        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns true
+        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns true
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+
+        viewModel.submitAddress(address)
+
+        viewModel.state.observeForever(stateObserver)
+        stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
+
+        coVerifySequence {
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) wasNot Called
+        }
     }
 
     companion object {
