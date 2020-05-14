@@ -24,7 +24,7 @@ constructor(
             if (termsChecker.getTermsAgreed()) {
                 updateState { TermsAgreed(viewAction = ViewAction.StartActivity(Intent(appContext, StartActivity::class.java))) }
             } else {
-                updateState { TermsAgreed(ShowTerms) }
+                updateState(true) { TermsAgreed(ShowTerms) }
             }
         }
     }
@@ -36,7 +36,7 @@ constructor(
         }
     }
 
-    data class TermsAgreed(override var viewAction: BaseStateViewModel.ViewAction?) : BaseStateViewModel.State
+    data class TermsAgreed(override var viewAction: ViewAction?) : State
 
     object ShowTerms : ViewAction
 }

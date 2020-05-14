@@ -41,8 +41,6 @@ interface ApplicationComponent {
 
     fun termsChecker(): TermsChecker
 
-    fun preferencesManager(): PreferencesManager
-
     fun tracker(): Tracker
 
     // Base injects

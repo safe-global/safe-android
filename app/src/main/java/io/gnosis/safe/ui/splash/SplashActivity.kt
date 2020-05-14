@@ -14,16 +14,19 @@ class SplashActivity : BaseActivity() {
     lateinit var viewModel: SplashViewModel
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
+    private val termsBottomSheetDialog = TermsBottomSheetDialog()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        viewComponent().inject(this)
+
         viewModel.state.observe(this, Observer {
             when (val viewAction = it.viewAction) {
                 is ViewAction.StartActivity -> startActivity(viewAction.intent)
                 is SplashViewModel.ShowTerms -> {
-                    TermsBottomSheetDialog().apply {
+                    termsBottomSheetDialog.apply {
                         onAgreeClickListener = {
                             viewModel.handleAgreeClicked()
                         }

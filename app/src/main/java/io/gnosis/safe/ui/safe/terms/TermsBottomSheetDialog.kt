@@ -26,7 +26,7 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
 
         with(binding) {
             bottomSheetTermsAndConditionsPrivacyPolicyLink.appendLink(getString(R.string.link_terms_privacy), getString(R.string.terms_privacy_policy))
-            bottomSheetTermsAndConditionsPrivacyPolicyLink.appendLink(getString(R.string.link_terms_terms_of_use), getString(R.string.terms_terms_of_use))
+            bottomSheetTermsAndConditionsTermsOfUseLink.appendLink(getString(R.string.link_terms_terms_of_use), getString(R.string.terms_terms_of_use))
 
             bottomSheetTermsAndConditionsAgree.setOnClickListener {
                 onAgreeClickListener()
@@ -46,15 +46,6 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
 }
 
 fun TextView.appendLink(url: String, urlText: String) {
-    var colorSpans: Array<ForegroundColorSpan> =
-        (text as SpannedString).getSpans(0, text.length, ForegroundColorSpan::class.java)
-//    val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
-//    linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-    this.text = SpannableStringBuilder()
-        .appendText(Html.fromHtml(text.toString()), colorSpans[0])
-        .append(" ")
-        .appendText(urlText, ForegroundColorSpan(context.getColorCompat(R.color.link)))
-//        .append(" ")
-//        .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
+    this.text = SpannableStringBuilder().appendText(urlText, ForegroundColorSpan(context.getColorCompat(R.color.link)))
     setOnClickListener { this.context.openUrl(url) }
 }
