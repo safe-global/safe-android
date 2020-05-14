@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.safe.terms
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,6 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
 }
 
 fun TextView.appendLink(url: String, urlText: String) {
-    this.text = SpannableStringBuilder().appendText(urlText, ForegroundColorSpan(context.getColorCompat(R.color.link)))
-    setOnClickListener { this.context.openUrl(url) }
+    text = SpannableStringBuilder().appendText(urlText, UnderlineSpan())
+    setOnClickListener { context.openUrl(url) }
 }
