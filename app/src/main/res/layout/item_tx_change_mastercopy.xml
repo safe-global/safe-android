@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="96dp">
+    android:layout_height="wrap_content"
+    android:minHeight="96dp">
 
     <ImageView
         android:id="@+id/tx_type_icon"
