@@ -40,15 +40,15 @@
     <TextView
         android:id="@+id/ellipsized_address"
         style="@style/TextDark"
-        android:layout_width="85dp"
-        android:layout_height="22dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:ellipsize="middle"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toEndOf="@+id/blockies"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        tools:text="0x5c9E7b93900536D9cc5559b881375Bae93c933D0" />
+        tools:text="0x5c...33D0" />
 
     <TextView
         android:id="@+id/amount"
