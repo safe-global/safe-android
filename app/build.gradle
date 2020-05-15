@@ -150,11 +150,6 @@ androidExtensions {
     experimental = true
 }
 
-jacoco {
-    toolVersion = versions.jacoco
-    version = versions.jacoco
-}
-
 dependencies {
     // We specify junit before anything else to make sure that this version is prioritized over the
     // one bundled in the android.jar
