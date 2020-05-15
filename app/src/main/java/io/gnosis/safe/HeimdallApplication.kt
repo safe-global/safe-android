@@ -6,6 +6,8 @@ import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
 import io.gnosis.safe.di.modules.ApplicationModule
+import io.gnosis.safe.di.modules.DatabaseModule
+import io.gnosis.safe.di.modules.RepositoryModule
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
@@ -15,8 +17,12 @@ import java.security.Security
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
-    private val component: ApplicationComponent = DaggerApplicationComponent.builder()
-        .applicationModule(ApplicationModule(this)).build()
+    private val component: ApplicationComponent =
+        DaggerApplicationComponent.builder()
+            .databaseModule(DatabaseModule())
+            .repositoryModule(RepositoryModule())
+            .applicationModule(ApplicationModule(this))
+            .build()
 
     override fun get(): ApplicationComponent = component
 

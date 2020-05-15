@@ -1,18 +1,16 @@
 package io.gnosis.safe.ui.safe.balances
 
 import io.gnosis.data.models.Safe
-import io.gnosis.safe.di.Repositories
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
 
 class SafeBalancesViewModel @Inject constructor(
-    repositories: Repositories,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeBalancesState>(appDispatchers) {
-
-    private val safeRepository = repositories.safeRepository()
 
     override fun initialState(): SafeBalancesState = SafeBalancesState.SafeLoading(null)
 

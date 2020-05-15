@@ -2,13 +2,11 @@ package io.gnosis.safe.ui.safe.selection
 
 import androidx.navigation.ActionOnlyNavDirections
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.empty.NoSafeFragmentDirections
 import javax.inject.Inject
-
 
 sealed class SafeSelectionState : BaseStateViewModel.State {
 
@@ -24,12 +22,10 @@ sealed class SafeSelectionState : BaseStateViewModel.State {
 }
 
 class SafeSelectionViewModel @Inject constructor(
-    repositories: Repositories,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSelectionState>(appDispatchers),
     SafeSelectionAdapter.OnSafeSelectionItemClickedListener {
-
-    private val safeRepository = repositories.safeRepository()
 
     private val items: MutableList<Any> = mutableListOf()
     private var activeSafe: Safe? = null
