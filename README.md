@@ -1,4 +1,6 @@
-# Gnosis Safe Android App [![Build Status](https://travis-ci.org/gnosis/safe-android.svg?branch=master)](https://travis-ci.org/gnosis/safe-android)
+# Gnosis Safe Android App 
+[![Build Status](https://travis-ci.org/gnosis/safe-android.svg?branch=master)](https://travis-ci.org/gnosis/safe-android)
+[![codecov](https://codecov.io/gh/gnosis/safe_android/branch/master/graph/badge.svg)](https://codecov.io/gh/gnosis/safe-android)
 
 ## Goal
 The Gnosis Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
