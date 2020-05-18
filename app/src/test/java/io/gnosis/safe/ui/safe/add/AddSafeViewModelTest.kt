@@ -4,7 +4,6 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
@@ -23,15 +22,12 @@ class AddSafeViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
-    private val repositories = mockk<Repositories>().apply {
-        every { safeRepository() } returns safeRepository
-    }
 
     private lateinit var viewModel: AddSafeViewModel
 
     @Before
     fun setup() {
-        viewModel = AddSafeViewModel(repositories, appDispatchers)
+        viewModel = AddSafeViewModel(safeRepository, appDispatchers)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 
