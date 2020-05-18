@@ -6,7 +6,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.appdistribution'
-apply from: '../buildsystem/coverageReport.gradle'
+apply from: '../buildsystem/coverage_report.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
 apply from: '../buildsystem/test_android_dependencies.gradle'
 
