@@ -1,5 +1,4 @@
 apply from: '../buildsystem/android_library.gradle'
-apply from: '../buildsystem/coverageReport.gradle'
 apply plugin: 'bivrost'
 
 android {
