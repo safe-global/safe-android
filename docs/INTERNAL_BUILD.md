@@ -5,10 +5,9 @@ The `internal` app uses the Rinkeby test network. It uses the staging environmen
 ## Local Build Setup Requirements
 ### Firebase / Google Services Plugin
 
-To build the `internal` buildType you need to have a properly configured `google-services.json` file. We need it for App distribution via Firebase and Crash reporting.
-Whe don't want to have this file in the git repository because it contains an api_key which might cause builds by external developers to report accidentally to our Crashlytics database
-As an Gnosis developer you can get the latest version here: <https://console.firebase.google.com/u/0/project/safe-firebase-staging/settings/general/android:io.gnosis.safe.internal>
-As an external developer please have a look at [README](../README.md#Firebase) on instructions how to get it.
+To build the `internal` buildType you need to have a properly configured `google-services.json` file. We need it for App distribution via Firebase and Crash reporting. Whe don't want to have this file in the git repository because it contains an api_key which might cause custom builds to report accidentally to our Crashlytics database. For a Gnosis build you can get the latest version here: <https://console.firebase.google.com/u/0/project/safe-firebase-staging/settings/general/android:io.gnosis.safe.internal>.
+
+For a custom build, please have a look at the [README.md#Firebase](../README.md#Firebase) for instructions on how to get it.
 
 ### INFURA API Key
 
