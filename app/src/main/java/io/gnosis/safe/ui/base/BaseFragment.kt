@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.base
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +18,9 @@ abstract class BaseFragment<T> : Fragment()
     private var _binding: T? = null
     protected val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        inject(buildViewComponent())
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        inject(buildViewComponent(context))
     }
 
     override fun onCreateView(
@@ -36,10 +37,10 @@ abstract class BaseFragment<T> : Fragment()
         _binding = null
     }
 
-    private fun buildViewComponent(): ViewComponent =
+    private fun buildViewComponent(context: Context): ViewComponent =
         DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[context!!])
-            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context])
+            .viewModule(ViewModule(context, parentFragment))
             .build()
 
     abstract fun inject(component: ViewComponent)

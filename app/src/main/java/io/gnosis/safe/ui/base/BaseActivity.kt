@@ -12,8 +12,8 @@ import io.gnosis.safe.di.modules.ViewModule
 abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         HeimdallApplication[this].inject(this)
+        super.onCreate(savedInstanceState)
         if (!BuildConfig.DEBUG) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }

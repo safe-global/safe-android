@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.dialogs
 
 import io.gnosis.data.repositories.EnsRepository
-import io.gnosis.safe.di.Repositories
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -15,11 +14,8 @@ import java.math.BigInteger
 class EnsInputViewModelTest {
 
     private val ensRepository = mockk<EnsRepository>(relaxed = true, relaxUnitFun = true)
-    private val repositories = mockk<Repositories>().apply {
-        every { ensRepository() } returns ensRepository
-    }
 
-    private val viewModel = EnsInputViewModel(repositories)
+    private val viewModel = EnsInputViewModel(ensRepository)
 
     @Test
     fun `processEnsInput (valid input safeRepository failure) should throw`() = runBlockingTest {

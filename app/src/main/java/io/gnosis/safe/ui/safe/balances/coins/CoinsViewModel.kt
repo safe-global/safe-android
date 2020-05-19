@@ -1,7 +1,8 @@
 package io.gnosis.safe.ui.safe.balances.coins
 
 import io.gnosis.data.models.Balance
-import io.gnosis.safe.di.Repositories
+import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
@@ -9,12 +10,10 @@ import javax.inject.Inject
 
 class CoinsViewModel
 @Inject constructor(
-    repositories: Repositories,
+    private val tokenRepository: TokenRepository,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CoinsState>(appDispatchers) {
-
-    private val tokenRepositories = repositories.tokenRepository()
-    private val safeRepository = repositories.safeRepository()
 
     override fun initialState(): CoinsState = CoinsState(loading = false, refreshing = false, viewAction = null)
 
@@ -27,7 +26,7 @@ class CoinsViewModel
     fun load(refreshing: Boolean = false) {
         safeLaunch {
             updateState { CoinsState(loading = !refreshing, refreshing = refreshing, viewAction = null) }
-            val balances = tokenRepositories.loadBalanceOf(safeRepository.getActiveSafe()!!.address)
+            val balances = tokenRepository.loadBalanceOf(safeRepository.getActiveSafe()!!.address)
             updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
         }
     }

@@ -6,7 +6,6 @@ import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.selection.AddSafeHeader
 import io.gnosis.safe.ui.safe.selection.SafeSelectionState
@@ -32,15 +31,12 @@ class SafeSelectionViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
-    private val repositories = mockk<Repositories>().apply {
-        every { safeRepository() } returns safeRepository
-    }
 
     private lateinit var safeSelectionViewModel: SafeSelectionViewModel
 
     @Before
     fun setup() {
-        safeSelectionViewModel = SafeSelectionViewModel(repositories, appDispatchers)
+        safeSelectionViewModel = SafeSelectionViewModel(safeRepository, appDispatchers)
     }
 
     @Test

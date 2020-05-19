@@ -5,7 +5,6 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
@@ -25,17 +24,14 @@ class AddSafeNameViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
-    private val tracker: Tracker = mockk<Tracker>()
+    private val tracker: Tracker = mockk()
     private val safeRepository = mockk<SafeRepository>()
-    private val repositories = mockk<Repositories>().apply {
-        every { safeRepository() } returns safeRepository
-    }
 
     private lateinit var viewModel: AddSafeNameViewModel
 
     @Before
     fun setup() {
-        viewModel = AddSafeNameViewModel(repositories, appDispatchers, tracker)
+        viewModel = AddSafeNameViewModel(safeRepository, appDispatchers, tracker)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 

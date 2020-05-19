@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.safe.settings
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
@@ -17,13 +16,11 @@ class SafeSettingsViewModelTest {
 
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
+
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
-    private val repositories = mockk<Repositories>().apply {
-        every { safeRepository() } returns safeRepository
-    }
 
     private val tracker = mockk<Tracker>()
 
@@ -31,13 +28,13 @@ class SafeSettingsViewModelTest {
 
     @Before
     fun setup() {
-        safeSettingsViewModel = SafeSettingsViewModel(repositories, appDispatchers, tracker)
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, tracker, appDispatchers)
     }
 
     @Test
     fun `removeSafe - should remove safe`() = runBlockingTest {
 
-        coEvery { safeRepository.getActiveSafe()} returnsMany  listOf(SAFE_1, null)
+        coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, null)
         coEvery { safeRepository.getSafes() } returnsMany listOf(SAFES, listOf(SAFE_2))
         coEvery { safeRepository.removeSafe(ACTIVE_SAFE) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
