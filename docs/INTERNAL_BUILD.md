@@ -1,11 +1,11 @@
 # Build `internal` app
 
-The `internal` app is meant to test new features as soon as they are merged to master. It uses the Rinkeby test network and the staging environment for relay and notification services.
+The `internal` build type is meant to test new features as soon as they are merged to master. It uses the Rinkeby test network and the staging environment for relay and notification services.
 
 ## Local Build Setup Requirements
 ### Firebase / Google Services Plugin
 
-To build the `internal` buildType you need to have a properly configured `google-services.json` file. We need it for App distribution via Firebase and Crash reporting. Whe don't want to have this file in the git repository because it contains an api_key which might cause custom builds to report accidentally to our Crashlytics database. For a Gnosis build you can get the latest version here: <https://console.firebase.google.com/u/0/project/safe-firebase-staging/settings/general/android:io.gnosis.safe.internal>.
+To build the `internal` build type you need to have a properly configured `google-services.json` file. We need it for app distribution and crash reporting via Firebase. We don't want to have this file in the git repository because it contains an api_key which might cause custom builds to report accidentally to our Crashlytics database. For a Gnosis build you can get the latest version here: <https://console.firebase.google.com/u/0/project/safe-firebase-staging/settings/general/android:io.gnosis.safe.internal>.
 
 For a custom build, please have a look at the [README.md#Firebase](../README.md#Firebase) for instructions on how to get it.
 
