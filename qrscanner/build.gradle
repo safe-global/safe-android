@@ -2,6 +2,7 @@ apply from: '../buildsystem/android_library.gradle'
 apply from: '../buildsystem/constants.gradle'
 apply from: '../buildsystem/helpers.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
+apply from: '../buildsystem/coverage_report.gradle'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
