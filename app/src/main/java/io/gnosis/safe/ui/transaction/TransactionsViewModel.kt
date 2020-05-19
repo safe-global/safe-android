@@ -10,10 +10,6 @@ import javax.inject.Inject
 class TransactionsViewModel
 @Inject constructor(appDispatchers: AppDispatchers) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    override val state: LiveData<TransactionsViewState> = liveData {
-        for (event in stateChannel.openSubscription()) emit(event)
-    }
-
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, false)
 }
 
