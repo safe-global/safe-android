@@ -1,5 +1,4 @@
 # Gnosis Safe Android App 
-[![Build Status](https://travis-ci.org/gnosis/safe-android.svg?branch=master)](https://travis-ci.org/gnosis/safe-android)
 [![codecov](https://codecov.io/gh/gnosis/safe-android/branch/master/graph/badge.svg)](https://codecov.io/gh/gnosis/safe-android)
 
 ## Goal
