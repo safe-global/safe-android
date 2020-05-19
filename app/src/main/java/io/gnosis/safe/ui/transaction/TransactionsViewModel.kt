@@ -1,7 +1,5 @@
 package io.gnosis.safe.ui.transaction
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.models.Transaction

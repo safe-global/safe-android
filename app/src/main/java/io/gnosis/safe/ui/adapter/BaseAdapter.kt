@@ -40,6 +40,12 @@ class BaseAdapter<VH, T>(
     fun notifyChangedAt(position: Int) {
         notifyItemChanged(position)
     }
+
+    fun appendItems(items: List<T>) {
+        val oldSize = items.size
+        this.items.addAll(items)
+        notifyItemRangeChanged(oldSize, this.items.size)
+    }
 }
 
 class UnsupportedItem : Throwable()
