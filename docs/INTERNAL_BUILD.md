@@ -3,7 +3,7 @@
 The `internal` app uses the Rinkeby test network. It uses the staging environment for relay and notification services. It is meant to test new features as soon as they are merged to master.
 
 ## Local Build Setup Requirements
-### Firebase / Goggle Services Plugin
+### Firebase / Google Services Plugin
 
 To build the `internal` buildType you need to have a properly configured `google-services.json` file. We need it for App distribution via Firebase and Crash reporting.
 Whe don't want to have this file in the git repository because it contains an api_key which might cause builds by external developers to report accidentally to our Crashlytics database
@@ -11,19 +11,16 @@ As an Gnosis developer you can get the latest version here: <https://console.fir
 As an external developer please have a look at [README](../README.md#Firebase) on instructions how to get it.
 
 ### INFURA API Key
-  - Why do we need it?
-    - The Json RPC depends on [Infura](https://infura.io/).
-  - How/where to get it
-    - Create a free (of charge) account at <https://infura.io/>
-    - Create a project
-    - Find project id in the project settings -> Keys
 
+We need an Infura API key for the JSON RPC calls. Please create a free (of charge) account with Infura at: <https://infura.io/>. Then create a project. Find the `project id` in the Project settings -> Keys.
 You need to get an API key and create a file named ``project_keys` in the project folder with the following contents:
+
+```
 INFURA_API_KEY=<YOUR_PROJECT_ID>
-Replace <YOUR_PROJECT_ID> with the project id that you get from Infura.
+```
+Replace <YOUR_PROJECT_ID> with the project id that you got from Infura.
 
-
-## Gradle tasks for local builds
+### Gradle task for local builds
 
 `./gradlew assembleInternal`
 
@@ -48,4 +45,4 @@ Access to `internal` builds is defined in the `internal` app in the `safe-fireba
 
 ## Build trigger
 
-Whenever a PR is merged to master and `internal` build is triggered.
+Whenever a PR is merged to master an `internal` build is triggered.
