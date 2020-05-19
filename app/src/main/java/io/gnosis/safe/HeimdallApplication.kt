@@ -15,8 +15,10 @@ import java.security.Security
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
-    private val component: ApplicationComponent = DaggerApplicationComponent.builder()
-        .applicationModule(ApplicationModule(this)).build()
+    private val component: ApplicationComponent =
+        DaggerApplicationComponent.builder()
+            .applicationModule(ApplicationModule(this))
+            .build()
 
     override fun get(): ApplicationComponent = component
 

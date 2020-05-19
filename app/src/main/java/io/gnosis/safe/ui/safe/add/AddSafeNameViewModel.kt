@@ -1,8 +1,8 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.model.Solidity
@@ -10,12 +10,10 @@ import javax.inject.Inject
 
 class AddSafeNameViewModel
 @Inject constructor(
-    repositories: Repositories,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers,
     private val tracker: Tracker
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
-
-    private val safeRepository = repositories.safeRepository()
 
     fun submitAddressAndName(address: Solidity.Address, localName: String) {
         safeLaunch {

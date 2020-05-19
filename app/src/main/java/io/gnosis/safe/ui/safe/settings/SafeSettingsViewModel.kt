@@ -1,20 +1,18 @@
 package io.gnosis.safe.ui.safe.settings
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
-import io.gnosis.safe.di.Repositories
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
-    repositories: Repositories,
-    appDispatchers: AppDispatchers,
-    private val tracker: Tracker
+    private val safeRepository: SafeRepository,
+    private val tracker: Tracker,
+    appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
-
-    private val safeRepository = repositories.safeRepository()
 
     override fun initialState() = SafeSettingsState.SafeLoading(null)
 

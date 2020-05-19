@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.dialogs
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -40,16 +41,20 @@ class EnsInputDialog : DialogFragment() {
 
     var callback: ((Solidity.Address) -> Unit)? = null
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        inject()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, 0)
         super.onCreate(savedInstanceState)
-        inject()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ens_input, null)
 
-        alertDialog = CustomAlertDialogBuilder.build(context!!, getString(R.string.ens_input_title), dialogView, R.string.ok, {
+        alertDialog = CustomAlertDialogBuilder.build(requireContext(), getString(R.string.ens_input_title), dialogView, R.string.ok, {
             onClick.offer(Unit)
         })
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
@@ -130,8 +135,8 @@ class EnsInputDialog : DialogFragment() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-            .viewModule(ViewModule(context!!))
-            .applicationComponent(HeimdallApplication[context!!])
+            .viewModule(ViewModule(requireContext()))
+            .applicationComponent(HeimdallApplication[requireContext()])
             .build()
             .inject(this)
     }

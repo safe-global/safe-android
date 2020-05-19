@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
-import io.gnosis.safe.di.Repositories
+import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.di.ForView
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.utils.asEthereumAddress
@@ -8,11 +9,9 @@ import javax.inject.Inject
 
 class AddSafeViewModel
 @Inject constructor(
-    repositories: Repositories,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
-
-    private val safeRepository = repositories.safeRepository()
 
     fun submitAddress(address: String) {
         safeLaunch {
