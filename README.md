@@ -19,7 +19,7 @@ Replace `<YOUR_PROJECT_ID>` with the `project id` that you get from Infura. You 
 The Gnosis Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
 To get this file, you need to create a Firebase project at <https://console.firebase.google.com/> and add at least one Android application.
 If you didn't change the applicationId in `app/build.gradle` you need to create an app with the Package name `io.gnosis.safe.debug` to be able  
-to build a debug app. You can find the latest config file `google-services.json` in the `Project Settings` -> `General`
+to build a debug app. You can find the latest `google-services.json` file in the `Project Settings` -> `General`
 
 After downloading the file, copy it to the `app` module folder.
 
