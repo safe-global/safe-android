@@ -1,6 +1,6 @@
 # Build `internal` app
 
-The `internal` app uses the Rinkeby test network. It uses the staging environment for relay and notification services. It is meant to test new features as soon as they are merged to master.
+The `internal` app is meant to test new features as soon as they are merged to master. It uses the Rinkeby test network and the staging environment for relay and notification services.
 
 ## Local Build Setup Requirements
 ### Firebase / Google Services Plugin
@@ -12,12 +12,12 @@ For a custom build, please have a look at the [README.md#Firebase](../README.md#
 ### INFURA API Key
 
 We need an Infura API key for the JSON RPC calls. Please create a free (of charge) account with Infura at: <https://infura.io/>. Then create a project. Find the `project id` in the Project settings -> Keys.
-You need to get an API key and create a file named ``project_keys` in the project folder with the following contents:
+You need to get an API key and create a file named `project_keys` in the project folder with the following content:
 
 ```
 INFURA_API_KEY=<YOUR_PROJECT_ID>
 ```
-Replace <YOUR_PROJECT_ID> with the project id that you got from Infura.
+Replace `<YOUR_PROJECT_ID>` with the `project id` that you got from Infura.
 
 ### Gradle task for local builds
 
