@@ -9,7 +9,7 @@ To build the `internal` build type you need to have a properly configured `googl
 
 For a custom build, please have a look at the [README.md#Firebase](../README.md#Firebase) for instructions on how to get it.
 
-### INFURA API Key
+### Infura API Key
 
 We need an Infura API key for the JSON RPC calls. Please create a free (of charge) account with Infura at: <https://infura.io/>. Then create a project. Find the `project id` in the Project settings -> Keys.
 You need to get an API key and create a file named `project_keys` in the project folder with the following content:
@@ -30,13 +30,18 @@ The Buildkite instance is also responsible for app signing and distribution. The
 
 ## Secrets injected on the ci server
 
-- SIGNING_STORE_PASSWORD
-- SIGNING_KEY_PASSWORD
-- FIREBASE_TOKEN -> Necessary to push updates to Firebase App Distribution
-- INFURA_API_KEY -> See above
-- GITHUB_API_KEY ->
-- SLACK_WEBHOOK -> Used to notify certain slack channels
+The `internal` build uses the debug.keystore that has been committed to the git repository. The CI server adds the following secrets to the build process.
+
+- FIREBASE_TOKEN
+  - For pushing updates to Firebase App Distribution
+- INFURA_API_KEY
+  - Used for Infura API calls
+- GITHUB_API_KEY
+  - ????
+- SLACK_WEBHOOK
+  - Used to notify certain slack channels
 - CODECOV
+  - To provide code coverage
 
 ##  Access to the `internal` app
 
@@ -44,4 +49,5 @@ Access to `internal` builds is defined in the `internal` app in the `safe-fireba
 
 ## Build trigger
 
-Whenever a PR is merged to master an `internal` build is triggered.
+Whenever a PR is merged to master an `internal` build and its distribution to Firebase is triggered automatically. Firebase sends an email to all registered email addresses to notify them, that there is a new version.
+ 
