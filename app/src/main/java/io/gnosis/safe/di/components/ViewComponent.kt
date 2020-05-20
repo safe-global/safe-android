@@ -14,6 +14,7 @@ import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SafeSettingsFragment
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.splash.SplashActivity
+import io.gnosis.safe.ui.transaction.TransactionsFragment
 
 @ForView
 @Component(
@@ -29,6 +30,8 @@ interface ViewComponent {
     fun inject(fragment: AddSafeFragment)
 
     fun inject(fragment: AddSafeNameFragment)
+
+    fun inject(fragment: TransactionsFragment)
 
     fun inject(dialog: EnsInputDialog)
 
