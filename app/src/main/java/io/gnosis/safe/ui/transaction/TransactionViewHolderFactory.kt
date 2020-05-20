@@ -13,7 +13,7 @@ enum class TransactionViewType {
     CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED
 }
 
-class TransactionViewHolderFactory : BaseFactory<Transaction, BaseTransactionViewHolder<Transaction>>() {
+class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Transaction>, Transaction>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Transaction> =
@@ -39,7 +39,7 @@ class TransactionViewHolderFactory : BaseFactory<Transaction, BaseTransactionVie
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
-    override fun <T> viewTypeFor(item: T): Int =
+    override fun viewTypeFor(item: Transaction): Int =
         when (item) {
             is Transaction.ChangeMastercopy -> TransactionViewType.CHANGE_MASTERCOPY
             is Transaction.SettingsChange -> TransactionViewType.SETTINGS_CHANGE

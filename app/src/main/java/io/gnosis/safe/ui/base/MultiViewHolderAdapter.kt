@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
 class MultiViewHolderAdapter<VH, T>(
-    private val factory: BaseFactory<T, VH>
+    private val factory: BaseFactory<VH, T>
 ) : Adapter<T, VH>() where VH : Adapter.ViewHolder<T> {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
@@ -19,11 +19,11 @@ class MultiViewHolderAdapter<VH, T>(
         factory.viewTypeFor(items[position]).takeUnless { it < 0 } ?: throw UnsupportedViewType()
 }
 
-abstract class BaseFactory<T, VH : Adapter.ViewHolder<T>> {
+abstract class BaseFactory<VH : Adapter.ViewHolder<T>, T> {
 
     abstract fun newViewHolder(viewBinding: ViewBinding, viewType: Int): VH
 
     abstract fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding
 
-    open fun <T> viewTypeFor(item: T): Int = 0
+    open fun viewTypeFor(item: T): Int = 0
 }
