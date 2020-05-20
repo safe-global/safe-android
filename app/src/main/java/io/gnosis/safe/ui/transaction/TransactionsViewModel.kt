@@ -11,7 +11,6 @@ class TransactionsViewModel
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, false)
 }
 
-
 data class TransactionsViewState(
     override var viewAction: BaseStateViewModel.ViewAction?,
     val isLoading: Boolean
