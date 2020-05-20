@@ -46,9 +46,10 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
     data class Data<out T>(
         val parentId: String? = null,
         val entries: List<T> = emptyList(),
-        val id: String = UUID.randomUUID().toString(),
         val diff: DiffUtil.DiffResult? = null
-    )
+    ) {
+        val id: String = UUID.randomUUID().toString()
+    }
 
     abstract class ViewHolder<in T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
         abstract fun bind(data: T, payloads: List<Any>)
