@@ -65,11 +65,11 @@ The `internal` build uses the debug.keystore that has been committed to the git 
 - INFURA_API_KEY
   - Used for Infura API calls
 - GITHUB_API_KEY
-  - Deploy to github in (`ci/upload_to_github.sh`)
+  - Deploy to github (used in `ci/upload_to_github.sh`)
 - SLACK_WEBHOOK
   - Used to notify certain slack channels
 - CODECOV_TOKEN
-  - To provide code coverage
+  - To provide test coverage analysis
 
 ##  Access to the `internal` app
 
