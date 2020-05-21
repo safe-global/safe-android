@@ -4,8 +4,8 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 class NoSafeViewModel
 @Inject constructor(
@@ -13,15 +13,14 @@ class NoSafeViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafesState>(appDispatchers) {
 
-    override fun initialState() = SafesState(null, 0, ViewAction.Loading(true))
+    override fun initialState() = SafesState(null, ViewAction.Loading(true))
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                val safeNum = safeRepository.getSafes().count()
-                updateState {
+                updateState(true) {
                     SafesState(
-                        safe, safeNum, if (safe == null) ViewAction.None else ViewAction.NavigateTo(
+                        safe, if (safe == null) ViewAction.None else ViewAction.NavigateTo(
                             NoSafeFragmentDirections.actionNoSafeFragmentToSafeBalancesFragment()
                         )
                     )
@@ -33,7 +32,6 @@ class NoSafeViewModel
 
 data class SafesState(
     val activeSafe: Safe?,
-    val safeNum: Int,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
