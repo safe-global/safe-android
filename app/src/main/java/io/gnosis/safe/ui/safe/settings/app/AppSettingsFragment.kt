@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -41,6 +42,8 @@ class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
             getInTouch.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
+            version.value = BuildConfig.VERSION_NAME
+            network.value = BuildConfig.BLOCKCHAIN_NAME
         }
     }
 

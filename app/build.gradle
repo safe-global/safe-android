@@ -32,6 +32,7 @@ android {
         buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.rinkeby.gnosis.io/api/"))
         buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.gnosis.io/api/"))
         // Blockchain settings
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Rinkeby"))
         buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "4")
         // Certificates
         buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm,*.gnosis.io"))
@@ -104,6 +105,7 @@ android {
             minifyEnabled true
             multiDexEnabled true
             signingConfig signingConfigs.release
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Mainnet"))
             buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.gnosis.io/api/"))
