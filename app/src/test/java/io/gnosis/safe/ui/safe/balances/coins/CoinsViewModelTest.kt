@@ -10,7 +10,9 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.safe.empty.NoSafeViewModelTest
 import io.mockk.*
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flow
 import org.junit.Rule
 import org.junit.Test
@@ -80,12 +82,16 @@ class CoinsViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         coEvery { safeRepository.getActiveSafe() } throws throwable
+        coEvery { safeRepository.activeSafeFlow() } returns flow {
+            emit(null)
+        }
+            .conflate()
 
         viewModel.load()
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = true, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
+            CoinsState(loading = false, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
