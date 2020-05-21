@@ -63,7 +63,17 @@
             app:popUpTo="@id/safeBalancesFragment"
             app:popUpToInclusive="false"/>
 
+        <action
+            android:id="@+id/action_settingsFragment_to_getInTouchFragment"
+            app:destination="@id/getInTouchFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/getInTouchFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment"
+        android:label="GetInTouchFragment"
+        tools:layout="@layout/fragment_get_in_touch"/>
 
     <navigation android:id="@+id/navigation"
         app:startDestination="@id/add_safe_nav">

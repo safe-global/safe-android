@@ -55,4 +55,11 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
+
+    <string name="get_in_touch_title">Get in touch</string>
+    <string name="get_in_touch_email">E-mail</string>
+    <string name="get_in_touch_discord">Discord</string>
+    <string name="get_in_touch_twitter">Twitter</string>
+    <string name="get_in_touch_help_center">Help center</string>
+    <string name="get_in_touch_feature_suggestion">Feature suggestion</string>
 </resources>

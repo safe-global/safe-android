@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.safe.settings.SettingsFragmentDirections
 import javax.inject.Inject
 
 class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
@@ -23,6 +25,12 @@ class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        with(binding) {
+            getInTouch.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
+            }
+        }
     }
 
     companion object {
