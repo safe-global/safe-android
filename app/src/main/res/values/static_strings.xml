@@ -4,6 +4,8 @@
     <string name="link_privacy_policy">https://safe.gnosis.io/privacy</string>
     <string name="link_terms_of_use">https://safe.gnosis.io/terms</string>
     <string name="link_licenses">https://gnosis-safe.io/licenses/</string>
+    <string name="link_help_center"> https://help.gnosis-safe.io</string>
+    <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
     <string name="id_telegram">GnosisSafe</string>
     <string name="email_feedback" translatable="false">safe@gnosis.io</string>
 </resources>

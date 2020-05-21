@@ -15,6 +15,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 
 class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
@@ -51,7 +52,7 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
                 openHelpCenter()
             }
             featureSuggestion.setOnClickListener {
-                sendFeatureSuggestion()
+                openFeatureSuggestionPage()
             }
         }
     }
@@ -75,11 +76,11 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
     }
 
     private fun openHelpCenter() {
-        //TODO:
+        requireContext().openUrl(getString(R.string.link_help_center))
     }
 
-    private fun sendFeatureSuggestion() {
-        //TODO:
+    private fun openFeatureSuggestionPage() {
+        requireContext().openUrl(getString(R.string.link_feature_suggestion))
     }
 
     // Do we need telegram channel or is discord sufficient?
