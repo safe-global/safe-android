@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SettingItem">
+        <attr name="setting_openable" format="boolean" />
+        <attr name="setting_name" format="string" />
+        <attr name="setting_value" format="string" />
+        <attr name="setting_image" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="EndpointItem">
+        <attr name="endpoint_name" format="string" />
+        <attr name="endpoint_value" format="string" />
+    </declare-styleable>
+
+</resources>
