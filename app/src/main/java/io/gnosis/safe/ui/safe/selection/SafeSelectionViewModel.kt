@@ -57,7 +57,7 @@ class SafeSelectionViewModel @Inject constructor(
 
     fun addSafe() {
         safeLaunch {
-            updateState {
+            updateState(true) {
                 SafeSelectionState.AddSafeState(
                     ViewAction.NavigateTo(
                         ActionOnlyNavDirections(R.id.action_to_add_safe_nav)

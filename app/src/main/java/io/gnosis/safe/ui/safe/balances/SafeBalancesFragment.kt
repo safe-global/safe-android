@@ -51,10 +51,7 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
                 }
             }.attach()
         }
-    }
 
-    override fun onStart() {
-        super.onStart()
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is SafeBalancesState.ActiveSafe -> {

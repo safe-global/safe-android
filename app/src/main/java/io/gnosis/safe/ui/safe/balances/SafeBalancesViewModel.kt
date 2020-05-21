@@ -17,7 +17,7 @@ class SafeBalancesViewModel @Inject constructor(
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState {
+                updateState(true) {
                     SafeBalancesState.ActiveSafe(
                         safe, takeIf { safe == null }?.let {
                             ViewAction.NavigateTo(
