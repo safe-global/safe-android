@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.multibindings.IntoMap
-import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
@@ -16,7 +14,9 @@ import io.gnosis.safe.ui.safe.balances.SafeBalancesViewModel
 import io.gnosis.safe.ui.safe.balances.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.empty.NoSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
-import io.gnosis.safe.ui.safe.settings.SafeSettingsViewModel
+import io.gnosis.safe.ui.safe.settings.SettingsViewModel
+import io.gnosis.safe.ui.safe.settings.app.AppSettingsViewModel
+import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transaction.TransactionsViewModel
 import javax.inject.Singleton
@@ -63,6 +63,16 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeSelectionViewModel::class)
     abstract fun providesSafeSelectionViewModel(viewModel: SafeSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingsViewModel::class)
+    abstract fun providesSettingsViewModel(viewModel: SettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AppSettingsViewModel::class)
+    abstract fun providesAppSettingsViewModel(viewModel: AppSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

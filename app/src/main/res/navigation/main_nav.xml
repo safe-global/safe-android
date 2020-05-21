@@ -47,13 +47,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/safeSettingsFragment"
-        android:name="io.gnosis.safe.ui.safe.settings.SafeSettingsFragment"
+        android:id="@+id/settingsFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.SettingsFragment"
         android:label="SafeSettingsFragment"
-        tools:layout="@layout/fragment_safe_settings">
+        tools:layout="@layout/fragment_settings">
 
         <action
-            android:id="@+id/action_safeSettingsFragment_to_noSafeFragment"
+            android:id="@+id/action_settingsFragment_to_noSafeFragment"
             app:destination="@id/noSafeFragment" />
 
         <action
@@ -64,6 +64,7 @@
             app:popUpToInclusive="false"/>
 
     </fragment>
+
     <navigation android:id="@+id/navigation"
         app:startDestination="@id/add_safe_nav">
         <include app:graph="@navigation/add_safe_nav" />

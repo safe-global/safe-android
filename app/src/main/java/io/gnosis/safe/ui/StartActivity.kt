@@ -49,7 +49,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun isFullscreen(id: Int?): Boolean =
         id != R.id.safeBalancesFragment &&
                 id != R.id.safeTransactionsFragment &&
-                id != R.id.safeSettingsFragment &&
+                id != R.id.settingsFragment &&
                 id != R.id.noSafeFragment
 
     override fun setSafeData(safe: Safe?) {
@@ -69,7 +69,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         navBar.menu.findItem(R.id.safeBalancesFragment).isEnabled = false
         navBar.menu.findItem(R.id.safeBalancesFragment).isChecked = true
-        navBar.menu.findItem(R.id.safeSettingsFragment).isEnabled = false
+        navBar.menu.findItem(R.id.settingsFragment).isEnabled = false
     }
 
     private fun setSafe(safe: Safe) {
@@ -81,7 +81,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         }
 
         navBar.menu.findItem(R.id.safeBalancesFragment).isEnabled = true
-        navBar.menu.findItem(R.id.safeSettingsFragment).isEnabled = true
+        navBar.menu.findItem(R.id.settingsFragment).isEnabled = true
     }
 }
 
