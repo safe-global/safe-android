@@ -3,4 +3,6 @@
     <string name="app_name" translatable="false">Gnosis Safe</string>
     <string name="link_terms_privacy">https://safe.gnosis.io/privacy</string>
     <string name="link_terms_terms_of_use">https://safe.gnosis.io/terms</string>
+    <string name="id_telegram">GnosisSafe</string>
+    <string name="email_feedback" translatable="false">safe@gnosis.io</string>
 </resources>
