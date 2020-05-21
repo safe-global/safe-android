@@ -16,7 +16,7 @@ class EndpointItem @JvmOverloads constructor(
 
     var name: String? = null
         set(value) {
-            binding.name.text = name
+            binding.name.text = value
             field = value
         }
 
@@ -45,8 +45,8 @@ class EndpointItem @JvmOverloads constructor(
     }
 
     private fun applyAttributes(context: Context, a: TypedArray) {
-        name = a.getString(R.styleable.SettingItem_setting_name)
-        value = a.getString(R.styleable.SettingItem_setting_value)
+        name = a.getString(R.styleable.EndpointItem_endpoint_name)
+        value = a.getString(R.styleable.EndpointItem_endpoint_value)
     }
 }
 
