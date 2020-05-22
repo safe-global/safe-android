@@ -54,7 +54,7 @@ We use the following hook scripts (located in `/etc/buildkite-agent/hooks` on th
 - `pre-command`
   - Copy `google-services.json` to the respective build type folders (prod version for `rinkeby` and `release` build type and staging version for `internal` builds)
   - Copy `gnosis-upload.jks` keystore used for release and rinkeby version (NOT `internal`)
-  - Prepare environment with different secrets for the legacy (v1) app and the current (v2) app build
+  - Prepare build environment with secrets (see below)
 
 ## Secrets injected on the ci server
 
