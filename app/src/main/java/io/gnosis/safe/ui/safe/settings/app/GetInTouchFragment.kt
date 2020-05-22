@@ -68,14 +68,14 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
     }
 
     private fun openDiscord() {
-        //TODO:
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/${getString(R.string.id_discord)}")))
     }
 
     private fun openTwitter() {
         val intent = try {
             // get the Twitter app if possible
             requireContext().packageManager.getPackageInfo("com.twitter.android", 0)
-            Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?user_id=${getString(R.string.id_twitter)}")).apply {
+            Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=${getString(R.string.id_twitter)}")).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         } catch (e: java.lang.Exception) {
