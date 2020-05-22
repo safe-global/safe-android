@@ -10,17 +10,17 @@ Transactions are secured by on-chain multi-factor-authentication. This is achiev
 ### Infura
 The Json RPC depends on [Infura](https://infura.io/). You need to get an API key and create a file named `project_keys` with the following contents:
 ```
-INFURA_API_KEY=<YOUR_API_KEY>
+INFURA_API_KEY=<YOUR_PROJECT_ID>
 ```
 
-Replace `<YOUR_API_KEY>` with the key that you get from Infura.
+Replace `<YOUR_PROJECT_ID>` with the `project id` that you get from Infura. You can find this `project id` at `Projects -> Settings -> Keys -> PROJECT ID` on the Infura Website.
 
 ### Firebase
 The Gnosis Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
+To get this file, you need to create a Firebase project at <https://console.firebase.google.com/> and add at least one Android application.
+If you didn't change the applicationId in `app/build.gradle` you need to create an app with the package name `io.gnosis.safe.debug` to be able to build a debug app. You can find the latest `google-services.json` file in the `Project Settings` -> `General`
 
-This file can be found in the Settings page of the Firebase project.
-
-After getting access to the file, move it to the `app` module.
+After downloading the file, copy it to the `app` module folder.
 
 ### Contribute
 You can contribute to this repo by creating a Pull Request or an issue. Please follow the default template set for the Pull Requests.
