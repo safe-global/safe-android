@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SettingsFragment
+import io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsFragment
@@ -45,6 +46,8 @@ interface ViewComponent {
     fun inject(fragment: AppSettingsFragment)
 
     fun inject(fragment: GetInTouchFragment)
+
+    fun inject(fragment: AdvancedAppSettingsFragment)
 
     fun inject(fragment: SafeSettingsFragment)
 

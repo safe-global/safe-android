@@ -67,6 +67,10 @@
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
             app:destination="@id/getInTouchFragment" />
 
+        <action
+            android:id="@+id/action_settingsFragment_to_advancedAppSettingsFragment"
+            app:destination="@id/advancedAppSettingsFragment" />
+
     </fragment>
 
     <fragment
@@ -74,6 +78,11 @@
         android:name="io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment"
         android:label="GetInTouchFragment"
         tools:layout="@layout/fragment_get_in_touch"/>
+
+    <fragment
+        android:id="@+id/advancedAppSettingsFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment"
+        android:label="AdvancedAppSettingsFragment" />
 
     <navigation android:id="@+id/navigation"
         app:startDestination="@id/add_safe_nav">

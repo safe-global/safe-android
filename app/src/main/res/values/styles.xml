@@ -108,6 +108,20 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="Header">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/header_height</item>
+        <item name="android:background">@color/background</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+    </style>
+
     <style name="Toolbar">
         <item name="theme">?attr/actionBarTheme</item>
         <item name="android:background">@color/white</item>

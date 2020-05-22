@@ -44,6 +44,9 @@ class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
             }
             version.value = BuildConfig.VERSION_NAME
             network.value = BuildConfig.BLOCKCHAIN_NAME
+            advanced.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedAppSettingsFragment())
+            }
         }
     }
 

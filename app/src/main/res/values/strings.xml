@@ -56,6 +56,12 @@
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
 
+    <string name="ens_resolver_address">ENS RESOLVER ADDRESS</string>
+    <string name="endpoints">ENDPOINTS</string>
+    <string name="rpc_endpoint">RPC endpoint</string>
+    <string name="tx_service">Transaction service</string>
+    <string name="relay_service">Relay service</string>
+
     <string name="get_in_touch_title">Get in touch</string>
     <string name="get_in_touch_email">E-mail</string>
     <string name="get_in_touch_discord">Discord</string>

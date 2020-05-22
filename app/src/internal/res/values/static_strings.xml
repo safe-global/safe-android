@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Gnosis Safe - Internal</string>
-    <string name="authenticator_link" translatable="false">https://chrome.google.com/webstore/detail/gnosis-safe-rinkeby/onhbkfhncfcgjenedjnbhdjggnnbflbe</string>
 </resources>
