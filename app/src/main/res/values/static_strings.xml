@@ -7,6 +7,7 @@
     <string name="link_help_center"> https://help.gnosis-safe.io</string>
     <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
     <string name="id_telegram">GnosisSafe</string>
+    <string name="id_twitter">gnosisSafe</string>
     <string name="email_feedback" translatable="false">safe@gnosis.io</string>
     <string name="etherscan_address_url" translatable="false">https://rinkeby.etherscan.io/address/%s</string>
     <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>

@@ -72,7 +72,17 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
     }
 
     private fun openTwitter() {
-        //TODO:
+        val intent = try {
+            // get the Twitter app if possible
+            requireContext().packageManager.getPackageInfo("com.twitter.android", 0)
+            Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?user_id=${getString(R.string.id_twitter)}")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        } catch (e: java.lang.Exception) {
+            // no Twitter app, revert to browser
+            Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/${getString(R.string.id_twitter)}"))
+        }
+        startActivity(intent)
     }
 
     private fun openHelpCenter() {
