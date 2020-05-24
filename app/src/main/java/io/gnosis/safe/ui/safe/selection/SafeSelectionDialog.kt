@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -41,6 +40,7 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogSafeSelectionBinding =
         DialogSafeSelectionBinding.inflate(inflater, container, false)
@@ -65,26 +65,13 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
 
                     state.viewAction?.let {
                         val action = it as BaseStateViewModel.ViewAction.NavigateTo
-                        dismiss()
                         findNavController().navigate(action.navDirections)
+                        dismiss()
                     }
                 }
             }
         })
 
         viewModel.loadSafes()
-    }
-
-    companion object {
-
-        private val TAG = SafeSelectionDialog::class.java.simpleName
-
-        fun show(context: Context) {
-            val dialog = SafeSelectionDialog()
-            dialog.show(
-                (context as FragmentActivity).supportFragmentManager,
-                TAG
-            )
-        }
     }
 }

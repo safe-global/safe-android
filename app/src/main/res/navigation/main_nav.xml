@@ -6,45 +6,17 @@
     android:id="@+id/main_nav_graph.xml"
     app:startDestination="@id/safeBalancesFragment">
 
-    <fragment
-        android:id="@+id/noSafeFragment"
-        android:name="io.gnosis.safe.ui.safe.empty.NoSafeFragment"
-        android:label="NoSafeFragment"
-        tools:layout="@layout/fragment_no_safes">
+    <include app:graph="@navigation/add_safe_nav" />
 
-        <action
-            android:id="@+id/action_noSafeFragment_to_safeBalancesFragment"
-            app:destination="@id/safeBalancesFragment"
-            app:popUpTo="@id/safeBalancesFragment"
-            app:popUpToInclusive="false"/>
-
-        <action
-            android:id="@+id/action_to_add_safe_nav"
-            app:destination="@id/navigation"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/safeBalancesFragment"
-            app:popUpToInclusive="false"/>
-
-    </fragment>
+    <action
+        android:id="@+id/action_to_add_safe_nav"
+        app:destination="@id/add_safe_nav" />
 
     <fragment
         android:id="@+id/safeBalancesFragment"
         android:name="io.gnosis.safe.ui.safe.balances.SafeBalancesFragment"
         android:label="SafeBalancesFragment"
-        tools:layout="@layout/fragment_safe_balances">
-
-        <action
-            android:id="@+id/action_safeBalancesFragment_to_noSafeFragment"
-            app:destination="@id/noSafeFragment" />
-
-        <action
-            android:id="@+id/action_to_add_safe_nav"
-            app:destination="@id/navigation"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/safeBalancesFragment"
-            app:popUpToInclusive="false"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_safe_balances"/>
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -53,23 +25,12 @@
         tools:layout="@layout/fragment_settings">
 
         <action
-            android:id="@+id/action_settingsFragment_to_noSafeFragment"
-            app:destination="@id/noSafeFragment" />
-
-        <action
-            android:id="@+id/action_to_add_safe_nav"
-            app:destination="@id/navigation"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/safeBalancesFragment"
-            app:popUpToInclusive="false"/>
-
-        <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
-            app:destination="@id/getInTouchFragment" />
+            app:destination="@id/getInTouchFragment"/>
 
         <action
             android:id="@+id/action_settingsFragment_to_advancedAppSettingsFragment"
-            app:destination="@id/advancedAppSettingsFragment" />
+            app:destination="@id/advancedAppSettingsFragment"/>
 
     </fragment>
 
@@ -84,9 +45,16 @@
         android:name="io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment"
         android:label="AdvancedAppSettingsFragment" />
 
-    <navigation android:id="@+id/navigation"
-        app:startDestination="@id/add_safe_nav">
-        <include app:graph="@navigation/add_safe_nav" />
-    </navigation>
+    <dialog
+        android:id="@+id/safeSelectionDialog"
+        android:name="io.gnosis.safe.ui.safe.selection.SafeSelectionDialog"
+        android:label="SafeSelectionDialog"
+        tools:layout="@layout/dialog_safe_selection">
+
+        <action
+            android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
+            app:destination="@id/add_safe_nav" />
+
+    </dialog>
 
 </navigation>

@@ -10,7 +10,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
-import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -27,7 +26,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
         toolbarBinding.safeSelection.setOnClickListener {
-            SafeSelectionDialog.show(this)
+            Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
         }
         setupNav()
     }
@@ -50,7 +49,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         id != R.id.safeBalancesFragment &&
                 id != R.id.safeTransactionsFragment &&
                 id != R.id.settingsFragment &&
-                id != R.id.noSafeFragment
+                id != R.id.safeSelectionDialog
 
     override fun setSafeData(safe: Safe?) {
         if (safe == null)
@@ -66,10 +65,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeName.visible(false)
             safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
         }
-
-        navBar.menu.findItem(R.id.safeBalancesFragment).isEnabled = false
-        navBar.menu.findItem(R.id.safeBalancesFragment).isChecked = true
-        navBar.menu.findItem(R.id.settingsFragment).isEnabled = false
     }
 
     private fun setSafe(safe: Safe) {
@@ -79,9 +74,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeName.text = safe.localName
             safeAddress.text = safe.address.asEthereumAddressString().asMiddleEllipsized(4)
         }
-
-        navBar.menu.findItem(R.id.safeBalancesFragment).isEnabled = true
-        navBar.menu.findItem(R.id.settingsFragment).isEnabled = true
     }
 }
 
