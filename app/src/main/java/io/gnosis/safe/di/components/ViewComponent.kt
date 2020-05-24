@@ -39,8 +39,6 @@ interface ViewComponent {
 
     fun inject(dialog: EnsInputDialog)
 
-    fun inject(fragment: NoSafeFragment)
-
     fun inject(fragment: SettingsFragment)
 
     fun inject(fragment: AppSettingsFragment)
