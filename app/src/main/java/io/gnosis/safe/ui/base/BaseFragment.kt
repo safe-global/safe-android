@@ -40,10 +40,12 @@ abstract class BaseFragment<T> : Fragment()
     private fun buildViewComponent(context: Context): ViewComponent =
         DaggerViewComponent.builder()
             .applicationComponent(HeimdallApplication[context])
-            .viewModule(ViewModule(context, parentFragment))
+            .viewModule(ViewModule(context, viewModelProvider()))
             .build()
 
     abstract fun inject(component: ViewComponent)
+
+    open protected fun viewModelProvider(): Any? = parentFragment
 
     abstract fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 }

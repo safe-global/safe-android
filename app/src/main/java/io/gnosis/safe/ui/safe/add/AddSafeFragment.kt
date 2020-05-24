@@ -33,6 +33,8 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAddSafeBinding =
         FragmentAddSafeBinding.inflate(inflater, container, false)
 

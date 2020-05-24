@@ -1,9 +1,7 @@
 package io.gnosis.safe.ui.safe.selection
 
-import androidx.navigation.ActionOnlyNavDirections
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import javax.inject.Inject
@@ -60,7 +58,7 @@ class SafeSelectionViewModel @Inject constructor(
             updateState(true) {
                 SafeSelectionState.AddSafeState(
                     ViewAction.NavigateTo(
-                        ActionOnlyNavDirections(R.id.action_to_add_safe_nav)
+                        SafeSelectionDialogDirections.actionSafeSelectionDialogToAddSafeNav()
                     )
                 )
             }

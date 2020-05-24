@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.base
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,9 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
 
     abstract fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        inject(buildViewComponent())
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        inject(buildViewComponent(context))
     }
 
     override fun onCreateView(
@@ -35,7 +36,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
         return binding.root
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  =
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         BottomSheetDialog(requireContext(), theme)
 
     override fun getTheme(): Int {
@@ -47,10 +48,13 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
         _binding = null
     }
 
-    private fun buildViewComponent() = DaggerViewComponent.builder()
-        .viewModule(ViewModule(context!!))
-        .applicationComponent(HeimdallApplication[context!!])
-        .build()
+    private fun buildViewComponent(context: Context) =
+        DaggerViewComponent.builder()
+            .applicationComponent(HeimdallApplication[context])
+            .viewModule(ViewModule(context, viewModelProvider()))
+            .build()
 
     abstract fun inject(viewComponent: ViewComponent)
+
+    open protected fun viewModelProvider(): Any? = parentFragment
 }
