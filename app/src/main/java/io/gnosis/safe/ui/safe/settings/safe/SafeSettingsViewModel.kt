@@ -36,7 +36,7 @@ class SafeSettingsViewModel @Inject constructor(
             }.onFailure {
                 updateState { SafeSettingsState(ViewAction.ShowError(it)) }
             }.onSuccess {
-                updateState { SafeSettingsState(ViewAction.UpdateActiveSafe(null)) }
+                updateState { SafeSettingsState(SafeRemoved) }
                 tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
@@ -47,4 +47,4 @@ data class SafeSettingsState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
-
+object SafeRemoved : BaseStateViewModel.ViewAction

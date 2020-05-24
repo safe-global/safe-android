@@ -12,16 +12,10 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.safe.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
-import javax.inject.Inject
 
 class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
 
-    @Inject
-    lateinit var viewModel: AppSettingsViewModel
-
-    override fun inject(component: ViewComponent) {
-        component.inject(this)
-    }
+    override fun inject(component: ViewComponent) {}
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppBinding =
         FragmentSettingsAppBinding.inflate(inflater, container, false)

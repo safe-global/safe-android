@@ -17,14 +17,11 @@ class SafeBalancesViewModel @Inject constructor(
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState(true) {
-                    SafeBalancesState.ActiveSafe(
-                        safe, takeIf { safe == null }?.let {
-                            ViewAction.NavigateTo(
-                                SafeBalancesFragmentDirections.actionSafeBalancesFragmentToNoSafeFragment()
-                            )
-                        }
-                    )
+                updateState {
+                    if (safe == null)
+                        SafeBalancesState.NoActiveSafe(null)
+                    else
+                        SafeBalancesState.ActiveSafe(safe, null)
                 }
             }
         }
@@ -39,6 +36,10 @@ sealed class SafeBalancesState : BaseStateViewModel.State {
 
     data class ActiveSafe(
         val safe: Safe?,
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) : SafeBalancesState()
+
+    data class NoActiveSafe(
         override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeBalancesState()
 }

@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.settings
 
+import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -11,28 +12,35 @@ class SettingsViewModel @Inject constructor(
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SettingsState>(appDispatchers) {
 
-    override fun initialState() = SettingsState(ViewAction.Loading(true))
+    override fun initialState() = SettingsState.SafeLoading(null)
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState(true) {
-                    SettingsState(
-                        if (safe == null)
-                            ViewAction.NavigateTo(
-                                SettingsFragmentDirections.actionSettingsFragmentToNoSafeFragment()
-                            )
-                        else
-                            ViewAction.UpdateActiveSafe(safe)
-                    )
+                updateState {
+                    if (safe == null)
+                        SettingsState.NoActiveSafe(null)
+                    else
+                        SettingsState.ActiveSafe(safe, null)
                 }
             }
         }
     }
-
 }
 
-data class SettingsState(
-    override var viewAction: BaseStateViewModel.ViewAction?
-) : BaseStateViewModel.State
+sealed class SettingsState : BaseStateViewModel.State {
+
+    data class SafeLoading(
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) : SettingsState()
+
+    data class ActiveSafe(
+        val safe: Safe?,
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) : SettingsState()
+
+    data class NoActiveSafe(
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) : SettingsState()
+}
 
