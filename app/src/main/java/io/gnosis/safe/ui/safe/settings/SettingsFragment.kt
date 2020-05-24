@@ -30,6 +30,8 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
@@ -65,6 +67,10 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
                 }
             }
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 
     override fun handleActiveSafe(safe: Safe?) {
@@ -104,7 +110,7 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun containsItem(itemId: Long): Boolean {
         return when {
             noActiveSafe && itemId == 3L -> true
-            noActiveSafe && itemId != 3L -> false
+            noActiveSafe && itemId == 1L -> false
             else -> itemId == 1L || itemId == 2L
         }
     }

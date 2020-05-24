@@ -26,11 +26,13 @@
 
         <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
-            app:destination="@id/getInTouchFragment"/>
+            app:destination="@id/getInTouchFragment"
+            app:popUpTo="@id/settingsFragment"/>
 
         <action
             android:id="@+id/action_settingsFragment_to_advancedAppSettingsFragment"
-            app:destination="@id/advancedAppSettingsFragment"/>
+            app:destination="@id/advancedAppSettingsFragment"
+            app:popUpTo="@id/settingsFragment"/>
 
     </fragment>
 
@@ -43,7 +45,8 @@
     <fragment
         android:id="@+id/advancedAppSettingsFragment"
         android:name="io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment"
-        android:label="AdvancedAppSettingsFragment" />
+        android:label="AdvancedAppSettingsFragment"
+        tools:layout="@layout/fragment_settings_app_advanced"/>
 
     <dialog
         android:id="@+id/safeSelectionDialog"

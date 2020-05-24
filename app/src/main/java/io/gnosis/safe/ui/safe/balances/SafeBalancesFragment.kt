@@ -106,7 +106,7 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun containsItem(itemId: Long): Boolean {
         return when {
             noActiveSafe && itemId == 3L -> true
-            noActiveSafe && itemId != 3L -> false
+            noActiveSafe && itemId != 1L -> false
             else -> itemId == 1L || itemId == 2L
         }
     }
