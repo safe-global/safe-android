@@ -7,12 +7,17 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewEndpointItemBinding
+import timber.log.Timber
 
 class EndpointItem @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding = ViewEndpointItemBinding.inflate(LayoutInflater.from(context), this)
+
+    init {
+        readAttributesAndSetupFields(context, attrs)
+    }
 
     var name: String? = null
         set(value) {
@@ -26,21 +31,17 @@ class EndpointItem @JvmOverloads constructor(
             field = value
         }
 
-    init {
-        readAttributesAndSetupFields(context, attrs)
-    }
-
     private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
-        val a = context.theme.obtainStyledAttributes(
+        context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.EndpointItem,
             0, 0
-        )
-        try {
-            applyAttributes(context, a)
-
-        } finally {
-            a.recycle()
+        ).also {
+            runCatching {
+                applyAttributes(context, it)
+            }
+                .onFailure { Timber.e(it) }
+            it.recycle()
         }
     }
 

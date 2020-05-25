@@ -17,6 +17,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
+import timber.log.Timber
 
 class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
 
@@ -111,6 +112,7 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
         try {
             startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
+            Timber.e(ex)
             snackbar(binding.root, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
         }
     }

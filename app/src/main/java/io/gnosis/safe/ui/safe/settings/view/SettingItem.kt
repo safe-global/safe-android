@@ -8,12 +8,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewSettingsItemBinding
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 
 class SettingItem @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by lazy { ViewSettingsItemBinding.inflate(LayoutInflater.from(context), this) }
+
+    init {
+        readAttributesAndSetupFields(context, attrs)
+    }
 
     var openable: Boolean = true
         set(value) {
@@ -33,21 +38,17 @@ class SettingItem @JvmOverloads constructor(
             field = value
         }
 
-    init {
-        readAttributesAndSetupFields(context, attrs)
-    }
-
     private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
-        val a = context.obtainStyledAttributes(
+        context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.SettingItem,
             0, 0
-        )
-        try {
-            applyAttributes(context, a)
-
-        } finally {
-            a.recycle()
+        ).also {
+            runCatching {
+                applyAttributes(context, it)
+            }
+                .onFailure { Timber.e(it) }
+            it.recycle()
         }
     }
 
