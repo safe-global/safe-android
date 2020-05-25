@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
+import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -19,7 +20,7 @@ class SafeSettingsViewModel @Inject constructor(
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState(true) {
-                    SafeSettingsState(ViewAction.ActiveSafe(safe))
+                    SafeSettingsState(ActiveSafe(safe))
                 }
             }
         }
@@ -48,3 +49,4 @@ data class SafeSettingsState(
 ) : BaseStateViewModel.State
 
 object SafeRemoved : BaseStateViewModel.ViewAction
+data class ActiveSafe(val safe: Safe?): BaseStateViewModel.ViewAction

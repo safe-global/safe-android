@@ -4,6 +4,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.safe.settings.safe.ActiveSafe
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.mockk.*
 import kotlinx.coroutines.flow.conflate
@@ -55,8 +56,8 @@ class SafeSettingsViewModelTest {
         with(stateObserver.values()[0]) {
             val viewAction = this.viewAction
             assert (
-                viewAction is BaseStateViewModel.ViewAction.ActiveSafe &&
-                        viewAction.newSafe == null
+                viewAction is ActiveSafe &&
+                        viewAction.safe == null
             )
         }
 
