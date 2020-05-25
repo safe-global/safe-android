@@ -49,9 +49,15 @@ class SafeRepository(
             isSupported(request.checkedResult("Valid safe check failed").asEthereumAddress())
         }
 
-    suspend fun setActiveSafe(safe: Safe?) {
+    suspend fun clearActiveSafe() {
         preferencesManager.prefs.edit {
-            putString(ACTIVE_SAFE, safe?.address?.asEthereumAddressString())
+            remove(ACTIVE_SAFE)
+        }
+    }
+
+    suspend fun setActiveSafe(safe: Safe) {
+        preferencesManager.prefs.edit {
+            putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
         }
     }
 

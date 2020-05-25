@@ -38,7 +38,7 @@ class SafeSettingsViewModelTest {
             emit(null)
         }
             .conflate()
-        coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { safeRepository.clearActiveSafe() } just Runs
         coEvery { safeRepository.getSafes() } returnsMany listOf(SAFES, listOf(SAFE_2))
         coEvery { safeRepository.removeSafe(ACTIVE_SAFE) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -62,7 +62,7 @@ class SafeSettingsViewModelTest {
 
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { safeRepository.removeSafe(SAFE_1) }
-        coVerify(exactly = 1) { safeRepository.setActiveSafe(null) }
+        coVerify(exactly = 1) { safeRepository.clearActiveSafe() }
 
         // verify SAFE_REMOVE event was tracked
         coVerify(exactly = 1) { tracker.setNumSafes(1) }
