@@ -6,12 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
+import io.gnosis.data.models.Safe
 import kotlinx.coroutines.*
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 data class AppDispatchers(
@@ -39,6 +36,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
     interface ViewAction {
         data class Loading(val isLoading: Boolean) : ViewAction
         data class ShowError(val error: Throwable) : ViewAction
+        data class UpdateActiveSafe(val newSafe: Safe?): ViewAction
         data class StartActivity(val intent: Intent) : ViewAction
         data class NavigateTo(val navDirections: NavDirections) : ViewAction
         object CloseScreen : ViewAction

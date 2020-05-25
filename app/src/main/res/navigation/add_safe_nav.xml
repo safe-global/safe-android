@@ -14,7 +14,6 @@
         <action
             android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
             app:destination="@id/addSafeNameFragment"
-            app:launchSingleTop="true"
             app:popUpTo="@id/addSafeFragment"
             app:popUpToInclusive="true" />
     </fragment>

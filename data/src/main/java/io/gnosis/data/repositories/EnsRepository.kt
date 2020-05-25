@@ -50,7 +50,8 @@ class EnsRepository(
 
 
     companion object {
-        private val ENS_ADDRESS = BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
+
+        val ENS_ADDRESS = BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
 
         /*
         contract ENS {

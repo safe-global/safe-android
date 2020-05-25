@@ -4,8 +4,8 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 class SafeBalancesViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
@@ -18,13 +18,7 @@ class SafeBalancesViewModel @Inject constructor(
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState {
-                    SafeBalancesState.ActiveSafe(
-                        safe, takeIf { safe == null }?.let {
-                            ViewAction.NavigateTo(
-                                SafeBalancesFragmentDirections.actionSafeBalancesFragmentToNoSafeFragment()
-                            )
-                        }
-                    )
+                    SafeBalancesState.ActiveSafe(safe, null)
                 }
             }
         }

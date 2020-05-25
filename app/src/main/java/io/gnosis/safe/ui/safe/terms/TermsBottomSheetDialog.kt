@@ -22,11 +22,11 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
 
         with(binding) {
             bottomSheetTermsAndConditionsPrivacyPolicyLink.appendLink(
-                getString(R.string.link_terms_privacy),
+                getString(R.string.link_privacy_policy),
                 getString(R.string.terms_privacy_policy)
             )
             bottomSheetTermsAndConditionsTermsOfUseLink.appendLink(
-                getString(R.string.link_terms_terms_of_use),
+                getString(R.string.link_terms_of_use),
                 getString(R.string.terms_terms_of_use)
             )
 

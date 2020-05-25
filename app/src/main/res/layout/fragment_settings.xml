@@ -7,22 +7,20 @@
     android:layout_height="match_parent"
     tools:background="@color/background">
 
-    <!-- TODO make views visible and remove <fragment /> -->
-
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/balances_tab_bar"
+        android:id="@+id/settings_tab_bar"
         style="@style/TabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/balances_content"
+        android:id="@+id/settings_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balances_tab_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/settings_tab_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

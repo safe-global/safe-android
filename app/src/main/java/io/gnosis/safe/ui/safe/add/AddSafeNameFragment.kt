@@ -1,12 +1,9 @@
 package io.gnosis.safe.ui.safe.add
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -34,6 +31,8 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
+
+    override fun viewModelProvider() = this
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAddSafeNameBinding =
         FragmentAddSafeNameBinding.inflate(inflater, container, false)
