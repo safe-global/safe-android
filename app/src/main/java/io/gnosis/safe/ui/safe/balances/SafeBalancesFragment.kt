@@ -74,6 +74,8 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     enum class Tabs { COINS, COLLECTIBLES }
 
+    enum class Items(val value: Long) { COINS(1), COLLECTIBLES(2), NO_SAFE(3) }
+
     var noActiveSafe: Boolean = false
         set(value) {
             field = value
@@ -88,21 +90,17 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
             Tabs.COLLECTIBLES -> CollectiblesFragment.newInstance()
         }
 
-    // item ids:
-    // COINS -> 1
-    // COLLECTIBLES -> 2
-    // NO_SAFE -> 3
     override fun getItemId(position: Int): Long {
         return when (Tabs.values()[position]) {
-            Tabs.COINS -> if (noActiveSafe) 3L else 1L
-            Tabs.COLLECTIBLES -> 2L
+            Tabs.COINS -> if (noActiveSafe) Items.NO_SAFE.value else Items.COINS.value
+            Tabs.COLLECTIBLES -> Items.COLLECTIBLES.value
         }
     }
 
     override fun containsItem(itemId: Long): Boolean {
         return when (itemId) {
-            3L -> noActiveSafe
-            1L -> !noActiveSafe
+            Items.NO_SAFE.value -> noActiveSafe
+            Items.COINS.value -> !noActiveSafe
             else -> true
         }
     }

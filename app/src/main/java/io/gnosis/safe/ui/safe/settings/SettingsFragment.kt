@@ -77,6 +77,8 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     enum class Tabs { SAFE, APP }
 
+    enum class Items(val value: Long) { SAFE(1), APP(2), NO_SAFE(3) }
+
     var noActiveSafe: Boolean = false
         set(value) {
             field = value
@@ -91,21 +93,18 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
             Tabs.APP -> AppSettingsFragment.newInstance()
         }
 
-    // item ids:
-    // SAFE -> 1
-    // APP -> 2
-    // NO_SAFE -> 3
     override fun getItemId(position: Int): Long {
         return when (Tabs.values()[position]) {
-            Tabs.SAFE -> if (noActiveSafe) 3L else 1L
-            Tabs.APP -> 2L
+            Tabs.SAFE -> if (noActiveSafe) Items.NO_SAFE.value else Items.SAFE.value
+            Tabs.APP -> Items.APP.value
         }
     }
 
+
     override fun containsItem(itemId: Long): Boolean {
         return when (itemId) {
-            3L -> noActiveSafe
-            1L -> !noActiveSafe
+            Items.NO_SAFE.value -> noActiveSafe
+            Items.SAFE.value -> !noActiveSafe
             else -> true
         }
     }
