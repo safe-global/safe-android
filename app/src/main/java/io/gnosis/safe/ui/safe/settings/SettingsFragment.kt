@@ -69,10 +69,6 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
         })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
     }
