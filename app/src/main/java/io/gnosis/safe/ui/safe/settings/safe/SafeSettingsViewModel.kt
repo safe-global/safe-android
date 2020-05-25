@@ -19,7 +19,7 @@ class SafeSettingsViewModel @Inject constructor(
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState(true) {
-                    SafeSettingsState(ViewAction.UpdateActiveSafe(safe))
+                    SafeSettingsState(ViewAction.ActiveSafe(safe))
                 }
             }
         }

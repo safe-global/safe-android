@@ -55,7 +55,7 @@ class SafeSettingsViewModelTest {
         with(stateObserver.values()[0]) {
             val viewAction = this.viewAction
             assert (
-                viewAction is BaseStateViewModel.ViewAction.UpdateActiveSafe &&
+                viewAction is BaseStateViewModel.ViewAction.ActiveSafe &&
                         viewAction.newSafe == null
             )
         }
