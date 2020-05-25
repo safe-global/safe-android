@@ -8,12 +8,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.repositories.EnsRepository
+import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
-import pm.gnosis.utils.asEthereumAddress
-import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.R
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.utils.asEthereumAddressString
