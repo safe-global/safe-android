@@ -83,7 +83,6 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
         requireContext().openUrl(getString(R.string.link_feature_suggestion))
     }
 
-    // Do we need telegram channel or is discord sufficient?
     private fun openTelegramChannel() {
         kotlin.runCatching {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=${getString(R.string.id_telegram)}"))
