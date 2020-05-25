@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Safe
@@ -74,7 +75,10 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     enum class Tabs { COINS, COLLECTIBLES }
 
-    enum class Items(val value: Long) { COINS(1), COLLECTIBLES(2), NO_SAFE(3) }
+    enum class Items(val value: Long) {
+        COINS(Tabs.COINS.ordinal.toLong()),
+        COLLECTIBLES(Tabs.COLLECTIBLES.ordinal.toLong()),
+        NO_SAFE(RecyclerView.NO_ID) }
 
     var noActiveSafe: Boolean = false
         set(value) {

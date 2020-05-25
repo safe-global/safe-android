@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Safe
@@ -77,7 +78,10 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     enum class Tabs { SAFE, APP }
 
-    enum class Items(val value: Long) { SAFE(1), APP(2), NO_SAFE(3) }
+    enum class Items(val value: Long) {
+        SAFE(Tabs.SAFE.ordinal.toLong()),
+        APP(Tabs.APP.ordinal.toLong()),
+        NO_SAFE(RecyclerView.NO_ID) }
 
     var noActiveSafe: Boolean = false
         set(value) {
