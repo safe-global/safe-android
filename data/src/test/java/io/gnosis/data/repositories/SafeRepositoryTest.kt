@@ -78,6 +78,15 @@ class SafeRepositoryTest {
     }
 
     @Test
+    fun `setActiveSafe - (Safe) should update active safe to null`() = runBlocking {
+        val safe = null
+
+        safeRepository.setActiveSafe(safe)
+
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, null) }
+    }
+
+    @Test
     fun `getActiveSafe - (no active safe) should return null`() = runBlocking {
         val actual = safeRepository.getActiveSafe()
 
