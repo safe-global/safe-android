@@ -82,19 +82,7 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
     private fun openFeatureSuggestionPage() {
         requireContext().openUrl(getString(R.string.link_feature_suggestion))
     }
-
-    private fun openTelegramChannel() {
-        kotlin.runCatching {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=${getString(R.string.id_telegram)}"))
-            startActivity(intent)
-        }
-            .onFailure {
-                Timber.e(it)
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.telegram.me/${getString(R.string.id_telegram)}"))
-                startActivity(intent)
-            }
-    }
-
+    
     private fun sendEmail() {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             type = "text/html"
