@@ -13,6 +13,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSettingsBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.safe.settings.app.AppSettingsFragment
@@ -55,15 +56,13 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
             }.attach()
         }
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {state ->
-            when (state) {
-                is SettingsState.ActiveSafe -> {
-                    pager.noActiveSafe = false
-                    handleActiveSafe(state.safe)
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            when (state.viewAction) {
+                is BaseStateViewModel.ViewAction.Loading -> {
                 }
-                is SettingsState.NoActiveSafe -> {
-                    pager.noActiveSafe = true
-                    handleActiveSafe(null)
+                else -> {
+                    handleActiveSafe(state.safe)
+                    pager.noActiveSafe = state.safe == null
                 }
             }
         })
@@ -104,10 +103,10 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     }
 
     override fun containsItem(itemId: Long): Boolean {
-        return when {
-            noActiveSafe && itemId == 3L -> true
-            noActiveSafe && itemId == 1L -> false
-            else -> itemId == 1L || itemId == 2L
+        return when (itemId) {
+            3L -> noActiveSafe
+            1L -> !noActiveSafe
+            else -> true
         }
     }
 }

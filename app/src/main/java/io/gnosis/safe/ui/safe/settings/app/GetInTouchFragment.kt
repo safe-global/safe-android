@@ -79,7 +79,7 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
             Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=${getString(R.string.id_twitter)}")).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-        } catch (e: java.lang.Exception) {
+        } catch (e: ActivityNotFoundException) {
             // no Twitter app, revert to browser
             Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/${getString(R.string.id_twitter)}"))
         }
@@ -98,22 +98,24 @@ class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
     private fun openTelegramChannel() {
         var intent = try {
             Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=${getString(R.string.id_telegram)}"))
-        } catch (e: Exception) { //App not found open in browser
+        } catch (e: ActivityNotFoundException) { //App not found open in browser
             Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/${getString(R.string.id_telegram)}"))
         }
         startActivity(intent)
     }
 
     private fun sendEmail() {
-        val intent = Intent(Intent.ACTION_SENDTO)
-        intent.type = "text/html"
-        intent.data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject, getString(R.string.app_name)))
-        try {
-            startActivity(intent)
-        } catch (ex: ActivityNotFoundException) {
-            Timber.e(ex)
-            snackbar(binding.root, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            type = "text/html"
+            data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject, getString(R.string.app_name)))
         }
+        kotlin.runCatching {
+            startActivity(intent)
+        }
+            .onFailure {
+                Timber.e(it)
+                snackbar(binding.root, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
+            }
     }
 }

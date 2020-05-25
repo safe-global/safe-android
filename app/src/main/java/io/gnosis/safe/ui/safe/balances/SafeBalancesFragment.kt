@@ -56,14 +56,10 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is SafeBalancesState.ActiveSafe -> {
-                    pager.noActiveSafe = false
-                    binding.balancesTabBar.visible(true, View.INVISIBLE)
+                    val noActiveSafe = state.safe == null
+                    pager.noActiveSafe = noActiveSafe
+                    binding.balancesTabBar.visible(!noActiveSafe, View.INVISIBLE)
                     handleActiveSafe(state.safe)
-                }
-                is SafeBalancesState.NoActiveSafe -> {
-                    pager.noActiveSafe = true
-                    binding.balancesTabBar.visible(false, View.INVISIBLE)
-                    handleActiveSafe(null)
                 }
             }
         })
@@ -104,10 +100,10 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     }
 
     override fun containsItem(itemId: Long): Boolean {
-        return when {
-            noActiveSafe && itemId == 3L -> true
-            noActiveSafe && itemId != 1L -> false
-            else -> itemId == 1L || itemId == 2L
+        return when (itemId) {
+            3L -> noActiveSafe
+            1L -> !noActiveSafe
+            else -> true
         }
     }
 }

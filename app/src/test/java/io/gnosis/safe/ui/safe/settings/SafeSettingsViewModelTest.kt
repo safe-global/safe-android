@@ -4,7 +4,8 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.settings.safe.ActiveSafe
+import io.gnosis.safe.ui.safe.settings.safe.SafeRemoved
+import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsState
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.mockk.*
 import kotlinx.coroutines.flow.conflate
@@ -40,7 +41,7 @@ class SafeSettingsViewModelTest {
         }
             .conflate()
         coEvery { safeRepository.clearActiveSafe() } just Runs
-        coEvery { safeRepository.getSafes() } returnsMany listOf(SAFES, listOf(SAFE_2))
+        coEvery { safeRepository.getSafes() } returns listOf(SAFE_2)
         coEvery { safeRepository.removeSafe(ACTIVE_SAFE) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
@@ -48,25 +49,25 @@ class SafeSettingsViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
-        val safeCount = safeRepository.getSafes().count()
-        assert(safeCount == 2)
-
         safeSettingsViewModel.removeSafe()
 
-        with(stateObserver.values()[0]) {
-            val viewAction = this.viewAction
-            assert (
-                viewAction is ActiveSafe &&
-                        viewAction.safe == null
-            )
+        with(stateObserver.values()[0] as SafeSettingsState) {
+            assert(safe == null && viewAction is BaseStateViewModel.ViewAction.None)
         }
 
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
-        coVerify(exactly = 1) { safeRepository.removeSafe(SAFE_1) }
-        coVerify(exactly = 1) { safeRepository.clearActiveSafe() }
+        with(stateObserver.values()[1] as SafeSettingsState) {
+            assert(safe == SAFE_1 && viewAction is SafeRemoved)
+        }
 
-        // verify SAFE_REMOVE event was tracked
-        coVerify(exactly = 1) { tracker.setNumSafes(1) }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.removeSafe(SAFE_1)
+            safeRepository.clearActiveSafe()
+            safeRepository.getSafes()
+            // verify SAFE_REMOVE event was tracked
+            tracker.setNumSafes(1)
+        }
     }
 
     companion object {

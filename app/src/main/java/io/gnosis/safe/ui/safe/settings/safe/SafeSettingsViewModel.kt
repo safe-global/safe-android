@@ -14,13 +14,13 @@ class SafeSettingsViewModel @Inject constructor(
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
 
-    override fun initialState() = SafeSettingsState(ViewAction.Loading(true))
+    override fun initialState() = SafeSettingsState(null, ViewAction.Loading(true))
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState(true) {
-                    SafeSettingsState(ActiveSafe(safe))
+                updateState {
+                    SafeSettingsState(safe, ViewAction.None)
                 }
             }
         }
@@ -28,16 +28,16 @@ class SafeSettingsViewModel @Inject constructor(
 
     fun removeSafe() {
         safeLaunch {
+            val safe = safeRepository.getActiveSafe()
             runCatching {
-                val safe = safeRepository.getActiveSafe()
                 safe?.let {
                     safeRepository.removeSafe(safe)
                     safeRepository.clearActiveSafe()
                 }
             }.onFailure {
-                updateState { SafeSettingsState(ViewAction.ShowError(it)) }
+                updateState { SafeSettingsState(safe, ViewAction.ShowError(it)) }
             }.onSuccess {
-                updateState { SafeSettingsState(SafeRemoved) }
+                updateState { SafeSettingsState(safe, SafeRemoved) }
                 tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
@@ -45,8 +45,8 @@ class SafeSettingsViewModel @Inject constructor(
 }
 
 data class SafeSettingsState(
+    val safe: Safe?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
 object SafeRemoved : BaseStateViewModel.ViewAction
-data class ActiveSafe(val safe: Safe?): BaseStateViewModel.ViewAction

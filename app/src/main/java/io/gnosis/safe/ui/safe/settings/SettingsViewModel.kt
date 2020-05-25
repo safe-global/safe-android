@@ -12,35 +12,21 @@ class SettingsViewModel @Inject constructor(
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SettingsState>(appDispatchers) {
 
-    override fun initialState() = SettingsState.SafeLoading(null)
+    override fun initialState() = SettingsState(null, ViewAction.Loading(true))
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState {
-                    if (safe == null)
-                        SettingsState.NoActiveSafe(null)
-                    else
-                        SettingsState.ActiveSafe(safe, null)
+                    SettingsState(safe, ViewAction.None)
                 }
             }
         }
     }
 }
 
-sealed class SettingsState : BaseStateViewModel.State {
-
-    data class SafeLoading(
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SettingsState()
-
-    data class ActiveSafe(
-        val safe: Safe?,
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SettingsState()
-
-    data class NoActiveSafe(
-        override var viewAction: BaseStateViewModel.ViewAction?
-    ) : SettingsState()
-}
+data class SettingsState(
+    val safe: Safe?,
+    override var viewAction: BaseStateViewModel.ViewAction?
+) : BaseStateViewModel.State
 
