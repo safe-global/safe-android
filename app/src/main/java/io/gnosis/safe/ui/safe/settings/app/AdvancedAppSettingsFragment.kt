@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
@@ -61,7 +62,9 @@ class AdvancedAppSettingsFragment : BaseFragment<FragmentSettingsAppAdvancedBind
 
     companion object {
 
-        val ENS_REGISTRY = io.gnosis.contracts.BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
+        val ENS_REGISTRY = EnsRepository.ENS_ADDRESS
+
+        //TODO: Add constants to respective repositories
         const val RPC_ENDPOINT = BuildConfig.BLOCKCHAIN_NET_URL
         const val TX_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.TRANSACTION_SERVICE_URL
         const val RELAY_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.RELAY_SERVICE_URL
