@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
@@ -19,6 +20,8 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import timber.log.Timber
 
 class GetInTouchFragment : BaseFragment<FragmentGetInTouchBinding>() {
+
+    override fun screenId() = ScreenId.SETTINGS_GET_IN_TOUCH
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

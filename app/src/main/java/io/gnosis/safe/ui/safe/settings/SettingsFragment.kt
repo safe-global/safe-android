@@ -93,7 +93,7 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     override fun createFragment(position: Int): Fragment =
         when (Tabs.values()[position]) {
-            Tabs.SAFE -> if (noActiveSafe) NoSafeFragment.newInstance() else SafeSettingsFragment.newInstance()
+            Tabs.SAFE -> if (noActiveSafe) NoSafeFragment.newInstance(NoSafeFragment.Position.SETTINGS) else SafeSettingsFragment.newInstance()
             Tabs.APP -> AppSettingsFragment.newInstance()
         }
 
@@ -103,7 +103,6 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
             Tabs.APP -> Items.APP.value
         }
     }
-
 
     override fun containsItem(itemId: Long): Boolean {
         return when (itemId) {

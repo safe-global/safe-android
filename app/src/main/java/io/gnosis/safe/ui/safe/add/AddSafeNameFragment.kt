@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
@@ -27,6 +28,8 @@ class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
 
     private val navArgs by navArgs<AddSafeNameFragmentArgs>()
     private val newAddress by lazy { navArgs.newAddress.asEthereumAddress()!! }
+
+    override fun screenId() = ScreenId.SAFE_ADD_NAME
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

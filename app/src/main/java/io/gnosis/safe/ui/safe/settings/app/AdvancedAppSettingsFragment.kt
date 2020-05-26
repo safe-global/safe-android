@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
@@ -18,6 +19,8 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.utils.asEthereumAddressString
 
 class AdvancedAppSettingsFragment : BaseFragment<FragmentSettingsAppAdvancedBinding>() {
+
+    override fun screenId() = ScreenId.SETTINGS_APP_ADVANCED
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
@@ -28,6 +29,8 @@ class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
     private val addressInputHelper by lazy {
         AddressInputHelper(this, ::updateAddress, allowAddressBook = false)
     }
+
+    override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

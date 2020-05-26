@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseFragment
@@ -23,6 +24,8 @@ class CoinsFragment : BaseFragment<FragmentCoinsBinding>() {
     lateinit var viewModel: CoinsViewModel
 
     private val adapter = CoinBalanceAdapter()
+
+    override fun screenId() = ScreenId.BALANCES_COINS
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
