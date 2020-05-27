@@ -40,6 +40,8 @@ constructor(
         safeLaunch {
             if (termsChecker.getTermsAgreed()) {
                 updateState { TermsAgreed(viewAction = ViewAction.StartActivity(Intent(appContext, StartActivity::class.java))) }
+            } else {
+                updateState { TermsAgreed(ShowButton) }
             }
         }
     }
@@ -47,4 +49,5 @@ constructor(
     data class TermsAgreed(override var viewAction: ViewAction?) : State
 
     object ShowTerms : ViewAction
+    object ShowButton : ViewAction
 }

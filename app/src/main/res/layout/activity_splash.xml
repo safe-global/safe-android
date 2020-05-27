@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -17,15 +15,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/splash_text"
-        style="@style/H5Headline"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/slogan"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_horizontal_margin"
-        android:layout_marginStart="@dimen/default_horizontal_margin"
-        android:layout_marginTop="34dp"
-        android:text="@string/splash_text"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:src="@drawable/ic_slogan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,12 +33,13 @@
         style="@style/PrimaryButton"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:layout_marginStart="@dimen/default_horizontal_margin"
         android:layout_marginTop="56dp"
+        android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:text="@string/get_started"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/splash_text" />
+        app:layout_constraintTop_toBottomOf="@+id/slogan" />
 </androidx.constraintlayout.widget.ConstraintLayout>
