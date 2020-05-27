@@ -5,6 +5,7 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import io.gnosis.data.adapters.OperationEnumAdapter
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.BigDecimalNumberAdapter
 import io.gnosis.safe.BuildConfig
@@ -67,6 +68,7 @@ class ApplicationModule(private val application: Application) {
     fun providesMoshi(): Moshi {
         return MoshiBuilderFactory.makeMoshiBuilder()
             .add(BigDecimalNumberAdapter())
+            .add(OperationEnumAdapter())
             .build()
     }
 

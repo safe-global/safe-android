@@ -1,11 +1,27 @@
 package io.gnosis.data.models
 
-sealed class Transaction(open val nonce: String) {
+import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
-    data class ChangeMastercopy(override val nonce: String) : Transaction(nonce)
-    data class ChangeMastercopyQueued(override val nonce: String) : Transaction(nonce)
-    data class SettingsChange(override val nonce: String) : Transaction(nonce)
-    data class SettingsChangeQueued(override val nonce: String) : Transaction(nonce)
-    data class Transfer(override val nonce: String) : Transaction(nonce)
-    data class TransferQueued(override val nonce: String) : Transaction(nonce)
+data class TransactionDto(
+    val safe: Solidity.Address,
+    val to: Solidity.Address,
+    val value: BigInteger,
+    val data: String?,
+    val operation: Operation,
+    val gasToken: Solidity.Address?,
+    val safeTxGas: BigInteger,
+    val baseGas: BigInteger,
+    val gasPrice: BigInteger,
+    val refundReceiver: Solidity.Address?,
+    val nonce: BigInteger,
+    val executionDate: String,
+    val submissionDate: String,
+    val modified: String, //Date
+    val blockNumber: BigInteger
+)
+
+enum class Operation(val id: Int) {
+    CALL(0),
+    DELEGATE(1)
 }

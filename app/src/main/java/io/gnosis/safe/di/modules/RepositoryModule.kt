@@ -49,4 +49,9 @@ class RepositoryModule {
         transactionServiceApi: TransactionServiceApi
     ): TokenRepository =
         TokenRepository(erc20TokenDao, transactionServiceApi)
+
+    @Provides
+    @Singleton
+    fun providesTransactionRepository(transactionServiceApi: TransactionServiceApi): TransactionRepository =
+        TransactionRepository(transactionServiceApi)
 }
