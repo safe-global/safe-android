@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
@@ -15,6 +16,9 @@ class SplashActivity : BaseActivity() {
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
     private val termsBottomSheetDialog = TermsBottomSheetDialog()
+
+    //TODO: split splash and get started screen
+    override fun screenId() = ScreenId.LAUNCH
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
