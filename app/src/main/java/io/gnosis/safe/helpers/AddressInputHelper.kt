@@ -6,6 +6,8 @@ import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.utils.handleAddressBookResult
@@ -19,6 +21,7 @@ import pm.gnosis.utils.exceptions.InvalidAddressException
 
 class AddressInputHelper(
     fragment: BaseFragment,
+    tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
     private val errorCallback: ((Throwable) -> Unit)? = null,
     allowAddressBook: Boolean = false
@@ -48,6 +51,7 @@ class AddressInputHelper(
             }
             bottom_sheet_address_input_qr_touch.setOnClickListener {
                 QRCodeScanActivity.startForResult(fragment)
+                tracker.setCurrentScreenId(fragment.requireActivity(), ScreenId.SCANNER)
                 hide()
             }
             bottom_sheet_address_input_paste_touch.setOnClickListener {
