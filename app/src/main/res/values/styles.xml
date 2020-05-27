@@ -11,12 +11,6 @@
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
-<!--    <style name="MountainThemeBase" parent="AppTheme">-->
-<!--        <item name="android:windowBackground">@drawable/mountain_background</item>-->
-<!--    </style>-->
-
-<!--    <style name="MountainTheme" parent="MountainThemeBase" />-->
-
     <style name="WhiteThemeBase" parent="AppTheme" />
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
@@ -191,12 +185,5 @@
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
-
-    <style name="H5Headline" parent="Theme.AppCompat.DayNight" >
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
-        <item name="android:textSize">26sp</item>
-        <item name="fontFamily"></item>
-
-    </style>
 
 </resources>

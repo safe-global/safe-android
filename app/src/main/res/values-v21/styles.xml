@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--    <style name="MountainTheme" parent="MountainThemeBase">-->
-<!--        <item name="android:statusBarColor">@color/safe_green</item>-->
-<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
-<!--        <item name="android:windowTranslucentNavigation">true</item>-->
-<!--    </style>-->
-
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
