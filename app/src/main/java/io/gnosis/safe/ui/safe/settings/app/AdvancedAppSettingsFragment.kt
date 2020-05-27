@@ -13,12 +13,12 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.utils.asEthereumAddressString
 
-class AdvancedAppSettingsFragment : BaseFragment<FragmentSettingsAppAdvancedBinding>() {
+class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppAdvancedBinding>() {
 
     override fun screenId() = ScreenId.SETTINGS_APP_ADVANCED
 

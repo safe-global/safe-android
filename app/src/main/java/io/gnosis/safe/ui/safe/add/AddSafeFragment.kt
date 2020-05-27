@@ -12,7 +12,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.model.Solidity
@@ -21,7 +21,7 @@ import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
-class AddSafeFragment : BaseFragment<FragmentAddSafeBinding>() {
+class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     @Inject
     lateinit var viewModel: AddSafeViewModel

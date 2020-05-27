@@ -11,7 +11,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.android.synthetic.main.fragment_add_safe.*
@@ -21,7 +21,7 @@ import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 
-class AddSafeNameFragment : BaseFragment<FragmentAddSafeNameBinding>() {
+class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>() {
 
     @Inject
     lateinit var viewModel: AddSafeNameViewModel

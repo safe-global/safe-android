@@ -3,9 +3,9 @@ package io.gnosis.safe.ui.safe
 import android.content.Context
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 
-abstract class SafeOverviewBaseFragment<T> : BaseFragment<T>() where T : ViewBinding {
+abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where T : ViewBinding {
 
     protected var navHandler: SafeOverviewNavigationHandler? = null
 

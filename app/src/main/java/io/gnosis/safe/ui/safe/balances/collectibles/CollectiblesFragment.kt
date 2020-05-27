@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 
-class CollectiblesFragment : BaseFragment<FragmentCollectiblesBinding>() {
+class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding>() {
 
     override fun screenId() = ScreenId.BALANCES_COLLECTIBLES
 

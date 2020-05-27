@@ -11,14 +11,14 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
-class CoinsFragment : BaseFragment<FragmentCoinsBinding>() {
+class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     @Inject
     lateinit var viewModel: CoinsViewModel
