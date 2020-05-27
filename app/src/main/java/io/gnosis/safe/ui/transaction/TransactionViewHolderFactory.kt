@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.transaction
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.Transaction
 import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.Adapter
@@ -13,10 +12,10 @@ enum class TransactionViewType {
     CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED
 }
 
-class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Transaction>, Transaction>() {
+class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<TransactionView>, TransactionView>() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<Transaction> =
+    override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<TransactionView> =
         when (viewType) {
             TransactionViewType.CHANGE_MASTERCOPY.ordinal -> ChangeMastercopyViewHolder(viewBinding as ItemTxChangeMastercopyBinding)
             TransactionViewType.CHANGE_MASTERCOPY_QUEUED.ordinal -> ChangeMastercopyQueuedViewHolder(viewBinding as ItemTxQueuedChangeMastercopyBinding)
@@ -25,7 +24,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
             TransactionViewType.TRANSFER_QUEUED.ordinal -> TransferQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
             else -> throw UnsupportedViewType(javaClass.name)
-        } as BaseTransactionViewHolder<Transaction>
+        } as BaseTransactionViewHolder<TransactionView>
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding =
         when (viewType) {
@@ -38,64 +37,64 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
-    override fun viewTypeFor(item: Transaction): Int =
+    override fun viewTypeFor(item: TransactionView): Int =
         when (item) {
-            is Transaction.ChangeMastercopy -> TransactionViewType.CHANGE_MASTERCOPY
-            is Transaction.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
-            is Transaction.Transfer -> TransactionViewType.TRANSFER
-            is Transaction.ChangeMastercopyQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
-            is Transaction.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
-            is Transaction.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
+            is TransactionView.ChangeMastercopy -> TransactionViewType.CHANGE_MASTERCOPY
+            is TransactionView.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
+            is TransactionView.Transfer -> TransactionViewType.TRANSFER
+            is TransactionView.ChangeMastercopyQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
+            is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
+            is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             else -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
 
-abstract class BaseTransactionViewHolder<T : Transaction>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
+
+abstract class BaseTransactionViewHolder<T : TransactionView>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
 
 class ChangeMastercopyViewHolder(viewBinding: ItemTxChangeMastercopyBinding) :
-    BaseTransactionViewHolder<Transaction.ChangeMastercopy>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.ChangeMastercopy>(viewBinding) {
 
-    override fun bind(data: Transaction.ChangeMastercopy, payloads: List<Any>) {
+    override fun bind(data: TransactionView.ChangeMastercopy, payloads: List<Any>) {
         TODO("Not yet implemented")
     }
 }
 
 class SettingsChangeViewHolder(viewBinding: ItemTxSettingsChangeBinding) :
-    BaseTransactionViewHolder<Transaction.SettingsChange>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.SettingsChange>(viewBinding) {
 
-    override fun bind(data: Transaction.SettingsChange, payloads: List<Any>) {
+    override fun bind(data: TransactionView.SettingsChange, payloads: List<Any>) {
         TODO("Not yet implemented")
     }
 }
 
 class TransferViewHolder(viewBinding: ItemTxTransferBinding) :
-    BaseTransactionViewHolder<Transaction.Transfer>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
 
-    override fun bind(data: Transaction.Transfer, payloads: List<Any>) {
-        TODO("Not yet implemented")
+    override fun bind(data: TransactionView.Transfer, payloads: List<Any>) {
     }
 }
 
 class ChangeMastercopyQueuedViewHolder(viewBinding: ItemTxQueuedChangeMastercopyBinding) :
-    BaseTransactionViewHolder<Transaction.SettingsChangeQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
 
-    override fun bind(data: Transaction.SettingsChangeQueued, payloads: List<Any>) {
+    override fun bind(data: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         TODO("Not yet implemented")
     }
 }
 
 class SettingsChangeQueuedViewHolder(viewBinding: ItemTxQueuedSettingsChangeBinding) :
-    BaseTransactionViewHolder<Transaction.SettingsChangeQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
 
-    override fun bind(data: Transaction.SettingsChangeQueued, payloads: List<Any>) {
+    override fun bind(data: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         TODO("Not yet implemented")
     }
 }
 
 class TransferQueuedViewHolder(viewBinding: ItemTxQueuedTransferBinding) :
-    BaseTransactionViewHolder<Transaction.TransferQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.TransferQueued>(viewBinding) {
 
-    override fun bind(data: Transaction.TransferQueued, payloads: List<Any>) {
+    override fun bind(data: TransactionView.TransferQueued, payloads: List<Any>) {
         TODO("Not yet implemented")
     }
 }
