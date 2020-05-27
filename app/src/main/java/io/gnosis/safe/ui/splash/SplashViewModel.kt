@@ -36,6 +36,14 @@ constructor(
         }
     }
 
+    fun skipSplashScreen() {
+        safeLaunch {
+            if (termsChecker.getTermsAgreed()) {
+                updateState { TermsAgreed(viewAction = ViewAction.StartActivity(Intent(appContext, StartActivity::class.java))) }
+            }
+        }
+    }
+
     data class TermsAgreed(override var viewAction: ViewAction?) : State
 
     object ShowTerms : ViewAction

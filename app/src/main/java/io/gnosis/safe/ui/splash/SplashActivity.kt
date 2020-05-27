@@ -22,6 +22,7 @@ class SplashActivity : BaseActivity() {
 
         viewComponent().inject(this)
 
+
         viewModel.state.observe(this, Observer {
             when (val viewAction = it.viewAction) {
                 is ViewAction.StartActivity -> {
@@ -41,5 +42,8 @@ class SplashActivity : BaseActivity() {
         binding.continueButton.setOnClickListener {
             viewModel.onStartClicked()
         }
+
+        //onResume()?
+        viewModel.skipSplashScreen()
     }
 }
