@@ -74,7 +74,6 @@ class Tracker private constructor(context: Context) {
 }
 
 enum class ScreenId(val value: String) {
-    SPLASH("splash"),
     LAUNCH("launch"),
     LAUNCH_TERMS("launch_terms"),
     BALANCES_NO_SAFE("assets_no_safe"),

@@ -17,7 +17,6 @@ class SplashActivity : BaseActivity() {
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
     private val termsBottomSheetDialog = TermsBottomSheetDialog()
 
-    //TODO: split splash and get started screen
     override fun screenId() = ScreenId.LAUNCH
 
     override fun onCreate(savedInstanceState: Bundle?) {
