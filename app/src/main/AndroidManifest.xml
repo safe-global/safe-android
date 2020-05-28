@@ -35,7 +35,7 @@
             android:name="io.gnosis.safe.ui.splash.SplashActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/MountainTheme"
+            android:theme="@style/WhiteTheme"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

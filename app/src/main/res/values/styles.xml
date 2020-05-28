@@ -11,18 +11,12 @@
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
-    <style name="MountainThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/mountain_background</item>
-    </style>
-
-    <style name="MountainTheme" parent="MountainThemeBase" />
-
     <style name="WhiteThemeBase" parent="AppTheme" />
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
     <style name="PrimaryButton">
-        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_height">@dimen/primary_button_height</item>
         <item name="android:background">@drawable/primary_button</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingStart">16dp</item>

@@ -1,12 +1,14 @@
 package io.gnosis.safe.ui.splash
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.Observer
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
@@ -25,6 +27,7 @@ class SplashActivity : BaseActivity() {
 
         viewComponent().inject(this)
 
+
         viewModel.state.observe(this, Observer {
             when (val viewAction = it.viewAction) {
                 is ViewAction.StartActivity -> {
@@ -38,11 +41,19 @@ class SplashActivity : BaseActivity() {
                         }
                     }.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
                 }
+                is SplashViewModel.ShowButton -> {
+                    binding.continueButton.visible(true)
+                    binding.continueButton.setOnClickListener {
+                        viewModel.onStartClicked()
+                    }
+                }
             }
         })
 
-        binding.continueButton.setOnClickListener {
-            viewModel.onStartClicked()
-        }
+        Handler().postDelayed(
+            {
+                viewModel.skipGetStartedButtonWhenTermsAgreed()
+            }, 500
+        )
     }
 }
