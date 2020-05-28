@@ -36,7 +36,7 @@ constructor(
         }
     }
 
-    fun skipSplashScreen() {
+    fun skipGetStartedButtonWhenTermsAgreed() {
         safeLaunch {
             if (termsChecker.getTermsAgreed()) {
                 updateState { TermsAgreed(viewAction = ViewAction.StartActivity(Intent(appContext, StartActivity::class.java))) }

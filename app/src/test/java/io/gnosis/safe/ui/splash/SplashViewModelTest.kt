@@ -74,4 +74,32 @@ class SplashViewModelTest {
         }
         coVerify(exactly = 1) { termsChecker.setTermsAgreed(true) }
     }
+
+    @Test
+    fun `skipSplashScreen (terms not agreed previously) should make get started button visible`() {
+        coEvery { termsChecker.getTermsAgreed() } returns false
+        val viewModel = SplashViewModel(termsChecker, appDispatchers, context)
+
+        viewModel.skipGetStartedButtonWhenTermsAgreed()
+
+        with(viewModel.state.test().values()) {
+            assertEquals(1, size)
+            assert(this[0].viewAction is SplashViewModel.ShowButton)
+        }
+        coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
+    }
+
+    @Test
+    fun `skipSplashScreen (terms agreed previously) should emit StartActivity`() {
+        coEvery { termsChecker.getTermsAgreed() } returns true
+        val viewModel = SplashViewModel(termsChecker, appDispatchers, context)
+
+        viewModel.skipGetStartedButtonWhenTermsAgreed()
+
+        with(viewModel.state.test().values()) {
+            assertEquals(1, size)
+            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+        }
+        coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
+    }
 }

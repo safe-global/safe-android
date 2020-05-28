@@ -49,7 +49,7 @@ class SplashActivity : BaseActivity() {
 
         Handler().postDelayed(
             {
-                viewModel.skipSplashScreen()
+                viewModel.skipGetStartedButtonWhenTermsAgreed()
             }, 500
         )
     }
