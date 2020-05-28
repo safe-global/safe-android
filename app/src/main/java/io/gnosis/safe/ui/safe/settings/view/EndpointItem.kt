@@ -10,7 +10,9 @@ import io.gnosis.safe.databinding.ViewEndpointItemBinding
 import timber.log.Timber
 
 class EndpointItem @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding = ViewEndpointItemBinding.inflate(LayoutInflater.from(context), this)
@@ -50,4 +52,3 @@ class EndpointItem @JvmOverloads constructor(
         value = a.getString(R.styleable.EndpointItem_endpoint_value)
     }
 }
-

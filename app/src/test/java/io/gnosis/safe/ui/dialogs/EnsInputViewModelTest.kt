@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.dialogs
 import io.gnosis.data.repositories.EnsRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -57,5 +56,4 @@ class EnsInputViewModelTest {
         }
         coVerify(exactly = 1) { ensRepository.resolve("safe.eth") }
     }
-
 }

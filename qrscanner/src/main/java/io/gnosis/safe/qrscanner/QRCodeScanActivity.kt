@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.screen_scan.*
-import io.gnosis.safe.qrscanner.R
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -68,7 +67,11 @@ class QRCodeScanActivity : AppCompatActivity() {
         }
 
         fun handleResult(
-            requestCode: Int, resultCode: Int, data: Intent?, onCancelledResult: (() -> Unit)? = null, onQrCodeResult: (String) -> Unit
+            requestCode: Int,
+            resultCode: Int,
+            data: Intent?,
+            onCancelledResult: (() -> Unit)? = null,
+            onQrCodeResult: (String) -> Unit
         ): Boolean {
             if (requestCode == REQUEST_CODE) {
                 if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(RESULT_EXTRA)) {

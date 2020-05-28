@@ -2,11 +2,7 @@ package io.gnosis.safe.helpers
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupWindow

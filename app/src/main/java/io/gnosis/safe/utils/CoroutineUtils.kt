@@ -38,7 +38,6 @@ fun <T> throttleLatest(
     }
 }
 
-
 /**
  * Constructs a function that processes input data and passes it to [destinationFunction] only if there's no new data for at least [waitMs]
  */
@@ -56,7 +55,6 @@ fun <T> debounce(
         }
     }
 }
-
 
 /**
  * Constructs a function that processes input data and passes the first data to [destinationFunction] and skips all new data for the next [skipMs].

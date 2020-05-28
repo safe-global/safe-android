@@ -27,7 +27,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<Transaction>
 
-
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding =
         when (viewType) {
             TransactionViewType.CHANGE_MASTERCOPY.ordinal -> ItemTxChangeMastercopyBinding.inflate(layoutInflater, parent, false)
@@ -50,7 +49,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             else -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
-
 
 abstract class BaseTransactionViewHolder<T : Transaction>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
 

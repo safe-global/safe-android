@@ -29,4 +29,3 @@ data class SettingsState(
     val safe: Safe?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
-

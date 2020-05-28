@@ -36,11 +36,11 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
     interface ViewAction {
         data class Loading(val isLoading: Boolean) : ViewAction
         data class ShowError(val error: Throwable) : ViewAction
-        data class UpdateActiveSafe(val newSafe: Safe?): ViewAction
+        data class UpdateActiveSafe(val newSafe: Safe?) : ViewAction
         data class StartActivity(val intent: Intent) : ViewAction
         data class NavigateTo(val navDirections: NavDirections) : ViewAction
         object CloseScreen : ViewAction
-        object None: ViewAction
+        object None : ViewAction
     }
 
     @Suppress("LeakingThis")

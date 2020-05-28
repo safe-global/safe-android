@@ -9,7 +9,6 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.balances.SafeBalancesFragment
 import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
 import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
-import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.settings.SettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment

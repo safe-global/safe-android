@@ -37,7 +37,6 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {

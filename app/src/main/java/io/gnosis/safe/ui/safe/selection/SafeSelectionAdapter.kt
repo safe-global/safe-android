@@ -14,7 +14,6 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import java.lang.ref.WeakReference
 
-
 class SafeSelectionAdapter(
     private val clickListener: WeakReference<OnSafeSelectionItemClickedListener>
 ) : RecyclerView.Adapter<BaseSafeSelectionViewHolder>() {
@@ -119,4 +118,3 @@ class SafeItemViewHolder(
         }
     }
 }
-

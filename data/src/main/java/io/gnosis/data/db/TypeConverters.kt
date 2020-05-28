@@ -18,7 +18,7 @@ class SolidityAddressConverter {
     fun toHexString(address: Solidity.Address): String = address.asEthereumAddressString()
 }
 
-//TODO push to svalinn
+// TODO push to svalinn
 class BigDecimalNumberAdapter {
     @ToJson
     fun toJson(@DecimalNumber bigDecimal: BigDecimal): String = bigDecimal.toString()

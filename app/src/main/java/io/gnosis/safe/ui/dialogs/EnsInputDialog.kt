@@ -38,7 +38,6 @@ class EnsInputDialog : DialogFragment() {
     private lateinit var dialogView: View
     private lateinit var alertDialog: AlertDialog
 
-
     var callback: ((Solidity.Address) -> Unit)? = null
 
     override fun onAttach(context: Context) {

@@ -12,7 +12,6 @@ import timber.log.Timber
 import timber.log.Timber.DebugTree
 import java.security.Security
 
-
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     private val component: ApplicationComponent =

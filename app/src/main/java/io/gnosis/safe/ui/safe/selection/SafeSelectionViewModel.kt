@@ -73,4 +73,3 @@ class SafeSelectionViewModel @Inject constructor(
         addSafe()
     }
 }
-

@@ -85,7 +85,7 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
     private fun openFeatureSuggestionPage() {
         requireContext().openUrl(getString(R.string.link_feature_suggestion))
     }
-    
+
     private fun sendEmail() {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             type = "text/html"

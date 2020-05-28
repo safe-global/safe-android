@@ -13,7 +13,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.*
-import java.math.BigInteger
 import io.gnosis.safe.R
 
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
@@ -32,7 +31,7 @@ fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67
 fun Solidity.Address.shortChecksumString() =
     asEthereumAddressChecksumString().asMiddleEllipsized(4)
 
-//make first & last 4 characters black
+// make first & last 4 characters black
 fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 4, suffixLength: Int = 4, addMiddleLinebreak: Boolean = true): Spannable {
     return SpannableStringBuilder(this.asEthereumAddressString()).apply {
         if (addMiddleLinebreak) insert(21, "\n")

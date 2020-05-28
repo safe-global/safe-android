@@ -131,5 +131,4 @@ class CoinsViewModelTest {
             BigInteger.valueOf(index),
             BigDecimal.valueOf(index)
         )
-
 }

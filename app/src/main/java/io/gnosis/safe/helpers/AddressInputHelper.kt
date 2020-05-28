@@ -37,7 +37,7 @@ class AddressInputHelper(
             bottom_sheet_address_input_book_touch.visible(allowAddressBook)
             if (allowAddressBook) {
                 bottom_sheet_address_input_book_touch.setOnClickListener {
-                    //TODO uncomment when address book functionality is ready
+                    // TODO uncomment when address book functionality is ready
 //                    activity.selectFromAddressBook()
                     hide()
                 }

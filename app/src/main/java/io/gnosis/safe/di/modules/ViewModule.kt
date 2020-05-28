@@ -91,5 +91,4 @@ class ViewModule(
     @Provides
     @ForView
     fun providesTransactionsViewModel(provider: ViewModelProvider) = provider[TransactionsViewModel::class.java]
-
 }

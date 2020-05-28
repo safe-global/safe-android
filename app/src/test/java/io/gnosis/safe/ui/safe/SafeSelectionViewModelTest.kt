@@ -12,7 +12,6 @@ import io.gnosis.safe.ui.safe.selection.SafeSelectionState
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals

@@ -66,7 +66,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
 
         val ENS_REGISTRY = EnsRepository.ENS_ADDRESS
 
-        //TODO: Add constants to respective repositories
+        // TODO: Add constants to respective repositories
         const val RPC_ENDPOINT = BuildConfig.BLOCKCHAIN_NET_URL
         const val TX_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.TRANSACTION_SERVICE_URL
         const val RELAY_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.RELAY_SERVICE_URL

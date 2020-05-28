@@ -49,5 +49,4 @@ class RepositoryModule {
         transactionServiceApi: TransactionServiceApi
     ): TokenRepository =
         TokenRepository(erc20TokenDao, transactionServiceApi)
-
 }

@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.di.ForView
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.utils.asEthereumAddress

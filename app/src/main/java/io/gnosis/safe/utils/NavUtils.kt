@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import timber.log.Timber
 
-
 fun FragmentManager.getParentNavController(): NavController? {
     return try {
         (primaryNavigationFragment as NavHostFragment).navController

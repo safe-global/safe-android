@@ -6,7 +6,6 @@ import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.tokenAsErc20Token
 import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.models.Balance
-import io.gnosis.data.models.Erc20Token
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.mockk.*
 import kotlinx.coroutines.runBlocking

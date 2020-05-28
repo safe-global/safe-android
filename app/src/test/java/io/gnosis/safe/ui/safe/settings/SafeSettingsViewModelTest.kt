@@ -30,7 +30,6 @@ class SafeSettingsViewModelTest {
 
     private lateinit var safeSettingsViewModel: SafeSettingsViewModel
 
-
     @Test
     fun `removeSafe - should remove safe`() = runBlockingTest {
 
