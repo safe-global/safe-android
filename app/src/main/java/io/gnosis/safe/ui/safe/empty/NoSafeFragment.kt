@@ -6,11 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentNoSafesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.withArgs
 
-class NoSafeFragment : BaseFragment<FragmentNoSafesBinding>() {
+class NoSafeFragment : BaseViewBindingFragment<FragmentNoSafesBinding>() {
+
+    override fun screenId() = when(requireArguments()[ARGS_POSITION] as Position) {
+        Position.BALANCES -> ScreenId.BALANCES_NO_SAFE
+        Position.TRANSACTIONS -> ScreenId.TRANSACTIONS_NO_SAFE
+        Position.SETTINGS -> ScreenId.SETTINGS_SAFE_NO_SAFE
+    }
 
     override fun inject(component: ViewComponent) {}
 
@@ -25,10 +33,20 @@ class NoSafeFragment : BaseFragment<FragmentNoSafesBinding>() {
         }
     }
 
+    enum class Position {
+        BALANCES,
+        TRANSACTIONS,
+        SETTINGS
+    }
+
     companion object {
 
-        fun newInstance(): NoSafeFragment {
-           return NoSafeFragment()
+        private const val ARGS_POSITION = "args.serializable.position"
+
+        fun newInstance(position: Position): NoSafeFragment {
+           return NoSafeFragment().withArgs(Bundle().apply {
+               putSerializable(ARGS_POSITION, position)
+           }) as NoSafeFragment
         }
     }
 }

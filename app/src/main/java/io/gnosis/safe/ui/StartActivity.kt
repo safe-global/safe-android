@@ -75,5 +75,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeAddress.text = safe.address.asEthereumAddressString().asMiddleEllipsized(4)
         }
     }
+
+    override fun screenId() = null
 }
 

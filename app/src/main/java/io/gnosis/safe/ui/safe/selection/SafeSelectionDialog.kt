@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogSafeSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseBottomSheetDialogFragment
@@ -35,6 +36,8 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
         super.onDetach()
         navHandler = null
     }
+
+    override fun screenId() = ScreenId.SAFE_SELECT
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

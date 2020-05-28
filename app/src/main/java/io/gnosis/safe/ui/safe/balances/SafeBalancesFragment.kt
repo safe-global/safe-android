@@ -90,7 +90,7 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     override fun createFragment(position: Int): Fragment =
         when (Tabs.values()[position]) {
-            Tabs.COINS -> if (noActiveSafe) NoSafeFragment.newInstance() else CoinsFragment.newInstance()
+            Tabs.COINS -> if (noActiveSafe) NoSafeFragment.newInstance(NoSafeFragment.Position.BALANCES) else CoinsFragment.newInstance()
             Tabs.COLLECTIBLES -> CollectiblesFragment.newInstance()
         }
 
