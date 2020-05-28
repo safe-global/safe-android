@@ -36,7 +36,18 @@ constructor(
         }
     }
 
+    fun skipGetStartedButtonWhenTermsAgreed() {
+        safeLaunch {
+            if (termsChecker.getTermsAgreed()) {
+                updateState { TermsAgreed(viewAction = ViewAction.StartActivity(Intent(appContext, StartActivity::class.java))) }
+            } else {
+                updateState { TermsAgreed(ShowButton) }
+            }
+        }
+    }
+
     data class TermsAgreed(override var viewAction: ViewAction?) : State
 
     object ShowTerms : ViewAction
+    object ShowButton : ViewAction
 }

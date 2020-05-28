@@ -42,6 +42,7 @@
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
+    <string name="splash_text">The most trusted platform to store digital assets on Ethereum</string>
     <string name="change_mastercopy">Change mastercopy</string>
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>
