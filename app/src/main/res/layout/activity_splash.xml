@@ -34,7 +34,6 @@
         android:id="@+id/continue_button"
         style="@style/PrimaryButton"
         android:layout_width="0dp"
-        android:layout_height="56dp"
         android:layout_marginEnd="@dimen/default_horizontal_margin"
         android:layout_marginStart="@dimen/default_horizontal_margin"
         android:layout_marginTop="56dp"

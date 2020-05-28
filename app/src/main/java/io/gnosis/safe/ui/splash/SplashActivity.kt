@@ -2,12 +2,12 @@ package io.gnosis.safe.ui.splash
 
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import androidx.lifecycle.Observer
 import io.gnosis.safe.databinding.ActivitySplashBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
@@ -39,7 +39,7 @@ class SplashActivity : BaseActivity() {
                     }.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
                 }
                 is SplashViewModel.ShowButton -> {
-                    binding.continueButton.visibility = View.VISIBLE
+                    binding.continueButton.visible(true)
                     binding.continueButton.setOnClickListener {
                         viewModel.onStartClicked()
                     }
