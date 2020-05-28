@@ -6,3 +6,5 @@ data class Page<T>(
     val previous: String?,
     val results: List<T>
 )
+
+inline fun <T, R> Page<T>.mapInner(mapper: (T) -> R): Page<R> = Page(count, next, previous, results.map(mapper))

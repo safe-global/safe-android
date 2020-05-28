@@ -3,10 +3,12 @@ package io.gnosis.safe.ui.transaction
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.UnsupportedViewType
+import io.gnosis.safe.utils.shiftedString
 
 enum class TransactionViewType {
     CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED
@@ -68,10 +70,16 @@ class SettingsChangeViewHolder(viewBinding: ItemTxSettingsChangeBinding) :
     }
 }
 
-class TransferViewHolder(viewBinding: ItemTxTransferBinding) :
+class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
 
     override fun bind(data: TransactionView.Transfer, payloads: List<Any>) {
+        with(viewBinding) {
+            blockies.setAddress(data.transaction.receiver)
+            amount.setText(data.transaction.value.shiftedString(18).plus(data.transaction.tokenInfo?.symbol))
+            dateTime.text = data.transaction.executionDate
+            txTypeIcon.setImageResource(if (data.isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp)
+        }
     }
 }
 

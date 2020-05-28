@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.transaction
 
-import io.gnosis.data.models.TransactionDto
+import io.gnosis.data.models.Transaction
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -23,21 +23,23 @@ class TransactionsViewModel
             updateState {
                 TransactionsViewState(
                     isLoading = false,
-                    viewAction = LoadTransactions(transactions.map { TransactionView.Transfer(it) })
+                    viewAction = LoadTransactions(transactions.results.mapNotNull {
+                        if (it is Transaction.Transfer) TransactionView.Transfer(it, it.receiver == safeAddress) else null
+                    })
                 )
             }
         }
     }
 }
 
-sealed class TransactionView(open val transactionDto: TransactionDto) {
+sealed class TransactionView(open val transaction: Transaction) {
 
-    data class ChangeMastercopy(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
-    data class ChangeMastercopyQueued(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
-    data class SettingsChange(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
-    data class SettingsChangeQueued(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
-    data class Transfer(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
-    data class TransferQueued(override val transactionDto: TransactionDto) : TransactionView(transactionDto)
+    data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
+    data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class SettingsChange(override val transaction: Transaction) : TransactionView(transaction)
+    data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class Transfer(override val transaction: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transaction)
+    data class TransferQueued(override val transaction: Transaction) : TransactionView(transaction)
 }
 
 data class TransactionsViewState(
