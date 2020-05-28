@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import javax.inject.Inject
 
-class SafeSettingsFragment : BaseFragment<FragmentSettingsSafeBinding>() {
+class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding>() {
+
+    override fun screenId() = ScreenId.SETTINGS_SAFE
 
     @Inject
     lateinit var viewModel: SafeSettingsViewModel

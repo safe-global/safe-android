@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
 
-class AppSettingsFragment: BaseFragment<FragmentSettingsAppBinding>() {
+class AppSettingsFragment: BaseViewBindingFragment<FragmentSettingsAppBinding>() {
+
+    override fun screenId() = ScreenId.SETTINGS_APP
 
     override fun inject(component: ViewComponent) {}
 
