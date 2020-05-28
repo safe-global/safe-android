@@ -124,7 +124,7 @@ class Erc20TokenDaoTest {
         val testToken2 = buildFakeToken(2)
         val testToken3 = buildFakeToken(3)
 
-        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2, testToken3))
 
         with(erc20TokenDao.loadTokens()) {
             assertEquals(3, size)
@@ -141,7 +141,7 @@ class Erc20TokenDaoTest {
         val testToken2 = buildFakeToken(2)
         val testToken3 = buildFakeToken(3)
 
-        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2, testToken3))
 
         with(erc20TokenDao.loadToken(testToken2.address)) {
             assertEquals(testToken2, this)
@@ -155,7 +155,7 @@ class Erc20TokenDaoTest {
         val testToken2 = buildFakeToken(2)
         val testToken3 = buildFakeToken(3)
 
-        erc20TokenDao.insertTokens(listOf(testToken1, testToken2,testToken3))
+        erc20TokenDao.insertTokens(listOf(testToken1, testToken2, testToken3))
 
         with(erc20TokenDao.loadToken(Solidity.Address(BigInteger.ZERO))) {
             assertEquals(null, this)
@@ -188,7 +188,6 @@ class Erc20TokenDaoTest {
             assertEquals(testToken1, get(0))
         }
     }
-
 
     private fun buildFakeToken(index: Long) =
         Erc20Token(

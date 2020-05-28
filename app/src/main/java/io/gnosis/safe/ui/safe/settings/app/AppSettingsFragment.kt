@@ -14,7 +14,7 @@ import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
 
-class AppSettingsFragment: BaseViewBindingFragment<FragmentSettingsAppBinding>() {
+class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
 
     override fun screenId() = ScreenId.SETTINGS_APP
 

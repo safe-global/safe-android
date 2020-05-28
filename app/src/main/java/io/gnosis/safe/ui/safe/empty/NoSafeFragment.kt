@@ -14,7 +14,7 @@ import pm.gnosis.svalinn.common.utils.withArgs
 
 class NoSafeFragment : BaseViewBindingFragment<FragmentNoSafesBinding>() {
 
-    override fun screenId() = when(requireArguments()[ARGS_POSITION] as Position) {
+    override fun screenId() = when (requireArguments()[ARGS_POSITION] as Position) {
         Position.BALANCES -> ScreenId.BALANCES_NO_SAFE
         Position.TRANSACTIONS -> ScreenId.TRANSACTIONS_NO_SAFE
         Position.SETTINGS -> ScreenId.SETTINGS_SAFE_NO_SAFE

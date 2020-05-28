@@ -6,7 +6,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.di.components.ViewComponent
 import javax.inject.Inject
 
-abstract class ViewModelActivity<VM : ViewModel, VB: ViewBinding> : BaseActivity() {
+abstract class ViewModelActivity<VM : ViewModel, VB : ViewBinding> : BaseActivity() {
     @Inject
     lateinit var viewModel: VM
 

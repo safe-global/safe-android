@@ -53,7 +53,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                             is UpdateBalances -> adapter.setItems(action.newBalances)
                         }
                     }
-
                 }
             }
         })

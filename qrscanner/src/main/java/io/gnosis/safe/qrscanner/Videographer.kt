@@ -143,7 +143,7 @@ class Videographer(context: Context, private val qrCodeDecoder: QRCodeDecoder) {
         }
 
         if ("Nexus 4".equals(Build.MODEL)) {
-            //Workaround for slow camera preview on Nexus 4
+            // Workaround for slow camera preview on Nexus 4
             parameters.setRecordingHint(true)
         }
 

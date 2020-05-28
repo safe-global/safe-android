@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 
-
 object CustomAlertDialogBuilder {
     fun build(
         context: Context,

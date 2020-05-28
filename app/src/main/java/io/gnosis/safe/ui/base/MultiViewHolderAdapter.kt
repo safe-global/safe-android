@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
 class MultiViewHolderAdapter<VH, T>(

@@ -27,5 +27,4 @@ class TestLifecycleRule : InstantTaskExecutorRule(), LifecycleOwner {
         Dispatchers.resetMain()
         super.finished(description)
     }
-
 }

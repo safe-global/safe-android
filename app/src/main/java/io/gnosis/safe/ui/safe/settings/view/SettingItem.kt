@@ -11,7 +11,9 @@ import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 
 class SettingItem @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by lazy { ViewSettingsItemBinding.inflate(LayoutInflater.from(context), this) }

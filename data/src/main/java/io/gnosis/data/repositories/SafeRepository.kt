@@ -35,7 +35,6 @@ class SafeRepository(
             .map { getActiveSafe() }
             .conflate()
 
-
     suspend fun isSafeAddressUsed(address: Solidity.Address): Boolean = safeDao.loadByAddress(address) != null
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAll().asList()

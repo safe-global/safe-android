@@ -71,5 +71,5 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
 
     abstract fun inject(viewComponent: ViewComponent)
 
-    open protected fun viewModelProvider(): Any? = parentFragment
+    protected open fun viewModelProvider(): Any? = parentFragment
 }

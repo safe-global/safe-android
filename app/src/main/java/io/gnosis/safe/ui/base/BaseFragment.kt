@@ -37,5 +37,5 @@ abstract class BaseFragment : Fragment() {
 
     abstract fun inject(component: ViewComponent)
 
-    open protected fun viewModelProvider(): Any? = parentFragment
+    protected open fun viewModelProvider(): Any? = parentFragment
 }

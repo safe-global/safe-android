@@ -59,4 +59,3 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
 }
 
 class UnsupportedViewType(message: String? = null) : Throwable(message)
-

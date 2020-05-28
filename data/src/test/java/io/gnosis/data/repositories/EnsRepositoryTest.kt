@@ -17,7 +17,6 @@ class EnsRepositoryTest {
     private val normalizerMock = mockk<EnsNormalizer>()
     private val ethereumRepository = mockk<EthereumRepository>()
 
-
     @Before
     fun setup() {
         repository = EnsRepository(normalizerMock, ethereumRepository)
@@ -46,7 +45,6 @@ class EnsRepositoryTest {
         val address = ""
 
         val actual = runCatching { repository.resolve(address) }
-
 
         with(actual) {
             assert(isFailure)
@@ -108,7 +106,6 @@ class EnsRepositoryTest {
                 )
             )
         }
-
     }
 
     @Test

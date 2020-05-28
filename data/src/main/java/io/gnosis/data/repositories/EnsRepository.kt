@@ -48,7 +48,6 @@ class EnsRepository(
         } ?: ByteArray(32)
     }
 
-
     companion object {
 
         val ENS_ADDRESS = BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
@@ -58,15 +57,15 @@ class EnsRepository(
             function resolver(bytes32 node) constant returns (Resolver);
         }
          */
-        private const val GET_ADDRESS = "0x3b3b57de"    // addr(bytes 32 node)
+        private const val GET_ADDRESS = "0x3b3b57de" // addr(bytes 32 node)
 
         /*
         contract Resolver {
             function addr(bytes32 node) constant returns (address);
         }
          */
-        private const val GET_RESOLVER = "0x0178b8bf"   // resolver(bytes32 node)
-        private const val GET_NAME = "0x691f3431"       // name(bytes32)
+        private const val GET_RESOLVER = "0x0178b8bf" // resolver(bytes32 node)
+        private const val GET_NAME = "0x691f3431" // name(bytes32)
     }
 }
 

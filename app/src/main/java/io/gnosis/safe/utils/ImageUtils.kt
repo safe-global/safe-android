@@ -57,5 +57,4 @@ object CircleTransformation : Transformation {
         squaredBitmap.recycle()
         return bitmap
     }
-
 }

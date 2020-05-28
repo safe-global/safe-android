@@ -78,4 +78,3 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     override fun screenId() = null
 }
-
