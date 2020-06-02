@@ -13,7 +13,8 @@ sealed class Transaction {
         val receiver: Solidity.Address,
         val value: BigInteger,
         val executionDate: String?,
-        val tokenInfo: ServiceTokenInfo?
+        val tokenInfo: ServiceTokenInfo?,
+        val transfersDtos: List<TransferDto>
     ) : Transaction()
 }
 
@@ -35,10 +36,29 @@ data class TransactionDto(
     val blockNumber: BigInteger?,
     val sender: Solidity.Address?,
     val tokenAddress: Solidity.Address?,
-    val tokenInfo: ServiceTokenInfo?
+    val tokenInfo: ServiceTokenInfo?,
+    val transfers: List<TransferDto>?
+)
+
+data class TransferDto(
+    val to: Solidity.Address,
+    val from: Solidity.Address,
+    val type: TransferType,
+    val executionDate: String?,
+    val value: BigInteger,
+    val tokenAddress: String?, //TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
+    val tokenId: String?,
+    val transactionHash: String?
 )
 
 enum class Operation(val id: Int) {
     CALL(0),
     DELEGATE(1)
+}
+
+enum class TransferType(val id: Int) {
+    ETHER_TRANSFER(0),
+    ERC20_TRANSFER(1),
+    ERC721_TRANSFER(2),
+    UNKNOWN(3)
 }
