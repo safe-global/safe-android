@@ -18,18 +18,3 @@ class OperationEnumAdapter {
             else -> throw JsonDataException("Unsupported operation value: \"$operation\"")
         }
 }
-
-class TransferTypeEnumAdapter {
-    @ToJson
-    fun toJson(transferType: TransferType): String = transferType.id.toString()
-
-    @FromJson
-    fun fromJson(transferType: String): TransferType =
-        when (transferType) {
-            TransferType.ETHER_TRANSFER.name -> TransferType.ETHER_TRANSFER
-            TransferType.ERC20_TRANSFER.name -> TransferType.ERC20_TRANSFER
-            TransferType.ERC721_TRANSFER.name -> TransferType.ERC721_TRANSFER
-            TransferType.UNKNOWN.name -> TransferType.UNKNOWN
-            else -> throw JsonDataException("Unsupported transferType value: \"$transferType\"")
-        }
-}

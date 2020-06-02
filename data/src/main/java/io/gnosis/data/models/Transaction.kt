@@ -37,7 +37,9 @@ data class TransactionDto(
     val sender: Solidity.Address?,
     val tokenAddress: Solidity.Address?,
     val tokenInfo: ServiceTokenInfo?,
-    val transfers: List<TransferDto>?
+    val transfers: List<TransferDto>?,
+    val confirmations: List<ConfirmationDto>?,
+    val txType: TransactionType
 )
 
 data class TransferDto(
@@ -51,14 +53,35 @@ data class TransferDto(
     val transactionHash: String?
 )
 
+data class ConfirmationDto(
+    val owner: Solidity.Address,
+    val submissionDate: String?,
+    val transactionHash: String?,
+    val signature: String,
+    val signatureType: SignatureType
+)
+
 enum class Operation(val id: Int) {
     CALL(0),
     DELEGATE(1)
 }
 
-enum class TransferType(val id: Int) {
-    ETHER_TRANSFER(0),
-    ERC20_TRANSFER(1),
-    ERC721_TRANSFER(2),
-    UNKNOWN(3)
+enum class TransferType {
+    ETHER_TRANSFER,
+    ERC20_TRANSFER,
+    ERC721_TRANSFER,
+    UNKNOWN
+}
+
+enum class TransactionType {
+    ETHEREUM_TRANSACTION,
+    MULTISIG_TRANSACTION,
+    MODULE_TRANSACTION
+}
+
+enum class SignatureType {
+    CONTRACT_SIGNATURE,
+    APPROVED_HASH,
+    EOA,
+    ETH_SIGN
 }
