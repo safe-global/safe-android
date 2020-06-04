@@ -72,6 +72,10 @@ data class DataDecodedDto(
     val params: List<ParamsDto>
 )
 
+data class DataDecodedDeprecate(
+    val json: Pair<String, List<ParamsDto>>
+)
+
 data class ParamsDto(
     val type: String,
     val name: String,
