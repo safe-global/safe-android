@@ -74,7 +74,12 @@ data class DataDecodedDto(
 
 data class DataDecodedDeprecate(
     val json: Pair<String, List<ParamsDto>>
-)
+) {
+
+    fun toDataDecodedDto(): DataDecodedDto {
+        return DataDecodedDto(json.first, json.second)
+    }
+}
 
 data class ParamsDto(
     val type: String,
