@@ -10,11 +10,11 @@ sealed class Transaction {
     data class SettingsChange(val nonce: BigInteger) : Transaction()
 
     data class Transfer(
-        val receiver: Solidity.Address,
+        val recipient: Solidity.Address,
+        val sender: Solidity.Address,
         val value: BigInteger,
-        val executionDate: String?,
-        val tokenInfo: ServiceTokenInfo?,
-        val transfersDtos: List<TransferDto>
+        val date: String?,
+        val tokenInfo: ServiceTokenInfo?
     ) : Transaction()
 }
 
@@ -23,13 +23,14 @@ data class TransactionDto(
     val to: Solidity.Address,
     val value: BigInteger,
     val data: String?,
+    val dataDecoded: DataDecodedDto?,
     val operation: Operation,
     val gasToken: Solidity.Address?,
     val safeTxGas: BigInteger,
     val baseGas: BigInteger,
     val gasPrice: BigInteger,
     val refundReceiver: Solidity.Address?,
-    val nonce: BigInteger,
+    val nonce: BigInteger?,
     val executionDate: String?,
     val submissionDate: String?,
     val modified: String?,
@@ -59,6 +60,17 @@ data class ConfirmationDto(
     val transactionHash: String?,
     val signature: String,
     val signatureType: SignatureType
+)
+
+data class DataDecodedDto(
+    val method: String,
+    val params: List<ParamsDto>
+)
+
+data class ParamsDto(
+    val type: String,
+    val name: String,
+    val value: String
 )
 
 enum class Operation(val id: Int) {
