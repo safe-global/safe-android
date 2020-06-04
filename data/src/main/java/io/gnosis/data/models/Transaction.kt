@@ -19,27 +19,27 @@ sealed class Transaction {
 }
 
 data class TransactionDto(
-    val safe: Solidity.Address,
+    val safe: Solidity.Address? = null,
     val to: Solidity.Address,
     val value: BigInteger,
-    val data: String?,
-    val dataDecoded: DataDecodedDto?,
-    val operation: Operation,
-    val gasToken: Solidity.Address?,
+    val data: String? = null,
+    val dataDecoded: DataDecodedDto? = null,
+    val operation: Operation? = null,
+    val gasToken: Solidity.Address? = null,
     val safeTxGas: BigInteger,
     val baseGas: BigInteger,
     val gasPrice: BigInteger,
-    val refundReceiver: Solidity.Address?,
-    val nonce: BigInteger?,
-    val executionDate: String?,
-    val submissionDate: String?,
-    val modified: String?,
-    val blockNumber: BigInteger?,
-    val sender: Solidity.Address?,
-    val tokenAddress: Solidity.Address?,
-    val tokenInfo: ServiceTokenInfo?,
-    val transfers: List<TransferDto>?,
-    val confirmations: List<ConfirmationDto>?,
+    val refundReceiver: Solidity.Address? = null,
+    val nonce: BigInteger? = null,
+    val executionDate: String? = null,
+    val submissionDate: String? = null,
+    val modified: String? = null,
+    val blockNumber: BigInteger? = null,
+    val sender: Solidity.Address? = null,
+    val tokenAddress: Solidity.Address? = null,
+    val tokenInfo: ServiceTokenInfo? = null,
+    val transfers: List<TransferDto>? = null,
+    val confirmations: List<ConfirmationDto>? = null,
     val txType: TransactionType
 )
 
@@ -47,11 +47,11 @@ data class TransferDto(
     val to: Solidity.Address,
     val from: Solidity.Address,
     val type: TransferType,
-    val executionDate: String?,
+    val executionDate: String? = null,
     val value: BigInteger,
-    val tokenAddress: String?, //TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
-    val tokenId: String?,
-    val transactionHash: String?
+    val tokenAddress: String? = null, //TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
+    val tokenId: String? = null,
+    val transactionHash: String? = null
 )
 
 data class ConfirmationDto(

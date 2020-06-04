@@ -17,7 +17,7 @@ class TransactionRepository(
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
             .mapInner { transactionDto ->
                 when {
-                    transactionDto.transfers?.size == 1 -> transfer(transactionDto, transactionDto.transfers[0])
+                    transactionDto.transfers?.size == 1 -> transfer(transactionDto.transfers[0])
                     transactionDto.to == transactionDto.safe && transactionDto.data != null -> Transaction.SettingsChange(
                         transactionDto.nonce ?: BigInteger.valueOf(-1)
                     )
@@ -25,9 +25,9 @@ class TransactionRepository(
                 }
             }
 
-    private fun transfer(transactionDto: TransactionDto, transferDto: TransferDto): Transaction.Transfer =
+    private fun transfer(transferDto: TransferDto): Transaction.Transfer =
         Transaction.Transfer(
-            transactionDto.to,
+            transferDto.to,
             transferDto.from,
             transferDto.value,
             transferDto.executionDate?.formatBackendDate(),
