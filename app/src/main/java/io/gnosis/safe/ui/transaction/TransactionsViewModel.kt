@@ -24,7 +24,7 @@ class TransactionsViewModel
                 TransactionsViewState(
                     isLoading = false,
                     viewAction = LoadTransactions(transactions.results.mapNotNull {
-                        if (it is Transaction.Transfer) TransactionView.Transfer(it, it.receiver == safeAddress) else null
+                        if (it is Transaction.Transfer) TransactionView.Transfer(it, it.recipient == safeAddress) else null
                     })
                 )
             }

@@ -77,11 +77,11 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
     override fun bind(data: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
-            blockies.setAddress(data.transaction.receiver)
-            ellipsizedAddress.text = (data.transaction.transfersDtos.getOrNull(0)?.to ?: data.transaction.receiver).asEthereumAddressString().asMiddleEllipsized(4)
-            val value = data.transaction.transfersDtos.getOrNull(0)?.value ?: data.transaction.value
+            blockies.setAddress(data.transaction.recipient)
+            ellipsizedAddress.text = data.transaction.recipient.asEthereumAddressString().asMiddleEllipsized(4)
+            val value = data.transaction.value
             amount.text = value.shiftedString(18).plus(data.transaction.tokenInfo?.symbol)
-            dateTime.text = data.transaction.executionDate
+            dateTime.text = data.transaction.date
             txTypeIcon.setImageResource(if (data.isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp)
         }
     }
