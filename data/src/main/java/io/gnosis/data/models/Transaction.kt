@@ -7,7 +7,11 @@ import java.math.BigInteger
 sealed class Transaction {
     data class Custom(val nonce: BigInteger) : Transaction()
 
-    data class SettingsChange(val nonce: BigInteger) : Transaction()
+    data class SettingsChange(
+        val dataDecoded: DataDecodedDto,
+        val date: String?,
+        val nonce: BigInteger
+    ) : Transaction()
 
     data class Transfer(
         val recipient: Solidity.Address,
@@ -33,6 +37,7 @@ data class TransactionDto(
     val nonce: BigInteger? = null,
     val executionDate: String? = null,
     val submissionDate: String? = null,
+    val creationDate: String? = null,
     val modified: String? = null,
     val blockNumber: BigInteger? = null,
     val sender: Solidity.Address? = null,

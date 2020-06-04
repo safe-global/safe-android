@@ -1,9 +1,7 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionDto
-import io.gnosis.data.models.TransferDto
+import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -18,9 +16,8 @@ class TransactionRepository(
             .mapInner { transactionDto ->
                 when {
                     transactionDto.transfers?.size == 1 -> transfer(transactionDto.transfers[0])
-                    transactionDto.to == transactionDto.safe && transactionDto.data != null -> Transaction.SettingsChange(
-                        transactionDto.nonce ?: BigInteger.valueOf(-1)
-                    )
+                    transactionDto.to == transactionDto.safe
+                            && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> settingsChange(transactionDto)
                     else -> Transaction.Custom(transactionDto.nonce ?: BigInteger.valueOf(-1))
                 }
             }
@@ -32,6 +29,13 @@ class TransactionRepository(
             transferDto.value,
             transferDto.executionDate?.formatBackendDate(),
             transferDto.tokenAddress?.let { null } ?: TokenRepository.ETH_SERVICE_TOKEN_INFO
+        )
+
+    private fun settingsChange(transactionDto: TransactionDto): Transaction.SettingsChange =
+        Transaction.SettingsChange(
+            transactionDto.dataDecoded!!,
+            (transactionDto.executionDate ?: transactionDto.submissionDate ?: transactionDto.creationDate)?.formatBackendDate(),
+            transactionDto.nonce ?: BigInteger.valueOf(-1)
         )
 
 }
