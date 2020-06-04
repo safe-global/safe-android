@@ -23,8 +23,12 @@ class TransactionsViewModel
             updateState {
                 TransactionsViewState(
                     isLoading = false,
-                    viewAction = LoadTransactions(transactions.results.mapNotNull {
-                        if (it is Transaction.Transfer) TransactionView.Transfer(it, it.recipient == safeAddress) else null
+                    viewAction = LoadTransactions(transactions.results.mapNotNull { transaction ->
+                        when (transaction) {
+                            is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                            is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                            else -> null
+                        }
                     })
                 )
             }
@@ -36,7 +40,7 @@ sealed class TransactionView(open val transaction: Transaction) {
 
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
-    data class SettingsChange(override val transaction: Transaction) : TransactionView(transaction)
+    data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
     data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class Transfer(override val transaction: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transaction)
     data class TransferQueued(override val transaction: Transaction) : TransactionView(transaction)

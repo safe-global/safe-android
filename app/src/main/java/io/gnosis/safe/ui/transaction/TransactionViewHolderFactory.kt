@@ -64,11 +64,14 @@ class ChangeMastercopyViewHolder(viewBinding: ItemTxChangeMastercopyBinding) :
     }
 }
 
-class SettingsChangeViewHolder(viewBinding: ItemTxSettingsChangeBinding) :
+class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChange>(viewBinding) {
 
     override fun bind(data: TransactionView.SettingsChange, payloads: List<Any>) {
-        TODO("Not yet implemented")
+        with(viewBinding) {
+            settingName.text = data.transaction.dataDecoded.method
+            dateTime.text = data.transaction.date
+        }
     }
 }
 
