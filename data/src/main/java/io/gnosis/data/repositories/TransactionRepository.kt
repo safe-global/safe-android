@@ -13,19 +13,30 @@ class TransactionRepository(
 
     suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
-            .mapInner { transactionDto ->
+            .fold { transactionDto ->
                 when (transactionDto) {
-                    is ModuleTransactionDto -> custom(transactionDto)
+                    is ModuleTransactionDto -> listOf(custom(transactionDto))
                     is EthereumTransactionDto -> {
                         when {
                             !transactionDto.transfers.isNullOrEmpty() -> transactionDto.transfers.map { transfer(it) }
-                            transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> custom(transactionDto)
-                            else -> transfer(transactionDto)
+                            transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> listOf(custom(transactionDto))
+                            else -> listOf(transfer(transactionDto))
                         }
-                        transfer(transactionDto)
+                        listOf(transfer(transactionDto))
                     }
-                    is MultisigTransactionDto -> custom(transactionDto)
-                    else -> custom(transactionDto)
+                    is MultisigTransactionDto -> {
+                        listOf(
+                            when {
+                                transactionDto.data == null
+                                        && transactionDto.operation == Operation.CALL -> transfer(transactionDto)
+                                transactionDto.to == transactionDto.safe
+                                        && transactionDto.operation == Operation.CALL
+                                        && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> settings(transactionDto)
+                                else -> custom(transactionDto)
+                            }
+                        )
+                    }
+                    else -> listOf(custom(transactionDto))
                 }
             }
 
@@ -46,6 +57,19 @@ class TransactionRepository(
             transaction.blockTimestamp?.formatBackendDate(),
             TokenRepository.ETH_SERVICE_TOKEN_INFO
         )
+
+    //when contractInfo is available have when for ETH, ERC20 and ERC721
+    private fun transfer(transaction: MultisigTransactionDto): Transaction.Transfer =
+        Transaction.Transfer(
+            transaction.to,
+            transaction.safe,
+            transaction.value,
+            transaction.executionDate?.formatBackendDate(),
+            TokenRepository.ETH_SERVICE_TOKEN_INFO
+        )
+
+    private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
+        Transaction.SettingsChange(transaction.dataDecoded!!, transaction.executionDate, transaction.nonce)
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(BigInteger.ZERO)
