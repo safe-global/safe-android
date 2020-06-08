@@ -14,11 +14,18 @@ class TransactionRepository(
     suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
             .mapInner { transactionDto ->
-                when {
-                    transactionDto.transfers?.size == 1 -> transfer(transactionDto.transfers[0])
-                    transactionDto.to == transactionDto.safe
-                            && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> settingsChange(transactionDto)
-                    else -> Transaction.Custom(transactionDto.nonce ?: BigInteger.valueOf(-1))
+                when (transactionDto) {
+                    is ModuleTransactionDto -> custom(transactionDto)
+                    is EthereumTransactionDto -> {
+                        when {
+                            !transactionDto.transfers.isNullOrEmpty() -> transactionDto.transfers.map { transfer(it) }
+                            transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> custom(transactionDto)
+                            else -> transfer(transactionDto)
+                        }
+                        transfer(transactionDto)
+                    }
+                    is MultisigTransactionDto -> custom(transactionDto)
+                    else -> custom(transactionDto)
                 }
             }
 
@@ -31,11 +38,24 @@ class TransactionRepository(
             transferDto.tokenAddress?.let { null } ?: TokenRepository.ETH_SERVICE_TOKEN_INFO
         )
 
-    private fun settingsChange(transactionDto: TransactionDto): Transaction.SettingsChange =
-        Transaction.SettingsChange(
-            transactionDto.dataDecoded!!,
-            (transactionDto.executionDate ?: transactionDto.submissionDate ?: transactionDto.creationDate)?.formatBackendDate(),
-            transactionDto.nonce ?: BigInteger.valueOf(-1)
+    private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
+        Transaction.Transfer(
+            transaction.to,
+            transaction.from,
+            transaction.value ?: BigInteger.ONE,
+            transaction.blockTimestamp?.formatBackendDate(),
+            TokenRepository.ETH_SERVICE_TOKEN_INFO
         )
 
+    private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
+        Transaction.Custom(BigInteger.ZERO)
+
+    private fun custom(transaction: MultisigTransactionDto): Transaction.Custom =
+        Transaction.Custom(BigInteger.ZERO)
+
+    private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
+        Transaction.Custom(BigInteger.ZERO)
+
+    private fun custom(transaction: TransactionDto): Transaction.Custom =
+        Transaction.Custom(BigInteger.ZERO)
 }

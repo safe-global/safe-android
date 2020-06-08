@@ -22,7 +22,11 @@ sealed class Transaction {
     ) : Transaction()
 }
 
-data class TransactionDto(
+open class TransactionDto(
+    val txType: TransactionType?
+)
+
+data class MultisigTransactionDto(
     val safe: Solidity.Address? = null,
     val to: Solidity.Address,
     val value: BigInteger,
@@ -44,9 +48,22 @@ data class TransactionDto(
     val tokenAddress: Solidity.Address? = null,
     val tokenInfo: ServiceTokenInfo? = null,
     val transfers: List<TransferDto>? = null,
-    val confirmations: List<ConfirmationDto>? = null,
-    val txType: TransactionType
-)
+    val confirmations: List<ConfirmationDto>? = null
+) : TransactionDto(txType = TransactionType.MULTISIG_TRANSACTION)
+
+data class EthereumTransactionDto(
+    val to: Solidity.Address,
+    val from: Solidity.Address,
+    val value: BigInteger?,
+    val blockTimestamp: String?,
+    val data: String?,
+    val txHash: String,
+    val transfers: List<TransferDto>?
+) : TransactionDto(txType = TransactionType.ETHEREUM_TRANSACTION)
+
+data class ModuleTransactionDto(
+    val to: Solidity.Address
+) : TransactionDto(txType = TransactionType.MODULE_TRANSACTION)
 
 data class TransferDto(
     val to: Solidity.Address,
@@ -71,15 +88,6 @@ data class DataDecodedDto(
     val method: String,
     val params: List<ParamsDto>
 )
-
-data class DataDecodedDeprecate(
-    val json: Pair<String, List<ParamsDto>>
-) {
-
-    fun toDataDecodedDto(): DataDecodedDto {
-        return DataDecodedDto(json.first, json.second)
-    }
-}
 
 data class ParamsDto(
     val type: String,
