@@ -13,30 +13,30 @@ class TransactionRepository(
 
     suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
-            .fold { transactionDto ->
-                when (transactionDto) {
-                    is ModuleTransactionDto -> listOf(custom(transactionDto))
-                    is EthereumTransactionDto -> {
-                        when {
-                            !transactionDto.transfers.isNullOrEmpty() -> transactionDto.transfers.map { transfer(it) }
-                            transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> listOf(custom(transactionDto))
-                            else -> listOf(transfer(transactionDto))
+            .fold { transactionDto, accumulatedTransactions ->
+                accumulatedTransactions.apply {
+                    when (transactionDto) {
+                        is ModuleTransactionDto -> add(custom(transactionDto))
+                        is EthereumTransactionDto -> {
+                            when {
+                                !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
+                                transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> add(custom(transactionDto))
+                                else -> add(transfer(transactionDto))
+                            }
+                            add(transfer(transactionDto))
                         }
-                        listOf(transfer(transactionDto))
-                    }
-                    is MultisigTransactionDto -> {
-                        listOf(
+                        is MultisigTransactionDto -> {
                             when {
                                 transactionDto.data == null
-                                        && transactionDto.operation == Operation.CALL -> transfer(transactionDto)
+                                        && transactionDto.operation == Operation.CALL -> add(transfer(transactionDto))
                                 transactionDto.to == transactionDto.safe
                                         && transactionDto.operation == Operation.CALL
-                                        && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> settings(transactionDto)
-                                else -> custom(transactionDto)
+                                        && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> add(settings(transactionDto))
+                                else -> add(custom(transactionDto))
                             }
-                        )
+                        }
+                        else -> add(custom(transactionDto))
                     }
-                    else -> listOf(custom(transactionDto))
                 }
             }
 
