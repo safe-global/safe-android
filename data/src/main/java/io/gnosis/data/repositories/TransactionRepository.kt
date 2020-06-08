@@ -69,7 +69,11 @@ class TransactionRepository(
         )
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
-        Transaction.SettingsChange(transaction.dataDecoded!!, transaction.executionDate, transaction.nonce)
+        Transaction.SettingsChange(
+            transaction.dataDecoded!!,
+            transaction.executionDate?.formatBackendDate(),
+            transaction.nonce
+        )
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(BigInteger.ZERO)
