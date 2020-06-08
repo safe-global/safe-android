@@ -86,8 +86,8 @@ android {
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
             firebaseAppDistribution {
-                releaseNotes=getKey("APP_RELEASE_NOTES")
-                groups=getKey("FIREBASE_GROUP")
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
             }
         }
 
@@ -157,7 +157,7 @@ dependencies {
 
     // Gnosis Bivrost
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
-    
+
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
@@ -210,6 +210,7 @@ dependencies {
 
     // Moshi
     implementation "com.squareup.moshi:moshi:$versions.moshi"
+    implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
     // Retrofit
