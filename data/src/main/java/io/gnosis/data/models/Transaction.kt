@@ -27,10 +27,11 @@ open class TransactionDto(
 )
 
 data class MultisigTransactionDto(
-    val safe: Solidity.Address? = null,
+    val safe: Solidity.Address,
     val to: Solidity.Address,
     val value: BigInteger,
     val data: String? = null,
+    val contractInfo: ContractInfoDto? = null,
     val dataDecoded: DataDecodedDto? = null,
     val operation: Operation? = null,
     val gasToken: Solidity.Address? = null,
@@ -38,13 +39,12 @@ data class MultisigTransactionDto(
     val baseGas: BigInteger,
     val gasPrice: BigInteger,
     val refundReceiver: Solidity.Address? = null,
-    val nonce: BigInteger? = null,
+    val nonce: BigInteger,
     val executionDate: String? = null,
     val submissionDate: String? = null,
     val creationDate: String? = null,
     val modified: String? = null,
     val blockNumber: BigInteger? = null,
-    val sender: Solidity.Address? = null,
     val tokenAddress: Solidity.Address? = null,
     val tokenInfo: ServiceTokenInfo? = null,
     val transfers: List<TransferDto>? = null,
@@ -74,6 +74,11 @@ data class TransferDto(
     val tokenAddress: String? = null, //TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
     val tokenId: String? = null,
     val transactionHash: String? = null
+)
+
+data class ContractInfoDto(
+    val tokenId: String?,
+    val tokenAddress: String?
 )
 
 data class ConfirmationDto(
