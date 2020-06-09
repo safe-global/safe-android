@@ -81,7 +81,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     override fun bind(data: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
             val value = data.transaction.value
-            amount.text = value.shiftedString(18).plus(data.transaction.tokenInfo?.symbol)
+            amount.text = "${value.shiftedString(18)} ${data.transaction.tokenInfo?.symbol}"
             dateTime.text = data.transaction.date
             if (data.isIncoming) {
                 txTypeIcon.setImageResource(R.drawable.ic_arrow_green_16dp)
