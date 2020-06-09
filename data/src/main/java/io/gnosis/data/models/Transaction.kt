@@ -77,9 +77,13 @@ data class TransferDto(
 )
 
 data class ContractInfoDto(
-    val tokenId: String?,
-    val tokenAddress: String?
+    val type: ContractInfoType
 )
+
+enum class ContractInfoType {
+    ERC20, //default
+    ERC721
+}
 
 data class ConfirmationDto(
     val owner: Solidity.Address,

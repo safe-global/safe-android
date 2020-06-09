@@ -26,11 +26,10 @@ class TransactionRepository(
                         }
                         is MultisigTransactionDto -> {
                             when {
-                                transactionDto.data == null
-                                        && transactionDto.operation == Operation.CALL -> add(transfer(transactionDto))
-                                transactionDto.to == transactionDto.safe
-                                        && transactionDto.operation == Operation.CALL
-                                        && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method) -> add(settings(transactionDto))
+                                isSettingsChange(transactionDto) -> add(settings(transactionDto))
+                                isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto))
+                                isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto))
+                                isEthTransfer(transactionDto) -> add(transferEth(transactionDto))
                                 else -> add(custom(transactionDto))
                             }
                         }
@@ -38,6 +37,24 @@ class TransactionRepository(
                     }
                 }
             }
+
+    private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
+        transactionDto.operation == Operation.CALL &&
+                transactionDto.contractInfo?.type == ContractInfoType.ERC721 &&
+                listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method)
+
+    private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
+        transactionDto.operation == Operation.CALL &&
+                transactionDto.contractInfo?.type == ContractInfoType.ERC20 &&
+                listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method)
+
+    private fun isEthTransfer(transactionDto: MultisigTransactionDto): Boolean =
+        transactionDto.data == null && transactionDto.operation == Operation.CALL
+
+    private fun isSettingsChange(transactionDto: MultisigTransactionDto): Boolean =
+        (transactionDto.to == transactionDto.safe
+                && transactionDto.operation == Operation.CALL
+                && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method))
 
     private fun transfer(transferDto: TransferDto): Transaction.Transfer =
         Transaction.Transfer(
@@ -58,13 +75,31 @@ class TransactionRepository(
         )
 
     //when contractInfo is available have when for ETH, ERC20 and ERC721
-    private fun transfer(transaction: MultisigTransactionDto): Transaction.Transfer =
+    private fun transferEth(transaction: MultisigTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
             transaction.to,
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
             TokenRepository.ETH_SERVICE_TOKEN_INFO
+        )
+
+    private fun transferErc20(transaction: MultisigTransactionDto): Transaction.Transfer =
+        Transaction.Transfer(
+            transaction.to,
+            transaction.safe,
+            transaction.value,
+            transaction.executionDate?.formatBackendDate(),
+            TokenRepository.ETH_SERVICE_TOKEN_INFO // find out correct token data source
+        )
+
+    private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
+        Transaction.Transfer(
+            transaction.to,
+            transaction.safe,
+            transaction.value,
+            transaction.executionDate?.formatBackendDate(),
+            TokenRepository.ETH_SERVICE_TOKEN_INFO // find out correct token data source
         )
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
