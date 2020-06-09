@@ -13,7 +13,7 @@ class TransactionRepository(
 
     suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
-            .fold { transactionDto, accumulatedTransactions ->
+            .foldInner { transactionDto, accumulatedTransactions ->
                 accumulatedTransactions.apply {
                     when (transactionDto) {
                         is ModuleTransactionDto -> add(custom(transactionDto))
@@ -23,7 +23,6 @@ class TransactionRepository(
                                 transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> add(custom(transactionDto))
                                 else -> add(transfer(transactionDto))
                             }
-                            add(transfer(transactionDto))
                         }
                         is MultisigTransactionDto -> {
                             when {
@@ -53,7 +52,7 @@ class TransactionRepository(
         Transaction.Transfer(
             transaction.to,
             transaction.from,
-            transaction.value ?: BigInteger.ONE,
+            transaction.value ?: BigInteger.ZERO,
             transaction.blockTimestamp?.formatBackendDate(),
             TokenRepository.ETH_SERVICE_TOKEN_INFO
         )
