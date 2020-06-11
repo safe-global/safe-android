@@ -210,6 +210,7 @@ dependencies {
 
     // Moshi
     implementation "com.squareup.moshi:moshi:$versions.moshi"
+    implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
     implementation "com.squareup.moshi:moshi-kotlin:$versions.moshi"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
