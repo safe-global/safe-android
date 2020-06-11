@@ -3,14 +3,13 @@ package io.gnosis.safe.di.modules
 import android.app.Application
 import android.content.Context
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.EnumJsonAdapter
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.adapters.OperationEnumAdapter
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.BigDecimalNumberAdapter
-import io.gnosis.data.models.*
+import io.gnosis.data.models.transactionDtoJsonAdapterFactory
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -72,8 +71,8 @@ class ApplicationModule(private val application: Application) {
         return MoshiBuilderFactory.makeMoshiBuilder()
             .add(BigDecimalNumberAdapter())
             .add(OperationEnumAdapter())
-//            .add(EnumJsonAdapter.create(TransactionType::class.java).withUnknownFallback(TransactionType.UNKNOWN))
             .add(transactionDtoJsonAdapterFactory)
+            .add(KotlinJsonAdapterFactory())
             .build()
     }
 

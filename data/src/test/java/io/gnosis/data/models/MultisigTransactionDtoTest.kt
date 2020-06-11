@@ -62,7 +62,7 @@ class MultisigTransactionDtoTest {
     fun `fromJson (transaction with missing txType) should throw a JsonDataException`() {
         val jsonString: String = readResource("tx_type_missing_transaction.json")
 
-         adapter.fromJson(jsonString)
+        adapter.fromJson(jsonString)
     }
 
     private fun readResource(fileName: String): String {
