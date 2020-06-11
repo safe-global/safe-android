@@ -33,29 +33,41 @@ class TransactionRepositoryTest {
         coVerify(exactly = 1) { transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressString()) }
     }
 
-//    @Test
-//    fun `getTransactions (module transaction) should return Custom Transaction`() = runBlockingTest {
-//        val safeAddress = Solidity.Address(BigInteger.ONE)
-//        val transactionDto = buildModuleTransactionDto()
-//        val pagedResult = listOf(transactionDto)
-//        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
-//
-//        val actual = transactionRepository.getTransactions(safeAddress)
-//
-//        with(actual.results[0] as Transaction.Custom) {
-//
-//            assert(address === transactionDto.module)
-////                assertEquals(address, transactionDto.module)
-//
-//            //address
-//            //data.size
-//
-//            //date
-//            //value
-//
-//
-//        }
-//    }
+    @Test
+    fun `getTransactions (module transaction) should return Custom Transaction`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = buildModuleTransactionDto(
+            Solidity.Address(BigInteger.ONE),
+            Solidity.Address(BigInteger.ONE),
+            Solidity.Address(BigInteger.ONE)
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        with(actual.results[0] as Transaction.Custom) {
+            assert(address === transactionDto.module)
+            assert(dataSize == transactionDto.data?.dataSizeBytes() ?: 0L)
+            assert(date === transactionDto.created)
+            assert(value == transactionDto.value)
+        }
+    }
+
+    @Test
+    fun `dataSizeBytes (one byte data) should return 1`() {
+        assertEquals("0x0A".dataSizeBytes(), 1L)
+    }
+
+    @Test
+    fun `dataSizeBytes (zero byte data) should return 0`() {
+        assertEquals("0x".dataSizeBytes(), 0L)
+    }
+
+    @Test
+    fun `dataSizeBytes (5 byte data) should return 5`() {
+        assertEquals("0x0123456789".dataSizeBytes(), 5L)
+    }
 
     private fun buildModuleTransactionDto(
         to: Solidity.Address,
