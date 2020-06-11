@@ -147,5 +147,6 @@ class TransactionRepository(
             BigInteger.ZERO
         )
 
-    private fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 }
+
+fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
