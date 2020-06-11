@@ -1,5 +1,6 @@
 package io.gnosis.data.models
 
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -61,6 +62,8 @@ data class EthereumTransactionDto(
     val transfers: List<TransferDto>?
 ) : TransactionDto(txType = TransactionType.ETHEREUM_TRANSACTION)
 
+object UnknownTransactionDto: TransactionDto(txType = TransactionType.UNKNOWN)
+
 data class ModuleTransactionDto(
     val to: Solidity.Address
 ) : TransactionDto(txType = TransactionType.MODULE_TRANSACTION)
@@ -119,7 +122,8 @@ enum class TransferType {
 enum class TransactionType {
     ETHEREUM_TRANSACTION,
     MULTISIG_TRANSACTION,
-    MODULE_TRANSACTION
+    MODULE_TRANSACTION,
+    UNKNOWN
 }
 
 enum class SignatureType {
@@ -128,3 +132,9 @@ enum class SignatureType {
     EOA,
     ETH_SIGN
 }
+
+val transactionDtoJsonAdapterFactory = PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
+    .withSubtype(MultisigTransactionDto::class.java, TransactionType.MULTISIG_TRANSACTION.name)
+    .withSubtype(EthereumTransactionDto::class.java, TransactionType.ETHEREUM_TRANSACTION.name)
+    .withSubtype(ModuleTransactionDto::class.java, TransactionType.MODULE_TRANSACTION.name)
+    .withDefaultValue(UnknownTransactionDto)

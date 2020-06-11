@@ -54,14 +54,15 @@ class TransactionRepositoryTest {
         coVerify(exactly = 1) { transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString()) }
     }
 
-    private fun buildTransactionDto(): TransactionDto =
-        TransactionDto(
+    private fun buildTransactionDto(): MultisigTransactionDto =
+        MultisigTransactionDto(
+            safe = Solidity.Address(BigInteger.ONE),
             to = Solidity.Address(BigInteger.ONE),
             value = BigInteger.ONE,
+            nonce = BigInteger.ONE,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
-            gasPrice = BigInteger.ONE,
-            txType = TransactionType.ETHEREUM_TRANSACTION
+            gasPrice = BigInteger.ONE
         )
 
     private fun buildTransferDto(): TransferDto =

@@ -3,6 +3,7 @@ package io.gnosis.safe.di.modules
 import android.app.Application
 import android.content.Context
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.EnumJsonAdapter
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -71,12 +72,8 @@ class ApplicationModule(private val application: Application) {
         return MoshiBuilderFactory.makeMoshiBuilder()
             .add(BigDecimalNumberAdapter())
             .add(OperationEnumAdapter())
-            .add(
-                PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
-                    .withSubtype(MultisigTransactionDto::class.java, TransactionType.MULTISIG_TRANSACTION.name)
-                    .withSubtype(EthereumTransactionDto::class.java, TransactionType.ETHEREUM_TRANSACTION.name)
-                    .withSubtype(ModuleTransactionDto::class.java, TransactionType.MODULE_TRANSACTION.name)
-            )
+            .add(EnumJsonAdapter.create(TransactionType::class.java).withUnknownFallback(TransactionType.UNKNOWN))
+            .add(transactionDtoJsonAdapterFactory)
             .build()
     }
 
