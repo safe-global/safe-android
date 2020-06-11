@@ -3,13 +3,10 @@ package io.gnosis.safe.di.modules
 import android.app.Application
 import android.content.Context
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import io.gnosis.data.adapters.OperationEnumAdapter
+import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.db.BigDecimalNumberAdapter
-import io.gnosis.data.models.*
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -18,7 +15,6 @@ import io.gnosis.safe.ui.safe.terms.TermsChecker
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import pm.gnosis.common.adapters.moshi.MoshiBuilderFactory
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
@@ -67,18 +63,7 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesMoshi(): Moshi {
-        return MoshiBuilderFactory.makeMoshiBuilder()
-            .add(BigDecimalNumberAdapter())
-            .add(OperationEnumAdapter())
-            .add(
-                PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
-                    .withSubtype(MultisigTransactionDto::class.java, TransactionType.MULTISIG_TRANSACTION.name)
-                    .withSubtype(EthereumTransactionDto::class.java, TransactionType.ETHEREUM_TRANSACTION.name)
-                    .withSubtype(ModuleTransactionDto::class.java, TransactionType.MODULE_TRANSACTION.name)
-            )
-            .build()
-    }
+    fun providesMoshi(): Moshi = dataMoshi
 
     @Provides
     @Singleton

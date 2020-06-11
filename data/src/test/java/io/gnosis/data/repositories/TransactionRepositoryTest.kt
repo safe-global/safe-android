@@ -6,9 +6,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -20,7 +19,7 @@ class TransactionRepositoryTest {
     private val transactionRepository = TransactionRepository(transactionServiceApi)
 
     @Test
-    fun `loadTransactions (api failure) should throw`() = runBlockingTest {
+    fun `getTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
         val safeAddress = Solidity.Address(BigInteger.ONE)
         coEvery { transactionServiceApi.loadTransactions(any()) } throws throwable
@@ -35,33 +34,30 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `loadTransaction (valid address, single history eth transfer) should returned paged mapped list`() = runBlockingTest {
-        val transactionDto = buildTransactionDto().copy(transfers = listOf(buildTransferDto()))
-        val safeAddress = Solidity.Address(BigInteger.ONE)
-        val pagedResult = listOf(transactionDto)
-        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+    fun `getTransactions (module transaction) should return Custom Transaction`() =
+        runBlockingTest {
+            val safeAddress = Solidity.Address(BigInteger.ONE)
+            val transactionDto = buildModuleTransactionDto()
+            val pagedResult = listOf(transactionDto)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
-
-        assertEquals(actual.results.size, 1)
-        assert(actual.results[0] is Transaction.Transfer)
-        (actual.results[0] as Transaction.Transfer).let { transfer ->
-            assertEquals(transactionDto.transfers?.get(0)?.to, transfer.recipient)
-            assertEquals(transactionDto.transfers?.get(0)?.from, transfer.sender)
-            assertEquals(transactionDto.transfers?.get(0)?.value, transfer.value)
-            assertEquals(TokenRepository.ETH_SERVICE_TOKEN_INFO, transfer.tokenInfo)
+            val actual = transactionRepository.getTransactions(safeAddress)
+            
         }
-        coVerify(exactly = 1) { transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString()) }
-    }
 
-    private fun buildTransactionDto(): TransactionDto =
-        TransactionDto(
+
+    private fun buildModuleTransactionDto(): ModuleTransactionDto = ModuleTransactionDto(Solidity.Address(BigInteger.ONE))
+
+    private fun buildTransactionDto(): MultisigTransactionDto =
+        MultisigTransactionDto(
+            safe = Solidity.Address(BigInteger.ONE),
             to = Solidity.Address(BigInteger.ONE),
+            operation = Operation.CALL,
             value = BigInteger.ONE,
+            nonce = BigInteger.ONE,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
-            gasPrice = BigInteger.ONE,
-            txType = TransactionType.ETHEREUM_TRANSACTION
+            gasPrice = BigInteger.ONE
         )
 
     private fun buildTransferDto(): TransferDto =
