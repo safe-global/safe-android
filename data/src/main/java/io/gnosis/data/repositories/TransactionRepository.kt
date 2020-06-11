@@ -5,6 +5,8 @@ import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 
 class TransactionRepository(
@@ -110,14 +112,40 @@ class TransactionRepository(
         )
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
-        Transaction.Custom(BigInteger.ZERO)
+        Transaction.Custom(
+            transaction.nonce,
+            transaction.module,
+            transaction.data?.dataSizeBytes() ?: 0L,
+            transaction.created,
+            transaction.value ?: BigInteger.ZERO
+        )
 
     private fun custom(transaction: MultisigTransactionDto): Transaction.Custom =
-        Transaction.Custom(BigInteger.ZERO)
+        Transaction.Custom(
+            transaction.nonce,
+            transaction.to,
+            transaction.data?.dataSizeBytes() ?: 0L,
+            transaction.creationDate,
+            transaction.value
+        )
 
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
-        Transaction.Custom(BigInteger.ZERO)
+        Transaction.Custom(
+            null, // Ethereum txs do not have a nonce
+            transaction.from,
+            transaction.data?.dataSizeBytes() ?: 0L,
+            transaction.blockTimestamp,
+            transaction.value ?: BigInteger.ZERO
+        )
 
     private fun custom(transaction: TransactionDto): Transaction.Custom =
-        Transaction.Custom(BigInteger.ZERO)
+        Transaction.Custom(
+            null,
+            transaction.to,
+            0L,
+            null,
+            BigInteger.ZERO
+        )
+
+    private fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 }
