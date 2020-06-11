@@ -72,7 +72,7 @@ class ApplicationModule(private val application: Application) {
         return MoshiBuilderFactory.makeMoshiBuilder()
             .add(BigDecimalNumberAdapter())
             .add(OperationEnumAdapter())
-            .add(EnumJsonAdapter.create(TransactionType::class.java).withUnknownFallback(TransactionType.UNKNOWN))
+//            .add(EnumJsonAdapter.create(TransactionType::class.java).withUnknownFallback(TransactionType.UNKNOWN))
             .add(transactionDtoJsonAdapterFactory)
             .build()
     }
