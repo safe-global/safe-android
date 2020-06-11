@@ -12,7 +12,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
 
-class MultisigTransactionDtoTest {
+class TransactionDtoTest {
 
     private var moshi = MoshiBuilderFactory.makeMoshiBuilder()
         .add(BigDecimalNumberAdapter())
