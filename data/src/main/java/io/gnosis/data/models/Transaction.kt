@@ -1,12 +1,17 @@
 package io.gnosis.data.models
 
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 sealed class Transaction {
-    data class Custom(val nonce: BigInteger) : Transaction()
+    data class Custom(
+        val nonce: BigInteger?,
+        val address: Solidity.Address,
+        val dataSize: Long,
+        val date: String?,
+        val value: BigInteger
+    ) : Transaction()
 
     data class SettingsChange(
         val dataDecoded: DataDecodedDto,
@@ -23,15 +28,18 @@ sealed class Transaction {
     ) : Transaction()
 }
 
-open class TransactionDto(
+interface TransactionDto {
     val txType: TransactionType?
-)
+    val to: Solidity.Address
+    val data: String?
+}
 
 data class MultisigTransactionDto(
+    override val txType: TransactionType = TransactionType.MULTISIG_TRANSACTION,
+    override val to: Solidity.Address,
+    override val data: String? = null,
     val safe: Solidity.Address,
-    val to: Solidity.Address,
     val value: BigInteger,
-    val data: String? = null,
     val contractInfo: ContractInfoDto? = null,
     val dataDecoded: DataDecodedDto? = null,
     val operation: Operation? = null,
@@ -50,23 +58,39 @@ data class MultisigTransactionDto(
     val tokenInfo: ServiceTokenInfo? = null,
     val transfers: List<TransferDto>? = null,
     val confirmations: List<ConfirmationDto>? = null
-) : TransactionDto(txType = TransactionType.MULTISIG_TRANSACTION)
+) : TransactionDto
 
 data class EthereumTransactionDto(
-    val to: Solidity.Address,
+    override val txType: TransactionType = TransactionType.MULTISIG_TRANSACTION,
+    override val to: Solidity.Address,
+    override val data: String? = null,
     val from: Solidity.Address,
     val value: BigInteger?,
     val blockTimestamp: String?,
-    val data: String?,
     val txHash: String,
     val transfers: List<TransferDto>?
-) : TransactionDto(txType = TransactionType.ETHEREUM_TRANSACTION)
+) : TransactionDto
 
-object UnknownTransactionDto: TransactionDto(txType = TransactionType.UNKNOWN)
+object UnknownTransactionDto : TransactionDto {
+    override val txType: TransactionType = TransactionType.UNKNOWN
+    override val to: Solidity.Address = Solidity.Address(BigInteger.ZERO)
+    override val data: String? = null
+}
 
 data class ModuleTransactionDto(
-    val to: Solidity.Address
-) : TransactionDto(txType = TransactionType.MODULE_TRANSACTION)
+    override val txType: TransactionType = TransactionType.MULTISIG_TRANSACTION,
+    override val to: Solidity.Address,
+    override val data: String? = null,
+    val nonce: BigInteger? = null,
+    val created: String? = null,
+    val blockNumber: BigInteger? = null,
+    val transactionHash: String? = null,
+    val safe: Solidity.Address,
+    val module: Solidity.Address,
+    val value: BigInteger? = null,
+    val operation: Operation? = null,
+    val transfers: List<TransferDto>? = null
+) : TransactionDto
 
 data class TransferDto(
     val to: Solidity.Address,
@@ -98,7 +122,7 @@ data class ConfirmationDto(
 
 data class DataDecodedDto(
     val method: String,
-    val params: List<ParamsDto>
+    val params: List<ParamsDto>?
 )
 
 data class ParamsDto(

@@ -33,20 +33,36 @@ class TransactionRepositoryTest {
         coVerify(exactly = 1) { transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressString()) }
     }
 
-    @Test
-    fun `getTransactions (module transaction) should return Custom Transaction`() =
-        runBlockingTest {
-            val safeAddress = Solidity.Address(BigInteger.ONE)
-            val transactionDto = buildModuleTransactionDto()
-            val pagedResult = listOf(transactionDto)
-            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+//    @Test
+//    fun `getTransactions (module transaction) should return Custom Transaction`() = runBlockingTest {
+//        val safeAddress = Solidity.Address(BigInteger.ONE)
+//        val transactionDto = buildModuleTransactionDto()
+//        val pagedResult = listOf(transactionDto)
+//        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+//
+//        val actual = transactionRepository.getTransactions(safeAddress)
+//
+//        with(actual.results[0] as Transaction.Custom) {
+//
+//            assert(address === transactionDto.module)
+////                assertEquals(address, transactionDto.module)
+//
+//            //address
+//            //data.size
+//
+//            //date
+//            //value
+//
+//
+//        }
+//    }
 
-            val actual = transactionRepository.getTransactions(safeAddress)
-            
-        }
-
-
-    private fun buildModuleTransactionDto(): ModuleTransactionDto = ModuleTransactionDto(Solidity.Address(BigInteger.ONE))
+    private fun buildModuleTransactionDto(
+        to: Solidity.Address,
+        module: Solidity.Address,
+        safe: Solidity.Address
+    ): ModuleTransactionDto =
+        ModuleTransactionDto(to = to, module = module, safe = safe)
 
     private fun buildTransactionDto(): MultisigTransactionDto =
         MultisigTransactionDto(
