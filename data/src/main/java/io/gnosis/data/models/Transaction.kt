@@ -132,9 +132,3 @@ enum class SignatureType {
     EOA,
     ETH_SIGN
 }
-
-val transactionDtoJsonAdapterFactory = PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
-    .withSubtype(MultisigTransactionDto::class.java, TransactionType.MULTISIG_TRANSACTION.name)
-    .withSubtype(EthereumTransactionDto::class.java, TransactionType.ETHEREUM_TRANSACTION.name)
-    .withSubtype(ModuleTransactionDto::class.java, TransactionType.MODULE_TRANSACTION.name)
-    .withDefaultValue(UnknownTransactionDto)

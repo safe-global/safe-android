@@ -1,25 +1,17 @@
-package io.gnosis.data.models
+package io.gnosis.data.adapters
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.adapters.OperationEnumAdapter
-import io.gnosis.data.db.BigDecimalNumberAdapter
+import io.gnosis.data.models.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import pm.gnosis.common.adapters.moshi.MoshiBuilderFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
 
-class TransactionDtoTest {
+class DataMoshiTest {
 
-    private var moshi = MoshiBuilderFactory.makeMoshiBuilder()
-        .add(BigDecimalNumberAdapter())
-        .add(OperationEnumAdapter())
-        .add(transactionDtoJsonAdapterFactory)
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    private var moshi = dataMoshi
     private val adapter = moshi.adapter(TransactionDto::class.java)
 
     @Test
