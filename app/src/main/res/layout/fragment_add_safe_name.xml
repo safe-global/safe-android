@@ -82,6 +82,7 @@
         android:id="@+id/new_address_hex"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
         android:paddingStart="8dp"
         android:paddingEnd="54dp"
         android:textAlignment="center"

@@ -42,11 +42,24 @@ fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 4, s
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            prefixLength,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        setSpan(
             ForegroundColorSpan(context.getColorCompat(R.color.address_boundaries)),
             length - suffixLength,
             length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
+        setSpan(
+            StyleSpan(Typeface.BOLD),
+            length - suffixLength,
+            length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
     }
 }
 
