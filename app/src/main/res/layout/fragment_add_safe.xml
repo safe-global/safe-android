@@ -9,33 +9,33 @@
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
-        android:layout_width="0dp"
-        android:layout_height="?android:actionBarSize"
+        style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
-        app:elevation="4dp"
         app:layout_constraintBottom_toTopOf="@id/add_safe_label_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <ImageButton
             android:id="@+id/back_button"
-            style="@style/TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:layout_weight="0"
-            android:drawableStart="@drawable/ic_keyboard_arrow_left_black_24dp"
+            android:background="@android:color/transparent"
             android:gravity="center_vertical"
-            android:text="@string/back" />
+            android:src="@drawable/ic_baseline_arrow_back_24" />
 
         <TextView
             android:id="@+id/title"
+            style="@style/ToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:text="@string/load_safe_multisig" />
 
         <TextView
@@ -56,6 +56,7 @@
 
     <TextView
         android:id="@+id/add_safe_label_top"
+        style="@style/TextDark.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
