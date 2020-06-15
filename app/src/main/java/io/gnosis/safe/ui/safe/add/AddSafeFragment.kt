@@ -86,6 +86,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun updateAddress(address: Solidity.Address) {
         with(binding) {
+            nextButton.isEnabled = true
             addSafeAddressInputLayout.isErrorEnabled = false
             addSafeAddressInputEntry.setText(address.asEthereumAddressString())
         }

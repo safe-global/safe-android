@@ -5,12 +5,13 @@
     <string name="load_safe_multisig">Load Safe Multisig</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
-    <string name="address">Address</string>
+    <string name="enter_safe_address">Enter Safe Address</string>
     <string name="enter_name">Enter name</string>
     <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
     <string name="next">Next</string>
     <string name="add_safe_label_top">Enter your Safe Multisig address.</string>
-    <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at https://gnosis-safe.io</string>
+    <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
+    <string name="add_safe_label_link">https://gnosis-safe.io</string>
     <string name="back">Back</string>
     <string name="choose_input_method">Choose input method</string>
     <string name="address_input_ens">ENS name</string>

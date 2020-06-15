@@ -44,6 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
+            android:enabled="false"
             android:text="@string/next" />
     </LinearLayout>
 
@@ -60,7 +61,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="16dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="22dp"
         android:text="@string/add_safe_label_top"
         app:layout_constraintBottom_toTopOf="@id/add_safe_address_input_layout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="@string/address"
+        android:hint="@string/enter_safe_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_label_top">
@@ -99,17 +102,29 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/add_safe_label_bottom"
+        android:id="@+id/add_safe_label_bottom_line1"
+        style="@style/TextDark.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:autoLink="web"
-        android:breakStrategy="simple"
         android:gravity="center"
-        android:padding="16dp"
+        android:paddingTop="16dp"
         android:text="@string/add_safe_label_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_address_input_layout" />
+
+    <TextView
+        android:id="@+id/add_safe_label_bottom_line2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:drawableEnd="@drawable/ic_link_green_24dp"
+        android:drawablePadding="4dp"
+        android:gravity="center"
+        android:text="@string/add_safe_label_link"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_safe_label_bottom_line1" />
 
     <ProgressBar
         android:id="@+id/progress"
