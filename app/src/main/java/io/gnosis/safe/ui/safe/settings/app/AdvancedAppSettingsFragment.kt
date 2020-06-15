@@ -54,10 +54,6 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 value = TX_SERVICE_ENDPOINT
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
-            with(relayService) {
-                value = RELAY_SERVICE_ENDPOINT
-                setOnLongClickListener { copyUrlToClipboard().let { true } }
-            }
         }
     }
 
@@ -78,6 +74,5 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
         // TODO: Add constants to respective repositories
         const val RPC_ENDPOINT = BuildConfig.BLOCKCHAIN_NET_URL
         const val TX_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.TRANSACTION_SERVICE_URL
-        const val RELAY_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.RELAY_SERVICE_URL
     }
 }

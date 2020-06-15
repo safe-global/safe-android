@@ -55,14 +55,6 @@
                 android:background="@color/white"
                 app:endpoint_name="@string/tx_service" />
 
-            <io.gnosis.safe.ui.safe.settings.view.EndpointItem
-                android:id="@+id/relay_service"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@color/white"
-                app:endpoint_name="@string/relay_service" />
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
