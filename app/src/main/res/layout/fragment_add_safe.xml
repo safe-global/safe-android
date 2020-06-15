@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
 
     <LinearLayout
@@ -90,7 +91,6 @@
             android:drawableEnd="@drawable/ic_more_horiz_black_24dp"
             android:drawablePadding="8dp"
             android:focusable="false"
-            android:focusableInTouchMode="false"
             android:lines="1"
             android:maxLines="1"
             android:scrollHorizontally="true"
@@ -103,18 +103,20 @@
 
     <TextView
         android:id="@+id/add_safe_label_bottom_line1"
-        style="@style/TextDark.Bold"
+        style="@style/TextMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="16dp"
         android:text="@string/add_safe_label_bottom"
+        android:textColor="@color/gnosis_dark_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_address_input_layout" />
 
     <TextView
         android:id="@+id/add_safe_label_bottom_line2"
+        style="@style/TextLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
