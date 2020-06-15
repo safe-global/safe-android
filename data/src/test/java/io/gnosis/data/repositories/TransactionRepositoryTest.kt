@@ -47,10 +47,10 @@ class TransactionRepositoryTest {
         val actual = transactionRepository.getTransactions(safeAddress)
 
         with(actual.results[0] as Transaction.Custom) {
-            assert(address === transactionDto.module)
-            assert(dataSize == transactionDto.data?.dataSizeBytes() ?: 0L)
-            assert(date === transactionDto.created)
-            assert(value == transactionDto.value)
+            assertEquals(transactionDto.module, address)
+            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+            assertEquals(transactionDto.created, date)
+            assertEquals(transactionDto.value, value)
         }
     }
 
@@ -74,7 +74,12 @@ class TransactionRepositoryTest {
         module: Solidity.Address,
         safe: Solidity.Address
     ): ModuleTransactionDto =
-        ModuleTransactionDto(to = to, module = module, safe = safe)
+        ModuleTransactionDto(
+            to = to,
+            module = module,
+            safe = safe,
+            value = BigInteger.ZERO
+        )
 
     private fun buildTransactionDto(): MultisigTransactionDto =
         MultisigTransactionDto(
