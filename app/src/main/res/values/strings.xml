@@ -73,4 +73,7 @@
 
     <string name="feedback_subject">Feedback for %1$s</string>
     <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
+
+    <string name="url_copied">URL copied</string>
+    <string name="url_copied_success">URL copied to clipboard</string>
 </resources>

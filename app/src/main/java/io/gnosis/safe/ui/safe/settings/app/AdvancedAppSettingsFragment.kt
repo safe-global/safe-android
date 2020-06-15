@@ -46,9 +46,18 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             ens.root.setOnClickListener {
                 requireContext().openUrl(getString(R.string.etherscan_address_url, ENS_REGISTRY.asEthereumAddressString()))
             }
-            rpcEndpoint.value = RPC_ENDPOINT
-            txService.value = TX_SERVICE_ENDPOINT
-            relayService.value = RELAY_SERVICE_ENDPOINT
+            with(rpcEndpoint) {
+                value = RPC_ENDPOINT
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
+            }
+            with(txService) {
+                value = TX_SERVICE_ENDPOINT
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
+            }
+            with(relayService) {
+                value = RELAY_SERVICE_ENDPOINT
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
+            }
         }
     }
 
