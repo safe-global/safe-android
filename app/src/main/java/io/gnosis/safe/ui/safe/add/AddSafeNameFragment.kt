@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -50,6 +51,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                 addSafeNameLayout.isErrorEnabled = false
                 viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString())
             }
+            addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -66,6 +68,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                                 progress.visible(false)
                                 binding.addSafeNameLayout.isErrorEnabled = true
                                 binding.addSafeNameLayout.error = getString(R.string.error_invalid_name)
+                                binding.nextButton.isEnabled = false
                                 Timber.e(action.error)
                             }
                             else -> Timber.i("Unsupported action by view: $action")
@@ -74,5 +77,10 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().hideSoftKeyboard()
     }
 }
