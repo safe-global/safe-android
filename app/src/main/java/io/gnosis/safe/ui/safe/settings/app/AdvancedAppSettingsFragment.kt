@@ -48,15 +48,15 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             }
             with(rpcEndpoint) {
                 value = RPC_ENDPOINT
-                setOnClickListener { copyUrlToClipboard() }
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
             with(txService) {
                 value = TX_SERVICE_ENDPOINT
-                setOnClickListener { copyUrlToClipboard() }
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
             with(relayService) {
                 value = RELAY_SERVICE_ENDPOINT
-                setOnClickListener { copyUrlToClipboard() }
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
         }
     }
