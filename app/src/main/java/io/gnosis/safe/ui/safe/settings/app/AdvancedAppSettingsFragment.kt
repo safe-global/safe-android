@@ -52,7 +52,13 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
             with(txService) {
-                value = Uri.parse(TX_SERVICE_ENDPOINT).let { "${it.scheme}://${it.host}" }
+                value = Uri.parse(TX_SERVICE_ENDPOINT).let {
+                    Uri.Builder()
+                        .scheme(it.scheme)
+                        .encodedAuthority(it.authority)
+                        .build()
+                        .toString()
+                }
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
         }
