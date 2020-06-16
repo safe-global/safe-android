@@ -12,7 +12,6 @@ import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 class TransactionRepositoryTest {
@@ -216,7 +215,7 @@ class TransactionRepositoryTest {
         dataDecodedDto: DataDecodedDto? = null,
         safe: Solidity.Address = Solidity.Address(BigInteger.ONE),
         to: Solidity.Address = Solidity.Address(BigInteger.TEN),
-        operation : Operation = Operation.CALL
+        operation: Operation = Operation.CALL
     ): MultisigTransactionDto {
         return MultisigTransactionDto(
             safe = safe,
