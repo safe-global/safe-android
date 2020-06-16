@@ -9,7 +9,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
@@ -18,25 +20,24 @@ class TransactionRepositoryTest {
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private val transactionRepository = TransactionRepository(transactionServiceApi)
+    private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         coEvery { transactionServiceApi.loadTransactions(any()) } throws throwable
 
-        val actual = runCatching { transactionRepository.getTransactions(safeAddress) }
+        val actual = runCatching { transactionRepository.getTransactions(defaultSafeAddress) }
 
         with(actual) {
             assert(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
     fun `getTransactions (module transaction) should return custom`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildModuleTransactionDto(
             Solidity.Address(BigInteger.ONE),
             Solidity.Address(BigInteger.ONE),
@@ -45,7 +46,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.module, address)
@@ -57,12 +58,11 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (UnknownTransaction with data) should return custom`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = UnknownTransactionDto
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
@@ -73,15 +73,14 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (multisig transaction settings change) should return settings`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(
-            to = safeAddress, safe = safeAddress,
+            to = defaultSafeAddress, safe = defaultSafeAddress,
             dataDecodedDto = DataDecodedDto("swapOwner", null) // TODO pick a method at random?
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.SettingsChange) {
@@ -92,7 +91,6 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(
             transfers = listOf(buildTransferDto()),
             contractInfoType = ContractInfoType.ERC20,
@@ -101,7 +99,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
@@ -116,7 +114,6 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(
             transfers = listOf(buildTransferDto()),
             contractInfoType = ContractInfoType.ERC721,
@@ -125,7 +122,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
@@ -141,12 +138,11 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (multisig transaction ETH transfer) should return transfer`() = runBlockingTest {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(transfers = listOf(buildTransferDto()))
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(safeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
@@ -158,9 +154,21 @@ class TransactionRepositoryTest {
         }
     }
 
-
     @Test
-    fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest { }
+    fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest {
+
+        val transactionDto = buildMultisigTransactionDto(operation = Operation.DELEGATE)
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Custom) {
+            assertEquals(transactionDto.to, address)
+            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+        }
+    }
 
     @Test
     fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest { }
@@ -207,12 +215,13 @@ class TransactionRepositoryTest {
         contractInfoType: ContractInfoType? = null,
         dataDecodedDto: DataDecodedDto? = null,
         safe: Solidity.Address = Solidity.Address(BigInteger.ONE),
-        to: Solidity.Address = Solidity.Address(BigInteger.TEN)
+        to: Solidity.Address = Solidity.Address(BigInteger.TEN),
+        operation : Operation = Operation.CALL
     ): MultisigTransactionDto {
         return MultisigTransactionDto(
             safe = safe,
             to = to,
-            operation = Operation.CALL,
+            operation = operation,
             value = BigInteger.ONE,
             nonce = BigInteger.ONE,
             safeTxGas = BigInteger.ONE,
