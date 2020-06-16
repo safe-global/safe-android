@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/default_margin"
         android:singleLine="true"
+        android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/safe_address"
         app:layout_constraintEnd_toStartOf="@+id/safe_selection"
