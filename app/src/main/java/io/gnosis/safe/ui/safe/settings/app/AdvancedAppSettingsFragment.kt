@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.settings.app
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -51,7 +52,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
             with(txService) {
-                value = TX_SERVICE_ENDPOINT
+                value = Uri.parse(TX_SERVICE_ENDPOINT).let { "${it.scheme}://${it.host}" }
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
         }
