@@ -36,7 +36,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (module transaction) should return Custom Transaction`() = runBlockingTest {
+    fun `getTransactions (module transaction) should return custom`() = runBlockingTest {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildModuleTransactionDto(
             Solidity.Address(BigInteger.ONE),
@@ -57,7 +57,10 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (multisig transaction with one outgoing ETH transfer) should return one outgoing transfer`() = runBlockingTest {
+    fun `getTransactions (UnknownTransaction with data) should return custom`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (multisig transaction ETH transfer) should return transfer`() = runBlockingTest {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(transfers = listOf(buildTransferDto()))
         val pagedResult = listOf(transactionDto)
@@ -71,9 +74,33 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.creationDate, date)
             assertEquals(transactionDto.safe, sender)
             assertEquals(transactionDto.to, recipient)
-            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo )
+            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
+
+    @Test
+    fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (multisig transaction settings change) should return settings`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (ethereum transaction no transfers and with data) should return custom`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (ethereum transaction with no transfers and no data with value) should return ETH transfer of value`() = runBlockingTest { }
+
+    @Test
+    fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() = runBlockingTest { }
 
     @Test
     fun `dataSizeBytes (one byte data) should return 1`() {
