@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.mockk.coEvery
@@ -73,6 +72,74 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    fun `getTransactions (multisig transaction settings change) should return settings`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = buildMultisigTransactionDto(
+            to = safeAddress, safe = safeAddress,
+            dataDecodedDto = DataDecodedDto("swapOwner", null) // TODO pick a method at random?
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.SettingsChange) {
+            assertEquals("swapOwner", dataDecoded.method)
+            // TODO: nonce, executionDate
+        }
+    }
+
+    @Test
+    fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = buildMultisigTransactionDto(
+            transfers = listOf(buildTransferDto()),
+            contractInfoType = ContractInfoType.ERC20,
+            dataDecodedDto = DataDecodedDto("safeTransferFrom", null) // TODO: check also transferFrom (might have different adress copied
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.creationDate, date)
+            assertEquals(transactionDto.safe, sender)
+            assertEquals(transactionDto.to, recipient)
+            //  TODO: check for right transfer type
+//            assertEquals(ERC721_TOKEN_INFO, tokenInfo)
+        }
+    }
+
+    @Test
+    fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = buildMultisigTransactionDto(
+            transfers = listOf(buildTransferDto()),
+            contractInfoType = ContractInfoType.ERC721,
+            dataDecodedDto = DataDecodedDto("transfer", null) // TODO: check also transferFrom (might have differrent adress copied
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.creationDate, date)
+            assertEquals(transactionDto.safe, sender)
+            assertEquals(transactionDto.to, recipient)
+            //  TODO: check for right transfer type
+//            assertEquals(ERC20_TOKEN_INFO, tokenInfo)
+        }
+
+    }
+
+    @Test
     fun `getTransactions (multisig transaction ETH transfer) should return transfer`() = runBlockingTest {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val transactionDto = buildMultisigTransactionDto(transfers = listOf(buildTransferDto()))
@@ -91,14 +158,6 @@ class TransactionRepositoryTest {
         }
     }
 
-    @Test
-    fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest { }
-
-    @Test
-    fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest { }
-
-    @Test
-    fun `getTransactions (multisig transaction settings change) should return settings`() = runBlockingTest { }
 
     @Test
     fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest { }
@@ -113,7 +172,8 @@ class TransactionRepositoryTest {
     fun `getTransactions (ethereum transaction with no transfers and no data with value) should return ETH transfer of value`() = runBlockingTest { }
 
     @Test
-    fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() = runBlockingTest { }
+    fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() =
+        runBlockingTest { }
 
     @Test
     fun `dataSizeBytes (one byte data) should return 1`() {
@@ -142,18 +202,27 @@ class TransactionRepositoryTest {
             value = BigInteger.ZERO
         )
 
-    private fun buildMultisigTransactionDto(transfers: List<TransferDto>): MultisigTransactionDto =
-        MultisigTransactionDto(
-            safe = Solidity.Address(BigInteger.ONE),
-            to = Solidity.Address(BigInteger.ONE),
+    private fun buildMultisigTransactionDto(
+        transfers: List<TransferDto>? = null,
+        contractInfoType: ContractInfoType? = null,
+        dataDecodedDto: DataDecodedDto? = null,
+        safe: Solidity.Address = Solidity.Address(BigInteger.ONE),
+        to: Solidity.Address = Solidity.Address(BigInteger.TEN)
+    ): MultisigTransactionDto {
+        return MultisigTransactionDto(
+            safe = safe,
+            to = to,
             operation = Operation.CALL,
             value = BigInteger.ONE,
             nonce = BigInteger.ONE,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
             gasPrice = BigInteger.ONE,
-            transfers = transfers
+            transfers = transfers,
+            contractInfo = contractInfoType?.let { ContractInfoDto(it) },
+            dataDecoded = dataDecodedDto
         )
+    }
 
     private fun buildTransferDto(): TransferDto =
         TransferDto(
