@@ -54,9 +54,9 @@ class TransactionRepository(
         transactionDto.data == null && transactionDto.operation == Operation.CALL
 
     private fun isSettingsChange(transactionDto: MultisigTransactionDto): Boolean =
-        (transactionDto.to == transactionDto.safe
+        transactionDto.to == transactionDto.safe
                 && transactionDto.operation == Operation.CALL
-                && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method))
+                && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
     private fun transfer(transferDto: TransferDto): Transaction.Transfer =
         Transaction.Transfer(
@@ -92,7 +92,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO // find out correct token data source
+            TokenRepository.ETH_SERVICE_TOKEN_INFO // TODO: find out correct token data source
         )
 
     private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
@@ -101,7 +101,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO // find out correct token data source
+            TokenRepository.ETH_SERVICE_TOKEN_INFO // TODO: find out correct token data source
         )
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
