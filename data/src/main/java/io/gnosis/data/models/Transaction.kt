@@ -54,8 +54,6 @@ data class MultisigTransactionDto(
     val creationDate: String? = null,
     val modified: String? = null,
     val blockNumber: BigInteger? = null,
-    val tokenAddress: Solidity.Address? = null,
-    val tokenInfo: ServiceTokenInfo? = null,
     val transfers: List<TransferDto>? = null,
     val confirmations: List<ConfirmationDto>? = null
 ) : TransactionDto
@@ -99,6 +97,7 @@ data class TransferDto(
     val executionDate: String? = null,
     val value: BigInteger,
     val tokenAddress: String? = null, //TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
+    val serviceTokenInfo: ServiceTokenInfo? = null,
     val tokenId: String? = null,
     val transactionHash: String? = null
 )
