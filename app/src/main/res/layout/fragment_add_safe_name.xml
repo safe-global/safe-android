@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
 
     <LinearLayout
@@ -80,9 +81,9 @@
 
     <TextView
         android:id="@+id/new_address_hex"
+        style="@style/TextMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
         android:paddingStart="8dp"
         android:paddingEnd="54dp"
         android:textAlignment="center"
