@@ -57,7 +57,20 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (UnknownTransaction with data) should return custom`() = runBlockingTest { }
+    fun `getTransactions (UnknownTransaction with data) should return custom`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = UnknownTransactionDto
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Custom) {
+            assertEquals(transactionDto.to, address)
+            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+        }
+    }
 
     @Test
     fun `getTransactions (multisig transaction ETH transfer) should return transfer`() = runBlockingTest {

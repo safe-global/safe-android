@@ -142,7 +142,7 @@ class TransactionRepository(
         Transaction.Custom(
             null,
             transaction.to,
-            0L,
+            transaction.data?.dataSizeBytes() ?: 0L,
             null,
             BigInteger.ZERO
         )
