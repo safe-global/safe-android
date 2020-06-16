@@ -1,7 +1,9 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -55,6 +57,25 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    fun `getTransactions (multisig transaction with one outgoing ETH transfer) should return one outgoing transfer`() = runBlockingTest {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val transactionDto = buildMultisigTransactionDto(transfers = listOf(buildTransferDto()))
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(safeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.creationDate, date)
+            assertEquals(transactionDto.safe, sender)
+            assertEquals(transactionDto.to, recipient)
+            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo )
+        }
+    }
+
+    @Test
     fun `dataSizeBytes (one byte data) should return 1`() {
         assertEquals("0x0A".dataSizeBytes(), 1L)
     }
@@ -81,7 +102,7 @@ class TransactionRepositoryTest {
             value = BigInteger.ZERO
         )
 
-    private fun buildTransactionDto(): MultisigTransactionDto =
+    private fun buildMultisigTransactionDto(transfers: List<TransferDto>): MultisigTransactionDto =
         MultisigTransactionDto(
             safe = Solidity.Address(BigInteger.ONE),
             to = Solidity.Address(BigInteger.ONE),
@@ -90,12 +111,13 @@ class TransactionRepositoryTest {
             nonce = BigInteger.ONE,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
-            gasPrice = BigInteger.ONE
+            gasPrice = BigInteger.ONE,
+            transfers = transfers
         )
 
     private fun buildTransferDto(): TransferDto =
         TransferDto(
-            to = Solidity.Address(BigInteger.ONE),
+            to = Solidity.Address(BigInteger.TEN),
             from = Solidity.Address(BigInteger.ONE),
             type = TransferType.ETHER_TRANSFER,
             value = BigInteger.ONE
