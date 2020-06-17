@@ -121,12 +121,12 @@ data class ConfirmationDto(
 
 data class DataDecodedDto(
     val method: String,
-    val params: List<ParamsDto>?
+    val parameters: List<ParamsDto>?
 )
 
 data class ParamsDto(
-    val type: String,
     val name: String,
+    val type: String,
     val value: String
 )
 

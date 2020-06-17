@@ -13,6 +13,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
@@ -24,6 +25,7 @@ class TransactionRepositoryTest {
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
     private val defaultFromAddress = "0x7cd310A8AeBf268bF78ea16C601F201ca81e84Cc".asEthereumAddress()!!
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
+    private val defaultValue = BigInteger("230000000000000000")
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
@@ -93,19 +95,54 @@ class TransactionRepositoryTest {
     fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
             contractInfoType = ContractInfoType.ERC20,
-            dataDecodedDto = DataDecodedDto("transfer", null) // TODO: check also transferFrom (might have different address copied
+            dataDecodedDto = DataDecodedDto(
+                "transfer",
+                listOf(
+                    ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("value", "uint256", defaultValue.asDecimalString())
+                )
+            )
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
-        assertEquals(1, actual.results.size)
+        assertEquals("Expect one Transfer result", 1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(transactionDto.value, value)
-            assertEquals(transactionDto.creationDate, date)
-            assertEquals(transactionDto.safe, sender)
-            assertEquals(transactionDto.to, recipient)
+            assertEquals("Correct value expected: ", defaultValue, value)
+            assertEquals("Correct date expected: ", transactionDto.creationDate, date)
+            assertEquals("Correct safe expected: ", transactionDto.safe, sender)
+            assertEquals("Correct to expected: ", transactionDto.to, recipient)
+            //  TODO: check for right transfer type
+            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
+        }
+    }
+
+    @Test
+    fun `getTransactions (multisig transaction for ERC20 with transferFrom) should return transfer`() = runBlockingTest {
+        val transactionDto = buildMultisigTransactionDto(
+            contractInfoType = ContractInfoType.ERC20,
+            dataDecodedDto = DataDecodedDto(
+                "transferFrom",
+                listOf(
+                    ParamsDto("from", "address", defaultFromAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("value", "uint256", defaultValue.asDecimalString())
+                )
+            )
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+        assertEquals("Expect one Transfer result", 1, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals("Correct value expected: ", defaultValue, value)
+            assertEquals("Correct date expected: ", transactionDto.creationDate, date)
+            assertEquals("Correct sender expected: ", transactionDto.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress(), sender)
+            assertEquals("Correct to expected: ", transactionDto.to, recipient)
             //  TODO: check for right transfer type
             assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
         }
@@ -151,7 +188,6 @@ class TransactionRepositoryTest {
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
-
 
     @Test
     fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest {
