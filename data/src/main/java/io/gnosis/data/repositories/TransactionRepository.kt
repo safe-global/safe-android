@@ -106,7 +106,9 @@ class TransactionRepository(
             to,
             from ?: transaction.safe,
             value,
-            transaction.executionDate?.formatBackendDate(),
+            transaction.executionDate?.formatBackendDate()
+                ?: transaction.submissionDate?.formatBackendDate()
+                ?: transaction.modified?.formatBackendDate(),
             TokenRepository.FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
         )
     }
