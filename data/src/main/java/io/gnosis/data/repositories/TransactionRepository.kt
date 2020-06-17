@@ -1,11 +1,12 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.decimalAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -43,12 +44,12 @@ class TransactionRepository(
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                transactionDto.contractInfo?.type == ContractInfoType.ERC721 &&
+                transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // Always false unless wir have contractInfo
                 listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method)
 
     private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                transactionDto.contractInfo?.type == ContractInfoType.ERC20 &&
+//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && //TODO enable this check when we have contractInfo
                 listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method)
 
     private fun isEthTransfer(transactionDto: MultisigTransactionDto): Boolean =
@@ -59,8 +60,8 @@ class TransactionRepository(
                 && transactionDto.operation == Operation.CALL
                 && SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
-    private fun transfer(transferDto: TransferDto): Transaction.Transfer =
-        Transaction.Transfer(
+    private fun transfer(transferDto: TransferDto): Transaction.Transfer {
+        return Transaction.Transfer(
             transferDto.to,
             transferDto.from,
             transferDto.value,
@@ -73,6 +74,7 @@ class TransactionRepository(
                 }
             }
         )
+    }
 
     private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
@@ -93,14 +95,21 @@ class TransactionRepository(
             TokenRepository.ETH_SERVICE_TOKEN_INFO
         )
 
-    private fun transferErc20(transaction: MultisigTransactionDto): Transaction.Transfer =
-        Transaction.Transfer(
-            transaction.to,
-            transaction.safe,
-            transaction.value,
+    private fun transferErc20(transaction: MultisigTransactionDto): Transaction.Transfer {
+        val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
+        val value = transaction.dataDecoded?.parameters?.getValueByName("value")?.decimalAsBigInteger() ?: BigInteger.ZERO
+
+        //Only available with transferFrom
+        val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress()
+
+        return Transaction.Transfer(
+            to,
+            from ?: transaction.safe,
+            value,
             transaction.executionDate?.formatBackendDate(),
             TokenRepository.FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
         )
+    }
 
     private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
@@ -154,6 +163,15 @@ class TransactionRepository(
             BigInteger.ZERO
         )
 
+}
+
+fun List<ParamsDto>?.getValueByName(name: String): String? {
+    this?.map {
+        if (it.name == name) {
+            return it.value
+        }
+    }
+    return null
 }
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
