@@ -59,7 +59,7 @@ data class MultisigTransactionDto(
 ) : TransactionDto
 
 data class EthereumTransactionDto(
-    override val txType: TransactionType = TransactionType.MULTISIG_TRANSACTION,
+    override val txType: TransactionType = TransactionType.ETHEREUM_TRANSACTION,
     override val to: Solidity.Address,
     override val data: String? = null,
     val from: Solidity.Address,

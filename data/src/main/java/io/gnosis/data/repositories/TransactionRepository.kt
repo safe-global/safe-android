@@ -22,7 +22,7 @@ class TransactionRepository(
                         is EthereumTransactionDto -> {
                             when {
                                 !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
-                                transactionDto.transfers.isNullOrEmpty() && transactionDto.data != null -> add(custom(transactionDto))
+                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
                                 else -> add(transfer(transactionDto))
                             }
                         }
@@ -150,3 +150,4 @@ class TransactionRepository(
 }
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
+fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
