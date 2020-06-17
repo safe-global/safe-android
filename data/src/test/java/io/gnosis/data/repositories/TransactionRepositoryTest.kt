@@ -3,6 +3,8 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.FAKE_ERC20_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.FAKE_ERC721_TOKEN_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -72,7 +74,7 @@ class TransactionRepositoryTest {
     fun `getTransactions (multisig transaction settings change) should return settings`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
             to = defaultSafeAddress, safe = defaultSafeAddress,
-            dataDecodedDto = DataDecodedDto("swapOwner", null) // TODO pick a method at random?
+            dataDecodedDto = DataDecodedDto("swapOwner", null)
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -90,9 +92,8 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
-            transfers = listOf(buildTransferDto()),
             contractInfoType = ContractInfoType.ERC20,
-            dataDecodedDto = DataDecodedDto("safeTransferFrom", null) // TODO: check also transferFrom (might have different adress copied
+            dataDecodedDto = DataDecodedDto("transfer", null) // TODO: check also transferFrom (might have different address copied
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -106,16 +107,15 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe, sender)
             assertEquals(transactionDto.to, recipient)
             //  TODO: check for right transfer type
-//            assertEquals(ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
         }
     }
 
     @Test
     fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
-            transfers = listOf(buildTransferDto()),
             contractInfoType = ContractInfoType.ERC721,
-            dataDecodedDto = DataDecodedDto("transfer", null) // TODO: check also transferFrom (might have differrent adress copied
+            dataDecodedDto = DataDecodedDto("safeTransferFrom", null) // TODO: check also transferFrom (might have differrent adress copied
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -129,7 +129,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe, sender)
             assertEquals(transactionDto.to, recipient)
             //  TODO: check for right transfer type
-//            assertEquals(ERC20_TOKEN_INFO, tokenInfo)
+            assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
         }
 
     }
@@ -151,6 +151,7 @@ class TransactionRepositoryTest {
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
+
 
     @Test
     fun `getTransactions (multisig unknown type) should return custom`() = runBlockingTest {
@@ -188,7 +189,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.blockTimestamp, date)
             assertEquals(transactionDto.from, sender)
             assertEquals(transactionDto.to, recipient)
-//            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo) //TODO: should be ERC20
+            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
         }
 
         with(actual.results[1] as Transaction.Transfer) {
@@ -196,7 +197,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.blockTimestamp, date)
             assertEquals(transactionDto.from, sender)
             assertEquals(transactionDto.to, recipient)
-//            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo) //TODO: should be ERC721
+            assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
         }
         with(actual.results[2] as Transaction.Transfer) {
             assertEquals(transactionDto.value, value)

@@ -1,6 +1,7 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -64,7 +65,13 @@ class TransactionRepository(
             transferDto.from,
             transferDto.value,
             transferDto.executionDate?.formatBackendDate(),
-            transferDto.tokenAddress?.let { null } ?: TokenRepository.ETH_SERVICE_TOKEN_INFO
+            transferDto.type.let {
+                when (it) {
+                    TransferType.ERC20_TRANSFER -> TokenRepository.FAKE_ERC20_TOKEN_INFO
+                    TransferType.ERC721_TRANSFER -> TokenRepository.FAKE_ERC721_TOKEN_INFO
+                    else -> TokenRepository.ETH_SERVICE_TOKEN_INFO
+                }
+            }
         )
 
     private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
@@ -92,7 +99,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO // TODO: find out correct token data source
+            TokenRepository.FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
         )
 
     private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
@@ -101,7 +108,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO // TODO: find out correct token data source
+            TokenRepository.FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
         )
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
