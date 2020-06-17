@@ -14,7 +14,6 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
-import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -70,8 +69,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
-        progress.visible(false)
         with(binding) {
+            progress.visible(false)
             nextButton.isEnabled = false
             addSafeAddressInputLayout.isErrorEnabled = true
             addSafeAddressInputLayout.error =
