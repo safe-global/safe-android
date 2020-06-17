@@ -7,7 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -20,6 +20,8 @@ class TransactionRepositoryTest {
 
     private val transactionRepository = TransactionRepository(transactionServiceApi)
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
+    private val defaultFromAddress = "0x7cd310A8AeBf268bF78ea16C601F201ca81e84Cc".asEthereumAddress()!!
+    private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
@@ -37,11 +39,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (module transaction) should return custom`() = runBlockingTest {
-        val transactionDto = buildModuleTransactionDto(
-            Solidity.Address(BigInteger.ONE),
-            Solidity.Address(BigInteger.ONE),
-            Solidity.Address(BigInteger.ONE)
-        )
+        val transactionDto = buildModuleTransactionDto(module = Solidity.Address(BigInteger.ONE))
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
@@ -65,7 +63,7 @@ class TransactionRepositoryTest {
 
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
-            assertEquals(transactionDto.to, address)
+            assertEquals(transactionDto.to, address) //TODO: Only to available in UnknownTransaction, but is it useful?
             assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
         }
     }
@@ -84,7 +82,8 @@ class TransactionRepositoryTest {
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.SettingsChange) {
             assertEquals("swapOwner", dataDecoded.method)
-            // TODO: nonce, executionDate
+            assertEquals(transactionDto.nonce, nonce)
+            assertEquals(transactionDto.creationDate, date)
         }
     }
 
@@ -170,17 +169,95 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest { }
+    fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest {
+        val transactionDto = buildEthereumTransactionDto(
+            transfers = listOf(
+                buildTransferDto(TransferType.ERC20_TRANSFER),
+                buildTransferDto(TransferType.ERC721_TRANSFER),
+                buildTransferDto()
+            )
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+        assertEquals(3, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.blockTimestamp, date)
+            assertEquals(transactionDto.from, sender)
+            assertEquals(transactionDto.to, recipient)
+//            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo) //TODO: should be ERC20
+        }
+
+        with(actual.results[1] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.blockTimestamp, date)
+            assertEquals(transactionDto.from, sender)
+            assertEquals(transactionDto.to, recipient)
+//            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo) //TODO: should be ERC721
+        }
+        with(actual.results[2] as Transaction.Transfer) {
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.blockTimestamp, date)
+            assertEquals(transactionDto.from, sender)
+            assertEquals(transactionDto.to, recipient)
+            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
+        }
+    }
 
     @Test
-    fun `getTransactions (ethereum transaction no transfers and with data) should return custom`() = runBlockingTest { }
+    fun `getTransactions (ethereum transaction no transfers and with data) should return custom`() = runBlockingTest {
+        val transactionDto = buildEthereumTransactionDto(data = "0x6a7612020000000000000000000000001c8b9b78e3085866521fe2")
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Custom) {
+            assertEquals(transactionDto.from, address)
+            assertEquals(transactionDto.data?.dataSizeBytes(), dataSize)
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.blockTimestamp, date)
+        }
+    }
 
     @Test
-    fun `getTransactions (ethereum transaction with no transfers and no data with value) should return ETH transfer of value`() = runBlockingTest { }
+    fun `getTransactions (ethereum transaction with no transfers and no data with value) should return ETH transfer of value`() = runBlockingTest {
+        val transactionDto = buildEthereumTransactionDto(data = "0x")
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(transactionDto.to, recipient)
+            assertEquals(transactionDto.from, sender)
+            assertEquals(transactionDto.value, value)
+            assertEquals(transactionDto.blockTimestamp, date)
+        }
+    }
 
     @Test
     fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() =
-        runBlockingTest { }
+        runBlockingTest {
+            val transactionDto = buildEthereumTransactionDto(data = null, value = BigInteger.ZERO)
+            val pagedResult = listOf(transactionDto)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
+            assertEquals(1, actual.results.size)
+            with(actual.results[0] as Transaction.Transfer) {
+                assertEquals(transactionDto.to, recipient)
+                assertEquals(transactionDto.from, sender)
+                assertEquals(transactionDto.value, value)
+                assertEquals(transactionDto.blockTimestamp, date)
+            }
+        }
 
     @Test
     fun `dataSizeBytes (one byte data) should return 1`() {
@@ -197,10 +274,25 @@ class TransactionRepositoryTest {
         assertEquals("0x0123456789".dataSizeBytes(), 5L)
     }
 
+    @Test
+    fun `hexStringNullOrEmpty (is 0x) should return true`() {
+        assertTrue("0x".hexStringNullOrEmpty())
+    }
+
+    @Test
+    fun `hexStringNullOrEmpty (is null) should return true`() {
+        assertTrue(null.hexStringNullOrEmpty())
+    }
+
+    @Test
+    fun `hexStringNullOrEmpty (is 0x1A) should return false`() {
+        assertFalse("0x1A".hexStringNullOrEmpty())
+    }
+
     private fun buildModuleTransactionDto(
-        to: Solidity.Address,
+        to: Solidity.Address = defaultToAddress,
         module: Solidity.Address,
-        safe: Solidity.Address
+        safe: Solidity.Address = defaultSafeAddress
     ): ModuleTransactionDto =
         ModuleTransactionDto(
             to = to,
@@ -213,8 +305,8 @@ class TransactionRepositoryTest {
         transfers: List<TransferDto>? = null,
         contractInfoType: ContractInfoType? = null,
         dataDecodedDto: DataDecodedDto? = null,
-        safe: Solidity.Address = Solidity.Address(BigInteger.ONE),
-        to: Solidity.Address = Solidity.Address(BigInteger.TEN),
+        safe: Solidity.Address = defaultSafeAddress,
+        to: Solidity.Address = defaultToAddress,
         operation: Operation = Operation.CALL
     ): MultisigTransactionDto {
         return MultisigTransactionDto(
@@ -232,11 +324,31 @@ class TransactionRepositoryTest {
         )
     }
 
-    private fun buildTransferDto(): TransferDto =
+    private fun buildEthereumTransactionDto(
+        transfers: List<TransferDto> = listOf(),
+        from: Solidity.Address = defaultFromAddress,
+        to: Solidity.Address = defaultToAddress,
+        data: String? = "0x",
+        value: BigInteger = BigInteger.ONE
+    ): EthereumTransactionDto {
+        return EthereumTransactionDto(
+            from = from,
+            to = to,
+            value = value,
+            transfers = transfers,
+            data = data,
+            txHash = "0x1234",
+            blockTimestamp = null
+        )
+    }
+
+    private fun buildTransferDto(
+        type: TransferType = TransferType.ETHER_TRANSFER
+    ): TransferDto =
         TransferDto(
-            to = Solidity.Address(BigInteger.TEN),
-            from = Solidity.Address(BigInteger.ONE),
-            type = TransferType.ETHER_TRANSFER,
+            to = defaultToAddress,
+            from = defaultFromAddress,
+            type = type,
             value = BigInteger.ONE
         )
 }
