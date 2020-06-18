@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.base
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.ScreenId
@@ -20,6 +21,9 @@ abstract class BaseActivity : AppCompatActivity() {
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
+            delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
+        }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
         if (!BuildConfig.DEBUG) {
