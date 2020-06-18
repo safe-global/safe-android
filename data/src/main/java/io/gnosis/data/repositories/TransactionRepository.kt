@@ -1,6 +1,7 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -11,9 +12,19 @@ import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 
+//TODO Remove all this, when we have ContractInfo from the backend
+private val defaultErc20Address = "0xc778417e063141139fce010982780140aa0cd5ab".asEthereumAddress()!!
+private val defaultErc721Address = "0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe".asEthereumAddress()!!
+private val ETH_ADDRESS = Solidity.Address(BigInteger.ZERO)
+val ETH_TOKEN_INFO = Erc20Token(ETH_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
+val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ETH_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
+val FAKE_ERC20_TOKEN_INFO = ServiceTokenInfo(defaultErc20Address, 18, "WETH", "Wrapped Ether", "local::ethereum")
+val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 18, "DRK", "Dirk", "local::ethereum")
+
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
 ) {
+
 
     suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
@@ -68,9 +79,9 @@ class TransactionRepository(
             transferDto.executionDate?.formatBackendDate(),
             transferDto.type.let {
                 when (it) {
-                    TransferType.ERC20_TRANSFER -> TokenRepository.FAKE_ERC20_TOKEN_INFO
-                    TransferType.ERC721_TRANSFER -> TokenRepository.FAKE_ERC721_TOKEN_INFO
-                    else -> TokenRepository.ETH_SERVICE_TOKEN_INFO
+                    TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
+                    TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
+                    else -> ETH_SERVICE_TOKEN_INFO
                 }
             }
         )
@@ -82,7 +93,7 @@ class TransactionRepository(
             transaction.from,
             transaction.value ?: BigInteger.ZERO,
             transaction.blockTimestamp?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO
+            ETH_SERVICE_TOKEN_INFO
         )
 
     //when contractInfo is available have when for ETH, ERC20 and ERC721
@@ -92,7 +103,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.ETH_SERVICE_TOKEN_INFO
+            ETH_SERVICE_TOKEN_INFO
         )
 
     private fun transferErc20(transaction: MultisigTransactionDto): Transaction.Transfer {
@@ -109,7 +120,7 @@ class TransactionRepository(
             transaction.executionDate?.formatBackendDate()
                 ?: transaction.submissionDate?.formatBackendDate()
                 ?: transaction.modified?.formatBackendDate(),
-            TokenRepository.FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
+            FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
         )
     }
 
@@ -119,7 +130,7 @@ class TransactionRepository(
             transaction.safe,
             transaction.value,
             transaction.executionDate?.formatBackendDate(),
-            TokenRepository.FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
+            FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
         )
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
