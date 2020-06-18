@@ -6,7 +6,7 @@ import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
-import io.gnosis.safe.ui.safe.assets.AssetssFragment
+import io.gnosis.safe.ui.safe.assets.AssetsFragment
 import io.gnosis.safe.ui.safe.assets.coins.CoinsFragment
 import io.gnosis.safe.ui.safe.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
@@ -48,7 +48,7 @@ interface ViewComponent {
 
     fun inject(fragment: SafeSettingsFragment)
 
-    fun inject(fragment: AssetssFragment)
+    fun inject(fragment: AssetsFragment)
 
     fun inject(fragment: CoinsFragment)
 

@@ -21,7 +21,7 @@ import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class AssetssFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
+class AssetsFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
 
     @Inject
     lateinit var viewModel: SafeBalancesViewModel
@@ -38,7 +38,7 @@ class AssetssFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            pager = BalancesPagerAdapter(this@AssetssFragment)
+            pager = BalancesPagerAdapter(this@AssetsFragment)
             balancesContent.adapter = pager
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
                 when (BalancesPagerAdapter.Tabs.values()[position]) {
