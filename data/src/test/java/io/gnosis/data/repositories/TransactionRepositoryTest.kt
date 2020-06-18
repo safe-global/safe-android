@@ -62,9 +62,10 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
-            assertEquals(transactionDto.to, address) //TODO: Only to available in UnknownTransaction, but is it useful?
+            assertEquals(transactionDto.to, address)
             assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
         }
     }
@@ -80,6 +81,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.SettingsChange) {
             assertEquals("swapOwner", dataDecoded.method)
@@ -105,6 +107,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals("Expect one Transfer result", 1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals("Correct value expected: ", defaultValue, value)
@@ -134,6 +137,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals("Expect one Transfer result", 1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals("Correct value expected: ", defaultValue, value)
@@ -156,6 +160,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals(transactionDto.value, value)
@@ -176,6 +181,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals(transactionDto.value, value)
@@ -195,6 +201,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.to, address)
@@ -216,6 +223,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(3, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals(transactionDto.value, value)
@@ -249,6 +257,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.from, address)
@@ -266,6 +275,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals(transactionDto.to, recipient)
@@ -284,6 +294,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
+            coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
             assertEquals(1, actual.results.size)
             with(actual.results[0] as Transaction.Transfer) {
                 assertEquals(transactionDto.to, recipient)
