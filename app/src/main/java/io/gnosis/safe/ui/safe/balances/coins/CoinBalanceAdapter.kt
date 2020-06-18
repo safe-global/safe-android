@@ -7,7 +7,9 @@ import io.gnosis.data.models.Balance
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.utils.loadTokenLogo
-import io.gnosis.safe.utils.shiftedString
+import io.gnosis.safe.utils.shifted
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class CoinBalanceAdapter : RecyclerView.Adapter<CoinBalanceViewHolder>() {
 
@@ -33,9 +35,13 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : R
     fun bind(balanceItem: Balance) {
         with(viewBinding) {
             logoImage.loadTokenLogo(balanceItem.token.logoUrl)
+            val formatter = DecimalFormat.getInstance()
             symbol.text = balanceItem.token.symbol
-            balance.text = balanceItem.balance.shiftedString(balanceItem.token.decimals, 5)
-            balanceUsd.text = viewBinding.root.context.getString(R.string.usd_balance, balanceItem.balanceUsd)
+            balance.text = formatter.format(balanceItem.balance.shifted(balanceItem.token.decimals))
+            balanceUsd.text = viewBinding.root.context.getString(
+                R.string.usd_balance,
+                formatter.format(balanceItem.balanceUsd.setScale(2, RoundingMode.DOWN))
+            )
         }
     }
 }
