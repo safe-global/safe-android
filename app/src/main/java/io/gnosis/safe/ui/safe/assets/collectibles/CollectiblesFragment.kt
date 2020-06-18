@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe.balances.collectibles
+package io.gnosis.safe.ui.safe.assets.collectibles
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe.balances
+package io.gnosis.safe.ui.safe.assets
 
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
