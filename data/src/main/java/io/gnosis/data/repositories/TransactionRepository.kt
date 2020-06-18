@@ -53,7 +53,7 @@ class TransactionRepository(
                 listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method)
 
     private fun isEthTransfer(transactionDto: MultisigTransactionDto): Boolean =
-        transactionDto.data == null && transactionDto.operation == Operation.CALL
+        transactionDto.data.hexStringNullOrEmpty() && transactionDto.operation == Operation.CALL
 
     private fun isSettingsChange(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.to == transactionDto.safe

@@ -281,7 +281,7 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() =
         runBlockingTest {
-            val transactionDto = buildEthereumTransactionDto(data = null, value = BigInteger.ZERO)
+            val transactionDto = buildEthereumTransactionDto(value = BigInteger.ZERO)
             val pagedResult = listOf(transactionDto)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
@@ -365,7 +365,7 @@ class TransactionRepositoryTest {
         transfers: List<TransferDto> = listOf(),
         from: Solidity.Address = defaultFromAddress,
         to: Solidity.Address = defaultToAddress,
-        data: String? = "0x",
+        data: String = "0x",
         value: BigInteger = BigInteger.ONE
     ): EthereumTransactionDto {
         return EthereumTransactionDto(
