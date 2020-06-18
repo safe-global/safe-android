@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe.balances
+package io.gnosis.safe.ui.safe.assets
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,13 +15,13 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSafeBalancesBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
-import io.gnosis.safe.ui.safe.balances.coins.CoinsFragment
-import io.gnosis.safe.ui.safe.balances.collectibles.CollectiblesFragment
+import io.gnosis.safe.ui.safe.assets.coins.CoinsFragment
+import io.gnosis.safe.ui.safe.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
+class AssetsFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
 
     @Inject
     lateinit var viewModel: SafeBalancesViewModel
@@ -38,7 +38,7 @@ class SafeBalancesFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            pager = BalancesPagerAdapter(this@SafeBalancesFragment)
+            pager = BalancesPagerAdapter(this@AssetsFragment)
             balancesContent.adapter = pager
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
                 when (BalancesPagerAdapter.Tabs.values()[position]) {
@@ -78,7 +78,8 @@ class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     enum class Items(val value: Long) {
         COINS(Tabs.COINS.ordinal.toLong()),
         COLLECTIBLES(Tabs.COLLECTIBLES.ordinal.toLong()),
-        NO_SAFE(RecyclerView.NO_ID) }
+        NO_SAFE(RecyclerView.NO_ID)
+    }
 
     var noActiveSafe: Boolean = false
         set(value) {

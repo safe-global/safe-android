@@ -12,8 +12,8 @@ import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
-import io.gnosis.safe.ui.safe.balances.SafeBalancesViewModel
-import io.gnosis.safe.ui.safe.balances.coins.CoinsViewModel
+import io.gnosis.safe.ui.safe.assets.SafeBalancesViewModel
+import io.gnosis.safe.ui.safe.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.settings.SettingsViewModel

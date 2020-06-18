@@ -5,12 +5,11 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewEndpointItemBinding
-import timber.log.Timber
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
+import timber.log.Timber
 
 class EndpointItem @JvmOverloads constructor(
     context: Context,
@@ -21,7 +20,6 @@ class EndpointItem @JvmOverloads constructor(
     private val binding = ViewEndpointItemBinding.inflate(LayoutInflater.from(context), this)
 
     init {
-        background = ContextCompat.getDrawable(context, R.drawable.background_selectable)
         readAttributesAndSetupFields(context, attrs)
     }
 

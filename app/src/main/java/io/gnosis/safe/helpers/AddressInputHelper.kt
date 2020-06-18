@@ -55,7 +55,7 @@ class AddressInputHelper(
                 hide()
             }
             bottom_sheet_address_input_paste_touch.setOnClickListener {
-                (clipboard.primaryClip?.getItemAt(0)?.text?.let { parseEthereumAddress(it.toString()) }
+                (clipboard.primaryClip?.getItemAt(0)?.text?.trim()?.let { parseEthereumAddress(it.toString()) }
                     ?: run {
                         handleError(IllegalArgumentException("No Ethereum address found"))
                         null

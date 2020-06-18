@@ -14,7 +14,6 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
-import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -70,13 +69,16 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
-        progress.visible(false)
-        binding.addSafeAddressInputLayout.isErrorEnabled = true
-        binding.addSafeAddressInputLayout.error =
-            when (throwable) {
-                is UsedSafeAddress -> getString(R.string.error_used_address)
-                else -> getString(R.string.error_invalid_safe)
-            }
+        with(binding) {
+            progress.visible(false)
+            nextButton.isEnabled = false
+            addSafeAddressInputLayout.isErrorEnabled = true
+            addSafeAddressInputLayout.error =
+                when (throwable) {
+                    is UsedSafeAddress -> getString(R.string.error_used_address)
+                    else -> getString(R.string.error_invalid_safe)
+                }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -85,6 +87,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     }
 
     private fun updateAddress(address: Solidity.Address) {
+        viewModel.validate(address)
         with(binding) {
             nextButton.isEnabled = true
             addSafeAddressInputLayout.isErrorEnabled = false
