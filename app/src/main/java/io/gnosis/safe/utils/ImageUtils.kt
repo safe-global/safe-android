@@ -16,16 +16,16 @@ fun ImageView.loadTokenLogo(icon: String?) {
         icon == "local::ethereum" -> {
             setImageResource(R.drawable.ic_ethereum_logo)
         }
-        icon?.startsWith("local::") == true -> setImageResource(R.drawable.background_circle)
+        icon?.startsWith("local::") == true -> setImageResource(R.drawable.ic_coin_placeholder)
 
         !icon.isNullOrBlank() ->
             Picasso.get()
                 .load(icon)
-                .placeholder(R.drawable.background_circle)
-                .error(R.drawable.background_circle)
+                .placeholder(R.drawable.ic_coin_placeholder)
+                .error(R.drawable.ic_coin_placeholder)
                 .transform(CircleTransformation)
                 .into(this)
-        else -> setImageResource(R.drawable.background_circle)
+        else -> setImageResource(R.drawable.ic_coin_placeholder)
     }
 }
 
