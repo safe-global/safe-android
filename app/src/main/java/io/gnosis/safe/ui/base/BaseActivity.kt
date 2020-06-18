@@ -21,6 +21,7 @@ abstract class BaseActivity : AppCompatActivity() {
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //FIXME: remove when dark mode is implemented
         if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
             delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
         }
