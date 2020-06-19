@@ -124,14 +124,19 @@ class TransactionRepository(
         )
     }
 
-    private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
-        Transaction.Transfer(
-            transaction.to,
-            transaction.safe,
-            transaction.value,
+    private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer {
+        val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
+        val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
+        val value = BigInteger.ONE
+
+        return Transaction.Transfer(
+            to,
+            from,
+            value,
             transaction.executionDate?.formatBackendDate(),
             FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
         )
+    }
 
     private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
         Transaction.SettingsChange(
