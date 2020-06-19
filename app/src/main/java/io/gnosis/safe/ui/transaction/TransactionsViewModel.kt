@@ -16,7 +16,7 @@ class TransactionsViewModel
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load() {//safeAddress: Solidity.Address) {
+    fun load() {
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()!!.address
             val transactions = transactionRepository.getTransactions(safeAddress)

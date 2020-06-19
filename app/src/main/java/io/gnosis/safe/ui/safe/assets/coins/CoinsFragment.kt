@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe.balances.coins
+package io.gnosis.safe.ui.safe.assets.coins
 
 import android.os.Bundle
 import android.view.LayoutInflater
