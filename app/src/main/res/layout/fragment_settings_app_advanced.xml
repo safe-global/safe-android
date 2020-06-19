@@ -30,21 +30,21 @@
 
             <TextView
                 style="@style/Header"
-                android:text="@string/ens_resolver_address"/>
+                android:text="@string/ens_resolver_address" />
 
             <include
                 android:id="@+id/ens"
-                layout="@layout/item_eth_address"/>
+                layout="@layout/item_eth_address" />
 
             <TextView
                 style="@style/Header"
-                android:text="@string/endpoints"/>
+                android:text="@string/endpoints" />
 
             <io.gnosis.safe.ui.safe.settings.view.EndpointItem
                 android:id="@+id/rpc_endpoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@drawable/background_selectable"
                 app:endpoint_name="@string/rpc_endpoint" />
 
             <io.gnosis.safe.ui.safe.settings.view.EndpointItem
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@color/white"
+                android:background="@drawable/background_selectable"
                 app:endpoint_name="@string/tx_service" />
 
         </LinearLayout>

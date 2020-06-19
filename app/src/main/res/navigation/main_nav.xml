@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/safeBalancesFragment"
-        android:name="io.gnosis.safe.ui.safe.balances.SafeBalancesFragment"
+        android:name="io.gnosis.safe.ui.safe.assets.AssetsFragment"
         android:label="SafeBalancesFragment"
         tools:layout="@layout/fragment_safe_balances" />
 

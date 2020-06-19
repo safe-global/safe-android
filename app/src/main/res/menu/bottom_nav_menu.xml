@@ -5,7 +5,7 @@
         android:id="@+id/safeBalancesFragment"
         android:enabled="true"
         android:icon="@drawable/ic_coins_24dp"
-        android:title="@string/balances"
+        android:title="@string/assets"
         app:showAsAction="always" />
     <item
         android:id="@+id/transactionsFragment"
