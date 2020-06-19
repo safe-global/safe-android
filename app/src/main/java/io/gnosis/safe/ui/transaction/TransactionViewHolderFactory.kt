@@ -5,12 +5,13 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
-import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.Adapter
+import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
 import io.gnosis.safe.utils.asMiddleEllipsized
 import io.gnosis.safe.utils.shiftedString
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
 
 enum class TransactionViewType {
     CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED
@@ -86,11 +87,11 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             if (data.isIncoming) {
                 txTypeIcon.setImageResource(R.drawable.ic_arrow_green_16dp)
                 blockies.setAddress(data.transaction.sender)
-                ellipsizedAddress.text = data.transaction.sender.asEthereumAddressString().asMiddleEllipsized(4)
+                ellipsizedAddress.text = data.transaction.sender.formatForTxList()
             } else {
                 txTypeIcon.setImageResource(R.drawable.ic_arrow_red_10dp)
                 blockies.setAddress(data.transaction.recipient)
-                ellipsizedAddress.text = data.transaction.recipient.asEthereumAddressString().asMiddleEllipsized(4)
+                ellipsizedAddress.text = data.transaction.recipient.formatForTxList()
             }
         }
     }
@@ -119,3 +120,5 @@ class TransferQueuedViewHolder(viewBinding: ItemTxQueuedTransferBinding) :
         TODO("Not yet implemented")
     }
 }
+
+fun Solidity.Address.formatForTxList(): String = asEthereumAddressChecksumString().asMiddleEllipsized(4)
