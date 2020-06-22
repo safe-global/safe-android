@@ -8,11 +8,8 @@ import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
-import io.gnosis.safe.utils.asMiddleEllipsized
 import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.model.Solidity
 
 enum class TransactionViewType {
     CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED

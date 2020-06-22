@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.models.*
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
