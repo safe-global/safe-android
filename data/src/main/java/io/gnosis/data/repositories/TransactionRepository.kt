@@ -72,7 +72,7 @@ class TransactionRepository(
         return Transaction.Transfer(
             transferDto.to,
             transferDto.from,
-            transferDto.value,
+            transferDto.value ?: BigInteger.ZERO,
             transferDto.executionDate?.formatBackendDate(),
             transferDto.type.let {
                 when (it) {
