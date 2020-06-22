@@ -206,7 +206,7 @@ class TransactionRepositoryTest {
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.to, address)
-            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+            assertEquals(0L, dataSize)
         }
     }
 
