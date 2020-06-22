@@ -1,11 +1,31 @@
 package io.gnosis.data.models
 
-sealed class Transaction(open val nonce: String) {
+import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
-    data class ChangeMastercopy(override val nonce: String) : Transaction(nonce)
-    data class ChangeMastercopyQueued(override val nonce: String) : Transaction(nonce)
-    data class SettingsChange(override val nonce: String) : Transaction(nonce)
-    data class SettingsChangeQueued(override val nonce: String) : Transaction(nonce)
-    data class Transfer(override val nonce: String) : Transaction(nonce)
-    data class TransferQueued(override val nonce: String) : Transaction(nonce)
+sealed class Transaction {
+    data class Custom(
+        val nonce: BigInteger?,
+        val address: Solidity.Address,
+        val dataSize: Long,
+        val date: String?,
+        val value: BigInteger
+    ) : Transaction()
+
+    data class SettingsChange(
+        val dataDecoded: DataDecodedDto,
+        val date: String?,
+        val nonce: BigInteger
+    ) : Transaction()
+
+    data class Transfer(
+        val recipient: Solidity.Address,
+        val sender: Solidity.Address,
+        val value: BigInteger,
+        val date: String?,
+        val tokenInfo: ServiceTokenInfo
+    ) : Transaction()
 }
+

@@ -1,0 +1,22 @@
+{
+  "to": "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A",
+  "data": "0x",
+  "txHash": "0x079255a96059d550307fd8c0648ec1a2300042b53b7ae9aa39c38f8b259f1c28",
+  "blockNumber": 6598482,
+  "blockTimestamp": "2020-06-02T21:18:20Z",
+  "transfers": [
+    {
+      "type": "ETHER_TRANSFER",
+      "executionDate": "2020-06-02T21:18:20Z",
+      "blockNumber": 6598482,
+      "transactionHash": "0x079255a96059d550307fd8c0648ec1a2300042b53b7ae9aa39c38f8b259f1c28",
+      "to": "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A",
+      "value": "10000000000000000000",
+      "tokenId": null,
+      "tokenAddress": null,
+      "from": "0xE86935943315293154c7AD63296b4e1adAc76364"
+    }
+  ],
+  "txType": "ETHEREUM_TRANSACTION",
+  "from": "0xE86935943315293154c7AD63296b4e1adAc76364"
+}

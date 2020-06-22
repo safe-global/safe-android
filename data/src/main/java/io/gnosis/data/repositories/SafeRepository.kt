@@ -87,5 +87,18 @@ class SafeRepository(
             SAFE_MASTER_COPY_1_0_0,
             SAFE_MASTER_COPY_1_1_1
         )
+
+        fun isSettingsMethod(methodName: String?): Boolean = settingMethodNames.contains(methodName)
+
+        private val settingMethodNames = listOf(
+            "setFallbackHandler",
+            "addOwnerWithThreshold",
+            "removeOwner",
+            "swapOwner",
+            "changeThreshold",
+            "changeMasterCopy",
+            "enableModule",
+            "disableModule"
+        )
     }
 }

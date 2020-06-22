@@ -1,14 +1,49 @@
 package io.gnosis.safe.ui.transaction
 
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import pm.gnosis.models.Transaction
 import javax.inject.Inject
 
 class TransactionsViewModel
-@Inject constructor(appDispatchers: AppDispatchers) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
+@Inject constructor(
+    private val transactionRepository: TransactionRepository,
+    private val safeRepository: SafeRepository,
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    override fun initialState(): TransactionsViewState = TransactionsViewState(null, false)
+    override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
+
+    fun load() {
+        safeLaunch {
+            val safeAddress = safeRepository.getActiveSafe()!!.address
+            val transactions = transactionRepository.getTransactions(safeAddress)
+            updateState {
+                TransactionsViewState(
+                    isLoading = false,
+                    viewAction = LoadTransactions(transactions.results.mapNotNull { transaction ->
+                        when (transaction) {
+                            is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                            is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                            else -> null
+                        }
+                    })
+                )
+            }
+        }
+    }
+}
+
+sealed class TransactionView(open val transaction: Transaction) {
+
+    data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
+    data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
+    data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class Transfer(override val transaction: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transaction)
+    data class TransferQueued(override val transaction: Transaction) : TransactionView(transaction)
 }
 
 data class TransactionsViewState(
@@ -17,5 +52,5 @@ data class TransactionsViewState(
 ) : BaseStateViewModel.State
 
 data class LoadTransactions(
-    val newTransactions: List<Transaction>
+    val newTransactions: List<TransactionView>
 ) : BaseStateViewModel.ViewAction
