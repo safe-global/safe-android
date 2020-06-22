@@ -32,7 +32,11 @@ class SafeSettingsViewModel @Inject constructor(
             runCatching {
                 safe?.let {
                     safeRepository.removeSafe(safe)
-                    safeRepository.clearActiveSafe()
+                    val safes = safeRepository.getSafes()
+                    if (safes.isEmpty())
+                        safeRepository.clearActiveSafe()
+                    else
+                        safeRepository.setActiveSafe(safes.first())
                 }
             }.onFailure {
                 updateState { SafeSettingsState(safe, ViewAction.ShowError(it)) }
