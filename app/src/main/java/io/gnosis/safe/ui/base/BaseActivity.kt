@@ -31,7 +31,7 @@ abstract class BaseActivity : AppCompatActivity() {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
         screenId()?.let {
-            tracker.setCurrentScreenId(this, it)
+            tracker.logScreen(it)
         }
     }
 
