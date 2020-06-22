@@ -2,7 +2,7 @@ package io.gnosis.data.backend
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.dto.ServiceBalance
-import io.gnosis.data.models.TransactionDto
+import io.gnosis.data.backend.dto.TransactionDto
 import io.gnosis.data.models.Page
 import retrofit2.http.GET
 import retrofit2.http.Path

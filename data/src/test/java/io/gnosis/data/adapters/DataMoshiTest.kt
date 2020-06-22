@@ -1,6 +1,7 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.JsonDataException
+import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -64,5 +65,4 @@ class DataMoshiTest {
             )
         ).lines().parallel().collect(Collectors.joining("\n"))
     }
-
 }
