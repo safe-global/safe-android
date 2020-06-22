@@ -9,6 +9,7 @@ import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
 import io.gnosis.safe.utils.asMiddleEllipsized
+import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -120,5 +121,3 @@ class TransferQueuedViewHolder(viewBinding: ItemTxQueuedTransferBinding) :
         TODO("Not yet implemented")
     }
 }
-
-fun Solidity.Address.formatForTxList(): String = asEthereumAddressChecksumString().asMiddleEllipsized(4)
