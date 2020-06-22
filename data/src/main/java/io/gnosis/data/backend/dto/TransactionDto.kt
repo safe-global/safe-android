@@ -1,6 +1,5 @@
 package io.gnosis.data.backend.dto
 
-import io.gnosis.data.models.*
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -100,3 +99,34 @@ data class ParamsDto(
     val type: String,
     val value: String
 )
+
+enum class ContractInfoType {
+    ERC20, // default
+    ERC721
+}
+
+enum class Operation(val id: Int) {
+    CALL(0),
+    DELEGATE(1)
+}
+
+enum class TransferType {
+    ETHER_TRANSFER,
+    ERC20_TRANSFER,
+    ERC721_TRANSFER,
+    UNKNOWN
+}
+
+enum class TransactionType {
+    ETHEREUM_TRANSACTION,
+    MULTISIG_TRANSACTION,
+    MODULE_TRANSACTION,
+    UNKNOWN
+}
+
+enum class SignatureType {
+    CONTRACT_SIGNATURE,
+    APPROVED_HASH,
+    EOA,
+    ETH_SIGN
+}
