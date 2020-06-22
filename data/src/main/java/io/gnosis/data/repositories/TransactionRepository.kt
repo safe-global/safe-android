@@ -53,7 +53,7 @@ class TransactionRepository(
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // Always false unless wir have contractInfo
+                transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // Always false unless we have contractInfo
                 listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method)
 
     private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
