@@ -52,7 +52,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
         }.ordinal
 }
 
-
 abstract class BaseTransactionViewHolder<T : TransactionView>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
 
 class ChangeMastercopyViewHolder(viewBinding: ItemTxChangeMastercopyBinding) :

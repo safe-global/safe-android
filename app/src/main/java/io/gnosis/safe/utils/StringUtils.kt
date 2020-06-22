@@ -59,7 +59,6 @@ fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 4, s
             length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-
     }
 }
 
