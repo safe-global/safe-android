@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -40,7 +41,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_book"
-        style="@style/Text"
+        style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
@@ -55,11 +56,76 @@
 
 
     <View
+        android:id="@+id/bottom_sheet_address_input_paste_touch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/background_selectable"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_book"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <ImageView
+        android:id="@+id/bottom_sheet_address_input_paste_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="14dp"
+        android:tint="@color/dark_grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_book_touch"
+        app:srcCompat="@drawable/ic_content_paste_white_24dp" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_paste"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/address_input_clipboard"
+        android:textColor="@color/dark_grey"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_paste_icon"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_book" />
+
+    <View
+        android:id="@+id/bottom_sheet_address_input_qr_touch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/background_selectable"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
+
+    <ImageView
+        android:id="@+id/bottom_sheet_address_input_qr_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="14dp"
+        android:src="@drawable/ic_qrcode_scan_white_24dp"
+        android:tint="@color/dark_grey"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_qr"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/address_input_qr_code"
+        android:textColor="@color/dark_grey"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_qr_icon"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
+
+    <View
         android:id="@+id/bottom_sheet_address_input_ens_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/background_selectable"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_book" />
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
 
     <ImageView
         android:id="@+id/bottom_sheet_address_input_ens_icon"
@@ -69,7 +135,7 @@
         android:src="@drawable/ic_ens_icon"
         android:tint="@color/dark_grey"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_book" />
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_qr" />
 
 
     <TextView
@@ -86,71 +152,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_ens_icon"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_book" />
-
-    <View
-        android:id="@+id/bottom_sheet_address_input_qr_touch"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/background_selectable"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
-
-    <ImageView
-        android:id="@+id/bottom_sheet_address_input_qr_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="14dp"
-        android:src="@drawable/ic_qrcode_scan_white_24dp"
-        android:tint="@color/dark_grey"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
-
-    <TextView
-        android:id="@+id/bottom_sheet_address_input_qr"
-        style="@style/Text"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/address_input_qr_code"
-        android:textColor="@color/dark_grey"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_qr_icon"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
-
-
-    <View
-        android:id="@+id/bottom_sheet_address_input_paste_touch"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/background_selectable"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
-
-    <ImageView
-        android:id="@+id/bottom_sheet_address_input_paste_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="14dp"
-        android:tint="@color/dark_grey"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr"
-        app:srcCompat="@drawable/ic_content_paste_white_24dp" />
-
-    <TextView
-        android:id="@+id/bottom_sheet_address_input_paste"
-        style="@style/Text"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/address_input_clipboard"
-        android:textColor="@color/dark_grey"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_paste_icon"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
