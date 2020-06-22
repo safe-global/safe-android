@@ -69,3 +69,5 @@ fun String.formatEthAddressBold(prefixLength: Int = 4, suffixLength: Int = 4): S
         setSpan(StyleSpan(Typeface.BOLD), this.length - suffixLength, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 }
+
+fun Solidity.Address.formatForTxList(): String = asEthereumAddressChecksumString().asMiddleEllipsized(4)

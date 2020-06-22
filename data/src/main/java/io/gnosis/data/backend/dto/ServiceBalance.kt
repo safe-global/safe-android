@@ -3,7 +3,7 @@ package io.gnosis.data.backend.dto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.Erc20Token
-import io.gnosis.data.repositories.ETH_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import pm.gnosis.common.adapters.moshi.DecimalNumber
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity

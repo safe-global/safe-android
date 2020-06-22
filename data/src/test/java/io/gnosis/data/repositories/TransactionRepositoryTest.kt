@@ -3,6 +3,7 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.models.*
 import io.gnosis.data.utils.formatBackendDate
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -49,7 +50,7 @@ class TransactionRepositoryTest {
 
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.module, address)
-            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+            assertEquals( 0L, dataSize)
             assertEquals(transactionDto.created, date)
             assertEquals(transactionDto.value, value)
         }
@@ -67,7 +68,7 @@ class TransactionRepositoryTest {
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.to, address)
-            assertEquals(transactionDto.data?.dataSizeBytes() ?: 0L, dataSize)
+            assertEquals( 0L, dataSize)
         }
     }
 
