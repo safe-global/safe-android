@@ -64,6 +64,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeImage.setImageResource(io.gnosis.safe.R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
             safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
+            safeSelection.visible(false)
         }
     }
 
@@ -73,6 +74,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeName.visible(true)
             safeName.text = safe.localName
             safeAddress.text = safe.address.asEthereumAddressString().asMiddleEllipsized(4)
+            safeSelection.visible(true)
         }
     }
 
