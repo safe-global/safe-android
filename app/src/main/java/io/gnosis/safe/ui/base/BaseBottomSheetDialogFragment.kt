@@ -48,7 +48,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
     override fun onStart() {
         super.onStart()
         screenId()?.let {
-            tracker.setCurrentScreenId(requireActivity(), it)
+            tracker.logScreen(it)
         }
     }
 

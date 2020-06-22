@@ -25,7 +25,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     private val adapter = CoinBalanceAdapter()
 
-    override fun screenId() = ScreenId.BALANCES_COINS
+    override fun screenId() = ScreenId.ASSETS_COINS
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

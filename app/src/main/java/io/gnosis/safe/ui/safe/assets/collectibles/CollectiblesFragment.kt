@@ -9,7 +9,7 @@ import io.gnosis.safe.ui.base.BaseViewBindingFragment
 
 class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding>() {
 
-    override fun screenId() = ScreenId.BALANCES_COLLECTIBLES
+    override fun screenId() = ScreenId.ASSETS_COLLECTIBLES
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

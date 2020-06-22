@@ -20,10 +20,10 @@ abstract class BaseFragment : Fragment() {
         HeimdallApplication[requireContext()].inject(this)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         screenId()?.let {
-            tracker.setCurrentScreenId(requireActivity(), it)
+            tracker.logScreen(it)
         }
     }
 
