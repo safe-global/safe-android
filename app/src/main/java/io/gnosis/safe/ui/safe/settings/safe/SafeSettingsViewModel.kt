@@ -33,10 +33,11 @@ class SafeSettingsViewModel @Inject constructor(
                 safe?.let {
                     safeRepository.removeSafe(safe)
                     val safes = safeRepository.getSafes()
-                    if (safes.isEmpty())
+                    if (safes.isEmpty()) {
                         safeRepository.clearActiveSafe()
-                    else
+                    } else {
                         safeRepository.setActiveSafe(safes.first())
+                    }
                 }
             }.onFailure {
                 updateState { SafeSettingsState(safe, ViewAction.ShowError(it)) }

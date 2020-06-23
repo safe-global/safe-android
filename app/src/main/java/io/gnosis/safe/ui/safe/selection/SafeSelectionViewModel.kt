@@ -36,14 +36,13 @@ class SafeSelectionViewModel @Inject constructor(
     fun loadSafes() {
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()
-            val safes = safeRepository.getSafes().filter { it != activeSafe }.reversed()
 
-            items.clear()
-            items.add(AddSafeHeader)
-            activeSafe?.let {
-                items.add(it)
+            with(items) {
+                clear()
+                add(AddSafeHeader)
+                activeSafe?.let(::add)
+                addAll(safeRepository.getSafes().filter { it != activeSafe }.reversed())
             }
-            items.addAll(safes)
 
             updateState { SafeSelectionState.SafeListState(items, activeSafe, null) }
         }
