@@ -2,7 +2,9 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.foldInner
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -52,13 +54,15 @@ class TransactionRepository(
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // Always false unless we have contractInfo
-                listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method)
+                //transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // TODO enable this check when we have contractInfo
+                listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
+                transactionDto.dataDecoded?.parameters?.getValueByName("tokenId") != null // TODO Remove this when have contractInfo
 
     private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && //TODO enable this check when we have contractInfo
-                listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method)
+//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && // TODO enable this check when we have contractInfo
+                listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
+                transactionDto.dataDecoded?.parameters?.getValueByName("value") != null // TODO Remove this when have contractInfo
 
     private fun isEthTransfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.data.hexStringNullOrEmpty() && transactionDto.operation == Operation.CALL
@@ -69,18 +73,21 @@ class TransactionRepository(
                 SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
+        val tokenInfo = when (transferDto.type) {
+            TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
+            TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
+            else -> ETH_SERVICE_TOKEN_INFO
+        }
+        val value = when (tokenInfo) {
+            FAKE_ERC721_TOKEN_INFO -> BigInteger.ONE
+            else -> transferDto.value ?: BigInteger.ZERO
+        }
         return Transaction.Transfer(
             transferDto.to,
             transferDto.from,
-            transferDto.value ?: BigInteger.ZERO,
+            value,
             transferDto.executionDate?.formatBackendDate(),
-            transferDto.type.let {
-                when (it) {
-                    TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
-                    TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
-                    else -> ETH_SERVICE_TOKEN_INFO
-                }
-            }
+            tokenInfo
         )
     }
 
@@ -177,6 +184,12 @@ class TransactionRepository(
             null,
             BigInteger.ZERO
         )
+}
+
+private operator fun Int.compareTo(size: Int?): Int = when (size) {
+    this -> 0
+    null -> 1
+    else -> -1
 }
 
 fun List<ParamsDto>?.getValueByName(name: String): String? {
