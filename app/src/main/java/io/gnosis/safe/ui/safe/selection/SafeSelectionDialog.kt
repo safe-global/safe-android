@@ -63,9 +63,13 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
                 is SafeSelectionState.SafeListState -> {
                     adapter.setItems(state.listItems, state.activeSafe)
                     navHandler?.setSafeData(state.activeSafe)
+                    if (state.viewAction == BaseStateViewModel.ViewAction.CloseScreen) {
+                        binding.root.postDelayed({
+                            dismiss()
+                        }, 200)
+                    }
                 }
                 is SafeSelectionState.AddSafeState -> {
-
                     state.viewAction?.let {
                         val action = it as BaseStateViewModel.ViewAction.NavigateTo
                         findNavController().navigate(action.navDirections)

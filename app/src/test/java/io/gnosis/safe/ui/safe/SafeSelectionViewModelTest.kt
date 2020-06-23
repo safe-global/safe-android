@@ -57,10 +57,14 @@ class SafeSelectionViewModelTest {
 
         // check updated state
         val selectionItemsList = mutableListOf<Any>(AddSafeHeader)
-        selectionItemsList.addAll(SAFES)
+        selectionItemsList.add(ACTIVE_SAFE)
+        selectionItemsList.addAll(SAFES.filter { it != ACTIVE_SAFE })
         with(stateObserver.values()[1] as SafeSelectionState.SafeListState) {
             assertEquals(listItems, selectionItemsList)
             assertEquals(activeSafe, ACTIVE_SAFE)
+            //check ordering
+            assertEquals(listItems[0], AddSafeHeader)
+            assertEquals(listItems[1], ACTIVE_SAFE)
         }
 
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
@@ -71,6 +75,6 @@ class SafeSelectionViewModelTest {
         private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         private val SAFE_2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
         private val SAFES = listOf(SAFE_1, SAFE_2)
-        private val ACTIVE_SAFE = SAFE_1
+        private val ACTIVE_SAFE = SAFE_2
     }
 }
