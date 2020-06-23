@@ -11,6 +11,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
 
     implementation "com.google.zxing:core:$versions.zxing"
 }
