@@ -109,7 +109,6 @@ class SafeSettingsViewModelTest {
         }
     }
 
-
     companion object {
         private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         private val SAFE_2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
