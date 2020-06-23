@@ -55,9 +55,9 @@ class QRCodeScanActivity : AppCompatActivity() {
             finish()
         } else {
             AlertDialog.Builder(this)
-                .setTitle(R.string.error_title)
-                .setMessage(R.string.error_message)
-                .setNegativeButton(R.string.retry_button) { _, _ -> videographer.open(scan_view_finder) }
+                .setTitle(R.string.qr_error_title)
+                .setMessage(R.string.qr_error_message)
+                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(scan_view_finder) }
                 .create().show()
         }
     }

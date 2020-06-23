@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="error_title">Error</string>
-    <string name="error_message">Incorrect QR code</string>
-    <string name="retry_button">Retry</string>
+    <string name="qr_error_title">Error</string>
+    <string name="qr_error_message">Incorrect QR code</string>
+    <string name="qr_retry_button">Retry</string>
 </resources>
