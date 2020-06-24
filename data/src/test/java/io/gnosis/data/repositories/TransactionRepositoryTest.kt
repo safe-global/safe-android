@@ -26,6 +26,7 @@ class TransactionRepositoryTest {
     private val defaultFromAddress = "0x7cd310A8AeBf268bF78ea16C601F201ca81e84Cc".asEthereumAddress()!!
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
     private val defaultValue = BigInteger("230000000000000000")
+    private val defaultTokenId = "23"
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
@@ -161,7 +162,7 @@ class TransactionRepositoryTest {
                 listOf(
                     ParamsDto("from", "address", defaultFromAddress.asEthereumAddressChecksumString()),
                     ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
-                    ParamsDto("tokenId", "uint256", "23")
+                    ParamsDto("tokenId", "uint256", defaultTokenId)
                 )
             )
         )
