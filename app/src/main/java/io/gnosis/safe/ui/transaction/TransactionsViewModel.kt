@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transaction
 import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.R
@@ -25,8 +26,8 @@ class TransactionsViewModel
             val safeInfo = safeRepository.getSafeInfo(safeAddress)
             val transactions = transactionRepository.getTransactions(safeAddress, safeInfo)
             updateState {
-                val newTransactions = newTransactions(transactions, safeAddress)
-                val transactionsWithSectionHeaders = addSectionHeaders(newTransactions)
+                val mappedTransactions = mapTransactions(transactions, safeAddress)
+                val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
                 TransactionsViewState(
                     isLoading = false,
                     viewAction = LoadTransactions(transactionsWithSectionHeaders)
@@ -35,7 +36,7 @@ class TransactionsViewModel
         }
     }
 
-    private fun newTransactions(
+    private fun mapTransactions(
         transactions: Page<Transaction>,
         safeAddress: Solidity.Address
     ): List<TransactionView> {
@@ -48,12 +49,33 @@ class TransactionsViewModel
         }
     }
 
-    private fun addSectionHeaders(newTransactions: List<TransactionView>): List<TransactionView> {
-        val mutableList = newTransactions.toMutableList()
-        //TODO: Find first QUEUED tx and insert SectionHeader before it
-        mutableList.add(0, TransactionView.SectionHeader(title = R.string.tx_list_queue))
-        //TODO: Find first HISTORY tx and insert SectionHeader before it
-        mutableList.add(3, TransactionView.SectionHeader(title = R.string.tx_list_history))
+    private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
+        val mutableList = transactions.toMutableList()
+
+        val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
+            when (transactionView.transaction?.status) {
+                TransactionStatus.Pending,
+                TransactionStatus.AwaitingConfirmation,
+                TransactionStatus.AwaitingExecution -> true
+                else -> false
+            }
+        }
+        if (firstQueuedTransaction >= 0) {
+            mutableList.add(firstQueuedTransaction, TransactionView.SectionHeader(title = R.string.tx_list_queue))
+        }
+
+        val firstHistoricTransaction = mutableList.indexOfFirst { transactionView ->
+            when (transactionView.transaction?.status) {
+                TransactionStatus.Cancelled,
+                TransactionStatus.Failed,
+                TransactionStatus.Success -> true
+                else -> false
+            }
+        }
+
+        if (firstHistoricTransaction >= 0) {
+            mutableList.add(firstHistoricTransaction, TransactionView.SectionHeader(title = R.string.tx_list_history))
+        }
         return mutableList
     }
 }
