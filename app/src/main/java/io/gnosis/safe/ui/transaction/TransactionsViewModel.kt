@@ -15,7 +15,7 @@ class TransactionsViewModel
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
-
+    var fnord: Boolean = false
     fun load() {
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()!!.address
@@ -24,10 +24,15 @@ class TransactionsViewModel
                 TransactionsViewState(
                     isLoading = false,
                     viewAction = LoadTransactions(transactions.results.mapNotNull { transaction ->
-                        when (transaction) {
-                            is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
-                            is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
-                            else -> null
+                        if (!fnord) {
+                            fnord = true
+                            TransactionView.SectionHeader(transaction, "QueuedOrHistory")
+                        } else {
+                            when (transaction) {
+                                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                                is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                                else -> null
+                            }
                         }
                     })
                 )
@@ -37,7 +42,7 @@ class TransactionsViewModel
 }
 
 sealed class TransactionView(open val transaction: Transaction) {
-
+    data class SectionHeader(override val transaction: Transaction, val title: String) : TransactionView(transaction)
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)

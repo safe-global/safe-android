@@ -12,7 +12,7 @@ import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
 
 enum class TransactionViewType {
-    CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED
+    CHANGE_MASTERCOPY, CHANGE_MASTERCOPY_QUEUED, SETTINGS_CHANGE, SETTINGS_CHANGE_QUEUED, TRANSFER, TRANSFER_QUEUED, SECTION_HEADER
 }
 
 class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<TransactionView>, TransactionView>() {
@@ -26,6 +26,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
             TransactionViewType.TRANSFER_QUEUED.ordinal -> TransferQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
+            TransactionViewType.SECTION_HEADER.ordinal -> SectionHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -37,6 +38,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TRANSFER.ordinal -> ItemTxTransferBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TRANSFER_QUEUED.ordinal -> ItemTxQueuedTransferBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SECTION_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -48,7 +50,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.ChangeMastercopyQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
-            else -> throw UnsupportedViewType(javaClass.name)
+            is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
+//            else -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
 
@@ -115,5 +118,15 @@ class TransferQueuedViewHolder(viewBinding: ItemTxQueuedTransferBinding) :
 
     override fun bind(data: TransactionView.TransferQueued, payloads: List<Any>) {
         TODO("Not yet implemented")
+    }
+}
+
+class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
+    BaseTransactionViewHolder<TransactionView.SectionHeader>(viewBinding) {
+
+    override fun bind(data: TransactionView.SectionHeader, payloads: List<Any>) {
+        with(viewBinding) {
+            sectionTitle.text = data.title
+        }
     }
 }
