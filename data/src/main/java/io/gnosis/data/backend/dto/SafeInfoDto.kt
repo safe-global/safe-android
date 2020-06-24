@@ -9,7 +9,7 @@ import java.math.BigInteger
 data class SafeInfoDto(
     @Json(name = "address") val address: Solidity.Address,
     @Json(name = "nonce") val nonce: BigInteger,
-    @Json(name = "threshold") val threshold: BigInteger,
+    @Json(name = "threshold") val threshold: Int,
     @Json(name = "owners") val owners: List<Solidity.Address>,
     @Json(name = "masterCopy") val masterCopy: Solidity.Address,
     @Json(name = "modules") val modules: List<Solidity.Address>,

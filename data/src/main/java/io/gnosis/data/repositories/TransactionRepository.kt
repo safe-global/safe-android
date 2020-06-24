@@ -23,7 +23,7 @@ class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
 ) {
 
-    suspend fun getTransactions(safeAddress: Solidity.Address): Page<Transaction> =
+    suspend fun getTransactions(safeAddress: Solidity.Address, safeInfo: SafeInfo): Page<Transaction> =
         transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
             .foldInner { transactionDto, accumulatedTransactions ->
                 accumulatedTransactions.apply {
@@ -38,10 +38,10 @@ class TransactionRepository(
                         }
                         is MultisigTransactionDto -> {
                             when {
-                                isSettingsChange(transactionDto) -> add(settings(transactionDto))
-                                isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto))
-                                isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto))
-                                isEthTransfer(transactionDto) -> add(transferEth(transactionDto))
+                                isSettingsChange(transactionDto) -> add(settings(transactionDto, safeInfo))
+                                isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto, safeInfo))
+                                isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto, safeInfo))
+                                isEthTransfer(transactionDto) -> add(transferEth(transactionDto, safeInfo))
                                 else -> add(custom(transactionDto))
                             }
                         }
@@ -68,8 +68,10 @@ class TransactionRepository(
                 transactionDto.operation == Operation.CALL &&
                 SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
+    // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
         return Transaction.Transfer(
+            TransactionStatus.Success,
             transferDto.to,
             transferDto.from,
             transferDto.value,
@@ -84,8 +86,10 @@ class TransactionRepository(
         )
     }
 
+    // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
+            TransactionStatus.Success,
             transaction.to,
             transaction.from,
             transaction.value ?: BigInteger.ZERO,
@@ -94,8 +98,9 @@ class TransactionRepository(
         )
 
     // when contractInfo is available have when for ETH, ERC20 and ERC721
-    private fun transferEth(transaction: MultisigTransactionDto): Transaction.Transfer =
+    private fun transferEth(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
         Transaction.Transfer(
+            transaction.status(safeInfo),
             transaction.to,
             transaction.safe,
             transaction.value,
@@ -103,7 +108,7 @@ class TransactionRepository(
             ETH_SERVICE_TOKEN_INFO
         )
 
-    private fun transferErc20(transaction: MultisigTransactionDto): Transaction.Transfer {
+    private fun transferErc20(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer {
         val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
         val value = transaction.dataDecoded?.parameters?.getValueByName("value")?.decimalAsBigInteger() ?: BigInteger.ZERO
 
@@ -111,6 +116,7 @@ class TransactionRepository(
         val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress()
 
         return Transaction.Transfer(
+            transaction.status(safeInfo),
             to,
             from ?: transaction.safe,
             value,
@@ -121,8 +127,9 @@ class TransactionRepository(
         )
     }
 
-    private fun transferErc721(transaction: MultisigTransactionDto): Transaction.Transfer =
+    private fun transferErc721(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
         Transaction.Transfer(
+            transaction.status(safeInfo),
             transaction.to,
             transaction.safe,
             transaction.value,
@@ -130,8 +137,9 @@ class TransactionRepository(
             FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
         )
 
-    private fun settings(transaction: MultisigTransactionDto): Transaction.SettingsChange =
+    private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(
+            transaction.status(safeInfo),
             transaction.dataDecoded!!,
             transaction.executionDate?.formatBackendDate(),
             transaction.nonce
@@ -139,6 +147,7 @@ class TransactionRepository(
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(
+            TransactionStatus.Success,
             transaction.nonce,
             transaction.module,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -146,8 +155,9 @@ class TransactionRepository(
             transaction.value ?: BigInteger.ZERO
         )
 
-    private fun custom(transaction: MultisigTransactionDto): Transaction.Custom =
+    private fun custom(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Custom =
         Transaction.Custom(
+            transaction.status(safeInfo),
             transaction.nonce,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -155,8 +165,10 @@ class TransactionRepository(
             transaction.value
         )
 
+    // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
         Transaction.Custom(
+            TransactionStatus.Success,
             null, // Ethereum txs do not have a nonce
             transaction.from,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -164,14 +176,29 @@ class TransactionRepository(
             transaction.value ?: BigInteger.ZERO
         )
 
-    private fun custom(transaction: TransactionDto): Transaction.Custom =
-        Transaction.Custom(
+    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo? = null): Transaction.Custom {
+        val status =
+            if (transaction is MultisigTransactionDto && safeInfo != null) transaction.status(safeInfo)
+            else TransactionStatus.Success
+
+        return Transaction.Custom(
+            status,
             null,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,
             null,
             BigInteger.ZERO
         )
+    }
+
+    private fun MultisigTransactionDto.status(safeInfo: SafeInfo): TransactionStatus =
+        when {
+            isExecuted && isSuccessful == true -> TransactionStatus.Success
+            isExecuted && isSuccessful != true -> TransactionStatus.Failed
+            !isExecuted && nonce < safeInfo.nonce -> TransactionStatus.Cancelled
+            !isExecuted && nonce >= safeInfo.nonce && confirmations?.size?.compareTo(safeInfo.threshold) ?: -1 < 0 -> TransactionStatus.AwaitingConfirmation
+            else -> TransactionStatus.AwaitingExecution
+        }
 }
 
 fun List<ParamsDto>?.getValueByName(name: String): String? {
