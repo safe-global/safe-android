@@ -186,12 +186,6 @@ class TransactionRepository(
         )
 }
 
-private operator fun Int.compareTo(size: Int?): Int = when (size) {
-    this -> 0
-    null -> 1
-    else -> -1
-}
-
 fun List<ParamsDto>?.getValueByName(name: String): String? {
     this?.map {
         if (it.name == name) {
