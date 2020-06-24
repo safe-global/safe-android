@@ -191,6 +191,7 @@ class TransactionRepository(
         )
     }
 
+    // Pending not reachable yet
     private fun MultisigTransactionDto.status(safeInfo: SafeInfo): TransactionStatus =
         when {
             isExecuted && isSuccessful == true -> TransactionStatus.Success

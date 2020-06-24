@@ -7,6 +7,7 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_I
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.*
 import org.junit.Test
@@ -348,6 +349,103 @@ class TransactionRepositoryTest {
             value = BigInteger.ZERO
         )
 
+    @Test
+    fun `getTransactions - (Ethereum Transaction) should return status success`() = runBlocking {
+        val transactionDto = buildEthereumTransactionDto()
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Module Transaction) should return status success`() = runBlocking {
+        val transactionDto = buildModuleTransactionDto(module = Solidity.Address(BigInteger.TEN))
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed true, successful true) should return status success`() = runBlocking {
+        val transactionDto = buildMultisigTransactionDto()
+            .copy(isExecuted = true, isSuccessful = true)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed true, successful false) should return status failed`() = runBlocking {
+        val transactionDto = buildMultisigTransactionDto()
+            .copy(isExecuted = true, isSuccessful = false)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Failed, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, successful false, nonce lower than safe) should return status cancelled`() =
+        runBlocking {
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+            assertEquals(TransactionStatus.Cancelled, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce greater than safe, with enough confirmations) should return status awaitingExecution`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.ONE, threshold = 2)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce equal to safe, with enough confirmations) should return status awaitingExecution`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN, threshold = 2)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce greater than safe, with insufficient confirmations) should return status awaitingConfirmation`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN, threshold = 3)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingConfirmation, actual.results[0].status)
+        }
+
     private fun buildMultisigTransactionDto(
         transfers: List<TransferDto>? = null,
         contractInfoType: ContractInfoType? = null,
@@ -398,5 +496,14 @@ class TransactionRepositoryTest {
             from = defaultFromAddress,
             type = type,
             value = BigInteger.ONE
+        )
+
+    private fun buildConfirmationDto(): ConfirmationDto =
+        ConfirmationDto(
+            owner = defaultSafeAddress,
+            submissionDate = null,
+            transactionHash = null,
+            signature = "signature",
+            signatureType = SignatureType.APPROVED_HASH
         )
 }
