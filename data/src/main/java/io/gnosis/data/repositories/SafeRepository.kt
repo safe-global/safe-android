@@ -71,7 +71,7 @@ class SafeRepository(
                 getSafeBy(address)
             }
 
-    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
+    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo? =
         transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
             SafeInfo(it.address, it.nonce, it.threshold)
         }
