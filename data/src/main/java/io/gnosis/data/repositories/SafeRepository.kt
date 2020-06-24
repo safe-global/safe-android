@@ -2,10 +2,13 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
+import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.Block
 import pm.gnosis.ethereum.EthGetStorageAt
 import pm.gnosis.ethereum.EthereumRepository
@@ -19,7 +22,8 @@ import java.math.BigInteger
 class SafeRepository(
     private val safeDao: SafeDao,
     private val preferencesManager: PreferencesManager,
-    private val ethereumRepository: EthereumRepository
+    private val ethereumRepository: EthereumRepository,
+    private val transactionServiceApi: TransactionServiceApi
 ) {
 
     private val keyFlow = callbackFlow {
@@ -66,6 +70,11 @@ class SafeRepository(
             ?.let { address ->
                 getSafeBy(address)
             }
+
+    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo? =
+        transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
+            SafeInfo(it.address, it.nonce, it.threshold)
+        }
 
     private suspend fun getSafeBy(address: Solidity.Address): Safe? = safeDao.loadByAddress(address)
 

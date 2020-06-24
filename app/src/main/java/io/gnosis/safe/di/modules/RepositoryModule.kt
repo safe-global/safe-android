@@ -20,9 +20,10 @@ class RepositoryModule {
     fun provideSafeRepository(
         safeDao: SafeDao,
         preferencesManager: PreferencesManager,
-        ethereumRepository: EthereumRepository
+        ethereumRepository: EthereumRepository,
+        transactionServiceApi: TransactionServiceApi
     ): SafeRepository {
-        return SafeRepository(safeDao, preferencesManager, ethereumRepository)
+        return SafeRepository(safeDao, preferencesManager, ethereumRepository, transactionServiceApi)
     }
 
     @Provides

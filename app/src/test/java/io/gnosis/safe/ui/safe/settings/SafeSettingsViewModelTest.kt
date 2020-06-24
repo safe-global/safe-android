@@ -72,6 +72,7 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
+        coEvery { safeRepository.getSafeInfo(any()) } returns null
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(SAFE_1)
@@ -99,6 +100,7 @@ class SafeSettingsViewModelTest {
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
+            safeRepository.getSafeInfo(SAFE_2.address)
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)
             safeRepository.getSafes()
