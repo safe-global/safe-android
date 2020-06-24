@@ -267,7 +267,7 @@ class SafeRepositoryTest {
         val safeInfoDto = SafeInfoDto(
             Solidity.Address(BigInteger.ONE),
             BigInteger.TEN,
-            BigInteger.ONE,
+            1,
             listOf(Solidity.Address(BigInteger.ONE)),
             Solidity.Address(BigInteger.ONE),
             listOf(Solidity.Address(BigInteger.ONE)),
