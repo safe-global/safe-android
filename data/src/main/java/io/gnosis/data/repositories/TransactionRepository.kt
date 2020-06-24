@@ -19,7 +19,7 @@ import java.math.BigInteger
 private val defaultErc20Address = "0xc778417e063141139fce010982780140aa0cd5ab".asEthereumAddress()!!
 private val defaultErc721Address = "0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe".asEthereumAddress()!!
 val FAKE_ERC20_TOKEN_INFO = ServiceTokenInfo(defaultErc20Address, 18, "WETH", "Wrapped Ether", "local::ethereum")
-val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 18, "DRK", "Dirk", "local::ethereum")
+val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 0, "DRK", "Dirk", "local::ethereum")
 
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
