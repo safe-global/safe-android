@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.settings
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -72,7 +73,7 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
-        coEvery { safeRepository.getSafeInfo(any()) } returns null
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(SAFE_1.address, BigInteger.ONE, 2)
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(SAFE_1)

@@ -19,7 +19,8 @@ class TransactionsViewModel
     fun load() {
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()!!.address
-            val transactions = transactionRepository.getTransactions(safeAddress)
+            val safeInfo = safeRepository.getSafeInfo(safeAddress)
+            val transactions = transactionRepository.getTransactions(safeAddress, safeInfo)
             updateState {
                 TransactionsViewState(
                     isLoading = false,
