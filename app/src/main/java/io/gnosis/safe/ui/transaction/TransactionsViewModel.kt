@@ -1,10 +1,14 @@
 package io.gnosis.safe.ui.transaction
 
+import androidx.annotation.StringRes
+import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class TransactionsViewModel
@@ -15,34 +19,46 @@ class TransactionsViewModel
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
-    var fnord: Boolean = false
     fun load() {
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()!!.address
             val transactions = transactionRepository.getTransactions(safeAddress)
             updateState {
+                val newTransactions = newTransactions(transactions, safeAddress)
+                val transactionsWithSectionHeaders = addSectionHeaders(newTransactions)
                 TransactionsViewState(
                     isLoading = false,
-                    viewAction = LoadTransactions(transactions.results.mapNotNull { transaction ->
-                        if (!fnord) {
-                            fnord = true
-                            TransactionView.SectionHeader(transaction, "QueuedOrHistory")
-                        } else {
-                            when (transaction) {
-                                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
-                                is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
-                                else -> null
-                            }
-                        }
-                    })
+                    viewAction = LoadTransactions(transactionsWithSectionHeaders)
                 )
             }
         }
     }
+
+    private fun newTransactions(
+        transactions: Page<Transaction>,
+        safeAddress: Solidity.Address
+    ): List<TransactionView> {
+        return transactions.results.mapNotNull { transaction ->
+            when (transaction) {
+                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                else -> null
+            }
+        }
+    }
+
+    private fun addSectionHeaders(newTransactions: List<TransactionView>): List<TransactionView> {
+        val mutableList = newTransactions.toMutableList()
+        //TODO: Find first QUEUED tx and insert SectionHeader before it
+        mutableList.add(0, TransactionView.SectionHeader(title = R.string.tx_list_queue))
+        //TODO: Find first HISTORY tx and insert SectionHeader before it
+        mutableList.add(3, TransactionView.SectionHeader(title = R.string.tx_list_history))
+        return mutableList
+    }
 }
 
-sealed class TransactionView(open val transaction: Transaction) {
-    data class SectionHeader(override val transaction: Transaction, val title: String) : TransactionView(transaction)
+sealed class TransactionView(open val transaction: Transaction?) {
+    data class SectionHeader(override val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(transaction)
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)

@@ -51,7 +51,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
-//            else -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
 
@@ -124,9 +123,9 @@ class TransferQueuedViewHolder(viewBinding: ItemTxQueuedTransferBinding) :
 class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
     BaseTransactionViewHolder<TransactionView.SectionHeader>(viewBinding) {
 
-    override fun bind(data: TransactionView.SectionHeader, payloads: List<Any>) {
+    override fun bind(sectionHeader: TransactionView.SectionHeader, payloads: List<Any>) {
         with(viewBinding) {
-            sectionTitle.text = data.title
+            sectionTitle.setText(sectionHeader.title)
         }
     }
 }
