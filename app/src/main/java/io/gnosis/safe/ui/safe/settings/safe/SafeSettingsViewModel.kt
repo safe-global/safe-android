@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -14,13 +15,14 @@ class SafeSettingsViewModel @Inject constructor(
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
 
-    override fun initialState() = SafeSettingsState(null, ViewAction.Loading(true))
+    override fun initialState() = SafeSettingsState(null, null, ViewAction.Loading(true))
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
+                val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
                 updateState {
-                    SafeSettingsState(safe, ViewAction.None)
+                    SafeSettingsState(safe, safeInfo, ViewAction.None)
                 }
             }
         }
@@ -40,9 +42,9 @@ class SafeSettingsViewModel @Inject constructor(
                     }
                 }
             }.onFailure {
-                updateState { SafeSettingsState(safe, ViewAction.ShowError(it)) }
+                updateState { SafeSettingsState(safe, null, ViewAction.ShowError(it)) }
             }.onSuccess {
-                updateState { SafeSettingsState(safe, SafeRemoved) }
+                updateState { SafeSettingsState(safe, null, SafeRemoved) }
                 tracker.setNumSafes(safeRepository.getSafes().count())
             }
         }
@@ -51,6 +53,7 @@ class SafeSettingsViewModel @Inject constructor(
 
 data class SafeSettingsState(
     val safe: Safe?,
+    val safeInfo: SafeInfo?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
