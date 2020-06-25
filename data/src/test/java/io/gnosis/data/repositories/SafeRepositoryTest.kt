@@ -1,6 +1,8 @@
 package io.gnosis.data.repositories
 
 import android.app.Application
+import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.dto.SafeInfoDto
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.mockk.*
@@ -19,6 +21,7 @@ class SafeRepositoryTest {
 
     private val safeDao = mockk<SafeDao>()
     private val ethereumRepository = mockk<EthereumRepository>()
+    private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
@@ -30,7 +33,7 @@ class SafeRepositoryTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         val preferencesManager = PreferencesManager(application)
-        safeRepository = SafeRepository(safeDao, preferencesManager, ethereumRepository)
+        safeRepository = SafeRepository(safeDao, preferencesManager, ethereumRepository, transactionServiceApi)
     }
 
     @Test
@@ -241,6 +244,48 @@ class SafeRepositoryTest {
             assertEquals(throwable, exceptionOrNull())
         }
         coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+    }
+
+    @Test
+    fun `getSafeInfo - (transaction service failure) should throw`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val throwable = Throwable()
+        coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
+
+        val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
+
+        with(actual) {
+            assertEquals(true, isFailure)
+            assertEquals(throwable, exceptionOrNull())
+        }
+        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
+    }
+
+    @Test
+    fun `getSafeInfo - (valid address) should return safeInfo`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val safeInfoDto = SafeInfoDto(
+            Solidity.Address(BigInteger.ONE),
+            BigInteger.TEN,
+            1,
+            listOf(Solidity.Address(BigInteger.ONE)),
+            Solidity.Address(BigInteger.ONE),
+            listOf(Solidity.Address(BigInteger.ONE)),
+            Solidity.Address(BigInteger.ONE),
+            "v1"
+        )
+        coEvery { transactionServiceApi.getSafeInfo(any()) } returns safeInfoDto
+
+        val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
+
+        with(actual) {
+            assertEquals(true, isSuccess)
+            val safeInfo = getOrNull()
+            assertEquals(safeInfoDto.address, safeInfo?.address)
+            assertEquals(safeInfoDto.nonce, safeInfo?.nonce)
+            assertEquals(safeInfoDto.threshold, safeInfo?.threshold)
+        }
+        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
 
     private fun buildSuccessfulEthRequest(from: Solidity.Address, masterCopy: Solidity.Address) =

@@ -24,6 +24,8 @@ data class MultisigTransactionDto(
     val gasPrice: BigInteger,
     val refundReceiver: Solidity.Address? = null,
     val nonce: BigInteger,
+    val isExecuted: Boolean,
+    val isSuccessful: Boolean? = null,
     val executionDate: String? = null,
     val submissionDate: String? = null,
     val creationDate: String? = null,

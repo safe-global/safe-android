@@ -2,12 +2,16 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
-import io.gnosis.data.utils.formatBackendDate
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.utils.formatBackendDate
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.*
 import org.junit.Test
@@ -27,13 +31,14 @@ class TransactionRepositoryTest {
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
     private val defaultValue = BigInteger("230000000000000000")
     private val defaultTokenId = "23"
+    private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10)
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
         coEvery { transactionServiceApi.loadTransactions(any()) } throws throwable
 
-        val actual = runCatching { transactionRepository.getTransactions(defaultSafeAddress) }
+        val actual = runCatching { transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo) }
 
         with(actual) {
             assert(isFailure)
@@ -48,7 +53,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.module, address)
@@ -64,7 +69,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -83,7 +88,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -109,7 +114,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals("Expect one Transfer result", 1, actual.results.size)
@@ -139,7 +144,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals("Expect one Transfer result", 1, actual.results.size)
@@ -169,7 +174,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -190,7 +195,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -210,7 +215,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -232,7 +237,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(3, actual.results.size)
@@ -267,7 +272,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -285,7 +290,7 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
@@ -304,7 +309,7 @@ class TransactionRepositoryTest {
             val pagedResult = listOf(transactionDto)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-            val actual = transactionRepository.getTransactions(defaultSafeAddress)
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
             coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
             assertEquals(1, actual.results.size)
@@ -358,6 +363,103 @@ class TransactionRepositoryTest {
             value = BigInteger.ZERO
         )
 
+    @Test
+    fun `getTransactions - (Ethereum Transaction) should return status success`() = runBlocking {
+        val transactionDto = buildEthereumTransactionDto()
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Module Transaction) should return status success`() = runBlocking {
+        val transactionDto = buildModuleTransactionDto(module = Solidity.Address(BigInteger.TEN))
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed true, successful true) should return status success`() = runBlocking {
+        val transactionDto = buildMultisigTransactionDto()
+            .copy(isExecuted = true, isSuccessful = true)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Success, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed true, successful false) should return status failed`() = runBlocking {
+        val transactionDto = buildMultisigTransactionDto()
+            .copy(isExecuted = true, isSuccessful = false)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        assertEquals(TransactionStatus.Failed, actual.results[0].status)
+    }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, successful false, nonce lower than safe) should return status cancelled`() =
+        runBlocking {
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+            assertEquals(TransactionStatus.Cancelled, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce greater than safe, with enough confirmations) should return status awaitingExecution`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.ONE, threshold = 2)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce equal to safe, with enough confirmations) should return status awaitingExecution`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN, threshold = 2)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+        }
+
+    @Test
+    fun `getTransactions - (Multisig Transaction, executed false, nonce greater than safe, with insufficient confirmations) should return status awaitingConfirmation`() =
+        runBlocking {
+            val confirmations = listOf(buildConfirmationDto(), buildConfirmationDto())
+            val transactionDto = buildMultisigTransactionDto()
+                .copy(isExecuted = false, nonce = BigInteger.TEN, confirmations = confirmations)
+            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN, threshold = 3)
+            coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
+
+            val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
+
+            assertEquals(TransactionStatus.AwaitingConfirmation, actual.results[0].status)
+        }
+
     private fun buildMultisigTransactionDto(
         transfers: List<TransferDto>? = null,
         contractInfoType: ContractInfoType? = null,
@@ -377,7 +479,8 @@ class TransactionRepositoryTest {
             gasPrice = BigInteger.ONE,
             transfers = transfers,
             contractInfo = contractInfoType?.let { ContractInfoDto(it) },
-            dataDecoded = dataDecodedDto
+            dataDecoded = dataDecodedDto,
+            isExecuted = true
         )
     }
 
@@ -410,5 +513,14 @@ class TransactionRepositoryTest {
             type = type,
             value = value,
             executionDate = executionDate
+        )
+
+    private fun buildConfirmationDto(): ConfirmationDto =
+        ConfirmationDto(
+            owner = defaultSafeAddress,
+            submissionDate = null,
+            transactionHash = null,
+            signature = "signature",
+            signatureType = SignatureType.APPROVED_HASH
         )
 }

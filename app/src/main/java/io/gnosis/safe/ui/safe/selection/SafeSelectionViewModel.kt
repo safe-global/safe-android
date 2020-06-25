@@ -35,25 +35,27 @@ class SafeSelectionViewModel @Inject constructor(
 
     fun loadSafes() {
         safeLaunch {
-            val safes = safeRepository.getSafes()
             activeSafe = safeRepository.getActiveSafe()
 
-            items.clear()
-            items.add(AddSafeHeader)
-            items.addAll(safes)
+            with(items) {
+                clear()
+                add(AddSafeHeader)
+                activeSafe?.let(::add)
+                addAll(safeRepository.getSafes().filter { it != activeSafe }.reversed())
+            }
 
             updateState { SafeSelectionState.SafeListState(items, activeSafe, null) }
         }
     }
 
-    fun selectSafe(safe: Safe) {
+    private fun selectSafe(safe: Safe) {
         safeLaunch {
             safeRepository.setActiveSafe(safe)
-            updateState { SafeSelectionState.SafeListState(items, safe, null) }
+            updateState { SafeSelectionState.SafeListState(items, safe, ViewAction.CloseScreen) }
         }
     }
 
-    fun addSafe() {
+    private fun addSafe() {
         safeLaunch {
             updateState {
                 SafeSelectionState.AddSafeState(
