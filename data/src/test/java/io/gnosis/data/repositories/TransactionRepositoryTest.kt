@@ -2,8 +2,12 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.utils.formatBackendDate
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -26,6 +30,7 @@ class TransactionRepositoryTest {
     private val defaultFromAddress = "0x7cd310A8AeBf268bF78ea16C601F201ca81e84Cc".asEthereumAddress()!!
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
     private val defaultValue = BigInteger("230000000000000000")
+    private val defaultTokenId = "23"
     private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10)
 
     @Test
@@ -157,7 +162,14 @@ class TransactionRepositoryTest {
     fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
             contractInfoType = ContractInfoType.ERC721,
-            dataDecodedDto = DataDecodedDto("safeTransferFrom", null) // TODO: check also transferFrom (might have differrent adress copied
+            dataDecodedDto = DataDecodedDto(
+                "safeTransferFrom",
+                listOf(
+                    ParamsDto("from", "address", defaultFromAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("tokenId", "uint256", defaultTokenId)
+                )
+            )
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -167,10 +179,11 @@ class TransactionRepositoryTest {
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(transactionDto.value, value)
+            assertEquals(BigInteger.ONE, value)
             assertEquals(transactionDto.creationDate, date)
-            assertEquals(transactionDto.safe, sender)
-            assertEquals(transactionDto.to, recipient)
+            assertEquals(transactionDto.safe.asEthereumAddressChecksumString(), defaultSafeAddress.asEthereumAddressChecksumString())
+            assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
+            assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             //  TODO: check for right transfer type
             assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
         }
@@ -216,9 +229,9 @@ class TransactionRepositoryTest {
     fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest {
         val transactionDto = buildEthereumTransactionDto(
             transfers = listOf(
-                buildTransferDto(TransferType.ERC20_TRANSFER),
-                buildTransferDto(TransferType.ERC721_TRANSFER),
-                buildTransferDto()
+                buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z"),
+                buildTransferDto(TransferType.ERC721_TRANSFER, executionDate = "2020-05-25T13:37:54Z", value = BigInteger.ONE),
+                buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
         )
         val pagedResult = listOf(transactionDto)
@@ -229,25 +242,26 @@ class TransactionRepositoryTest {
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(3, actual.results.size)
         with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(transactionDto.value, value)
-            assertEquals(transactionDto.blockTimestamp, date)
-            assertEquals(transactionDto.from, sender)
-            assertEquals(transactionDto.to, recipient)
+            val transferDto = transactionDto.transfers?.get(0)
+            assertEquals(transferDto?.value, value)
+            assertEquals(transferDto?.executionDate?.formatBackendDate(), date)
+            assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
+            assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
         }
-
         with(actual.results[1] as Transaction.Transfer) {
-            assertEquals(transactionDto.value, value)
-            assertEquals(transactionDto.blockTimestamp, date)
-            assertEquals(transactionDto.from, sender)
-            assertEquals(transactionDto.to, recipient)
+            assertEquals(BigInteger.ONE, value)
+            assertEquals(transactionDto.transfers?.get(1)?.executionDate?.formatBackendDate(), date)
+            assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
+            assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
         }
         with(actual.results[2] as Transaction.Transfer) {
-            assertEquals(transactionDto.value, value)
-            assertEquals(transactionDto.blockTimestamp, date)
-            assertEquals(transactionDto.from, sender)
-            assertEquals(transactionDto.to, recipient)
+            val transferDto = transactionDto.transfers?.get(2)
+            assertEquals(transferDto?.value, value)
+            assertEquals(transferDto?.executionDate?.formatBackendDate(), date)
+            assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
+            assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
@@ -475,7 +489,7 @@ class TransactionRepositoryTest {
         from: Solidity.Address = defaultFromAddress,
         to: Solidity.Address = defaultToAddress,
         data: String = "0x",
-        value: BigInteger = BigInteger.ONE
+        value: BigInteger = BigInteger.ZERO
     ): EthereumTransactionDto {
         return EthereumTransactionDto(
             from = from,
@@ -489,13 +503,16 @@ class TransactionRepositoryTest {
     }
 
     private fun buildTransferDto(
-        type: TransferType = TransferType.ETHER_TRANSFER
+        type: TransferType = TransferType.ETHER_TRANSFER,
+        value: BigInteger = BigInteger.TEN,
+        executionDate: String = "2020-05-25T13:37:52Z"
     ): TransferDto =
         TransferDto(
             to = defaultToAddress,
             from = defaultFromAddress,
             type = type,
-            value = BigInteger.ONE
+            value = value,
+            executionDate = executionDate
         )
 
     private fun buildConfirmationDto(): ConfirmationDto =

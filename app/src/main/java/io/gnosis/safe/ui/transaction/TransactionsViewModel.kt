@@ -105,7 +105,7 @@ sealed class TransactionView(open val transaction: Transaction?) {
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
     data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
-    data class Transfer(override val transaction: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transaction)
+    data class Transfer(val transfer: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transfer)
     data class TransferQueued(override val transaction: Transaction) : TransactionView(transaction)
 }
 

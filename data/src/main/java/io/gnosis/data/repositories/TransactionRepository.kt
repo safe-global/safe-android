@@ -17,7 +17,7 @@ import java.math.BigInteger
 private val defaultErc20Address = "0xc778417e063141139fce010982780140aa0cd5ab".asEthereumAddress()!!
 private val defaultErc721Address = "0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe".asEthereumAddress()!!
 val FAKE_ERC20_TOKEN_INFO = ServiceTokenInfo(defaultErc20Address, 18, "WETH", "Wrapped Ether", "local::ethereum")
-val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 18, "DRK", "Dirk", "local::ethereum")
+val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 0, "DRK", "Dirk", "local::ethereum")
 
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
@@ -52,13 +52,15 @@ class TransactionRepository(
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // Always false unless we have contractInfo
-                listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method)
+                //transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // TODO enable this check when we have contractInfo
+                listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
+                transactionDto.dataDecoded?.parameters?.getValueByName("tokenId") != null // TODO Remove this when have contractInfo
 
     private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && //TODO enable this check when we have contractInfo
-                listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method)
+//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && // TODO enable this check when we have contractInfo
+                listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
+                transactionDto.dataDecoded?.parameters?.getValueByName("value") != null // TODO Remove this when have contractInfo
 
     private fun isEthTransfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.data.hexStringNullOrEmpty() && transactionDto.operation == Operation.CALL
@@ -70,19 +72,22 @@ class TransactionRepository(
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
+        val tokenInfo = when (transferDto.type) {
+            TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
+            TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
+            else -> ETH_SERVICE_TOKEN_INFO
+        }
+        val value = when (tokenInfo) {
+            FAKE_ERC721_TOKEN_INFO -> BigInteger.ONE
+            else -> transferDto.value ?: BigInteger.ZERO
+        }
         return Transaction.Transfer(
             TransactionStatus.Success,
             transferDto.to,
             transferDto.from,
-            transferDto.value,
+            value,
             transferDto.executionDate?.formatBackendDate(),
-            transferDto.type.let {
-                when (it) {
-                    TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
-                    TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
-                    else -> ETH_SERVICE_TOKEN_INFO
-                }
-            }
+            tokenInfo
         )
     }
 
@@ -127,15 +132,20 @@ class TransactionRepository(
         )
     }
 
-    private fun transferErc721(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
-        Transaction.Transfer(
+    private fun transferErc721(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer {
+        val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
+        val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
+        val value = BigInteger.ONE
+
+        return Transaction.Transfer(
             transaction.status(safeInfo),
-            transaction.to,
-            transaction.safe,
-            transaction.value,
+            to,
+            from,
+            value,
             transaction.executionDate?.formatBackendDate(),
             FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
         )
+    }
 
     private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(

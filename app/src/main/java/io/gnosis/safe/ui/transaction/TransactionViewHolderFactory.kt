@@ -78,19 +78,19 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
 
-    override fun bind(data: TransactionView.Transfer, payloads: List<Any>) {
+    override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
-            val value = data.transaction.value
-            amount.text = "${value.shiftedString(decimals = data.transaction.tokenInfo.decimals)} ${data.transaction.tokenInfo.symbol}"
-            dateTime.text = data.transaction.date
-            if (data.isIncoming) {
+            val value = viewTransfer.transfer.value
+            amount.text = "${value.shiftedString(decimals = viewTransfer.transfer.tokenInfo.decimals)} ${viewTransfer.transfer.tokenInfo.symbol}"
+            dateTime.text = viewTransfer.transfer.date
+            if (viewTransfer.isIncoming) {
                 txTypeIcon.setImageResource(R.drawable.ic_arrow_green_16dp)
-                blockies.setAddress(data.transaction.sender)
-                ellipsizedAddress.text = data.transaction.sender.formatForTxList()
+                blockies.setAddress(viewTransfer.transfer.sender)
+                ellipsizedAddress.text = viewTransfer.transfer.sender.formatForTxList()
             } else {
                 txTypeIcon.setImageResource(R.drawable.ic_arrow_red_10dp)
-                blockies.setAddress(data.transaction.recipient)
-                ellipsizedAddress.text = data.transaction.recipient.formatForTxList()
+                blockies.setAddress(viewTransfer.transfer.recipient)
+                ellipsizedAddress.text = viewTransfer.transfer.recipient.formatForTxList()
             }
         }
     }
