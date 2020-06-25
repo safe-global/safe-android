@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import kotlinx.coroutines.flow.collect
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -19,30 +20,48 @@ class TransactionsViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
+    init {
+        safeLaunch {
+            safeRepository.activeSafeFlow().collect { load() }
+        }
+    }
+
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
+
     fun load() {
         safeLaunch {
-            val safeAddress = safeRepository.getActiveSafe()!!.address
-            val safeInfo = safeRepository.getSafeInfo(safeAddress)
-            val transactions = transactionRepository.getTransactions(safeAddress, safeInfo)
-            updateState {
-                val mappedTransactions = mapTransactions(transactions, safeAddress)
-                val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
-                TransactionsViewState(
-                    isLoading = false,
-                    viewAction = LoadTransactions(transactionsWithSectionHeaders)
-                )
+            val safeAddress = safeRepository.getActiveSafe()?.address
+            if (safeAddress != null) {
+                loadTransactions(safeAddress)
+            } else {
+                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = ViewAction.ShowEmptyState) }
             }
+        }
+    }
+
+    private suspend fun loadTransactions(safe: Solidity.Address) {
+        val safeInfo = safeRepository.getSafeInfo(safe)
+        val transactions = transactionRepository.getTransactions(safe, safeInfo)
+        updateState {
+            val mappedTransactions = mapTransactions(transactions, safe)
+            val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
+            TransactionsViewState(
+                isLoading = false,
+                viewAction = mappedTransactions
+                    .takeUnless { it.isEmpty() }
+                    ?.let { LoadTransactions(transactionsWithSectionHeaders) }
+                    ?: ViewAction.ShowEmptyState
+            )
         }
     }
 
     private fun mapTransactions(
         transactions: Page<Transaction>,
-        safeAddress: Solidity.Address
+        safe: Solidity.Address
     ): List<TransactionView> {
         return transactions.results.mapNotNull { transaction ->
             when (transaction) {
-                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safe)
                 is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
                 else -> null
             }
