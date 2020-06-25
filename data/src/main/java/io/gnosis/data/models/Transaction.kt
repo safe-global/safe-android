@@ -2,6 +2,7 @@ package io.gnosis.data.models
 
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.models.TransactionStatus.*
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -32,6 +33,17 @@ sealed class Transaction {
         val date: String?,
         val tokenInfo: ServiceTokenInfo
     ) : Transaction()
+
+    fun completed(): Boolean =
+        when (status) {
+            AwaitingConfirmation,
+            AwaitingExecution,
+            Pending -> false
+            Success,
+            Failed,
+            Cancelled -> false
+
+        }
 }
 
 enum class TransactionStatus {

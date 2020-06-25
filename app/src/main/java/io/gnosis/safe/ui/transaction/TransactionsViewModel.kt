@@ -60,11 +60,26 @@ class TransactionsViewModel
         safe: Solidity.Address
     ): List<TransactionView> {
         return transactions.results.mapNotNull { transaction ->
-            when (transaction) {
-                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safe)
-                is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
-                else -> null
+            if (transaction.completed()) {
+                when (transaction) {
+                    is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safe)
+                    is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                    is Transaction.Custom -> TransactionView.CustomTransaction(transaction)
+                    //TODO: How to detect a Mastercopy change? method?
+                    //TODO: Add all possible transaction vieholder types here
+                    else -> null
+                }
+            } else {
+                when (transaction) {
+                    is Transaction.Transfer -> TransactionView.TransferQueued(transaction, transaction.recipient == safe)
+                    is Transaction.SettingsChange -> TransactionView.SettingsChangeQueued(transaction)
+                    is Transaction.Custom -> TransactionView.CustomTransactionQueued(transaction)
+                    //TODO: How to detect a Mastercopy change? method?
+                    //TODO: Add all possible transaction vieholder types here
+                    else -> null
+                }
             }
+
         }
     }
 
@@ -103,10 +118,12 @@ sealed class TransactionView(open val transaction: Transaction?) {
     data class SectionHeader(override val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(transaction)
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class CustomTransaction(override val transaction: Transaction) : TransactionView(transaction)
+    data class CustomTransactionQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
     data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class Transfer(val transfer: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transfer)
-    data class TransferQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class TransferQueued(override val transaction: Transaction, val isIncoming: Boolean) : TransactionView(transaction)
 }
 
 data class TransactionsViewState(
