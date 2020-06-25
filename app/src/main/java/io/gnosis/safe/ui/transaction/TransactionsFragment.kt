@@ -58,6 +58,8 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
         with(binding) {
             progress.visible(false)
             transactions.visible(true)
+            imageEmpty.visible(false)
+            labelEmpty.visible(false)
         }
         adapter.updateData(Adapter.Data(entries = newTransactions))
     }
