@@ -11,6 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.Adapter
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.MultiViewHolderAdapter
 import kotlinx.android.synthetic.main.fragment_transactions.*
@@ -45,7 +46,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is LoadTransactions -> adapter.updateData(Adapter.Data(entries = viewAction.newTransactions))
-                    is ShowEmptyState -> showEmptyState()
+                    is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
                     else -> binding.progress.visible(state.isLoading)
                 }
             }

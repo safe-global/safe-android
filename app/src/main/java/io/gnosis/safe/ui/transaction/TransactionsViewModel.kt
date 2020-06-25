@@ -34,7 +34,7 @@ class TransactionsViewModel
             if (safeAddress != null) {
                 loadTransactions(safeAddress)
             } else {
-                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = ShowEmptyState) }
+                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = ViewAction.ShowEmptyState) }
             }
         }
     }
@@ -50,7 +50,7 @@ class TransactionsViewModel
                 viewAction = mappedTransactions
                     .takeUnless { it.isEmpty() }
                     ?.let { LoadTransactions(transactionsWithSectionHeaders) }
-                    ?: ShowEmptyState
+                    ?: ViewAction.ShowEmptyState
             )
         }
     }
@@ -117,5 +117,3 @@ data class TransactionsViewState(
 data class LoadTransactions(
     val newTransactions: List<TransactionView>
 ) : BaseStateViewModel.ViewAction
-
-object ShowEmptyState : BaseStateViewModel.ViewAction
