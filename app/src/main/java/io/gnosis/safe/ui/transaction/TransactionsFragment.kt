@@ -45,7 +45,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             binding.progress.visible(state.isLoading)
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is LoadTransactions -> adapter.updateData(Adapter.Data(entries = viewAction.newTransactions))
+                    is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
                     else -> binding.progress.visible(state.isLoading)
                 }
@@ -54,8 +54,15 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
         viewModel.load()
     }
 
+    private fun loadTransactions(newTransactions: List<TransactionView>) {
+        binding.progress.visible(false)
+        binding.transactions.visible(true)
+        adapter.updateData(Adapter.Data(entries = newTransactions))
+    }
+
     private fun showEmptyState() {
         with(binding) {
+            binding.transactions.visible(false)
             progress.visible(false)
             imageEmpty.visible(true)
             labelEmpty.visible(true)
