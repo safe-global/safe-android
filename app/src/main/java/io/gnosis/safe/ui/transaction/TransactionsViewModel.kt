@@ -1,10 +1,15 @@
 package io.gnosis.safe.ui.transaction
 
+import androidx.annotation.StringRes
+import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class TransactionsViewModel
@@ -15,30 +20,68 @@ class TransactionsViewModel
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
-
     fun load() {
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()!!.address
             val safeInfo = safeRepository.getSafeInfo(safeAddress)
             val transactions = transactionRepository.getTransactions(safeAddress, safeInfo)
             updateState {
+                val mappedTransactions = mapTransactions(transactions, safeAddress)
+                val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
                 TransactionsViewState(
                     isLoading = false,
-                    viewAction = LoadTransactions(transactions.results.mapNotNull { transaction ->
-                        when (transaction) {
-                            is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
-                            is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
-                            else -> null
-                        }
-                    })
+                    viewAction = LoadTransactions(transactionsWithSectionHeaders)
                 )
             }
         }
     }
+
+    private fun mapTransactions(
+        transactions: Page<Transaction>,
+        safeAddress: Solidity.Address
+    ): List<TransactionView> {
+        return transactions.results.mapNotNull { transaction ->
+            when (transaction) {
+                is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safeAddress)
+                is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
+                else -> null
+            }
+        }
+    }
+
+    private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
+        val mutableList = transactions.toMutableList()
+
+        val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
+            when (transactionView.transaction?.status) {
+                TransactionStatus.Pending,
+                TransactionStatus.AwaitingConfirmation,
+                TransactionStatus.AwaitingExecution -> true
+                else -> false
+            }
+        }
+        if (firstQueuedTransaction >= 0) {
+            mutableList.add(firstQueuedTransaction, TransactionView.SectionHeader(title = R.string.tx_list_queue))
+        }
+
+        val firstHistoricTransaction = mutableList.indexOfFirst { transactionView ->
+            when (transactionView.transaction?.status) {
+                TransactionStatus.Cancelled,
+                TransactionStatus.Failed,
+                TransactionStatus.Success -> true
+                else -> false
+            }
+        }
+
+        if (firstHistoricTransaction >= 0) {
+            mutableList.add(firstHistoricTransaction, TransactionView.SectionHeader(title = R.string.tx_list_history))
+        }
+        return mutableList
+    }
 }
 
-sealed class TransactionView(open val transaction: Transaction) {
-
+sealed class TransactionView(open val transaction: Transaction?) {
+    data class SectionHeader(override val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(transaction)
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
