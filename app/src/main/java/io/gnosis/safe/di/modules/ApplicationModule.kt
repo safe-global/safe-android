@@ -7,11 +7,13 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.safe.terms.TermsChecker
+import io.gnosis.safe.ui.transaction.list.TransactionPagingProvider
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -119,4 +121,10 @@ class ApplicationModule(private val application: Application) {
                 }.build()
             )
         }.build()
+
+
+    @Provides
+    @Singleton
+    fun providesTransactionPagingProvider(transactionRepository: TransactionRepository): TransactionPagingProvider =
+        TransactionPagingProvider(transactionRepository)
 }

@@ -19,32 +19,41 @@ class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
 ) {
 
-    suspend fun getTransactions(safeAddress: Solidity.Address, safeInfo: SafeInfo): Page<Transaction> =
-        transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString())
-            .foldInner { transactionDto, accumulatedTransactions ->
-                accumulatedTransactions.apply {
-                    when (transactionDto) {
-                        is ModuleTransactionDto -> add(custom(transactionDto))
-                        is EthereumTransactionDto -> {
-                            when {
-                                !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
-                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
-                                else -> add(transfer(transactionDto))
-                            }
+    suspend fun getTransactions(safeAddress: Solidity.Address, safeInfo: SafeInfo, pageSize: Int? = null): Page<Transaction> =
+        transactionServiceApi.loadTransactions(safeAddress.asEthereumAddressChecksumString(), pageSize)
+            .mapToModels(safeInfo)
+
+    suspend fun loadTransactionsPage(pageLink: String, safeInfo: SafeInfo): Page<Transaction> =
+        transactionServiceApi
+            .loadTransactionsPage(pageLink)
+            .mapToModels(safeInfo)
+
+    private fun Page<TransactionDto>.mapToModels(safeInfo: SafeInfo): Page<Transaction> {
+        return foldInner { transactionDto, accumulatedTransactions ->
+            accumulatedTransactions.apply {
+                when (transactionDto) {
+                    is ModuleTransactionDto -> add(custom(transactionDto))
+                    is EthereumTransactionDto -> {
+                        when {
+                            !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
+                            transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
+                            else -> add(transfer(transactionDto))
                         }
-                        is MultisigTransactionDto -> {
-                            when {
-                                isSettingsChange(transactionDto) -> add(settings(transactionDto, safeInfo))
-                                isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto, safeInfo))
-                                isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto, safeInfo))
-                                isEthTransfer(transactionDto) -> add(transferEth(transactionDto, safeInfo))
-                                else -> add(custom(transactionDto, safeInfo))
-                            }
-                        }
-                        else -> add(custom(transactionDto))
                     }
+                    is MultisigTransactionDto -> {
+                        when {
+                            isSettingsChange(transactionDto) -> add(settings(transactionDto, safeInfo))
+                            isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto, safeInfo))
+                            isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto, safeInfo))
+                            isEthTransfer(transactionDto) -> add(transferEth(transactionDto, safeInfo))
+                            else -> add(custom(transactionDto, safeInfo))
+                        }
+                    }
+                    else -> add(custom(transactionDto))
                 }
             }
+        }
+    }
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&

@@ -87,10 +87,10 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
     <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
-    <string name="tx_list_cancelled">\u2022 Cancelled</string>
-    <string name="tx_list_failed">\u2022 Failed</string>
     <string name="tx_list_pending">\u2022 Pending</string>
-    <string name="tx_list_success">\u2022 Success</string>
+    <string name="tx_list_cancelled">Cancelled</string>
+    <string name="tx_list_failed">Failed</string>
+    <string name="tx_list_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
@@ -105,4 +105,8 @@
     <string name="safe_settings_master_copy_unknown">Unknown</string>
     <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
     <string name="safe_settings_master_copy_up_to_date">Up to date</string>
+
+    <string name="tx_list_error_loading_data">Could not load more transactions</string>
+
+    <string name="retry">RETRY</string>
 </resources>
