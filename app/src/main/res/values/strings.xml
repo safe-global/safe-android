@@ -36,6 +36,7 @@
     <string name="switch_safes">Switch Safes</string>
     <string name="assets">Assets</string>
     <string name="transactions">Transactions</string>
+    <string name="transactions_empty">Transactions will appear here</string>
     <string name="settigns">Settings</string>
     <string name="remove_safe">Remove safe</string>
     <string name="error_loading_balances">Unable to load balances</string>
