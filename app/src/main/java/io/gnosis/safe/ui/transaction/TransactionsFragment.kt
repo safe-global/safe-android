@@ -11,8 +11,10 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.Adapter
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.MultiViewHolderAdapter
+import kotlinx.android.synthetic.main.fragment_transactions.*
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -43,10 +45,31 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             binding.progress.visible(state.isLoading)
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is LoadTransactions -> adapter.updateData(Adapter.Data(entries = viewAction.newTransactions))
+                    is LoadTransactions -> loadTransactions(viewAction.newTransactions)
+                    is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
+                    else -> binding.progress.visible(state.isLoading)
                 }
             }
         })
         viewModel.load()
+    }
+
+    private fun loadTransactions(newTransactions: List<TransactionView>) {
+        with(binding) {
+            progress.visible(false)
+            transactions.visible(true)
+            imageEmpty.visible(false)
+            labelEmpty.visible(false)
+        }
+        adapter.updateData(Adapter.Data(entries = newTransactions))
+    }
+
+    private fun showEmptyState() {
+        with(binding) {
+            transactions.visible(false)
+            progress.visible(false)
+            imageEmpty.visible(true)
+            labelEmpty.visible(true)
+        }
     }
 }
