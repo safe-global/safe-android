@@ -55,14 +55,16 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
     }
 
     private fun loadTransactions(newTransactions: List<TransactionView>) {
-        binding.progress.visible(false)
-        binding.transactions.visible(true)
+        with(binding) {
+            progress.visible(false)
+            transactions.visible(true)
+        }
         adapter.updateData(Adapter.Data(entries = newTransactions))
     }
 
     private fun showEmptyState() {
         with(binding) {
-            binding.transactions.visible(false)
+            transactions.visible(false)
             progress.visible(false)
             imageEmpty.visible(true)
             labelEmpty.visible(true)
