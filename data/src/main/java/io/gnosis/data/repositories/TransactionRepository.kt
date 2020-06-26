@@ -83,6 +83,7 @@ class TransactionRepository(
         }
         return Transaction.Transfer(
             TransactionStatus.Success,
+            null,
             transferDto.to,
             transferDto.from,
             value,
@@ -95,6 +96,7 @@ class TransactionRepository(
     private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
             TransactionStatus.Success,
+            null,
             transaction.to,
             transaction.from,
             transaction.value ?: BigInteger.ZERO,
@@ -106,6 +108,7 @@ class TransactionRepository(
     private fun transferEth(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
         Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.to,
             transaction.safe,
             transaction.value,
@@ -122,6 +125,7 @@ class TransactionRepository(
 
         return Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             to,
             from ?: transaction.safe,
             value,
@@ -139,6 +143,7 @@ class TransactionRepository(
 
         return Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             to,
             from,
             value,
@@ -150,6 +155,7 @@ class TransactionRepository(
     private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.dataDecoded!!,
             transaction.executionDate?.formatBackendDate(),
             transaction.nonce
@@ -158,6 +164,7 @@ class TransactionRepository(
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(
             TransactionStatus.Success,
+            null,
             transaction.nonce,
             transaction.module,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -168,6 +175,7 @@ class TransactionRepository(
     private fun custom(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Custom =
         Transaction.Custom(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.nonce,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -179,6 +187,7 @@ class TransactionRepository(
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
         Transaction.Custom(
             TransactionStatus.Success,
+            null,
             null, // Ethereum txs do not have a nonce
             transaction.from,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -191,8 +200,13 @@ class TransactionRepository(
             if (transaction is MultisigTransactionDto && safeInfo != null) transaction.status(safeInfo)
             else TransactionStatus.Success
 
+        val confirmations =
+            if (transaction is MultisigTransactionDto) transaction.confirmations?.size ?: 0
+            else null
+
         return Transaction.Custom(
             status,
+            confirmations,
             null,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,

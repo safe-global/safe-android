@@ -1,8 +1,11 @@
 package io.gnosis.safe.ui.transaction
 
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
@@ -43,7 +46,7 @@ class TransactionsViewModel
         val safeInfo = safeRepository.getSafeInfo(safe)
         val transactions = transactionRepository.getTransactions(safe, safeInfo)
         updateState {
-            val mappedTransactions = mapTransactions(transactions, safe)
+            val mappedTransactions = mapTransactions(transactions, safeInfo)
             val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
             TransactionsViewState(
                 isLoading = false,
@@ -57,31 +60,88 @@ class TransactionsViewModel
 
     private fun mapTransactions(
         transactions: Page<Transaction>,
-        safe: Solidity.Address
+        safeInfo: SafeInfo
     ): List<TransactionView> {
         return transactions.results.mapNotNull { transaction ->
-            if (transaction.completed()) {
-                when (transaction) {
-                    is Transaction.Transfer -> TransactionView.Transfer(transaction, transaction.recipient == safe)
-                    is Transaction.SettingsChange -> TransactionView.SettingsChange(transaction)
-                    is Transaction.Custom -> TransactionView.CustomTransaction(transaction)
-                    //TODO: How to detect a Mastercopy change? method?
-                    //TODO: Add all possible transaction vieholder types here
-                    else -> null
-                }
-            } else {
-                when (transaction) {
-                    is Transaction.Transfer -> TransactionView.TransferQueued(transaction, transaction.recipient == safe)
-                    is Transaction.SettingsChange -> TransactionView.SettingsChangeQueued(transaction)
-                    is Transaction.Custom -> TransactionView.CustomTransactionQueued(transaction)
-                    //TODO: How to detect a Mastercopy change? method?
-                    //TODO: Add all possible transaction vieholder types here
-                    else -> null
-                }
+            when {
+                transaction is Transfer && isHistoricTransfer(transaction) -> historicTransfer(transaction, safeInfo)
+                transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
+                transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(transaction)
+                transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historyMastercopyChange(transaction)
+                transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
+                transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction)
+                transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction)
+                transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction)
+                else -> null
             }
-
         }
     }
+
+
+    private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
+    }
+
+    private fun isQueuedMastercopyChange(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isChangeMasterCopy() && !settingsChange.isCompleted()
+    }
+
+    private fun isHistoricCustomTransaction(custom: Custom): Boolean {
+        return custom.isCompleted()
+    }
+
+    private fun isQueuedCustomTransaction(custom: Custom): Boolean {
+        return !custom.isCompleted()
+    }
+
+    private fun isHistoricSettingsChange(settingsChange: SettingsChange): Boolean {
+        return !settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
+    }
+
+    private fun isQueuedSettingsChange(settingsChange: SettingsChange): Boolean {
+        return !settingsChange.isChangeMasterCopy() && !settingsChange.isCompleted()
+    }
+
+    private fun isHistoricTransfer(transfer: Transfer): Boolean {
+        return transfer.isCompleted()
+    }
+
+    private fun isQueuedTransfer(transfer: Transfer): Boolean {
+        return !transfer.isCompleted()
+    }
+
+    private fun queuedSettingsChange(transaction: Transaction): TransactionView.SettingsChangeQueued {
+        return TransactionView.SettingsChangeQueued(transaction)
+    }
+
+    private fun historicCustomTransaction(custom: Custom): TransactionView.CustomTransaction {
+        return TransactionView.CustomTransaction(custom)
+    }
+    private fun queuedCustomTransaction(custom: Custom): TransactionView.CustomTransactionQueued {
+        return TransactionView.CustomTransactionQueued(custom)
+    }
+
+    private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange {
+        return TransactionView.SettingsChange(transaction)
+    }
+
+    private fun queuedMastercopyChange(transaction: SettingsChange): TransactionView? {
+        TODO("Not yet implemented")
+    }
+
+    private fun historyMastercopyChange(transaction: SettingsChange): TransactionView? {
+        TODO("Not yet implemented")
+    }
+
+    private fun historicTransfer(
+        transaction: Transfer,
+        safeInfo: SafeInfo
+    ) = TransactionView.Transfer(transaction, transaction.recipient == safeInfo.address, )
+
+    private fun queuedTransfer(transaction: Transfer, safeInfo: SafeInfo): TransactionView? {
+        return TransactionView.TransferQueued(transaction, transaction.recipient == safeInfo.address, safeInfo.threshold)
+    }
+
 
     private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
         val mutableList = transactions.toMutableList()
@@ -118,12 +178,12 @@ sealed class TransactionView(open val transaction: Transaction?) {
     data class SectionHeader(override val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(transaction)
     data class ChangeMastercopy(override val transaction: Transaction) : TransactionView(transaction)
     data class ChangeMastercopyQueued(override val transaction: Transaction) : TransactionView(transaction)
-    data class CustomTransaction(override val transaction: Transaction) : TransactionView(transaction)
-    data class CustomTransactionQueued(override val transaction: Transaction) : TransactionView(transaction)
+    data class CustomTransaction(override val transaction: Custom) : TransactionView(transaction)
+    data class CustomTransactionQueued(override val transaction: Custom) : TransactionView(transaction)
     data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
     data class SettingsChangeQueued(override val transaction: Transaction) : TransactionView(transaction)
-    data class Transfer(val transfer: Transaction.Transfer, val isIncoming: Boolean) : TransactionView(transfer)
-    data class TransferQueued(override val transaction: Transaction, val isIncoming: Boolean) : TransactionView(transaction)
+    data class Transfer(val transfer: Transaction.Transfer, val isIncoming: Boolean/*, @ColorRes val statusColor: Int */) : TransactionView(transfer)
+    data class TransferQueued(val transfer: Transaction.Transfer, val isIncoming: Boolean, val threshold: Int) : TransactionView(transfer)
 }
 
 data class TransactionsViewState(
