@@ -71,30 +71,12 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 
 abstract class BaseTransactionViewHolder<T : TransactionView>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
 
-class ChangeMastercopyViewHolder(viewBinding: ItemTxChangeMastercopyBinding) :
-    BaseTransactionViewHolder<TransactionView.ChangeMastercopy>(viewBinding) {
-
-    override fun bind(data: TransactionView.ChangeMastercopy, payloads: List<Any>) {
-        TODO("Not yet implemented")
-    }
-}
-
-class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
-    BaseTransactionViewHolder<TransactionView.SettingsChange>(viewBinding) {
-
-    override fun bind(data: TransactionView.SettingsChange, payloads: List<Any>) {
-        with(viewBinding) {
-            settingName.text = data.transaction.dataDecoded.method
-            dateTime.text = data.transaction.date
-        }
-    }
-}
-
 class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
 
     override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
+            finalStatus.text = viewTransfer.transfer.status.name
             val value = viewTransfer.transfer.value
             amount.text = "${value.shiftedString(decimals = viewTransfer.transfer.tokenInfo.decimals)} ${viewTransfer.transfer.tokenInfo.symbol}"
             dateTime.text = viewTransfer.transfer.date
@@ -107,7 +89,6 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
                 blockies.setAddress(viewTransfer.transfer.recipient)
                 ellipsizedAddress.text = viewTransfer.transfer.recipient.formatForTxList()
             }
-            finalStatus.text = viewTransfer.transfer.status.name
 //            if (viewTransfer.transfer.status == TransactionStatus.Success) {
 //                finalStatus.setTextColor(viewTransfer.statusColor) // TODO need right color here
 //            }
@@ -145,35 +126,107 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
     }
 }
 
-class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
-    BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
+class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
+    BaseTransactionViewHolder<TransactionView.SettingsChange>(viewBinding) {
 
-    override fun bind(data: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
-        TODO("Not yet implemented")
+    override fun bind(viewTransfer: TransactionView.SettingsChange, payloads: List<Any>) {
+        with(viewBinding) {
+            finalStatus.text = viewTransfer.transaction.status.name
+            settingName.text = viewTransfer.transaction.dataDecoded.method
+            dateTime.text = viewTransfer.transaction.date
+        }
     }
 }
 
 class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
 
-    override fun bind(settingsChangeQueued: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
-        TODO("Not yet implemented")
+    override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
+        with(viewBinding) {
+            status.text = viewTransfer.transaction.status.name
+            dateTime.text = viewTransfer.transaction.date
+
+            if (viewTransfer.transaction.confirmations != null) {
+                confirmations.text = "${viewTransfer.transaction.confirmations} out of ${viewTransfer.threshold}"
+                confirmationsIcon.visibility = View.VISIBLE
+            } else {
+                //TODO: hide confirmations views
+                confirmations.text = ""
+                confirmationsIcon.visibility = View.INVISIBLE
+            }
+        }
+    }
+}
+
+class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopyBinding) :
+    BaseTransactionViewHolder<TransactionView.ChangeMastercopy>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.ChangeMastercopy, payloads: List<Any>) {
+        with(viewBinding) {
+            finalStatus.text = viewTransfer.transaction.status.name
+            dateTime.text = viewTransfer.transaction.date
+        }
+    }
+}
+
+class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
+    BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
+        with(viewBinding) {
+            status.text = viewTransfer.transaction.status.name
+            dateTime.text = viewTransfer.transaction.date
+
+            if (viewTransfer.transaction.confirmations != null) {
+                confirmations.text = "${viewTransfer.transaction.confirmations} out of ${viewTransfer.threshold}"
+                confirmationsIcon.visibility = View.VISIBLE
+            } else {
+                //TODO: hide confirmations views
+                confirmations.text = ""
+                confirmationsIcon.visibility = View.INVISIBLE
+            }
+        }
     }
 }
 
 class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
 
-    override fun bind(data: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
-        TODO("Not yet implemented")
+    override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
+        with(viewBinding) {
+            txTypeIcon.setImageResource(R.drawable.ic_code)
+
+            status.text = viewTransfer.transaction.status.name
+            dateTime.text = viewTransfer.transaction.date
+
+            if (viewTransfer.transaction.confirmations != null) {
+                confirmations.text = "${viewTransfer.transaction.confirmations} out of ${viewTransfer.threshold}"
+                confirmationsIcon.visibility = View.VISIBLE
+            } else {
+                //TODO: hide confirmations views
+                confirmations.text = ""
+                confirmationsIcon.visibility = View.INVISIBLE
+            }
+
+            blockies.setAddress(viewTransfer.transaction.address)
+            ellipsizedAddress.text = viewTransfer.transaction.address.formatForTxList()
+        }
     }
 }
 
 class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransaction>(viewBinding) {
 
-    override fun bind(data: TransactionView.CustomTransaction, payloads: List<Any>) {
-        TODO("Not yet implemented")
+    override fun bind(viewTransfer: TransactionView.CustomTransaction, payloads: List<Any>) {
+        with(viewBinding) {
+            txTypeIcon.setImageResource(R.drawable.ic_code)
+
+            finalStatus.text = viewTransfer.transaction.status.name
+            dateTime.text = viewTransfer.transaction.date
+
+            blockies.setAddress(viewTransfer.transaction.address)
+            ellipsizedAddress.text = viewTransfer.transaction.address.formatForTxList()
+        }
     }
 }
 
