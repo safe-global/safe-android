@@ -20,8 +20,6 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
     }
 
     abstract fun handleActiveSafe(safe: Safe?)
-
-    override fun screenId() = null
 }
 
 interface SafeOverviewNavigationHandler {

@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transaction
 
 import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
@@ -30,10 +31,10 @@ class TransactionsViewModel
 
     fun load() {
         safeLaunch {
-            val safeAddress = safeRepository.getActiveSafe()?.address
+            val safeAddress = safeRepository.getActiveSafe()
+            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safeAddress)) }
             if (safeAddress != null) {
-                updateState { TransactionsViewState(null, isLoading = true) }
-                loadTransactions(safeAddress)
+                loadTransactions(safeAddress.address)
             } else {
                 updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
             }
@@ -117,6 +118,10 @@ data class TransactionsViewState(
 
 data class LoadTransactions(
     val newTransactions: List<TransactionView>
+) : BaseStateViewModel.ViewAction
+
+data class ActiveSafeChanged(
+    val activeSafe: Safe?
 ) : BaseStateViewModel.ViewAction
 
 object NoSafeSelected : BaseStateViewModel.ViewAction

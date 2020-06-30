@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionsBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -14,11 +15,12 @@ import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.MultiViewHolderAdapter
+import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding>() {
+class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS
 
@@ -48,6 +50,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
                     is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
+                    is ActiveSafeChanged -> handleActiveSafe(viewAction.activeSafe)
                     else -> binding.progress.visible(state.isLoading)
                 }
             }
@@ -89,5 +92,9 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             labelEmpty.visible(true)
             noSafe.visible(false)
         }
+    }
+
+    override fun handleActiveSafe(safe: Safe?) {
+        navHandler?.setSafeData(safe)
     }
 }

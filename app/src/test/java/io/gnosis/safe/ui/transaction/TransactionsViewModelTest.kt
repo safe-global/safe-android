@@ -124,7 +124,7 @@ class TransactionsViewModelTest {
         }
         with(testObserver.values()[1]) {
             assertEquals(true, isLoading)
-            assertEquals(null, viewAction)
+            assertEquals(ActiveSafeChanged(safe), viewAction)
         }
         with(testObserver.values()[2]) {
             assertEquals(false, isLoading)
@@ -160,7 +160,7 @@ class TransactionsViewModelTest {
         }
         with(testObserver.values()[1]) {
             assertEquals(true, isLoading)
-            assertEquals(null, viewAction)
+            assertEquals(ActiveSafeChanged(safe), viewAction)
         }
         with(testObserver.values()[2]) {
             assertEquals(false, isLoading)
