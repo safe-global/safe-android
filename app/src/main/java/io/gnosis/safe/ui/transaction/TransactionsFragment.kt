@@ -14,7 +14,7 @@ import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.MultiViewHolderAdapter
-import kotlinx.android.synthetic.main.fragment_transactions.*
+import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -46,6 +46,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
+                    is NoSafeSelected -> loadNoSafeFragment()
                     is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
                     else -> binding.progress.visible(state.isLoading)
                 }
@@ -54,12 +55,28 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
         viewModel.load()
     }
 
+    private fun loadNoSafeFragment() {
+        with(binding) {
+            transactions.visible(false)
+            progress.visible(false)
+            imageEmpty.visible(false)
+            labelEmpty.visible(false)
+            noSafe.apply {
+                childFragmentManager.beginTransaction()
+                    .add(noSafe.id, NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS))
+                    .commit()
+                visible(true)
+            }
+        }
+    }
+
     private fun loadTransactions(newTransactions: List<TransactionView>) {
         with(binding) {
             progress.visible(false)
             transactions.visible(true)
             imageEmpty.visible(false)
             labelEmpty.visible(false)
+            noSafe.visible(false)
         }
         adapter.updateData(Adapter.Data(entries = newTransactions))
     }
@@ -70,6 +87,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             progress.visible(false)
             imageEmpty.visible(true)
             labelEmpty.visible(true)
+            noSafe.visible(false)
         }
     }
 }

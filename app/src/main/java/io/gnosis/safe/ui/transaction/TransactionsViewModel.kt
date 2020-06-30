@@ -32,9 +32,10 @@ class TransactionsViewModel
         safeLaunch {
             val safeAddress = safeRepository.getActiveSafe()?.address
             if (safeAddress != null) {
+                updateState { TransactionsViewState(null, isLoading = true) }
                 loadTransactions(safeAddress)
             } else {
-                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = ViewAction.ShowEmptyState) }
+                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
             }
         }
     }
@@ -117,3 +118,5 @@ data class TransactionsViewState(
 data class LoadTransactions(
     val newTransactions: List<TransactionView>
 ) : BaseStateViewModel.ViewAction
+
+object NoSafeSelected : BaseStateViewModel.ViewAction
