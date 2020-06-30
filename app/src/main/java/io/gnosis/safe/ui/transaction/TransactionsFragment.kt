@@ -28,6 +28,7 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
     lateinit var viewModel: TransactionsViewModel
 
     private val adapter by lazy { MultiViewHolderAdapter(TransactionViewHolderFactory()) }
+    private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -66,9 +67,8 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
             labelEmpty.visible(false)
             noSafe.apply {
                 childFragmentManager.beginTransaction()
-                    .add(noSafe.id, NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS))
-                    .commit()
-                visible(true)
+                    .replace(noSafe.id, noSafeFragment)
+                    .commitNow()
             }
         }
     }
@@ -79,7 +79,6 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
             transactions.visible(true)
             imageEmpty.visible(false)
             labelEmpty.visible(false)
-            noSafe.visible(false)
         }
         adapter.updateData(Adapter.Data(entries = newTransactions))
     }
@@ -90,11 +89,13 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
             progress.visible(false)
             imageEmpty.visible(true)
             labelEmpty.visible(true)
-            noSafe.visible(false)
         }
     }
 
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
+        if (safe != null) {
+            childFragmentManager.beginTransaction().remove(noSafeFragment).commitNow()
+        }
     }
 }
