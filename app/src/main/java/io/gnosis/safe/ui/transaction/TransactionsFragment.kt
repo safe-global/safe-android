@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionsBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -14,11 +15,12 @@ import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.MultiViewHolderAdapter
-import kotlinx.android.synthetic.main.fragment_transactions.*
+import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
+import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding>() {
+class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS
 
@@ -26,6 +28,7 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
     lateinit var viewModel: TransactionsViewModel
 
     private val adapter by lazy { MultiViewHolderAdapter(TransactionViewHolderFactory()) }
+    private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -46,12 +49,28 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
+                    is NoSafeSelected -> loadNoSafeFragment()
                     is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
+                    is ActiveSafeChanged -> handleActiveSafe(viewAction.activeSafe)
                     else -> binding.progress.visible(state.isLoading)
                 }
             }
         })
         viewModel.load()
+    }
+
+    private fun loadNoSafeFragment() {
+        with(binding) {
+            transactions.visible(false)
+            progress.visible(false)
+            imageEmpty.visible(false)
+            labelEmpty.visible(false)
+            noSafe.apply {
+                childFragmentManager.beginTransaction()
+                    .replace(noSafe.id, noSafeFragment)
+                    .commitNow()
+            }
+        }
     }
 
     private fun loadTransactions(newTransactions: List<TransactionView>) {
@@ -70,6 +89,13 @@ class TransactionsFragment : BaseViewBindingFragment<FragmentTransactionsBinding
             progress.visible(false)
             imageEmpty.visible(true)
             labelEmpty.visible(true)
+        }
+    }
+
+    override fun handleActiveSafe(safe: Safe?) {
+        navHandler?.setSafeData(safe)
+        if (safe != null) {
+            childFragmentManager.beginTransaction().remove(noSafeFragment).commitNow()
         }
     }
 }

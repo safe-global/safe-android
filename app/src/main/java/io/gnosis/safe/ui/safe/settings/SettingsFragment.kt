@@ -71,6 +71,8 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
     }
+
+    override fun screenId() = null
 }
 
 class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {

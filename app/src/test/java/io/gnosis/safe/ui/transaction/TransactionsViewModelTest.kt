@@ -117,12 +117,16 @@ class TransactionsViewModelTest {
         transactionsViewModel.state.observeForever(testObserver)
         transactionsViewModel.load()
 
-        testObserver.assertValueCount(2)
+        testObserver.assertValueCount(3)
         with(testObserver.values()[0]) {
             assertEquals(true, isLoading)
             assertEquals(null, viewAction)
         }
         with(testObserver.values()[1]) {
+            assertEquals(true, isLoading)
+            assertEquals(ActiveSafeChanged(safe), viewAction)
+        }
+        with(testObserver.values()[2]) {
             assertEquals(false, isLoading)
             assertEquals(BaseStateViewModel.ViewAction.ShowEmptyState, viewAction)
         }
@@ -149,12 +153,16 @@ class TransactionsViewModelTest {
         transactionsViewModel.state.observeForever(testObserver)
         transactionsViewModel.load()
 
-        testObserver.assertValueCount(2)
+        testObserver.assertValueCount(3)
         with(testObserver.values()[0]) {
             assertEquals(true, isLoading)
             assertEquals(null, viewAction)
         }
         with(testObserver.values()[1]) {
+            assertEquals(true, isLoading)
+            assertEquals(ActiveSafeChanged(safe), viewAction)
+        }
+        with(testObserver.values()[2]) {
             assertEquals(false, isLoading)
             assertEquals(true, viewAction is LoadTransactions)
         }
