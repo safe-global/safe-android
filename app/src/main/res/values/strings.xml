@@ -81,4 +81,6 @@
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$s out of %2$s</string>
+    <string name="tx_list_status">\u2022 %1$s</string>
+
 </resources>

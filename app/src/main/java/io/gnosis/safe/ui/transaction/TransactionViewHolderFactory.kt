@@ -104,37 +104,18 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = "\u2022 ${viewTransfer.status?.name}"
-            status.setTextColor(statusTextColor(viewTransfer.transfer.status, resources))
-            amount.text = formatAmount(viewTransfer.transfer, viewTransfer.isIncoming)
-            dateTime.text = viewTransfer.transfer.date
-            if (viewTransfer.isIncoming) {
-                txTypeIcon.setImageResource(R.drawable.ic_arrow_green_16dp)
-                blockies.setAddress(viewTransfer.transfer.sender)
-                ellipsizedAddress.text = viewTransfer.transfer.sender.formatForTxList()
-                amount.setTextColor(resources.getColor(R.color.safe_green, null))
-            } else {
-                txTypeIcon.setImageResource(R.drawable.ic_arrow_red_10dp)
-                blockies.setAddress(viewTransfer.transfer.recipient)
-                ellipsizedAddress.text = viewTransfer.transfer.recipient.formatForTxList()
-                amount.setTextColor(resources.getColor(R.color.gnosis_dark_blue, null))
-            }
-            if (viewTransfer.transfer.confirmations != null) {
-                if (viewTransfer.transfer.confirmations!! >= viewTransfer.threshold) {
-                    confirmations.setTextColor(resources.getColor(R.color.safe_green, null))
-                    confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_green_16dp, null))
-                } else {
-                    confirmations.setTextColor(resources.getColor(R.color.medium_grey, null))
-                    confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_grey_16dp, null))
-                }
-                confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.transfer.confirmations, viewTransfer.threshold)
-                confirmationsIcon.visibility = View.VISIBLE
-                confirmations.visibility = View.VISIBLE
-            } else {
-                confirmations.visibility = View.INVISIBLE
-                confirmationsIcon.visibility = View.INVISIBLE
-            }
-            nonce.text = viewTransfer.transfer.nonce.toString()
+            status.text = resources.getString(R.string.tx_list_status, viewTransfer.finalStatusText)
+            status.setTextColor(resources.getColor(viewTransfer.statusColorRes, null))
+            amount.text = viewTransfer.amountText
+            dateTime.text = viewTransfer.dateTimeText
+            txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
+            blockies.setAddress(viewTransfer.address)
+            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor, null))
+            confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon, null))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
+            nonce.text = viewTransfer.nonce
         }
     }
 }
