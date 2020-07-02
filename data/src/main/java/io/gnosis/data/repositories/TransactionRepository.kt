@@ -273,7 +273,7 @@ class TransactionRepository(
             isExecuted && isSuccessful == true -> TransactionStatus.Success
             isExecuted && isSuccessful != true -> TransactionStatus.Failed
             !isExecuted && nonce < safeInfo.nonce -> TransactionStatus.Cancelled
-            !isExecuted && nonce >= safeInfo.nonce && confirmations?.size?.compareTo(safeInfo.threshold) ?: -1 < 0 -> TransactionStatus.AwaitingConfirmation
+            !isExecuted && nonce >= safeInfo.nonce && confirmations?.size?.compareTo(safeInfo.threshold) ?: -1 < 0 -> TransactionStatus.AwaitingConfirmations
             else -> TransactionStatus.AwaitingExecution
         }
 }

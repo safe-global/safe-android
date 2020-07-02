@@ -457,7 +457,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
 
-            assertEquals(TransactionStatus.AwaitingConfirmation, actual.results[0].status)
+            assertEquals(TransactionStatus.AwaitingConfirmations, actual.results[0].status)
         }
 
     private fun buildMultisigTransactionDto(

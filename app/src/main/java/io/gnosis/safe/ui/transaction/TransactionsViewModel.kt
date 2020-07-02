@@ -122,7 +122,7 @@ class TransactionsViewModel
 
         return TransactionView.SettingsChangeQueued(
             status = transaction.status,
-            statusText = transaction.status.name,
+            statusText = transaction.status.displayString,
             statusColorRes = finalStatusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
@@ -137,7 +137,7 @@ class TransactionsViewModel
     private fun historicCustomTransaction(custom: Custom): CustomTransaction =
         CustomTransaction(
             status = custom.status,
-            statusText = custom.status.name,
+            statusText = custom.status.displayString,
             statusColorRes = finalStatusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
@@ -151,7 +151,7 @@ class TransactionsViewModel
 
         return CustomTransactionQueued(
             status = custom.status,
-            statusText = custom.status.name,
+            statusText = custom.status.displayString,
             statusColorRes = finalStatusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
@@ -166,7 +166,7 @@ class TransactionsViewModel
     private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
             status = transaction.status,
-            statusText = transaction.status.name,
+            statusText = transaction.status.displayString,
             statusColorRes = finalStatusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
@@ -189,7 +189,7 @@ class TransactionsViewModel
 
         return TransactionView.Transfer(
             status = transfer.status,
-            statusText = transfer.status.name,
+            statusText = transfer.status.displayString,
             statusColorRes = finalStatusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
@@ -208,7 +208,7 @@ class TransactionsViewModel
 
         return TransactionView.TransferQueued(
             status = transfer.status,
-            statusText = transfer.status.name,
+            statusText = transfer.status.displayString,
             statusColorRes = finalStatusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
@@ -250,7 +250,7 @@ class TransactionsViewModel
         val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
             when (transactionView.status) {
                 TransactionStatus.Pending,
-                TransactionStatus.AwaitingConfirmation,
+                TransactionStatus.AwaitingConfirmations,
                 TransactionStatus.AwaitingExecution -> true
                 else -> false
             }

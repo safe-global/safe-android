@@ -46,7 +46,7 @@ sealed class Transaction {
 
     fun isCompleted(): Boolean =
         when (status) {
-            AwaitingConfirmation,
+            AwaitingConfirmations,
             AwaitingExecution,
             Pending -> false
             Success,
@@ -55,11 +55,11 @@ sealed class Transaction {
         }
 }
 
-enum class TransactionStatus {
-    AwaitingConfirmation,
-    AwaitingExecution,
-    Cancelled,
-    Failed,
-    Success,
-    Pending // Not supported yet as these correspond to the ones issued from the device
+enum class TransactionStatus(val displayString: String) {
+    AwaitingConfirmations("Awaiting confirmations"),
+    AwaitingExecution("Awaiting execution"),
+    Cancelled("Cancelled"),
+    Failed("Failed"),
+    Success("Success"),
+    Pending("Pending") // Not supported yet as these correspond to the ones issued from the device
 }

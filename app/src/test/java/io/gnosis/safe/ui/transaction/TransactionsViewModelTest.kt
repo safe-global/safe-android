@@ -243,7 +243,7 @@ class TransactionsViewModelTest {
         coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransactionListWithStatus(
             Pending,
             AwaitingExecution,
-            AwaitingConfirmation
+            AwaitingConfirmations
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
