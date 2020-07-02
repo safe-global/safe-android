@@ -86,21 +86,14 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
     override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
-            finalStatus.text = viewTransfer.transfer.status.name
-            finalStatus.setTextColor(statusTextColor(viewTransfer.transfer.status, resources))
-            amount.text = formatAmount(viewTransfer.transfer, viewTransfer.isIncoming)
-            dateTime.text = viewTransfer.transfer.date
-            if (viewTransfer.isIncoming) {
-                txTypeIcon.setImageResource(R.drawable.ic_arrow_green_16dp)
-                blockies.setAddress(viewTransfer.transfer.sender)
-                ellipsizedAddress.text = viewTransfer.transfer.sender.formatForTxList()
-                amount.setTextColor(resources.getColor(R.color.safe_green, null))
-            } else {
-                txTypeIcon.setImageResource(R.drawable.ic_arrow_red_10dp)
-                blockies.setAddress(viewTransfer.transfer.recipient)
-                ellipsizedAddress.text = viewTransfer.transfer.recipient.formatForTxList()
-                amount.setTextColor(resources.getColor(R.color.gnosis_dark_blue, null))
-            }
+            finalStatus.text = viewTransfer.statusText
+            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes, null))
+            amount.text = viewTransfer.amountText
+            dateTime.text = viewTransfer.dateTimeText
+            txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
+            blockies.setAddress(viewTransfer.address)
+            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
         }
     }
 }
@@ -111,7 +104,7 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = "\u2022 ${viewTransfer.transaction?.status?.name}"
+            status.text = "\u2022 ${viewTransfer.status?.name}"
             status.setTextColor(statusTextColor(viewTransfer.transfer.status, resources))
             amount.text = formatAmount(viewTransfer.transfer, viewTransfer.isIncoming)
             dateTime.text = viewTransfer.transfer.date

@@ -1,10 +1,14 @@
 package io.gnosis.safe.ui.transaction
 
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.*
+import io.gnosis.data.models.Transaction.Custom
+import io.gnosis.data.models.Transaction.SettingsChange
+import io.gnosis.data.models.Transaction.Transfer
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
@@ -13,6 +17,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transaction.TransactionView.CustomTransaction
 import io.gnosis.safe.ui.transaction.TransactionView.CustomTransactionQueued
+import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.collect
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
@@ -78,7 +83,6 @@ class TransactionsViewModel
         }
     }
 
-
     private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
         return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
     }
@@ -136,20 +140,46 @@ class TransactionsViewModel
     }
 
     private fun historicTransfer(
-        transaction: Transfer,
+        transfer: Transfer,
         safeInfo: SafeInfo
-    ) = TransactionView.Transfer(transaction, transaction.recipient == safeInfo.address)
+    ): TransactionView.Transfer =
+        TransactionView.Transfer(
+            transfer.status,
+            transfer.status.name,
+            finaleStatusTextColor(transfer.status),
+            formatAmount(transfer, isIncoming(transfer, safeInfo)),
+            transfer.date ?: "",
+            if (isIncoming(transfer, safeInfo)) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
+            transfer.sender,
+            if (isIncoming(transfer, safeInfo)) R.color.safe_green else R.color.gnosis_dark_blue
+        )
 
-    private fun queuedTransfer(transaction: Transfer, safeInfo: SafeInfo): TransactionView? {
-        return TransactionView.TransferQueued(transaction, transaction.recipient == safeInfo.address, safeInfo.threshold)
+    private fun formatAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
+        val inOut = if (incoming) "+" else "-"
+        val symbol = viewTransfer.tokenInfo?.symbol
+        val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()
+        return "%s%s %s".format(inOut, value, symbol)
     }
 
+    private fun finaleStatusTextColor(status: TransactionStatus): Int {
+        return when (status) {
+            TransactionStatus.Success -> R.color.safe_green
+            TransactionStatus.Cancelled -> R.color.dark_grey
+            else -> R.color.safe_failed_red
+        }
+    }
+
+    private fun queuedTransfer(transaction: Transfer, safeInfo: SafeInfo): TransactionView? {
+        return TransactionView.TransferQueued(transaction, isIncoming(transaction, safeInfo), safeInfo.threshold)
+    }
+
+    private fun isIncoming(transfer: Transfer, safeInfo: SafeInfo) = transfer.recipient == safeInfo.address
 
     private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
         val mutableList = transactions.toMutableList()
 
         val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.transaction?.status) {
+            when (transactionView.status) {
                 TransactionStatus.Pending,
                 TransactionStatus.AwaitingConfirmation,
                 TransactionStatus.AwaitingExecution -> true
@@ -161,7 +191,7 @@ class TransactionsViewModel
         }
 
         val firstHistoricTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.transaction?.status) {
+            when (transactionView.status) {
                 TransactionStatus.Cancelled,
                 TransactionStatus.Failed,
                 TransactionStatus.Success -> true
@@ -176,16 +206,26 @@ class TransactionsViewModel
     }
 }
 
-sealed class TransactionView(open val transaction: Transaction?) {
-    data class SectionHeader(override val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(transaction)
-    data class ChangeMastercopy(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
-    data class ChangeMastercopyQueued(override val transaction: Transaction.SettingsChange, val threshold: Int) : TransactionView(transaction)
-    data class CustomTransaction(override val transaction: Custom) : TransactionView(transaction)
-    data class CustomTransactionQueued(override val transaction: Custom, val threshold: Int) : TransactionView(transaction)
-    data class SettingsChange(override val transaction: Transaction.SettingsChange) : TransactionView(transaction)
-    data class SettingsChangeQueued(override val transaction: Transaction.SettingsChange, val threshold: Int) : TransactionView(transaction)
-    data class Transfer(val transfer: Transaction.Transfer, val isIncoming: Boolean/*, @ColorRes val statusColor: Int */) : TransactionView(transfer)
-    data class TransferQueued(val transfer: Transaction.Transfer, val isIncoming: Boolean, val threshold: Int) : TransactionView(transfer)
+sealed class TransactionView(open val status: TransactionStatus) {
+    data class Transfer(
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val amountText: String,
+        val dateTimeText: String,
+        @DrawableRes val txTypeIcon: Int,
+        val address: Solidity.Address,
+        @ColorRes val amountColor: Int
+    ) : TransactionView(status)
+
+    data class TransferQueued(val transfer: Transaction.Transfer, val isIncoming: Boolean, val threshold: Int) : TransactionView(transfer.status)
+    data class SettingsChange(val transaction: Transaction.SettingsChange) : TransactionView(transaction.status)
+    data class SettingsChangeQueued(val transaction: Transaction.SettingsChange, val threshold: Int) : TransactionView(transaction.status)
+    data class ChangeMastercopy(val transaction: Transaction.SettingsChange) : TransactionView(transaction.status)
+    data class ChangeMastercopyQueued(val transaction: Transaction.SettingsChange, val threshold: Int) : TransactionView(transaction.status)
+    data class CustomTransaction(val transaction: Custom) : TransactionView(transaction.status)
+    data class CustomTransactionQueued(val transaction: Custom, val threshold: Int) : TransactionView(transaction.status)
+    data class SectionHeader(val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(TransactionStatus.Pending)
 }
 
 data class TransactionsViewState(
