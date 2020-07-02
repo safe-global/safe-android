@@ -111,7 +111,7 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = viewTransfer.transfer.status.name
+            status.text = "\u2022 ${viewTransfer.transaction?.status?.name}"
             status.setTextColor(statusTextColor(viewTransfer.transfer.status, resources))
             amount.text = formatAmount(viewTransfer.transfer, viewTransfer.isIncoming)
             dateTime.text = viewTransfer.transfer.date
@@ -130,12 +130,15 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
                 if (viewTransfer.transfer.confirmations!! >= viewTransfer.threshold) {
                     confirmations.setTextColor(resources.getColor(R.color.safe_green, null))
                     confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_green_16dp, null))
+                } else {
+                    confirmations.setTextColor(resources.getColor(R.color.medium_grey, null))
+                    confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_grey_16dp, null))
                 }
                 confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.transfer.confirmations, viewTransfer.threshold)
                 confirmationsIcon.visibility = View.VISIBLE
+                confirmations.visibility = View.VISIBLE
             } else {
-                //TODO: hide confirmations views
-                confirmations.text = ""
+                confirmations.visibility = View.INVISIBLE
                 confirmationsIcon.visibility = View.INVISIBLE
             }
             nonce.text = viewTransfer.transfer.nonce.toString()
@@ -163,12 +166,20 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = viewTransfer.transaction.status.name
+            status.text = "\u2022 ${viewTransfer.transaction.status.name}"
             status.setTextColor(statusTextColor(viewTransfer.transaction.status, resources))
             dateTime.text = viewTransfer.transaction.date
 
             if (viewTransfer.transaction.confirmations != null) {
+                if (viewTransfer.transaction.confirmations!! >= viewTransfer.threshold) {
+                    confirmations.setTextColor(resources.getColor(R.color.safe_green, null))
+                    confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_green_16dp, null))
+                } else {
+                    confirmations.setTextColor(resources.getColor(R.color.medium_grey, null))
+                    confirmationsIcon.setImageDrawable(resources.getDrawable(R.drawable.ic_confirmations_grey_16dp, null))
+                }
                 confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.transaction.confirmations, viewTransfer.threshold)
+                confirmations.visibility = View.VISIBLE
                 confirmationsIcon.visibility = View.VISIBLE
             } else {
                 confirmations.visibility = View.INVISIBLE
@@ -198,7 +209,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = viewTransfer.transaction.status.name
+            status.text = "\u2022 ${viewTransfer.transaction.status.name}"
             status.setTextColor(statusTextColor(viewTransfer.transaction.status, resources))
 
             dateTime.text = viewTransfer.transaction.date
@@ -222,7 +233,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
-            status.text = viewTransfer.transaction.status.name
+            status.text = "\u2022 ${viewTransfer.transaction.status.name}"
             status.setTextColor(statusTextColor(viewTransfer.transaction.status, resources))
 
             dateTime.text = viewTransfer.transaction.date

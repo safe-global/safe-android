@@ -211,7 +211,7 @@ class TransactionsViewModelTest {
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_queue),
                     this[0]
                 )
-                assertEquals(true, this[1] is TransactionView.Transfer)
+                assertEquals(true, this[1] is TransactionView.TransferQueued)
                 assertEquals(
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_history),
                     this[2]
@@ -261,9 +261,9 @@ class TransactionsViewModelTest {
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_queue),
                     this[0]
                 )
-                assertEquals(true, this[1] is TransactionView.Transfer)
-                assertEquals(true, this[2] is TransactionView.Transfer)
-                assertEquals(true, this[3] is TransactionView.Transfer)
+                assertEquals(true, this[1] is TransactionView.TransferQueued)
+                assertEquals(true, this[2] is TransactionView.TransferQueued)
+                assertEquals(true, this[3] is TransactionView.TransferQueued)
             }
         }
         callVerification()
@@ -303,7 +303,7 @@ class TransactionsViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(status, defaultAddress, defaultAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO)
+            Transaction.Transfer(status, 2, defaultAddress, defaultAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
         }
         return Page(1, "", "", transfers)
     }
@@ -311,6 +311,7 @@ class TransactionsViewModelTest {
     private fun buildMockSettingsChange(): Transaction.SettingsChange =
         Transaction.SettingsChange(
             Success,
+            2,
             DataDecodedDto("method", emptyList()),
             null,
             BigInteger.TEN

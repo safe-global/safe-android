@@ -91,7 +91,6 @@ class TransactionRepository(
             TransferType.ERC721_TRANSFER -> NFT_ERC721_TOKEN_INFO
             else -> ETH_SERVICE_TOKEN_INFO
         }
-        val foo = serviceTokenInfo(transferDto)
 
         val value = when (tokenInfo) {
             NFT_ERC721_TOKEN_INFO -> BigInteger.ONE
@@ -130,7 +129,7 @@ class TransactionRepository(
             transaction.to,
             transaction.safe,
             transaction.value,
-            transaction.executionDate?.formatBackendDate() ?: transaction.submissionDate?.formatBackendDate(),
+            transaction.bestAvailableDate(),
             ETH_SERVICE_TOKEN_INFO,
             transaction.nonce
         )
@@ -150,9 +149,7 @@ class TransactionRepository(
             to,
             from ?: transaction.safe,
             value,
-            transaction.executionDate?.formatBackendDate()
-                ?: transaction.submissionDate?.formatBackendDate()
-                ?: transaction.modified?.formatBackendDate(),
+            transaction.bestAvailableDate(),
             tokenInfo,
             transaction.nonce
         )
@@ -171,7 +168,7 @@ class TransactionRepository(
             to,
             from,
             value,
-            transaction.executionDate?.formatBackendDate(),
+            transaction.bestAvailableDate(),
             tokenInfo,
             transaction.nonce
         )
@@ -206,7 +203,7 @@ class TransactionRepository(
             transaction.status(safeInfo),
             transaction.confirmations?.size ?: 0,
             transaction.dataDecoded!!,
-            transaction.executionDate?.formatBackendDate(),
+            transaction.bestAvailableDate(),
             transaction.nonce
         )
 
@@ -217,7 +214,7 @@ class TransactionRepository(
             transaction.nonce,
             transaction.module,
             transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.created,
+            transaction.created?.formatBackendDate(),
             transaction.value ?: BigInteger.ZERO
         )
 
@@ -228,7 +225,7 @@ class TransactionRepository(
             transaction.nonce,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.creationDate,
+            transaction.bestAvailableDate(),
             transaction.value
         )
 
@@ -292,3 +289,7 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
+fun MultisigTransactionDto.bestAvailableDate() =
+    this.executionDate?.formatBackendDate()
+        ?: this.submissionDate?.formatBackendDate()
+        ?: this.modified?.formatBackendDate()
