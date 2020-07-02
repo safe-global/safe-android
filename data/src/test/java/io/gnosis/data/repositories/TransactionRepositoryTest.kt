@@ -185,7 +185,7 @@ class TransactionRepositoryTest {
             assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             //  TODO: check for right transfer type
-            assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
         }
     }
 
@@ -254,7 +254,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.transfers?.get(1)?.executionDate?.formatBackendDate(), date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(FAKE_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
         }
         with(actual.results[2] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(2)

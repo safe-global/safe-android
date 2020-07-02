@@ -40,7 +40,8 @@ sealed class Transaction {
         val sender: Solidity.Address,
         val value: BigInteger,
         val date: String?,
-        val tokenInfo: ServiceTokenInfo
+        val tokenInfo: ServiceTokenInfo?,
+        val nonce: BigInteger?
     ) : Transaction()
 
     fun isCompleted(): Boolean =

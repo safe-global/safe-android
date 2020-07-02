@@ -107,6 +107,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
+        android:textColor="@color/safe_pending_orange"
         tools:text="\u2022 Awaiting your confirmation" />
 
     <TextView
