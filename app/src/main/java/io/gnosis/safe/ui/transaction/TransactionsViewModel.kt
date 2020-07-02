@@ -116,20 +116,62 @@ class TransactionsViewModel
     }
 
     private fun queuedSettingsChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeQueued {
-        return TransactionView.SettingsChangeQueued(transaction, threshold)
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+
+        return TransactionView.SettingsChangeQueued(
+            status = transaction.status,
+            statusText = transaction.status.name,
+            statusColorRes = finalStatusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            settingNameText = transaction.dataDecoded.method,
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString()
+        )
     }
 
-    private fun historicCustomTransaction(custom: Custom): CustomTransaction {
-        return CustomTransaction(custom)
-    }
+    private fun historicCustomTransaction(custom: Custom): CustomTransaction =
+        CustomTransaction(
+            status = custom.status,
+            statusText = custom.status.name,
+            statusColorRes = finalStatusTextColor(custom.status),
+            dateTimeText = custom.date ?: "",
+            address = custom.address,
+            alpha = alpha(custom)
+        )
 
     private fun queuedCustomTransaction(custom: Custom, threshold: Int): CustomTransactionQueued {
-        return CustomTransactionQueued(custom, threshold)
+        val thresholdMet: Boolean = custom.confirmations?.let {
+            it >= threshold
+        } ?: false
+
+        return CustomTransactionQueued(
+            status = custom.status,
+            statusText = custom.status.name,
+            statusColorRes = finalStatusTextColor(custom.status),
+            dateTimeText = custom.date ?: "",
+            address = custom.address,
+            confirmations = custom.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = custom.nonce.toString()
+        )
     }
 
-    private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange {
-        return TransactionView.SettingsChange(transaction)
-    }
+    private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
+        TransactionView.SettingsChange(
+            status = transaction.status,
+            statusText = transaction.status.name,
+            statusColorRes = finalStatusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            settingNameText = transaction.dataDecoded.method,
+            alpha = alpha(transaction)
+        )
 
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView? {
         TODO("Not yet implemented")
@@ -153,7 +195,8 @@ class TransactionsViewModel
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
-            amountColor = if (isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
+            amountColor = if (isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            alpha = alpha(transfer)
         )
     }
 
@@ -165,7 +208,7 @@ class TransactionsViewModel
 
         return TransactionView.TransferQueued(
             status = transfer.status,
-            finalStatusText = transfer.status.name,
+            statusText = transfer.status.name,
             statusColorRes = finalStatusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
@@ -195,7 +238,11 @@ class TransactionsViewModel
         }
     }
 
-//    private fun Transfer.isIncoming(address: Solidity.Address) = recipient == address
+    private fun alpha(transaction: Transaction): Float =
+        when (transaction.status) {
+            TransactionStatus.Failed, TransactionStatus.Cancelled -> 0.5F
+            else -> 1.0F
+        }
 
     private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
         val mutableList = transactions.toMutableList()
@@ -237,12 +284,13 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val dateTimeText: String,
         @DrawableRes val txTypeIcon: Int,
         val address: Solidity.Address,
-        @ColorRes val amountColor: Int
+        @ColorRes val amountColor: Int,
+        val alpha: Float
     ) : TransactionView(status)
 
     data class TransferQueued(
         override val status: TransactionStatus,
-        val finalStatusText: String,
+        val statusText: String,
         @ColorRes val statusColorRes: Int,
         val amountText: String,
         val dateTimeText: String,
@@ -257,19 +305,70 @@ sealed class TransactionView(open val status: TransactionStatus) {
     ) : TransactionView(status)
 
     data class SettingsChange(
-        val transaction: Transaction.SettingsChange
-    ) : TransactionView(transaction.status)
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val settingNameText: String,
+        val alpha: Float
+    ) : TransactionView(status)
 
     data class SettingsChangeQueued(
-        val transaction: Transaction.SettingsChange,
-        val threshold: Int
-    ) : TransactionView(transaction.status)
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val settingNameText: String,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String
+    ) : TransactionView(status)
 
-    data class ChangeMastercopy(val transaction: Transaction.SettingsChange) : TransactionView(transaction.status)
-    data class ChangeMastercopyQueued(val transaction: Transaction.SettingsChange, val threshold: Int) : TransactionView(transaction.status)
-    data class CustomTransaction(val transaction: Custom) : TransactionView(transaction.status)
-    data class CustomTransactionQueued(val transaction: Custom, val threshold: Int) : TransactionView(transaction.status)
-    data class SectionHeader(val transaction: Transaction? = null, @StringRes val title: Int) : TransactionView(TransactionStatus.Pending)
+    data class ChangeMastercopy(
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val alpha: Float
+    ) : TransactionView(status)
+
+    data class ChangeMastercopyQueued(
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String
+    ) : TransactionView(status)
+
+    data class CustomTransaction(
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val address: Solidity.Address,
+        val alpha: Float
+    ) : TransactionView(status)
+
+    data class CustomTransactionQueued(
+        override val status: TransactionStatus,
+        val statusText: String,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val address: Solidity.Address,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String
+    ) : TransactionView(status)
+
+    data class SectionHeader(@StringRes val title: Int) : TransactionView(TransactionStatus.Pending)
 }
 
 data class TransactionsViewState(
