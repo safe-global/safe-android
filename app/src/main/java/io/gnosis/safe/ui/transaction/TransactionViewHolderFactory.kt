@@ -74,6 +74,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 
 abstract class BaseTransactionViewHolder<T : TransactionView>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
 
+private const val OPACITY_FULL = 1.0F
+
 class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
     private val resources = viewBinding.root.context.resources
@@ -89,7 +91,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
 
-            finalStatus.alpha = 1.0F
+            finalStatus.alpha = OPACITY_FULL
             amount.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             txTypeIcon.alpha = viewTransfer.alpha
@@ -132,7 +134,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
             dateTime.text = viewTransfer.dateTimeText
             settingName.text = viewTransfer.settingNameText
 
-            finalStatus.alpha = 1.0F
+            finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             settingName.alpha = viewTransfer.alpha
         }
@@ -169,7 +171,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
-            finalStatus.alpha = 1.0F
+            finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             version.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
@@ -212,6 +214,10 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE
 
+            dataSize.text = viewTransfer.dataSizeText
+            amount.text = viewTransfer.amountText
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
         }
@@ -234,11 +240,17 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
 
-            finalStatus.alpha = 1.0F
+            dataSize.text = viewTransfer.dataSizeText
+            amount.text = viewTransfer.amountText
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+
+            finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
+            dataSize.alpha = viewTransfer.alpha
+            amount.alpha = viewTransfer.alpha
 
         }
     }

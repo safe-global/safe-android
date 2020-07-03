@@ -127,7 +127,7 @@ class TransactionsViewModel
         return TransactionView.SettingsChangeQueued(
             status = transaction.status,
             statusText = transaction.status.displayString,
-            statusColorRes = finalStatusTextColor(transaction.status),
+            statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
             confirmations = transaction.confirmations ?: 0,
@@ -142,10 +142,14 @@ class TransactionsViewModel
         CustomTransaction(
             status = custom.status,
             statusText = custom.status.displayString,
-            statusColorRes = finalStatusTextColor(custom.status),
+            statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
+            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
+            amountText = "${custom.value} ETH",
+            amountColor = R.color.gnosis_dark_blue,
             alpha = alpha(custom)
+            //TODO: ETH value formatting missing
         )
 
     private fun queuedCustomTransaction(custom: Custom, threshold: Int): CustomTransactionQueued {
@@ -156,14 +160,19 @@ class TransactionsViewModel
         return CustomTransactionQueued(
             status = custom.status,
             statusText = custom.status.displayString,
-            statusColorRes = finalStatusTextColor(custom.status),
+            statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
             confirmations = custom.confirmations ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = custom.nonce.toString()
+            nonce = custom.nonce.toString(),
+            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
+            amountText = "${custom.value} ETH",
+            amountColor = R.color.gnosis_dark_blue
+            //TODO: ETH amount formatting missing
+
         )
     }
 
@@ -171,7 +180,7 @@ class TransactionsViewModel
         TransactionView.SettingsChange(
             status = transaction.status,
             statusText = transaction.status.displayString,
-            statusColorRes = finalStatusTextColor(transaction.status),
+            statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
             alpha = alpha(transaction)
@@ -185,7 +194,7 @@ class TransactionsViewModel
         return TransactionView.ChangeMastercopyQueued(
             status = transaction.status,
             statusText = transaction.status.displayString,
-            statusColorRes = finalStatusTextColor(transaction.status),
+            statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             confirmations = transaction.confirmations ?: 0,
             threshold = threshold,
@@ -209,7 +218,7 @@ class TransactionsViewModel
         return TransactionView.ChangeMastercopy(
             status = transaction.status,
             statusText = transaction.status.displayString,
-            statusColorRes = finalStatusTextColor(transaction.status),
+            statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             alpha = alpha(transaction),
             version = version,
@@ -226,7 +235,7 @@ class TransactionsViewModel
         return TransactionView.Transfer(
             status = transfer.status,
             statusText = transfer.status.displayString,
-            statusColorRes = finalStatusTextColor(transfer.status),
+            statusColorRes = statusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
@@ -245,7 +254,7 @@ class TransactionsViewModel
         return TransactionView.TransferQueued(
             status = transfer.status,
             statusText = transfer.status.displayString,
-            statusColorRes = finalStatusTextColor(transfer.status),
+            statusColorRes = statusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
@@ -266,7 +275,7 @@ class TransactionsViewModel
         return "%s%s %s".format(inOut, value, symbol)
     }
 
-    private fun finalStatusTextColor(status: TransactionStatus): Int {
+    private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
             TransactionStatus.Success -> R.color.safe_green
             TransactionStatus.Cancelled -> R.color.dark_grey
@@ -390,6 +399,9 @@ sealed class TransactionView(open val status: TransactionStatus) {
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val address: Solidity.Address,
+        val dataSizeText: String,
+        val amountText: String,
+        @ColorRes val amountColor: Int,
         val alpha: Float
     ) : TransactionView(status)
 
@@ -403,6 +415,9 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val threshold: Int,
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
+        val dataSizeText: String,
+        val amountText: String,
+        @ColorRes val amountColor: Int,
         val nonce: String
     ) : TransactionView(status)
 
