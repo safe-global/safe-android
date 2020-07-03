@@ -20,6 +20,7 @@ import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
 import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 
 enum class TransactionViewType {
     TRANSFER,
@@ -170,6 +171,9 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.text = viewTransfer.status.name
             finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
             dateTime.text = viewTransfer.dateTimeText
+
+            version.text = viewTransfer.version
+            ellipsizedAddress.text = viewTransfer.address?.asEthereumAddressChecksumString() ?: ""
 
             finalStatus.alpha = 1.0F
             dateTime.alpha = viewTransfer.alpha

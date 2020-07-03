@@ -6,12 +6,15 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.Custom
-import io.gnosis.data.models.Transaction.SettingsChange
-import io.gnosis.data.models.Transaction.Transfer
+import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0_2
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1_0
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -20,6 +23,7 @@ import io.gnosis.safe.ui.transaction.TransactionView.CustomTransactionQueued
 import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.collect
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class TransactionsViewModel
@@ -173,12 +177,44 @@ class TransactionsViewModel
             alpha = alpha(transaction)
         )
 
-    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView? {
-        TODO("Not yet implemented")
+    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+
+        return TransactionView.ChangeMastercopyQueued(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = finalStatusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString()
+        )
     }
 
-    private fun historyMastercopyChange(transaction: SettingsChange): TransactionView? {
-        TODO("Not yet implemented")
+    private fun historyMastercopyChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+
+        val address = transaction.dataDecoded.parameters.getValueByName("_masterCopy")?.asEthereumAddress()
+        val version = when (address) {
+            SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
+            SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
+            SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
+            SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
+            else -> "unknown"
+        }
+
+        return TransactionView.ChangeMastercopy(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = finalStatusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            alpha = alpha(transaction),
+            version = version,
+            address = address
+        )
     }
 
     private fun historicTransfer(
@@ -331,6 +367,8 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val statusText: String,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
+        val address: Solidity.Address?,
+        val version: String,
         val alpha: Float
     ) : TransactionView(status)
 
