@@ -8,19 +8,12 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxQueuedTransferBinding
-import io.gnosis.safe.databinding.ItemTxSectionHeaderBinding
-import io.gnosis.safe.databinding.ItemTxSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxTransferBinding
+import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
 import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 
 enum class TransactionViewType {
     TRANSFER,
@@ -173,12 +166,14 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             dateTime.text = viewTransfer.dateTimeText
 
             version.text = viewTransfer.version
-            ellipsizedAddress.text = viewTransfer.address?.asEthereumAddressChecksumString() ?: ""
+            blockies.setAddress(viewTransfer.address)
+            ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
             finalStatus.alpha = 1.0F
             dateTime.alpha = viewTransfer.alpha
-
-            //TODO: contract address and Version missing
+            version.alpha = viewTransfer.alpha
+            blockies.alpha = viewTransfer.alpha
+            ellipsizedAddress.alpha = viewTransfer.alpha
         }
     }
 }
