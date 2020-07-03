@@ -20,8 +20,6 @@ private val EnsErc721Address = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85".asEt
 val NFT_ERC721_TOKEN_INFO = ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum")
 val ENS_ERC721_TOKEN_INFO = ServiceTokenInfo(EnsErc721Address, 0, "ENS", "", "local::ethereum")
 
-//val FAKE_ERC20_TOKEN_INFO = ServiceTokenInfo(defaultErc20Address, 18, "WETH", "Wrapped Ether", "local::ethereum")
-
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
 ) {

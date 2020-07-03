@@ -101,15 +101,19 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (multisig transaction for ERC20) should return transfer`() = runBlockingTest {
+
+        val erc20ServiceTokenInfo = buildErc20ServiceTokenInfo()
+        val erc20Transfer = buildTransferDto(tokenInfo = erc20ServiceTokenInfo)
         val transactionDto = buildMultisigTransactionDto(
-            contractInfoType = ContractInfoType.ERC20,
+            contractInfoType = null,
             dataDecodedDto = DataDecodedDto(
                 "transfer",
                 listOf(
                     ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
                     ParamsDto("value", "uint256", defaultValue.asDecimalString())
                 )
-            )
+            ),
+            transfers = listOf(erc20Transfer)
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -124,7 +128,7 @@ class TransactionRepositoryTest {
             assertEquals("Correct safe expected: ", transactionDto.safe, sender)
             assertEquals("Correct to expected: ", transactionDto.to, recipient)
             //  TODO: check for right transfer type
-            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
+            assertEquals(erc20ServiceTokenInfo, tokenInfo)
         }
     }
 
@@ -154,14 +158,14 @@ class TransactionRepositoryTest {
             assertEquals("Correct sender expected: ", transactionDto.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress(), sender)
             assertEquals("Correct to expected: ", transactionDto.to, recipient)
             //  TODO: check for right transfer type
-            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
+            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
 
     @Test
     fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
-            contractInfoType = ContractInfoType.ERC721,
+//            contractInfoType = ContractInfoType.ERC721,
             dataDecodedDto = DataDecodedDto(
                 "safeTransferFrom",
                 listOf(
@@ -169,7 +173,8 @@ class TransactionRepositoryTest {
                     ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
                     ParamsDto("tokenId", "uint256", defaultTokenId)
                 )
-            )
+            ),
+            transfers = listOf(buildTransferDto(tokenInfo = NFT_ERC721_TOKEN_INFO))
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -184,7 +189,6 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe.asEthereumAddressChecksumString(), defaultSafeAddress.asEthereumAddressChecksumString())
             assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            //  TODO: check for right transfer type
             assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
         }
     }
@@ -229,8 +233,8 @@ class TransactionRepositoryTest {
     fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest {
         val transactionDto = buildEthereumTransactionDto(
             transfers = listOf(
-                buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z"),
-                buildTransferDto(TransferType.ERC721_TRANSFER, executionDate = "2020-05-25T13:37:54Z", value = BigInteger.ONE),
+                buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z", tokenInfo = buildErc20ServiceTokenInfo()),
+                buildTransferDto(TransferType.ERC721_TRANSFER, executionDate = "2020-05-25T13:37:54Z", value = BigInteger.ONE, tokenInfo = NFT_ERC721_TOKEN_INFO),
                 buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
         )
@@ -247,7 +251,7 @@ class TransactionRepositoryTest {
             assertEquals(transferDto?.executionDate?.formatBackendDate(), date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(FAKE_ERC20_TOKEN_INFO, tokenInfo)
+            assertEquals(buildErc20ServiceTokenInfo(), tokenInfo)
         }
         with(actual.results[1] as Transaction.Transfer) {
             assertEquals(BigInteger.ONE, value)
@@ -505,14 +509,16 @@ class TransactionRepositoryTest {
     private fun buildTransferDto(
         type: TransferType = TransferType.ETHER_TRANSFER,
         value: BigInteger = BigInteger.TEN,
-        executionDate: String = "2020-05-25T13:37:52Z"
+        executionDate: String = "2020-05-25T13:37:52Z",
+        tokenInfo: ServiceTokenInfo? = null
     ): TransferDto =
         TransferDto(
             to = defaultToAddress,
             from = defaultFromAddress,
             type = type,
             value = value,
-            executionDate = executionDate
+            executionDate = executionDate,
+            tokenInfo = tokenInfo
         )
 
     private fun buildConfirmationDto(): ConfirmationDto =
@@ -522,5 +528,15 @@ class TransactionRepositoryTest {
             transactionHash = null,
             signature = "signature",
             signatureType = SignatureType.APPROVED_HASH
+        )
+
+    private fun buildErc20ServiceTokenInfo(): ServiceTokenInfo =
+        ServiceTokenInfo(
+            decimals = 18,
+            symbol = "WETH",
+            name = "Wrapped Ether",
+            address = "0x1234".asEthereumAddress()!!,
+            type = null,
+            logoUri = ""
         )
 }
