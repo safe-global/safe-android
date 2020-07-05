@@ -62,7 +62,7 @@
         tools:text="1.1.1" />
 
     <TextView
-        android:id="@+id/change_mastercopy"
+        android:id="@+id/label"
         style="@style/TextDark"
         android:layout_width="98dp"
         android:layout_height="wrap_content"

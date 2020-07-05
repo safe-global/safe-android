@@ -4,8 +4,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
-import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.Transaction.Custom
 import io.gnosis.data.models.Transaction.SettingsChange
@@ -25,7 +25,6 @@ import io.gnosis.safe.ui.transaction.TransactionView.CustomTransaction
 import io.gnosis.safe.ui.transaction.TransactionView.CustomTransactionQueued
 import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.collect
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
@@ -83,6 +82,7 @@ class TransactionsViewModel
                 transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
                 transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
+                transaction is SettingsChange && isHistoricSetFallbackHandler(transaction) -> historicSetFallbackHandler(transaction)
                 transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
                 transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo.threshold)
@@ -94,6 +94,10 @@ class TransactionsViewModel
 
     private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
         return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
+    }
+
+    private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isSetFallBackHandler() && settingsChange.isCompleted()
     }
 
     private fun isQueuedMastercopyChange(settingsChange: SettingsChange): Boolean {
@@ -207,8 +211,25 @@ class TransactionsViewModel
             dateTimeText = transaction.date ?: "",
             alpha = alpha(transaction),
             version = version,
-            address = address//,
-            //label = R.string.change_mastercopy
+            address = address,
+            label = R.string.change_mastercopy
+        )
+    }
+
+    private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+
+        val address = getAddress(transaction, "handler")
+        val version = getVersionForAddress(address)
+
+        return TransactionView.ChangeMastercopy(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            alpha = alpha(transaction),
+            version = "DefaultFallbackHandler",
+            address = address,
+            label = R.string.set_fallback_handler
         )
     }
 
@@ -230,7 +251,8 @@ class TransactionsViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = transaction.nonce.toString(),
             version = version,
-            address = address
+            address = address,
+            label = R.string.change_mastercopy
         )
     }
 
@@ -394,7 +416,8 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val dateTimeText: String,
         val address: Solidity.Address?,
         val version: String,
-        val alpha: Float
+        val alpha: Float,
+        @StringRes val label: Int
     ) : TransactionView(status)
 
     data class ChangeMastercopyQueued(
@@ -408,7 +431,8 @@ sealed class TransactionView(open val status: TransactionStatus) {
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val address: Solidity.Address?,
-        val version: String
+        val version: String,
+        @StringRes val label: Int
     ) : TransactionView(status)
 
     data class CustomTransaction(

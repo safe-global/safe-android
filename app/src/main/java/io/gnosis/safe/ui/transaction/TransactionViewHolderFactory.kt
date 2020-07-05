@@ -170,6 +170,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             version.text = viewTransfer.version
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            label.setText(viewTransfer.label)
 
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
@@ -193,6 +194,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             version.text = viewTransfer.version
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            label.setText(viewTransfer.label)
 
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE

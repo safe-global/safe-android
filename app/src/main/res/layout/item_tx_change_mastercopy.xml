@@ -43,7 +43,7 @@
         tools:text="0x5c...33D0" />
 
     <TextView
-        android:id="@+id/master_copy_label"
+        android:id="@+id/label"
         style="@style/TextDark"
         android:layout_width="88dp"
         android:layout_height="wrap_content"

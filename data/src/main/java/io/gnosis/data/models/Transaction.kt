@@ -2,12 +2,18 @@ package io.gnosis.data.models
 
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.models.TransactionStatus.*
+import io.gnosis.data.models.TransactionStatus.AwaitingConfirmations
+import io.gnosis.data.models.TransactionStatus.AwaitingExecution
+import io.gnosis.data.models.TransactionStatus.Cancelled
+import io.gnosis.data.models.TransactionStatus.Failed
+import io.gnosis.data.models.TransactionStatus.Pending
+import io.gnosis.data.models.TransactionStatus.Success
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 sealed class Transaction {
     abstract val status: TransactionStatus
+
     // If status is Successful, Failed or Canceled, the confirmations can be null
     abstract val confirmations: Int?
 
@@ -30,6 +36,10 @@ sealed class Transaction {
     ) : Transaction() {
         fun isChangeMasterCopy(): Boolean {
             return "changeMasterCopy" == dataDecoded.method
+        }
+
+        fun isSetFallBackHandler(): Boolean {
+            return "setFallbackHandler" == dataDecoded.method
         }
     }
 
