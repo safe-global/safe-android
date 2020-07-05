@@ -181,15 +181,18 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
 }
 
 class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
-    BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.ChangeMastercopyQueued>(viewBinding) {
     private val resources = viewBinding.root.context.resources
 
-    override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
+    override fun bind(viewTransfer: TransactionView.ChangeMastercopyQueued, payloads: List<Any>) {
         with(viewBinding) {
             status.text = resources.getString(R.string.tx_list_status, viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
-
             dateTime.text = viewTransfer.dateTimeText
+
+            version.text = viewTransfer.version
+            blockies.setAddress(viewTransfer.address)
+            ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE

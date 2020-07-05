@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/ellipsized_address"
         app:layout_constraintTop_toTopOf="@+id/blockies"
-        tools:text="1.1.1." />
+        tools:text="1.1.1" />
 
     <TextView
         android:id="@+id/change_mastercopy"

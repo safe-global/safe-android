@@ -6,7 +6,9 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.*
+import io.gnosis.data.models.Transaction.Custom
+import io.gnosis.data.models.Transaction.SettingsChange
+import io.gnosis.data.models.Transaction.Transfer
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0_2
@@ -22,6 +24,7 @@ import io.gnosis.safe.ui.transaction.TransactionView.CustomTransaction
 import io.gnosis.safe.ui.transaction.TransactionView.CustomTransactionQueued
 import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.collect
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
@@ -77,7 +80,7 @@ class TransactionsViewModel
                 transaction is Transfer && isHistoricTransfer(transaction) -> historicTransfer(transaction, safeInfo)
                 transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
                 transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(transaction, safeInfo.threshold)
-                transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historyMastercopyChange(transaction)
+                transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
                 transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
                 transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo.threshold)
@@ -119,113 +122,6 @@ class TransactionsViewModel
         return !transfer.isCompleted()
     }
 
-    private fun queuedSettingsChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
-
-        return TransactionView.SettingsChangeQueued(
-            status = transaction.status,
-            statusText = transaction.status.displayString,
-            statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
-            settingNameText = transaction.dataDecoded.method,
-            confirmations = transaction.confirmations ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = transaction.nonce.toString()
-        )
-    }
-
-    private fun historicCustomTransaction(custom: Custom): CustomTransaction =
-        CustomTransaction(
-            status = custom.status,
-            statusText = custom.status.displayString,
-            statusColorRes = statusTextColor(custom.status),
-            dateTimeText = custom.date ?: "",
-            address = custom.address,
-            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = "${custom.value} ETH",
-            amountColor = R.color.gnosis_dark_blue,
-            alpha = alpha(custom)
-            //TODO: ETH value formatting missing
-        )
-
-    private fun queuedCustomTransaction(custom: Custom, threshold: Int): CustomTransactionQueued {
-        val thresholdMet: Boolean = custom.confirmations?.let {
-            it >= threshold
-        } ?: false
-
-        return CustomTransactionQueued(
-            status = custom.status,
-            statusText = custom.status.displayString,
-            statusColorRes = statusTextColor(custom.status),
-            dateTimeText = custom.date ?: "",
-            address = custom.address,
-            confirmations = custom.confirmations ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = custom.nonce.toString(),
-            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = "${custom.value} ETH",
-            amountColor = R.color.gnosis_dark_blue
-            //TODO: ETH amount formatting missing
-
-        )
-    }
-
-    private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
-        TransactionView.SettingsChange(
-            status = transaction.status,
-            statusText = transaction.status.displayString,
-            statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
-            settingNameText = transaction.dataDecoded.method,
-            alpha = alpha(transaction)
-        )
-
-    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
-
-        return TransactionView.ChangeMastercopyQueued(
-            status = transaction.status,
-            statusText = transaction.status.displayString,
-            statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
-            confirmations = transaction.confirmations ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = transaction.nonce.toString()
-        )
-    }
-
-    private fun historyMastercopyChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
-
-        val address = transaction.dataDecoded.parameters.getValueByName("_masterCopy")?.asEthereumAddress()
-        val version = when (address) {
-            SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
-            SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
-            SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
-            SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
-            else -> "unknown"
-        }
-
-        return TransactionView.ChangeMastercopy(
-            status = transaction.status,
-            statusText = transaction.status.displayString,
-            statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
-            alpha = alpha(transaction),
-            version = version,
-            address = address
-        )
-    }
-
     private fun historicTransfer(
         transfer: Transfer,
         safeInfo: SafeInfo
@@ -265,6 +161,124 @@ class TransactionsViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = transfer.nonce.toString()
+        )
+    }
+
+    private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
+        TransactionView.SettingsChange(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            settingNameText = transaction.dataDecoded.method,
+            alpha = alpha(transaction)
+        )
+
+    private fun queuedSettingsChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeQueued {
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+
+        return TransactionView.SettingsChangeQueued(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            settingNameText = transaction.dataDecoded.method,
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString()
+        )
+    }
+
+    private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+
+        val address = getAddress(transaction, "_masterCopy")
+        val version = getVersionForAddress(address)
+
+        return TransactionView.ChangeMastercopy(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            alpha = alpha(transaction),
+            version = version,
+            address = address//,
+            //label = R.string.change_mastercopy
+        )
+    }
+
+    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+        val address = getAddress(transaction, "_masterCopy")
+        val version = getVersionForAddress(address)
+
+        return TransactionView.ChangeMastercopyQueued(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString(),
+            version = version,
+            address = address
+        )
+    }
+
+    private fun getVersionForAddress(address: Solidity.Address?): String =
+        when (address) {
+            SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
+            SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
+            SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
+            SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
+            else -> "unknown"
+        }
+
+    private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
+        transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
+
+    private fun historicCustomTransaction(custom: Custom): CustomTransaction =
+        CustomTransaction(
+            status = custom.status,
+            statusText = custom.status.displayString,
+            statusColorRes = statusTextColor(custom.status),
+            dateTimeText = custom.date ?: "",
+            address = custom.address,
+            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
+            amountText = "${custom.value} ETH",
+            amountColor = R.color.gnosis_dark_blue,
+            alpha = alpha(custom)
+            //TODO: ETH value formatting missing
+        )
+
+    private fun queuedCustomTransaction(custom: Custom, threshold: Int): CustomTransactionQueued {
+        val thresholdMet: Boolean = custom.confirmations?.let {
+            it >= threshold
+        } ?: false
+
+        return CustomTransactionQueued(
+            status = custom.status,
+            statusText = custom.status.displayString,
+            statusColorRes = statusTextColor(custom.status),
+            dateTimeText = custom.date ?: "",
+            address = custom.address,
+            confirmations = custom.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = custom.nonce.toString(),
+            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
+            amountText = "${custom.value} ETH",
+            amountColor = R.color.gnosis_dark_blue
+            //TODO: ETH amount formatting missing
+
         )
     }
 
@@ -390,7 +404,9 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val threshold: Int,
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
-        val nonce: String
+        val nonce: String,
+        val address: Solidity.Address?,
+        val version: String
     ) : TransactionView(status)
 
     data class CustomTransaction(
