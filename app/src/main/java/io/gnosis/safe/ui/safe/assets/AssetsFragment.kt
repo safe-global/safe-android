@@ -69,6 +69,9 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
     }
+
+    override fun screenId() = null
+
 }
 
 class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
