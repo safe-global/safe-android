@@ -2,8 +2,19 @@ package io.gnosis.data.repositories
 
 import android.util.Log
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.Operation
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.TransactionDto
+import io.gnosis.data.backend.dto.TransferDto
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.foldInner
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -33,7 +44,7 @@ class TransactionRepository(
                         is EthereumTransactionDto -> {
                             when {
                                 !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
-                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
+                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto, safeInfo))
                                 else -> add(transfer(transactionDto))
                             }
                         }
@@ -43,10 +54,10 @@ class TransactionRepository(
                                 isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto, safeInfo))
                                 isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto, safeInfo))
                                 isEthTransfer(transactionDto) -> add(transferEth(transactionDto, safeInfo))
-                                else -> add(custom(transactionDto))
+                                else -> add(custom(transactionDto, safeInfo))
                             }
                         }
-                        else -> add(custom(transactionDto))
+                        else -> add(custom(transactionDto, safeInfo))
                     }
                 }
             }
@@ -168,7 +179,6 @@ class TransactionRepository(
                 }
             } ?: ETH_SERVICE_TOKEN_INFO
 
-
     private fun serviceTokenInfo(transaction: MultisigTransactionDto): ServiceTokenInfo {
         return if (transaction.transfers != null && transaction.transfers.isNotEmpty()) {
             return serviceTokenInfo(transaction.transfers[0])
@@ -220,9 +230,9 @@ class TransactionRepository(
             transaction.value ?: BigInteger.ZERO
         )
 
-    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo? = null): Transaction.Custom {
+    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo): Transaction.Custom {
         val status =
-            if (transaction is MultisigTransactionDto && safeInfo != null) transaction.status(safeInfo)
+            if (transaction is MultisigTransactionDto) transaction.status(safeInfo)
             else TransactionStatus.Success
 
         val confirmations =
