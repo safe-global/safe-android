@@ -165,7 +165,6 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions (multisig transaction for ERC721) should return transfer`() = runBlockingTest {
         val transactionDto = buildMultisigTransactionDto(
-//            contractInfoType = ContractInfoType.ERC721,
             dataDecodedDto = DataDecodedDto(
                 "safeTransferFrom",
                 listOf(

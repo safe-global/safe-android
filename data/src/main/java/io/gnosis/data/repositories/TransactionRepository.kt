@@ -1,6 +1,5 @@
 package io.gnosis.data.repositories
 
-import android.util.Log
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.EthereumTransactionDto
 import io.gnosis.data.backend.dto.ModuleTransactionDto
@@ -171,7 +170,6 @@ class TransactionRepository(
     private fun serviceTokenInfo(transfer: TransferDto): ServiceTokenInfo =
         transfer.tokenInfo
             ?: transfer.tokenAddress?.let { address ->
-                Log.w("NFT", "transfer.tokenAddress: ${transfer.tokenAddress}")
                 if (address.asEthereumAddress() == EnsErc721Address) {
                     ENS_ERC721_TOKEN_INFO
                 } else {
@@ -181,7 +179,7 @@ class TransactionRepository(
 
     private fun serviceTokenInfo(transaction: MultisigTransactionDto): ServiceTokenInfo {
         return if (transaction.transfers != null && transaction.transfers.isNotEmpty()) {
-            return serviceTokenInfo(transaction.transfers[0])
+            serviceTokenInfo(transaction.transfers[0])
         } else {
             ETH_SERVICE_TOKEN_INFO
         }
