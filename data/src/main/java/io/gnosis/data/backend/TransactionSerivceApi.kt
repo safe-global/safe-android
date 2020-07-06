@@ -13,7 +13,7 @@ interface TransactionServiceApi {
     @GET("v1/safes/{address}/balances/usd/")
     suspend fun loadBalances(@Path("address") address: String): List<ServiceBalance>
 
-    @GET("v1/safes/{address}/all-transactions/?limit=100")
+    @GET("v1/safes/{address}/all-transactions/")
     suspend fun loadTransactions(@Path("address") address: String): Page<TransactionDto>
 
     @GET("v1/safes/{address}")
