@@ -48,6 +48,7 @@
     <string name="change_mastercopy">Change mastercopy</string>
     <string name="set_fallback_handler">Set fallback handler</string>
     <string name="enable_module">Enable module</string>
+    <string name="disable_module">Disable module</string>
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>

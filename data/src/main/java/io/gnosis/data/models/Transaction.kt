@@ -41,6 +41,10 @@ sealed class Transaction {
         fun isSetFallBackHandler(): Boolean {
             return "setFallbackHandler" == dataDecoded.method
         }
+        fun isModuleChange(): Boolean {
+            return "enableModule" == dataDecoded.method || "disableModule" == dataDecoded.method
+        }
+
     }
 
     data class Transfer(

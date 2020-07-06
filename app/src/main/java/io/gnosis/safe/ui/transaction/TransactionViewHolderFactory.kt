@@ -8,7 +8,13 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.*
+import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
+import io.gnosis.safe.databinding.ItemTxQueuedChangeMastercopyBinding
+import io.gnosis.safe.databinding.ItemTxQueuedSettingsChangeBinding
+import io.gnosis.safe.databinding.ItemTxQueuedTransferBinding
+import io.gnosis.safe.databinding.ItemTxSectionHeaderBinding
+import io.gnosis.safe.databinding.ItemTxSettingsChangeBinding
+import io.gnosis.safe.databinding.ItemTxTransferBinding
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
@@ -177,6 +183,11 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             version.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
+
+            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            version.visibility = viewTransfer.visibilityVersion
+            ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
+            moduleAddress.visibility = viewTransfer.visibilityModuleAddress
         }
     }
 }
@@ -199,6 +210,10 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE
 
+            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            version.visibility = viewTransfer.visibilityVersion
+            ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
+            moduleAddress.visibility = viewTransfer.visibilityModuleAddress
         }
     }
 }

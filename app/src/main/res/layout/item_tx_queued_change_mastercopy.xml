@@ -147,4 +147,16 @@
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/module_address"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

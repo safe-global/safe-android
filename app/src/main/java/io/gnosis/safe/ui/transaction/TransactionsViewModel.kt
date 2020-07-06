@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transaction
 
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -82,7 +83,10 @@ class TransactionsViewModel
                 transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
                 transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
+                transaction is SettingsChange && isQueuedSetFallbackHandler(transaction) -> queuedSetFallbackHandler(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricSetFallbackHandler(transaction) -> historicSetFallbackHandler(transaction)
+                transaction is SettingsChange && isQueuedModuleChange(transaction) -> queuedModuleChange(transaction, safeInfo.threshold)
+                transaction is SettingsChange && isHistoricModuleChange(transaction) -> historicModuleChange(transaction)
                 transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
                 transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo.threshold)
@@ -92,12 +96,23 @@ class TransactionsViewModel
         }
     }
 
-    private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
-    }
-
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
         return settingsChange.isSetFallBackHandler() && settingsChange.isCompleted()
+    }
+
+    private fun isQueuedSetFallbackHandler(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isSetFallBackHandler() && !settingsChange.isCompleted()
+    }
+    private fun isHistoricModuleChange(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isModuleChange() && settingsChange.isCompleted()
+    }
+
+    private fun isQueuedModuleChange(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isModuleChange() && !settingsChange.isCompleted()
+    }
+
+    private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
+        return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
     }
 
     private fun isQueuedMastercopyChange(settingsChange: SettingsChange): Boolean {
@@ -216,6 +231,29 @@ class TransactionsViewModel
         )
     }
 
+    private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+        val address = getAddress(transaction, "handler")
+        val version = getVersionForAddress(address)
+
+        return TransactionView.ChangeMastercopyQueued(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            version = "DefaultFallbackHandler",
+            address = address,
+            label = R.string.set_fallback_handler,
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString()
+        )
+    }
+
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.ChangeMastercopy {
 
         val address = getAddress(transaction, "handler")
@@ -233,6 +271,51 @@ class TransactionsViewModel
         )
     }
 
+    private fun queuedModuleChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+        val thresholdMet: Boolean = transaction.confirmations?.let {
+            it >= threshold
+        } ?: false
+        val address = getAddress(transaction, "module")
+        val label = if (transaction.dataDecoded.method == "enableModule") R.string.enable_module else R.string.disable_module
+
+        return TransactionView.ChangeMastercopyQueued(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            version = "",
+            address = address,
+            label = label,
+            confirmations = transaction.confirmations ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = transaction.nonce.toString(),
+            visibilityVersion = View.INVISIBLE,
+            visibilityEllipsizedAddress = View.INVISIBLE,
+            visibilityModuleAddress = View.VISIBLE
+        )
+    }
+
+    private fun historicModuleChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+
+        val address = getAddress(transaction, "module")
+        val label = if (transaction.dataDecoded.method == "enableModule") R.string.enable_module else R.string.disable_module
+
+        return TransactionView.ChangeMastercopy(
+            status = transaction.status,
+            statusText = transaction.status.displayString,
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.date ?: "",
+            alpha = alpha(transaction),
+            address = address,
+            label = label,
+            version = "",
+            visibilityVersion = View.INVISIBLE,
+            visibilityEllipsizedAddress = View.INVISIBLE,
+            visibilityModuleAddress = View.VISIBLE
+        )
+    }
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
         val thresholdMet: Boolean = transaction.confirmations?.let {
             it >= threshold
@@ -417,7 +500,11 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val address: Solidity.Address?,
         val version: String,
         val alpha: Float,
-        @StringRes val label: Int
+        @StringRes val label: Int,
+        val visibilityVersion : Int = View.VISIBLE,
+        val visibilityEllipsizedAddress: Int = View.VISIBLE,
+        val visibilityModuleAddress: Int = View.GONE
+
     ) : TransactionView(status)
 
     data class ChangeMastercopyQueued(
@@ -432,7 +519,10 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val nonce: String,
         val address: Solidity.Address?,
         val version: String,
-        @StringRes val label: Int
+        @StringRes val label: Int,
+        val visibilityVersion : Int = View.VISIBLE,
+        val visibilityEllipsizedAddress: Int = View.VISIBLE,
+        val visibilityModuleAddress: Int = View.GONE
     ) : TransactionView(status)
 
     data class CustomTransaction(
