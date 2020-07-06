@@ -276,7 +276,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
-fun MultisigTransactionDto.bestAvailableDate() =
-    this.executionDate?.formatBackendDate()
-        ?: this.submissionDate?.formatBackendDate()
-        ?: this.modified?.formatBackendDate()
+fun MultisigTransactionDto.bestAvailableDate() = (executionDate ?: submissionDate ?: modified)?.formatBackendDate()
