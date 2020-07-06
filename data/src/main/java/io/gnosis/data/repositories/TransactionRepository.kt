@@ -235,7 +235,7 @@ class TransactionRepository(
 
         val confirmations =
             if (transaction is MultisigTransactionDto) transaction.confirmations?.size ?: 0
-            else null
+            else 0
 
         val date =
             if (transaction is MultisigTransactionDto) transaction.executionDate
@@ -244,13 +244,13 @@ class TransactionRepository(
             else null
 
         return Transaction.Custom(
-            status,
-            confirmations,
-            null,
-            transaction.to,
-            transaction.data?.dataSizeBytes() ?: 0L,
-            date?.formatBackendDate(),
-            BigInteger.ZERO
+            status = status,
+            confirmations = confirmations,
+            nonce = null,
+            address = transaction.to,
+            dataSize = transaction.data?.dataSizeBytes() ?: 0L,
+            date = date?.formatBackendDate(),
+            value = BigInteger.ZERO
         )
     }
 

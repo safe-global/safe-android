@@ -280,7 +280,7 @@ class TransactionRepositoryTest {
         coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
         assertEquals(1, actual.results.size)
         with(actual.results[0] as Transaction.Custom) {
-            assertEquals(transactionDto.from, address)
+            assertEquals(transactionDto.to, address)
             assertEquals(transactionDto.data?.dataSizeBytes(), dataSize)
             assertEquals(transactionDto.value, value)
             assertEquals(transactionDto.blockTimestamp, date)
