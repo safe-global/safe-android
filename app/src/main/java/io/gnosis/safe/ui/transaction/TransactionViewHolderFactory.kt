@@ -84,9 +84,9 @@ private const val OPACITY_FULL = 1.0F
 
 class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
@@ -109,9 +109,9 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
 class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
     BaseTransactionViewHolder<TransactionView.TransferQueued>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
             status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
@@ -131,14 +131,15 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
 class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChange>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.SettingsChange, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
             finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
             dateTime.text = viewTransfer.dateTimeText
-            settingName.text = viewTransfer.settingNameText
+            settingName.text = viewTransfer.method
 
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
@@ -149,9 +150,9 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 
 class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
@@ -165,9 +166,9 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 
 class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopyBinding) :
     BaseTransactionViewHolder<TransactionView.ChangeMastercopy>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.ChangeMastercopy, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
             finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
@@ -194,9 +195,9 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
 
 class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
     BaseTransactionViewHolder<TransactionView.ChangeMastercopyQueued>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.ChangeMastercopyQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
@@ -220,9 +221,9 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
 class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
@@ -246,9 +247,9 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
 class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransaction>(viewBinding) {
-    private val resources = viewBinding.root.context.resources
 
     override fun bind(viewTransfer: TransactionView.CustomTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
