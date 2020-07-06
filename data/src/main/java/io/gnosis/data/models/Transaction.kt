@@ -41,10 +41,10 @@ sealed class Transaction {
         fun isSetFallBackHandler(): Boolean {
             return "setFallbackHandler" == dataDecoded.method
         }
+
         fun isModuleChange(): Boolean {
             return "enableModule" == dataDecoded.method || "disableModule" == dataDecoded.method
         }
-
     }
 
     data class Transfer(
@@ -69,11 +69,11 @@ sealed class Transaction {
         }
 }
 
-enum class TransactionStatus(val displayString: String) {
-    AwaitingConfirmations("Awaiting confirmations"),
-    AwaitingExecution("Awaiting execution"),
-    Cancelled("Cancelled"),
-    Failed("Failed"),
-    Success("Success"),
-    Pending("Pending") // Not supported yet as these correspond to the ones issued from the device
+enum class TransactionStatus() {
+    AwaitingConfirmations,
+    AwaitingExecution,
+    Cancelled,
+    Failed,
+    Success,
+    Pending // Not supported yet as these correspond to the ones issued from the device
 }

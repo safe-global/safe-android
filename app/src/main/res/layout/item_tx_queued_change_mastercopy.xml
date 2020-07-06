@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:lineSpacingExtra="4sp"
-        android:text="@string/change_mastercopy"
+        android:text="@string/tx_list_change_mastercopy"
         android:textAlignment="viewEnd"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"

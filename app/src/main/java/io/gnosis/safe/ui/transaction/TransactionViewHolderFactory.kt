@@ -88,10 +88,10 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
     override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
         with(viewBinding) {
-            finalStatus.text = viewTransfer.statusText
-            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes, null))
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
             dateTime.text = viewTransfer.dateTimeText
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
@@ -113,16 +113,16 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = resources.getString(R.string.tx_list_status, viewTransfer.statusText)
-            status.setTextColor(resources.getColor(viewTransfer.statusColorRes, null))
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
             amount.text = viewTransfer.amountText
             dateTime.text = viewTransfer.dateTimeText
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
-            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor, null))
-            confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon, null))
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
+            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor))
+            confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
         }
@@ -153,10 +153,10 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = resources.getString(R.string.tx_list_status, viewTransfer.statusText)
+            status.setText(viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
             dateTime.text = viewTransfer.dateTimeText
-            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor, null))
+            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor))
             confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon, null))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
         }
@@ -198,7 +198,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
     override fun bind(viewTransfer: TransactionView.ChangeMastercopyQueued, payloads: List<Any>) {
         with(viewBinding) {
-            status.text = resources.getString(R.string.tx_list_status, viewTransfer.statusText)
+            status.setText(viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
             dateTime.text = viewTransfer.dateTimeText
 
@@ -226,7 +226,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
-            status.text = resources.getString(R.string.tx_list_status, viewTransfer.statusText)
+            status.setText(viewTransfer.statusText)
             status.setTextColor(statusTextColor(viewTransfer.status, resources))
 
             dateTime.text = viewTransfer.dateTimeText
@@ -236,7 +236,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
 
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
@@ -262,7 +262,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
 
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor, null))
+            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
@@ -288,9 +288,9 @@ class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBindin
 
 private fun statusTextColor(status: TransactionStatus, resources: Resources): Int {
     return when (status) {
-        TransactionStatus.Success -> resources.getColor(R.color.safe_green, null)
-        TransactionStatus.Cancelled -> resources.getColor(R.color.dark_grey, null)
-        else -> resources.getColor(R.color.safe_failed_red, null)
+        TransactionStatus.Success -> resources.getColor(R.color.safe_green)
+        TransactionStatus.Cancelled -> resources.getColor(R.color.dark_grey)
+        else -> resources.getColor(R.color.safe_failed_red)
     }
 }
 

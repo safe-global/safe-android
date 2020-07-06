@@ -103,6 +103,7 @@ class TransactionsViewModel
     private fun isQueuedSetFallbackHandler(settingsChange: SettingsChange): Boolean {
         return settingsChange.isSetFallBackHandler() && !settingsChange.isCompleted()
     }
+
     private fun isHistoricModuleChange(settingsChange: SettingsChange): Boolean {
         return settingsChange.isModuleChange() && settingsChange.isCompleted()
     }
@@ -151,7 +152,7 @@ class TransactionsViewModel
 
         return TransactionView.Transfer(
             status = transfer.status,
-            statusText = transfer.status.displayString,
+            statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
@@ -170,7 +171,7 @@ class TransactionsViewModel
 
         return TransactionView.TransferQueued(
             status = transfer.status,
-            statusText = transfer.status.displayString,
+            statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
             amountText = formatAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
@@ -188,7 +189,7 @@ class TransactionsViewModel
     private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
@@ -202,7 +203,7 @@ class TransactionsViewModel
 
         return TransactionView.SettingsChangeQueued(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             settingNameText = transaction.dataDecoded.method,
@@ -221,13 +222,13 @@ class TransactionsViewModel
 
         return TransactionView.ChangeMastercopy(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             alpha = alpha(transaction),
             version = version,
             address = address,
-            label = R.string.change_mastercopy
+            label = R.string.tx_list_change_mastercopy
         )
     }
 
@@ -240,12 +241,12 @@ class TransactionsViewModel
 
         return TransactionView.ChangeMastercopyQueued(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             version = "DefaultFallbackHandler",
             address = address,
-            label = R.string.set_fallback_handler,
+            label = R.string.tx_list_set_fallback_handler,
             confirmations = transaction.confirmations ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
@@ -254,6 +255,17 @@ class TransactionsViewModel
         )
     }
 
+    @StringRes
+    private fun displayString(status: TransactionStatus): Int =
+        when (status) {
+            TransactionStatus.AwaitingConfirmations -> R.string.tx_list_awaiting_confirmations
+            TransactionStatus.AwaitingExecution -> R.string.tx_list_awaiting_confirmations
+            TransactionStatus.Cancelled -> R.string.tx_list_cancelled
+            TransactionStatus.Failed -> R.string.tx_list_failed
+            TransactionStatus.Success -> R.string.tx_list_success
+            TransactionStatus.Pending -> R.string.tx_list_pending
+        }
+
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.ChangeMastercopy {
 
         val address = getAddress(transaction, "handler")
@@ -261,13 +273,13 @@ class TransactionsViewModel
 
         return TransactionView.ChangeMastercopy(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             alpha = alpha(transaction),
             version = "DefaultFallbackHandler",
             address = address,
-            label = R.string.set_fallback_handler
+            label = R.string.tx_list_set_fallback_handler
         )
     }
 
@@ -276,11 +288,11 @@ class TransactionsViewModel
             it >= threshold
         } ?: false
         val address = getAddress(transaction, "module")
-        val label = if (transaction.dataDecoded.method == "enableModule") R.string.enable_module else R.string.disable_module
+        val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
         return TransactionView.ChangeMastercopyQueued(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             version = "",
@@ -300,11 +312,11 @@ class TransactionsViewModel
     private fun historicModuleChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
 
         val address = getAddress(transaction, "module")
-        val label = if (transaction.dataDecoded.method == "enableModule") R.string.enable_module else R.string.disable_module
+        val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
         return TransactionView.ChangeMastercopy(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             alpha = alpha(transaction),
@@ -316,6 +328,7 @@ class TransactionsViewModel
             visibilityModuleAddress = View.VISIBLE
         )
     }
+
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
         val thresholdMet: Boolean = transaction.confirmations?.let {
             it >= threshold
@@ -325,7 +338,7 @@ class TransactionsViewModel
 
         return TransactionView.ChangeMastercopyQueued(
             status = transaction.status,
-            statusText = transaction.status.displayString,
+            statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
             confirmations = transaction.confirmations ?: 0,
@@ -335,7 +348,7 @@ class TransactionsViewModel
             nonce = transaction.nonce.toString(),
             version = version,
             address = address,
-            label = R.string.change_mastercopy
+            label = R.string.tx_list_change_mastercopy
         )
     }
 
@@ -354,7 +367,7 @@ class TransactionsViewModel
     private fun historicCustomTransaction(custom: Custom): CustomTransaction =
         CustomTransaction(
             status = custom.status,
-            statusText = custom.status.displayString,
+            statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
@@ -372,7 +385,7 @@ class TransactionsViewModel
 
         return CustomTransactionQueued(
             status = custom.status,
-            statusText = custom.status.displayString,
+            statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
@@ -389,7 +402,7 @@ class TransactionsViewModel
         )
     }
 
-    private fun formatAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
+    private fun formatAmount(viewTransfer: Transfer, incoming: Boolean): String {
         val inOut = if (incoming) "+" else "-"
         val symbol = viewTransfer.tokenInfo?.symbol
         val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()
@@ -444,7 +457,7 @@ class TransactionsViewModel
 sealed class TransactionView(open val status: TransactionStatus) {
     data class Transfer(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val amountText: String,
         val dateTimeText: String,
@@ -456,7 +469,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class TransferQueued(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val amountText: String,
         val dateTimeText: String,
@@ -472,7 +485,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class SettingsChange(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val settingNameText: String,
@@ -481,7 +494,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class SettingsChangeQueued(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val settingNameText: String,
@@ -494,14 +507,14 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class ChangeMastercopy(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val address: Solidity.Address?,
         val version: String,
         val alpha: Float,
         @StringRes val label: Int,
-        val visibilityVersion : Int = View.VISIBLE,
+        val visibilityVersion: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
         val visibilityModuleAddress: Int = View.GONE
 
@@ -509,7 +522,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class ChangeMastercopyQueued(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val confirmations: Int,
@@ -520,14 +533,14 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val address: Solidity.Address?,
         val version: String,
         @StringRes val label: Int,
-        val visibilityVersion : Int = View.VISIBLE,
+        val visibilityVersion: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
         val visibilityModuleAddress: Int = View.GONE
     ) : TransactionView(status)
 
     data class CustomTransaction(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val address: Solidity.Address,
@@ -539,7 +552,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     data class CustomTransactionQueued(
         override val status: TransactionStatus,
-        val statusText: String,
+        @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val address: Solidity.Address,

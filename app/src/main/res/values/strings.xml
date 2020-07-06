@@ -45,10 +45,7 @@
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
     <string name="splash_text">The most trusted platform to store digital assets on Ethereum</string>
-    <string name="change_mastercopy">Change mastercopy</string>
-    <string name="set_fallback_handler">Set fallback handler</string>
-    <string name="enable_module">Enable module</string>
-    <string name="disable_module">Disable module</string>
+
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>
@@ -83,7 +80,15 @@
 
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
-    <string name="tx_list_confirmations">%1$s out of %2$s</string>
-    <string name="tx_list_status">\u2022 %1$s</string>
-
+    <string name="tx_list_confirmations">%1$d out of %2$d</string>
+    <string name="tx_list_change_mastercopy">Change mastercopy</string>
+    <string name="tx_list_set_fallback_handler">Set fallback handler</string>
+    <string name="tx_list_enable_module">Enable module</string>
+    <string name="tx_list_disable_module">Disable module</string>
+    <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
+    <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
+    <string name="tx_list_cancelled">\u2022 Cancelled</string>
+    <string name="tx_list_failed">\u2022 Failed</string>
+    <string name="tx_list_pending">\u2022 Pending</string>
+    <string name="tx_list_success">\u2022 Success</string>
 </resources>

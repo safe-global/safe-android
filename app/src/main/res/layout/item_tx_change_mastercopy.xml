@@ -51,7 +51,7 @@
         android:ellipsize="end"
         android:lineSpacingExtra="6sp"
         android:maxLines="2"
-        android:text="@string/change_mastercopy"
+        android:text="@string/tx_list_change_mastercopy"
         android:textAlignment="viewEnd"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintEnd_toEndOf="parent"
