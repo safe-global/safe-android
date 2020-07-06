@@ -295,8 +295,8 @@ private fun statusTextColor(status: TransactionStatus, resources: Resources): In
 }
 
 private fun formatAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
-    val inOut = if (incoming) "+" else "-"
-    val symbol = viewTransfer.tokenInfo?.symbol
+    val inOut: String = if (incoming) "+" else "-"
+    val symbol: String = viewTransfer.tokenInfo?.symbol ?: ""
     val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()
     return "%s%s %s".format(inOut, value, symbol)
 }
