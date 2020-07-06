@@ -97,52 +97,62 @@ class TransactionsViewModel
     }
 
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isSetFallBackHandler() && settingsChange.isCompleted()
+        return "setFallbackHandler" == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedSetFallbackHandler(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isSetFallBackHandler() && !settingsChange.isCompleted()
+        return "setFallbackHandler" == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricModuleChange(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isModuleChange() && settingsChange.isCompleted()
+        return ("enableModule" == settingsChange.dataDecoded.method || "disableModule" == settingsChange.dataDecoded.method) && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedModuleChange(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isModuleChange() && !settingsChange.isCompleted()
+        return ("enableModule" == settingsChange.dataDecoded.method || "disableModule" == settingsChange.dataDecoded.method) && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
+        return "changeMasterCopy" == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedMastercopyChange(settingsChange: SettingsChange): Boolean {
-        return settingsChange.isChangeMasterCopy() && !settingsChange.isCompleted()
+        return "changeMasterCopy" == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricCustomTransaction(custom: Custom): Boolean {
-        return custom.isCompleted()
+        return isCompleted(custom.status)
     }
 
     private fun isQueuedCustomTransaction(custom: Custom): Boolean {
-        return !custom.isCompleted()
+        return !isCompleted(custom.status)
     }
 
     private fun isHistoricSettingsChange(settingsChange: SettingsChange): Boolean {
-        return !settingsChange.isChangeMasterCopy() && settingsChange.isCompleted()
+        return "changeMasterCopy" != settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedSettingsChange(settingsChange: SettingsChange): Boolean {
-        return !settingsChange.isChangeMasterCopy() && !settingsChange.isCompleted()
+        return "changeMasterCopy" != settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricTransfer(transfer: Transfer): Boolean {
-        return transfer.isCompleted()
+        return isCompleted(transfer.status)
     }
 
     private fun isQueuedTransfer(transfer: Transfer): Boolean {
-        return !transfer.isCompleted()
+        return !isCompleted(transfer.status)
     }
+
+    fun isCompleted(status: TransactionStatus): Boolean =
+        when (status) {
+            TransactionStatus.AwaitingConfirmations,
+            TransactionStatus.AwaitingExecution,
+            TransactionStatus.Pending -> false
+            TransactionStatus.Success,
+            TransactionStatus.Failed,
+            TransactionStatus.Cancelled -> true
+        }
 
     private fun historicTransfer(
         transfer: Transfer,
@@ -192,7 +202,7 @@ class TransactionsViewModel
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date ?: "",
-            settingNameText = transaction.dataDecoded.method,
+            method = transaction.dataDecoded.method,
             alpha = alpha(transaction)
         )
 
@@ -488,9 +498,21 @@ sealed class TransactionView(open val status: TransactionStatus) {
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
-        val settingNameText: String,
+        val method: String,
         val alpha: Float
-    ) : TransactionView(status)
+    ) : TransactionView(status) {
+        fun isChangeMasterCopy(): Boolean {
+            return "changeMasterCopy" == method
+        }
+
+        fun isSetFallBackHandler(): Boolean {
+            return "setFallbackHandler" == method
+        }
+
+        fun isModuleChange(): Boolean {
+            return "enableModule" == method || "disableModule" == method
+        }
+    }
 
     data class SettingsChangeQueued(
         override val status: TransactionStatus,
