@@ -12,7 +12,7 @@
         android:id="@+id/tx_type_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blockies"
@@ -22,7 +22,7 @@
         android:id="@+id/chevron"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +43,7 @@
         tools:text="0x5c...33D0" />
 
     <TextView
-        android:id="@+id/master_copy_label"
+        android:id="@+id/label"
         style="@style/TextDark"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         android:ellipsize="end"
         android:lineSpacingExtra="6sp"
         android:maxLines="2"
-        android:text="@string/change_mastercopy"
+        android:text="@string/tx_list_change_mastercopy"
         android:textAlignment="viewEnd"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +62,7 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="3dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ellipsized_address"
@@ -97,8 +97,21 @@
         android:id="@+id/blockies"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/module_address"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="@+id/blockies"
+        android:visibility="gone"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

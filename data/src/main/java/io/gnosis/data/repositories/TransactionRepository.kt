@@ -1,8 +1,19 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.Operation
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.TransactionDto
+import io.gnosis.data.backend.dto.TransferDto
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.foldInner
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -15,9 +26,9 @@ import java.math.BigInteger
 
 // TODO Remove these fake tokens, when we have ContractInfo from the backend
 private val defaultErc20Address = "0xc778417e063141139fce010982780140aa0cd5ab".asEthereumAddress()!!
-private val defaultErc721Address = "0xB3775fB83F7D12A36E0475aBdD1FCA35c091efBe".asEthereumAddress()!!
-val FAKE_ERC20_TOKEN_INFO = ServiceTokenInfo(defaultErc20Address, 18, "WETH", "Wrapped Ether", "local::ethereum")
-val FAKE_ERC721_TOKEN_INFO = ServiceTokenInfo(defaultErc721Address, 0, "DRK", "Dirk", "local::ethereum")
+private val EnsErc721Address = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85".asEthereumAddress()!!
+val NFT_ERC721_TOKEN_INFO = ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum")
+val ENS_ERC721_TOKEN_INFO = ServiceTokenInfo(EnsErc721Address, 0, "ENS", "", "local::ethereum")
 
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
@@ -32,7 +43,7 @@ class TransactionRepository(
                         is EthereumTransactionDto -> {
                             when {
                                 !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
-                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
+                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto, safeInfo))
                                 else -> add(transfer(transactionDto))
                             }
                         }
@@ -42,10 +53,10 @@ class TransactionRepository(
                                 isErc20Transfer(transactionDto) -> add(transferErc20(transactionDto, safeInfo))
                                 isErc721Transfer(transactionDto) -> add(transferErc721(transactionDto, safeInfo))
                                 isEthTransfer(transactionDto) -> add(transferEth(transactionDto, safeInfo))
-                                else -> add(custom(transactionDto))
+                                else -> add(custom(transactionDto, safeInfo))
                             }
                         }
-                        else -> add(custom(transactionDto))
+                        else -> add(custom(transactionDto, safeInfo))
                     }
                 }
             }
@@ -72,22 +83,21 @@ class TransactionRepository(
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
-        val tokenInfo = when (transferDto.type) {
-            TransferType.ERC20_TRANSFER -> FAKE_ERC20_TOKEN_INFO
-            TransferType.ERC721_TRANSFER -> FAKE_ERC721_TOKEN_INFO
-            else -> ETH_SERVICE_TOKEN_INFO
-        }
+        val tokenInfo = serviceTokenInfo(transferDto)
         val value = when (tokenInfo) {
-            FAKE_ERC721_TOKEN_INFO -> BigInteger.ONE
+            NFT_ERC721_TOKEN_INFO,
+            ENS_ERC721_TOKEN_INFO -> BigInteger.ONE
             else -> transferDto.value ?: BigInteger.ZERO
         }
         return Transaction.Transfer(
             TransactionStatus.Success,
+            null,
             transferDto.to,
             transferDto.from,
             value,
             transferDto.executionDate?.formatBackendDate(),
-            tokenInfo
+            tokenInfo,
+            null
         )
     }
 
@@ -95,22 +105,26 @@ class TransactionRepository(
     private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
         Transaction.Transfer(
             TransactionStatus.Success,
+            null,
             transaction.to,
             transaction.from,
             transaction.value ?: BigInteger.ZERO,
             transaction.blockTimestamp?.formatBackendDate(),
-            ETH_SERVICE_TOKEN_INFO
+            ETH_SERVICE_TOKEN_INFO,
+            null
         )
 
     // when contractInfo is available have when for ETH, ERC20 and ERC721
     private fun transferEth(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
         Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.to,
             transaction.safe,
             transaction.value,
-            transaction.executionDate?.formatBackendDate(),
-            ETH_SERVICE_TOKEN_INFO
+            transaction.bestAvailableDate(),
+            ETH_SERVICE_TOKEN_INFO,
+            transaction.nonce
         )
 
     private fun transferErc20(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer {
@@ -120,15 +134,17 @@ class TransactionRepository(
         // Only available with transferFrom
         val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress()
 
+        val tokenInfo: ServiceTokenInfo = serviceTokenInfo(transaction)
+
         return Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             to,
             from ?: transaction.safe,
             value,
-            transaction.executionDate?.formatBackendDate()
-                ?: transaction.submissionDate?.formatBackendDate()
-                ?: transaction.modified?.formatBackendDate(),
-            FAKE_ERC20_TOKEN_INFO // TODO: find out correct token data source
+            transaction.bestAvailableDate(),
+            tokenInfo,
+            transaction.nonce
         )
     }
 
@@ -137,41 +153,66 @@ class TransactionRepository(
         val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
         val value = BigInteger.ONE
 
+        val tokenInfo = serviceTokenInfo(transaction)
+
         return Transaction.Transfer(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             to,
             from,
             value,
-            transaction.executionDate?.formatBackendDate(),
-            FAKE_ERC721_TOKEN_INFO // TODO: find out correct token data source
+            transaction.bestAvailableDate(),
+            tokenInfo,
+            transaction.nonce
         )
+    }
+
+    private fun serviceTokenInfo(transfer: TransferDto): ServiceTokenInfo =
+        transfer.tokenInfo
+            ?: transfer.tokenAddress?.let { address ->
+                if (address.asEthereumAddress() == EnsErc721Address) {
+                    ENS_ERC721_TOKEN_INFO
+                } else {
+                    NFT_ERC721_TOKEN_INFO
+                }
+            } ?: ETH_SERVICE_TOKEN_INFO
+
+    private fun serviceTokenInfo(transaction: MultisigTransactionDto): ServiceTokenInfo {
+        return if (transaction.transfers != null && transaction.transfers.isNotEmpty()) {
+            serviceTokenInfo(transaction.transfers[0])
+        } else {
+            ETH_SERVICE_TOKEN_INFO
+        }
     }
 
     private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.dataDecoded!!,
-            transaction.executionDate?.formatBackendDate(),
+            transaction.bestAvailableDate(),
             transaction.nonce
         )
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(
             TransactionStatus.Success,
+            null,
             transaction.nonce,
             transaction.module,
             transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.created,
+            transaction.created?.formatBackendDate(),
             transaction.value ?: BigInteger.ZERO
         )
 
     private fun custom(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Custom =
         Transaction.Custom(
             transaction.status(safeInfo),
+            transaction.confirmations?.size ?: 0,
             transaction.nonce,
             transaction.to,
             transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.creationDate,
+            transaction.bestAvailableDate(),
             transaction.value
         )
 
@@ -179,6 +220,7 @@ class TransactionRepository(
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
         Transaction.Custom(
             TransactionStatus.Success,
+            null,
             null, // Ethereum txs do not have a nonce
             transaction.from,
             transaction.data?.dataSizeBytes() ?: 0L,
@@ -186,18 +228,29 @@ class TransactionRepository(
             transaction.value ?: BigInteger.ZERO
         )
 
-    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo? = null): Transaction.Custom {
+    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo): Transaction.Custom {
         val status =
-            if (transaction is MultisigTransactionDto && safeInfo != null) transaction.status(safeInfo)
+            if (transaction is MultisigTransactionDto) transaction.status(safeInfo)
             else TransactionStatus.Success
 
+        val confirmations =
+            if (transaction is MultisigTransactionDto) transaction.confirmations?.size ?: 0
+            else 0
+
+        val date =
+            if (transaction is MultisigTransactionDto) transaction.executionDate
+                ?: transaction.submissionDate
+                ?: transaction.creationDate // TODO Order?
+            else null
+
         return Transaction.Custom(
-            status,
-            null,
-            transaction.to,
-            transaction.data?.dataSizeBytes() ?: 0L,
-            null,
-            BigInteger.ZERO
+            status = status,
+            confirmations = confirmations,
+            nonce = null,
+            address = transaction.to,
+            dataSize = transaction.data?.dataSizeBytes() ?: 0L,
+            date = date?.formatBackendDate(),
+            value = BigInteger.ZERO
         )
     }
 
@@ -207,7 +260,7 @@ class TransactionRepository(
             isExecuted && isSuccessful == true -> TransactionStatus.Success
             isExecuted && isSuccessful != true -> TransactionStatus.Failed
             !isExecuted && nonce < safeInfo.nonce -> TransactionStatus.Cancelled
-            !isExecuted && nonce >= safeInfo.nonce && confirmations?.size?.compareTo(safeInfo.threshold) ?: -1 < 0 -> TransactionStatus.AwaitingConfirmation
+            !isExecuted && nonce >= safeInfo.nonce && confirmations?.size?.compareTo(safeInfo.threshold) ?: -1 < 0 -> TransactionStatus.AwaitingConfirmations
             else -> TransactionStatus.AwaitingExecution
         }
 }
@@ -223,3 +276,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
+fun MultisigTransactionDto.bestAvailableDate() = (executionDate ?: submissionDate ?: modified)?.formatBackendDate()

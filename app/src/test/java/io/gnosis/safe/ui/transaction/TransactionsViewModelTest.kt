@@ -1,8 +1,11 @@
 package io.gnosis.safe.ui.transaction
 
 import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.TransactionStatus.*
+import io.gnosis.data.repositories.ENS_ERC721_TOKEN_INFO
+import io.gnosis.data.repositories.NFT_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
@@ -38,7 +41,7 @@ class TransactionsViewModelTest {
     private val defaultSafeAddress: Solidity.Address = "0x1234".asEthereumAddress()!!
     private val defaultAddress: Solidity.Address = Solidity.Address(BigInteger.ZERO)
     private val defaultSafe = Safe(defaultSafeAddress, defaultSafeName)
-    private val defaultThreshold: Int = 23
+    private val defaultThreshold: Int = 2
     private val defaultNonce: BigInteger = BigInteger.ONE
     private val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
@@ -219,7 +222,7 @@ class TransactionsViewModelTest {
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_queue),
                     this[0]
                 )
-                assertEquals(true, this[1] is TransactionView.Transfer)
+                assertEquals(true, this[1] is TransactionView.TransferQueued)
                 assertEquals(
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_history),
                     this[2]
@@ -251,7 +254,7 @@ class TransactionsViewModelTest {
         coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransactionListWithStatus(
             Pending,
             AwaitingExecution,
-            AwaitingConfirmation
+            AwaitingConfirmations
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
@@ -269,9 +272,9 @@ class TransactionsViewModelTest {
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_queue),
                     this[0]
                 )
-                assertEquals(true, this[1] is TransactionView.Transfer)
-                assertEquals(true, this[2] is TransactionView.Transfer)
-                assertEquals(true, this[3] is TransactionView.Transfer)
+                assertEquals(true, this[1] is TransactionView.TransferQueued)
+                assertEquals(true, this[2] is TransactionView.TransferQueued)
+                assertEquals(true, this[3] is TransactionView.TransferQueued)
             }
         }
         callVerification()
@@ -303,6 +306,39 @@ class TransactionsViewModelTest {
         callVerification()
     }
 
+    @Test
+    fun `load (tx list with historic token transfers) should emit updates with token transfer`() {
+        coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransferListWithTokenInfo(
+            ENS_ERC721_TOKEN_INFO,
+            NFT_ERC721_TOKEN_INFO,
+            createErc20ServiceToken(),
+            ETH_SERVICE_TOKEN_INFO
+        )
+        coEvery { safeRepository.getActiveSafe() } returns defaultSafe
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
+
+        transactionsViewModel.load()
+
+        transactionsViewModel.state.observeForever(stateObserver)
+        with(stateObserver.values()[0]) {
+            assertEquals(true, viewAction is LoadTransactions)
+            with((viewAction as LoadTransactions).newTransactions) {
+                assertEquals(5, size)
+                assertEquals(
+                    TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_history),
+                    this[0]
+                )
+                assertEquals("-1 ENS", (this[1] as TransactionView.Transfer).amountText)
+                assertEquals("-1 NFT", (this[2] as TransactionView.Transfer).amountText)
+                assertEquals("-1 AQER", (this[3] as TransactionView.Transfer).amountText)
+                assertEquals("-1 ETH", (this[4] as TransactionView.Transfer).amountText)
+            }
+        }
+        callVerification()
+    }
+
+
     private fun callVerification() {
         coVerify { safeRepository.getActiveSafe() }
         coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
@@ -311,14 +347,41 @@ class TransactionsViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(status, defaultAddress, defaultAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO)
+            Transaction.Transfer(status, 2, defaultAddress, defaultAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
         }
         return Page(1, "", "", transfers)
     }
 
+    private fun createTransferListWithTokenInfo(vararg tokenInfoList: ServiceTokenInfo): Page<Transaction> {
+        val transfers = tokenInfoList.map { serviceTokenInfo ->
+            val value = if (serviceTokenInfo == ETH_SERVICE_TOKEN_INFO) BigInteger("1000000000000000000") else BigInteger.ONE
+            Transaction.Transfer(
+                status = Success,
+                confirmations = 2,
+                recipient = defaultAddress,
+                sender = defaultSafeAddress,
+                value = value,
+                date = "",
+                tokenInfo = serviceTokenInfo,
+                nonce = defaultNonce
+            )
+        }
+        return Page(1, "", "", transfers)
+    }
+
+    private fun createErc20ServiceToken() = ServiceTokenInfo(
+        type = ServiceTokenInfo.TokenType.ERC20,
+        address = "0x63704B63Ac04f3a173Dfe677C7e3D330c347CD88".asEthereumAddress()!!,
+        name = "TEST AQER",
+        symbol = "AQER",
+        decimals = 0,
+        logoUri = "local::ethereum"
+    )
+
     private fun buildMockSettingsChange(): Transaction.SettingsChange =
         Transaction.SettingsChange(
             Success,
+            2,
             DataDecodedDto("method", emptyList()),
             null,
             BigInteger.TEN

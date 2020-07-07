@@ -13,7 +13,7 @@ data class ServiceTokenInfo(
     @Json(name = "symbol") val symbol: String = "",
     @Json(name = "name") val name: String = "",
     @Json(name = "logoUri") val logoUri: String?,
-    @Json(name = "tokenType") val tokenType: TokenType? = null
+    @Json(name = "type") val type: TokenType? = null
 ) {
     fun toErc20Token(): Erc20Token = Erc20Token(
         address,

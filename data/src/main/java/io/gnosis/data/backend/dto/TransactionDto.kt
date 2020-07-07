@@ -73,8 +73,8 @@ data class TransferDto(
     val type: TransferType,
     val executionDate: String? = null,
     val value: BigInteger?,
-    val tokenAddress: String? = null, // TokenInfo https://github.com/gnosis/safe-transaction-service/issues/96
-    val serviceTokenInfo: ServiceTokenInfo? = null,
+    val tokenAddress: String? = null,
+    val tokenInfo: ServiceTokenInfo? = null,
     val tokenId: String? = null,
     val transactionHash: String? = null
 )

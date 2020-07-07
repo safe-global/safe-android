@@ -8,8 +8,12 @@ import java.math.BigInteger
 sealed class Transaction {
     abstract val status: TransactionStatus
 
+    // If status is Successful, Failed or Canceled, the confirmations can be null
+    abstract val confirmations: Int?
+
     data class Custom(
         override val status: TransactionStatus,
+        override val confirmations: Int?,
         val nonce: BigInteger?,
         val address: Solidity.Address,
         val dataSize: Long,
@@ -19,6 +23,7 @@ sealed class Transaction {
 
     data class SettingsChange(
         override val status: TransactionStatus,
+        override val confirmations: Int?,
         val dataDecoded: DataDecodedDto,
         val date: String?,
         val nonce: BigInteger
@@ -26,16 +31,18 @@ sealed class Transaction {
 
     data class Transfer(
         override val status: TransactionStatus,
+        override val confirmations: Int?,
         val recipient: Solidity.Address,
         val sender: Solidity.Address,
         val value: BigInteger,
         val date: String?,
-        val tokenInfo: ServiceTokenInfo
+        val tokenInfo: ServiceTokenInfo?,
+        val nonce: BigInteger?
     ) : Transaction()
 }
 
-enum class TransactionStatus {
-    AwaitingConfirmation,
+enum class TransactionStatus() {
+    AwaitingConfirmations,
     AwaitingExecution,
     Cancelled,
     Failed,

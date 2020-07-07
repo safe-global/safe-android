@@ -107,6 +107,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
+        android:textColor="@color/safe_pending_orange"
         tools:text="\u2022 Awaiting your confirmation" />
 
     <TextView
@@ -136,5 +137,15 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/data_size"
+        style="@style/TextLight.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        tools:text="96 bytes"
+        app:layout_constraintEnd_toEndOf="@+id/amount"
+        app:layout_constraintTop_toBottomOf="@+id/amount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
