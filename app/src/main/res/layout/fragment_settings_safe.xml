@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -27,18 +26,107 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/remove_safe"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
 
+            <TextView
+                style="@style/SafeSettingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Safe name" />
 
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="SOME NAME"
+                app:setting_openable="true" />
+
+            <TextView
+                style="@style/SafeSettingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Required confirmations" />
+
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="2 out of 3"
+                app:setting_openable="false" />
+
+            <TextView
+                style="@style/SafeSettingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Owner Addresses" />
+
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                style="@style/SafeSettingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="Contract version" />
+
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/background_selectable_white"
+                app:setting_openable="false" />
+
+            <TextView
+                style="@style/SafeSettingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="ENS name" />
+
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="Not set"
+                app:setting_openable="false" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="Advanced"
+                app:setting_openable="true" />
+
+            <TextView
+                android:id="@+id/remove"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/background_selectable"
+                android:drawableStart="@drawable/ic_remove"
+                android:drawablePadding="9dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="@string/remove_safe"
+                android:textColor="@color/tomato"
+                android:textSize="16sp" />
+
+        </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

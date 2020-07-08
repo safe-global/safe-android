@@ -52,6 +52,14 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="SafeSettingTitle" parent="Text">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
     <style name="TextTitleSection" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>

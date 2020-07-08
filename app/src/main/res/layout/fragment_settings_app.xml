@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_terms_of_use"
                 app:setting_openable="true" />
 
@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_privacy_policy"
                 app:setting_openable="true" />
 
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_licenses"
                 app:setting_openable="true" />
 
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_get_in_touch"
                 app:setting_openable="true" />
 
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_non_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_version"
                 app:setting_openable="false" />
 
@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_non_openable_height"
                 android:layout_marginTop="@dimen/item_setting_separator_size"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_network"
                 app:setting_openable="false" />
 
@@ -74,7 +74,7 @@
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="32dp"
-                android:background="@drawable/background_selectable"
+                android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_advanced"
                 app:setting_openable="true" />
 
