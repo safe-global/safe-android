@@ -24,6 +24,7 @@ import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.collect
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TransactionsViewModel
@@ -85,8 +86,8 @@ class TransactionsViewModel
                 transaction is SettingsChange && isHistoricModuleChange(transaction) -> historicModuleChange(transaction)
                 transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
                 transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
-                transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo.threshold)
-                transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction)
+                transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo)
+                transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction, safeInfo)
                 else -> null
             }
         }
@@ -101,11 +102,15 @@ class TransactionsViewModel
     }
 
     private fun isHistoricModuleChange(settingsChange: SettingsChange): Boolean {
-        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && isCompleted(settingsChange.status)
+        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && isCompleted(
+            settingsChange.status
+        )
     }
 
     private fun isQueuedModuleChange(settingsChange: SettingsChange): Boolean {
-        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && !isCompleted(settingsChange.status)
+        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && !isCompleted(
+            settingsChange.status
+        )
     }
 
     private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
@@ -160,7 +165,7 @@ class TransactionsViewModel
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
-            amountText = formatAmount(transfer, isIncoming),
+            amountText = formatTransferAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
@@ -179,7 +184,7 @@ class TransactionsViewModel
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
-            amountText = formatAmount(transfer, isIncoming),
+            amountText = formatTransferAmount(transfer, isIncoming),
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
@@ -370,23 +375,25 @@ class TransactionsViewModel
     private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
         transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
 
-    private fun historicCustomTransaction(custom: Custom): CustomTransaction =
-        CustomTransaction(
+    private fun historicCustomTransaction(custom: Custom, safeInfo: SafeInfo): CustomTransaction {
+        val isIncoming: Boolean = custom.address == safeInfo.address
+        return CustomTransaction(
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = "${custom.value} ETH",
-            amountColor = R.color.gnosis_dark_blue,
+            amountText = formatAmount(isIncoming, custom.value, 18, "ETH"),
+            amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom)
-            //TODO: ETH value formatting missing
         )
+    }
 
-    private fun queuedCustomTransaction(custom: Custom, threshold: Int): CustomTransactionQueued {
+    private fun queuedCustomTransaction(custom: Custom, safeInfo: SafeInfo): CustomTransactionQueued {
+        val isIncoming: Boolean = custom.address == safeInfo.address
         val thresholdMet: Boolean = custom.confirmations?.let {
-            it >= threshold
+            it >= safeInfo.threshold
         } ?: false
 
         return CustomTransactionQueued(
@@ -396,23 +403,25 @@ class TransactionsViewModel
             dateTimeText = custom.date ?: "",
             address = custom.address,
             confirmations = custom.confirmations ?: 0,
-            threshold = threshold,
+            threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce.toString(),
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = "${custom.value} ETH",
-            amountColor = R.color.gnosis_dark_blue
-            //TODO: ETH amount formatting missing
-
+            amountText = formatAmount(isIncoming, custom.value, 18, "ETH"),
+            amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
 
-    private fun formatAmount(viewTransfer: Transfer, incoming: Boolean): String {
-        val inOut = if (incoming) "+" else "-"
+    private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
         val symbol = viewTransfer.tokenInfo?.symbol
-        val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()
-        return "%s%s %s".format(inOut, value, symbol)
+        return formatAmount(incoming, viewTransfer.value, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
+    }
+
+    private fun formatAmount(incoming: Boolean, value: BigInteger, decimals: Int, symbol: String?): String {
+        val inOut = if (value == BigInteger.ZERO) "" else if (incoming) "+" else "-"
+        val decimalValue = value.shiftedString(decimals = decimals)
+        return "%s%s %s".format(inOut, decimalValue, symbol)
     }
 
     private fun statusTextColor(status: TransactionStatus): Int {
@@ -425,8 +434,8 @@ class TransactionsViewModel
 
     private fun alpha(transaction: Transaction): Float =
         when (transaction.status) {
-            TransactionStatus.Failed, TransactionStatus.Cancelled -> 0.5F
-            else -> 1.0F
+            TransactionStatus.Failed, TransactionStatus.Cancelled -> OPACITY_HALF
+            else -> OPACITY_FULL
         }
 
     private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
@@ -457,6 +466,11 @@ class TransactionsViewModel
             mutableList.add(firstHistoricTransaction, TransactionView.SectionHeader(title = R.string.tx_list_history))
         }
         return mutableList
+    }
+
+    companion object {
+        const val OPACITY_FULL = 1.0F
+        const val OPACITY_HALF = 0.5F
     }
 }
 

@@ -11,6 +11,8 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_I
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_HALF
 import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -312,7 +314,7 @@ class TransactionsViewModelTest {
                 buildTransfer(serviceTokenInfo = ENS_ERC721_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
                 buildTransfer(serviceTokenInfo = NFT_ERC721_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
                 buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = Cancelled),
-                buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("1000000000000000000"), status = Failed)
+                buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = Failed)
             )
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
@@ -340,7 +342,7 @@ class TransactionsViewModelTest {
                         dateTimeText = "",
                         txTypeIcon = R.drawable.ic_arrow_green_16dp,
                         address = defaultFromAddress,
-                        alpha = 1.0F
+                        alpha = OPACITY_FULL
                     ),
                     this[1]
                 )
@@ -354,7 +356,7 @@ class TransactionsViewModelTest {
                         dateTimeText = "",
                         txTypeIcon = R.drawable.ic_arrow_green_16dp,
                         address = defaultFromAddress,
-                        alpha = 1.0F
+                        alpha = OPACITY_FULL
                     ),
                     this[2]
                 )
@@ -368,7 +370,7 @@ class TransactionsViewModelTest {
                         dateTimeText = "",
                         txTypeIcon = R.drawable.ic_arrow_red_10dp,
                         address = defaultToAddress,
-                        alpha = 0.5F
+                        alpha = OPACITY_HALF
                     ),
                     this[3]
                 )
@@ -377,14 +379,87 @@ class TransactionsViewModelTest {
                         status = Failed,
                         statusText = R.string.tx_list_failed,
                         statusColorRes = R.color.safe_failed_red,
-                        amountText = "-1 ETH",
+                        amountText = "-0.0001 ETH",
                         amountColor = R.color.gnosis_dark_blue,
                         dateTimeText = "",
                         txTypeIcon = R.drawable.ic_arrow_red_10dp,
                         address = defaultToAddress,
-                        alpha = 0.5F
+                        alpha = OPACITY_HALF
                     ),
                     this[4]
+                )
+            }
+        }
+        callVerification()
+    }
+
+
+    @Test
+    fun `load (tx list with historic custom txs) should emit updates with Custom transactions`() {
+        coEvery { transactionRepository.getTransactions(any(), any()) } returns Page(
+            1, "", "",
+            listOf(
+                buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress),
+                buildCustom(status = Failed),
+                buildCustom(status = Cancelled, value = BigInteger("100000000000000"))
+            )
+        )
+        coEvery { safeRepository.getActiveSafe() } returns defaultSafe
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
+
+        transactionsViewModel.load()
+
+        transactionsViewModel.state.observeForever(stateObserver)
+        with(stateObserver.values()[0]) {
+            assertEquals(true, viewAction is LoadTransactions)
+            with((viewAction as LoadTransactions).newTransactions) {
+                assertEquals(4, size)
+                assertEquals(
+                    TransactionView.SectionHeader(title = R.string.tx_list_history),
+                    this[0]
+                )
+                assertEquals(
+                    TransactionView.CustomTransaction(
+                        status = Success,
+                        statusText = R.string.tx_list_success,
+                        statusColorRes = R.color.safe_green,
+                        amountText = "+0.0001 ETH",
+                        amountColor = R.color.safe_green,
+                        dateTimeText = "",
+                        address = defaultSafeAddress,
+                        alpha = OPACITY_FULL,
+                        dataSizeText = ""
+                    ),
+                    this[1]
+                )
+                assertEquals(
+                    TransactionView.CustomTransaction(
+                        status = Failed,
+                        statusText = R.string.tx_list_failed,
+                        statusColorRes = R.color.safe_failed_red,
+                        amountText = "0 ETH",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        address = defaultToAddress,
+                        alpha = OPACITY_HALF,
+                        dataSizeText = ""
+                    ),
+                    this[2]
+                )
+                assertEquals(
+                    TransactionView.CustomTransaction(
+                        status = Cancelled,
+                        statusText = R.string.tx_list_cancelled,
+                        statusColorRes = R.color.dark_grey,
+                        amountText = "-0.0001 ETH",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        address = defaultToAddress,
+                        alpha = OPACITY_HALF,
+                        dataSizeText = ""
+                    ),
+                    this[3]
                 )
             }
         }
@@ -429,10 +504,10 @@ class TransactionsViewModelTest {
     private fun buildCustom(
         status: TransactionStatus = Success,
         confirmations: Int = 0,
-        value: BigInteger = BigInteger.ONE,
+        value: BigInteger = BigInteger.ZERO,
         date: String = "",
         nonce: BigInteger = defaultNonce,
-        address: Solidity.Address = defaultSafeAddress,
+        address: Solidity.Address = defaultToAddress,
         dataSize: Long = 0
     ): Transaction =
         Transaction.Custom(

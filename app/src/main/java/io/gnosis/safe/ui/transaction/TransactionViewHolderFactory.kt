@@ -8,16 +8,11 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxQueuedTransferBinding
-import io.gnosis.safe.databinding.ItemTxSectionHeaderBinding
-import io.gnosis.safe.databinding.ItemTxSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxTransferBinding
+import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
+import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatForTxList
 import io.gnosis.safe.utils.shiftedString
 
@@ -79,8 +74,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 }
 
 abstract class BaseTransactionViewHolder<T : TransactionView>(viewBinding: ViewBinding) : Adapter.ViewHolder<T>(viewBinding.root)
-
-private const val OPACITY_FULL = 1.0F
 
 class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
     BaseTransactionViewHolder<TransactionView.Transfer>(viewBinding) {
@@ -295,7 +288,7 @@ private fun statusTextColor(status: TransactionStatus, resources: Resources): In
     }
 }
 
-private fun formatAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
+private fun formatTransferAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
     val inOut: String = if (incoming) "+" else "-"
     val symbol: String = viewTransfer.tokenInfo?.symbol ?: ""
     val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()

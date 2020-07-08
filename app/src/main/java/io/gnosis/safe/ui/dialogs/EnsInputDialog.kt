@@ -16,6 +16,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.helpers.AddressHelper
+import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import io.gnosis.safe.utils.debounce
 import kotlinx.android.synthetic.main.dialog_ens_input.view.*
@@ -80,14 +82,14 @@ class EnsInputDialog : DialogFragment() {
 
     private fun onUrlAvailable(string: String) {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = OPACITY_HALF
         dialogView.dialog_ens_input_progress.visible(true)
         lifecycleScope.launch {
             runCatching { viewModel.processEnsInput(string) }
                 .onSuccess { address ->
                     dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1f
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = OPACITY_FULL
                     dialogView.dialog_ens_input_name.visible(false)
                     dialogView.dialog_ens_input_address.visible(true)
                     addressHelper.populateAddressInfo(
@@ -101,7 +103,7 @@ class EnsInputDialog : DialogFragment() {
                 .onFailure {
                     dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = OPACITY_HALF
                     dialogView.dialog_ens_input_name.visible(true)
                     dialogView.dialog_ens_input_address.visible(false)
                     dialogView.dialog_ens_input_address.text = null
