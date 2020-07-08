@@ -1,12 +1,19 @@
 package io.gnosis.safe.ui.transaction
 
+import android.view.View
 import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.TransactionStatus.*
 import io.gnosis.data.repositories.ENS_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.NFT_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
@@ -21,9 +28,10 @@ import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
-class TransactionsViewModelTest {
+class TransactionsViewModelTest() {
 
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
@@ -40,6 +48,8 @@ class TransactionsViewModelTest {
     private val defaultSafeAddress: Solidity.Address = "0x1234".asEthereumAddress()!!
     private val defaultToAddress: Solidity.Address = "0x12345678".asEthereumAddress()!!
     private val defaultFromAddress: Solidity.Address = "0x1234567890".asEthereumAddress()!!
+    private val defaultModuleAddress: Solidity.Address = "0x25F73b24B866963B0e560fFF9bbA7908be0263E8".asEthereumAddress()!!
+    private val defaultFallbackHandler: Solidity.Address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
     private val defaultSafe = Safe(defaultSafeAddress, defaultSafeName)
     private val defaultThreshold: Int = 2
     private val defaultNonce: BigInteger = BigInteger.ONE
@@ -467,6 +477,118 @@ class TransactionsViewModelTest {
     }
 
 
+    @Test
+    fun `load (tx list with historic setting changes) should emit updates with settings changes`() {
+        coEvery { transactionRepository.getTransactions(any(), any()) } returns Page(
+            1, "", "",
+            listOf(
+                buildSettingsChange(
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_CHANGE_MASTER_COPY,
+                        listOf(ParamsDto("_masterCopy", "address", SAFE_MASTER_COPY_1_1_1.asEthereumAddressString()))
+                    )
+                ),
+                buildSettingsChange(
+                    status = Failed,
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_ENABLE_MODULE,
+                        listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    )
+                ),
+                buildSettingsChange(
+                    status = Cancelled,
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_SET_FALLBACK_HANDLER,
+                        listOf(ParamsDto("handler", "address", defaultFallbackHandler.asEthereumAddressString()))
+                    )
+                ),
+                buildSettingsChange(
+                    status = Cancelled,
+                    dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf())
+                )
+            )
+        )
+
+        coEvery { safeRepository.getActiveSafe() } returns defaultSafe
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
+
+        transactionsViewModel.load()
+
+        transactionsViewModel.state.observeForever(stateObserver)
+        with(stateObserver.values()[0]) {
+            assertEquals(true, viewAction is LoadTransactions)
+            with((viewAction as LoadTransactions).newTransactions) {
+                assertEquals(5, size)
+                assertEquals(
+                    TransactionView.SectionHeader(title = R.string.tx_list_history),
+                    this[0]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopy(
+                        status = Success,
+                        statusText = R.string.tx_list_success,
+                        statusColorRes = R.color.safe_green,
+                        dateTimeText = "",
+                        address = SAFE_MASTER_COPY_1_1_1,
+                        alpha = OPACITY_FULL,
+                        version = "1.1.1",
+                        label = R.string.tx_list_change_mastercopy,
+                        visibilityEllipsizedAddress = View.VISIBLE,
+                        visibilityModuleAddress = View.GONE,
+                        visibilityVersion = View.VISIBLE
+                    ),
+                    this[1]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopy(
+                        status = Failed,
+                        statusText = R.string.tx_list_failed,
+                        statusColorRes = R.color.safe_failed_red,
+                        dateTimeText = "",
+                        alpha = OPACITY_HALF,
+                        version = "",
+                        label = R.string.tx_list_enable_module,
+                        visibilityEllipsizedAddress = View.INVISIBLE,
+                        visibilityModuleAddress = View.VISIBLE,
+                        visibilityVersion = View.INVISIBLE,
+                        address = defaultModuleAddress
+                    ),
+                    this[2]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopy(
+                        status = Cancelled,
+                        statusText = R.string.tx_list_cancelled,
+                        statusColorRes = R.color.dark_grey,
+                        dateTimeText = "",
+                        alpha = OPACITY_HALF,
+                        label = R.string.tx_list_set_fallback_handler,
+                        visibilityEllipsizedAddress = View.VISIBLE,
+                        visibilityModuleAddress = View.GONE,
+                        visibilityVersion = View.VISIBLE,
+                        address = defaultFallbackHandler,
+                        version = "DefaultFallbackHandler"
+                    ),
+                    this[3]
+                )
+                assertEquals(
+                    TransactionView.SettingsChange(
+                        status = Cancelled,
+                        statusText = R.string.tx_list_cancelled,
+                        statusColorRes = R.color.dark_grey,
+                        dateTimeText = "",
+                        alpha = OPACITY_HALF,
+                        method = METHOD_REMOVE_OWNER
+                    ),
+                    this[4]
+                )
+            }
+        }
+        callVerification()
+    }
+
+
     private fun callVerification() {
         coVerify { safeRepository.getActiveSafe() }
         coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
@@ -525,7 +647,7 @@ class TransactionsViewModelTest {
         confirmations: Int = 0,
         date: String = "",
         nonce: BigInteger = defaultNonce,
-        dataDecoded: DataDecodedDto = DataDecodedDto("addOwner", listOf())
+        dataDecoded: DataDecodedDto = buildDataDecodedDto()
     ): Transaction =
         Transaction.SettingsChange(
             status = status,
@@ -534,6 +656,16 @@ class TransactionsViewModelTest {
             nonce = nonce,
             dataDecoded = dataDecoded
         )
+
+    private fun buildDataDecodedDto(
+        method: String = METHOD_REMOVE_OWNER,
+        parameters: List<ParamsDto> = listOf()
+    ): DataDecodedDto {
+        return DataDecodedDto(
+            method = method,
+            parameters = parameters
+        )
+    }
 
     private fun createErc20ServiceToken() = ServiceTokenInfo(
         type = ServiceTokenInfo.TokenType.ERC20,
@@ -553,3 +685,4 @@ class TransactionsViewModelTest {
             BigInteger.TEN
         )
 }
+
