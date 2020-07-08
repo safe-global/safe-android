@@ -10,4 +10,9 @@
             </item>
         </ripple>
     </item>
+    <item android:state_pressed="false">
+        <shape>
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
 </selector>
