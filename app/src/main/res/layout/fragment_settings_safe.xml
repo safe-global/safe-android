@@ -37,7 +37,7 @@
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="Safe name" />
+                android:text="@string/safe_settings_safe_name" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="Required confirmations" />
+                android:text="@string/safe_settings_required_confirmations" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="Owner Addresses" />
+                android:text="@string/safe_settings_owner_addresses" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:layout_width="match_parent"
@@ -79,7 +79,7 @@
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="Contract version" />
+                android:text="@string/safe_settings_contract_version" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:layout_width="match_parent"
@@ -93,7 +93,7 @@
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="ENS name" />
+                android:text="@string/safe_settings_ens_name" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:layout_width="match_parent"
