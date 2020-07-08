@@ -97,4 +97,7 @@
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
     <string name="safe_settings_safe_name">Safe name</string>
+    <string name="safe_settings_dialog_description">Removing a Safe only removes it from this app. It does not delete the Safe from the blockchain. Funds will not get lost.</string>
+    <string name="safe_settings_dialog_cancel">Cancel</string>
+    <string name="safe_settings_dialog_remove">Remove</string>
 </resources>

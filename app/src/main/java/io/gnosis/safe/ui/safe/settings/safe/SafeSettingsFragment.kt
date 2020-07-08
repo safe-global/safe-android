@@ -1,9 +1,11 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -27,7 +29,11 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.remove.setOnClickListener {
-            viewModel.removeSafe()
+            AlertDialog.Builder(requireContext()).apply {
+                setMessage(R.string.safe_settings_dialog_description)
+                setNegativeButton(R.string.safe_settings_dialog_cancel) { dialog, _ -> dialog.dismiss() }
+                setPositiveButton(R.string.safe_settings_dialog_remove) { _, _ -> viewModel.removeSafe() }
+            }.create().show()
         }
     }
 
