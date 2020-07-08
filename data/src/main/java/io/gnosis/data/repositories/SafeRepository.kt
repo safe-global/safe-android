@@ -17,6 +17,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.lang.IllegalStateException
 import java.math.BigInteger
 
 class SafeRepository(
@@ -73,7 +74,7 @@ class SafeRepository(
 
     suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
         transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
-            SafeInfo(it.address, it.nonce, it.threshold)
+            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy)
         }
 
     private suspend fun getSafeBy(address: Solidity.Address): Safe? = safeDao.loadByAddress(address)
@@ -87,14 +88,17 @@ class SafeRepository(
         val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
 
-        fun isSupported(masterCopy: Solidity.Address?) =
-            supportedContracts.contains(masterCopy)
+        fun masterCopyVersion(masterCopy: Solidity.Address): String =
+            supportedContracts[masterCopy] ?: throw IllegalStateException("Unsupported mastercopy version")
 
-        private val supportedContracts = listOf(
-            SAFE_MASTER_COPY_0_0_2,
-            SAFE_MASTER_COPY_0_1_0,
-            SAFE_MASTER_COPY_1_0_0,
-            SAFE_MASTER_COPY_1_1_1
+        fun isSupported(masterCopy: Solidity.Address?) =
+            supportedContracts.containsKey(masterCopy)
+
+        private val supportedContracts = mapOf(
+            SAFE_MASTER_COPY_0_0_2 to "0.0.2",
+            SAFE_MASTER_COPY_0_1_0 to "0.1.0",
+            SAFE_MASTER_COPY_1_0_0 to "1.0.0",
+            SAFE_MASTER_COPY_1_1_1 to "1.1.1"
         )
 
         fun isSettingsMethod(methodName: String?): Boolean = settingMethodNames.contains(methodName)
