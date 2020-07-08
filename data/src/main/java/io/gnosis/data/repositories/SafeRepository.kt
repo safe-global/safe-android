@@ -87,6 +87,7 @@ class SafeRepository(
         val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
 
+
         fun isSupported(masterCopy: Solidity.Address?) =
             supportedContracts.contains(masterCopy)
 
@@ -99,15 +100,24 @@ class SafeRepository(
 
         fun isSettingsMethod(methodName: String?): Boolean = settingMethodNames.contains(methodName)
 
+        const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
+        const val METHOD_ADD_OWNER_WITH_THRESHOLD = "addOwnerWithThreshold"
+        const val METHOD_REMOVE_OWNER = "removeOwner"
+        const val METHOD_SWAP_OWNER = "swapOwner"
+        const val METHOD_CHANGE_THRESHOLD = "changeThreshold"
+        const val METHOD_CHANGE_MASTER_COPY = "changeMasterCopy"
+        const val METHOD_ENABLE_MODULE = "enableModule"
+        const val METHOD_DISABLE_MODULE = "disableModule"
+
         private val settingMethodNames = listOf(
-            "setFallbackHandler",
-            "addOwnerWithThreshold",
-            "removeOwner",
-            "swapOwner",
-            "changeThreshold",
-            "changeMasterCopy",
-            "enableModule",
-            "disableModule"
+            METHOD_SET_FALLBACK_HANDLER,
+            METHOD_ADD_OWNER_WITH_THRESHOLD,
+            METHOD_REMOVE_OWNER,
+            METHOD_SWAP_OWNER,
+            METHOD_CHANGE_THRESHOLD,
+            METHOD_CHANGE_MASTER_COPY,
+            METHOD_ENABLE_MODULE,
+            METHOD_DISABLE_MODULE
         )
     }
 }

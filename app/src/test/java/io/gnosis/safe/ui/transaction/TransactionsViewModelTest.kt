@@ -9,10 +9,7 @@ import io.gnosis.data.repositories.NFT_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.MainCoroutineScopeRule
-import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.TestLiveDataObserver
-import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
@@ -39,7 +36,8 @@ class TransactionsViewModelTest {
 
     private val defaultSafeName: String = "Default Name"
     private val defaultSafeAddress: Solidity.Address = "0x1234".asEthereumAddress()!!
-    private val defaultAddress: Solidity.Address = Solidity.Address(BigInteger.ZERO)
+    private val defaultToAddress: Solidity.Address = "0x12345678".asEthereumAddress()!!
+    private val defaultFromAddress: Solidity.Address = "0x1234567890".asEthereumAddress()!!
     private val defaultSafe = Safe(defaultSafeAddress, defaultSafeName)
     private val defaultThreshold: Int = 2
     private val defaultNonce: BigInteger = BigInteger.ONE
@@ -308,11 +306,14 @@ class TransactionsViewModelTest {
 
     @Test
     fun `load (tx list with historic token transfers) should emit updates with token transfer`() {
-        coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransferListWithTokenInfo(
-            ENS_ERC721_TOKEN_INFO,
-            NFT_ERC721_TOKEN_INFO,
-            createErc20ServiceToken(),
-            ETH_SERVICE_TOKEN_INFO
+        coEvery { transactionRepository.getTransactions(any(), any()) } returns Page(
+            1, "", "",
+            listOf(
+                buildTransfer(serviceTokenInfo = ENS_ERC721_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
+                buildTransfer(serviceTokenInfo = NFT_ERC721_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
+                buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = Cancelled),
+                buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("1000000000000000000"), status = Failed)
+            )
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
@@ -329,10 +330,62 @@ class TransactionsViewModelTest {
                     TransactionView.SectionHeader(title = io.gnosis.safe.R.string.tx_list_history),
                     this[0]
                 )
-                assertEquals("-1 ENS", (this[1] as TransactionView.Transfer).amountText)
-                assertEquals("-1 NFT", (this[2] as TransactionView.Transfer).amountText)
-                assertEquals("-1 AQER", (this[3] as TransactionView.Transfer).amountText)
-                assertEquals("-1 ETH", (this[4] as TransactionView.Transfer).amountText)
+                assertEquals(
+                    TransactionView.Transfer(
+                        status = Success,
+                        statusText = R.string.tx_list_success,
+                        statusColorRes = R.color.safe_green,
+                        amountText = "+1 ENS",
+                        amountColor = R.color.safe_green,
+                        dateTimeText = "",
+                        txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                        address = defaultFromAddress,
+                        alpha = 1.0F
+                    ),
+                    this[1]
+                )
+                assertEquals(
+                    TransactionView.Transfer(
+                        status = Success,
+                        statusText = R.string.tx_list_success,
+                        statusColorRes = R.color.safe_green,
+                        amountText = "+1 NFT",
+                        amountColor = R.color.safe_green,
+                        dateTimeText = "",
+                        txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                        address = defaultFromAddress,
+                        alpha = 1.0F
+                    ),
+                    this[2]
+                )
+                assertEquals(
+                    TransactionView.Transfer(
+                        status = Cancelled,
+                        statusText = R.string.tx_list_cancelled,
+                        statusColorRes = R.color.dark_grey,
+                        amountText = "-1 AQER",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        txTypeIcon = R.drawable.ic_arrow_red_10dp,
+                        address = defaultToAddress,
+                        alpha = 0.5F
+                    ),
+                    this[3]
+                )
+                assertEquals(
+                    TransactionView.Transfer(
+                        status = Failed,
+                        statusText = R.string.tx_list_failed,
+                        statusColorRes = R.color.safe_failed_red,
+                        amountText = "-1 ETH",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        txTypeIcon = R.drawable.ic_arrow_red_10dp,
+                        address = defaultToAddress,
+                        alpha = 0.5F
+                    ),
+                    this[4]
+                )
             }
         }
         callVerification()
@@ -347,27 +400,65 @@ class TransactionsViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(status, 2, defaultAddress, defaultAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
+            Transaction.Transfer(status, 2, defaultToAddress, defaultFromAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
         }
         return Page(1, "", "", transfers)
     }
 
-    private fun createTransferListWithTokenInfo(vararg tokenInfoList: ServiceTokenInfo): Page<Transaction> {
-        val transfers = tokenInfoList.map { serviceTokenInfo ->
-            val value = if (serviceTokenInfo == ETH_SERVICE_TOKEN_INFO) BigInteger("1000000000000000000") else BigInteger.ONE
-            Transaction.Transfer(
-                status = Success,
-                confirmations = 2,
-                recipient = defaultAddress,
-                sender = defaultSafeAddress,
-                value = value,
-                date = "",
-                tokenInfo = serviceTokenInfo,
-                nonce = defaultNonce
-            )
-        }
-        return Page(1, "", "", transfers)
-    }
+    private fun buildTransfer(
+        status: TransactionStatus = Success,
+        confirmations: Int = 0,
+        recipient: Solidity.Address = defaultToAddress,
+        sender: Solidity.Address = defaultFromAddress,
+        value: BigInteger = BigInteger.ONE,
+        date: String = "",
+        serviceTokenInfo: ServiceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+        nonce: BigInteger = defaultNonce
+    ): Transaction =
+        Transaction.Transfer(
+            status = status,
+            confirmations = confirmations,
+            recipient = recipient,
+            sender = sender,
+            value = value,
+            date = date,
+            tokenInfo = serviceTokenInfo,
+            nonce = nonce
+        )
+
+    private fun buildCustom(
+        status: TransactionStatus = Success,
+        confirmations: Int = 0,
+        value: BigInteger = BigInteger.ONE,
+        date: String = "",
+        nonce: BigInteger = defaultNonce,
+        address: Solidity.Address = defaultSafeAddress,
+        dataSize: Long = 0
+    ): Transaction =
+        Transaction.Custom(
+            status = status,
+            confirmations = confirmations,
+            value = value,
+            date = date,
+            nonce = nonce,
+            address = address,
+            dataSize = dataSize
+        )
+
+    private fun buildSettingsChange(
+        status: TransactionStatus = Success,
+        confirmations: Int = 0,
+        date: String = "",
+        nonce: BigInteger = defaultNonce,
+        dataDecoded: DataDecodedDto = DataDecodedDto("addOwner", listOf())
+    ): Transaction =
+        Transaction.SettingsChange(
+            status = status,
+            confirmations = confirmations,
+            date = date,
+            nonce = nonce,
+            dataDecoded = dataDecoded
+        )
 
     private fun createErc20ServiceToken() = ServiceTokenInfo(
         type = ServiceTokenInfo.TokenType.ERC20,

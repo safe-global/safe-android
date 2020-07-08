@@ -2,15 +2,13 @@ package io.gnosis.safe.ui.transaction
 
 import android.view.View
 import androidx.annotation.StringRes
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.Custom
-import io.gnosis.data.models.Transaction.SettingsChange
-import io.gnosis.data.models.Transaction.Transfer
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.*
+import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0_2
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
@@ -95,27 +93,27 @@ class TransactionsViewModel
     }
 
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
-        return "setFallbackHandler" == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
+        return METHOD_SET_FALLBACK_HANDLER == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedSetFallbackHandler(settingsChange: SettingsChange): Boolean {
-        return "setFallbackHandler" == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
+        return METHOD_SET_FALLBACK_HANDLER == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricModuleChange(settingsChange: SettingsChange): Boolean {
-        return ("enableModule" == settingsChange.dataDecoded.method || "disableModule" == settingsChange.dataDecoded.method) && isCompleted(settingsChange.status)
+        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedModuleChange(settingsChange: SettingsChange): Boolean {
-        return ("enableModule" == settingsChange.dataDecoded.method || "disableModule" == settingsChange.dataDecoded.method) && !isCompleted(settingsChange.status)
+        return (METHOD_ENABLE_MODULE == settingsChange.dataDecoded.method || METHOD_DISABLE_MODULE == settingsChange.dataDecoded.method) && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricMastercopyChange(settingsChange: SettingsChange): Boolean {
-        return "changeMasterCopy" == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
+        return METHOD_CHANGE_MASTER_COPY == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedMastercopyChange(settingsChange: SettingsChange): Boolean {
-        return "changeMasterCopy" == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
+        return METHOD_CHANGE_MASTER_COPY == settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricCustomTransaction(custom: Custom): Boolean {
@@ -127,11 +125,11 @@ class TransactionsViewModel
     }
 
     private fun isHistoricSettingsChange(settingsChange: SettingsChange): Boolean {
-        return "changeMasterCopy" != settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
+        return METHOD_CHANGE_MASTER_COPY != settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
     }
 
     private fun isQueuedSettingsChange(settingsChange: SettingsChange): Boolean {
-        return "changeMasterCopy" != settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
+        return METHOD_CHANGE_MASTER_COPY != settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
     private fun isHistoricTransfer(transfer: Transfer): Boolean {
