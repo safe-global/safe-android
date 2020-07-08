@@ -229,11 +229,42 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    fun `getTransactions (multisig !isSuccessful) should return failed custom transfer`() = runBlockingTest {
+
+        val transactionDto = buildMultisigTransactionDto(
+            operation = Operation.DELEGATE,
+            isExecuted = true,
+            isSuccessful = false
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Custom) {
+            assertEquals(transactionDto.to, address)
+            assertEquals(0L, dataSize)
+            assertEquals(TransactionStatus.Failed, status)
+        }
+    }
+
+    @Test
     fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest {
         val transactionDto = buildEthereumTransactionDto(
             transfers = listOf(
-                buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z", tokenInfo = buildErc20ServiceTokenInfo()),
-                buildTransferDto(TransferType.ERC721_TRANSFER, executionDate = "2020-05-25T13:37:54Z", value = BigInteger.ONE, tokenInfo = NFT_ERC721_TOKEN_INFO),
+                buildTransferDto(
+                    TransferType.ERC20_TRANSFER,
+                    executionDate = "2020-05-25T13:37:53Z",
+                    tokenInfo = buildErc20ServiceTokenInfo()
+                ),
+                buildTransferDto(
+                    TransferType.ERC721_TRANSFER,
+                    executionDate = "2020-05-25T13:37:54Z",
+                    value = BigInteger.ONE,
+                    tokenInfo = NFT_ERC721_TOKEN_INFO
+                ),
                 buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
         )
@@ -388,8 +419,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions - (Multisig Transaction, executed true, successful true) should return status success`() = runBlocking {
-        val transactionDto = buildMultisigTransactionDto()
-            .copy(isExecuted = true, isSuccessful = true)
+        val transactionDto = buildMultisigTransactionDto(isExecuted = true, isSuccessful = true)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
@@ -399,8 +429,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions - (Multisig Transaction, executed true, successful false) should return status failed`() = runBlocking {
-        val transactionDto = buildMultisigTransactionDto()
-            .copy(isExecuted = true, isSuccessful = false)
+        val transactionDto = buildMultisigTransactionDto(isExecuted = true, isSuccessful = false)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
@@ -411,8 +440,7 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions - (Multisig Transaction, executed false, successful false, nonce lower than safe) should return status cancelled`() =
         runBlocking {
-            val transactionDto = buildMultisigTransactionDto()
-                .copy(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
+            val transactionDto = buildMultisigTransactionDto(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
             val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
@@ -469,21 +497,25 @@ class TransactionRepositoryTest {
         dataDecodedDto: DataDecodedDto? = null,
         safe: Solidity.Address = defaultSafeAddress,
         to: Solidity.Address = defaultToAddress,
-        operation: Operation = Operation.CALL
+        operation: Operation = Operation.CALL,
+        isExecuted: Boolean = false,
+        isSuccessful: Boolean = false,
+        nonce : BigInteger = BigInteger.ONE
     ): MultisigTransactionDto {
         return MultisigTransactionDto(
             safe = safe,
             to = to,
             operation = operation,
             value = BigInteger.ONE,
-            nonce = BigInteger.ONE,
+            nonce = nonce,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
             gasPrice = BigInteger.ONE,
             transfers = transfers,
             contractInfo = contractInfoType?.let { ContractInfoDto(it) },
             dataDecoded = dataDecodedDto,
-            isExecuted = true
+            isExecuted = isExecuted,
+            isSuccessful = isSuccessful
         )
     }
 

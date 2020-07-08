@@ -1,19 +1,8 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.EthereumTransactionDto
-import io.gnosis.data.backend.dto.ModuleTransactionDto
-import io.gnosis.data.backend.dto.MultisigTransactionDto
-import io.gnosis.data.backend.dto.Operation
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.TransactionDto
-import io.gnosis.data.backend.dto.TransferDto
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.foldInner
+import io.gnosis.data.backend.dto.*
+import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -43,7 +32,7 @@ class TransactionRepository(
                         is EthereumTransactionDto -> {
                             when {
                                 !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
-                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto, safeInfo))
+                                transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
                                 else -> add(transfer(transactionDto))
                             }
                         }
@@ -56,7 +45,7 @@ class TransactionRepository(
                                 else -> add(custom(transactionDto, safeInfo))
                             }
                         }
-                        else -> add(custom(transactionDto, safeInfo))
+                        else -> add(custom(transactionDto))
                     }
                 }
             }
@@ -196,52 +185,42 @@ class TransactionRepository(
 
     private fun custom(transaction: ModuleTransactionDto): Transaction.Custom =
         Transaction.Custom(
-            TransactionStatus.Success,
-            null,
-            transaction.nonce,
-            transaction.module,
-            transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.created?.formatBackendDate(),
-            transaction.value ?: BigInteger.ZERO
+            status = TransactionStatus.Success,
+            confirmations = null,
+            nonce = transaction.nonce,
+            address = transaction.module,
+            dataSize = transaction.data?.dataSizeBytes() ?: 0L,
+            date = transaction.created?.formatBackendDate(),
+            value = transaction.value ?: BigInteger.ZERO
         )
 
     private fun custom(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Custom =
         Transaction.Custom(
             transaction.status(safeInfo),
-            transaction.confirmations?.size ?: 0,
-            transaction.nonce,
-            transaction.to,
-            transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.bestAvailableDate(),
-            transaction.value
+            confirmations = transaction.confirmations?.size ?: 0,
+            nonce = transaction.nonce,
+            address = transaction.to,
+            dataSize = transaction.data?.dataSizeBytes() ?: 0L,
+            date = transaction.bestAvailableDate(),
+            value = transaction.value
         )
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
         Transaction.Custom(
-            TransactionStatus.Success,
-            null,
-            null, // Ethereum txs do not have a nonce
-            transaction.from,
-            transaction.data?.dataSizeBytes() ?: 0L,
-            transaction.blockTimestamp,
-            transaction.value ?: BigInteger.ZERO
+            status = TransactionStatus.Success,
+            confirmations =  null,
+            nonce = null, // Ethereum txs do not have a nonce
+            address = transaction.to,
+            dataSize = transaction.data?.dataSizeBytes() ?: 0L,
+            date = transaction.blockTimestamp,
+            value = transaction.value ?: BigInteger.ZERO
         )
 
-    private fun custom(transaction: TransactionDto, safeInfo: SafeInfo): Transaction.Custom {
-        val status =
-            if (transaction is MultisigTransactionDto) transaction.status(safeInfo)
-            else TransactionStatus.Success
-
-        val confirmations =
-            if (transaction is MultisigTransactionDto) transaction.confirmations?.size ?: 0
-            else 0
-
-        val date =
-            if (transaction is MultisigTransactionDto) transaction.executionDate
-                ?: transaction.submissionDate
-                ?: transaction.creationDate // TODO Order?
-            else null
+    private fun custom(transaction: TransactionDto): Transaction.Custom {
+        val status = TransactionStatus.Success
+        val confirmations = 0
+        val date = null
 
         return Transaction.Custom(
             status = status,
