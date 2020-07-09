@@ -8,6 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
@@ -24,7 +25,9 @@ class SafeSettingsViewModel @Inject constructor(
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState { SafeSettingsState(null, null, null, ViewAction.Loading(true)) }
                 val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
-                val safeEnsName = safe?.let { ensRepository.reverseResolve(it.address) }
+                val safeEnsName = runCatching { safe?.let { ensRepository.reverseResolve(it.address) } }
+                    .onFailure { Timber.e(it) }
+                    .getOrNull()
                 updateState {
                     SafeSettingsState(safe, safeInfo, safeEnsName, ViewAction.Loading(false))
                 }

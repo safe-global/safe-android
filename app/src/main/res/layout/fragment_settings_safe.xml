@@ -33,12 +33,13 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/SafeSettingTitle"
+                style="@style/Header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/safe_settings_safe_name" />
+                android:text="@string/safe_settings_safe_name"
+                android:textAllCaps="true" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:id="@+id/local_name"
@@ -49,12 +50,13 @@
                 app:setting_openable="false" />
 
             <TextView
-                style="@style/SafeSettingTitle"
+                style="@style/Header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/safe_settings_required_confirmations" />
+                android:text="@string/safe_settings_required_confirmations"
+                android:textAllCaps="true" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:id="@+id/threshold"
@@ -65,12 +67,13 @@
                 app:setting_openable="false" />
 
             <TextView
-                style="@style/SafeSettingTitle"
+                style="@style/Header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/safe_settings_owner_addresses" />
+                android:text="@string/safe_settings_owner_addresses"
+                android:textAllCaps="true" />
 
             <LinearLayout
                 android:id="@+id/owners_container"
@@ -79,12 +82,13 @@
                 android:orientation="vertical" />
 
             <TextView
-                style="@style/SafeSettingTitle"
+                style="@style/Header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/safe_settings_contract_version" />
+                android:text="@string/safe_settings_contract_version"
+                android:textAllCaps="true" />
 
             <io.gnosis.safe.ui.safe.settings.view.MasterCopyItem
                 android:id="@+id/master_copy"
@@ -94,12 +98,13 @@
                 app:setting_openable="false" />
 
             <TextView
-                style="@style/SafeSettingTitle"
+                style="@style/Header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/safe_settings_ens_name" />
+                android:text="@string/safe_settings_ens_name"
+                android:textAllCaps="true" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
                 android:id="@+id/ens_name"

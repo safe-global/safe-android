@@ -1,9 +1,6 @@
 package io.gnosis.safe.ui.safe.settings.view
 
 import android.content.Context
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.annotation.ColorRes
@@ -13,12 +10,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewAddressItemBinding
-import io.gnosis.safe.databinding.ViewContractVersionItemBinding
+import io.gnosis.safe.databinding.ViewMastercopyItemBinding
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -29,7 +24,7 @@ class MasterCopyItem @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding by lazy { ViewContractVersionItemBinding.inflate(LayoutInflater.from(context), this) }
+    private val binding by lazy { ViewMastercopyItemBinding.inflate(LayoutInflater.from(context), this) }
 
     var address: Solidity.Address? = null
         set(value) {
