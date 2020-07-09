@@ -16,6 +16,7 @@ import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.safe.settings.view.AddressItem
 import io.gnosis.safe.ui.safe.settings.view.SettingItem
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -72,10 +73,11 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun ownerView(owner: Solidity.Address): SettingItem {
-        return SettingItem(requireContext()).apply {
+    private fun ownerView(owner: Solidity.Address): AddressItem {
+        return AddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-            name = owner.asEthereumAddressChecksumString()
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            address = owner
         }
     }
 
