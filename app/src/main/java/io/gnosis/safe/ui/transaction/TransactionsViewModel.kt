@@ -169,7 +169,7 @@ class TransactionsViewModel
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
-            amountColor = if (isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(transfer)
         )
     }
@@ -186,7 +186,7 @@ class TransactionsViewModel
             dateTimeText = transfer.date ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
-            amountColor = if (isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             confirmations = transfer.confirmations ?: 0,
             threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,

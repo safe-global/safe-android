@@ -3,6 +3,8 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -12,12 +14,6 @@ import pm.gnosis.utils.decimalAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
-
-// TODO Remove these fake tokens, when we have ContractInfo from the backend
-private val defaultErc20Address = "0xc778417e063141139fce010982780140aa0cd5ab".asEthereumAddress()!!
-private val EnsErc721Address = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85".asEthereumAddress()!!
-val NFT_ERC721_TOKEN_INFO = ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum")
-val ENS_ERC721_TOKEN_INFO = ServiceTokenInfo(EnsErc721Address, 0, "ENS", "", "local::ethereum")
 
 class TransactionRepository(
     private val transactionServiceApi: TransactionServiceApi
@@ -74,8 +70,7 @@ class TransactionRepository(
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
         val tokenInfo = serviceTokenInfo(transferDto)
         val value = when (tokenInfo) {
-            NFT_ERC721_TOKEN_INFO,
-            ENS_ERC721_TOKEN_INFO -> BigInteger.ONE
+            ERC721_FALLBACK_SERVICE_TOKEN_INFO -> BigInteger.ONE
             else -> transferDto.value ?: BigInteger.ZERO
         }
         return Transaction.Transfer(
@@ -123,7 +118,7 @@ class TransactionRepository(
         // Only available with transferFrom
         val from = transaction.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress()
 
-        val tokenInfo: ServiceTokenInfo = serviceTokenInfo(transaction)
+        val tokenInfo: ServiceTokenInfo = serviceTokenInfoErc20(transaction)
 
         return Transaction.Transfer(
             transaction.status(safeInfo),
@@ -142,7 +137,7 @@ class TransactionRepository(
         val to = transaction.dataDecoded?.parameters?.getValueByName("to")?.asEthereumAddress() ?: Solidity.Address(BigInteger.ZERO)
         val value = BigInteger.ONE
 
-        val tokenInfo = serviceTokenInfo(transaction)
+        val tokenInfo = serviceTokenInfoErc721(transaction)
 
         return Transaction.Transfer(
             transaction.status(safeInfo),
@@ -159,20 +154,25 @@ class TransactionRepository(
     private fun serviceTokenInfo(transfer: TransferDto): ServiceTokenInfo =
         transfer.tokenInfo
             ?: transfer.tokenAddress?.let { address ->
-                if (address.asEthereumAddress() == EnsErc721Address) {
-                    ENS_ERC721_TOKEN_INFO
-                } else {
-                    NFT_ERC721_TOKEN_INFO
-                }
+                ERC721_FALLBACK_SERVICE_TOKEN_INFO
             } ?: ETH_SERVICE_TOKEN_INFO
 
-    private fun serviceTokenInfo(transaction: MultisigTransactionDto): ServiceTokenInfo {
+    private fun serviceTokenInfoErc20(transaction: MultisigTransactionDto): ServiceTokenInfo {
         return if (transaction.transfers != null && transaction.transfers.isNotEmpty()) {
             serviceTokenInfo(transaction.transfers[0])
         } else {
-            ETH_SERVICE_TOKEN_INFO
+            ERC20_FALLBACK_SERVICE_TOKEN_INFO
         }
     }
+
+    private fun serviceTokenInfoErc721(transaction: MultisigTransactionDto): ServiceTokenInfo {
+        return if (transaction.transfers != null && transaction.transfers.isNotEmpty()) {
+            serviceTokenInfo(transaction.transfers[0])
+        } else {
+            ERC721_FALLBACK_SERVICE_TOKEN_INFO
+        }
+    }
+
 
     private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(
@@ -209,7 +209,7 @@ class TransactionRepository(
     private fun custom(transaction: EthereumTransactionDto): Transaction.Custom =
         Transaction.Custom(
             status = TransactionStatus.Success,
-            confirmations =  null,
+            confirmations = null,
             nonce = null, // Ethereum txs do not have a nonce
             address = transaction.to,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,

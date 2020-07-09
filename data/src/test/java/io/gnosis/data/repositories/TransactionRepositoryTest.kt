@@ -6,6 +6,8 @@ import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import io.mockk.coEvery
@@ -158,7 +160,7 @@ class TransactionRepositoryTest {
             assertEquals("Correct sender expected: ", transactionDto.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress(), sender)
             assertEquals("Correct to expected: ", transactionDto.to, recipient)
             //  TODO: check for right transfer type
-            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC20_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
 
@@ -173,7 +175,7 @@ class TransactionRepositoryTest {
                     ParamsDto("tokenId", "uint256", defaultTokenId)
                 )
             ),
-            transfers = listOf(buildTransferDto(tokenInfo = NFT_ERC721_TOKEN_INFO))
+            transfers = listOf(buildTransferDto(tokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO))
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -188,7 +190,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe.asEthereumAddressChecksumString(), defaultSafeAddress.asEthereumAddressChecksumString())
             assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
 
@@ -263,7 +265,7 @@ class TransactionRepositoryTest {
                     TransferType.ERC721_TRANSFER,
                     executionDate = "2020-05-25T13:37:54Z",
                     value = BigInteger.ONE,
-                    tokenInfo = NFT_ERC721_TOKEN_INFO
+                    tokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO
                 ),
                 buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
@@ -288,7 +290,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.transfers?.get(1)?.executionDate?.formatBackendDate(), date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
         with(actual.results[2] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(2)
