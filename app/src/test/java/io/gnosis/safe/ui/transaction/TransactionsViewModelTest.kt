@@ -411,6 +411,8 @@ class TransactionsViewModelTest() {
         coEvery { transactionRepository.getTransactions(any(), any()) } returns Page(
             1, "", "",
             listOf(
+                buildCustom(status = AwaitingExecution, confirmations = 2),
+                buildCustom(status = AwaitingConfirmations, confirmations = null),
                 buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress),
                 buildCustom(status = Failed),
                 buildCustom(status = Cancelled, value = BigInteger("100000000000000"))
@@ -426,10 +428,50 @@ class TransactionsViewModelTest() {
         with(stateObserver.values()[0]) {
             assertEquals(true, viewAction is LoadTransactions)
             with((viewAction as LoadTransactions).newTransactions) {
-                assertEquals(4, size)
+                assertEquals(7, size)
+                assertEquals(
+                    TransactionView.SectionHeader(title = R.string.tx_list_queue),
+                    this[0]
+                )
+                assertEquals(
+                    TransactionView.CustomTransactionQueued(
+                        status = AwaitingExecution,
+                        statusText = R.string.tx_list_awaiting_execution,
+                        statusColorRes = R.color.safe_pending_orange,
+                        amountText = "0 ETH",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        address = defaultToAddress,
+                        dataSizeText = "",
+                        nonce = "1",
+                        confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
+                        confirmationsTextColor = R.color.safe_green,
+                        threshold = 2,
+                        confirmations = 2
+                    ),
+                    this[1]
+                )
+                assertEquals(
+                    TransactionView.CustomTransactionQueued(
+                        status = AwaitingConfirmations,
+                        statusText = R.string.tx_list_awaiting_confirmations,
+                        statusColorRes = R.color.safe_pending_orange,
+                        amountText = "0 ETH",
+                        amountColor = R.color.gnosis_dark_blue,
+                        dateTimeText = "",
+                        address = defaultToAddress,
+                        dataSizeText = "",
+                        threshold = 2,
+                        confirmationsTextColor = R.color.medium_grey,
+                        confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
+                        nonce = "1",
+                        confirmations = 0
+                    ),
+                    this[2]
+                )
                 assertEquals(
                     TransactionView.SectionHeader(title = R.string.tx_list_history),
-                    this[0]
+                    this[3]
                 )
                 assertEquals(
                     TransactionView.CustomTransaction(
@@ -443,7 +485,7 @@ class TransactionsViewModelTest() {
                         alpha = OPACITY_FULL,
                         dataSizeText = ""
                     ),
-                    this[1]
+                    this[4]
                 )
                 assertEquals(
                     TransactionView.CustomTransaction(
@@ -457,7 +499,7 @@ class TransactionsViewModelTest() {
                         alpha = OPACITY_HALF,
                         dataSizeText = ""
                     ),
-                    this[2]
+                    this[5]
                 )
                 assertEquals(
                     TransactionView.CustomTransaction(
@@ -471,7 +513,7 @@ class TransactionsViewModelTest() {
                         alpha = OPACITY_HALF,
                         dataSizeText = ""
                     ),
-                    this[3]
+                    this[6]
                 )
             }
         }
@@ -746,7 +788,7 @@ class TransactionsViewModelTest() {
 
     private fun buildCustom(
         status: TransactionStatus = Success,
-        confirmations: Int = 0,
+        confirmations: Int? = 0,
         value: BigInteger = BigInteger.ZERO,
         date: String = "",
         nonce: BigInteger = defaultNonce,

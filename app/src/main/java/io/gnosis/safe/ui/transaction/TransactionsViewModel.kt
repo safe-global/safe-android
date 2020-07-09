@@ -175,9 +175,7 @@ class TransactionsViewModel
     }
 
     private fun queuedTransfer(transfer: Transfer, safeInfo: SafeInfo): TransactionView? {
-        val thresholdMet: Boolean = transfer.confirmations?.let {
-            it >= safeInfo.threshold
-        } ?: false
+        val thresholdMet = checkThreshold(safeInfo.threshold, transfer.confirmations)
         val isIncoming: Boolean = transfer.recipient == safeInfo.address
 
         return TransactionView.TransferQueued(
@@ -208,9 +206,7 @@ class TransactionsViewModel
         )
 
     private fun queuedSettingsChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
+        val thresholdMet = checkThreshold(threshold, transaction.confirmations)
 
         return TransactionView.SettingsChangeQueued(
             status = transaction.status,
@@ -244,9 +240,7 @@ class TransactionsViewModel
     }
 
     private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
+        val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "handler")
         val version = getVersionForAddress(address)
 
@@ -293,9 +287,7 @@ class TransactionsViewModel
     }
 
     private fun queuedModuleChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
+        val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "module")
         val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
@@ -339,9 +331,7 @@ class TransactionsViewModel
     }
 
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
-        val thresholdMet: Boolean = transaction.confirmations?.let {
-            it >= threshold
-        } ?: false
+        val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "_masterCopy")
         val version = getVersionForAddress(address)
 
@@ -390,9 +380,7 @@ class TransactionsViewModel
 
     private fun queuedCustomTransaction(custom: Custom, safeInfo: SafeInfo): CustomTransactionQueued {
         val isIncoming: Boolean = custom.address == safeInfo.address
-        val thresholdMet: Boolean = custom.confirmations?.let {
-            it >= safeInfo.threshold
-        } ?: false
+        val thresholdMet = checkThreshold(safeInfo.threshold, custom.confirmations)
 
         return CustomTransactionQueued(
             status = custom.status,
@@ -438,6 +426,12 @@ class TransactionsViewModel
             TransactionStatus.Failed, TransactionStatus.Cancelled -> OPACITY_HALF
             else -> OPACITY_FULL
         }
+
+    private fun checkThreshold(safeThreshold: Int, txThreshold: Int?): Boolean {
+        return txThreshold?.let {
+            it >= safeThreshold
+        } ?: false
+    }
 
     private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
         val mutableList = transactions.toMutableList()
