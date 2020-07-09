@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -14,6 +16,9 @@ import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.safe.settings.view.SettingItem
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -59,10 +64,18 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 progress.visible(false)
                 mainContainer.visible(true)
                 localName.name = safe?.localName
-                threshold.name = safeInfo?.threshold?.toString()
-                owners.name = safeInfo?.owners?.size?.toString()
+                threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
+                ownersContainer.removeAllViews()
+                safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
                 ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set)
             }
+        }
+    }
+
+    private fun ownerView(owner: Solidity.Address): SettingItem {
+        return SettingItem(requireContext()).apply {
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+            name = owner.asEthereumAddressChecksumString()
         }
     }
 

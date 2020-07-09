@@ -72,10 +72,11 @@
                 android:paddingHorizontal="16dp"
                 android:text="@string/safe_settings_owner_addresses" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
-                android:id="@+id/owners"
+            <LinearLayout
+                android:id="@+id/owners_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
             <TextView
                 style="@style/SafeSettingTitle"
