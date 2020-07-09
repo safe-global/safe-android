@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import io.gnosis.data.models.Safe
@@ -18,6 +19,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.settings.view.AddressItem
 import io.gnosis.safe.ui.safe.settings.view.SettingItem
+import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -41,13 +43,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.remove.setOnClickListener {
-            AlertDialog.Builder(requireContext()).apply {
-                setMessage(R.string.safe_settings_dialog_description)
-                setNegativeButton(R.string.safe_settings_dialog_cancel) { dialog, _ -> dialog.dismiss() }
-                setPositiveButton(R.string.safe_settings_dialog_remove) { _, _ -> viewModel.removeSafe() }
-            }.create().show()
-        }
+        binding.remove.setOnClickListener { showRemoveDialog() }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> loadDetails(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
@@ -89,6 +85,20 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
         snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
         Timber.e(throwable)
+    }
+
+    private fun showRemoveDialog() {
+        CustomAlertDialogBuilder.build(
+            requireContext(),
+            confirmCallback = { dialog ->
+                viewModel.removeSafe()
+                dialog.dismiss()
+            },
+            contentView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_remove_safe, null),
+            confirmRes = R.string.safe_settings_dialog_remove,
+            confirmColor = R.color.tomato,
+            cancelColor = R.color.safe_green
+        ).show()
     }
 
     companion object {
