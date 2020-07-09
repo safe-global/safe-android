@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.safe.settings
 
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -26,8 +27,10 @@ class SafeSettingsViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
-
     private val tracker = mockk<Tracker>()
+    private val ensRepository = mockk<EnsRepository>().apply {
+        coEvery { reverseResolve(any()) } returns null
+    }
 
     private lateinit var safeSettingsViewModel: SafeSettingsViewModel
 
@@ -45,14 +48,14 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, tracker, appDispatchers)
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
         safeSettingsViewModel.removeSafe()
 
         with(stateObserver.values()[0] as SafeSettingsState) {
-            assert(safe == null && viewAction is BaseStateViewModel.ViewAction.None)
+            assert(safe == null && viewAction is BaseStateViewModel.ViewAction.Loading)
         }
 
         with(stateObserver.values()[1] as SafeSettingsState) {
@@ -73,7 +76,13 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(SAFE_1.address, BigInteger.ONE, 2)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            SAFE_1.address,
+            BigInteger.ONE,
+            2,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(SAFE_1)
@@ -85,14 +94,14 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, tracker, appDispatchers)
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
         safeSettingsViewModel.removeSafe()
 
         with(stateObserver.values()[0] as SafeSettingsState) {
-            assert(safe == SAFE_2 && viewAction is BaseStateViewModel.ViewAction.None)
+            assert(safe == SAFE_2 && viewAction is BaseStateViewModel.ViewAction.Loading)
         }
 
         with(stateObserver.values()[1] as SafeSettingsState) {

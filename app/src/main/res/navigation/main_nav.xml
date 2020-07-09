@@ -6,11 +6,9 @@
     android:id="@+id/main_nav_graph.xml"
     app:startDestination="@id/safeBalancesFragment">
 
-    <include app:graph="@navigation/add_safe_nav" />
-
     <action
         android:id="@+id/action_to_add_safe_nav"
-        app:destination="@id/add_safe_nav" />
+        app:destination="@id/addSafeFragment" />
 
     <fragment
         android:id="@+id/safeBalancesFragment"
@@ -56,7 +54,9 @@
 
         <action
             android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
-            app:destination="@id/add_safe_nav" />
+            app:destination="@id/addSafeFragment"
+            app:popUpTo="@id/addSafeFragment"
+            app:popUpToInclusive="true" />
 
     </dialog>
 
@@ -65,5 +65,26 @@
         android:name="io.gnosis.safe.ui.transaction.TransactionsFragment"
         android:label="TransactionsFragment"
         tools:layout="@layout/fragment_transactions" />
+
+    <fragment
+        android:id="@+id/addSafeFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeFragment"
+        android:label="AddSafeFragment"
+        tools:layout="@layout/fragment_add_safe">
+        <action
+            android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
+            app:destination="@id/addSafeNameFragment"
+            app:popUpTo="@id/addSafeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSafeNameFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeNameFragment"
+        android:label="AddSafeNameFragment"
+        tools:layout="@layout/fragment_add_safe_name">
+        <argument
+            android:name="newAddress"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

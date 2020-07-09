@@ -17,7 +17,7 @@ import pm.gnosis.svalinn.common.utils.visible
 object CustomAlertDialogBuilder {
     fun build(
         context: Context,
-        title: CharSequence,
+        title: CharSequence? = null,
         contentView: View,
         @StringRes confirmRes: Int,
         confirmCallback: ((DialogInterface) -> Unit)?,
@@ -34,7 +34,12 @@ object CustomAlertDialogBuilder {
         }
             .setView(contentView)
             .setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
-                layout_alert_dialog_title_text.text = title
+                if (title == null) {
+                    layout_alert_dialog_title_text.visible(false)
+                } else {
+                    layout_alert_dialog_title_text.visible(true)
+                    layout_alert_dialog_title_text.text = title
+                }
             })
             .create()
             .apply {

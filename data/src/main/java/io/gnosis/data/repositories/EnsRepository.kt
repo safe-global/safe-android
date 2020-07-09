@@ -6,9 +6,10 @@ import pm.gnosis.ethereum.Block
 import pm.gnosis.ethereum.EthCall
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.model.Solidity
+import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
+import java.math.BigInteger
 import java.net.IDN
 import java.util.*
 
@@ -39,6 +40,38 @@ class EnsRepository(
                 )
             )
         ).checkedResult("ENS address request failure").asEthereumAddress()
+    }
+
+    suspend fun reverseResolve(address: Solidity.Address): String? {
+
+        val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
+
+        val resolver = ethereumRepository.request(
+            EthCall(
+                block = Block.LATEST,
+                transaction = Transaction(
+                    address = ENS_ADDRESS,
+                    data = GET_RESOLVER + node.toHexString()
+                )
+            )
+        ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
+
+        val nameResult = ethereumRepository.request(
+            EthCall(
+                block = Block.LATEST,
+                transaction = Transaction(
+                    address = resolver,
+                    data = GET_NAME + node.toHexString()
+                )
+            )
+        ).checkedResult("Failed to reverse resolve name")
+
+        return takeUnless { nameResult.removePrefix("0x").isBlank() }?.let {
+            val source = SolidityBase.PartitionData.of(nameResult)
+            // Add decoders
+            val offset = BigIntegerUtils.exact(BigInteger(source.consume(), 16))
+            Solidity.String.DECODER.decode(source.subData(offset)).value
+        }
     }
 
     private fun String.nameHash(): ByteArray {

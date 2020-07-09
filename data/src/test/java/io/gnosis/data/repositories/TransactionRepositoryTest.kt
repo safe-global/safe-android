@@ -33,7 +33,7 @@ class TransactionRepositoryTest {
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
     private val defaultValue = BigInteger("230000000000000000")
     private val defaultTokenId = "23"
-    private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10)
+    private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10, emptyList(), Solidity.Address(BigInteger.ONE))
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
