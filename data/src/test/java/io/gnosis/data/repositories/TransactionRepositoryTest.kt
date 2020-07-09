@@ -443,7 +443,6 @@ class TransactionRepositoryTest {
     fun `getTransactions - (Multisig Transaction, executed false, successful false, nonce lower than safe) should return status cancelled`() =
         runBlocking {
             val transactionDto = buildMultisigTransactionDto(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
-            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)

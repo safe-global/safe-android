@@ -69,8 +69,8 @@ class TransactionRepository(
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
     private fun transfer(transferDto: TransferDto): Transaction.Transfer {
         val tokenInfo = serviceTokenInfo(transferDto)
-        val value = when (tokenInfo) {
-            ERC721_FALLBACK_SERVICE_TOKEN_INFO -> BigInteger.ONE
+        val value = when (tokenInfo.type) {
+            ServiceTokenInfo.TokenType.ERC721 -> BigInteger.ONE
             else -> transferDto.value ?: BigInteger.ZERO
         }
         return Transaction.Transfer(
@@ -153,7 +153,7 @@ class TransactionRepository(
 
     private fun serviceTokenInfo(transfer: TransferDto): ServiceTokenInfo =
         transfer.tokenInfo
-            ?: transfer.tokenAddress?.let { address ->
+            ?: transfer.tokenAddress?.let {
                 ERC721_FALLBACK_SERVICE_TOKEN_INFO
             } ?: ETH_SERVICE_TOKEN_INFO
 
