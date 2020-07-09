@@ -1,12 +1,10 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import io.gnosis.data.models.Safe
@@ -18,9 +16,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.settings.view.AddressItem
-import io.gnosis.safe.ui.safe.settings.view.SettingItem
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -46,13 +42,13 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         binding.remove.setOnClickListener { showRemoveDialog() }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is BaseStateViewModel.ViewAction.Loading -> loadDetails(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
+                is BaseStateViewModel.ViewAction.Loading -> updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
                 is BaseStateViewModel.ViewAction.ShowError -> showError(viewAction.error)
             }
         })
     }
 
-    private fun loadDetails(isLoading: Boolean, safe: Safe?, safeInfo: SafeInfo?, ensNameValue: String?) {
+    private fun updateUi(isLoading: Boolean, safe: Safe?, safeInfo: SafeInfo?, ensNameValue: String?) {
         with(binding) {
             if (isLoading) {
                 progress.visible(true)
@@ -60,13 +56,23 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             } else {
                 progress.visible(false)
                 mainContainer.visible(true)
-                localName.name = safe?.localName
-                threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
-                ownersContainer.removeAllViews()
-                safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
-                masterCopy.address = safeInfo?.masterCopy
-                ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set)
+                loadSafeInfo(safe, safeInfo, ensNameValue)
             }
+        }
+    }
+
+    private fun loadSafeInfo(
+        safe: Safe?,
+        safeInfo: SafeInfo?,
+        ensNameValue: String?
+    ) {
+        with(binding) {
+            localName.name = safe?.localName
+            threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
+            ownersContainer.removeAllViews()
+            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
+            masterCopy.address = safeInfo?.masterCopy
+            ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set)
         }
     }
 
