@@ -80,7 +80,7 @@ class EnsInputDialog : DialogFragment() {
 
     private fun onUrlAvailable(string: String) {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1.0F
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5F
         dialogView.dialog_ens_input_progress.visible(true)
         lifecycleScope.launch {
             runCatching { viewModel.processEnsInput(string) }
