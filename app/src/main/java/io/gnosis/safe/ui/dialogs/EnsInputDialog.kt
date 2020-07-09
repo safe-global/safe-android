@@ -80,14 +80,14 @@ class EnsInputDialog : DialogFragment() {
 
     private fun onUrlAvailable(string: String) {
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5F
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
         dialogView.dialog_ens_input_progress.visible(true)
         lifecycleScope.launch {
             runCatching { viewModel.processEnsInput(string) }
                 .onSuccess { address ->
                     dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1.0F
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1f
                     dialogView.dialog_ens_input_name.visible(false)
                     dialogView.dialog_ens_input_address.visible(true)
                     addressHelper.populateAddressInfo(
@@ -101,7 +101,7 @@ class EnsInputDialog : DialogFragment() {
                 .onFailure {
                     dialogView.dialog_ens_input_progress.visible(false)
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5F
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
                     dialogView.dialog_ens_input_name.visible(true)
                     dialogView.dialog_ens_input_address.visible(false)
                     dialogView.dialog_ens_input_address.text = null
