@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transaction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
@@ -76,11 +77,12 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
     override fun bind(viewTransfer: TransactionView.Transfer, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             finalStatus.setText(viewTransfer.statusText)
-            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
+            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
             dateTime.text = viewTransfer.dateTimeText
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
@@ -101,17 +103,18 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
 
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
-            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             amount.text = viewTransfer.amountText
             dateTime.text = viewTransfer.dateTimeText
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
-            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor))
-            confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon))
+            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
         }
@@ -123,10 +126,11 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 
     override fun bind(viewTransfer: TransactionView.SettingsChange, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
             settingName.text = viewTransfer.method
@@ -143,13 +147,14 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
-            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
-            confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor))
-            confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon, null))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
         }
     }
@@ -160,9 +165,10 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
 
     override fun bind(viewTransfer: TransactionView.ChangeMastercopy, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -190,9 +196,10 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
     override fun bind(viewTransfer: TransactionView.ChangeMastercopyQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
-            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -217,11 +224,12 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
             status.setText(viewTransfer.statusText)
-            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -230,7 +238,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
+            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
 
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
@@ -243,11 +251,12 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
 
     override fun bind(viewTransfer: TransactionView.CustomTransaction, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -256,7 +265,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
 
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
-            amount.setTextColor(resources.getColor(viewTransfer.amountColor))
+            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
