@@ -6,6 +6,8 @@ import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.utils.formatBackendDate
 import io.mockk.coEvery
@@ -158,7 +160,7 @@ class TransactionRepositoryTest {
             assertEquals("Correct sender expected: ", transactionDto.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress(), sender)
             assertEquals("Correct to expected: ", transactionDto.to, recipient)
             //  TODO: check for right transfer type
-            assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC20_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
 
@@ -173,7 +175,7 @@ class TransactionRepositoryTest {
                     ParamsDto("tokenId", "uint256", defaultTokenId)
                 )
             ),
-            transfers = listOf(buildTransferDto(tokenInfo = NFT_ERC721_TOKEN_INFO))
+            transfers = listOf(buildTransferDto(tokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO))
         )
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
@@ -188,7 +190,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe.asEthereumAddressChecksumString(), defaultSafeAddress.asEthereumAddressChecksumString())
             assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
     }
 
@@ -229,15 +231,41 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    fun `getTransactions (multisig !isSuccessful) should return failed custom transfer`() = runBlockingTest {
+
+        val transactionDto = buildMultisigTransactionDto(
+            operation = Operation.DELEGATE,
+            isExecuted = true,
+            isSuccessful = false
+        )
+        val pagedResult = listOf(transactionDto)
+        coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
+
+        coVerify { transactionServiceApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
+        assertEquals(1, actual.results.size)
+        with(actual.results[0] as Transaction.Custom) {
+            assertEquals(transactionDto.to, address)
+            assertEquals(0L, dataSize)
+            assertEquals(TransactionStatus.Failed, status)
+        }
+    }
+
+    @Test
     fun `getTransactions (ethereum transaction with transfers ERC20, ERC721 and ETH) should return transfer list`() = runBlockingTest {
         val transactionDto = buildEthereumTransactionDto(
             transfers = listOf(
-                buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z", tokenInfo = buildErc20ServiceTokenInfo()),
+                buildTransferDto(
+                    TransferType.ERC20_TRANSFER,
+                    executionDate = "2020-05-25T13:37:53Z",
+                    tokenInfo = buildErc20ServiceTokenInfo()
+                ),
                 buildTransferDto(
                     TransferType.ERC721_TRANSFER,
                     executionDate = "2020-05-25T13:37:54Z",
                     value = BigInteger.ONE,
-                    tokenInfo = NFT_ERC721_TOKEN_INFO
+                    tokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO
                 ),
                 buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
@@ -262,7 +290,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.transfers?.get(1)?.executionDate?.formatBackendDate(), date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
-            assertEquals(NFT_ERC721_TOKEN_INFO, tokenInfo)
+            assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
         }
         with(actual.results[2] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(2)
@@ -393,8 +421,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions - (Multisig Transaction, executed true, successful true) should return status success`() = runBlocking {
-        val transactionDto = buildMultisigTransactionDto()
-            .copy(isExecuted = true, isSuccessful = true)
+        val transactionDto = buildMultisigTransactionDto(isExecuted = true, isSuccessful = true)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
@@ -404,8 +431,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions - (Multisig Transaction, executed true, successful false) should return status failed`() = runBlocking {
-        val transactionDto = buildMultisigTransactionDto()
-            .copy(isExecuted = true, isSuccessful = false)
+        val transactionDto = buildMultisigTransactionDto(isExecuted = true, isSuccessful = false)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
@@ -416,9 +442,7 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions - (Multisig Transaction, executed false, successful false, nonce lower than safe) should return status cancelled`() =
         runBlocking {
-            val transactionDto = buildMultisigTransactionDto()
-                .copy(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
-            val safeInfo = defaultSafeInfo.copy(nonce = BigInteger.TEN)
+            val transactionDto = buildMultisigTransactionDto(isExecuted = false, isSuccessful = false, nonce = BigInteger.ONE)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, listOf(transactionDto))
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
@@ -474,21 +498,25 @@ class TransactionRepositoryTest {
         dataDecodedDto: DataDecodedDto? = null,
         safe: Solidity.Address = defaultSafeAddress,
         to: Solidity.Address = defaultToAddress,
-        operation: Operation = Operation.CALL
+        operation: Operation = Operation.CALL,
+        isExecuted: Boolean = false,
+        isSuccessful: Boolean = false,
+        nonce : BigInteger = BigInteger.ONE
     ): MultisigTransactionDto {
         return MultisigTransactionDto(
             safe = safe,
             to = to,
             operation = operation,
             value = BigInteger.ONE,
-            nonce = BigInteger.ONE,
+            nonce = nonce,
             safeTxGas = BigInteger.ONE,
             baseGas = BigInteger.ONE,
             gasPrice = BigInteger.ONE,
             transfers = transfers,
             contractInfo = contractInfoType?.let { ContractInfoDto(it) },
             dataDecoded = dataDecodedDto,
-            isExecuted = true
+            isExecuted = isExecuted,
+            isSuccessful = isSuccessful
         )
     }
 

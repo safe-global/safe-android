@@ -24,8 +24,10 @@ class TokenRepository(
             }
 
     companion object {
-        private val ETH_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = Erc20Token(ETH_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
-        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ETH_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
+        private val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
+        val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
+        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
+        val ERC20_FALLBACK_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 0, "ERC20", "ERC20", "local::ethereum", ServiceTokenInfo.TokenType.ERC20)
+        val ERC721_FALLBACK_SERVICE_TOKEN_INFO = ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum", ServiceTokenInfo.TokenType.ERC721)
     }
 }
