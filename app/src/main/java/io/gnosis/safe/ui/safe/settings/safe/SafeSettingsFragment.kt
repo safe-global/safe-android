@@ -42,10 +42,6 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 setPositiveButton(R.string.safe_settings_dialog_remove) { _, _ -> viewModel.removeSafe() }
             }.create().show()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> loadDetails(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
