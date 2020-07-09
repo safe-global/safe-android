@@ -31,7 +31,7 @@ class TransactionRepositoryTest {
     private val defaultToAddress = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!
     private val defaultValue = BigInteger("230000000000000000")
     private val defaultTokenId = "23"
-    private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10)
+    private val defaultSafeInfo = SafeInfo(defaultSafeAddress, BigInteger.TEN, 10, emptyList(), Solidity.Address(BigInteger.ONE))
 
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
@@ -233,7 +233,12 @@ class TransactionRepositoryTest {
         val transactionDto = buildEthereumTransactionDto(
             transfers = listOf(
                 buildTransferDto(TransferType.ERC20_TRANSFER, executionDate = "2020-05-25T13:37:53Z", tokenInfo = buildErc20ServiceTokenInfo()),
-                buildTransferDto(TransferType.ERC721_TRANSFER, executionDate = "2020-05-25T13:37:54Z", value = BigInteger.ONE, tokenInfo = NFT_ERC721_TOKEN_INFO),
+                buildTransferDto(
+                    TransferType.ERC721_TRANSFER,
+                    executionDate = "2020-05-25T13:37:54Z",
+                    value = BigInteger.ONE,
+                    tokenInfo = NFT_ERC721_TOKEN_INFO
+                ),
                 buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
             )
         )

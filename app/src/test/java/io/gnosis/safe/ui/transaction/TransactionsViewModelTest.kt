@@ -65,7 +65,7 @@ class TransactionsViewModelTest {
     @Test
     fun `init - (active safe available, no transactions) should emit ShowEmptyState`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -109,7 +109,7 @@ class TransactionsViewModelTest {
     @Test
     fun `load - (active safe no transactions) should emit ShowEmptyState`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -144,7 +144,7 @@ class TransactionsViewModelTest {
     @Test
     fun `load - (active safe with transactions) should emit LoadTransaction`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -180,7 +180,7 @@ class TransactionsViewModelTest {
     @Test
     fun `load - (transactionRepository failure) should emit ShowError`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
@@ -207,7 +207,13 @@ class TransactionsViewModelTest {
     @Test
     fun `load (tx list with queued and historic transfer) should emit updates with queued and historic sections`() {
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            defaultSafeAddress,
+            defaultNonce,
+            defaultThreshold,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransactionListWithStatus(Pending, Success)
         transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
 
@@ -236,7 +242,13 @@ class TransactionsViewModelTest {
     @Test
     fun `load (tx list with no transfer) should emit updates with no sections`() {
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            defaultSafeAddress,
+            defaultNonce,
+            defaultThreshold,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransactionListWithStatus()
         transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
 
@@ -257,7 +269,13 @@ class TransactionsViewModelTest {
             AwaitingConfirmations
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            defaultSafeAddress,
+            defaultNonce,
+            defaultThreshold,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
 
 
@@ -284,7 +302,13 @@ class TransactionsViewModelTest {
     fun `load (tx list with historic transfers) should emit updates with historic sections`() {
         coEvery { transactionRepository.getTransactions(any(), any()) } returns createTransactionListWithStatus(Success, Failed, Cancelled)
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            defaultSafeAddress,
+            defaultNonce,
+            defaultThreshold,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
 
         transactionsViewModel.load()
@@ -315,7 +339,13 @@ class TransactionsViewModelTest {
             ETH_SERVICE_TOKEN_INFO
         )
         coEvery { safeRepository.getActiveSafe() } returns defaultSafe
-        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            defaultSafeAddress,
+            defaultNonce,
+            defaultThreshold,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         transactionsViewModel = TransactionsViewModel(transactionRepository, safeRepository, appDispatchers)
 
         transactionsViewModel.load()
@@ -342,7 +372,12 @@ class TransactionsViewModelTest {
     private fun callVerification() {
         coVerify { safeRepository.getActiveSafe() }
         coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
-        coVerify { transactionRepository.getTransactions(defaultSafeAddress, SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold)) }
+        coVerify {
+            transactionRepository.getTransactions(
+                defaultSafeAddress,
+                SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold, emptyList(), Solidity.Address(BigInteger.ONE))
+            )
+        }
     }
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
