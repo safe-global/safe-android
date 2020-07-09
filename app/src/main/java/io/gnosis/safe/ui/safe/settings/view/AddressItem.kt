@@ -1,17 +1,14 @@
 package io.gnosis.safe.ui.safe.settings.view
 
 import android.content.Context
-import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
-import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -30,7 +27,7 @@ class AddressItem @JvmOverloads constructor(
         set(value) {
             with(binding) {
                 blockies.setAddress(value)
-                address.text = value?.formatEthAddress(context, addMiddleLinebreak = false)
+                address.text = value?.formatOwnerAddress()
                 binding.root.setOnClickListener {
                     context.openUrl(
                         context.getString(
@@ -43,14 +40,8 @@ class AddressItem @JvmOverloads constructor(
             field = value
         }
 
-    private fun Solidity.Address.formatEthAddress(
-        context: Context,
-        prefixLength: Int = 4,
-        suffixLength: Int = 4,
-        addMiddleLinebreak: Boolean = true
-    ): Spannable {
-        return SpannableStringBuilder(this.asEthereumAddressString()).apply {
-            if (addMiddleLinebreak) insert(21, "\n")
+    private fun Solidity.Address.formatOwnerAddress(prefixLength: Int = 4, suffixLength: Int = 4): Spannable =
+        SpannableStringBuilder(this.asEthereumAddressString()).apply {
             setSpan(
                 ForegroundColorSpan(context.getColorCompat(R.color.blue)),
                 0,
@@ -64,5 +55,4 @@ class AddressItem @JvmOverloads constructor(
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-    }
 }
