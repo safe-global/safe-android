@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"
-                app:setting_name="Not set"
+                app:setting_name="@string/safe_settings_not_set"
                 app:setting_openable="false" />
 
             <View

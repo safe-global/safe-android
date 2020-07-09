@@ -65,7 +65,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 localName.name = safe?.localName
                 threshold.name = safeInfo?.threshold?.toString()
                 owners.name = safeInfo?.owners?.size?.toString()
-                ensName.name = ensNameValue
+                ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set)
             }
         }
     }
