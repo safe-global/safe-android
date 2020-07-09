@@ -1,12 +1,9 @@
 package io.gnosis.safe.ui.transaction
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.Adapter
@@ -14,7 +11,6 @@ import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
 import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatForTxList
-import io.gnosis.safe.utils.shiftedString
 
 enum class TransactionViewType {
     TRANSFER,
@@ -130,7 +126,8 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
+            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+
             dateTime.text = viewTransfer.dateTimeText
             settingName.text = viewTransfer.method
 
@@ -148,7 +145,8 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
         val resources = viewBinding.root.context.resources
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
-            status.setTextColor(statusTextColor(viewTransfer.status, resources))
+            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+
             dateTime.text = viewTransfer.dateTimeText
             confirmations.setTextColor(resources.getColor(viewTransfer.confirmationsTextColor))
             confirmationsIcon.setImageDrawable(resources.getDrawable(viewTransfer.confirmationsIcon, null))
@@ -164,7 +162,8 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
         val resources = viewBinding.root.context.resources
         with(viewBinding) {
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
+            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+
             dateTime.text = viewTransfer.dateTimeText
 
             version.text = viewTransfer.version
@@ -193,7 +192,8 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
         val resources = viewBinding.root.context.resources
         with(viewBinding) {
             status.setText(viewTransfer.statusText)
-            status.setTextColor(statusTextColor(viewTransfer.status, resources))
+            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
+
             dateTime.text = viewTransfer.dateTimeText
 
             version.text = viewTransfer.version
@@ -221,7 +221,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
             status.setText(viewTransfer.statusText)
-            status.setTextColor(statusTextColor(viewTransfer.status, resources))
+            status.setTextColor(resources.getColor(viewTransfer.statusColorRes))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -247,7 +247,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
             finalStatus.text = viewTransfer.status.name
-            finalStatus.setTextColor(statusTextColor(viewTransfer.status, resources))
+            finalStatus.setTextColor(resources.getColor(viewTransfer.statusColorRes))
 
             dateTime.text = viewTransfer.dateTimeText
 
@@ -278,19 +278,4 @@ class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBindin
             sectionTitle.setText(sectionHeader.title)
         }
     }
-}
-
-private fun statusTextColor(status: TransactionStatus, resources: Resources): Int {
-    return when (status) {
-        TransactionStatus.Success -> resources.getColor(R.color.safe_green)
-        TransactionStatus.Cancelled -> resources.getColor(R.color.dark_grey)
-        else -> resources.getColor(R.color.safe_failed_red)
-    }
-}
-
-private fun formatTransferAmount(viewTransfer: Transaction.Transfer, incoming: Boolean): String {
-    val inOut: String = if (incoming) "+" else "-"
-    val symbol: String = viewTransfer.tokenInfo?.symbol ?: ""
-    val value: String = viewTransfer.tokenInfo?.decimals?.let { viewTransfer.value.shiftedString(decimals = it) }.toString()
-    return "%s%s %s".format(inOut, value, symbol)
 }

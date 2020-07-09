@@ -10,9 +10,11 @@ import io.gnosis.data.repositories.ENS_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.NFT_ERC721_TOKEN_INFO
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
+import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
@@ -482,19 +484,39 @@ class TransactionsViewModelTest() {
         coEvery { transactionRepository.getTransactions(any(), any()) } returns Page(
             1, "", "",
             listOf(
+                // queued
                 buildSettingsChange(
+                    status = AwaitingExecution,
+                    confirmations = 2,
                     dataDecoded = buildDataDecodedDto(
                         METHOD_CHANGE_MASTER_COPY,
                         listOf(ParamsDto("_masterCopy", "address", SAFE_MASTER_COPY_1_1_1.asEthereumAddressString()))
                     )
                 ),
                 buildSettingsChange(
-                    status = Failed,
+                    status = AwaitingConfirmations,
+                    dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf())
+                ),
+                buildSettingsChange(
+                    status = AwaitingConfirmations,
+                    dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf())
+                ),
+                buildSettingsChange(
+                    status = AwaitingConfirmations,
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_DISABLE_MODULE,
+                        listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    )
+                ),
+                buildSettingsChange(
+                    status = AwaitingExecution,
+                    confirmations = 2,
                     dataDecoded = buildDataDecodedDto(
                         METHOD_ENABLE_MODULE,
                         listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
                     )
                 ),
+                // history
                 buildSettingsChange(
                     status = Cancelled,
                     dataDecoded = buildDataDecodedDto(
@@ -503,8 +525,19 @@ class TransactionsViewModelTest() {
                     )
                 ),
                 buildSettingsChange(
-                    status = Cancelled,
-                    dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf())
+                    status = Success,
+                    confirmations = 2,
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_CHANGE_MASTER_COPY,
+                        listOf(ParamsDto("_masterCopy", "address", SAFE_MASTER_COPY_1_0_0.asEthereumAddressString()))
+                    )
+                ),
+                buildSettingsChange(
+                    status = Failed,
+                    dataDecoded = buildDataDecodedDto(
+                        METHOD_ENABLE_MODULE,
+                        listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    )
                 )
             )
         )
@@ -519,69 +552,157 @@ class TransactionsViewModelTest() {
         with(stateObserver.values()[0]) {
             assertEquals(true, viewAction is LoadTransactions)
             with((viewAction as LoadTransactions).newTransactions) {
-                assertEquals(5, size)
+                assertEquals(10, size)
                 assertEquals(
-                    TransactionView.SectionHeader(title = R.string.tx_list_history),
+                    TransactionView.SectionHeader(title = R.string.tx_list_queue),
                     this[0]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopy(
-                        status = Success,
-                        statusText = R.string.tx_list_success,
-                        statusColorRes = R.color.safe_green,
+                    TransactionView.ChangeMastercopyQueued(
+                        label = R.string.tx_list_change_mastercopy,
+                        status = AwaitingExecution,
+                        statusText = R.string.tx_list_awaiting_execution,
+                        statusColorRes = R.color.safe_pending_orange,
                         dateTimeText = "",
                         address = SAFE_MASTER_COPY_1_1_1,
-                        alpha = OPACITY_FULL,
                         version = "1.1.1",
-                        label = R.string.tx_list_change_mastercopy,
                         visibilityEllipsizedAddress = View.VISIBLE,
                         visibilityModuleAddress = View.GONE,
-                        visibilityVersion = View.VISIBLE
+                        visibilityVersion = View.VISIBLE,
+                        nonce = "1",
+                        confirmations = 2,
+                        confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
+                        confirmationsTextColor = R.color.safe_green,
+                        threshold = 2
                     ),
                     this[1]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopy(
-                        status = Failed,
-                        statusText = R.string.tx_list_failed,
-                        statusColorRes = R.color.safe_failed_red,
+                    TransactionView.SettingsChangeQueued(
+                        status = AwaitingConfirmations,
+                        statusText = R.string.tx_list_awaiting_confirmations,
+                        statusColorRes = R.color.safe_pending_orange,
                         dateTimeText = "",
-                        alpha = OPACITY_HALF,
-                        version = "",
-                        label = R.string.tx_list_enable_module,
-                        visibilityEllipsizedAddress = View.INVISIBLE,
-                        visibilityModuleAddress = View.VISIBLE,
-                        visibilityVersion = View.INVISIBLE,
-                        address = defaultModuleAddress
+                        confirmations = 0,
+                        threshold = 2,
+                        confirmationsTextColor = R.color.medium_grey,
+                        confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
+                        nonce = "1",
+                        settingNameText = "removeOwner"
                     ),
                     this[2]
                 )
                 assertEquals(
+                    TransactionView.ChangeMastercopyQueued(
+                        label = R.string.tx_list_set_fallback_handler,
+                        status = AwaitingConfirmations,
+                        statusText = R.string.tx_list_awaiting_confirmations,
+                        statusColorRes = R.color.safe_pending_orange,
+                        dateTimeText = "",
+                        confirmations = 0,
+                        threshold = 2,
+                        confirmationsTextColor = R.color.medium_grey,
+                        confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
+                        nonce = "1",
+                        version = "DefaultFallbackHandler",
+                        address = null,
+                        visibilityVersion = View.VISIBLE,
+                        visibilityModuleAddress = View.GONE,
+                        visibilityEllipsizedAddress = View.VISIBLE
+                    ),
+                    this[3]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopyQueued(
+                        label = R.string.tx_list_disable_module,
+                        status = AwaitingConfirmations,
+                        statusText = R.string.tx_list_awaiting_confirmations,
+                        statusColorRes = R.color.safe_pending_orange,
+                        dateTimeText = "",
+                        confirmations = 0,
+                        threshold = 2,
+                        confirmationsTextColor = R.color.medium_grey,
+                        confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
+                        nonce = "1",
+                        visibilityEllipsizedAddress = View.INVISIBLE,
+                        visibilityModuleAddress = View.VISIBLE,
+                        visibilityVersion = View.INVISIBLE,
+                        address = defaultModuleAddress,
+                        version = ""
+                    ),
+                    this[4]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopyQueued(
+                        label = R.string.tx_list_enable_module,
+                        status = AwaitingExecution,
+                        statusText = R.string.tx_list_awaiting_execution,
+                        statusColorRes = R.color.safe_pending_orange,
+                        dateTimeText = "",
+                        confirmations = 2,
+                        threshold = 2,
+                        confirmationsTextColor = R.color.safe_green,
+                        confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
+                        nonce = "1",
+                        visibilityEllipsizedAddress = View.INVISIBLE,
+                        visibilityModuleAddress = View.VISIBLE,
+                        visibilityVersion = View.INVISIBLE,
+                        address = defaultModuleAddress,
+                        version = ""
+                    ),
+                    this[5]
+                )
+                assertEquals(
+                    TransactionView.SectionHeader(title = R.string.tx_list_history),
+                    this[6]
+                )
+                assertEquals(
                     TransactionView.ChangeMastercopy(
+                        label = R.string.tx_list_set_fallback_handler,
                         status = Cancelled,
                         statusText = R.string.tx_list_cancelled,
                         statusColorRes = R.color.dark_grey,
                         dateTimeText = "",
                         alpha = OPACITY_HALF,
-                        label = R.string.tx_list_set_fallback_handler,
                         visibilityEllipsizedAddress = View.VISIBLE,
                         visibilityModuleAddress = View.GONE,
                         visibilityVersion = View.VISIBLE,
                         address = defaultFallbackHandler,
                         version = "DefaultFallbackHandler"
                     ),
-                    this[3]
+                    this[7]
                 )
                 assertEquals(
-                    TransactionView.SettingsChange(
-                        status = Cancelled,
-                        statusText = R.string.tx_list_cancelled,
-                        statusColorRes = R.color.dark_grey,
+                    TransactionView.ChangeMastercopy(
+                        label = R.string.tx_list_change_mastercopy,
+                        status = Success,
+                        statusText = R.string.tx_list_success,
+                        statusColorRes = R.color.safe_green,
+                        dateTimeText = "",
+                        address = SAFE_MASTER_COPY_1_0_0,
+                        version = "1.0.0",
+                        visibilityEllipsizedAddress = View.VISIBLE,
+                        visibilityModuleAddress = View.GONE,
+                        visibilityVersion = View.VISIBLE,
+                        alpha = OPACITY_FULL
+                    ),
+                    this[8]
+                )
+                assertEquals(
+                    TransactionView.ChangeMastercopy(
+                        label = R.string.tx_list_enable_module,
+                        status = Failed,
+                        statusText = R.string.tx_list_failed,
+                        statusColorRes = R.color.safe_failed_red,
                         dateTimeText = "",
                         alpha = OPACITY_HALF,
-                        method = METHOD_REMOVE_OWNER
+                        version = "",
+                        visibilityEllipsizedAddress = View.INVISIBLE,
+                        visibilityModuleAddress = View.VISIBLE,
+                        visibilityVersion = View.INVISIBLE,
+                        address = defaultModuleAddress
                     ),
-                    this[4]
+                    this[9]
                 )
             }
         }

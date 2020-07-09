@@ -270,7 +270,7 @@ class TransactionsViewModel
     private fun displayString(status: TransactionStatus): Int =
         when (status) {
             TransactionStatus.AwaitingConfirmations -> R.string.tx_list_awaiting_confirmations
-            TransactionStatus.AwaitingExecution -> R.string.tx_list_awaiting_confirmations
+            TransactionStatus.AwaitingExecution -> R.string.tx_list_awaiting_execution
             TransactionStatus.Cancelled -> R.string.tx_list_cancelled
             TransactionStatus.Failed -> R.string.tx_list_failed
             TransactionStatus.Success -> R.string.tx_list_success
@@ -278,9 +278,7 @@ class TransactionsViewModel
         }
 
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.ChangeMastercopy {
-
         val address = getAddress(transaction, "handler")
-        val version = getVersionForAddress(address)
 
         return TransactionView.ChangeMastercopy(
             status = transaction.status,
@@ -428,6 +426,9 @@ class TransactionsViewModel
         return when (status) {
             TransactionStatus.Success -> R.color.safe_green
             TransactionStatus.Cancelled -> R.color.dark_grey
+            TransactionStatus.AwaitingExecution,
+            TransactionStatus.AwaitingConfirmations,
+            TransactionStatus.Pending -> R.color.safe_pending_orange
             else -> R.color.safe_failed_red
         }
     }
