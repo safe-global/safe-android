@@ -746,7 +746,7 @@ class TransactionsViewModelTest {
                     this[0]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopyQueued(
+                    TransactionView.SettingsChangeVariantQueued(
                         label = R.string.tx_list_change_mastercopy,
                         status = AwaitingExecution,
                         statusText = R.string.tx_list_awaiting_execution,
@@ -781,7 +781,7 @@ class TransactionsViewModelTest {
                     this[2]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopyQueued(
+                    TransactionView.SettingsChangeVariantQueued(
                         label = R.string.tx_list_set_fallback_handler,
                         status = AwaitingConfirmations,
                         statusText = R.string.tx_list_awaiting_confirmations,
@@ -801,7 +801,7 @@ class TransactionsViewModelTest {
                     this[3]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopyQueued(
+                    TransactionView.SettingsChangeVariantQueued(
                         label = R.string.tx_list_disable_module,
                         status = AwaitingConfirmations,
                         statusText = R.string.tx_list_awaiting_confirmations,
@@ -821,7 +821,7 @@ class TransactionsViewModelTest {
                     this[4]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopyQueued(
+                    TransactionView.SettingsChangeVariantQueued(
                         label = R.string.tx_list_enable_module,
                         status = AwaitingExecution,
                         statusText = R.string.tx_list_awaiting_execution,
@@ -845,7 +845,7 @@ class TransactionsViewModelTest {
                     this[6]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopy(
+                    TransactionView.SettingsChangeVariant(
                         label = R.string.tx_list_set_fallback_handler,
                         status = Cancelled,
                         statusText = R.string.tx_list_cancelled,
@@ -861,7 +861,7 @@ class TransactionsViewModelTest {
                     this[7]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopy(
+                    TransactionView.SettingsChangeVariant(
                         label = R.string.tx_list_change_mastercopy,
                         status = Success,
                         statusText = R.string.tx_list_success,
@@ -877,7 +877,7 @@ class TransactionsViewModelTest {
                     this[8]
                 )
                 assertEquals(
-                    TransactionView.ChangeMastercopy(
+                    TransactionView.SettingsChangeVariant(
                         label = R.string.tx_list_enable_module,
                         status = Failed,
                         statusText = R.string.tx_list_failed,

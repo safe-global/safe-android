@@ -62,8 +62,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             is TransactionView.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
-            is TransactionView.ChangeMastercopy -> TransactionViewType.CHANGE_MASTERCOPY
-            is TransactionView.ChangeMastercopyQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
+            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_MASTERCOPY
+            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
             is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
             is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
@@ -161,9 +161,9 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 }
 
 class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopyBinding) :
-    BaseTransactionViewHolder<TransactionView.ChangeMastercopy>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.SettingsChangeVariant>(viewBinding) {
 
-    override fun bind(viewTransfer: TransactionView.ChangeMastercopy, payloads: List<Any>) {
+    override fun bind(viewTransfer: TransactionView.SettingsChangeVariant, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {
@@ -192,9 +192,9 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
 }
 
 class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
-    BaseTransactionViewHolder<TransactionView.ChangeMastercopyQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.SettingsChangeVariantQueued>(viewBinding) {
 
-    override fun bind(viewTransfer: TransactionView.ChangeMastercopyQueued, payloads: List<Any>) {
+    override fun bind(viewTransfer: TransactionView.SettingsChangeVariantQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {

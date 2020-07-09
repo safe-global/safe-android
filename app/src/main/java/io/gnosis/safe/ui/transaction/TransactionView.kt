@@ -58,7 +58,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
         val nonce: String
     ) : TransactionView(status)
 
-    data class ChangeMastercopy(
+    data class SettingsChangeVariant(
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -73,7 +73,7 @@ sealed class TransactionView(open val status: TransactionStatus) {
 
     ) : TransactionView(status)
 
-    data class ChangeMastercopyQueued(
+    data class SettingsChangeVariantQueued(
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,

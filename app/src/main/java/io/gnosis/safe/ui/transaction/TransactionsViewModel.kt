@@ -13,6 +13,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
@@ -222,12 +223,12 @@ class TransactionsViewModel
         )
     }
 
-    private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+    private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
 
         val address = getAddress(transaction, "_masterCopy")
         val version = getVersionForAddress(address)
 
-        return TransactionView.ChangeMastercopy(
+        return TransactionView.SettingsChangeVariant(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -239,12 +240,12 @@ class TransactionsViewModel
         )
     }
 
-    private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+    private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "handler")
         val version = getVersionForAddress(address)
 
-        return TransactionView.ChangeMastercopyQueued(
+        return TransactionView.SettingsChangeVariantQueued(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -271,10 +272,10 @@ class TransactionsViewModel
             TransactionStatus.Pending -> R.string.tx_list_pending
         }
 
-    private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+    private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
         val address = getAddress(transaction, "handler")
 
-        return TransactionView.ChangeMastercopy(
+        return TransactionView.SettingsChangeVariant(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -286,12 +287,12 @@ class TransactionsViewModel
         )
     }
 
-    private fun queuedModuleChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+    private fun queuedModuleChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "module")
         val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
-        return TransactionView.ChangeMastercopyQueued(
+        return TransactionView.SettingsChangeVariantQueued(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -310,12 +311,12 @@ class TransactionsViewModel
         )
     }
 
-    private fun historicModuleChange(transaction: SettingsChange): TransactionView.ChangeMastercopy {
+    private fun historicModuleChange(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
 
         val address = getAddress(transaction, "module")
         val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
-        return TransactionView.ChangeMastercopy(
+        return TransactionView.SettingsChangeVariant(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -330,12 +331,12 @@ class TransactionsViewModel
         )
     }
 
-    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.ChangeMastercopyQueued {
+    private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "_masterCopy")
         val version = getVersionForAddress(address)
 
-        return TransactionView.ChangeMastercopyQueued(
+        return TransactionView.SettingsChangeVariantQueued(
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -372,7 +373,7 @@ class TransactionsViewModel
             dateTimeText = custom.date ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, 18, "ETH"),
+            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom)
         )
@@ -394,7 +395,7 @@ class TransactionsViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce.toString(),
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, 18, "ETH"),
+            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
