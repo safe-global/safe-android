@@ -25,7 +25,7 @@ class SafeSettingsViewModel @Inject constructor(
                 val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
                 val safeEnsName = safe?.let { ensRepository.reverseResolve(it.address) }
                 updateState {
-                    SafeSettingsState(safe, safeInfo, safeEnsName, ViewAction.None)
+                    SafeSettingsState(safe, safeInfo, safeEnsName, ViewAction.Loading(false))
                 }
             }
         }

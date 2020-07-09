@@ -5,11 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding>() {
@@ -35,6 +42,41 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 setPositiveButton(R.string.safe_settings_dialog_remove) { _, _ -> viewModel.removeSafe() }
             }.create().show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when (val viewAction = it.viewAction) {
+                is BaseStateViewModel.ViewAction.Loading -> loadDetails(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
+                is BaseStateViewModel.ViewAction.ShowError -> showError(viewAction.error)
+            }
+        })
+    }
+
+    private fun loadDetails(isLoading: Boolean, safe: Safe?, safeInfo: SafeInfo?, ensNameValue: String?) {
+        with(binding) {
+            if (isLoading) {
+                progress.visible(true)
+                mainContainer.visible(false)
+            } else {
+                progress.visible(false)
+                mainContainer.visible(true)
+                localName.name = safe?.localName
+                threshold.name = safeInfo?.threshold?.toString()
+                owners.name = safeInfo?.owners?.size?.toString()
+                ensName.name = ensNameValue
+            }
+        }
+    }
+
+    private fun showError(throwable: Throwable) {
+        with(binding) {
+            mainContainer.visible(false)
+            progress.visible(false)
+        }
+        snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
+        Timber.e(throwable)
     }
 
     companion object {

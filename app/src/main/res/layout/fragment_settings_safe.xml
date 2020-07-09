@@ -18,6 +18,7 @@
         tools:visibility="visible" />
 
     <ScrollView
+        android:id="@+id/main_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -40,11 +41,12 @@
                 android:text="@string/safe_settings_safe_name" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/local_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="SOME NAME"
-                app:setting_openable="true" />
+                app:setting_openable="false" />
 
             <TextView
                 style="@style/SafeSettingTitle"
@@ -55,6 +57,7 @@
                 android:text="@string/safe_settings_required_confirmations" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/threshold"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"
@@ -70,6 +73,7 @@
                 android:text="@string/safe_settings_owner_addresses" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/owners"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -82,6 +86,7 @@
                 android:text="@string/safe_settings_contract_version" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/contract_version"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"
@@ -96,6 +101,7 @@
                 android:text="@string/safe_settings_ens_name" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/ens_name"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"
