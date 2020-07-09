@@ -88,11 +88,12 @@ class SafeRepository(
         val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
 
-        fun masterCopyVersion(masterCopy: Solidity.Address): String =
-            supportedContracts[masterCopy] ?: throw IllegalStateException("Unsupported mastercopy version")
+        fun masterCopyVersion(masterCopy: Solidity.Address?): String? = supportedContracts[masterCopy]
 
         fun isSupported(masterCopy: Solidity.Address?) =
             supportedContracts.containsKey(masterCopy)
+
+        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_MASTER_COPY_1_1_1
 
         private val supportedContracts = mapOf(
             SAFE_MASTER_COPY_0_0_2 to "0.0.2",

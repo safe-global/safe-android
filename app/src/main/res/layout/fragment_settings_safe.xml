@@ -86,8 +86,8 @@
                 android:paddingHorizontal="16dp"
                 android:text="@string/safe_settings_contract_version" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
-                android:id="@+id/contract_version"
+            <io.gnosis.safe.ui.safe.settings.view.MasterCopyItem
+                android:id="@+id/master_copy"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"

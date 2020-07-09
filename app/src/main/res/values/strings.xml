@@ -102,4 +102,7 @@
     <string name="safe_settings_dialog_remove">Remove</string>
     <string name="safe_settings_not_set">Not set</string>
     <string name="safe_settings_confirmations_required">%d out of %d</string>
+    <string name="safe_settings_master_copy_unknown">Unknown</string>
+    <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
+    <string name="safe_settings_master_copy_up_to_date">Up to date</string>
 </resources>
