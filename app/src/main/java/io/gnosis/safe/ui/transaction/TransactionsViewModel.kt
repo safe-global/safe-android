@@ -2,8 +2,15 @@ package io.gnosis.safe.ui.transaction
 
 import android.view.View
 import androidx.annotation.StringRes
-import io.gnosis.data.models.*
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
+import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.Transaction.*
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -14,15 +21,16 @@ import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
-import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transaction.TransactionView.CustomTransaction
-import io.gnosis.safe.ui.transaction.TransactionView.CustomTransactionQueued
+import io.gnosis.safe.ui.transaction.list.TransactionPagingProvider
 import io.gnosis.safe.utils.shiftedString
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -30,10 +38,13 @@ import javax.inject.Inject
 
 class TransactionsViewModel
 @Inject constructor(
-    private val transactionRepository: TransactionRepository,
+    private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
+
+    private var currentSafeAddress: Solidity.Address? = null
+    private var currentSafeTxItems: Flow<PagingData<TransactionView>>? = null
 
     init {
         safeLaunch {
@@ -45,53 +56,97 @@ class TransactionsViewModel
 
     fun load() {
         safeLaunch {
-            val safeAddress = safeRepository.getActiveSafe()
-            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safeAddress)) }
-            if (safeAddress != null) {
-                loadTransactions(safeAddress.address)
+            val safe = safeRepository.getActiveSafe()
+            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+            if (safe != null) {
+                val safeInfo = safeRepository.getSafeInfo(safe.address)
+                getTransactions(safe.address, safeInfo).collectLatest {
+                    updateState {
+                        TransactionsViewState(
+                            isLoading = false,
+                            viewAction = LoadTransactions(it)
+                        )
+                    }
+                }
             } else {
                 updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
             }
         }
     }
 
-    private suspend fun loadTransactions(safe: Solidity.Address) {
-        val safeInfo = safeRepository.getSafeInfo(safe)
-        val transactions = transactionRepository.getTransactions(safe, safeInfo)
-        updateState {
-            val mappedTransactions = mapTransactions(transactions, safeInfo)
-            val transactionsWithSectionHeaders = addSectionHeaders(mappedTransactions)
-            TransactionsViewState(
-                isLoading = false,
-                viewAction = mappedTransactions
-                    .takeUnless { it.isEmpty() }
-                    ?.let { LoadTransactions(transactionsWithSectionHeaders) }
-                    ?: ViewAction.ShowEmptyState
-            )
+    fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo): Flow<PagingData<TransactionView>> {
+
+        val lastResult = currentSafeTxItems
+        if (safe == currentSafeAddress && lastResult != null) {
+            return lastResult
         }
+
+        currentSafeAddress = safe
+
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, safeInfo)
+            .map { pagingData ->
+                pagingData
+                    .map { transaction -> getTransactionView(transaction, safeInfo) }
+                    .filter { it !is TransactionView.Unknown }
+            }
+            .map {
+                // insert headers
+                it.insertSeparators { before, after ->
+
+                    if (after == null) {
+                        // we're at the end of the list
+                        return@insertSeparators null  // no separator
+                    }
+
+                    if (before == null) {
+                        // we're at the beginning of the list
+
+                       return@insertSeparators if (after.isQueued()) {
+                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
+                        } else if (after.isHistory()) {
+                            TransactionView.SectionHeader(title = R.string.tx_list_history)
+                        } else {
+                            null // no separator
+                        }
+                    }
+
+                    // we're in the middle of the list
+                    if (before.isQueued() && after.isHistory()) {
+                        // insert history separator after queued transaction
+                        TransactionView.SectionHeader(title = R.string.tx_list_history)
+                    } else {
+                        null // no separator
+                    }
+                }
+            }
+            .cachedIn(viewModelScope)
+
+        currentSafeTxItems = safeTxItems
+        return safeTxItems
     }
 
-    private fun mapTransactions(
-        transactions: Page<Transaction>,
-        safeInfo: SafeInfo
-    ): List<TransactionView> {
-        return transactions.results.mapNotNull { transaction ->
-            when {
-                transaction is Transfer && isHistoricTransfer(transaction) -> historicTransfer(transaction, safeInfo)
-                transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
-                transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(transaction, safeInfo.threshold)
-                transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
-                transaction is SettingsChange && isQueuedSetFallbackHandler(transaction) -> queuedSetFallbackHandler(transaction, safeInfo.threshold)
-                transaction is SettingsChange && isHistoricSetFallbackHandler(transaction) -> historicSetFallbackHandler(transaction)
-                transaction is SettingsChange && isQueuedModuleChange(transaction) -> queuedModuleChange(transaction, safeInfo.threshold)
-                transaction is SettingsChange && isHistoricModuleChange(transaction) -> historicModuleChange(transaction)
-                transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
-                transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
-                transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo)
-                transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction, safeInfo)
-                else -> null
-            }
-        }
+    fun getTransactionView(transaction: Transaction, safeInfo: SafeInfo): TransactionView {
+        return when {
+            transaction is Transfer && isHistoricTransfer(transaction) -> historicTransfer(transaction, safeInfo)
+            transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo)
+            transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(
+                transaction,
+                safeInfo.threshold
+            )
+            transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
+            transaction is SettingsChange && isQueuedSetFallbackHandler(transaction) -> queuedSetFallbackHandler(
+                transaction,
+                safeInfo.threshold
+            )
+            transaction is SettingsChange && isHistoricSetFallbackHandler(transaction) -> historicSetFallbackHandler(transaction)
+            transaction is SettingsChange && isQueuedModuleChange(transaction) -> queuedModuleChange(transaction, safeInfo.threshold)
+            transaction is SettingsChange && isHistoricModuleChange(transaction) -> historicModuleChange(transaction)
+            transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(transaction, safeInfo.threshold)
+            transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
+            transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo)
+            transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction, safeInfo)
+            else -> TransactionView.Unknown
+        } as TransactionView
     }
 
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
@@ -146,7 +201,7 @@ class TransactionsViewModel
         return !isCompleted(transfer.status)
     }
 
-    fun isCompleted(status: TransactionStatus): Boolean =
+    private fun isCompleted(status: TransactionStatus): Boolean =
         when (status) {
             TransactionStatus.AwaitingConfirmations,
             TransactionStatus.AwaitingExecution,
@@ -364,9 +419,9 @@ class TransactionsViewModel
     private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
         transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
 
-    private fun historicCustomTransaction(custom: Custom, safeInfo: SafeInfo): CustomTransaction {
+    private fun historicCustomTransaction(custom: Custom, safeInfo: SafeInfo): TransactionView.CustomTransaction {
         val isIncoming: Boolean = custom.address == safeInfo.address
-        return CustomTransaction(
+        return TransactionView.CustomTransaction(
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
@@ -379,11 +434,10 @@ class TransactionsViewModel
         )
     }
 
-    private fun queuedCustomTransaction(custom: Custom, safeInfo: SafeInfo): CustomTransactionQueued {
+    private fun queuedCustomTransaction(custom: Custom, safeInfo: SafeInfo): TransactionView.CustomTransactionQueued {
         val isIncoming: Boolean = custom.address == safeInfo.address
         val thresholdMet = checkThreshold(safeInfo.threshold, custom.confirmations)
-
-        return CustomTransactionQueued(
+        return TransactionView.CustomTransactionQueued(
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
@@ -434,36 +488,6 @@ class TransactionsViewModel
         } ?: false
     }
 
-    private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
-        val mutableList = transactions.toMutableList()
-
-        val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.status) {
-                TransactionStatus.Pending,
-                TransactionStatus.AwaitingConfirmations,
-                TransactionStatus.AwaitingExecution -> true
-                else -> false
-            }
-        }
-        if (firstQueuedTransaction >= 0) {
-            mutableList.add(firstQueuedTransaction, TransactionView.SectionHeader(title = R.string.tx_list_queue))
-        }
-
-        val firstHistoricTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.status) {
-                TransactionStatus.Cancelled,
-                TransactionStatus.Failed,
-                TransactionStatus.Success -> true
-                else -> false
-            }
-        }
-
-        if (firstHistoricTransaction >= 0) {
-            mutableList.add(firstHistoricTransaction, TransactionView.SectionHeader(title = R.string.tx_list_history))
-        }
-        return mutableList
-    }
-
     companion object {
         const val OPACITY_FULL = 1.0F
         const val OPACITY_HALF = 0.5F
@@ -476,7 +500,7 @@ data class TransactionsViewState(
 ) : BaseStateViewModel.State
 
 data class LoadTransactions(
-    val newTransactions: List<TransactionView>
+    val newTransactions: PagingData<TransactionView>
 ) : BaseStateViewModel.ViewAction
 
 data class ActiveSafeChanged(
@@ -484,3 +508,17 @@ data class ActiveSafeChanged(
 ) : BaseStateViewModel.ViewAction
 
 object NoSafeSelected : BaseStateViewModel.ViewAction
+
+fun TransactionView.isQueued() = when (status) {
+    TransactionStatus.Pending,
+    TransactionStatus.AwaitingConfirmations,
+    TransactionStatus.AwaitingExecution -> true
+    else -> false
+}
+
+fun TransactionView.isHistory() = when (status) {
+    TransactionStatus.Cancelled,
+    TransactionStatus.Failed,
+    TransactionStatus.Success -> true
+    else -> false
+}

@@ -5,6 +5,7 @@ dependencies {
     testImplementation "io.mockk:mockk:${versions.mockk}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinx_coroutines}"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "androidx.paging:paging-common-ktx:$versions.androidx_paging"
 
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
     testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:${versions.svalinn}"

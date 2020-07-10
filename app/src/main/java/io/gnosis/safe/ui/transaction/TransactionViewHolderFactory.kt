@@ -67,6 +67,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
             is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
+            is TransactionView.Unknown -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
 

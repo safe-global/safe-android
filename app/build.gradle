@@ -200,6 +200,8 @@ dependencies {
     implementation "androidx.room:room-ktx:$versions.androidx_room"
     // Google Material
     implementation "com.google.android.material:material:$versions.material"
+    // Pagination
+    implementation "androidx.paging:paging-runtime:$versions.androidx_paging"
 
     // String formatting
     implementation "com.squareup.phrase:phrase:$versions.phrase"

@@ -7,7 +7,7 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
 
-sealed class TransactionView(open val status: TransactionStatus) {
+sealed class TransactionView(open val status: TransactionStatus?) {
     data class Transfer(
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
@@ -120,4 +120,6 @@ sealed class TransactionView(open val status: TransactionStatus) {
     ) : TransactionView(status)
 
     data class SectionHeader(@StringRes val title: Int) : TransactionView(TransactionStatus.Pending)
+
+    object Unknown : TransactionView(null)
 }
