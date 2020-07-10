@@ -99,7 +99,10 @@ class TransactionsViewModelTest {
     @Test
     fun `load - (active safe with transactions) should emit LoadTransaction`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
+        val safeInfo = SafeInfo(
+            safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -124,7 +127,8 @@ class TransactionsViewModelTest {
     @Test
     fun `load - (transactionRepository failure) should emit ShowError`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE))
+        val safeInfo =
+            SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
@@ -162,6 +166,8 @@ class TransactionsViewModelTest {
                         defaultNonce,
                         defaultThreshold,
                         emptyList(),
+                        Solidity.Address(BigInteger.ONE),
+                        emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
                 )
@@ -189,6 +195,8 @@ class TransactionsViewModelTest {
                         defaultNonce,
                         defaultThreshold,
                         emptyList(),
+                        Solidity.Address(BigInteger.ONE),
+                        emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
                 )
@@ -213,6 +221,8 @@ class TransactionsViewModelTest {
                         defaultSafeAddress,
                         defaultNonce,
                         defaultThreshold,
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE),
                         emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
@@ -260,6 +270,8 @@ class TransactionsViewModelTest {
                         defaultSafeAddress,
                         defaultNonce,
                         defaultThreshold,
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE),
                         emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
@@ -380,6 +392,8 @@ class TransactionsViewModelTest {
                         defaultNonce,
                         defaultThreshold,
                         emptyList(),
+                        Solidity.Address(BigInteger.ONE),
+                        emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
                 )
@@ -463,6 +477,8 @@ class TransactionsViewModelTest {
                         defaultSafeAddress,
                         defaultNonce,
                         defaultThreshold,
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE),
                         emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
@@ -624,6 +640,8 @@ class TransactionsViewModelTest {
                         defaultSafeAddress,
                         defaultNonce,
                         defaultThreshold,
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE),
                         emptyList(),
                         Solidity.Address(BigInteger.ONE)
                     )
@@ -792,7 +810,15 @@ class TransactionsViewModelTest {
         coVerify {
             transactionRepository.getTransactions(
                 defaultSafeAddress,
-                SafeInfo(defaultSafeAddress, defaultNonce, defaultThreshold, emptyList(), Solidity.Address(BigInteger.ONE))
+                SafeInfo(
+                    defaultSafeAddress,
+                    defaultNonce,
+                    defaultThreshold,
+                    emptyList(),
+                    Solidity.Address(BigInteger.ONE),
+                    emptyList(),
+                    Solidity.Address(BigInteger.ONE)
+                )
             )
         }
     }

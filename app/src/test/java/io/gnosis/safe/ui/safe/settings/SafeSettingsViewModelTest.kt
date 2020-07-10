@@ -81,6 +81,8 @@ class SafeSettingsViewModelTest {
             BigInteger.ONE,
             2,
             emptyList(),
+            Solidity.Address(BigInteger.ONE),
+            emptyList(),
             Solidity.Address(BigInteger.ONE)
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
