@@ -3,7 +3,7 @@ steps:
     if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
     #TODO: rename key here and on build server to upload-app-distribution (buildkite agent hooks)
     key: 'upload-firebase'
-    command: 'ci/upload_app_distribution_internal.sh'
+    command: 'ci/upload_app_distribution.sh internal-beta internal'
 
   - label: 'Upload Github Release'
     if: build.branch =~ /^v[0-9]+.*/

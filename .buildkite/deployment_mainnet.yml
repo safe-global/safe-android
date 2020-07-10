@@ -1,4 +1,4 @@
 - label: ':rocket: Upload App Distribution Mainnet'
   key: 'upload-firebase'
-  command: 'ci/upload_app_distribution_mainnet.sh'
+  command: 'ci/upload_app_distribution.sh mainnet-release release'
   branches: "master"
