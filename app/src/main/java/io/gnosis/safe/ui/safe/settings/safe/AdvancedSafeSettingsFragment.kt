@@ -69,8 +69,11 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
             fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
-            safeInfo.modules.takeUnless { it.isEmpty() }?.forEach { module ->
-                modulesContainer.addView(labeledAddress(module))
+            safeInfo.modules.takeUnless { it.isEmpty() }?.let {
+                moduleLabel.visible(true)
+                it.forEach { module ->
+                    modulesContainer.addView(labeledAddress(module))
+                }
             } ?: run { moduleLabel.visible(false) }
         }
     }
