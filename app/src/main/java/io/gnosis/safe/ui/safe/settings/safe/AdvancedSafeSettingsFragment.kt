@@ -1,11 +1,14 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -18,10 +21,13 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.settings.view.LabeledAddressItem
+import io.gnosis.safe.ui.safe.settings.view.SettingItem
+import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSafeSettingsBinding>() {
@@ -60,18 +66,30 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
 
     private fun setSafeInfo(safeInfo: SafeInfo) {
         with(binding) {
-            val fallbackHandlerLabel =
-                if (viewModel.isDefaultFallbackHandler(safeInfo.fallbackHandler)) R.string.safe_settings_default_fallback_handler
-                else R.string.safe_settings_unknown
             fallbackHandlerContainer.removeAllViews()
-            fallbackHandlerContainer.addView(labeledAddress(safeInfo.fallbackHandler, getString(fallbackHandlerLabel)))
+            fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
-            safeInfo.modules.forEachIndexed { index, module ->
+            safeInfo.modules.takeUnless { it.isEmpty() }?.forEachIndexed { index, module ->
                 modulesContainer.addView(labeledAddress(module, "Module $index"))
-            }
+            } ?: run { moduleLabel.visible(false) }
         }
     }
+
+    private fun fallbackHandlerView(fallbackHandler: Solidity.Address?): View =
+        when {
+            fallbackHandler == null || fallbackHandler.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dpToPx(60))
+                openable = false
+                name = getString(R.string.safe_settings_not_set)
+            }
+            viewModel.isDefaultFallbackHandler(fallbackHandler) -> labeledAddress(fallbackHandler, R.string.safe_settings_default_fallback_handler)
+            else -> labeledAddress(fallbackHandler, R.string.safe_settings_unknown)
+        }
+
+    private fun labeledAddress(address: Solidity.Address, @StringRes labelId: Int): LabeledAddressItem =
+        labeledAddress(address, getString(labelId))
 
     private fun labeledAddress(address: Solidity.Address, label: String): LabeledAddressItem {
         return LabeledAddressItem(requireContext()).apply {

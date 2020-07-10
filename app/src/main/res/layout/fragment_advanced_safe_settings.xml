@@ -62,6 +62,7 @@
                 app:setting_openable="false" />
 
             <TextView
+                android:id="@+id/module_label"
                 style="@style/Header"
                 android:text="@string/safe_settings_modules"
                 android:textAllCaps="true" />
