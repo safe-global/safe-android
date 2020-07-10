@@ -16,7 +16,6 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionsBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transaction.list.TransactionLoadStateAdapter
@@ -79,7 +78,6 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
                 when (viewAction) {
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
-                    is BaseStateViewModel.ViewAction.ShowEmptyState -> showEmptyState()
                     is ActiveSafeChanged -> {
                         handleActiveSafe(viewAction.activeSafe)
                         lifecycleScope.launch {
