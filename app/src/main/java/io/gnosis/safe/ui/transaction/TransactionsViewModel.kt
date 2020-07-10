@@ -488,36 +488,6 @@ class TransactionsViewModel
         } ?: false
     }
 
-    private fun addSectionHeaders(transactions: List<TransactionView>): List<TransactionView> {
-        val mutableList = transactions.toMutableList()
-
-        val firstQueuedTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.status) {
-                TransactionStatus.Pending,
-                TransactionStatus.AwaitingConfirmations,
-                TransactionStatus.AwaitingExecution -> true
-                else -> false
-            }
-        }
-        if (firstQueuedTransaction >= 0) {
-            mutableList.add(firstQueuedTransaction, TransactionView.SectionHeader(title = R.string.tx_list_queue))
-        }
-
-        val firstHistoricTransaction = mutableList.indexOfFirst { transactionView ->
-            when (transactionView.status) {
-                TransactionStatus.Cancelled,
-                TransactionStatus.Failed,
-                TransactionStatus.Success -> true
-                else -> false
-            }
-        }
-
-        if (firstHistoricTransaction >= 0) {
-            mutableList.add(firstHistoricTransaction, TransactionView.SectionHeader(title = R.string.tx_list_history))
-        }
-        return mutableList
-    }
-
     companion object {
         const val OPACITY_FULL = 1.0F
         const val OPACITY_HALF = 0.5F
