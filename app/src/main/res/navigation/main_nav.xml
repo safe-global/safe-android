@@ -31,6 +31,9 @@
             android:id="@+id/action_settingsFragment_to_advancedAppSettingsFragment"
             app:destination="@id/advancedAppSettingsFragment"
             app:popUpTo="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_advancedSafeSettingsFragment"
+            app:destination="@id/advancedSafeSettingsFragment" />
 
     </fragment>
 
@@ -86,5 +89,11 @@
             android:name="newAddress"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/advancedSafeSettingsFragment"
+        android:name="io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsFragment"
+        android:label="AdvancedSafeSettingsFragment"
+        tools:layout="@layout/fragment_advanced_safe_settings" />
 
 </navigation>

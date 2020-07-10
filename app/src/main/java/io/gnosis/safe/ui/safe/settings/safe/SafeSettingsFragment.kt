@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
@@ -15,6 +16,7 @@ import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.safe.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.safe.settings.view.AddressItem
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.model.Solidity
@@ -30,6 +32,8 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     @Inject
     lateinit var viewModel: SafeSettingsViewModel
 
+    override fun viewModelProvider() = this
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -40,6 +44,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.remove.setOnClickListener { showRemoveDialog() }
+        binding.advanced.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())
+        }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)

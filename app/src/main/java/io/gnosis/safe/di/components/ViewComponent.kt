@@ -14,6 +14,7 @@ import io.gnosis.safe.ui.safe.settings.SettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment
+import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsFragment
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.splash.SplashActivity
@@ -53,6 +54,8 @@ interface ViewComponent {
     fun inject(fragment: CoinsFragment)
 
     fun inject(fragment: CollectiblesFragment)
+
+    fun inject(fragment: AdvancedSafeSettingsFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)

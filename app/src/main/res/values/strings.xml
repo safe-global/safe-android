@@ -105,7 +105,10 @@
     <string name="safe_settings_master_copy_unknown">Unknown</string>
     <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
     <string name="safe_settings_master_copy_up_to_date">Up to date</string>
-
+    <string name="safe_settings_fallback_handler">Fallback handler</string>
+    <string name="safe_settings_nonce">Nonce</string>
+    <string name="safe_settings_modules">Addresses of enabled modules</string>
+    
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="retry">RETRY</string>

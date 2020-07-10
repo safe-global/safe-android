@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.safe.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.settings.SettingsViewModel
+import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transaction.TransactionsViewModel
@@ -91,4 +92,8 @@ class ViewModule(
     @Provides
     @ForView
     fun providesTransactionsViewModel(provider: ViewModelProvider) = provider[TransactionsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAdvancedSafeSettingsViewModel(provider: ViewModelProvider) = provider[AdvancedSafeSettingsViewModel::class.java]
 }

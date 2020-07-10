@@ -119,6 +119,7 @@
                 android:layout_height="24dp" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/advanced"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/background_selectable_white"

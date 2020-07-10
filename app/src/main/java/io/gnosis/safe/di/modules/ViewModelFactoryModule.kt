@@ -14,6 +14,7 @@ import io.gnosis.safe.ui.safe.assets.SafeBalancesViewModel
 import io.gnosis.safe.ui.safe.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.settings.SettingsViewModel
+import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transaction.TransactionsViewModel
@@ -71,6 +72,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TransactionsViewModel::class)
     abstract fun providesTransactionsViewModel(viewModel: TransactionsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AdvancedSafeSettingsViewModel::class)
+    abstract fun providesAdvancedSafeSettingsViewModel(viewModel: AdvancedSafeSettingsViewModel): ViewModel
 
     @Binds
     @Singleton
