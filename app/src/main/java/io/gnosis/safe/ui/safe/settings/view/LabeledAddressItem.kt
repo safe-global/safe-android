@@ -10,6 +10,7 @@ import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 
 class LabeledAddressItem @JvmOverloads constructor(
@@ -39,7 +40,12 @@ class LabeledAddressItem @JvmOverloads constructor(
 
     var label: String? = null
         set(value) {
-            binding.label.text = value
+            if(value.isNullOrBlank()) {
+                binding.label.visible(false)
+            } else {
+                binding.label.visible(true)
+                binding.label.text = value
+            }
             field = value
         }
 }

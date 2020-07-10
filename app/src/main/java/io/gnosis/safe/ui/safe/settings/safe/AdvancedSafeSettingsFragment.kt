@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.safe.settings.safe
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -70,8 +69,8 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
             fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
-            safeInfo.modules.takeUnless { it.isEmpty() }?.forEachIndexed { index, module ->
-                modulesContainer.addView(labeledAddress(module, "Module $index"))
+            safeInfo.modules.takeUnless { it.isEmpty() }?.forEach { module ->
+                modulesContainer.addView(labeledAddress(module))
             } ?: run { moduleLabel.visible(false) }
         }
     }
@@ -91,7 +90,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
     private fun labeledAddress(address: Solidity.Address, @StringRes labelId: Int): LabeledAddressItem =
         labeledAddress(address, getString(labelId))
 
-    private fun labeledAddress(address: Solidity.Address, label: String): LabeledAddressItem {
+    private fun labeledAddress(address: Solidity.Address, label: String = ""): LabeledAddressItem {
         return LabeledAddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
