@@ -4,6 +4,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class AdvancedSafeSettingsViewModel
@@ -27,6 +28,9 @@ class AdvancedSafeSettingsViewModel
             }
         }
     }
+
+    fun isDefaultFallbackHandler(fallbackHandle: Solidity.Address): Boolean =
+        SafeRepository.DEFAULT_FALLBACK_HANDLER == fallbackHandle
 }
 
 data class LoadSafeInfo(
@@ -35,5 +39,5 @@ data class LoadSafeInfo(
 
 data class AdvancedSafeSettingsState(
     val isLoading: Boolean = true,
-    override var viewAction: BaseStateViewModel.ViewAction? = null
+    override var viewAction: BaseStateViewModel.ViewAction? = BaseStateViewModel.ViewAction.None
 ) : BaseStateViewModel.State

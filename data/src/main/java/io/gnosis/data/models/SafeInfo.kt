@@ -8,5 +8,7 @@ data class SafeInfo(
     val nonce: BigInteger,
     val threshold: Int,
     val owners: List<Solidity.Address>,
-    val masterCopy: Solidity.Address
+    val masterCopy: Solidity.Address,
+    val modules: List<Solidity.Address>,
+    val fallbackHandler: Solidity.Address
 )

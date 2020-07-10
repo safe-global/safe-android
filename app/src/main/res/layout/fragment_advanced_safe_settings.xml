@@ -29,6 +29,7 @@
         tools:visibility="visible" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -54,6 +55,7 @@
                 android:textAllCaps="true" />
 
             <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                android:id="@+id/nonce"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/background_selectable_white"

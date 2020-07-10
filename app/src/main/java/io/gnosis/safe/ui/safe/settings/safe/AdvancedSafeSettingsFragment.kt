@@ -5,12 +5,23 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAdvancedSafeSettingsBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.safe.settings.view.LabeledAddressItem
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSafeSettingsBinding>() {
@@ -32,7 +43,59 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(binding.advancedAppSettingsToolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            when (val viewAction = state.viewAction) {
+                is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
+                is BaseStateViewModel.ViewAction.ShowError -> handleError(viewAction.error)
+                else -> setUi(state.isLoading)
+            }
+        })
         viewModel.load()
+    }
+
+    private fun setUi(isLoading: Boolean, safeInfo: SafeInfo? = null) {
+        toggleLoading(isLoading)
+        safeInfo?.let { setSafeInfo(it) }
+    }
+
+    private fun setSafeInfo(safeInfo: SafeInfo) {
+        with(binding) {
+            val fallbackHandlerLabel =
+                if (viewModel.isDefaultFallbackHandler(safeInfo.fallbackHandler)) R.string.safe_settings_default_fallback_handler
+                else R.string.safe_settings_unknown
+            fallbackHandlerContainer.removeAllViews()
+            fallbackHandlerContainer.addView(labeledAddress(safeInfo.fallbackHandler, getString(fallbackHandlerLabel)))
+            nonce.name = safeInfo.nonce.toString()
+            modulesContainer.removeAllViews()
+            safeInfo.modules.forEachIndexed { index, module ->
+                modulesContainer.addView(labeledAddress(module, "Module $index"))
+            }
+        }
+    }
+
+    private fun labeledAddress(address: Solidity.Address, label: String): LabeledAddressItem {
+        return LabeledAddressItem(requireContext()).apply {
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            this.address = address
+            this.label = label
+        }
+    }
+
+    private fun handleError(throwable: Throwable) {
+        with(binding) {
+            mainContainer.visible(false)
+            progress.visible(false)
+        }
+        snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
+        Timber.e(throwable)
+    }
+
+    private fun toggleLoading(showLoading: Boolean) {
+        with(binding) {
+            mainContainer.visible(!showLoading)
+            progress.visible(showLoading)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

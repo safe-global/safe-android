@@ -13,6 +13,6 @@ data class SafeInfoDto(
     @Json(name = "owners") val owners: List<Solidity.Address>,
     @Json(name = "masterCopy") val masterCopy: Solidity.Address,
     @Json(name = "modules") val modules: List<Solidity.Address>,
-    @Json(name = "fallbackHandler") val fallbackHandler: Solidity.Address?,
+    @Json(name = "fallbackHandler") val fallbackHandler: Solidity.Address,
     @Json(name = "version") val version: String
 )
