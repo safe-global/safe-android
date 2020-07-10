@@ -25,9 +25,12 @@ class CoinsViewModel
 
     fun load(refreshing: Boolean = false) {
         safeLaunch {
-            updateState { CoinsState(loading = !refreshing, refreshing = refreshing, viewAction = null) }
-            val balances = tokenRepository.loadBalanceOf(safeRepository.getActiveSafe()!!.address)
-            updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
+            val safe = safeRepository.getActiveSafe()
+            if (safe != null) {
+                updateState { CoinsState(loading = !refreshing, refreshing = refreshing, viewAction = null) }
+                val balances = tokenRepository.loadBalanceOf(safe.address)
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
+            }
         }
     }
 }

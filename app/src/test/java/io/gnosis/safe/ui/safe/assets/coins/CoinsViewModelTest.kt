@@ -85,7 +85,7 @@ class CoinsViewModelTest {
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = true, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
+            CoinsState(loading = false, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
