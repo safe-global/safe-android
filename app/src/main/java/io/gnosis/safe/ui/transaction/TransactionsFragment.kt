@@ -45,10 +45,6 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter.withLoadStateHeaderAndFooter(
-            header = TransactionLoadStateAdapter { adapter.retry() },
-            footer = TransactionLoadStateAdapter { adapter.retry() }
-        )
         adapter.addLoadStateListener { loadState ->
             binding.transactions.isVisible = loadState.refresh is LoadState.NotLoading
             binding.progress.isVisible = loadState.refresh is LoadState.Loading
@@ -66,7 +62,10 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
         }
 
         with(binding.transactions) {
-            adapter = this@TransactionsFragment.adapter
+            adapter = this@TransactionsFragment.adapter.withLoadStateHeaderAndFooter(
+                header = TransactionLoadStateAdapter { this@TransactionsFragment.adapter.retry() },
+                footer = TransactionLoadStateAdapter { this@TransactionsFragment.adapter.retry() }
+            )
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
