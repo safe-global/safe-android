@@ -609,6 +609,11 @@ class TransactionsViewModelTest {
                     METHOD_ENABLE_MODULE,
                     listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
                 )
+            ),
+            buildSettingsChange(
+                status = Success,
+                confirmations = 2,
+                dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList())
             )
         )
         val transactionViews =
@@ -767,6 +772,17 @@ class TransactionsViewModelTest {
                 address = defaultModuleAddress
             ),
             transactionViews[7]
+        )
+        assertEquals(
+            TransactionView.SettingsChange(
+                status = Success,
+                statusText = R.string.tx_list_success,
+                statusColorRes = R.color.safe_green,
+                dateTimeText = "",
+                method = METHOD_REMOVE_OWNER,
+                alpha = OPACITY_FULL
+            ),
+            transactionViews[8]
         )
     }
 
