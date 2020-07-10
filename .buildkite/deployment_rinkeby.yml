@@ -1,0 +1,5 @@
+- label: ':rocket: Upload App Distribution Rinkeby'
+  key: 'upload-firebase'
+  command: 'ci/upload_app_distribution_rinkeby.sh'
+  branches: "master"
+
