@@ -15,5 +15,5 @@ fi
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
 #TODO: requires app distribution setup in firebase
-./gradlew assembleRinkeby
-./gradlew appDistributionUploadRinkeby
+./gradlew assembleRelease
+./gradlew appDistributionUploadRelease
