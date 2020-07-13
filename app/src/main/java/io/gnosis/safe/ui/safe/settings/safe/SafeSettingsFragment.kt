@@ -43,9 +43,12 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.remove.setOnClickListener { showRemoveDialog() }
-        binding.advanced.setOnClickListener {
-            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())
+        with(binding) {
+            remove.setOnClickListener { showRemoveDialog() }
+            advanced.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())
+            }
+            refresh.setOnRefreshListener { viewModel.reload() }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
@@ -57,6 +60,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     private fun updateUi(isLoading: Boolean, safe: Safe?, safeInfo: SafeInfo?, ensNameValue: String?) {
         with(binding) {
+            refresh.isRefreshing = false
             if (isLoading) {
                 progress.visible(true)
                 mainContainer.visible(false)
@@ -93,6 +97,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     private fun showError(throwable: Throwable) {
         with(binding) {
+            refresh.isRefreshing = false
             mainContainer.visible(false)
             progress.visible(false)
         }

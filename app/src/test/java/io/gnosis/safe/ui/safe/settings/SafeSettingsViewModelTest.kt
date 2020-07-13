@@ -33,6 +33,9 @@ class SafeSettingsViewModelTest {
     }
 
     private lateinit var safeSettingsViewModel: SafeSettingsViewModel
+//    
+//    @Test
+//    fun ``() = runBlockingTest {  }
 
     @Test
     fun `removeSafe (one safe) - should remove safe and clear active safe`() = runBlockingTest {
