@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.safe.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsFragment
+import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.splash.SplashActivity
 import io.gnosis.safe.ui.transaction.TransactionsFragment
@@ -61,4 +62,6 @@ interface ViewComponent {
     fun inject(dialog: SafeSelectionDialog)
 
     fun inject(dialog: TermsBottomSheetDialog)
+
+    fun inject(dialog: ShareSafeDialog)
 }
