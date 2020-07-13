@@ -19,7 +19,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -28,54 +27,60 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/main_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:visibility="visible">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/main_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/Header"
-                android:text="@string/safe_settings_fallback_handler"
-                android:textAllCaps="true" />
-
-            <FrameLayout
-                android:id="@+id/fallback_handler_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                style="@style/Header"
-                android:text="@string/safe_settings_nonce"
-                android:textAllCaps="true" />
-
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
-                android:id="@+id/nonce"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/background_selectable_white"
-                app:setting_openable="false" />
-
-            <TextView
-                android:id="@+id/module_label"
-                style="@style/Header"
-                android:text="@string/safe_settings_modules"
-                android:textAllCaps="true" />
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:visibility="visible">
 
             <LinearLayout
-                android:id="@+id/modules_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical">
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <TextView
+                    style="@style/Header"
+                    android:text="@string/safe_settings_fallback_handler"
+                    android:textAllCaps="true" />
 
+                <FrameLayout
+                    android:id="@+id/fallback_handler_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/Header"
+                    android:text="@string/safe_settings_nonce"
+                    android:textAllCaps="true" />
+
+                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                    android:id="@+id/nonce"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/background_selectable_white"
+                    app:setting_openable="false" />
+
+                <TextView
+                    android:id="@+id/module_label"
+                    style="@style/Header"
+                    android:text="@string/safe_settings_modules"
+                    android:textAllCaps="true" />
+
+                <LinearLayout
+                    android:id="@+id/modules_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

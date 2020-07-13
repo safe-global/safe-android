@@ -22,6 +22,7 @@ class AdvancedSafeSettingsViewModel
                 updateState {
                     AdvancedSafeSettingsState(
                         isLoading = false,
+                        isReloading = false,
                         viewAction = LoadSafeInfo(safeInfo)
                     )
                 }
@@ -39,5 +40,6 @@ data class LoadSafeInfo(
 
 data class AdvancedSafeSettingsState(
     val isLoading: Boolean = true,
+    val isReloading: Boolean = false,
     override var viewAction: BaseStateViewModel.ViewAction? = BaseStateViewModel.ViewAction.None
 ) : BaseStateViewModel.State

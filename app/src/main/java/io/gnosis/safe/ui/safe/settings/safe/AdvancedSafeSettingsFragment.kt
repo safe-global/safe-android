@@ -54,16 +54,19 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
-                is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
+                is LoadSafeInfo -> setUi(state.isLoading, state.isReloading, viewAction.safeInfo)
                 is BaseStateViewModel.ViewAction.ShowError -> handleError(viewAction.error)
-                else -> setUi(state.isLoading)
+                else -> setUi(state.isLoading, state.isReloading)
             }
         })
+        binding.refresh.setOnRefreshListener {
+            viewModel.load()
+        }
         viewModel.load()
     }
 
-    private fun setUi(isLoading: Boolean, safeInfo: SafeInfo? = null) {
-        toggleLoading(isLoading)
+    private fun setUi(isLoading: Boolean, isReloading: Boolean, safeInfo: SafeInfo? = null) {
+        updateLoading(isLoading, isReloading)
         safeInfo?.let { setSafeInfo(it) }
     }
 
@@ -115,9 +118,10 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
         Timber.e(throwable)
     }
 
-    private fun toggleLoading(showLoading: Boolean) {
+    private fun updateLoading(showLoading: Boolean, showReloading: Boolean) {
         with(binding) {
             mainContainer.visible(!showLoading)
+            refresh.isRefreshing = showReloading
             progress.visible(showLoading)
         }
     }
