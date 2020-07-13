@@ -73,7 +73,7 @@ class SafeRepository(
 
     suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
         transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
-            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy)
+            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy, it.modules, it.fallbackHandler)
         }
 
     private suspend fun getSafeBy(address: Solidity.Address): Safe? = safeDao.loadByAddress(address)
@@ -86,6 +86,8 @@ class SafeRepository(
         val SAFE_MASTER_COPY_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
         val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
         val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+
+        val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
         fun masterCopyVersion(masterCopy: Solidity.Address?): String? = supportedContracts[masterCopy]
 

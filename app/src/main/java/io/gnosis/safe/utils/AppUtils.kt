@@ -2,6 +2,7 @@ package io.gnosis.safe.utils
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 
@@ -40,4 +41,12 @@ fun handleAddressBookResult(
 //        return true
 //    }
     return false
+}
+
+fun pxToDp(px: Int): Int {
+    return (px / Resources.getSystem().displayMetrics.density).toInt()
+}
+
+fun dpToPx(dp: Int): Int {
+    return (dp * Resources.getSystem().displayMetrics.density).toInt()
 }

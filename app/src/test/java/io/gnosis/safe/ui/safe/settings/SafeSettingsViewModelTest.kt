@@ -11,11 +11,15 @@ import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsState
 import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
 import io.mockk.*
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
+import timber.log.Timber
 import java.math.BigInteger
 
 class SafeSettingsViewModelTest {
@@ -35,8 +39,176 @@ class SafeSettingsViewModelTest {
     private lateinit var safeSettingsViewModel: SafeSettingsViewModel
 
     @Test
-    fun `removeSafe (one safe) - should remove safe and clear active safe`() = runBlockingTest {
+    fun `init - (no active safe) should emit loading`() = runBlockingTest {
+        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(null, ensName)
+            assertEquals(null, safeInfo)
+            assertEquals(null, safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(true), viewAction)
+        }
+        coVerify(exactly = 1) { safeRepository.activeSafeFlow() }
+    }
+
+    @Test
+    fun `init - (activeSafe change) should load new data`() = runBlockingTest {
+        val safe1 = Safe(Solidity.Address(BigInteger.ONE), "safe")
+        val safe2 = Safe(Solidity.Address(BigInteger.TEN), "safe")
+        val safeInfo1 = SafeInfo(safe1.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val safeInfo2 = SafeInfo(safe2.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val ensName1 = "ens.name"
+        val ensName2 = "ens.name"
+        coEvery { safeRepository.getSafeInfo(any()) } returnsMany listOf(safeInfo1, safeInfo2)
+        coEvery { safeRepository.activeSafeFlow() } returns flowOf(safe1, safe2)
+        coEvery { ensRepository.reverseResolve(any()) } returnsMany listOf(ensName1, ensName2)
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
+
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(ensName2, this.ensName)
+            assertEquals(safeInfo2, this.safeInfo)
+            assertEquals(safe2, this.safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getSafeInfo(safe1.address)
+            ensRepository.reverseResolve(safe1.address)
+            safeRepository.getSafeInfo(safe2.address)
+            ensRepository.reverseResolve(safe2.address)
+        }
+    }
+
+    @Test
+    fun `reload - (activeSafe null) should emit not loading`() = runBlockingTest {
+        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        coEvery { safeRepository.getActiveSafe() } returns null
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+
+        safeSettingsViewModel.reload()
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(null, ensName)
+            assertEquals(null, safeInfo)
+            assertEquals(null, safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.getSafeInfo(any()) wasNot Called
+            ensRepository wasNot Called
+        }
+    }
+
+    @Test
+    fun `reload - (activeSafe available, everything works) should emit everything`() = runBlockingTest {
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val ensName = "ens.name"
+        coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
+        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        coEvery { ensRepository.reverseResolve(any()) } returns ensName
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+
+        safeSettingsViewModel.reload()
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(ensName, this.ensName)
+            assertEquals(safeInfo, this.safeInfo)
+            assertEquals(safe, this.safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.getSafeInfo(safe.address)
+            ensRepository.reverseResolve(safe.address)
+        }
+    }
+
+    @Test
+    fun `reload - (activeSafe available, ensFailure) should emit safe data with null name`() = runBlockingTest {
+        val throwable = Throwable()
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
+        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        coEvery { ensRepository.reverseResolve(any()) } throws throwable
+        mockkStatic(Timber::class)
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+
+        safeSettingsViewModel.reload()
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(null, this.ensName)
+            assertEquals(safeInfo, this.safeInfo)
+            assertEquals(safe, this.safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.getSafeInfo(safe.address)
+            ensRepository.reverseResolve(safe.address)
+            Timber.e(throwable)
+        }
+    }
+
+    @Test
+    fun `reload - (activeSafe available, safeInfo failure) should emit safe data with null safeInfo`() = runBlockingTest {
+        val throwable = Throwable()
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
+        val ensName = "ens.name"
+        coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { safeRepository.getSafeInfo(any()) } throws throwable
+        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        coEvery { ensRepository.reverseResolve(any()) } returns ensName
+        mockkStatic(Timber::class)
+        val testObserver = TestLiveDataObserver<SafeSettingsState>()
+        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
+
+        safeSettingsViewModel.reload()
+        safeSettingsViewModel.state.observeForever(testObserver)
+
+        testObserver.assertValueCount(1)
+        with(testObserver.values()[0]) {
+            assertEquals(ensName, this.ensName)
+            assertEquals(null, this.safeInfo)
+            assertEquals(safe, this.safe)
+            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+        }
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            safeRepository.getSafeInfo(safe.address)
+            Timber.e(throwable)
+            ensRepository.reverseResolve(safe.address)
+        }
+    }
+
+    @Test
+    fun `removeSafe (one safe) - should remove safe and clear active safe`() = runBlockingTest {
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, null)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(SAFE_1)
@@ -80,6 +252,8 @@ class SafeSettingsViewModelTest {
             SAFE_1.address,
             BigInteger.ONE,
             2,
+            emptyList(),
+            Solidity.Address(BigInteger.ONE),
             emptyList(),
             Solidity.Address(BigInteger.ONE)
         )
