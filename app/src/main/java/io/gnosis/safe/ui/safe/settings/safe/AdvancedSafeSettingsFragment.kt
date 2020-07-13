@@ -43,9 +43,13 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSaf
         component.inject(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(binding.advancedAppSettingsToolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
