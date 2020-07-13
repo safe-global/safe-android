@@ -69,7 +69,7 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
-        binding.refresh.setOnRefreshListener { viewModel.load() }
+        binding.refresh.setOnRefreshListener { viewModel.load(true) }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             binding.progress.visible(state.isLoading)
