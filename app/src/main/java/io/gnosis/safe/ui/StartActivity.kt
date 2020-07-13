@@ -10,6 +10,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.safe.share.ShareSafeDialogDirections
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -27,6 +28,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setContentView(R.layout.activity_start)
         toolbarBinding.safeSelection.setOnClickListener {
             Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
+        }
+        toolbarBinding.safeImage.setOnClickListener {
+            Navigation.findNavController(this, R.id.nav_host).navigate(ShareSafeDialogDirections.actionGlobalShareSafeDialog())
         }
         setupNav()
     }
@@ -49,7 +53,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         id != R.id.safeBalancesFragment &&
                 id != R.id.transactionsFragment &&
                 id != R.id.settingsFragment &&
-                id != R.id.safeSelectionDialog
+                id != R.id.safeSelectionDialog &&
+                id != R.id.shareSafeDialog
 
     override fun setSafeData(safe: Safe?) {
         if (safe == null)

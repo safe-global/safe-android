@@ -96,4 +96,14 @@
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_advanced_safe_settings" />
 
+    <dialog
+        android:id="@+id/shareSafeDialog"
+        android:name="io.gnosis.safe.ui.safe.share.ShareSafeDialog"
+        android:label="ShareSafeDialog"
+        tools:layout="@layout/dialog_share_safe" />
+
+    <action
+        android:id="@+id/action_global_shareSafeDialog"
+        app:destination="@id/shareSafeDialog" />
+
 </navigation>
