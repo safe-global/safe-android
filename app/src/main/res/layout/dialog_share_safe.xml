@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="372dp"
-    android:orientation="vertical"
+    android:background="@drawable/background_corners_rounded"
     android:padding="24dp">
 
     <ProgressBar
@@ -45,18 +44,31 @@
     <TextView
         android:id="@+id/safe_address"
         style="@style/TextMedium"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/background_selectable"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:lines="2"
         android:textColor="@color/medium_grey"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/safe_ens_name"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/safe_local_name"
         tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <ImageView
+        android:id="@+id/link"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_link_green_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/safe_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/safe_address"
+        app:layout_constraintTop_toTopOf="@id/safe_address" />
 
     <TextView
         android:id="@+id/safe_ens_name"
@@ -86,5 +98,5 @@
         android:id="@+id/safe_fields"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="blockies, safe_local_name, safe_address, safe_ens_name, safe_qr_code" />
+        app:constraint_referenced_ids="blockies, link, safe_local_name, safe_address, safe_ens_name, safe_qr_code" />
 </androidx.constraintlayout.widget.ConstraintLayout>

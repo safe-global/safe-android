@@ -20,6 +20,9 @@ import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.formatEthAddress
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -31,12 +34,17 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
     lateinit var viewModel: ShareSafeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogShareSafeBinding =
-        DialogShareSafeBinding.inflate(layoutInflater)
+        DialogShareSafeBinding.inflate(layoutInflater, container, false)
 
     override fun screenId(): ScreenId? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setStyle(STYLE_NO_TITLE, R.style.BaseSheetDialog)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +64,14 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
         with(binding) {
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
-            safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext())
+            safeDetails.safe.address.let { address ->
+                safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext())
+                safeAddress.setOnClickListener {
+                    requireContext().copyToClipboard(getString(R.string.url_copied), address.asEthereumAddressChecksumString()) {
+                        snackbar(requireParentFragment().requireView(), getString(R.string.url_copied_success))
+                    }
+                }
+            }
             safeEnsName.text = safeDetails.ensName ?: getString(R.string.safe_settings_not_set)
         }
     }
