@@ -31,7 +31,6 @@ class SafeSettingsViewModel @Inject constructor(
     fun reload() {
         safeLaunch {
             load(safeRepository.getActiveSafe(), true)
-
         }
     }
 
@@ -40,10 +39,14 @@ class SafeSettingsViewModel @Inject constructor(
             val viewAction = if (isRefreshing) ViewAction.None else ViewAction.Loading(true)
             SafeSettingsState(null, null, null, viewAction)
         }
-        val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
+        val safeInfo = runCatching { safe?.let { safeRepository.getSafeInfo(it.address) } }
+            .onFailure { Timber.e(it) }
+            .getOrNull()
+
         val safeEnsName = runCatching { safe?.let { ensRepository.reverseResolve(it.address) } }
             .onFailure { Timber.e(it) }
             .getOrNull()
+
         updateState {
             SafeSettingsState(safe, safeInfo, safeEnsName, ViewAction.Loading(false))
         }
