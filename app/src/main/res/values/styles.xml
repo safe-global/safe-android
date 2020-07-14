@@ -188,7 +188,7 @@
         <item name="bottomSheetStyle">@style/BottomSheet</item>
     </style>
 
-    <style name="BaseSheetDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="BaseDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">false</item>
     </style>
