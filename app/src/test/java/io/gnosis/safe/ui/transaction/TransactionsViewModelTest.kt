@@ -887,6 +887,7 @@ class TransactionsViewModelTest {
             date = date,
             nonce = nonce,
             dataDecoded = dataDecoded
+
         )
 
     private fun buildDataDecodedDto(

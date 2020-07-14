@@ -96,6 +96,10 @@ android {
             versionNameSuffix "-rinkeby"
             minifyEnabled true
             signingConfig signingConfigs.release
+            firebaseAppDistribution {
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
+            }
         }
 
         release {
@@ -106,6 +110,10 @@ android {
             buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
+            firebaseAppDistribution {
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
+            }
         }
     }
 
