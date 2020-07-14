@@ -80,6 +80,7 @@
                 android:id="@+id/link"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:background="@drawable/background_selectable"
                 android:src="@drawable/ic_link_green_24dp"
                 app:layout_constraintBottom_toBottomOf="@id/safe_address"
                 app:layout_constraintEnd_toEndOf="parent"

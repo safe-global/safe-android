@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.base.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -74,7 +75,12 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
                     }
                 }
                 link.setOnClickListener {
-
+                    requireContext().openUrl(
+                        getString(
+                            R.string.etherscan_address_url,
+                            address.asEthereumAddressChecksumString()
+                        )
+                    )
                 }
             }
             safeQrCode.setImageBitmap(safeDetails.qrCode)
