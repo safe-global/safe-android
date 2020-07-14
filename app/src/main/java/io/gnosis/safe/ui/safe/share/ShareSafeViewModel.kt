@@ -1,10 +1,17 @@
 package io.gnosis.safe.ui.safe.share
 
+import android.graphics.Bitmap
+import android.graphics.Color
+import androidx.annotation.ColorInt
+import androidx.lifecycle.viewModelScope
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import kotlinx.coroutines.withContext
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -12,6 +19,7 @@ class ShareSafeViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
     private val ensRepository: EnsRepository,
+    private val qrCodeGenerator: QrCodeGenerator,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<ShareSafeState>(appDispatchers) {
 
@@ -23,8 +31,18 @@ class ShareSafeViewModel
                 val ensName = runCatching { ensRepository.reverseResolve(activeSafe.address) }
                     .onFailure { Timber.e(it) }
                     .getOrNull()
+                val qrCode = runCatching {
+                    qrCodeGenerator.generateQrCodeSync(
+                        activeSafe.address.asEthereumAddressChecksumString(),
+                        512,
+                        512,
+                        Color.WHITE
+                    )
+                }.onFailure { Timber.e(it) }
+                    .getOrNull()
+
                 updateState {
-                    ShareSafeState(ShowSafeDetails(SafeDetails(activeSafe, ensName)))
+                    ShareSafeState(ShowSafeDetails(SafeDetails(activeSafe, ensName, qrCode)))
                 }
             }
         }
@@ -37,7 +55,8 @@ data class ShareSafeState(
 
 data class SafeDetails(
     val safe: Safe,
-    val ensName: String?
+    val ensName: String?,
+    val qrCode: Bitmap?
 )
 
 data class ShowSafeDetails(

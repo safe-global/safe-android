@@ -188,11 +188,9 @@
         <item name="bottomSheetStyle">@style/BottomSheet</item>
     </style>
 
-    <style name="BaseSheetDialog" parent="@style/Theme.Design.Light">
+    <style name="BaseSheetDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowMinWidthMinor">328dp</item>
-        <item name="android:background">@drawable/background_corners_rounded</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
