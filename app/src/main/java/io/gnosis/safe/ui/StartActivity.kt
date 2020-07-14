@@ -10,6 +10,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.BaseActivity
 import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.safe.share.ShareSafeDialogDirections
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -49,7 +50,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         id != R.id.safeBalancesFragment &&
                 id != R.id.transactionsFragment &&
                 id != R.id.settingsFragment &&
-                id != R.id.safeSelectionDialog
+                id != R.id.safeSelectionDialog &&
+                id != R.id.shareSafeDialog
 
     override fun setSafeData(safe: Safe?) {
         if (safe == null)
@@ -60,8 +62,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setNoSafe() {
         with(toolbarBinding) {
+            safeImage.setOnClickListener(null)
             safeImage.setAddress(null)
-            safeImage.setImageResource(io.gnosis.safe.R.drawable.ic_no_safe_loaded_36dp)
+            safeImage.setImageResource(R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
             safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
             safeSelection.visible(false)
@@ -70,6 +73,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setSafe(safe: Safe) {
         with(toolbarBinding) {
+            safeImage.setOnClickListener {
+                Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
+            }
             safeImage.setAddress(safe.address)
             safeName.visible(true)
             safeName.text = safe.localName

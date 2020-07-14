@@ -10,6 +10,7 @@ import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseActivity
+import io.gnosis.safe.ui.base.BaseDialogFragment
 import io.gnosis.safe.ui.base.BaseFragment
 import io.gnosis.safe.ui.safe.terms.TermsChecker
 import javax.inject.Singleton
@@ -44,6 +45,8 @@ interface ApplicationComponent {
     fun inject(activity: BaseActivity)
 
     fun inject(fragment: BaseFragment)
+
+    fun inject(fragment: BaseDialogFragment)
 
 //    fun inject(service: BridgeService)
 //    fun inject(service: HeimdallFirebaseService)

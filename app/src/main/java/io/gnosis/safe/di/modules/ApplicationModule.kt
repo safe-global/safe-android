@@ -21,6 +21,8 @@ import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -127,4 +129,8 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesTransactionPagingProvider(transactionRepository: TransactionRepository): TransactionPagingProvider =
         TransactionPagingProvider(transactionRepository)
+
+    @Provides
+    @Singleton
+    fun providesQrCodeGenerator(): QrCodeGenerator = ZxingQrCodeGenerator()
 }
