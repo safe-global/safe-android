@@ -45,7 +45,7 @@ class ShareSafeViewModel
                 updateState {
                     ShareSafeState(ShowSafeDetails(SafeDetails(activeSafe, ensName, qrCode)))
                 }
-            } ?: throw IllegalStateException("Safe share is only accessible with and active safe")
+            } ?: throw IllegalStateException("Safe share is only accessible with an active safe")
         }
     }
 }
