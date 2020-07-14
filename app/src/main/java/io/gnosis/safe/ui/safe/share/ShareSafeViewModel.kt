@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.transaction.NoSafeSelected
 import kotlinx.coroutines.withContext
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
@@ -44,7 +45,7 @@ class ShareSafeViewModel
                 updateState {
                     ShareSafeState(ShowSafeDetails(SafeDetails(activeSafe, ensName, qrCode)))
                 }
-            }
+            } ?: throw IllegalStateException("Safe share is only accessible with and active safe")
         }
     }
 }
