@@ -29,9 +29,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         toolbarBinding.safeSelection.setOnClickListener {
             Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
         }
-        toolbarBinding.safeImage.setOnClickListener {
-            Navigation.findNavController(this, R.id.nav_host).navigate(ShareSafeDialogDirections.actionGlobalShareSafeDialog())
-        }
         setupNav()
     }
 
@@ -65,8 +62,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setNoSafe() {
         with(toolbarBinding) {
+            safeImage.setOnClickListener(null)
             safeImage.setAddress(null)
-            safeImage.setImageResource(io.gnosis.safe.R.drawable.ic_no_safe_loaded_36dp)
+            safeImage.setImageResource(R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
             safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
             safeSelection.visible(false)
@@ -75,6 +73,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun setSafe(safe: Safe) {
         with(toolbarBinding) {
+            safeImage.setOnClickListener {
+                Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(ShareSafeDialogDirections.actionGlobalShareSafeDialog())
+            }
             safeImage.setAddress(safe.address)
             safeName.visible(true)
             safeName.text = safe.localName
