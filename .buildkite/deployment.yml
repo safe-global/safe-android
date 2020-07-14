@@ -10,7 +10,7 @@ steps:
     command: 'ci/upload_app_distribution.sh rinkeby-release rinkeby'
 
   - label: 'Upload App Distribution Mainnet'
-    #if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
+    if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
     key: 'upload-firebase-mainnet'
     command: 'ci/upload_app_distribution.sh mainnet-release release'
 
