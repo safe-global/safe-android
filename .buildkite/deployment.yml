@@ -1,17 +1,17 @@
 steps:
   - label: 'Upload App Distribution Internal'
     if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
-    key: 'upload-firebase'
+    key: 'upload-firebase-internal'
     command: 'ci/upload_app_distribution.sh internal-beta internal'
 
   - label: 'Upload App Distribution Rinkeby'
     if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
-    key: 'upload-firebase'
+    key: 'upload-firebase-rinkeby'
     command: 'ci/upload_app_distribution.sh rinkeby-release rinkeby'
 
   - label: 'Upload App Distribution Mainnet'
     if: build.branch == "master" || build.branch =~ /^v[0-9]+.*/
-    key: 'upload-firebase'
+    key: 'upload-firebase-mainnet'
     command: 'ci/upload_app_distribution.sh mainnet-release release'
 
   - label: 'Upload Github Release'
