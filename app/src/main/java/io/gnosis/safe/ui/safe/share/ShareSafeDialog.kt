@@ -30,7 +30,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogShareSafeBinding =
         DialogShareSafeBinding.inflate(layoutInflater, container, false)
 
-    override fun screenId(): ScreenId? = null
+    override fun screenId(): ScreenId = ScreenId.SAFE_RECEIVE
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

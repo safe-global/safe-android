@@ -102,8 +102,4 @@
         android:label="ShareSafeDialog"
         tools:layout="@layout/dialog_share_safe" />
 
-    <action
-        android:id="@+id/action_global_shareSafeDialog"
-        app:destination="@id/shareSafeDialog" />
-
 </navigation>

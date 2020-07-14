@@ -74,7 +74,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun setSafe(safe: Safe) {
         with(toolbarBinding) {
             safeImage.setOnClickListener {
-                Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(ShareSafeDialogDirections.actionGlobalShareSafeDialog())
+                Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
             }
             safeImage.setAddress(safe.address)
             safeName.visible(true)
