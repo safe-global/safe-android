@@ -75,7 +75,6 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         with(binding) {
             progress.visible(false)
             nextButton.isEnabled = false
-            bottomLabels.visible(true)
             if (throwable is InvalidAddressException) {
                 snackbar(requireView(), R.string.invalid_ethereum_address, Snackbar.LENGTH_LONG)
             } else {
