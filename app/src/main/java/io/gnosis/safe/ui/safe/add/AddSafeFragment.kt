@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
@@ -14,9 +15,11 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,7 +29,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     lateinit var viewModel: AddSafeViewModel
 
     private val addressInputHelper by lazy {
-        AddressInputHelper(this, tracker, ::updateAddress, allowAddressBook = false)
+        AddressInputHelper(this, tracker, ::updateAddress, allowAddressBook = false, errorCallback = ::handleError)
     }
 
     override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
@@ -44,10 +47,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                viewModel.submitAddress(addSafeAddressInputEntry.text.toString())
+                viewModel.submitAddress(addSafeAddressInputLayout.address!!.asEthereumAddressChecksumString())
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
-            addSafeAddressInputEntry.setOnClickListener {
+            addSafeAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
         }
@@ -72,12 +75,16 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         with(binding) {
             progress.visible(false)
             nextButton.isEnabled = false
-            addSafeAddressInputLayout.isErrorEnabled = true
-            addSafeAddressInputLayout.error =
-                when (throwable) {
-                    is UsedSafeAddress -> getString(R.string.error_used_address)
-                    else -> getString(R.string.error_invalid_safe)
-                }
+            bottomLabels.visible(true)
+            if (throwable is InvalidAddressException) {
+                snackbar(requireView(), R.string.invalid_ethereum_address, Snackbar.LENGTH_LONG)
+            } else {
+                addSafeAddressInputLayout.error =
+                    when (throwable) {
+                        is UsedSafeAddress -> getString(R.string.error_used_address)
+                        else -> getString(R.string.error_invalid_safe)
+                    }
+            }
         }
     }
 
@@ -90,8 +97,9 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         viewModel.validate(address)
         with(binding) {
             nextButton.isEnabled = true
-            addSafeAddressInputLayout.isErrorEnabled = false
-            addSafeAddressInputEntry.setText(address.asEthereumAddressString())
+            addSafeAddressInputLayout.address = address
+            addSafeAddressInputLayout.error = null
+            bottomLabels.visible(false)
         }
     }
 }
