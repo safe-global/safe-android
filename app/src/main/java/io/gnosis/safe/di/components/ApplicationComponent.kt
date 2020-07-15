@@ -12,7 +12,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
-import io.gnosis.safe.ui.settings.app.GetInTouchHelper
 import io.gnosis.safe.ui.terms.TermsChecker
 import javax.inject.Singleton
 
@@ -39,8 +38,6 @@ interface ApplicationComponent {
     fun appDispatchers(): AppDispatchers
 
     fun termsChecker(): TermsChecker
-
-    fun getInTouchHelper(): GetInTouchHelper
 
     fun tracker(): Tracker
 

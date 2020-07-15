@@ -18,6 +18,7 @@ import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
@@ -102,6 +103,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesAdvancedSafeSettingsViewModel(provider: ViewModelProvider) = provider[AdvancedSafeSettingsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesGetInTouchViewModel(provider: ViewModelProvider) = provider[GetInTouchViewModel::class.java]
 
     @Provides
     @ForView

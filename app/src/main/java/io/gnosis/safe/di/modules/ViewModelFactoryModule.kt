@@ -15,6 +15,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
@@ -89,6 +90,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ShareSafeViewModel::class)
     abstract fun providesSharedSafeViewModel(viewModel: ShareSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GetInTouchViewModel::class)
+    abstract fun providesGetInTouchViewModel(viewModel: GetInTouchViewModel): ViewModel
 
     @Binds
     @Singleton
