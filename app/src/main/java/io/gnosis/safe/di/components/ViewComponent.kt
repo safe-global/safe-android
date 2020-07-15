@@ -6,21 +6,21 @@ import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
-import io.gnosis.safe.ui.safe.assets.AssetsFragment
-import io.gnosis.safe.ui.safe.assets.coins.CoinsFragment
-import io.gnosis.safe.ui.safe.assets.collectibles.CollectiblesFragment
+import io.gnosis.safe.ui.assets.AssetsFragment
+import io.gnosis.safe.ui.assets.coins.CoinsFragment
+import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
-import io.gnosis.safe.ui.safe.settings.SettingsFragment
-import io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment
-import io.gnosis.safe.ui.safe.settings.app.AppSettingsFragment
-import io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment
-import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsFragment
-import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsFragment
+import io.gnosis.safe.ui.settings.SettingsFragment
+import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
+import io.gnosis.safe.ui.settings.app.AppSettingsFragment
+import io.gnosis.safe.ui.settings.app.GetInTouchFragment
+import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
+import io.gnosis.safe.ui.settings.safe.SafeSettingsFragment
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
-import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
+import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.splash.SplashActivity
-import io.gnosis.safe.ui.safe.transactions.TransactionListFragment
-import io.gnosis.safe.ui.safe.transactions.details.TransactionDetailsFragment
+import io.gnosis.safe.ui.transactions.TransactionListFragment
+import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragment
 
 @ForView
 @Component(

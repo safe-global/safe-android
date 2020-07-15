@@ -12,13 +12,13 @@
 
     <fragment
         android:id="@+id/safeBalancesFragment"
-        android:name="io.gnosis.safe.ui.safe.assets.AssetsFragment"
+        android:name="io.gnosis.safe.ui.assets.AssetsFragment"
         android:label="SafeBalancesFragment"
         tools:layout="@layout/fragment_safe_balances" />
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="io.gnosis.safe.ui.safe.settings.SettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.SettingsFragment"
         android:label="SafeSettingsFragment"
         tools:layout="@layout/fragment_settings">
 
@@ -39,13 +39,13 @@
 
     <fragment
         android:id="@+id/getInTouchFragment"
-        android:name="io.gnosis.safe.ui.safe.settings.app.GetInTouchFragment"
+        android:name="io.gnosis.safe.ui.settings.app.GetInTouchFragment"
         android:label="GetInTouchFragment"
         tools:layout="@layout/fragment_get_in_touch" />
 
     <fragment
         android:id="@+id/advancedAppSettingsFragment"
-        android:name="io.gnosis.safe.ui.safe.settings.app.AdvancedAppSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment"
         android:label="AdvancedAppSettingsFragment"
         tools:layout="@layout/fragment_settings_app_advanced" />
 
@@ -65,7 +65,7 @@
 
     <fragment
         android:id="@+id/transactionListFragment"
-        android:name="io.gnosis.safe.ui.safe.transactions.TransactionListFragment"
+        android:name="io.gnosis.safe.ui.transactions.TransactionListFragment"
         android:label="TransactionListFragment"
         tools:layout="@layout/fragment_transaction_list">
 
@@ -77,7 +77,7 @@
 
     <fragment
         android:id="@+id/transactionDetailsFragment"
-        android:name="io.gnosis.safe.ui.safe.transactions.details.TransactionDetailsFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsFragment"
         android:label="TransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details" />
 
@@ -104,7 +104,7 @@
 
     <fragment
         android:id="@+id/advancedSafeSettingsFragment"
-        android:name="io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_advanced_safe_settings" />
 

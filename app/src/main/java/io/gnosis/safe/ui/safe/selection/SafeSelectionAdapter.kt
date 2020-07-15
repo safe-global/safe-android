@@ -8,7 +8,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.ItemAddSafeBinding
 import io.gnosis.safe.databinding.ItemSafeBinding
-import io.gnosis.safe.ui.base.UnsupportedViewType
+import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString

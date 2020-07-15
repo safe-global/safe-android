@@ -5,9 +5,9 @@ import android.os.Handler
 import androidx.lifecycle.Observer
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
-import io.gnosis.safe.ui.base.BaseActivity
+import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
-import io.gnosis.safe.ui.safe.terms.TermsBottomSheetDialog
+import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 

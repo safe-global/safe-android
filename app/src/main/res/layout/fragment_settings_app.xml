@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/terms"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
@@ -23,7 +23,7 @@
                 app:setting_name="@string/settings_app_terms_of_use"
                 app:setting_openable="true" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/privacy"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
@@ -32,7 +32,7 @@
                 app:setting_name="@string/settings_app_privacy_policy"
                 app:setting_openable="true" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/licenses"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
@@ -41,7 +41,7 @@
                 app:setting_name="@string/settings_app_licenses"
                 app:setting_openable="true" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/get_in_touch"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
@@ -50,7 +50,7 @@
                 app:setting_name="@string/settings_app_get_in_touch"
                 app:setting_openable="true" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/version"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_non_openable_height"
@@ -59,7 +59,7 @@
                 app:setting_name="@string/settings_app_version"
                 app:setting_openable="false" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/network"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_non_openable_height"
@@ -68,7 +68,7 @@
                 app:setting_name="@string/settings_app_network"
                 app:setting_openable="false" />
 
-            <io.gnosis.safe.ui.safe.settings.view.SettingItem
+            <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/advanced"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"

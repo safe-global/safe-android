@@ -3,7 +3,7 @@ package io.gnosis.safe.ui.safe
 import android.content.Context
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
-import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 
 abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where T : ViewBinding {
 

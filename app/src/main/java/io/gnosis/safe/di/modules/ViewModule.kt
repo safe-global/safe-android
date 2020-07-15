@@ -12,17 +12,17 @@ import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
-import io.gnosis.safe.ui.safe.assets.SafeBalancesViewModel
-import io.gnosis.safe.ui.safe.assets.coins.CoinsViewModel
+import io.gnosis.safe.ui.assets.SafeBalancesViewModel
+import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
-import io.gnosis.safe.ui.safe.settings.SettingsViewModel
-import io.gnosis.safe.ui.safe.settings.safe.AdvancedSafeSettingsViewModel
-import io.gnosis.safe.ui.safe.settings.safe.SafeSettingsViewModel
+import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
+import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
-import io.gnosis.safe.ui.safe.transactions.TransactionListViewModel
-import io.gnosis.safe.ui.safe.transactions.details.TransactionDetailsViewModel
+import io.gnosis.safe.ui.transactions.TransactionListViewModel
+import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import java.lang.ref.WeakReference
 
 @Module

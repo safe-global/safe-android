@@ -12,8 +12,8 @@ import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
-import io.gnosis.safe.ui.safe.terms.TermsChecker
-import io.gnosis.safe.ui.safe.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.ui.terms.TermsChecker
+import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
