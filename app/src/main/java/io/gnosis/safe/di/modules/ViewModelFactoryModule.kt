@@ -7,16 +7,17 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
+import io.gnosis.safe.ui.assets.SafeBalancesViewModel
+import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
-import io.gnosis.safe.ui.assets.SafeBalancesViewModel
-import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
-import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
@@ -89,6 +90,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ShareSafeViewModel::class)
     abstract fun providesSharedSafeViewModel(viewModel: ShareSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GetInTouchViewModel::class)
+    abstract fun providesGetInTouchViewModel(viewModel: GetInTouchViewModel): ViewModel
 
     @Binds
     @Singleton

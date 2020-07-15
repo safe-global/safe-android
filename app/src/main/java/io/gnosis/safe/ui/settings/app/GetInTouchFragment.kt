@@ -1,23 +1,35 @@
 package io.gnosis.safe.ui.settings.app
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
+import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import javax.inject.Inject
 
 class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() {
+
+    @Inject
+    lateinit var helper: GetInTouchViewModel
 
     override fun screenId() = ScreenId.SETTINGS_GET_IN_TOUCH
 
@@ -70,17 +82,37 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
     }
 
     private fun sendEmail() {
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            type = "text/html"
-            data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject, getString(R.string.app_name)))
-        }
-        kotlin.runCatching {
-            startActivity(intent)
-        }
-            .onFailure {
-                Timber.e(it)
-                snackbar(binding.root, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
+        lifecycleScope.launch {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                type = "text/html"
+                data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
+                putExtra(Intent.EXTRA_TEXT, helper.createFeedbackText(requireContext()))
             }
+            kotlin.runCatching {
+                startActivity(intent)
+            }
+                .onFailure {
+                    Timber.e(it)
+                    snackbar(binding.root, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
+                }
+        }
+    }
+}
+
+class GetInTouchViewModel
+@Inject constructor(
+    private val safeRepository: SafeRepository
+) : ViewModel() {
+
+    suspend fun createFeedbackText(context: Context): String {
+        return runBlocking {
+            val activeSafe = safeRepository.getActiveSafe()
+            val text = StringBuilder()
+            text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
+            text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressString() ?: ""))
+            text.appendln(context.getString(R.string.feedback_feedback))
+            text.toString()
+        }
     }
 }
