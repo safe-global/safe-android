@@ -8,9 +8,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
-import io.gnosis.safe.ui.base.BaseActivity
-import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
-import io.gnosis.safe.ui.safe.share.ShareSafeDialogDirections
+import io.gnosis.safe.ui.base.activity.BaseActivity
+import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -48,7 +47,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun isFullscreen(id: Int?): Boolean =
         id != R.id.safeBalancesFragment &&
-                id != R.id.transactionsFragment &&
+                id != R.id.transactionListFragment &&
                 id != R.id.settingsFragment &&
                 id != R.id.safeSelectionDialog &&
                 id != R.id.shareSafeDialog

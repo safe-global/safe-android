@@ -46,7 +46,7 @@
                     android:text="@string/safe_settings_safe_name"
                     android:textAllCaps="true" />
 
-                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/local_name"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -63,7 +63,7 @@
                     android:text="@string/safe_settings_required_confirmations"
                     android:textAllCaps="true" />
 
-                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/threshold"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -95,7 +95,7 @@
                     android:text="@string/safe_settings_contract_version"
                     android:textAllCaps="true" />
 
-                <io.gnosis.safe.ui.safe.settings.view.MasterCopyItem
+                <io.gnosis.safe.ui.settings.view.MasterCopyItem
                     android:id="@+id/master_copy"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -111,7 +111,7 @@
                     android:text="@string/safe_settings_ens_name"
                     android:textAllCaps="true" />
 
-                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/ens_name"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -123,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="24dp" />
 
-                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/advanced"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

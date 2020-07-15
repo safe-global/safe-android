@@ -9,7 +9,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentNoSafesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseViewBindingFragment
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.withArgs
 
 class NoSafeFragment : BaseViewBindingFragment<FragmentNoSafesBinding>() {

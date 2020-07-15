@@ -8,7 +8,7 @@ import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
-import io.gnosis.safe.ui.base.BaseFragment
+import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.utils.handleAddressBookResult
 import io.gnosis.safe.utils.handleQrCodeActivityResult

@@ -6,7 +6,7 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.terms.TermsChecker
+import io.gnosis.safe.ui.terms.TermsChecker
 import io.mockk.*
 import org.junit.Assert.assertEquals
 import org.junit.Before

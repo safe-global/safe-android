@@ -2,15 +2,11 @@ package io.gnosis.safe.ui.safe.share
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import androidx.annotation.ColorInt
-import androidx.lifecycle.viewModelScope
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transaction.NoSafeSelected
-import kotlinx.coroutines.withContext
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import timber.log.Timber

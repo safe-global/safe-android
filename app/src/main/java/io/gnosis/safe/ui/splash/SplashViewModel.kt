@@ -6,7 +6,7 @@ import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.terms.TermsChecker
+import io.gnosis.safe.ui.terms.TermsChecker
 import javax.inject.Inject
 
 class SplashViewModel

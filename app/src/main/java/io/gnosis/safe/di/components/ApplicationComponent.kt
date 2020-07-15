@@ -9,10 +9,10 @@ import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
 import io.gnosis.safe.ui.base.AppDispatchers
-import io.gnosis.safe.ui.base.BaseActivity
-import io.gnosis.safe.ui.base.BaseDialogFragment
-import io.gnosis.safe.ui.base.BaseFragment
-import io.gnosis.safe.ui.safe.terms.TermsChecker
+import io.gnosis.safe.ui.base.activity.BaseActivity
+import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
+import io.gnosis.safe.ui.base.fragment.BaseFragment
+import io.gnosis.safe.ui.terms.TermsChecker
 import javax.inject.Singleton
 
 @Singleton

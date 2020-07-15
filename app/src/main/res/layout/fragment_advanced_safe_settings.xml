@@ -61,7 +61,7 @@
                     android:text="@string/safe_settings_nonce"
                     android:textAllCaps="true" />
 
-                <io.gnosis.safe.ui.safe.settings.view.SettingItem
+                <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/nonce"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

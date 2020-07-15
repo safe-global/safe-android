@@ -40,14 +40,14 @@
                 style="@style/Header"
                 android:text="@string/endpoints" />
 
-            <io.gnosis.safe.ui.safe.settings.view.EndpointItem
+            <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/rpc_endpoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_selectable_white"
                 app:endpoint_name="@string/rpc_endpoint" />
 
-            <io.gnosis.safe.ui.safe.settings.view.EndpointItem
+            <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/tx_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
