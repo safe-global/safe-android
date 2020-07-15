@@ -6,18 +6,14 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.formatEthAddress
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.utils.asEthereumAddressString
 
 class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppAdvancedBinding>() {
 
@@ -30,23 +26,11 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppAdvancedBinding =
         FragmentSettingsAppAdvancedBinding.inflate(inflater, container, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.advancedAppSettingsToolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         with(binding) {
-            ens.blockie.setAddress(ENS_REGISTRY)
-            ens.address.text = ENS_REGISTRY.formatEthAddress(requireContext(), addMiddleLinebreak = false)
-            ens.root.setOnClickListener {
-                requireContext().openUrl(getString(R.string.etherscan_address_url, ENS_REGISTRY.asEthereumAddressString()))
-            }
+            ens.address = ENS_REGISTRY
             with(rpcEndpoint) {
                 value = RPC_ENDPOINT
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
@@ -60,6 +44,9 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                         .toString()
                 }
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
+            }
+            backButton.setOnClickListener {
+                Navigation.findNavController(it).navigateUp()
             }
         }
     }
