@@ -176,15 +176,12 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `reload - (activeSafe available, safeInfo failure) should emit safe data with null safeInfo`() = runBlockingTest {
+    fun `reload - (activeSafe available, safeInfo failure) should emit ShowError`() = runBlockingTest {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val ensName = "ens.name"
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } throws throwable
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
-        coEvery { ensRepository.reverseResolve(any()) } returns ensName
-        mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, tracker, appDispatchers)
 
@@ -193,17 +190,16 @@ class SafeSettingsViewModelTest {
 
         testObserver.assertValueCount(1)
         with(testObserver.values()[0]) {
-            assertEquals(ensName, this.ensName)
+            assertEquals(null, this.ensName)
             assertEquals(null, this.safeInfo)
-            assertEquals(safe, this.safe)
-            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+            assertEquals(null, this.safe)
+            assertEquals(BaseStateViewModel.ViewAction.ShowError(throwable), viewAction)
         }
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
             safeRepository.getSafeInfo(safe.address)
-            Timber.e(throwable)
-            ensRepository.reverseResolve(safe.address)
+            ensRepository wasNot Called
         }
     }
 
