@@ -14,7 +14,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSafeBalancesBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.assets.coins.CoinsFragment
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment

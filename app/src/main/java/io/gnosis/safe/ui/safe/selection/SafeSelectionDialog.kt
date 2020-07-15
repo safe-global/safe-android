@@ -14,7 +14,7 @@ import io.gnosis.safe.databinding.DialogSafeSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import javax.inject.Inject
 
 class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBinding>() {

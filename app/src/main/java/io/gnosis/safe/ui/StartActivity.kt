@@ -9,7 +9,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.activity.BaseActivity
-import io.gnosis.safe.ui.safe.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString

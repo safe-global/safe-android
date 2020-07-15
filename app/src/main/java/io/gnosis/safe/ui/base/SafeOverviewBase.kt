@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.safe
+package io.gnosis.safe.ui.base
 
 import android.content.Context
 import androidx.viewbinding.ViewBinding

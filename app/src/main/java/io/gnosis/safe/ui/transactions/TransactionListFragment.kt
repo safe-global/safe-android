@@ -16,7 +16,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter

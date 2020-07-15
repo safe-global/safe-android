@@ -15,7 +15,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentSettingsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsFragment
