@@ -4,11 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -30,18 +28,13 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentGetInTouchBinding =
         FragmentGetInTouchBinding.inflate(inflater, container, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(binding.getInTouchToolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         with(binding) {
+            backButton.setOnClickListener {
+                Navigation.findNavController(it).navigateUp()
+            }
             email.setOnClickListener {
                 sendEmail()
             }
@@ -58,16 +51,6 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
                 openFeatureSuggestionPage()
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                findNavController().navigateUp()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun openDiscord() {
