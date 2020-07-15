@@ -72,7 +72,9 @@
     <string name="get_in_touch_help_center">Help center</string>
     <string name="get_in_touch_feature_suggestion">Feature suggestion</string>
 
-    <string name="feedback_subject">Feedback for %1$s</string>
+    <string name="feedback_subject">Feedback</string>
+    <string name="feedback_safe">Safe address: %1$s</string>
+    <string name="feedback_feedback">Feedback:</string>
     <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
 
     <string name="url_copied">URL copied</string>
