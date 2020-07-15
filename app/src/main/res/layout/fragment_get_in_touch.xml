@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -11,10 +12,35 @@
         android:layout_height="wrap_content"
         android:background="@color/white">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/get_in_touch_toolbar"
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
             style="@style/Toolbar"
-            app:title="@string/get_in_touch_title" />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                android:text="@string/back" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/get_in_touch_title" />
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -37,45 +63,66 @@
                 app:setting_name="@string/get_in_touch_email"
                 app:setting_openable="true" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/discord"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
                 android:background="@color/white"
                 app:setting_image="@drawable/ic_discord_24dp"
                 app:setting_name="@string/get_in_touch_discord"
                 app:setting_openable="true" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/twitter"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
                 android:background="@color/white"
                 app:setting_image="@drawable/ic_twitter_24dp"
                 app:setting_name="@string/get_in_touch_twitter"
                 app:setting_openable="true" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/help_center"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
                 android:background="@color/white"
                 app:setting_image="@drawable/ic_help_center_24dp"
                 app:setting_name="@string/get_in_touch_help_center"
                 app:setting_openable="true" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/feature_suggestion"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
                 android:background="@color/white"
                 app:setting_image="@drawable/ic_feature_suggestion_24dp"
                 app:setting_name="@string/get_in_touch_feature_suggestion"
                 app:setting_openable="true" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
 
         </LinearLayout>
 
