@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction.list
+package io.gnosis.safe.ui.safe.transactions.paging
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
-import io.gnosis.safe.ui.transaction.BaseTransactionViewHolder
-import io.gnosis.safe.ui.transaction.TransactionView
+import io.gnosis.safe.ui.safe.transactions.BaseTransactionViewHolder
+import io.gnosis.safe.ui.safe.transactions.TransactionView
 
 class TransactionViewListAdapter(
     private val factory: BaseFactory<BaseTransactionViewHolder<TransactionView>, TransactionView>

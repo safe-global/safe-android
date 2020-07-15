@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction
+package io.gnosis.safe.ui.safe.transactions
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,22 +14,22 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentTransactionsBinding
+import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.safe.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
-import io.gnosis.safe.ui.transaction.list.TransactionLoadStateAdapter
-import io.gnosis.safe.ui.transaction.list.TransactionViewListAdapter
+import io.gnosis.safe.ui.safe.transactions.paging.TransactionLoadStateAdapter
+import io.gnosis.safe.ui.safe.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBinding>() {
+class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionListBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS
 
     @Inject
-    lateinit var viewModel: TransactionsViewModel
+    lateinit var viewModel: TransactionListViewModel
 
     private val adapter by lazy { TransactionViewListAdapter(TransactionViewHolderFactory()) }
     private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
@@ -38,8 +38,8 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
         component.inject(this)
     }
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionsBinding =
-        FragmentTransactionsBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionListBinding =
+        FragmentTransactionListBinding.inflate(inflater, container, false)
 
     @ExperimentalPagingApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +62,9 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
         }
 
         with(binding.transactions) {
-            adapter = this@TransactionsFragment.adapter.withLoadStateHeaderAndFooter(
-                header = TransactionLoadStateAdapter { this@TransactionsFragment.adapter.retry() },
-                footer = TransactionLoadStateAdapter { this@TransactionsFragment.adapter.retry() }
+            adapter = this@TransactionListFragment.adapter.withLoadStateHeaderAndFooter(
+                header = TransactionLoadStateAdapter { this@TransactionListFragment.adapter.retry() },
+                footer = TransactionLoadStateAdapter { this@TransactionListFragment.adapter.retry() }
             )
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))

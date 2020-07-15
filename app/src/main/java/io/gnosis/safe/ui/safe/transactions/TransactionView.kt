@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction
+package io.gnosis.safe.ui.safe.transactions
 
 import android.view.View
 import androidx.annotation.ColorRes

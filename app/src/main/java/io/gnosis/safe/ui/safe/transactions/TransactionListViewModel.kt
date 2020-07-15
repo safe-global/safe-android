@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction
+package io.gnosis.safe.ui.safe.transactions
 
 import android.view.View
 import androidx.annotation.StringRes
@@ -25,7 +25,7 @@ import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transaction.list.TransactionPagingProvider
+import io.gnosis.safe.ui.safe.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -36,7 +36,7 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class TransactionsViewModel
+class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,

@@ -1,16 +1,17 @@
-package io.gnosis.safe.ui.transaction
+package io.gnosis.safe.ui.safe.transactions
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.Adapter
 import io.gnosis.safe.ui.base.BaseFactory
 import io.gnosis.safe.ui.base.UnsupportedViewType
-import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.ui.safe.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatForTxList
 
 enum class TransactionViewType {
@@ -95,6 +96,11 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             txTypeIcon.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                //TODO: pass tx data to details page
+                Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
+            }
         }
     }
 }

@@ -64,10 +64,22 @@
     </dialog>
 
     <fragment
-        android:id="@+id/transactionsFragment"
-        android:name="io.gnosis.safe.ui.transaction.TransactionsFragment"
-        android:label="TransactionsFragment"
-        tools:layout="@layout/fragment_transactions" />
+        android:id="@+id/transactionListFragment"
+        android:name="io.gnosis.safe.ui.safe.transactions.TransactionListFragment"
+        android:label="TransactionListFragment"
+        tools:layout="@layout/fragment_transaction_list">
+
+        <action
+            android:id="@+id/action_transactionListFragment_to_transactionDetailsFragment"
+            app:destination="@id/transactionDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionDetailsFragment"
+        android:name="io.gnosis.safe.ui.safe.transactions.details.TransactionDetailsFragment"
+        android:label="TransactionDetailsFragment"
+        tools:layout="@layout/fragment_transaction_details" />
 
     <fragment
         android:id="@+id/addSafeFragment"

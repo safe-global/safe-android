@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction.list
+package io.gnosis.safe.ui.safe.transactions.paging
 
 import androidx.paging.PagingSource
 import io.gnosis.data.models.SafeInfo

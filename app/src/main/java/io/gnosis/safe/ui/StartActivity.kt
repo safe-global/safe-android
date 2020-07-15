@@ -48,7 +48,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun isFullscreen(id: Int?): Boolean =
         id != R.id.safeBalancesFragment &&
-                id != R.id.transactionsFragment &&
+                id != R.id.transactionListFragment &&
                 id != R.id.settingsFragment &&
                 id != R.id.safeSelectionDialog &&
                 id != R.id.shareSafeDialog
