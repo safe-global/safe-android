@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transaction
+package io.gnosis.safe.ui.safe.transactions
 
 import android.view.View
 import androidx.paging.PagingData
@@ -21,9 +21,9 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_I
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_FULL
-import io.gnosis.safe.ui.transaction.TransactionsViewModel.Companion.OPACITY_HALF
-import io.gnosis.safe.ui.transaction.list.TransactionPagingProvider
+import io.gnosis.safe.ui.safe.transactions.TransactionListViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.ui.safe.transactions.TransactionListViewModel.Companion.OPACITY_HALF
+import io.gnosis.safe.ui.safe.transactions.paging.TransactionPagingProvider
 import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -35,7 +35,7 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
-class TransactionsViewModelTest {
+class TransactionListViewModelTest {
 
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
@@ -43,7 +43,7 @@ class TransactionsViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
-    private lateinit var transactionsViewModel: TransactionsViewModel
+    private lateinit var transactionsViewModel: TransactionListViewModel
 
     private val safeRepository = mockk<SafeRepository>()
     private val transactionRepository = mockk<TransactionRepository>()
@@ -64,7 +64,7 @@ class TransactionsViewModelTest {
     fun `init - (no active safe change) should emit Loading`() {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -82,7 +82,7 @@ class TransactionsViewModelTest {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } throws throwable
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -108,7 +108,7 @@ class TransactionsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } returns flow { emit(PagingData.empty<Transaction>()) }
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -136,7 +136,7 @@ class TransactionsViewModelTest {
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { transactionRepository.getTransactions(any(), any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } throws throwable
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -154,7 +154,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapToTransactionView (tx list with no transfer) should map to empty list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = createEmptyTransactionList()
         val transactionViews =
@@ -179,7 +179,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapToTransactionView (tx list with queued transfers) should map to queued and ether transfer list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = createTransactionListWithStatus(
             Pending,
@@ -210,7 +210,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapTransactionView (tx list with queued and historic transfer) should map to queued and transfer list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = createTransactionListWithStatus(Pending, Success)
         val transactionViews =
@@ -236,7 +236,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapTransactionView (tx list with queued and historic ether transfers) should map to queued and ether transfer list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = listOf(
             buildTransfer(
@@ -375,7 +375,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic ether transfers) should map to ether transfer list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = listOf(
             buildTransfer(serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
@@ -460,7 +460,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic custom txs) should map to custom transactions list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = listOf(
             buildCustom(status = AwaitingExecution, confirmations = 2),
@@ -568,7 +568,7 @@ class TransactionsViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic setting changes) should map to settings changes list`() {
 
-        transactionsViewModel = TransactionsViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = listOf(
             // queued

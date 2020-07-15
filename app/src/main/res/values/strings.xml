@@ -92,6 +92,8 @@
     <string name="tx_list_failed">Failed</string>
     <string name="tx_list_success">Success</string>
 
+    <string name="tx_details_title">Transaction details</string>
+
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>

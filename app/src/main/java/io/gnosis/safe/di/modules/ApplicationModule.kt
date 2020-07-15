@@ -13,7 +13,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.safe.terms.TermsChecker
-import io.gnosis.safe.ui.transaction.list.TransactionPagingProvider
+import io.gnosis.safe.ui.safe.transactions.paging.TransactionPagingProvider
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
