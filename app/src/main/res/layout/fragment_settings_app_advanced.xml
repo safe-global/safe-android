@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -11,10 +12,34 @@
         android:layout_height="wrap_content"
         android:background="@color/white">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/advanced_app_settings_toolbar"
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
             style="@style/Toolbar"
-            app:title="@string/settings_app_advanced" />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                android:text="@string/back" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/settings_app_advanced" />
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,9 +57,11 @@
                 style="@style/Header"
                 android:text="@string/ens_resolver_address" />
 
-            <include
+            <io.gnosis.safe.ui.settings.view.AddressItem
                 android:id="@+id/ens"
-                layout="@layout/item_eth_address" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_selectable_white"/>
 
             <TextView
                 style="@style/Header"
@@ -47,13 +74,22 @@
                 android:background="@drawable/background_selectable_white"
                 app:endpoint_name="@string/rpc_endpoint" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/tx_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/item_setting_separator_size"
                 android:background="@drawable/background_selectable_white"
                 app:endpoint_name="@string/tx_service" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
 
         </LinearLayout>
 
