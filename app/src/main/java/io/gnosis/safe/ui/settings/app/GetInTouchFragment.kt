@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.google.android.material.snackbar.Snackbar
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentGetInTouchBinding
@@ -103,7 +104,7 @@ class GetInTouchHelper
         return runBlocking {
             val activeSafe = safeRepository.getActiveSafe()
             val text = StringBuilder()
-            text.appendln(context.getString(R.string.app_name))
+            text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
             text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressString() ?: ""))
             text.appendln(context.getString(R.string.feedback_feedback))
             text.toString()
