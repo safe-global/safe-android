@@ -19,6 +19,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                viewModel.submitAddress(addSafeAddressInputLayout.address!!.asEthereumAddressChecksumString())
+                addSafeAddressInputLayout.address?.let { viewModel.validate(it) }
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
             addSafeAddressInputLayout.setOnClickListener {
@@ -56,16 +57,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                is AddSafeState -> {
-                    state.viewAction?.let { action ->
-                        when (action) {
-                            is BaseStateViewModel.ViewAction.NavigateTo -> findNavController().navigate((action.navDirections))
-                            is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
-                            is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
-                        }
-                    }
-                }
+            when (val action = state.viewAction) {
+                is ShowValidSafe -> handleValid(action.address)
+                is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
+                is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
             }
         })
     }
@@ -76,6 +71,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             progress.visible(false)
             nextButton.isEnabled = false
             if (throwable is InvalidAddressException) {
+                addSafeAddressInputLayout.address = null
                 snackbar(requireView(), R.string.invalid_ethereum_address, Snackbar.LENGTH_LONG)
             } else {
                 addSafeAddressInputLayout.error =
@@ -94,7 +90,16 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun updateAddress(address: Solidity.Address) {
         viewModel.validate(address)
+    }
+
+    private fun handleValid(address: Solidity.Address) {
         with(binding) {
+            progress.visible(false)
+            binding.nextButton.setOnClickListener {
+                findNavController().navigate(
+                    AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address.asEthereumAddressChecksumString())
+                )
+            }
             nextButton.isEnabled = true
             addSafeAddressInputLayout.address = address
             addSafeAddressInputLayout.error = null
