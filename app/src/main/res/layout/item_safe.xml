@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_selectable_white"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
@@ -13,8 +14,8 @@
         android:id="@+id/safe_image"
         android:layout_width="@dimen/safe_blockie_size"
         android:layout_height="@dimen/safe_blockie_size"
-        android:layout_marginStart="@dimen/default_margin"
         android:layout_marginVertical="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,8 +40,8 @@
         style="@style/ToolbarSubtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/safe_selection"
         app:layout_constraintStart_toEndOf="@+id/safe_image"

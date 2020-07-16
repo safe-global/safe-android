@@ -8,7 +8,8 @@
 
     <action
         android:id="@+id/action_to_add_safe_nav"
-        app:destination="@id/addSafeFragment" />
+        app:destination="@id/addSafeFragment"
+        app:launchSingleTop="true" />
 
     <fragment
         android:id="@+id/safeBalancesFragment"
@@ -58,6 +59,7 @@
         <action
             android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
             app:destination="@id/addSafeFragment"
+            app:launchSingleTop="true"
             app:popUpTo="@id/addSafeFragment"
             app:popUpToInclusive="true" />
 
@@ -88,9 +90,7 @@
         tools:layout="@layout/fragment_add_safe">
         <action
             android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
-            app:destination="@id/addSafeNameFragment"
-            app:popUpTo="@id/addSafeFragment"
-            app:popUpToInclusive="true" />
+            app:destination="@id/addSafeNameFragment" />
     </fragment>
     <fragment
         android:id="@+id/addSafeNameFragment"

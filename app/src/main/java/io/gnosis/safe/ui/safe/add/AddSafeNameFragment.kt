@@ -61,7 +61,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                         when (action) {
                             is BaseStateViewModel.ViewAction.CloseScreen -> {
                                 requireActivity().hideSoftKeyboard()
-                                findNavController().navigateUp()
+                                findNavController().popBackStack(R.id.addSafeFragment, true)
                             }
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                             is BaseStateViewModel.ViewAction.ShowError -> {

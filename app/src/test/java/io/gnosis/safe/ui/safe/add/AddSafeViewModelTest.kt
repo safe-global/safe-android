@@ -37,32 +37,14 @@ class AddSafeViewModelTest {
     }
 
     @Test
-    fun `submitAddress (empty address string) should ShowError with InvalidSafeAddress`() {
-        val address = ""
-        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-
-        viewModel.submitAddress(address)
-
-        viewModel.state.observeForever(stateObserver)
-        with(stateObserver.values()[0]) {
-            assert(
-                viewAction is BaseStateViewModel.ViewAction.ShowError &&
-                        (viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
-            )
-        }
-
-        coVerify { safeRepository wasNot Called }
-    }
-
-    @Test
     fun `submitAddress (address safeRepository failure) should ShowError`() {
         val address = VALID_SAFE_ADDRESS
         val exception = IllegalStateException()
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } throws exception
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
+        coEvery { safeRepository.isValidSafe(address) } throws exception
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.submitAddress(address)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver
@@ -70,19 +52,19 @@ class AddSafeViewModelTest {
                 AddSafeState(BaseStateViewModel.ViewAction.ShowError(exception))
             )
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS)
         }
     }
 
     @Test
     fun `submitAddress (invalid address safeRepository works) should ShowError InvalidSafeAddress`() {
-        val address = "0x0"
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns false
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
+        val address = "0x0".asEthereumAddress()!!
+        coEvery { safeRepository.isValidSafe(address) } returns false
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.submitAddress(address)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
         with(stateObserver.values()[0]) {
@@ -92,91 +74,84 @@ class AddSafeViewModelTest {
             )
         }
         coVerify {
-            safeRepository.isSafeAddressUsed("0x0".asEthereumAddress()!!)
-            safeRepository.isValidSafe("0x0".asEthereumAddress()!!)
+            safeRepository.isSafeAddressUsed(address)
+            safeRepository.isValidSafe(address)
         }
     }
 
     @Test
     fun `submitAddress (valid unused address) should NavigateTo`() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns true
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
+        coEvery { safeRepository.isValidSafe(address) } returns true
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.submitAddress(address)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
-        stateObserver
-            .assertValues(
-                AddSafeState(
-                    BaseStateViewModel.ViewAction.NavigateTo(
-                        AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address)
-                    )
-                )
-            )
+        stateObserver.assertValues(AddSafeState(ShowValidSafe(address)))
 
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS)
         }
     }
 
     @Test
     fun `submitAddress (valid used address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns true
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns true
+        coEvery { safeRepository.isValidSafe(address) } returns true
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns true
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.submitAddress(address)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
 
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) wasNot Called
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS) wasNot Called
         }
     }
 
     @Test
     fun `validate (valid used address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns true
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns true
+        coEvery { safeRepository.isValidSafe(address) } returns true
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns true
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address.asEthereumAddress()!!)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
 
         coVerify {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!) wasNot Called
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS) wasNot Called
         }
     }
 
     @Test
     fun `validate (invalid address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.isValidSafe(address.asEthereumAddress()!!) } returns false
-        coEvery { safeRepository.isSafeAddressUsed(address.asEthereumAddress()!!) } returns false
+        coEvery { safeRepository.isValidSafe(address) } returns false
+        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address.asEthereumAddress()!!)
+        viewModel.validate(address)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(InvalidSafeAddress)))
 
         coVerify {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
-            safeRepository.isValidSafe(VALID_SAFE_ADDRESS.asEthereumAddress()!!)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
+            safeRepository.isValidSafe(VALID_SAFE_ADDRESS)
         }
     }
 
     companion object {
-        private const val VALID_SAFE_ADDRESS = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC"
+        private val VALID_SAFE_ADDRESS = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
     }
 }
