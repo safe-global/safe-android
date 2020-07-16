@@ -17,7 +17,9 @@
         app:layout_constraintBottom_toTopOf="@id/add_safe_label_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -54,7 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/add_safe_label_top"
@@ -69,37 +72,21 @@
         app:layout_constraintBottom_toTopOf="@id/add_safe_address_input_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <io.gnosis.safe.ui.safe.add.SafeInputView
         android:id="@+id/add_safe_address_input_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="@string/enter_safe_address"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/add_safe_label_bottom_line1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_safe_label_top">
-
-        <EditText
-            android:id="@+id/add_safe_address_input_entry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:drawableEnd="@drawable/ic_more_horiz_black_24dp"
-            android:drawablePadding="8dp"
-            android:focusable="false"
-            android:lines="1"
-            android:maxLines="1"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:textColor="@color/blue"
-            android:textSize="16sp"
-            tools:text="0x20000207d9B4364480d69a38044B752c850aF9A8" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@id/add_safe_label_top"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_weight="0" />
 
     <TextView
         android:id="@+id/add_safe_label_bottom_line1"
@@ -110,9 +97,11 @@
         android:paddingTop="16dp"
         android:text="@string/add_safe_label_bottom"
         android:textColor="@color/gnosis_dark_blue"
+        app:layout_constraintBottom_toTopOf="@id/add_safe_label_bottom_line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_safe_address_input_layout" />
+        app:layout_constraintTop_toBottomOf="@id/add_safe_address_input_layout"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/add_safe_label_bottom_line2"
@@ -124,9 +113,11 @@
         android:drawablePadding="4dp"
         android:gravity="center"
         android:text="@string/add_safe_label_link"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_safe_label_bottom_line1" />
+        app:layout_constraintTop_toBottomOf="@id/add_safe_label_bottom_line1"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -136,4 +127,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bottom_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="add_safe_label_bottom_line1, add_safe_label_bottom_line2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

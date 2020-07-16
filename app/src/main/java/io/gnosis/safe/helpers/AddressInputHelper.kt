@@ -23,7 +23,7 @@ class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: ((Throwable) -> Unit)? = null,
+    private val errorCallback: ((Throwable) -> Unit),
     allowAddressBook: Boolean = false
 ) {
 
@@ -57,7 +57,7 @@ class AddressInputHelper(
             bottom_sheet_address_input_paste_touch.setOnClickListener {
                 (clipboard.primaryClip?.getItemAt(0)?.text?.trim()?.let { parseEthereumAddress(it.toString()) }
                     ?: run {
-                        handleError(IllegalArgumentException("No Ethereum address found"))
+                        handleError(InvalidAddressException("No Ethereum address found"))
                         null
                     })?.let { addressCallback(it) }
                 hide()
@@ -84,6 +84,6 @@ class AddressInputHelper(
     }
 
     private fun handleError(t: Throwable) {
-        errorCallback?.invoke(t) ?: dialog.context.toast(R.string.invalid_ethereum_address)
+        errorCallback.invoke(t)
     }
 }
