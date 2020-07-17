@@ -1,6 +1,7 @@
 package io.gnosis.safe.helpers
 
 import android.widget.TextView
+import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -17,7 +18,10 @@ class AddressHelper
         address: Solidity.Address
     ) {
 
-        val (displayAddress, fullAddress) = address.shortChecksumString() to address.asEthereumAddressChecksumString()
+        val (displayAddress, fullAddress) = address.formatEthAddress(
+            addressView.context,
+            addMiddleLinebreak = false
+        ) to address.asEthereumAddressChecksumString()
 
         addressView.post {
             imageView?.setAddress(address)

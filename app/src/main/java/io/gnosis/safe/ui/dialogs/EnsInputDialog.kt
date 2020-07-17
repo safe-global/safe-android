@@ -48,12 +48,10 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
 
-//TODO: Put this in confirm button click listener onViewCreated or something
-//            onClick.offer(Unit)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.confirmButton.setOnClickListener { onClick.offer(Unit) }
+        binding.backButton.setOnClickListener { dismiss() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
