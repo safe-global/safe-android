@@ -80,10 +80,7 @@
             android:layout_height="match_parent"
             android:inputType="textUri"
             android:textColor="@color/default_text"
-            android:textCursorDrawable="@drawable/cursor_drawable"
-            android:textSelectHandle="@color/safe_green"
-            android:textSelectHandleLeft="@null"
-            android:textSelectHandleRight="@null" />
+            android:textCursorDrawable="@drawable/cursor_drawable" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
