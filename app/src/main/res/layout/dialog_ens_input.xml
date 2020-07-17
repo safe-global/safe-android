@@ -68,7 +68,7 @@
         android:layout_marginTop="28dp"
         android:hint="@string/address_input_ens"
         android:textColorHint="@color/medium_grey"
-        app:boxStrokeColor="@color/white_smoke"
+        app:boxStrokeColor="@color/outline_box"
         app:errorIconDrawable="@null"
         app:errorTextColor="@color/tomato"
         app:hintTextColor="@color/medium_grey"
@@ -78,7 +78,12 @@
             android:id="@+id/dialog_ens_input_url"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textUri" />
+            android:inputType="textUri"
+            android:textColor="@color/default_text"
+            android:textCursorDrawable="@drawable/cursor_drawable"
+            android:textSelectHandle="@color/safe_green"
+            android:textSelectHandleLeft="@null"
+            android:textSelectHandleRight="@null" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
