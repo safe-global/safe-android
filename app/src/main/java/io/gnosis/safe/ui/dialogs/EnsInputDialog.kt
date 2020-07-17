@@ -1,24 +1,20 @@
 package io.gnosis.safe.ui.dialogs
 
-import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
-import io.gnosis.safe.di.components.DaggerViewComponent
-import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.ScreenId
+import io.gnosis.safe.databinding.DialogEnsInputBinding
+import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressHelper
-import io.gnosis.safe.utils.CustomAlertDialogBuilder
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
-import kotlinx.android.synthetic.main.dialog_ens_input.view.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
@@ -27,7 +23,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class EnsInputDialog : DialogFragment() {
+class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
@@ -35,29 +31,29 @@ class EnsInputDialog : DialogFragment() {
     @Inject
     lateinit var addressHelper: AddressHelper
 
-    private lateinit var dialogView: View
-    private lateinit var alertDialog: AlertDialog
-
     var callback: ((Solidity.Address) -> Unit)? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        inject()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setStyle(STYLE_NO_FRAME, 0)
+        setStyle(STYLE_NO_FRAME, R.style.FullScreenDialog)
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ens_input, null)
+    override fun inject(component: ViewComponent) {
+        component.inject(this)
+    }
 
-        alertDialog = CustomAlertDialogBuilder.build(requireContext(), getString(R.string.ens_input_title), dialogView, R.string.ok, {
-            onClick.offer(Unit)
-        })
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        return alertDialog
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogEnsInputBinding =
+        DialogEnsInputBinding.inflate(inflater, container, false)
+
+    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
+
+//TODO: Put this in confirm button click listener onViewCreated or something
+//            onClick.offer(Unit)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.confirmButton.setOnClickListener { onClick.offer(Unit) }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -79,34 +75,27 @@ class EnsInputDialog : DialogFragment() {
     private val onClick = ConflatedBroadcastChannel<Unit>()
 
     private fun onUrlAvailable(string: String) {
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
-        dialogView.dialog_ens_input_progress.visible(true)
         lifecycleScope.launch {
             runCatching { viewModel.processEnsInput(string) }
                 .onSuccess { address ->
-                    dialogView.dialog_ens_input_progress.visible(false)
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1f
-                    dialogView.dialog_ens_input_name.visible(false)
-                    dialogView.dialog_ens_input_address.visible(true)
+                    binding.dialogEnsInputProgress.visible(false)
+                    binding.confirmButton.isEnabled = true
+                    binding.successViews.visible(true)
+                    binding.dialogEnsInputUrlLayout.isErrorEnabled = false
+                    onNewAddress.offer(address)
                     addressHelper.populateAddressInfo(
-                        dialogView.dialog_ens_input_address,
-//                        dialogView.dialog_ens_input_name,
-                        dialogView.dialog_ens_input_address_image,
+                        binding.dialogEnsInputAddress,
+                        binding.dialogEnsInputAddressImage,
                         address
                     )
-                    onNewAddress.offer(address)
                 }
                 .onFailure {
-                    dialogView.dialog_ens_input_progress.visible(false)
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
-                    dialogView.dialog_ens_input_name.visible(true)
-                    dialogView.dialog_ens_input_address.visible(false)
-                    dialogView.dialog_ens_input_address.text = null
-                    dialogView.dialog_ens_input_address_image.setAddress(null)
-                    dialogView.dialog_ens_input_name.text = getString(R.string.error_resolve_ens)
+                    binding.dialogEnsInputProgress.visible(false)
+                    binding.confirmButton.isEnabled = false
+                    binding.successViews.visible(false)
+                    binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
+                    binding.dialogEnsInputUrlLayout.isErrorEnabled = true
+
                     onNewAddress.offer(null)
                 }
         }
@@ -115,7 +104,10 @@ class EnsInputDialog : DialogFragment() {
     val onUrlChanged: (String) -> Unit = debounce(1000, lifecycleScope, this::onUrlAvailable)
 
     private fun processInput() {
-        dialogView.dialog_ens_input_url.doOnTextChanged { text, _, _, _ ->
+        binding.dialogEnsInputUrl.doOnTextChanged { text, _, _, _ ->
+            binding.successViews.visible(false)
+            binding.dialogEnsInputUrlLayout.isErrorEnabled = false
+            binding.dialogEnsInputProgress.visible(true)
             onUrlChanged(text.toString())
         }
     }
@@ -130,14 +122,6 @@ class EnsInputDialog : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         callback = null
         super.onDismiss(dialog)
-    }
-
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .viewModule(ViewModule(requireContext()))
-            .applicationComponent(HeimdallApplication[requireContext()])
-            .build()
-            .inject(this)
     }
 
     companion object {

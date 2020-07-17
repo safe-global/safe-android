@@ -193,6 +193,13 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Light">
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowIsFloating">false</item>
+
+    </style>
+
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 </resources>

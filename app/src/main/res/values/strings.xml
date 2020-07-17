@@ -117,4 +117,7 @@
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="retry">RETRY</string>
+    <string name="address_found">Address found</string>
+    <string name="confirm">Confirm</string>
+    <string name="enter_ens_name">Enter ENS name</string>
 </resources>
