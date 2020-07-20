@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.R
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -50,15 +50,13 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.confirmButton.setOnClickListener { onClick.offer(Unit) }
-        binding.backButton.setOnClickListener { dismiss() }
+        with(binding) {
+            backButton.setOnClickListener { dismiss() }
+            confirmButton.setOnClickListener { onClick.offer(Unit) }
+            dialogEnsInputUrl.showKeyboardForView()
+        }
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-    }
-
+    
     override fun onStart() {
         super.onStart()
         processInput()
