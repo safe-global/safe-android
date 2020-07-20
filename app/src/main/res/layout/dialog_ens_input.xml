@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialog_change_password_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/dialog_ens_input_url_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,6 +24,7 @@
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="0"
             android:background="@android:color/transparent"
@@ -42,11 +43,12 @@
 
         <TextView
             android:id="@+id/confirm_button"
-            style="@style/TextButton"
+            style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:enabled="false"
+            android:layout_marginEnd="24dp"
             android:text="@string/confirm" />
     </LinearLayout>
 
@@ -151,4 +153,5 @@
         android:visibility="gone"
         app:constraint_referenced_ids="dialog_ens_input_address,dialog_ens_input_address_image,label_address_found,valid_check_mark"
         tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

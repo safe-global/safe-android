@@ -35,6 +35,7 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -141,6 +142,17 @@
         <item name="android:textColor">@color/medium_grey</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="ToolbarButton">
+        <item name="android:textColor">@color/text_button_color</item>
+        <item name="android:drawableTint">@color/primary</item>
+        <item name="android:foreground">@drawable/background_selectable</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.09</item>
+        <item name="android:lineSpacingExtra">2sp</item>
     </style>
 
     <style name="TabLayout" parent="Widget.Design.TabLayout">
