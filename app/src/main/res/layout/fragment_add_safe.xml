@@ -7,13 +7,11 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
     <LinearLayout
         android:id="@+id/toolbar_layout"
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/add_safe_label_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,6 +23,7 @@
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_weight="0"
             android:background="@android:color/transparent"
@@ -43,11 +42,12 @@
 
         <TextView
             android:id="@+id/next_button"
-            style="@style/TextButton"
+            style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:enabled="false"
+            android:layout_marginEnd="24dp"
             android:text="@string/next" />
     </LinearLayout>
 
@@ -133,4 +133,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="add_safe_label_bottom_line1, add_safe_label_bottom_line2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

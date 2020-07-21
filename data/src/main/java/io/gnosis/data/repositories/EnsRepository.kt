@@ -2,9 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.contracts.BuildConfig
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.ethereum.Block
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -30,6 +28,10 @@ class EnsRepository(
                 )
             )
         ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
+
+        if (resolverAddress == Solidity.Address(BigInteger.ZERO)) {
+            throw RequestFailedException("No resolver set for the record")
+        }
 
         return ethereumRepository.request(
             EthCall(
