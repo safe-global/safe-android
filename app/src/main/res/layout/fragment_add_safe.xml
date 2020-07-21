@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
     <LinearLayout
         android:id="@+id/toolbar_layout"
         style="@style/Toolbar"
@@ -134,4 +133,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="add_safe_label_bottom_line1, add_safe_label_bottom_line2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
