@@ -2,6 +2,7 @@ package io.gnosis.data.backend.dto
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.db.BigDecimalNumber
 import io.gnosis.data.models.Erc20Token
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import pm.gnosis.common.adapters.moshi.DecimalNumber
@@ -14,10 +15,8 @@ import java.math.BigInteger
 data class ServiceBalance(
     @Json(name = "tokenAddress") val tokenAddress: Solidity.Address?,
     @Json(name = "token") val token: ServiceTokenMeta?,
-    @DecimalNumber
-    @Json(name = "balance") val balance: BigInteger,
-    @DecimalNumber
-    @Json(name = "balanceUsd") val balanceUsd: BigDecimal
+    @Json(name = "balance") @field:DecimalNumber val balance: BigInteger,
+    @Json(name = "balanceUsd") @field:BigDecimalNumber val balanceUsd: BigDecimal
 ) {
     @JsonClass(generateAdapter = true)
     data class ServiceTokenMeta(
