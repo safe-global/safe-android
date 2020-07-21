@@ -83,11 +83,12 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
 
     private fun sendEmail() {
         lifecycleScope.launch {
+            val feedback = helper.createFeedbackText(requireContext())
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 type = "text/html"
                 data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
-                putExtra(Intent.EXTRA_TEXT, helper.createFeedbackText(requireContext()))
+                putExtra(Intent.EXTRA_TEXT, feedback)
             }
             kotlin.runCatching {
                 startActivity(intent)
@@ -106,13 +107,11 @@ class GetInTouchViewModel
 ) : ViewModel() {
 
     suspend fun createFeedbackText(context: Context): String {
-        return runBlocking {
-            val activeSafe = safeRepository.getActiveSafe()
-            val text = StringBuilder()
-            text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
-            text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressString() ?: ""))
-            text.appendln(context.getString(R.string.feedback_feedback))
-            text.toString()
-        }
+        val activeSafe = safeRepository.getActiveSafe()
+        val text = StringBuilder()
+        text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
+        text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressString() ?: ""))
+        text.appendln(context.getString(R.string.feedback_feedback))
+        return text.toString()
     }
 }
