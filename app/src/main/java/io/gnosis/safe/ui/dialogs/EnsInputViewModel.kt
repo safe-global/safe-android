@@ -10,7 +10,18 @@ class EnsInputViewModel
     private val ensRepository: EnsRepository
 ) : ViewModel() {
 
-    suspend fun processEnsInput(input: CharSequence): Solidity.Address = ensRepository.resolve(input.toString()) ?: throw AddressNotFound()
+    suspend fun processEnsInput(input: CharSequence): Solidity.Address {
+        return kotlin.runCatching {
+            ensRepository.resolve(input.toString())
+        }
+            .onSuccess {
+                it ?: throw EnsResolutionError()
+            }
+            .onFailure {
+                throw EnsResolutionError(it.cause?.localizedMessage ?: it.localizedMessage)
+            }
+            .getOrNull()!!
+    }
 }
 
-class AddressNotFound : Throwable()
+class EnsResolutionError(val msg: String? = null) : Throwable()

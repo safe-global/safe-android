@@ -5,7 +5,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -17,7 +16,7 @@ class EnsInputViewModelTest {
     private val viewModel = EnsInputViewModel(ensRepository)
 
     @Test
-    fun `processEnsInput (valid input safeRepository failure) should throw`() = runBlockingTest {
+    fun `processEnsInput (valid input ensRepository failure) should throw`() = runBlockingTest {
         val throwable = IllegalStateException()
         coEvery { ensRepository.resolve(any()) } throws throwable
 
@@ -25,7 +24,6 @@ class EnsInputViewModelTest {
 
         with(actual) {
             assert(isFailure)
-            assertEquals(exceptionOrNull(), throwable)
         }
         coVerify(exactly = 1) { ensRepository.resolve("") }
     }
@@ -38,7 +36,7 @@ class EnsInputViewModelTest {
 
         with(actual) {
             assert(isFailure)
-            assert(exceptionOrNull() is AddressNotFound)
+            assert(exceptionOrNull() is EnsResolutionError)
         }
         coVerify(exactly = 1) { ensRepository.resolve("") }
     }

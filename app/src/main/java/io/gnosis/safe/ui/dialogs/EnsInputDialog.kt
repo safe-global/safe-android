@@ -56,7 +56,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             dialogEnsInputUrl.showKeyboardForView()
         }
     }
-    
+
     override fun onStart() {
         super.onStart()
         processInput()
@@ -89,7 +89,15 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.dialogEnsInputProgress.visible(false)
                     binding.confirmButton.isEnabled = false
                     binding.successViews.visible(false)
-                    binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
+
+                    when(it) {
+                        is EnsResolutionError -> {
+                            binding.dialogEnsInputUrlLayout.error = it.msg ?: getString(R.string.error_resolve_ens)
+                        }
+                        else -> {
+                            binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
+                        }
+                    }
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = true
 
                     onNewAddress.offer(null)
