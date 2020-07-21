@@ -50,8 +50,13 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
                 is BaseStateViewModel.ViewAction.ShowError -> showError(viewAction.error)
             }
         })
-        viewModel.load()
         dismissBehaviour()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resetUI()
+        viewModel.load()
     }
 
     private fun dismissBehaviour() {
@@ -102,5 +107,14 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
         }
         Timber.e(error)
         snackbar(requireView(), Snackbar.LENGTH_LONG, R.string.error_invalid_safe)
+    }
+
+    private fun resetUI() {
+        with(binding) {
+            blockies.setAddress(null)
+            safeLocalName.text = ""
+            progress.visible(true)
+            safeFields.visible(false)
+        }
     }
 }
