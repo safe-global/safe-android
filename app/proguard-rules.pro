@@ -71,6 +71,7 @@
 
 -keep @interface pm.gnosis.heimdall.data.adapters.HexNumber
 -keep @interface pm.gnosis.heimdall.data.adapters.DecimalNumber
+-keep @interface pm.gnosis.heimdall.data.adapters.BigDecimalNumber
 
 ####################################################################################################
 # Retrofit

@@ -1,10 +1,10 @@
 package io.gnosis.data.adapters
 
+import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.db.BigDecimalNumberAdapter
-import pm.gnosis.common.adapters.moshi.MoshiBuilderFactory
+import pm.gnosis.common.adapters.moshi.*
 
 internal val transactionDtoAdapter =
     PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
@@ -14,8 +14,13 @@ internal val transactionDtoAdapter =
         .withDefaultValue(UnknownTransactionDto)
 
 val dataMoshi =
-    MoshiBuilderFactory.makeMoshiBuilder()
+    Moshi.Builder()
+        .add(WeiAdapter())
+        .add(DecimalNumberAdapter())
         .add(BigDecimalNumberAdapter())
+        .add(HexNumberAdapter())
+        .add(DefaultNumberAdapter())
+        .add(SolidityAddressAdapter())
         .add(OperationEnumAdapter())
         .add(transactionDtoAdapter)
         .add(KotlinJsonAdapterFactory())
