@@ -19,7 +19,6 @@ import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddressString
@@ -86,7 +85,12 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
             val feedback = helper.createFeedbackText(requireContext())
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 type = "text/html"
-                data = Uri.parse("mailto:${getString(R.string.email_feedback)}")
+                // gmail is ignoring intent extras
+                data = Uri.parse(
+                    "mailto:${getString(R.string.email_feedback)}" +
+                            "?subject=${getString(R.string.feedback_subject)}" +
+                            "&body=${feedback}"
+                )
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
                 putExtra(Intent.EXTRA_TEXT, feedback)
             }
