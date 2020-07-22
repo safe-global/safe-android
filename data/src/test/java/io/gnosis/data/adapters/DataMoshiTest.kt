@@ -11,7 +11,7 @@ import java.util.stream.Collectors
 
 class DataMoshiTest {
 
-    private var moshi = dataMoshi
+    private val moshi = dataMoshi
     private val adapter = moshi.adapter(TransactionDto::class.java)
 
     @Test

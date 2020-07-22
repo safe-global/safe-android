@@ -1,0 +1,30 @@
+[
+  {
+    "tokenAddress": null,
+    "token": null,
+    "balance": "1331553306076676",
+    "balanceUsd": "0.3248"
+  },
+  {
+    "tokenAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    "token": {
+      "name": "Dai Stablecoin",
+      "symbol": "DAI",
+      "decimals": 18,
+      "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x6B175474E89094C44Da98b954EedeAC495271d0F.png"
+    },
+    "balance": "234500000000000000",
+    "balanceUsd": "0.2371"
+  },
+  {
+    "tokenAddress": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+    "token": {
+      "name": "Dai Stablecoin v1.0",
+      "symbol": "DAI",
+      "decimals": 18,
+      "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359.png"
+    },
+    "balance": "100000000000000000",
+    "balanceUsd": "0.1346"
+  }
+]
