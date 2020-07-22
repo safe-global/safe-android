@@ -91,6 +91,7 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
                             "?subject=${getString(R.string.feedback_subject)}" +
                             "&body=${feedback}"
                 )
+                putExtra(Intent.EXTRA_EMAIL, getString(R.string.email_feedback))
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
                 putExtra(Intent.EXTRA_TEXT, feedback)
             }

@@ -4,7 +4,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.db.BigDecimalNumberAdapter
 import pm.gnosis.common.adapters.moshi.*
 
 internal val transactionDtoAdapter =
