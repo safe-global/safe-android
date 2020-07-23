@@ -106,7 +106,7 @@
         android:id="@+id/advancedSafeSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
-        tools:layout="@layout/fragment_advanced_safe_settings" />
+        tools:layout="@layout/fragment_settings_safe_advanced" />
 
     <dialog
         android:id="@+id/shareSafeDialog"
