@@ -52,7 +52,7 @@
                     android:layout_height="60dp"
                     android:background="@drawable/background_selectable_white"
                     app:setting_name="SOME NAME"
-                    app:setting_openable="false" />
+                    app:setting_openable="true" />
 
                 <TextView
                     style="@style/Header"
