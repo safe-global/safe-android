@@ -113,6 +113,8 @@
     <string name="safe_settings_default_fallback_handler">DefaultCallbackHandler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
+
+    <string name="safe_settings_edit_name_title">Edit Safe name</string>
     
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
