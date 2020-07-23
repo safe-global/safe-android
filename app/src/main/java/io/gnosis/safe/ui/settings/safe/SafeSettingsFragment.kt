@@ -44,6 +44,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+            localName.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSafeSettingsEditNameFragment())
+            }
             remove.setOnClickListener { showRemoveDialog() }
             advanced.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())

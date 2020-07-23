@@ -32,11 +32,22 @@
             android:id="@+id/action_settingsFragment_to_advancedAppSettingsFragment"
             app:destination="@id/advancedAppSettingsFragment"
             app:popUpTo="@id/settingsFragment" />
+
         <action
             android:id="@+id/action_settingsFragment_to_advancedSafeSettingsFragment"
             app:destination="@id/advancedSafeSettingsFragment" />
 
+        <action
+            android:id="@+id/action_settingsFragment_to_safeSettingsEditNameFragment"
+            app:destination="@id/safeSettingsEditNameFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/safeSettingsEditNameFragment"
+        android:name="io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment"
+        android:label="SafeSettingsEditNameFragment"
+        tools:layout="@layout/fragment_settings_safe_edit_name" />
 
     <fragment
         android:id="@+id/getInTouchFragment"

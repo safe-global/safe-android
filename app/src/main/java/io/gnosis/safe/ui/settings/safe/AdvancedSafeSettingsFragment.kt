@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentAdvancedSafeSettingsBinding
+import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -29,15 +29,15 @@ import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
-class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSafeSettingsBinding>() {
+class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeAdvancedBinding>() {
 
     @Inject
     lateinit var viewModel: AdvancedSafeSettingsViewModel
 
     override fun screenId(): ScreenId? = ScreenId.SETTINGS_SAFE_ADVANCED
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAdvancedSafeSettingsBinding =
-        FragmentAdvancedSafeSettingsBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsSafeAdvancedBinding =
+        FragmentSettingsSafeAdvancedBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
