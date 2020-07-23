@@ -56,7 +56,7 @@ class SafeRepositoryTest {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         coEvery { safeDao.insert(any()) } just Runs
 
-        safeRepository.addSafe(safe)
+        safeRepository.saveSafe(safe)
 
         coVerify(exactly = 1) { safeDao.insert(safe) }
     }

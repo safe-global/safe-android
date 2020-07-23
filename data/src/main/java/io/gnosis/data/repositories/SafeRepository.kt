@@ -43,7 +43,7 @@ class SafeRepository(
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAll().asList()
 
-    suspend fun addSafe(safe: Safe) = safeDao.insert(safe)
+    suspend fun saveSafe(safe: Safe) = safeDao.insert(safe)
 
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
