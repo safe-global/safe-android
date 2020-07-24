@@ -99,7 +99,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
             root.setOnClickListener {
                 //TODO: pass tx data to details page
-                Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
+                //Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
             }
         }
     }
