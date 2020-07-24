@@ -50,7 +50,7 @@ class SafeSettingsEditNameViewModelTest {
 
         viewModel.saveLocalName("safe2")
 
-        with(stateObserver.values()[0] as EditNameState) {
+        with(stateObserver.values()[1] as EditNameState) {
             assert(name == "safe2" && viewAction is BaseStateViewModel.ViewAction.CloseScreen)
         }
     }
