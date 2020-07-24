@@ -113,11 +113,14 @@
     <string name="safe_settings_default_fallback_handler">DefaultCallbackHandler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
+
+    <string name="safe_settings_edit_name_title">Edit Safe name</string>
     
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="retry">RETRY</string>
     <string name="address_found">Address found</string>
     <string name="confirm">Confirm</string>
+    <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
 </resources>

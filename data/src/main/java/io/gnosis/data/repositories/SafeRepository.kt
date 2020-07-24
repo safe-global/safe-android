@@ -43,7 +43,7 @@ class SafeRepository(
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAll().asList()
 
-    suspend fun addSafe(safe: Safe) = safeDao.insert(safe)
+    suspend fun saveSafe(safe: Safe) = safeDao.insert(safe)
 
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
@@ -60,12 +60,12 @@ class SafeRepository(
 
     suspend fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
-            putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
+            putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
         }
     }
 
     suspend fun getActiveSafe(): Safe? =
-        preferencesManager.prefs.getString(ACTIVE_SAFE, null)
+        preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")?.get(0)
             ?.asEthereumAddress()
             ?.let { address ->
                 getSafeBy(address)

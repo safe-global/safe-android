@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentAdvancedSafeSettingsBinding
+import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -29,38 +29,36 @@ import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
-class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentAdvancedSafeSettingsBinding>() {
+class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeAdvancedBinding>() {
 
     @Inject
     lateinit var viewModel: AdvancedSafeSettingsViewModel
 
     override fun screenId(): ScreenId? = ScreenId.SETTINGS_SAFE_ADVANCED
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAdvancedSafeSettingsBinding =
-        FragmentAdvancedSafeSettingsBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsSafeAdvancedBinding =
+        FragmentSettingsSafeAdvancedBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(binding.advancedAppSettingsToolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
                 is BaseStateViewModel.ViewAction.ShowError -> handleError(viewAction.error)
                 else -> setUi(state.isLoading)
             }
         })
-        binding.refresh.setOnRefreshListener {
-            viewModel.load()
+        with(binding) {
+            backButton.setOnClickListener {
+                Navigation.findNavController(it).navigateUp()
+            }
+            refresh.setOnRefreshListener {
+                viewModel.load()
+            }
         }
         viewModel.load()
     }

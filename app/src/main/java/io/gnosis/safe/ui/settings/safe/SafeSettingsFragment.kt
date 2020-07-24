@@ -32,7 +32,6 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     @Inject
     lateinit var viewModel: SafeSettingsViewModel
 
-    override fun viewModelProvider() = this
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -44,6 +43,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+            localName.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSafeSettingsEditNameFragment())
+            }
             remove.setOnClickListener { showRemoveDialog() }
             advanced.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())

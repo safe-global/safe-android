@@ -56,7 +56,7 @@ class SafeRepositoryTest {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         coEvery { safeDao.insert(any()) } just Runs
 
-        safeRepository.addSafe(safe)
+        safeRepository.saveSafe(safe)
 
         coVerify(exactly = 1) { safeDao.insert(safe) }
     }
@@ -77,7 +77,7 @@ class SafeRepositoryTest {
 
         safeRepository.setActiveSafe(safe)
 
-        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString()) }
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}") }
     }
 
     @Test
@@ -106,7 +106,7 @@ class SafeRepositoryTest {
 
         assertEquals(safe, actual)
         coVerify(ordering = Ordering.ORDERED) {
-            preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
+            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
             preferences.getString(ACTIVE_SAFE, null)
             safeDao.loadByAddress(safe.address)
         }
