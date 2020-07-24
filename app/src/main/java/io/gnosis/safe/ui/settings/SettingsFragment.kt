@@ -32,8 +32,6 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
         component.inject(this)
     }
 
-    override fun viewModelProvider() = this
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 

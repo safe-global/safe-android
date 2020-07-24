@@ -77,7 +77,7 @@ class SafeRepositoryTest {
 
         safeRepository.setActiveSafe(safe)
 
-        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString()) }
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}") }
     }
 
     @Test
@@ -106,7 +106,7 @@ class SafeRepositoryTest {
 
         assertEquals(safe, actual)
         coVerify(ordering = Ordering.ORDERED) {
-            preferences.putString(ACTIVE_SAFE, safe.address.asEthereumAddressString())
+            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
             preferences.getString(ACTIVE_SAFE, null)
             safeDao.loadByAddress(safe.address)
         }

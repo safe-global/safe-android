@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeEditNameBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -37,20 +38,25 @@ class SafeSettingsEditNameFragment : BaseViewBindingFragment<FragmentSettingsSaf
             backButton.setOnClickListener {
                 close()
             }
+            safeName.showKeyboardForView()
             safeName.setOnEditorActionListener listener@ { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     viewModel.saveLocalName(safeName.text.toString())
-                    close()
                     return@listener true
                 }
                 return@listener false
             }
-            safeName.showKeyboardForView()
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            binding.safeName.setText(it.name)
-            binding.safeName.setSelection(it.name?.length ?: 0)
+
+            when (it.viewAction) {
+                is BaseStateViewModel.ViewAction.CloseScreen -> close()
+                else -> {
+                    binding.safeName.setText(it.name)
+                    binding.safeName.setSelection(it.name?.length ?: 0)
+                }
+            }
         })
     }
 

@@ -32,7 +32,6 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     @Inject
     lateinit var viewModel: SafeSettingsViewModel
 
-    override fun viewModelProvider() = this
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

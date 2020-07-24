@@ -1,11 +1,9 @@
 package io.gnosis.safe.ui.settings.safe
 
-import androidx.lifecycle.viewModelScope
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SafeSettingsEditNameViewModel
@@ -25,10 +23,13 @@ class SafeSettingsEditNameViewModel
     }
 
     fun saveLocalName(name: String) {
-        viewModelScope.launch {
+        safeLaunch {
             val safe = safeRepository.getActiveSafe()
             safe?.let {
-                safeRepository.saveSafe(it.copy(localName = name))
+                val safeUpdate = it.copy(localName = name)
+                safeRepository.saveSafe(safeUpdate)
+                safeRepository.setActiveSafe(safeUpdate)
+                updateState { EditNameState(safeUpdate.localName, ViewAction.CloseScreen) }
             }
         }
     }
