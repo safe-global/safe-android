@@ -38,6 +38,9 @@ class SafeSettingsEditNameFragment : BaseViewBindingFragment<FragmentSettingsSaf
             backButton.setOnClickListener {
                 close()
             }
+            saveButton.setOnClickListener {
+                viewModel.saveLocalName(safeName.text.toString())
+            }
             safeName.showKeyboardForView()
             safeName.setOnEditorActionListener listener@ { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {

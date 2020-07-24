@@ -121,5 +121,6 @@
     <string name="retry">RETRY</string>
     <string name="address_found">Address found</string>
     <string name="confirm">Confirm</string>
+    <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
 </resources>
