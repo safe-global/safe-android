@@ -55,6 +55,36 @@ class SafeSettingsEditNameViewModelTest {
         }
     }
 
+    @Test
+    fun `saveLocalName (safeRepository fails to save active safe) - should keep local name and emit ShowError`() = runBlockingTest {
+        val throwable = IllegalStateException()
+        coEvery { safeRepository.activeSafeFlow() } returnsMany listOf(
+            flow {
+                emit(SAFE_1)
+            },
+            flow {
+                emit(SAFE_1)
+            }
+        )
+
+        coEvery { safeRepository.getActiveSafe() } returnsMany  listOf(SAFE_1, SAFE_1)
+        coEvery { safeRepository.saveSafe(any()) } throws throwable
+
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel = SafeSettingsEditNameViewModel(safeRepository, appDispatchers)
+        viewModel.state.observeForever(stateObserver)
+
+        with(stateObserver.values()[0] as EditNameState) {
+            assert(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.None)
+        }
+
+        viewModel.saveLocalName("safe2")
+
+        with(stateObserver.values()[1] as EditNameState) {
+            assert(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.ShowError)
+        }
+    }
+
     companion object {
         private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         private val SAFE_2 = Safe(Solidity.Address(BigInteger.ZERO), "safe2")
