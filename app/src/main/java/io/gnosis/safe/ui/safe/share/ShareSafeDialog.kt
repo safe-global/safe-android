@@ -89,7 +89,12 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
                 }
             }
             safeQrCode.setImageBitmap(safeDetails.qrCode)
-            safeEnsName.text = safeDetails.ensName ?: getString(R.string.safe_settings_not_set)
+            if (safeDetails.ensName.isNullOrBlank()) {
+                safeEnsName.visible(false)
+            } else {
+                safeEnsName.text = safeDetails.ensName
+                safeEnsName.visible(true)
+            }
         }
     }
 
@@ -115,6 +120,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             safeLocalName.text = ""
             progress.visible(true)
             safeFields.visible(false)
+            safeEnsName.visible(false)
         }
     }
 }
