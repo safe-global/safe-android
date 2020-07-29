@@ -101,7 +101,7 @@ class TransactionListViewModel
                     if (before == null) {
                         // we're at the beginning of the list
 
-                       return@insertSeparators if (after.isQueued()) {
+                        return@insertSeparators if (after.isQueued()) {
                             TransactionView.SectionHeader(title = R.string.tx_list_queue)
                         } else if (after.isHistory()) {
                             TransactionView.SectionHeader(title = R.string.tx_list_history)
@@ -215,34 +215,32 @@ class TransactionListViewModel
         transfer: Transfer,
         safeInfo: SafeInfo
     ): TransactionView.Transfer {
-        val isIncoming: Boolean = transfer.recipient == safeInfo.address
 
         return TransactionView.Transfer(
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
-            amountText = formatTransferAmount(transfer, isIncoming),
+            amountText = formatTransferAmount(transfer, transfer.incoming),
             dateTimeText = transfer.date ?: "",
-            txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
-            address = if (isIncoming) transfer.sender else transfer.recipient,
-            amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            txTypeIcon = if (transfer.incoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
+            address = if (transfer.incoming) transfer.sender else transfer.recipient,
+            amountColor = if (transfer.value > BigInteger.ZERO && transfer.incoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(transfer)
         )
     }
 
     private fun queuedTransfer(transfer: Transfer, safeInfo: SafeInfo): TransactionView? {
         val thresholdMet = checkThreshold(safeInfo.threshold, transfer.confirmations)
-        val isIncoming: Boolean = transfer.recipient == safeInfo.address
 
         return TransactionView.TransferQueued(
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
-            amountText = formatTransferAmount(transfer, isIncoming),
+            amountText = formatTransferAmount(transfer, transfer.incoming),
             dateTimeText = transfer.date ?: "",
-            txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
-            address = if (isIncoming) transfer.sender else transfer.recipient,
-            amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            txTypeIcon = if (transfer.incoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
+            address = if (transfer.incoming) transfer.sender else transfer.recipient,
+            amountColor = if (transfer.value > BigInteger.ZERO && transfer.incoming) R.color.safe_green else R.color.gnosis_dark_blue,
             confirmations = transfer.confirmations ?: 0,
             threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
