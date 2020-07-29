@@ -159,6 +159,8 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
+            settingName.text = viewTransfer.settingNameText
+
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
