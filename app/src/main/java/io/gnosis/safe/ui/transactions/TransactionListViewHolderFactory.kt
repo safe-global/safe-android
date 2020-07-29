@@ -162,7 +162,6 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
-
             nonce.text = viewTransfer.nonce
         }
     }
@@ -223,7 +222,6 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
-
             nonce.text = viewTransfer.nonce
         }
     }
@@ -252,7 +250,6 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
-
             nonce.text = viewTransfer.nonce
         }
     }
