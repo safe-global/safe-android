@@ -6,7 +6,6 @@ import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
-import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -88,7 +87,7 @@ class TransactionRepository(
             transferDto.to,
             transferDto.from,
             value,
-            transferDto.executionDate?.formatBackendDate(),
+            transferDto.executionDate,
             tokenInfo,
             null
         )
@@ -102,7 +101,7 @@ class TransactionRepository(
             transaction.to,
             transaction.from,
             transaction.value ?: BigInteger.ZERO,
-            transaction.blockTimestamp?.formatBackendDate(),
+            transaction.blockTimestamp,
             ETH_SERVICE_TOKEN_INFO,
             null
         )
@@ -199,7 +198,7 @@ class TransactionRepository(
             nonce = transaction.nonce,
             address = transaction.module,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = transaction.created?.formatBackendDate(),
+            date = transaction.created,
             value = transaction.value ?: BigInteger.ZERO
         )
 
@@ -222,7 +221,7 @@ class TransactionRepository(
             nonce = null, // Ethereum txs do not have a nonce
             address = transaction.to,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = transaction.blockTimestamp?.formatBackendDate(),
+            date = transaction.blockTimestamp,
             value = transaction.value ?: BigInteger.ZERO
         )
 
@@ -237,7 +236,7 @@ class TransactionRepository(
             nonce = null,
             address = transaction.to,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = date?.formatBackendDate(),
+            date = date,
             value = BigInteger.ZERO
         )
     }
@@ -264,4 +263,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
-fun MultisigTransactionDto.bestAvailableDate() = (executionDate ?: submissionDate ?: modified)?.formatBackendDate()
+fun MultisigTransactionDto.bestAvailableDate() = executionDate ?: submissionDate ?: modified

@@ -9,7 +9,9 @@ import androidx.paging.insertSeparators
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.*
+import io.gnosis.data.models.Transaction.Custom
+import io.gnosis.data.models.Transaction.SettingsChange
+import io.gnosis.data.models.Transaction.Transfer
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
@@ -22,6 +24,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.getValueByName
+import io.gnosis.data.utils.formatBackendDate
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -222,7 +225,7 @@ class TransactionListViewModel
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
             amountText = formatTransferAmount(transfer, isIncoming),
-            dateTimeText = transfer.date ?: "",
+            dateTimeText = transfer.date?.formatBackendDate() ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
             amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
@@ -239,7 +242,7 @@ class TransactionListViewModel
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
             amountText = formatTransferAmount(transfer, isIncoming),
-            dateTimeText = transfer.date ?: "",
+            dateTimeText = transfer.date?.formatBackendDate() ?: "",
             txTypeIcon = if (isIncoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (isIncoming) transfer.sender else transfer.recipient,
             amountColor = if (transfer.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
@@ -256,7 +259,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             method = transaction.dataDecoded.method,
             alpha = alpha(transaction)
         )
@@ -268,7 +271,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             settingNameText = transaction.dataDecoded.method,
             confirmations = transaction.confirmations ?: 0,
             threshold = threshold,
@@ -287,7 +290,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
             version = version,
             address = address,
@@ -304,7 +307,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             version = "DefaultFallbackHandler",
             address = address,
             label = R.string.tx_list_set_fallback_handler,
@@ -334,7 +337,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
             version = "DefaultFallbackHandler",
             address = address,
@@ -351,7 +354,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             version = "",
             address = address,
             label = label,
@@ -375,7 +378,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
             address = address,
             label = label,
@@ -395,7 +398,7 @@ class TransactionListViewModel
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.date ?: "",
+            dateTimeText = transaction.date?.formatBackendDate() ?: "",
             confirmations = transaction.confirmations ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
@@ -425,7 +428,7 @@ class TransactionListViewModel
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
-            dateTimeText = custom.date ?: "",
+            dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
             amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
@@ -441,7 +444,7 @@ class TransactionListViewModel
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
-            dateTimeText = custom.date ?: "",
+            dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             confirmations = custom.confirmations ?: 0,
             threshold = safeInfo.threshold,

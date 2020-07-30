@@ -34,6 +34,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
+import java.util.*
 
 class TransactionListViewModelTest {
 
@@ -829,7 +830,16 @@ class TransactionListViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(status, 2, defaultToAddress, defaultFromAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
+            Transaction.Transfer(
+                status = status,
+                confirmations = 2,
+                recipient = defaultToAddress,
+                sender = defaultFromAddress,
+                value = BigInteger.ONE,
+                date = Date(),
+                tokenInfo = ETH_SERVICE_TOKEN_INFO,
+                nonce = defaultNonce
+            )
         }
         return Page(1, "", "", transfers)
     }
@@ -840,7 +850,7 @@ class TransactionListViewModelTest {
         recipient: Solidity.Address = defaultToAddress,
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
-        date: String = "",
+        date: Date = Date(),
         serviceTokenInfo: ServiceTokenInfo = ETH_SERVICE_TOKEN_INFO,
         nonce: BigInteger = defaultNonce
     ): Transaction =

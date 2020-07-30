@@ -6,8 +6,7 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.util.*
 
+private val customFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault())
 fun Date.formatBackendDate(): String {
-    val customFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault())
-    val instant = Instant.ofEpochMilli(this.time)
-    return customFormatter.format(instant)
+    return customFormatter.format(Instant.ofEpochMilli(time))
 }
