@@ -6,6 +6,7 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
+import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
@@ -88,6 +89,16 @@ class ApplicationModule(private val application: Application) {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(TransactionServiceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesGatewayApi(moshi: Moshi, client: OkHttpClient): GatewayApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(GatewayApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(GatewayApi::class.java)
 
     @Provides
     @Singleton

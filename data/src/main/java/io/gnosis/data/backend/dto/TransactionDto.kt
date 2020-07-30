@@ -98,7 +98,7 @@ data class DataDecodedDto(
 
 data class ParamsDto(
     val name: String,
-    val type: String,
+    val paramType: String,
     val value: String
 )
 
