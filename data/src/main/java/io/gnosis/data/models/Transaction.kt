@@ -8,7 +8,6 @@ import java.util.*
 
 sealed class Transaction {
     abstract val status: TransactionStatus
-
     // If status is Successful, Failed or Canceled, the confirmations can be null
     abstract val confirmations: Int?
 
