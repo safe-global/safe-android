@@ -1,21 +1,19 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.JsonDataException
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.utils.formatBackendDate
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.TransactionDto
+import io.gnosis.data.backend.dto.UnknownTransactionDto
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.threeten.bp.zone.TzdbZoneRulesProvider
-import org.threeten.bp.zone.ZoneRulesProvider
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.stream.Collectors
 
 class DataMoshiTest {
-    init {
-        initThreeTen()
-    }
     private val moshi = dataMoshi
     private val adapter = moshi.adapter(TransactionDto::class.java)
 
@@ -26,12 +24,6 @@ class DataMoshiTest {
         val transactionDto = adapter.fromJson(jsonString)
 
         assertTrue(transactionDto is MultisigTransactionDto)
-        println("transactionDto: $transactionDto")
-        if (transactionDto is MultisigTransactionDto) {
-            println(" transactionDto.executionDate: ${transactionDto.executionDate?.formatBackendDate()}")
-            println("transactionDto.submissionDate: ${transactionDto.submissionDate?.formatBackendDate()}")
-            println("      transactionDto.modified: ${transactionDto.modified?.formatBackendDate()}")
-        }
     }
 
     @Test
@@ -41,8 +33,6 @@ class DataMoshiTest {
         val transactionDto: TransactionDto? = adapter.fromJson(jsonString)
 
         assertTrue(transactionDto is EthereumTransactionDto)
-
-
     }
 
     @Test
@@ -85,14 +75,5 @@ class DataMoshiTest {
                 this::class.java.getClassLoader()?.getResourceAsStream(fileName)!!
             )
         ).lines().parallel().collect(Collectors.joining("\n"))
-    }
-}
-
-fun Any.initThreeTen() {
-    if (ZoneRulesProvider.getAvailableZoneIds().isEmpty()) {
-        val stream = this.javaClass.classLoader!!.getResourceAsStream("TZDB.dat")
-        stream.use(::TzdbZoneRulesProvider).apply {
-            ZoneRulesProvider.registerProvider(this)
-        }
     }
 }

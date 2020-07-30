@@ -1,8 +1,20 @@
 package io.gnosis.data.repositories
 
-import io.gnosis.data.adapters.initThreeTen
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.*
+import io.gnosis.data.backend.dto.ConfirmationDto
+import io.gnosis.data.backend.dto.ContractInfoDto
+import io.gnosis.data.backend.dto.ContractInfoType
+import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.Operation
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.SignatureType
+import io.gnosis.data.backend.dto.TransferDto
+import io.gnosis.data.backend.dto.TransferType
+import io.gnosis.data.backend.dto.UnknownTransactionDto
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
@@ -10,13 +22,14 @@ import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
-import io.gnosis.data.utils.formatBackendDate
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -26,9 +39,9 @@ import java.math.BigInteger
 import java.util.*
 
 class TransactionRepositoryTest {
-    init {
-        initThreeTen()
-    }
+//    init {
+//        initThreeTen()
+//    }
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private val transactionRepository = TransactionRepository(transactionServiceApi)
@@ -292,14 +305,14 @@ class TransactionRepositoryTest {
         with(actual.results[0] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(0)
             assertEquals(transferDto?.value, value)
-            assertEquals(transferDto?.executionDate?.formatBackendDate(), date)
+            assertEquals(transferDto?.executionDate, date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(buildErc20ServiceTokenInfo(), tokenInfo)
         }
         with(actual.results[1] as Transaction.Transfer) {
             assertEquals(BigInteger.ONE, value)
-            assertEquals(transactionDto.transfers?.get(1)?.executionDate?.formatBackendDate(), date)
+            assertEquals(transactionDto.transfers?.get(1)?.executionDate, date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
@@ -307,7 +320,7 @@ class TransactionRepositoryTest {
         with(actual.results[2] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(2)
             assertEquals(transferDto?.value, value)
-            assertEquals(transferDto?.executionDate?.formatBackendDate(), date)
+            assertEquals(transferDto?.executionDate, date)
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)

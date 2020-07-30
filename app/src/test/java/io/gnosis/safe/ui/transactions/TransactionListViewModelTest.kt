@@ -5,8 +5,17 @@ import androidx.paging.PagingData
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.models.*
-import io.gnosis.data.models.TransactionStatus.*
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.TransactionStatus.AwaitingConfirmations
+import io.gnosis.data.models.TransactionStatus.AwaitingExecution
+import io.gnosis.data.models.TransactionStatus.Cancelled
+import io.gnosis.data.models.TransactionStatus.Failed
+import io.gnosis.data.models.TransactionStatus.Pending
+import io.gnosis.data.models.TransactionStatus.Success
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -19,17 +28,28 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERV
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.*
+import io.gnosis.data.utils.formatBackendDate
+import io.gnosis.safe.MainCoroutineScopeRule
+import io.gnosis.safe.R
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
-import io.mockk.*
+import io.mockk.Called
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.mockk
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import org.threeten.bp.zone.TzdbZoneRulesProvider
+import org.threeten.bp.zone.ZoneRulesProvider
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -37,7 +57,9 @@ import java.math.BigInteger
 import java.util.*
 
 class TransactionListViewModelTest {
-
+    init {
+        initThreeTen()
+    }
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
 
@@ -286,7 +308,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
                 confirmations = 0,
@@ -304,7 +326,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
                 threshold = 2,
@@ -322,7 +344,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0.0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
                 alpha = OPACITY_HALF
@@ -336,7 +358,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
                 alpha = OPACITY_FULL
@@ -350,7 +372,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL
@@ -364,7 +386,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "+10 ERC20",
                 amountColor = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL
@@ -407,7 +429,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 ERC20",
                 amountColor = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL
@@ -421,7 +443,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 NFT",
                 amountColor = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL
@@ -435,7 +457,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.dark_grey,
                 amountText = "-1 AQER",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
                 alpha = OPACITY_HALF
@@ -449,7 +471,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0.0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
                 alpha = OPACITY_HALF
@@ -493,7 +515,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 dataSizeText = "",
                 nonce = "1",
@@ -511,7 +533,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 dataSizeText = "",
                 threshold = 2,
@@ -529,7 +551,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 amountText = "+0.0001 ETH",
                 amountColor = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
                 alpha = OPACITY_FULL,
                 dataSizeText = ""
@@ -543,7 +565,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
                 dataSizeText = ""
@@ -557,7 +579,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.dark_grey,
                 amountText = "-0.0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
                 dataSizeText = ""
@@ -655,7 +677,7 @@ class TransactionListViewModelTest {
                 status = AwaitingExecution,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_MASTER_COPY_1_1_1,
                 version = "1.1.1",
                 visibilityEllipsizedAddress = View.VISIBLE,
@@ -674,7 +696,7 @@ class TransactionListViewModelTest {
                 status = AwaitingConfirmations,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.medium_grey,
@@ -690,7 +712,7 @@ class TransactionListViewModelTest {
                 status = AwaitingConfirmations,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.medium_grey,
@@ -710,7 +732,7 @@ class TransactionListViewModelTest {
                 status = AwaitingConfirmations,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.medium_grey,
@@ -730,7 +752,7 @@ class TransactionListViewModelTest {
                 status = AwaitingExecution,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 2,
                 threshold = 2,
                 confirmationsTextColor = R.color.safe_green,
@@ -750,7 +772,7 @@ class TransactionListViewModelTest {
                 status = Cancelled,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
@@ -766,7 +788,7 @@ class TransactionListViewModelTest {
                 status = Success,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_MASTER_COPY_1_0_0,
                 version = "1.0.0",
                 visibilityEllipsizedAddress = View.VISIBLE,
@@ -782,7 +804,7 @@ class TransactionListViewModelTest {
                 status = Failed,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
                 version = "",
                 visibilityEllipsizedAddress = View.INVISIBLE,
@@ -797,7 +819,7 @@ class TransactionListViewModelTest {
                 status = Success,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
-                dateTimeText = "",
+                dateTimeText = Date(0).formatBackendDate(),
                 method = METHOD_REMOVE_OWNER,
                 alpha = OPACITY_FULL
             ),
@@ -836,7 +858,7 @@ class TransactionListViewModelTest {
                 recipient = defaultToAddress,
                 sender = defaultFromAddress,
                 value = BigInteger.ONE,
-                date = Date(),
+                date = Date(0),
                 tokenInfo = ETH_SERVICE_TOKEN_INFO,
                 nonce = defaultNonce
             )
@@ -850,7 +872,7 @@ class TransactionListViewModelTest {
         recipient: Solidity.Address = defaultToAddress,
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
-        date: Date = Date(),
+        date: Date = Date(0),
         serviceTokenInfo: ServiceTokenInfo = ETH_SERVICE_TOKEN_INFO,
         nonce: BigInteger = defaultNonce
     ): Transaction =
@@ -869,7 +891,7 @@ class TransactionListViewModelTest {
         status: TransactionStatus = Success,
         confirmations: Int? = 0,
         value: BigInteger = BigInteger.ZERO,
-        date: String = "",
+        date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
         address: Solidity.Address = defaultToAddress,
         dataSize: Long = 0
@@ -887,7 +909,7 @@ class TransactionListViewModelTest {
     private fun buildSettingsChange(
         status: TransactionStatus = Success,
         confirmations: Int = 0,
-        date: String = "",
+        date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
         dataDecoded: DataDecodedDto = buildDataDecodedDto()
     ): Transaction =
@@ -927,4 +949,13 @@ class TransactionListViewModelTest {
             null,
             BigInteger.TEN
         )
+}
+
+fun Any.initThreeTen() {
+    if (ZoneRulesProvider.getAvailableZoneIds().isEmpty()) {
+        val stream = this.javaClass.classLoader!!.getResourceAsStream("TZDB.dat")
+        stream.use(::TzdbZoneRulesProvider).apply {
+            ZoneRulesProvider.registerProvider(this)
+        }
+    }
 }
