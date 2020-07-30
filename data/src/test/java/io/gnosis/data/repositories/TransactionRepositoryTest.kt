@@ -256,7 +256,7 @@ class TransactionRepositoryTest {
         with(actual.results[0] as Transaction.Custom) {
             assertEquals(transactionDto.to, address)
             assertEquals(0L, dataSize)
-            assertEquals(TransactionStatus.Failed, status)
+            assertEquals(TransactionStatus.FAILED, status)
         }
     }
 
@@ -414,7 +414,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
-        assertEquals(TransactionStatus.Success, actual.results[0].status)
+        assertEquals(TransactionStatus.SUCCESS, actual.results[0].status)
     }
 
     @Test
@@ -424,7 +424,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
-        assertEquals(TransactionStatus.Success, actual.results[0].status)
+        assertEquals(TransactionStatus.SUCCESS, actual.results[0].status)
     }
 
     @Test
@@ -434,7 +434,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
-        assertEquals(TransactionStatus.Success, actual.results[0].status)
+        assertEquals(TransactionStatus.SUCCESS, actual.results[0].status)
     }
 
     @Test
@@ -444,7 +444,7 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
-        assertEquals(TransactionStatus.Failed, actual.results[0].status)
+        assertEquals(TransactionStatus.FAILED, actual.results[0].status)
     }
 
     @Test
@@ -455,7 +455,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, defaultSafeInfo)
 
-            assertEquals(TransactionStatus.Cancelled, actual.results[0].status)
+            assertEquals(TransactionStatus.CANCELLED, actual.results[0].status)
         }
 
     @Test
@@ -469,7 +469,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
 
-            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+            assertEquals(TransactionStatus.AWAITING_EXECUTION, actual.results[0].status)
         }
 
     @Test
@@ -483,7 +483,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
 
-            assertEquals(TransactionStatus.AwaitingExecution, actual.results[0].status)
+            assertEquals(TransactionStatus.AWAITING_EXECUTION, actual.results[0].status)
         }
 
     @Test
@@ -497,7 +497,7 @@ class TransactionRepositoryTest {
 
             val actual = transactionRepository.getTransactions(defaultSafeAddress, safeInfo)
 
-            assertEquals(TransactionStatus.AwaitingConfirmations, actual.results[0].status)
+            assertEquals(TransactionStatus.AWAITING_CONFIRMATIONS, actual.results[0].status)
         }
 
     private fun buildMultisigTransactionDto(

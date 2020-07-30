@@ -10,8 +10,6 @@ import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class TransactionRepository(
     private val gatewayApi: GatewayApi
@@ -82,18 +80,18 @@ class TransactionRepository(
     private fun TransferInfo.tokenInfo(): ServiceTokenInfo? =
         when (this) {
             is Erc20Transfer -> ServiceTokenInfo(
-                address = tokenAddress,
+                address = token_address,
                 decimals = decimals ?: 0,
-                symbol = tokenSymbol.orEmpty(),
-                name = tokenName.orEmpty(),
-                logoUri = logoUri,
+                symbol = token_symbol.orEmpty(),
+                name = token_name.orEmpty(),
+                logoUri = logo_uri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
             is Erc721Transfer -> ServiceTokenInfo(
-                address = tokenAddress,
-                symbol = tokenSymbol.orEmpty(),
-                name = tokenName.orEmpty(),
-                logoUri = logoUri,
+                address = token_address,
+                symbol = token_symbol.orEmpty(),
+                name = token_name.orEmpty(),
+                logoUri = logo_uri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
             else -> null

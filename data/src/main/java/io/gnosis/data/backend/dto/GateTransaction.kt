@@ -57,21 +57,21 @@ interface TransferInfo {
 
 data class Erc20Transfer(
     override val type: GateTransferType = GateTransferType.ERC20,
-    val tokenAddress: Solidity.Address,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?,
+    val token_address: Solidity.Address,
+    val token_name: String?,
+    val token_symbol: String?,
+    val logo_uri: String?,
     val decimals: Int?,
     val value: String
 ) : TransferInfo
 
 data class Erc721Transfer(
     override val type: GateTransferType = GateTransferType.ERC721,
-    val tokenAddress: Solidity.Address,
-    val tokenId: String,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?
+    val token_address: Solidity.Address,
+    val token_id: String,
+    val token_name: String?,
+    val token_symbol: String?,
+    val logo_uri: String?
 ) : TransferInfo
 
 data class EtherTransfer(

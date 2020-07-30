@@ -5,6 +5,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.repositories.TransactionRepository
 import pm.gnosis.model.Solidity
+import timber.log.Timber
 
 
 class TransactionPagingSource(
@@ -28,8 +29,8 @@ class TransactionPagingSource(
             )
         }
             .onFailure {
+                Timber.e(it)
                 return LoadResult.Error(it)
-
             }
 
         throw IllegalStateException(javaClass.name)
