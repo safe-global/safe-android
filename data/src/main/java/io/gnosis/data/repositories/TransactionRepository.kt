@@ -1,17 +1,25 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.backend.dto.Custom
+import io.gnosis.data.backend.dto.Erc20Transfer
+import io.gnosis.data.backend.dto.Erc721Transfer
+import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.SettingsChange
+import io.gnosis.data.backend.dto.TransactionDirection
+import io.gnosis.data.backend.dto.Transfer
+import io.gnosis.data.backend.dto.TransferInfo
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.Transaction
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class TransactionRepository(
     private val gatewayApi: GatewayApi
@@ -49,7 +57,8 @@ class TransactionRepository(
                 recipient = txInfo.recipient,
                 sender = txInfo.sender,
                 value = txInfo.transferInfo.value().toBigInteger(),
-                tokenInfo = txInfo.transferInfo.tokenInfo()
+                tokenInfo = txInfo.transferInfo.tokenInfo(),
+                incoming = txInfo.direction == TransactionDirection.INCOMING
             )
             is SettingsChange -> Transaction.SettingsChange(
                 status = txStatus,
@@ -99,10 +108,7 @@ class TransactionRepository(
             else -> null
         }
 
-    private fun Long.toDate(): String =
-        with(SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")) {
-            format(Date().apply { time = this@toDate })
-        }
+    private fun Long.toDate(): Date = Date(this)
 
 }
 

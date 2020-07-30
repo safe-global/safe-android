@@ -10,9 +10,9 @@ import java.util.*
 
 internal val transferInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())
-        .withSubtype(Erc20Transfer::class.java, TransferType.ERC20_TRANSFER.name)
-        .withSubtype(Erc721Transfer::class.java, TransferType.ERC721_TRANSFER.name)
-        .withSubtype(EtherTransfer::class.java, TransferType.ETHER_TRANSFER.name)
+        .withSubtype(Erc20Transfer::class.java, GateTransferType.ERC20.name)
+        .withSubtype(Erc721Transfer::class.java, GateTransferType.ERC721.name)
+        .withSubtype(EtherTransfer::class.java, GateTransferType.ETHER.name)
 
 internal val transactionInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, TransactionInfo::type::name.get())

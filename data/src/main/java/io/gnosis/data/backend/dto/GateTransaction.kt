@@ -43,9 +43,15 @@ data class Transfer(
     override val type: GateTransactionType = GateTransactionType.Transfer,
     val sender: Solidity.Address,
     val recipient: Solidity.Address,
-    val transferInfo: TransferInfo
+    val transferInfo: TransferInfo,
+    val direction : TransactionDirection
 ) : TransactionInfo
 
+enum class TransactionDirection {
+    INCOMING,
+    OUTGOING,
+    UNKNOWN
+}
 
 enum class GateTransferType {
     ERC20, ERC721, ETHER

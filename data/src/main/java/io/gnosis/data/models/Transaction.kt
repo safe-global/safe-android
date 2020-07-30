@@ -43,10 +43,10 @@ sealed class Transaction {
 }
 
 enum class TransactionStatus() {
-    AwaitingConfirmations,
-    AwaitingExecution,
-    Cancelled,
-    Failed,
-    Success,
-    Pending // Not supported yet as these correspond to the ones issued from the device
+    AWAITING_CONFIRMATIONS,
+    AWAITING_EXECUTION,
+    CANCELLED,
+    FAILED,
+    SUCCESS,
+    PENDING // Not supported yet as these correspond to the ones issued from the device
 }

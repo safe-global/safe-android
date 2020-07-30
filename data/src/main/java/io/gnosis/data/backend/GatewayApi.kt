@@ -4,13 +4,12 @@ import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.models.Page
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface GatewayApi {
 
-    @GET("transactions/{address}")
-    suspend fun loadTransactions(@Path("address") address: String, @Query("next") next: String? = null): Page<GateTransactionDto>
+    @GET("v1/safes/{address}/transactions")
+    suspend fun loadTransactions(@Path("address") address: String): Page<GateTransactionDto>
 
     @GET
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<GateTransactionDto>
