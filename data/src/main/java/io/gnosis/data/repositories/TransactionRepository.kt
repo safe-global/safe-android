@@ -222,14 +222,14 @@ class TransactionRepository(
             nonce = null, // Ethereum txs do not have a nonce
             address = transaction.to,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = transaction.blockTimestamp,
+            date = transaction.blockTimestamp?.formatBackendDate(),
             value = transaction.value ?: BigInteger.ZERO
         )
 
     private fun custom(transaction: TransactionDto): Transaction.Custom {
         val status = TransactionStatus.Success
         val confirmations = 0
-        val date = null
+        val date = null //as LocalDateTime?
 
         return Transaction.Custom(
             status = status,

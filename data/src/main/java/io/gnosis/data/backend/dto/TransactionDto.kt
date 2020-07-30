@@ -2,6 +2,7 @@ package io.gnosis.data.backend.dto
 
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
+import java.util.*
 
 interface TransactionDto {
     val txType: TransactionType?
@@ -26,10 +27,10 @@ data class MultisigTransactionDto(
     val nonce: BigInteger,
     val isExecuted: Boolean,
     val isSuccessful: Boolean? = null,
-    val executionDate: String? = null,
-    val submissionDate: String? = null,
-    val creationDate: String? = null,
-    val modified: String? = null,
+    val executionDate: Date? = null,
+    val submissionDate: Date? = null,
+    val creationDate: Date? = null,
+    val modified: Date? = null,
     val blockNumber: BigInteger? = null,
     val transfers: List<TransferDto>? = null,
     val confirmations: List<ConfirmationDto>? = null
@@ -41,7 +42,7 @@ data class EthereumTransactionDto(
     override val data: String? = null,
     val from: Solidity.Address,
     val value: BigInteger?,
-    val blockTimestamp: String?,
+    val blockTimestamp: Date?,
     val txHash: String,
     val transfers: List<TransferDto>?
 ) : TransactionDto
@@ -57,7 +58,7 @@ data class ModuleTransactionDto(
     override val to: Solidity.Address,
     override val data: String? = null,
     val nonce: BigInteger? = null,
-    val created: String? = null,
+    val created: Date? = null,
     val blockNumber: BigInteger? = null,
     val transactionHash: String? = null,
     val safe: Solidity.Address,
@@ -71,7 +72,7 @@ data class TransferDto(
     val to: Solidity.Address,
     val from: Solidity.Address,
     val type: TransferType,
-    val executionDate: String? = null,
+    val executionDate: Date? = null,
     val value: BigInteger?,
     val tokenAddress: String? = null,
     val tokenInfo: ServiceTokenInfo? = null,

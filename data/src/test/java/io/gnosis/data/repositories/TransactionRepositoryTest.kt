@@ -1,5 +1,6 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.adapters.initThreeTen
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.Page
@@ -22,9 +23,12 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
+import java.util.*
 
 class TransactionRepositoryTest {
-
+    init {
+        initThreeTen()
+    }
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private val transactionRepository = TransactionRepository(transactionServiceApi)
@@ -266,16 +270,16 @@ class TransactionRepositoryTest {
             transfers = listOf(
                 buildTransferDto(
                     TransferType.ERC20_TRANSFER,
-                    executionDate = "2020-05-25T13:37:53Z",
+                    executionDate = Date(),
                     tokenInfo = buildErc20ServiceTokenInfo()
                 ),
                 buildTransferDto(
                     TransferType.ERC721_TRANSFER,
-                    executionDate = "2020-05-25T13:37:54Z",
+                    executionDate = Date(),
                     value = BigInteger.ONE,
                     tokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO
                 ),
-                buildTransferDto(executionDate = "2020-05-25T13:37:55Z")
+                buildTransferDto(executionDate = Date())
             )
         )
         val pagedResult = listOf(transactionDto)
@@ -549,7 +553,7 @@ class TransactionRepositoryTest {
     private fun buildTransferDto(
         type: TransferType = TransferType.ETHER_TRANSFER,
         value: BigInteger = BigInteger.TEN,
-        executionDate: String = "2020-05-25T13:37:52Z",
+        executionDate: Date = Date(),
         tokenInfo: ServiceTokenInfo? = null
     ): TransferDto =
         TransferDto(

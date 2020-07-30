@@ -2,6 +2,7 @@ package io.gnosis.safe
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.jakewharton.threetenabp.AndroidThreeTen
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
@@ -23,6 +24,7 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     override fun onCreate() {
         super.onCreate()
+        AndroidThreeTen.init(this)
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         }

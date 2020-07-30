@@ -74,4 +74,5 @@ dependencies {
 
     testImplementation "androidx.room:room-testing:$versions.androidx_room"
 
+    implementation "com.jakewharton.threetenabp:threetenabp:$versions.threetenabp"
 }
