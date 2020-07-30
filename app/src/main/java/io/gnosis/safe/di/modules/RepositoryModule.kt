@@ -2,6 +2,7 @@ package io.gnosis.safe.di.modules
 
 import dagger.Module
 import dagger.Provides
+import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.db.daos.SafeDao
@@ -53,6 +54,6 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providesTransactionRepository(transactionServiceApi: TransactionServiceApi): TransactionRepository =
-        TransactionRepository(transactionServiceApi)
+    fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
+        TransactionRepository(gatewayApi)
 }
