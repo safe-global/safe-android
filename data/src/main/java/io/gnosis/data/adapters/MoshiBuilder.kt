@@ -6,13 +6,6 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.backend.dto.*
 import pm.gnosis.common.adapters.moshi.*
 
-internal val transactionDtoAdapter =
-    PolymorphicJsonAdapterFactory.of(TransactionDto::class.java, TransactionDto::txType::name.get())
-        .withSubtype(MultisigTransactionDto::class.java, TransactionType.MULTISIG_TRANSACTION.name)
-        .withSubtype(EthereumTransactionDto::class.java, TransactionType.ETHEREUM_TRANSACTION.name)
-        .withSubtype(ModuleTransactionDto::class.java, TransactionType.MODULE_TRANSACTION.name)
-        .withDefaultValue(UnknownTransactionDto)
-
 internal val transferInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())
         .withSubtype(Erc20Transfer::class.java, TransferType.ERC20_TRANSFER.name)
@@ -36,6 +29,5 @@ val dataMoshi =
         .add(OperationEnumAdapter())
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
-//        .add(transactionDtoAdapter)
         .add(KotlinJsonAdapterFactory())
         .build()
