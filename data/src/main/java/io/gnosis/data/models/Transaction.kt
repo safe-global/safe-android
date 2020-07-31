@@ -37,7 +37,8 @@ sealed class Transaction {
         val value: BigInteger,
         val date: String?,
         val tokenInfo: ServiceTokenInfo?,
-        val nonce: BigInteger?
+        val nonce: BigInteger?,
+        val incoming: Boolean
     ) : Transaction()
 }
 

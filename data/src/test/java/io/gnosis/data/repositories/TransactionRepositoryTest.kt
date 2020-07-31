@@ -119,7 +119,7 @@ class TransactionRepositoryTest {
             dataDecodedDto = DataDecodedDto(
                 "transfer",
                 listOf(
-                    ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("to", "address", defaultSafeAddress.asEthereumAddressChecksumString()),
                     ParamsDto("value", "uint256", defaultValue.asDecimalString())
                 )
             ),
@@ -135,10 +135,11 @@ class TransactionRepositoryTest {
         with(actual.results[0] as Transaction.Transfer) {
             assertEquals("Correct value expected: ", defaultValue, value)
             assertEquals("Correct date expected: ", transactionDto.creationDate, date)
-            assertEquals("Correct safe expected: ", transactionDto.safe, sender)
-            assertEquals("Correct to expected: ", transactionDto.to, recipient)
+            assertEquals("Correct safe expected: ", defaultSafeAddress, sender)
+            assertEquals("Correct to expected: ", defaultSafeAddress, recipient)
             //  TODO: check for right transfer type
             assertEquals(erc20ServiceTokenInfo, tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
     }
 
@@ -150,7 +151,7 @@ class TransactionRepositoryTest {
                 "transferFrom",
                 listOf(
                     ParamsDto("from", "address", defaultFromAddress.asEthereumAddressChecksumString()),
-                    ParamsDto("to", "address", defaultToAddress.asEthereumAddressChecksumString()),
+                    ParamsDto("to", "address", defaultSafeAddress.asEthereumAddressChecksumString()),
                     ParamsDto("value", "uint256", defaultValue.asDecimalString())
                 )
             )
@@ -166,9 +167,10 @@ class TransactionRepositoryTest {
             assertEquals("Correct value expected: ", defaultValue, value)
             assertEquals("Correct date expected: ", transactionDto.creationDate, date)
             assertEquals("Correct sender expected: ", transactionDto.dataDecoded?.parameters?.getValueByName("from")?.asEthereumAddress(), sender)
-            assertEquals("Correct to expected: ", transactionDto.to, recipient)
+            assertEquals("Correct recipient expected: ", defaultSafeAddress, recipient)
             //  TODO: check for right transfer type
             assertEquals(ERC20_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals("Incoming tx expected: ", true, incoming)
         }
     }
 
@@ -199,6 +201,7 @@ class TransactionRepositoryTest {
             assertEquals(defaultFromAddress.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(defaultToAddress.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
     }
 
@@ -218,6 +221,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.safe, sender)
             assertEquals(transactionDto.to, recipient)
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
     }
 
@@ -292,6 +296,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(buildErc20ServiceTokenInfo(), tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
         with(actual.results[1] as Transaction.Transfer) {
             assertEquals(BigInteger.ONE, value)
@@ -299,6 +304,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ERC721_FALLBACK_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
         with(actual.results[2] as Transaction.Transfer) {
             val transferDto = transactionDto.transfers?.get(2)
@@ -307,6 +313,7 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.from.asEthereumAddressChecksumString(), sender.asEthereumAddressChecksumString())
             assertEquals(transactionDto.to.asEthereumAddressChecksumString(), recipient.asEthereumAddressChecksumString())
             assertEquals(ETH_SERVICE_TOKEN_INFO, tokenInfo)
+            assertEquals("Outgoing tx expected: ", false, incoming)
         }
     }
 
@@ -330,7 +337,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getTransactions (ethereum transaction with no transfers and no data with value) should return ETH transfer of value`() = runBlockingTest {
-        val transactionDto = buildEthereumTransactionDto(data = "0x")
+        val transactionDto = buildEthereumTransactionDto(data = "0x", to = defaultSafeAddress)
         val pagedResult = listOf(transactionDto)
         coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
@@ -343,13 +350,14 @@ class TransactionRepositoryTest {
             assertEquals(transactionDto.from, sender)
             assertEquals(transactionDto.value, value)
             assertEquals(transactionDto.blockTimestamp, date)
+            assertEquals("Incoming tx expected: ", true, incoming)
         }
     }
 
     @Test
     fun `getTransactions (ethereum transaction with no transfers and no data with no value) should return ETH transfer of 0 value`() =
         runBlockingTest {
-            val transactionDto = buildEthereumTransactionDto(value = BigInteger.ZERO)
+            val transactionDto = buildEthereumTransactionDto(value = BigInteger.ZERO, to = defaultSafeAddress)
             val pagedResult = listOf(transactionDto)
             coEvery { transactionServiceApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
@@ -362,6 +370,7 @@ class TransactionRepositoryTest {
                 assertEquals(transactionDto.from, sender)
                 assertEquals(transactionDto.value, value)
                 assertEquals(transactionDto.blockTimestamp, date)
+                assertEquals("Incoming tx expected: ", true, incoming)
             }
         }
 

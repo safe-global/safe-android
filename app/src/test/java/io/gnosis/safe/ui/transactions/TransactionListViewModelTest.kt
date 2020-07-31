@@ -829,7 +829,7 @@ class TransactionListViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(status, 2, defaultToAddress, defaultFromAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce)
+            Transaction.Transfer(status, 2, defaultToAddress, defaultFromAddress, BigInteger.ONE, "", ETH_SERVICE_TOKEN_INFO, defaultNonce, false)
         }
         return Page(1, "", "", transfers)
     }
@@ -852,7 +852,8 @@ class TransactionListViewModelTest {
             value = value,
             date = date,
             tokenInfo = serviceTokenInfo,
-            nonce = nonce
+            nonce = nonce,
+            incoming = defaultSafeAddress == recipient
         )
 
     private fun buildCustom(

@@ -35,9 +35,9 @@ class TransactionRepository(
                     is ModuleTransactionDto -> add(custom(transactionDto))
                     is EthereumTransactionDto -> {
                         when {
-                            !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it) })
+                            !transactionDto.transfers.isNullOrEmpty() -> addAll(transactionDto.transfers.map { transfer(it, safeInfo) })
                             transactionDto.transfers.isNullOrEmpty() && !transactionDto.data.hexStringNullOrEmpty() -> add(custom(transactionDto))
-                            else -> add(transfer(transactionDto))
+                            else -> add(transfer(transactionDto, safeInfo))
                         }
                     }
                     is MultisigTransactionDto -> {
@@ -76,35 +76,37 @@ class TransactionRepository(
                 SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
-    private fun transfer(transferDto: TransferDto): Transaction.Transfer {
-        val tokenInfo = serviceTokenInfo(transferDto)
+    private fun transfer(transfer: TransferDto, safeInfo: SafeInfo): Transaction.Transfer {
+        val tokenInfo = serviceTokenInfo(transfer)
         val value = when (tokenInfo.type) {
             ServiceTokenInfo.TokenType.ERC721 -> BigInteger.ONE
-            else -> transferDto.value ?: BigInteger.ZERO
+            else -> transfer.value ?: BigInteger.ZERO
         }
         return Transaction.Transfer(
             TransactionStatus.Success,
             null,
-            transferDto.to,
-            transferDto.from,
+            transfer.to,
+            transfer.from,
             value,
-            transferDto.executionDate?.formatBackendDate(),
+            transfer.executionDate?.formatBackendDate(),
             tokenInfo,
-            null
+            null,
+            transfer.isIncoming(safeInfo)
         )
     }
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
-    private fun transfer(transaction: EthereumTransactionDto): Transaction.Transfer =
+    private fun transfer(ethereumTransaction: EthereumTransactionDto, safeInfo: SafeInfo): Transaction.Transfer =
         Transaction.Transfer(
             TransactionStatus.Success,
             null,
-            transaction.to,
-            transaction.from,
-            transaction.value ?: BigInteger.ZERO,
-            transaction.blockTimestamp?.formatBackendDate(),
+            ethereumTransaction.to,
+            ethereumTransaction.from,
+            ethereumTransaction.value ?: BigInteger.ZERO,
+            ethereumTransaction.blockTimestamp?.formatBackendDate(),
             ETH_SERVICE_TOKEN_INFO,
-            null
+            null,
+            ethereumTransaction.isIncoming(safeInfo)
         )
 
     // when contractInfo is available have when for ETH, ERC20 and ERC721
@@ -117,7 +119,8 @@ class TransactionRepository(
             transaction.value,
             transaction.bestAvailableDate(),
             ETH_SERVICE_TOKEN_INFO,
-            transaction.nonce
+            transaction.nonce,
+            transaction.isIncoming(safeInfo)
         )
 
     private fun transferErc20(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.Transfer {
@@ -137,7 +140,8 @@ class TransactionRepository(
             value,
             transaction.bestAvailableDate(),
             tokenInfo,
-            transaction.nonce
+            transaction.nonce,
+            transaction.isIncoming(safeInfo)
         )
     }
 
@@ -156,7 +160,8 @@ class TransactionRepository(
             value,
             transaction.bestAvailableDate(),
             tokenInfo,
-            transaction.nonce
+            transaction.nonce,
+            transaction.isIncoming(safeInfo)
         )
     }
 
@@ -252,6 +257,38 @@ class TransactionRepository(
             else -> TransactionStatus.AwaitingExecution
         }
 }
+
+private fun TransferDto.isIncoming(safeInfo: SafeInfo): Boolean {
+    if (to == safeInfo.address && from != safeInfo.address) {
+        return true
+    }
+    return false
+}
+
+private fun EthereumTransactionDto.isIncoming(safeInfo: SafeInfo): Boolean {
+    if (to == safeInfo.address && from != safeInfo.address) {
+        return true
+    }
+    return false
+}
+
+private fun MultisigTransactionDto.isIncoming(safeInfo: SafeInfo): Boolean {
+    if (dataDecoded?.method == "transfer") {
+        return false
+    } else if (dataDecoded?.method == "transferFrom" || dataDecoded?.method == "safeTransferFrom") {
+        val from = dataDecoded.parameters?.getValueByName("from")?.asEthereumAddress()
+        val to = dataDecoded.parameters?.getValueByName("to")?.asEthereumAddress()
+
+        if (from != safeInfo.address && to == safeInfo.address) {
+            return true
+        }
+        return false
+    } else {
+        // unknown method
+        return false
+    }
+}
+
 
 fun List<ParamsDto>?.getValueByName(name: String): String? {
     this?.map {
