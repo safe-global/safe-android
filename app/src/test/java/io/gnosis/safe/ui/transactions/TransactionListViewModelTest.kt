@@ -28,7 +28,6 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERV
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.data.utils.formatBackendDate
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.R
 import io.gnosis.safe.TestLifecycleRule
@@ -38,6 +37,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.utils.formatBackendDate
 import io.mockk.Called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -81,7 +81,6 @@ class TransactionListViewModelTest {
     private val defaultSafe = Safe(defaultSafeAddress, defaultSafeName)
     private val defaultThreshold: Int = 2
     private val defaultNonce: BigInteger = BigInteger.ONE
-    private val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
     @Test
     fun `init - (no active safe change) should emit Loading`() {

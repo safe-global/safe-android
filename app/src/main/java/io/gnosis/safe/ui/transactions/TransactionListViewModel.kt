@@ -24,11 +24,11 @@ import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.getValueByName
-import io.gnosis.data.utils.formatBackendDate
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.utils.formatBackendDate
 import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
