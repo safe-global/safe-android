@@ -33,6 +33,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.initThreeTen
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
@@ -48,8 +49,6 @@ import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.threeten.bp.zone.TzdbZoneRulesProvider
-import org.threeten.bp.zone.ZoneRulesProvider
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -60,6 +59,7 @@ class TransactionListViewModelTest {
     init {
         initThreeTen()
     }
+
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
 
@@ -116,7 +116,6 @@ class TransactionListViewModelTest {
         coVerify(exactly = 1) { safeRepository.activeSafeFlow() }
         coVerify { transactionRepository wasNot Called }
     }
-
 
     @Test
     fun `load - (active safe with transactions) should emit LoadTransaction`() {
@@ -948,13 +947,4 @@ class TransactionListViewModelTest {
             null,
             BigInteger.TEN
         )
-}
-
-fun Any.initThreeTen() {
-    if (ZoneRulesProvider.getAvailableZoneIds().isEmpty()) {
-        val stream = this.javaClass.classLoader!!.getResourceAsStream("TZDB.dat")
-        stream.use(::TzdbZoneRulesProvider).apply {
-            ZoneRulesProvider.registerProvider(this)
-        }
-    }
 }

@@ -1,6 +1,6 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.safe.ui.transactions.initThreeTen
+import io.gnosis.safe.initThreeTen
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.ZoneId
