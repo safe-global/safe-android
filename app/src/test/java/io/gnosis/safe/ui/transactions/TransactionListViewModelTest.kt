@@ -858,7 +858,8 @@ class TransactionListViewModelTest {
                 value = BigInteger.ONE,
                 date = Date(0),
                 tokenInfo = ETH_SERVICE_TOKEN_INFO,
-                nonce = defaultNonce
+                nonce = defaultNonce,
+                incoming = false
             )
         }
         return Page(1, "", "", transfers)
@@ -882,7 +883,8 @@ class TransactionListViewModelTest {
             value = value,
             date = date,
             tokenInfo = serviceTokenInfo,
-            nonce = nonce
+            nonce = nonce,
+            incoming = defaultSafeAddress == recipient
         )
 
     private fun buildCustom(
@@ -938,13 +940,4 @@ class TransactionListViewModelTest {
         decimals = 0,
         logoUri = "local::ethereum"
     )
-
-    private fun buildMockSettingsChange(): Transaction.SettingsChange =
-        Transaction.SettingsChange(
-            Success,
-            2,
-            DataDecodedDto("method", emptyList()),
-            null,
-            BigInteger.TEN
-        )
 }
