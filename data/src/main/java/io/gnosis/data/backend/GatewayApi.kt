@@ -15,6 +15,6 @@ interface GatewayApi {
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<GateTransactionDto>
 
     companion object {
-        const val BASE_URL = "https://safe-client-gateway.herokuapp.com/"
+        const val BASE_URL = "https://safe-client-gateway.herokuapp.com/v1/"
     }
 }
