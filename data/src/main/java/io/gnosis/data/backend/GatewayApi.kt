@@ -9,13 +9,13 @@ import retrofit2.http.Url
 
 interface GatewayApi {
 
-    @GET("transactions/{address}")
+    @GET("safes/{address}/transactions")
     suspend fun loadTransactions(@Path("address") address: String, @Query("next") next: String? = null): Page<GateTransactionDto>
 
     @GET
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<GateTransactionDto>
 
     companion object {
-        const val BASE_URL = "https://safe-client-gateway.herokuapp.com/"
+        const val BASE_URL = "https://safe-client-gateway.herokuapp.com/v1/"
     }
 }

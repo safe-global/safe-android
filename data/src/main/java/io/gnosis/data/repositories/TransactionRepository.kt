@@ -1,8 +1,18 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.backend.dto.Custom
+import io.gnosis.data.backend.dto.Erc20Transfer
+import io.gnosis.data.backend.dto.Erc721Transfer
+import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.SettingsChange
+import io.gnosis.data.backend.dto.Transfer
+import io.gnosis.data.backend.dto.TransferInfo
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.Transaction
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
@@ -80,18 +90,18 @@ class TransactionRepository(
     private fun TransferInfo.tokenInfo(): ServiceTokenInfo? =
         when (this) {
             is Erc20Transfer -> ServiceTokenInfo(
-                address = token_address,
+                address = tokenAddress,
                 decimals = decimals ?: 0,
-                symbol = token_symbol.orEmpty(),
-                name = token_name.orEmpty(),
-                logoUri = logo_uri,
+                symbol = tokenSymbol.orEmpty(),
+                name = tokenName.orEmpty(),
+                logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
             is Erc721Transfer -> ServiceTokenInfo(
-                address = token_address,
-                symbol = token_symbol.orEmpty(),
-                name = token_name.orEmpty(),
-                logoUri = logo_uri,
+                address = tokenAddress,
+                symbol = tokenSymbol.orEmpty(),
+                name = tokenName.orEmpty(),
+                logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
             else -> null
