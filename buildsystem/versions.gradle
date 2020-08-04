@@ -44,7 +44,6 @@ ext {
             retrofit                        : '2.6.2',
             status_keycard                  : '3.0.1',
             svalinn                         : 'v0.12.1',
-            threetenabp                     : '1.2.4',
             timber                          : '4.7.1',
             wallet_connect                  : '0.9.6',
             zxing                           : '3.3.1',

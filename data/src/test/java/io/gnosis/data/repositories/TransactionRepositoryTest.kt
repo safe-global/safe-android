@@ -39,9 +39,7 @@ import java.math.BigInteger
 import java.util.*
 
 class TransactionRepositoryTest {
-//    init {
-//        initThreeTen()
-//    }
+
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private val transactionRepository = TransactionRepository(transactionServiceApi)
