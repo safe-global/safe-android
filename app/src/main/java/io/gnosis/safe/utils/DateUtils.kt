@@ -1,9 +1,9 @@
 package io.gnosis.safe.utils
 
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
 fun Date.formatBackendDate(zoneId : ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String {

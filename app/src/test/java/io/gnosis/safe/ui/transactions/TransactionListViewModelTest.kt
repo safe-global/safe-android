@@ -33,7 +33,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.initThreeTen
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
@@ -56,10 +55,6 @@ import java.math.BigInteger
 import java.util.*
 
 class TransactionListViewModelTest {
-    init {
-        initThreeTen()
-    }
-
     @get:Rule
     val coroutineScope = MainCoroutineScopeRule()
 

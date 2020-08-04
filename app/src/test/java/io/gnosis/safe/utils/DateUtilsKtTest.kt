@@ -1,16 +1,11 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.safe.initThreeTen
 import junit.framework.Assert.assertEquals
 import org.junit.Test
-import org.threeten.bp.ZoneId
+import java.time.ZoneId
 import java.util.*
 
 class DateUtilsKtTest {
-    init {
-        initThreeTen()
-    }
-
     @Test
     fun `formatBackendDate (german locale and europe timezone) should return german date string`() {
         val result = Date(0).formatBackendDate(ZoneId.of("CET"), Locale.GERMAN)
