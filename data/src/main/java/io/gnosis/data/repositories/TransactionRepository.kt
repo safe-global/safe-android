@@ -14,6 +14,7 @@ import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
@@ -105,10 +106,7 @@ class TransactionRepository(
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
-            //TODO: missing branch for ETHER
-//            is EtherTransfer -> ServiceTokenInfo(
-//
-//            )
+            is EtherTransfer -> ETH_SERVICE_TOKEN_INFO
             else -> null
         }
 
