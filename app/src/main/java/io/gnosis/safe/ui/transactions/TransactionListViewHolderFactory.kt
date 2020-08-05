@@ -224,11 +224,11 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
+            nonce.text = viewTransfer.nonce
 
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE
-            nonce.text = viewTransfer.nonce
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             version.visibility = viewTransfer.visibilityVersion
