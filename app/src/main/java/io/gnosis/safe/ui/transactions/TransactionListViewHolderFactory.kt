@@ -6,7 +6,13 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.*
+import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
+import io.gnosis.safe.databinding.ItemTxQueuedChangeMastercopyBinding
+import io.gnosis.safe.databinding.ItemTxQueuedSettingsChangeBinding
+import io.gnosis.safe.databinding.ItemTxQueuedTransferBinding
+import io.gnosis.safe.databinding.ItemTxSectionHeaderBinding
+import io.gnosis.safe.databinding.ItemTxSettingsChangeBinding
+import io.gnosis.safe.databinding.ItemTxTransferBinding
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
@@ -135,7 +141,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            finalStatus.text = viewTransfer.status.name
+            finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
@@ -176,7 +182,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {
-            finalStatus.text = viewTransfer.status.name
+            finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
@@ -268,7 +274,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code)
 
-            finalStatus.text = viewTransfer.status.name
+            finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText

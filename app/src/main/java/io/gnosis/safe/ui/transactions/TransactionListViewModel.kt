@@ -77,7 +77,7 @@ class TransactionListViewModel
         }
     }
 
-    fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo, forceLoad: Boolean): Flow<PagingData<TransactionView>> {
+    private fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo, forceLoad: Boolean): Flow<PagingData<TransactionView>> {
 
         val lastResult = currentSafeTxItems
         if (!forceLoad && safe == currentSafeAddress && lastResult != null) {
@@ -206,12 +206,12 @@ class TransactionListViewModel
 
     private fun isCompleted(status: TransactionStatus): Boolean =
         when (status) {
-            TransactionStatus.AwaitingConfirmations,
-            TransactionStatus.AwaitingExecution,
-            TransactionStatus.Pending -> false
-            TransactionStatus.Success,
-            TransactionStatus.Failed,
-            TransactionStatus.Cancelled -> true
+            TransactionStatus.AWAITING_CONFIRMATIONS,
+            TransactionStatus.AWAITING_EXECUTION,
+            TransactionStatus.PENDING -> false
+            TransactionStatus.SUCCESS,
+            TransactionStatus.FAILED,
+            TransactionStatus.CANCELLED -> true
         }
 
     private fun historicTransfer(
@@ -319,12 +319,12 @@ class TransactionListViewModel
     @StringRes
     private fun displayString(status: TransactionStatus): Int =
         when (status) {
-            TransactionStatus.AwaitingConfirmations -> R.string.tx_list_awaiting_confirmations
-            TransactionStatus.AwaitingExecution -> R.string.tx_list_awaiting_execution
-            TransactionStatus.Cancelled -> R.string.tx_list_cancelled
-            TransactionStatus.Failed -> R.string.tx_list_failed
-            TransactionStatus.Success -> R.string.tx_list_success
-            TransactionStatus.Pending -> R.string.tx_list_pending
+            TransactionStatus.AWAITING_CONFIRMATIONS -> R.string.tx_list_awaiting_confirmations
+            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_list_awaiting_execution
+            TransactionStatus.CANCELLED -> R.string.tx_list_cancelled
+            TransactionStatus.FAILED -> R.string.tx_list_failed
+            TransactionStatus.SUCCESS -> R.string.tx_list_success
+            TransactionStatus.PENDING -> R.string.tx_list_pending
         }
 
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
@@ -467,18 +467,18 @@ class TransactionListViewModel
 
     private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
-            TransactionStatus.Success -> R.color.safe_green
-            TransactionStatus.Cancelled -> R.color.dark_grey
-            TransactionStatus.AwaitingExecution,
-            TransactionStatus.AwaitingConfirmations,
-            TransactionStatus.Pending -> R.color.safe_pending_orange
+            TransactionStatus.SUCCESS -> R.color.safe_green
+            TransactionStatus.CANCELLED -> R.color.dark_grey
+            TransactionStatus.AWAITING_EXECUTION,
+            TransactionStatus.AWAITING_CONFIRMATIONS,
+            TransactionStatus.PENDING -> R.color.safe_pending_orange
             else -> R.color.safe_failed_red
         }
     }
 
     private fun alpha(transaction: Transaction): Float =
         when (transaction.status) {
-            TransactionStatus.Failed, TransactionStatus.Cancelled -> OPACITY_HALF
+            TransactionStatus.FAILED, TransactionStatus.CANCELLED -> OPACITY_HALF
             else -> OPACITY_FULL
         }
 
@@ -510,15 +510,15 @@ data class ActiveSafeChanged(
 object NoSafeSelected : BaseStateViewModel.ViewAction
 
 fun TransactionView.isQueued() = when (status) {
-    TransactionStatus.Pending,
-    TransactionStatus.AwaitingConfirmations,
-    TransactionStatus.AwaitingExecution -> true
+    TransactionStatus.PENDING,
+    TransactionStatus.AWAITING_CONFIRMATIONS,
+    TransactionStatus.AWAITING_EXECUTION -> true
     else -> false
 }
 
 fun TransactionView.isHistory() = when (status) {
-    TransactionStatus.Cancelled,
-    TransactionStatus.Failed,
-    TransactionStatus.Success -> true
+    TransactionStatus.CANCELLED,
+    TransactionStatus.FAILED,
+    TransactionStatus.SUCCESS -> true
     else -> false
 }

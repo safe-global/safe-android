@@ -1,0 +1,16 @@
+{
+  "id": "multisig_0xa9b819d0123858cb3b37a849a2ed3d5c4341bd5ecb55bc7c2983301dc8d3cb5c",
+  "timestamp": 1591356920000,
+  "txStatus": "SUCCESS",
+  "txInfo": {
+    "type": "Custom",
+    "to": "0x2134Bb3DE97813678daC21575E7A77a95079FC51",
+    "dataSize": "0",
+    "value": "3140000000000000000"
+  },
+  "executionInfo": {
+    "nonce": 8,
+    "confirmationsRequired": 2,
+    "confirmationsSubmitted": 2
+  }
+}

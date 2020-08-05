@@ -10,12 +10,12 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.TransactionStatus.AwaitingConfirmations
-import io.gnosis.data.models.TransactionStatus.AwaitingExecution
-import io.gnosis.data.models.TransactionStatus.Cancelled
-import io.gnosis.data.models.TransactionStatus.Failed
-import io.gnosis.data.models.TransactionStatus.Pending
-import io.gnosis.data.models.TransactionStatus.Success
+import io.gnosis.data.models.TransactionStatus.AWAITING_CONFIRMATIONS
+import io.gnosis.data.models.TransactionStatus.AWAITING_EXECUTION
+import io.gnosis.data.models.TransactionStatus.CANCELLED
+import io.gnosis.data.models.TransactionStatus.FAILED
+import io.gnosis.data.models.TransactionStatus.PENDING
+import io.gnosis.data.models.TransactionStatus.SUCCESS
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -150,7 +150,7 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
-        coEvery { transactionRepository.getTransactions(any(), any()) } throws throwable
+        coEvery { transactionRepository.getTransactions(any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
@@ -198,9 +198,9 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = createTransactionListWithStatus(
-            Pending,
-            AwaitingExecution,
-            AwaitingConfirmations
+            PENDING,
+            AWAITING_EXECUTION,
+            AWAITING_CONFIRMATIONS
         )
         val transactionViews =
             transactions.results.map {
@@ -228,7 +228,7 @@ class TransactionListViewModelTest {
 
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
-        val transactions = createTransactionListWithStatus(Pending, Success)
+        val transactions = createTransactionListWithStatus(PENDING, SUCCESS)
         val transactionViews =
             transactions.results.map {
                 transactionsViewModel.getTransactionView(
@@ -256,20 +256,20 @@ class TransactionListViewModelTest {
 
         val transactions = listOf(
             buildTransfer(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 confirmations = 0,
                 serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultToAddress // outgoing
             ),
             buildTransfer(
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 confirmations = 2,
                 serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultSafeAddress // incoming
             ),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = Failed),
+            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
             buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
             buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
             buildTransfer(
@@ -296,7 +296,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.TransferQueued(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
@@ -314,7 +314,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.TransferQueued(
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
@@ -332,7 +332,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Failed,
+                status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0.0001 ETH",
@@ -346,7 +346,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
@@ -360,7 +360,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
@@ -374,7 +374,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+10 ERC20",
@@ -396,8 +396,8 @@ class TransactionListViewModelTest {
         val transactions = listOf(
             buildTransfer(serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
             buildTransfer(serviceTokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = Cancelled),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = Failed)
+            buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = CANCELLED),
+            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
         val transactionViews =
             transactions.map {
@@ -417,7 +417,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.Transfer(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 ERC20",
@@ -431,7 +431,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 NFT",
@@ -445,7 +445,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Cancelled,
+                status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-1 AQER",
@@ -459,7 +459,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
-                status = Failed,
+                status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0.0001 ETH",
@@ -479,11 +479,11 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
 
         val transactions = listOf(
-            buildCustom(status = AwaitingExecution, confirmations = 2),
-            buildCustom(status = AwaitingConfirmations, confirmations = null),
+            buildCustom(status = AWAITING_EXECUTION, confirmations = 2),
+            buildCustom(status = AWAITING_CONFIRMATIONS, confirmations = null),
             buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress),
-            buildCustom(status = Failed),
-            buildCustom(status = Cancelled, value = BigInteger("100000000000000"))
+            buildCustom(status = FAILED),
+            buildCustom(status = CANCELLED, value = BigInteger("100000000000000"))
         )
         val transactionViews =
             transactions.map {
@@ -503,7 +503,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.CustomTransactionQueued(
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
@@ -521,7 +521,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransactionQueued(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
@@ -539,7 +539,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+0.0001 ETH",
@@ -553,7 +553,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
-                status = Failed,
+                status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "0 ETH",
@@ -567,7 +567,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
-                status = Cancelled,
+                status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-0.0001 ETH",
@@ -589,7 +589,7 @@ class TransactionListViewModelTest {
         val transactions = listOf(
             // queued
             buildSettingsChange(
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
@@ -597,22 +597,22 @@ class TransactionListViewModelTest {
                 )
             ),
             buildSettingsChange(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf())
             ),
             buildSettingsChange(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf())
             ),
             buildSettingsChange(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_DISABLE_MODULE,
                     listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
                 )
             ),
             buildSettingsChange(
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
@@ -621,14 +621,14 @@ class TransactionListViewModelTest {
             ),
             // history
             buildSettingsChange(
-                status = Cancelled,
+                status = CANCELLED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_SET_FALLBACK_HANDLER,
                     listOf(ParamsDto("handler", "address", defaultFallbackHandler.asEthereumAddressString()))
                 )
             ),
             buildSettingsChange(
-                status = Success,
+                status = SUCCESS,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
@@ -636,14 +636,14 @@ class TransactionListViewModelTest {
                 )
             ),
             buildSettingsChange(
-                status = Failed,
+                status = FAILED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
                     listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
                 )
             ),
             buildSettingsChange(
-                status = Success,
+                status = SUCCESS,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList())
             )
@@ -667,7 +667,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 label = R.string.tx_list_change_mastercopy,
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -686,7 +686,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -702,7 +702,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 label = R.string.tx_list_set_fallback_handler,
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -722,7 +722,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 label = R.string.tx_list_disable_module,
-                status = AwaitingConfirmations,
+                status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -742,7 +742,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 label = R.string.tx_list_enable_module,
-                status = AwaitingExecution,
+                status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -762,7 +762,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 label = R.string.tx_list_set_fallback_handler,
-                status = Cancelled,
+                status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -778,7 +778,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 label = R.string.tx_list_change_mastercopy,
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -794,7 +794,7 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 label = R.string.tx_list_enable_module,
-                status = Failed,
+                status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -809,7 +809,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
-                status = Success,
+                status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
@@ -824,18 +824,7 @@ class TransactionListViewModelTest {
         coVerify { safeRepository.getActiveSafe() }
         coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
         coVerify {
-            transactionRepository.getTransactions(
-                defaultSafeAddress,
-                SafeInfo(
-                    defaultSafeAddress,
-                    defaultNonce,
-                    defaultThreshold,
-                    emptyList(),
-                    Solidity.Address(BigInteger.ONE),
-                    emptyList(),
-                    Solidity.Address(BigInteger.ONE)
-                )
-            )
+            transactionRepository.getTransactions(defaultSafeAddress)
         }
     }
 
@@ -861,7 +850,7 @@ class TransactionListViewModelTest {
     }
 
     private fun buildTransfer(
-        status: TransactionStatus = Success,
+        status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
         recipient: Solidity.Address = defaultToAddress,
         sender: Solidity.Address = defaultFromAddress,
@@ -883,7 +872,7 @@ class TransactionListViewModelTest {
         )
 
     private fun buildCustom(
-        status: TransactionStatus = Success,
+        status: TransactionStatus = SUCCESS,
         confirmations: Int? = 0,
         value: BigInteger = BigInteger.ZERO,
         date: Date = Date(0),
@@ -902,7 +891,7 @@ class TransactionListViewModelTest {
         )
 
     private fun buildSettingsChange(
-        status: TransactionStatus = Success,
+        status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,

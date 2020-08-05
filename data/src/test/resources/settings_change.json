@@ -1,0 +1,28 @@
+{
+  "id": "multisig_0x238f1fe1beac3cfd4ec98acb4e006f7ebbbd615ddac9d6b065fdb3ce01065a9a",
+  "timestamp": 1591137785000,
+  "txStatus": "SUCCESS",
+  "txInfo": {
+    "type": "SettingsChange",
+    "dataDecoded": {
+      "method": "addOwnerWithThreshold",
+      "parameters": [
+        {
+          "name": "owner",
+          "type": "address",
+          "value": "0x5c9E7b93900536D9cc5559b881375Bae93c933D0"
+        },
+        {
+          "name": "_threshold",
+          "type": "uint256",
+          "value": "1"
+        }
+      ]
+    }
+  },
+  "executionInfo": {
+    "nonce": 4,
+    "confirmationsRequired": 1,
+    "confirmationsSubmitted": 1
+  }
+}

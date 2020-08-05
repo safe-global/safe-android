@@ -119,7 +119,7 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val nonce: String
     ) : TransactionView(status)
 
-    data class SectionHeader(@StringRes val title: Int) : TransactionView(TransactionStatus.Pending)
+    data class SectionHeader(@StringRes val title: Int) : TransactionView(TransactionStatus.PENDING)
 
     object Unknown : TransactionView(null)
 }

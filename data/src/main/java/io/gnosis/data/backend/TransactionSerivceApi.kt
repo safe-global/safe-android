@@ -3,23 +3,13 @@ package io.gnosis.data.backend
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.dto.SafeInfoDto
 import io.gnosis.data.backend.dto.ServiceBalance
-import io.gnosis.data.backend.dto.TransactionDto
-import io.gnosis.data.models.Page
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.Url
 
 interface TransactionServiceApi {
 
     @GET("v1/safes/{address}/balances/usd/")
     suspend fun loadBalances(@Path("address") address: String): List<ServiceBalance>
-
-    @GET("v1/safes/{address}/all-transactions/")
-    suspend fun loadTransactions(@Path("address") address: String, @Query("limit") pageSize: Int? = null): Page<TransactionDto>
-
-    @GET()
-    suspend fun loadTransactionsPage(@Url pageLink: String): Page<TransactionDto>
 
     @GET("v1/safes/{address}")
     suspend fun getSafeInfo(@Path("address") address: String): SafeInfoDto
