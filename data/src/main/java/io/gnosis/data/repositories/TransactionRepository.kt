@@ -105,6 +105,10 @@ class TransactionRepository(
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
+            //TODO: missing branch for ETHER
+//            is EtherTransfer -> ServiceTokenInfo(
+//
+//            )
             else -> null
         }
 
