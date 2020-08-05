@@ -106,6 +106,8 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
                 //TODO: pass tx data to details page
                 //Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
             }
+
+            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -150,6 +152,8 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             settingName.alpha = viewTransfer.alpha
+
+            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -293,6 +297,8 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             ellipsizedAddress.alpha = viewTransfer.alpha
             dataSize.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
+
+            nonce.text = viewTransfer.nonce
 
         }
     }

@@ -340,7 +340,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
-                alpha = OPACITY_HALF
+                alpha = OPACITY_HALF,
+                nonce = "1"
             ),
             transactionViews[2]
         )
@@ -354,7 +355,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[3]
         )
@@ -368,7 +370,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[4]
         )
@@ -382,7 +385,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[5]
         )
@@ -425,7 +429,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[0]
         )
@@ -439,7 +444,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_16dp,
                 address = defaultFromAddress,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[1]
         )
@@ -453,7 +459,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
-                alpha = OPACITY_HALF
+                alpha = OPACITY_HALF,
+                nonce = "1"
             ),
             transactionViews[2]
         )
@@ -467,7 +474,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
-                alpha = OPACITY_HALF
+                alpha = OPACITY_HALF,
+                nonce = "1"
             ),
             transactionViews[3]
         )
@@ -547,7 +555,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
                 alpha = OPACITY_FULL,
-                dataSizeText = ""
+                dataSizeText = "",
+                nonce = "1"
             ),
             transactionViews[2]
         )
@@ -561,7 +570,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
-                dataSizeText = ""
+                dataSizeText = "",
+                nonce = "1"
             ),
             transactionViews[3]
         )
@@ -575,7 +585,8 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
-                dataSizeText = ""
+                dataSizeText = "",
+                nonce = "1"
             ),
             transactionViews[4]
         )
@@ -645,7 +656,8 @@ class TransactionListViewModelTest {
             buildSettingsChange(
                 status = SUCCESS,
                 confirmations = 2,
-                dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList())
+                dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList()),
+                nonce = 10.toBigInteger()
             )
         )
         val transactionViews =
@@ -771,7 +783,8 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
                 address = defaultFallbackHandler,
-                version = "DefaultFallbackHandler"
+                version = "DefaultFallbackHandler",
+                nonce = "1"
             ),
             transactionViews[5]
         )
@@ -787,7 +800,8 @@ class TransactionListViewModelTest {
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "1"
             ),
             transactionViews[6]
         )
@@ -803,7 +817,8 @@ class TransactionListViewModelTest {
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
-                address = defaultModuleAddress
+                address = defaultModuleAddress,
+                nonce = "1"
             ),
             transactionViews[7]
         )
@@ -814,7 +829,8 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 method = METHOD_REMOVE_OWNER,
-                alpha = OPACITY_FULL
+                alpha = OPACITY_FULL,
+                nonce = "10"
             ),
             transactionViews[8]
         )
