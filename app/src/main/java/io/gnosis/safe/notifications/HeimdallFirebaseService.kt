@@ -26,7 +26,7 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
         if (message.data.isEmpty()) return
 
         try {
-            //notificationRepo.handleNotification()
+            notificationRepo.handleNotification(message)
         } catch (e: IllegalArgumentException) {
             Timber.e(e)
         }

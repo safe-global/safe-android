@@ -12,6 +12,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
+import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
@@ -148,5 +149,9 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationRepo(): NotificationRepository = NotificationRepository()
+    fun providesNotificationRepo(notificationManager: NotificationManager): NotificationRepository = NotificationRepository(notificationManager)
+
+    @Provides
+    @Singleton
+    fun providesNotificationManager(@ApplicationContext context: Context): NotificationManager = NotificationManager(context)
 }
