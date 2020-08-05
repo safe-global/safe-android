@@ -94,6 +94,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             amount.alpha = viewTransfer.alpha
@@ -106,8 +107,6 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
                 //TODO: pass tx data to details page
                 //Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
             }
-
-            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -148,12 +147,11 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 
             dateTime.text = viewTransfer.dateTimeText
             settingName.text = viewTransfer.method
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             settingName.alpha = viewTransfer.alpha
-
-            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -230,12 +228,12 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             confirmationsIcon.visibility = View.VISIBLE
+            nonce.text = viewTransfer.nonce
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
-            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -289,6 +287,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
@@ -297,8 +296,6 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             ellipsizedAddress.alpha = viewTransfer.alpha
             dataSize.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
-
-            nonce.text = viewTransfer.nonce
 
         }
     }
