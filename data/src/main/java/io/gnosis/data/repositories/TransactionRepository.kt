@@ -1,12 +1,22 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.*
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.Operation
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.TransactionDto
+import io.gnosis.data.backend.dto.TransferDto
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.foldInner
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
-import io.gnosis.data.utils.formatBackendDate
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -57,13 +67,13 @@ class TransactionRepository(
 
     private fun isErc721Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-                //transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // TODO enable this check when we have contractInfo
+                // transactionDto.contractInfo?.type == ContractInfoType.ERC721 && // TODO enable this check when we have contractInfo
                 listOf("safeTransferFrom", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
                 transactionDto.dataDecoded?.parameters?.getValueByName("tokenId") != null // TODO Remove this when have contractInfo
 
     private fun isErc20Transfer(transactionDto: MultisigTransactionDto): Boolean =
         transactionDto.operation == Operation.CALL &&
-//                transactionDto.contractInfo?.type == ContractInfoType.ERC20 && // TODO enable this check when we have contractInfo
+                // transactionDto.contractInfo?.type == ContractInfoType.ERC20 && // TODO enable this check when we have contractInfo
                 listOf("transfer", "transferFrom").contains(transactionDto.dataDecoded?.method) &&
                 transactionDto.dataDecoded?.parameters?.getValueByName("value") != null // TODO Remove this when have contractInfo
 
@@ -76,22 +86,22 @@ class TransactionRepository(
                 SafeRepository.isSettingsMethod(transactionDto.dataDecoded?.method)
 
     // This is a big assumption for txType == ETHEREUM_TRANSACTION, it was agreed that this can be assumed successful, because only successful TXs trigger events
-    private fun transfer(transfer: TransferDto, safeInfo: SafeInfo): Transaction.Transfer {
-        val tokenInfo = serviceTokenInfo(transfer)
+    private fun transfer(transferDto: TransferDto, safeInfo: SafeInfo): Transaction.Transfer {
+        val tokenInfo = serviceTokenInfo(transferDto)
         val value = when (tokenInfo.type) {
             ServiceTokenInfo.TokenType.ERC721 -> BigInteger.ONE
-            else -> transfer.value ?: BigInteger.ZERO
+            else -> transferDto.value ?: BigInteger.ZERO
         }
         return Transaction.Transfer(
             TransactionStatus.Success,
             null,
-            transfer.to,
-            transfer.from,
+            transferDto.to,
+            transferDto.from,
             value,
-            transfer.executionDate?.formatBackendDate(),
+            transferDto.executionDate,
             tokenInfo,
             null,
-            transfer.isIncoming(safeInfo)
+            transferDto.isIncoming(safeInfo)
         )
     }
 
@@ -103,7 +113,7 @@ class TransactionRepository(
             ethereumTransaction.to,
             ethereumTransaction.from,
             ethereumTransaction.value ?: BigInteger.ZERO,
-            ethereumTransaction.blockTimestamp?.formatBackendDate(),
+            ethereumTransaction.blockTimestamp,
             ETH_SERVICE_TOKEN_INFO,
             null,
             ethereumTransaction.isIncoming(safeInfo)
@@ -187,7 +197,6 @@ class TransactionRepository(
         }
     }
 
-
     private fun settings(transaction: MultisigTransactionDto, safeInfo: SafeInfo): Transaction.SettingsChange =
         Transaction.SettingsChange(
             transaction.status(safeInfo),
@@ -204,7 +213,7 @@ class TransactionRepository(
             nonce = transaction.nonce,
             address = transaction.module,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = transaction.created?.formatBackendDate(),
+            date = transaction.created,
             value = transaction.value ?: BigInteger.ZERO
         )
 
@@ -242,7 +251,7 @@ class TransactionRepository(
             nonce = null,
             address = transaction.to,
             dataSize = transaction.data?.dataSizeBytes() ?: 0L,
-            date = date?.formatBackendDate(),
+            date = date,
             value = BigInteger.ZERO
         )
     }
@@ -289,7 +298,6 @@ private fun MultisigTransactionDto.isIncoming(safeInfo: SafeInfo): Boolean {
     }
 }
 
-
 fun List<ParamsDto>?.getValueByName(name: String): String? {
     this?.map {
         if (it.name == name) {
@@ -301,4 +309,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
-fun MultisigTransactionDto.bestAvailableDate() = (executionDate ?: submissionDate ?: modified)?.formatBackendDate()
+fun MultisigTransactionDto.bestAvailableDate() = executionDate ?: submissionDate ?: modified

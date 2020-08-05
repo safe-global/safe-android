@@ -1,7 +1,11 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.JsonDataException
-import io.gnosis.data.backend.dto.*
+import io.gnosis.data.backend.dto.EthereumTransactionDto
+import io.gnosis.data.backend.dto.ModuleTransactionDto
+import io.gnosis.data.backend.dto.MultisigTransactionDto
+import io.gnosis.data.backend.dto.TransactionDto
+import io.gnosis.data.backend.dto.UnknownTransactionDto
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -10,7 +14,6 @@ import java.io.InputStreamReader
 import java.util.stream.Collectors
 
 class DataMoshiTest {
-
     private val moshi = dataMoshi
     private val adapter = moshi.adapter(TransactionDto::class.java)
 
@@ -27,7 +30,7 @@ class DataMoshiTest {
     fun `fromJson (ethereum transaction) should return EthereumTransactionDto`() {
         val jsonString: String = readResource("ethereum_transaction.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto: TransactionDto? = adapter.fromJson(jsonString)
 
         assertTrue(transactionDto is EthereumTransactionDto)
     }

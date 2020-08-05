@@ -4,6 +4,7 @@ import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
+import java.util.*
 
 sealed class Transaction {
     abstract val status: TransactionStatus
@@ -17,7 +18,7 @@ sealed class Transaction {
         val nonce: BigInteger?,
         val address: Solidity.Address,
         val dataSize: Long,
-        val date: String?,
+        val date: Date?,
         val value: BigInteger
     ) : Transaction()
 
@@ -25,7 +26,7 @@ sealed class Transaction {
         override val status: TransactionStatus,
         override val confirmations: Int?,
         val dataDecoded: DataDecodedDto,
-        val date: String?,
+        val date: Date?,
         val nonce: BigInteger
     ) : Transaction()
 
@@ -35,7 +36,7 @@ sealed class Transaction {
         val recipient: Solidity.Address,
         val sender: Solidity.Address,
         val value: BigInteger,
-        val date: String?,
+        val date: Date?,
         val tokenInfo: ServiceTokenInfo?,
         val nonce: BigInteger?,
         val incoming: Boolean
