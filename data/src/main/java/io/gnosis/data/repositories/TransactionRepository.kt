@@ -9,18 +9,6 @@ import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.SettingsChange
-import io.gnosis.data.backend.dto.Transfer
-import io.gnosis.data.backend.dto.TransferInfo
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.backend.dto.Custom
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
@@ -121,7 +109,6 @@ class TransactionRepository(
         }
 
     private fun Long.toDate(): Date = Date(this)
-
 }
 
 fun List<ParamsDto>?.getValueByName(name: String): String? {
