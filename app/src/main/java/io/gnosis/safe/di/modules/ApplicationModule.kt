@@ -12,6 +12,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
@@ -144,4 +145,8 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesQrCodeGenerator(): QrCodeGenerator = ZxingQrCodeGenerator()
+
+    @Provides
+    @Singleton
+    fun providesNotificationRepo(): NotificationRepository = NotificationRepository()
 }
