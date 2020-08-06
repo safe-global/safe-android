@@ -94,6 +94,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             amount.alpha = viewTransfer.alpha
@@ -146,6 +147,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 
             dateTime.text = viewTransfer.dateTimeText
             settingName.text = viewTransfer.method
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
@@ -222,6 +224,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
+            nonce.text = viewTransfer.nonce
 
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
@@ -231,7 +234,6 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
-            nonce.text = viewTransfer.nonce
         }
     }
 }
@@ -285,6 +287,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
+            nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha

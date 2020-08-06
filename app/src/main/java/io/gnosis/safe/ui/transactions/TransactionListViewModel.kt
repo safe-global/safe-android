@@ -227,7 +227,8 @@ class TransactionListViewModel
             txTypeIcon = if (transfer.incoming) R.drawable.ic_arrow_green_16dp else R.drawable.ic_arrow_red_10dp,
             address = if (transfer.incoming) transfer.sender else transfer.recipient,
             amountColor = if (transfer.value > BigInteger.ZERO && transfer.incoming) R.color.safe_green else R.color.gnosis_dark_blue,
-            alpha = alpha(transfer)
+            alpha = alpha(transfer),
+            nonce = transfer.nonce?.toString() ?: ""
         )
     }
 
@@ -247,7 +248,7 @@ class TransactionListViewModel
             threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = transfer.nonce.toString()
+            nonce = transfer.nonce?.toString() ?: ""
         )
     }
 
@@ -258,7 +259,8 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date?.formatBackendDate() ?: "",
             method = transaction.dataDecoded.method,
-            alpha = alpha(transaction)
+            alpha = alpha(transaction),
+            nonce = transaction.nonce.toString()
         )
 
     private fun queuedSettingsChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeQueued {
@@ -291,7 +293,8 @@ class TransactionListViewModel
             alpha = alpha(transaction),
             version = version,
             address = address,
-            label = R.string.tx_list_change_mastercopy
+            label = R.string.tx_list_change_mastercopy,
+            nonce = transaction.nonce.toString()
         )
     }
 
@@ -338,7 +341,8 @@ class TransactionListViewModel
             alpha = alpha(transaction),
             version = "DefaultFallbackHandler",
             address = address,
-            label = R.string.tx_list_set_fallback_handler
+            label = R.string.tx_list_set_fallback_handler,
+            nonce = transaction.nonce.toString()
         )
     }
 
@@ -382,7 +386,8 @@ class TransactionListViewModel
             version = "",
             visibilityVersion = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
-            visibilityModuleAddress = View.VISIBLE
+            visibilityModuleAddress = View.VISIBLE,
+            nonce = transaction.nonce.toString()
         )
     }
 
@@ -430,7 +435,8 @@ class TransactionListViewModel
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
             amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
-            alpha = alpha(custom)
+            alpha = alpha(custom),
+            nonce = custom.nonce.toString()
         )
     }
 

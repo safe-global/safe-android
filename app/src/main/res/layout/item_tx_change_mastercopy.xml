@@ -29,6 +29,16 @@
         app:srcCompat="@drawable/ic_chevron_right" />
 
     <TextView
+        android:id="@+id/nonce"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chevron"
+        tools:text="10" />
+
+    <TextView
         android:id="@+id/ellipsized_address"
         style="@style/TextDark"
         android:layout_width="wrap_content"
@@ -62,10 +72,10 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="3dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ellipsized_address"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/nonce"
+        app:layout_constraintStart_toEndOf="@+id/nonce"
+        app:layout_constraintTop_toTopOf="@+id/nonce"
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
     <TextView

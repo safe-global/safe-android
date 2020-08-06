@@ -17,7 +17,8 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @DrawableRes val txTypeIcon: Int,
         val address: Solidity.Address,
         @ColorRes val amountColor: Int,
-        val alpha: Float
+        val alpha: Float,
+        val nonce: String
     ) : TransactionView(status)
 
     data class TransferQueued(
@@ -42,7 +43,8 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val method: String,
-        val alpha: Float
+        val alpha: Float,
+        val nonce: String
     ) : TransactionView(status)
 
     data class SettingsChangeQueued(
@@ -69,7 +71,8 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @StringRes val label: Int,
         val visibilityVersion: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
-        val visibilityModuleAddress: Int = View.GONE
+        val visibilityModuleAddress: Int = View.GONE,
+        val nonce: String
 
     ) : TransactionView(status)
 
@@ -100,7 +103,8 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val dataSizeText: String,
         val amountText: String,
         @ColorRes val amountColor: Int,
-        val alpha: Float
+        val alpha: Float,
+        val nonce: String
     ) : TransactionView(status)
 
     data class CustomTransactionQueued(
