@@ -2,6 +2,7 @@ package io.gnosis.data.backend.dto
 
 import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 data class GateTransactionDto(
     val id: String,
@@ -12,7 +13,7 @@ data class GateTransactionDto(
 )
 
 data class ExecutionInfo(
-    val nonce: Long,
+    val nonce: BigInteger,
     val confirmationsRequired: Int,
     val confirmationsSubmitted: Int
 )

@@ -70,7 +70,7 @@ class DataMoshiTest {
                 value = "3140000000000000000"
             ),
             executionInfo = ExecutionInfo(
-                nonce = 8,
+                nonce = 8.toBigInteger(),
                 confirmationsRequired = 2,
                 confirmationsSubmitted = 2
             )
@@ -99,7 +99,7 @@ class DataMoshiTest {
                 )
             ),
             executionInfo = ExecutionInfo(
-                nonce = 4,
+                nonce = 4.toBigInteger(),
                 confirmationsRequired = 1,
                 confirmationsSubmitted = 1
             )
