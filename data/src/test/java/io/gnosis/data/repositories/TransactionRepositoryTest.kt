@@ -57,6 +57,28 @@ class TransactionRepositoryTest {
     }
 
     @Test
+    fun `loadTransactionsPage (default Transfer transaction) should return Transfer`() = runBlockingTest {
+        val pagedResult = listOf(
+            buildGateTransactionDto(txInfo = buildTransferTxInfo()),
+            buildGateTransactionDto(txInfo = buildCustomTxInfo()),
+            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo())
+        )
+        coEvery { gatewayApi.loadTransactionsPage(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.loadTransactionsPage("url")
+
+        with(actual.results[0] as Transaction.Transfer) {
+            assertEquals(pagedResult[0].executionInfo?.nonce, this.nonce)
+        }
+        with(actual.results[1] as Transaction.Custom) {
+            assertEquals(pagedResult[1].executionInfo?.nonce, this.nonce)
+        }
+        with(actual.results[2] as Transaction.SettingsChange) {
+            assertEquals(pagedResult[2].executionInfo?.nonce, this.nonce)
+        }
+    }
+
+    @Test
     fun `getTransactions (default Transfer transaction) should return Transfer`() = runBlockingTest {
         val pagedResult = listOf(
             buildGateTransactionDto(txInfo = buildTransferTxInfo()),
@@ -90,14 +112,10 @@ class TransactionRepositoryTest {
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
-        with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(transactionDto.executionInfo?.nonce, this.nonce)
-        }
-        with(actual.results[1] as Transaction.Transfer) {
-            assertEquals(transactionDto.executionInfo?.nonce, this.nonce)
-        }
-        with(actual.results[2] as Transaction.Transfer) {
-            assertEquals(transactionDto.executionInfo?.nonce, this.nonce)
+        (0..2).forEach { i ->
+            with(actual.results[i] as Transaction.Transfer) {
+                assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
+            }
         }
     }
 
