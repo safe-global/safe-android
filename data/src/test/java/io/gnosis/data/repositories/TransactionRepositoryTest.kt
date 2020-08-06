@@ -41,7 +41,6 @@ class TransactionRepositoryTest {
 //    private val defaultValue = BigInteger("230000000000000000")
 //    private val defaultTokenId = "23"
 
-
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
@@ -117,6 +116,21 @@ class TransactionRepositoryTest {
                 assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
             }
         }
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `getTransactions (unknown txInfo) should throw exception Transfers`() = runBlockingTest {
+        val transactionDto = buildGateTransactionDto()
+        val pagedResult = listOf(
+            buildGateTransactionDto(txInfo = object : TransactionInfo {
+                override val type: GateTransactionType
+                    get() = GateTransactionType.Transfer
+            })
+        )
+        coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+
+        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+
     }
 
     @Test
