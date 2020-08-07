@@ -53,7 +53,7 @@ class TransactionRepository(
             is Transfer -> Transaction.Transfer(
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
-                nonce = executionInfo?.nonce?.toBigInteger(),
+                nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 recipient = txInfo.recipient,
                 sender = txInfo.sender,
@@ -64,14 +64,14 @@ class TransactionRepository(
             is SettingsChange -> Transaction.SettingsChange(
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
-                nonce = executionInfo?.nonce?.toBigInteger() ?: BigInteger.ZERO,
+                nonce = executionInfo?.nonce ?: BigInteger.ZERO,
                 date = timestamp.toDate(),
                 dataDecoded = txInfo.dataDecoded
             )
             is Custom -> Transaction.Custom(
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
-                nonce = executionInfo?.nonce?.toBigInteger(),
+                nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 address = txInfo.to,
                 dataSize = txInfo.dataSize.toLong(),
@@ -104,7 +104,7 @@ class TransactionRepository(
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
-                type = ServiceTokenInfo.TokenType.ERC20
+                type = ServiceTokenInfo.TokenType.ERC721
             )
             is EtherTransfer -> ETH_SERVICE_TOKEN_INFO
             else -> null
