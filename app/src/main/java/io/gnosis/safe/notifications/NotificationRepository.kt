@@ -4,6 +4,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.gnosis.safe.notifications.models.Notification
 
 class NotificationRepository(
+    private val notificationService: NotificationServiceApi,
     private val notificationManager: NotificationManager
 ) {
 

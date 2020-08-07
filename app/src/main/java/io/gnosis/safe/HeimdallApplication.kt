@@ -2,6 +2,8 @@ package io.gnosis.safe
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
@@ -34,6 +36,20 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
             Timber.e("Could not register LinuxSecureRandom. Using default SecureRandom.")
         }
         Security.insertProviderAt(BouncyCastleProvider(), 1)
+
+
+        //TODO: remove
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.e(task.exception)
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                Timber.d("Firebase token: $token")
+            })
+
     }
 
     companion object Companion {

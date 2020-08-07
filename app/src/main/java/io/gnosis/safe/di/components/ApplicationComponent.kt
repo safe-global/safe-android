@@ -8,7 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
-import io.gnosis.safe.notifications.HeimdallFirebaseService
+import io.gnosis.safe.notifications.firebase.HeimdallFirebaseService
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseDialogFragment

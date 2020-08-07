@@ -1,8 +1,9 @@
-package io.gnosis.safe.notifications
+package io.gnosis.safe.notifications.firebase
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.gnosis.safe.HeimdallApplication
+import io.gnosis.safe.notifications.NotificationRepository
 import timber.log.Timber
 import javax.inject.Inject
 
