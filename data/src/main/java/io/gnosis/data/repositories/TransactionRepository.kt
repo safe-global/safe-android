@@ -104,7 +104,7 @@ class TransactionRepository(
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
-                type = ServiceTokenInfo.TokenType.ERC20
+                type = ServiceTokenInfo.TokenType.ERC721
             )
             is EtherTransfer -> ETH_SERVICE_TOKEN_INFO
             else -> null
