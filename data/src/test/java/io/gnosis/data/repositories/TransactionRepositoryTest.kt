@@ -36,11 +36,11 @@ import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddress
 
 @RunWith(Parameterized::class)
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class TransactionRepositoryTransferTest(
     private val direction: TransactionDirection
 ) {
     private val gatewayApi = mockk<GatewayApi>()
-
     private val transactionRepository = TransactionRepository(gatewayApi)
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
 
@@ -70,22 +70,33 @@ class TransactionRepositoryTransferTest(
                 when ((pagedResult[i].txInfo as Transfer).transferInfo) {
                     is Erc20Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
-                        assertEquals(((pagedResult[i].txInfo as Transfer).transferInfo as Erc20Transfer).value, value.asDecimalString())
+                        val erc20Transfer = (pagedResult[i].txInfo as Transfer).transferInfo as Erc20Transfer
+                        assertEquals(erc20Transfer.value, value.asDecimalString())
+                        assertEquals(erc20Transfer.tokenAddress, tokenInfo?.address)
+                        assertEquals(erc20Transfer.tokenSymbol, tokenInfo?.symbol)
+                        assertEquals(erc20Transfer.tokenName, tokenInfo?.name)
+                        assertEquals(erc20Transfer.decimals, tokenInfo?.decimals)
+                        assertEquals(erc20Transfer.logoUri, tokenInfo?.logoUri)
                     }
                     is Erc721Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
                         assertEquals(1.toBigInteger(), value)
+                        val erc721Transfer = (pagedResult[i].txInfo as Transfer).transferInfo as Erc721Transfer
+                        assertEquals(erc721Transfer.tokenAddress, tokenInfo?.address)
+                        assertEquals(erc721Transfer.tokenSymbol, tokenInfo?.symbol)
+                        assertEquals(erc721Transfer.tokenName, tokenInfo?.name)
                     }
                     is EtherTransfer -> {
                         assertEquals(null, this.tokenInfo?.type)
-                        assertEquals(((pagedResult[i].txInfo as Transfer).transferInfo as EtherTransfer).value, value.asDecimalString())
+                        val etherTransfer = (pagedResult[i].txInfo as Transfer).transferInfo as EtherTransfer
+                        assertEquals(etherTransfer.value, value.asDecimalString())
                     }
                 }
             }
         }
     }
 }
-
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class TransactionRepositoryTest {
     private val gatewayApi = mockk<GatewayApi>()
 
@@ -179,7 +190,6 @@ class TransactionRepositoryTest {
 
     @Test(expected = IllegalStateException::class)
     fun `getTransactions (unknown txInfo) should throw exception Transfers`() = runBlockingTest {
-        val transactionDto = buildGateTransactionDto()
         val pagedResult = listOf(
             buildGateTransactionDto(txInfo = object : TransactionInfo {
                 override val type: GateTransactionType
@@ -188,13 +198,11 @@ class TransactionRepositoryTest {
         )
         coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
-
+        transactionRepository.getTransactions(defaultSafeAddress)
     }
 
     @Test
     fun `getTransactions (unknown transferInfo) should have value 0`() = runBlockingTest {
-        val transactionDto = buildGateTransactionDto()
         val pagedResult = listOf(
             buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = object : TransferInfo {
                 override val type: GateTransferType
@@ -358,7 +366,7 @@ private fun buildTransferInfoERC721(
     )
 
 private fun buildTransferInfoEther(
-    value: String = "0"
+    value: String = "23"
 ): TransferInfo = EtherTransfer(
     type = GateTransferType.ETHER,
     value = value
