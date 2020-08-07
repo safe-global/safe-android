@@ -10,6 +10,7 @@ import io.gnosis.data.backend.dto.ExecutionInfo
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.GateTransactionType
 import io.gnosis.data.backend.dto.GateTransferType
+import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
@@ -29,6 +30,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddress
 
 class TransactionRepositoryTest {
@@ -55,11 +57,11 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (all transfer types) should return Transfers`() = runBlockingTest {
+    fun `getTransactions (all tx type) should return respective tx type`() = runBlockingTest {
         val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoERC20())),
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoEther())),
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoERC721()))
+            buildGateTransactionDto(txInfo = buildTransferTxInfo()),
+            buildGateTransactionDto(txInfo = buildCustomTxInfo()),
+            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo())
         )
         coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
@@ -67,23 +69,30 @@ class TransactionRepositoryTest {
 
         assertEquals(3, actual.results.size)
         (0..2).forEach { i ->
-            with(actual.results[i] as Transaction.Transfer) {
-                assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
-                when ((pagedResult[i].txInfo as Transfer).transferInfo) {
-                    is Erc20Transfer -> assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
-                    is Erc721Transfer -> {
-                        assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
-                        assertEquals(1.toBigInteger(), value)
-
+            with(actual.results[i]) {
+                when (pagedResult[i].txInfo) {
+                    is Transfer -> {
+                        assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Transfer).nonce)
+                        assertEquals(pagedResult[i].txStatus, this.status)
+                        assertEquals((pagedResult[i].txInfo as Transfer).direction != TransactionDirection.OUTGOING, incoming)
                     }
-                    is EtherTransfer -> assertEquals(null, this.tokenInfo?.type)
+                    is Custom -> {
+                        assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Custom).nonce)
+                        assertEquals(pagedResult[i].txStatus, this.status)
+                        assertEquals((pagedResult[i].txInfo as Custom).dataSize, "${dataSize}")
+                    }
+                    is SettingsChange -> {
+                        assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
+                        assertEquals(pagedResult[i].txStatus, this.status)
+                        assertEquals((pagedResult[i].txInfo as SettingsChange).dataDecoded, dataDecoded)
+                    }
                 }
             }
         }
     }
 
     @Test
-    fun `loadTransactionsPage (default Transfer transaction) should return Transfer`() = runBlockingTest {
+    fun `loadTransactionsPage (all tx type) should return respective tx type`() = runBlockingTest {
         val pagedResult = listOf(
             buildGateTransactionDto(txInfo = buildTransferTxInfo()),
             buildGateTransactionDto(txInfo = buildCustomTxInfo()),
@@ -119,25 +128,35 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (default Transfer transaction) should return Transfer`() = runBlockingTest {
+    fun `getTransactions (all transfer types) should return Transfers`() = runBlockingTest {
         val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo()),
-            buildGateTransactionDto(txInfo = buildCustomTxInfo()),
-            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo())
+            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoERC20())),
+            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoEther())),
+            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = buildTransferInfoERC721()))
         )
         coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
         assertEquals(3, actual.results.size)
-        with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(pagedResult[0].executionInfo?.nonce, this.nonce)
-        }
-        with(actual.results[1] as Transaction.Custom) {
-            assertEquals(pagedResult[1].executionInfo?.nonce, this.nonce)
-        }
-        with(actual.results[2] as Transaction.SettingsChange) {
-            assertEquals(pagedResult[2].executionInfo?.nonce, this.nonce)
+        (0..2).forEach { i ->
+            with(actual.results[i] as Transaction.Transfer) {
+                assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
+                when ((pagedResult[i].txInfo as Transfer).transferInfo) {
+                    is Erc20Transfer -> {
+                        assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
+                        assertEquals(((pagedResult[i].txInfo as Transfer).transferInfo as Erc20Transfer).value, value.asDecimalString())
+                    }
+                    is Erc721Transfer -> {
+                        assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
+                        assertEquals(1.toBigInteger(), value)
+                    }
+                    is EtherTransfer -> {
+                        assertEquals(null, this.tokenInfo?.type)
+                        assertEquals(((pagedResult[i].txInfo as Transfer).transferInfo as EtherTransfer).value, value.asDecimalString())
+                    }
+                }
+            }
         }
     }
 
@@ -202,6 +221,37 @@ class TransactionRepositoryTest {
     @Test
     fun `hexStringNullOrEmpty (is 0x1A) should return false`() {
         assertFalse("0x1A".hexStringNullOrEmpty())
+    }
+
+    @Test
+    fun `getValueByName (single param) should return right value`() {
+        val params = listOf(ParamsDto(name = "foo", type = "uint256", value = "12"))
+
+        val result = params.getValueByName("foo")
+
+        assertEquals("12", result)
+    }
+
+    @Test
+    fun `getValueByName (several params) should return right value`() {
+        val params = listOf(
+            ParamsDto(name = "foo", type = "uint256", value = "1"),
+            ParamsDto(name = "bar", type = "uint256", value = "2"),
+            ParamsDto(name = "baz", type = "uint256", value = "3")
+        )
+
+        val result = params.getValueByName("bar")
+
+        assertEquals("2", result)
+    }
+
+    @Test
+    fun `getValueByName (unavailable name) should return null`() {
+        val params = listOf(ParamsDto(name = "foo", type = "uint256", value = "12"))
+
+        val result = params.getValueByName("bar")
+
+        assertEquals(null, result)
     }
 
     private fun buildGateTransactionDto(
