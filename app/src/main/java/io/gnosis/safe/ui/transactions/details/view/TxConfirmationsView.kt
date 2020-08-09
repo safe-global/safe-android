@@ -12,7 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewTxConfirmationsSectionHeaderBinding
+import io.gnosis.safe.databinding.ViewTxConfirmationsExecutionStepBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
@@ -23,11 +23,6 @@ class TxConfirmationsView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
-
-    var status: TransactionStatus = TransactionStatus.AWAITING_CONFIRMATIONS
-    var threshold: Int = 0
-    var executor: Solidity.Address? = null
-    private val confirmations = mutableListOf<Solidity.Address>()
 
     private val linePaint: Paint
 
@@ -40,72 +35,64 @@ class TxConfirmationsView @JvmOverloads constructor(
         linePaint.color = context.getColorCompat(LINE_COLOR)
     }
 
-    fun setConfirmations(addresses: List<Solidity.Address>) {
+    fun setExecutionData(status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null) {
 
         clear()
 
-        addView(SectionHeader(context).apply {
-            val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-            lp.setMargins(0, 0, 0, dpToPx(MARGIN_VERTICAL))
-            layoutParams = lp
-            update(SectionHeader.Type.CREATED)
-        })
+        addExecutionStep(TxExecutionStep.Type.CREATED)
 
-        addresses.forEach {
-            addView(SectionHeader(context).apply {
-                val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-                lp.setMargins(0, 0, 0, dpToPx(MARGIN_VERTICAL))
-                layoutParams = lp
-                update(SectionHeader.Type.CONFIRMED)
-            })
-            val confirmationItem = AddressItem(context)
-            val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
-            layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
-            confirmationItem.layoutParams = layoutParams
-            confirmationItem.address = it
-            addView(confirmationItem)
+        confirmations.forEach {
+            addExecutionStep(TxExecutionStep.Type.CONFIRMED)
+            addAddressItem(it)
         }
 
         if (confirmations.size < threshold) {
-            addView(SectionHeader(context).apply {
-                update(SectionHeader.Type.EXECUTE_WAITING, threshold - confirmations.size)
-            })
+            addExecutionStep(TxExecutionStep.Type.EXECUTE_WAITING, threshold - confirmations.size)
         } else {
 
             when (status) {
                 TransactionStatus.AWAITING_EXECUTION -> {
-                    addView(SectionHeader(context).apply {
-                        update(SectionHeader.Type.EXECUTE_READY)
-                    })
+                    addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
                 }
                 TransactionStatus.SUCCESS -> {
-                    addView(SectionHeader(context).apply {
-                        update(SectionHeader.Type.EXECUTE_DONE)
-                    })
-                    val executorItem = AddressItem(context)
-                    val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
-                    layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), dpToPx(MARGIN_VERTICAL), 0, 0)
-                    executorItem.layoutParams = layoutParams
-                    executorItem.address = executor
-                    addView(executorItem)
+                    if(executor != null) {
+                        addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
+                        addAddressItem(executor)
+                    } else {
+                        // fail silently
+                        addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
+                    }
                 }
                 TransactionStatus.CANCELLED -> {
-                    addView(SectionHeader(context).apply {
-                        update(SectionHeader.Type.CANCELED)
-                    })
+                    addExecutionStep(TxExecutionStep.Type.CANCELED)
                 }
                 TransactionStatus.FAILED -> {
-                    addView(SectionHeader(context).apply {
-                        update(SectionHeader.Type.FAILED)
-                    })
+                    addExecutionStep(TxExecutionStep.Type.FAILED)
                 }
             }
         }
     }
 
+    private fun addExecutionStep(type: TxExecutionStep.Type, missingConfirmations: Int? = null) {
+        addView(TxExecutionStep(context).apply {
+            val lp = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+            lp.setMargins(0, 0, 0, dpToPx(MARGIN_VERTICAL))
+            layoutParams = lp
+            setStep(type, missingConfirmations)
+        })
+    }
+    
+    private fun addAddressItem(address: Solidity.Address) {
+        val addressItem = AddressItem(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
+        layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
+        addressItem.layoutParams = layoutParams
+        addressItem.address = address
+        addView(addressItem)
+    }
+
     fun clear() {
         removeAllViews()
-        confirmations.clear()
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -116,25 +103,25 @@ class TxConfirmationsView @JvmOverloads constructor(
         for (i in 0 until childCount - 1) {
 
             val child1 = getChildAt(i)
-            if (child1 is SectionHeader) {
-                x1 = child1.getCircleBottom().x
-                y1 = child1.getCircleBottom().y
+            if (child1 is TxExecutionStep) {
+                x1 = child1.stepIconBottom.x
+                y1 = child1.stepIconBottom.y
             }
 
             val child2 = getChildAt(i + 1)
-            if (child2 is SectionHeader) {
+            if (child2 is TxExecutionStep) {
                 canvas.drawLine(
                     x1,
                     y1,
-                    child2.getCircleTop().x,
-                    child2.getCircleTop().y,
+                    child2.stepIconTop.x,
+                    child2.stepIconTop.y,
                     linePaint
                 )
             }
         }
     }
 
-    class SectionHeader @JvmOverloads constructor(
+    private class TxExecutionStep @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
@@ -153,57 +140,55 @@ class TxConfirmationsView @JvmOverloads constructor(
             EXECUTE_DONE
         }
 
-        private val binding by lazy { ViewTxConfirmationsSectionHeaderBinding.inflate(LayoutInflater.from(context), this) }
+        private val binding by lazy { ViewTxConfirmationsExecutionStepBinding.inflate(LayoutInflater.from(context), this) }
 
-        fun update(type: Type, missingConfirmations: Int? = null) {
+        val stepIconBottom: PointF
+            get() = PointF(left + binding.stepIcon.left + binding.stepIcon.width.toFloat() / 2, top + binding.stepIcon.bottom.toFloat())
+
+        val stepIconTop: PointF
+            get() = PointF(left + binding.stepIcon.left + binding.stepIcon.width.toFloat() / 2, top + binding.stepIcon.top.toFloat())
+
+        fun setStep(type: Type, missingConfirmations: Int? = null) {
             this.type = type
             with(binding) {
                 when (type) {
                     Type.CREATED -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_start_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_created)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_start_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_created)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
                     }
                     Type.CONFIRMED -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_confirmed)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_confirmed)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
                     }
                     Type.CANCELED -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_canceled)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.gnosis_dark_blue))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_canceled)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.gnosis_dark_blue))
                     }
                     Type.FAILED -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_failed_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_failed)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.tomato))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_failed_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_failed)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.tomato))
                     }
                     Type.EXECUTE_WAITING -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_waiting_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_execute_waiting, missingConfirmations)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.medium_grey))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_waiting_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_execute_waiting, missingConfirmations)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.medium_grey))
                     }
                     Type.EXECUTE_READY -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_ready_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_ready_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
                     }
                     Type.EXECUTE_DONE -> {
-                        sectionIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
-                        sectionTitle.text = resources.getString(R.string.tx_confirmations_executed)
-                        sectionTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_executed)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
                     }
                 }
             }
-        }
-
-        fun getCircleBottom(): PointF {
-            return PointF(left + binding.sectionIcon.left + binding.sectionIcon.width.toFloat() / 2, top + binding.sectionIcon.bottom.toFloat())
-        }
-
-        fun getCircleTop(): PointF {
-            return PointF(left + binding.sectionIcon.left + binding.sectionIcon.width.toFloat() / 2, top + binding.sectionIcon.top.toFloat())
         }
     }
 

@@ -35,9 +35,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         with(binding) {
 
-            binding.confirmations.status = TransactionStatus.FAILED
-            binding.confirmations.executor = Solidity.Address(BigInteger.ZERO)
-            binding.confirmations.setConfirmations(listOf(Solidity.Address(BigInteger.ZERO)))
+            txConfirmations.setExecutionData(
+                status = TransactionStatus.FAILED,
+                confirmations = listOf(
+                    Solidity.Address(BigInteger.ZERO)
+                ),
+                threshold = 1,
+                executor = Solidity.Address(BigInteger.ZERO)
+            )
 
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()

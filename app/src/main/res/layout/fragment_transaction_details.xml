@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content">
 
                 <io.gnosis.safe.ui.transactions.details.view.TxConfirmationsView
-                    android:id="@+id/confirmations"
+                    android:id="@+id/tx_confirmations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
