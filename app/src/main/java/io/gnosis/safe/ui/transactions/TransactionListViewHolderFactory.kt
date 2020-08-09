@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
@@ -105,7 +106,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 
             root.setOnClickListener {
                 //TODO: pass tx data to details page
-                //Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
+                Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment())
             }
         }
     }

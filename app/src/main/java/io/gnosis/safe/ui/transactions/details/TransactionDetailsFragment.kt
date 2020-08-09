@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.model.Solidity
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -31,6 +34,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            binding.confirmations.status = TransactionStatus.FAILED
+            binding.confirmations.executor = Solidity.Address(BigInteger.ZERO)
+            binding.confirmations.setConfirmations(listOf(Solidity.Address(BigInteger.ZERO)))
 
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()

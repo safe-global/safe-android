@@ -20,8 +20,8 @@
             app:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_constraintTop_toTopOf="parent">
+<!--            app:layout_scrollFlags="scroll|enterAlways"-->
 
             <ImageButton
                 android:id="@+id/back_button"
@@ -58,6 +58,19 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <io.gnosis.safe.ui.transactions.details.view.TxConfirmationsView
+                    android:id="@+id/confirmations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="200dp"-->
+<!--                    android:background="@color/black"/>-->
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
