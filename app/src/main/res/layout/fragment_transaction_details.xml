@@ -60,6 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                tools:visibility="visible"
                 android:orientation="vertical">
 
                 <io.gnosis.safe.ui.transactions.details.view.TxConfirmationsView
@@ -73,12 +74,24 @@
                     android:layout_height="1dp"
                     android:background="@color/light_grey"/>
 
+                <io.gnosis.safe.ui.settings.view.SettingItem
+                    android:id="@+id/advanced"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_setting_openable_height"
+                    app:setting_name="@string/tx_details_advanced"
+                    app:setting_openable="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey"/>
+
                 <TextView
                     android:id="@+id/etherscan"
                     style="@style/TextLink"
                     android:layout_marginLeft="16dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/header_height"
+                    android:layout_height="@dimen/item_setting_openable_height"
                     android:drawableRight="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="left|center_vertical"
