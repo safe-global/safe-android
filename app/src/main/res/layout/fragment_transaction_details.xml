@@ -20,8 +20,8 @@
             app:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-<!--            app:layout_scrollFlags="scroll|enterAlways"-->
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <ImageButton
                 android:id="@+id/back_button"
@@ -80,6 +80,28 @@
                     android:layout_height="@dimen/item_setting_openable_height"
                     app:setting_name="@string/tx_details_advanced"
                     app:setting_openable="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey"/>
+                
+                <io.gnosis.safe.ui.transactions.details.view.TimeInfoItem
+                    android:id="@+id/created"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:time_info_name="@string/tx_details_created"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey"/>
+
+                <io.gnosis.safe.ui.transactions.details.view.TimeInfoItem
+                    android:id="@+id/executed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:time_info_name="@string/tx_details_executed"/>
 
                 <View
                     android:layout_width="match_parent"

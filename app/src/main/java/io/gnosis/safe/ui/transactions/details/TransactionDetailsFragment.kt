@@ -14,6 +14,7 @@ import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -72,6 +73,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 threshold = txDetails.detailedExecutionInfo.confirmationsRequired,
                 executor = txDetails.executor
             )
+            binding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
+            binding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
             binding.etherscan.setOnClickListener {
                 requireContext().openUrl(
                     getString(

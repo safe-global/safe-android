@@ -96,6 +96,8 @@
 
     <string name="tx_details_title">Transaction details</string>
     <string name="tx_details_advanced">Advanced</string>
+    <string name="tx_details_created">Created:</string>
+    <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
 
     <string name="safe_settings_ens_name">ENS name</string>

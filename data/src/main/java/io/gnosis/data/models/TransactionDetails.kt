@@ -9,6 +9,7 @@ import java.util.*
 data class TransactionDetails(
     val txHash: String,
     val txStatus: TransactionStatus,
+    val createdAt: Date?,
     val executedAt: Date?,
     val executor: Solidity.Address,
     val txData: TxData,

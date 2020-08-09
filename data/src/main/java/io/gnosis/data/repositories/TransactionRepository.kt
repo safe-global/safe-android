@@ -44,6 +44,7 @@ class TransactionRepository(
             TransactionDetails(
                 it.txHash,
                 it.txStatus,
+                it.detailedExecutionInfo.sumbittedAt?.toDate(),
                 it.executedAt?.toDate(),
                 it.txInfo.sender,
                 it.txData,
