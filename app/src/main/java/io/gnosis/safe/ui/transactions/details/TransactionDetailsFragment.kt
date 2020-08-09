@@ -6,18 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
-import io.gnosis.data.models.TransactionStatus
+import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import pm.gnosis.model.Solidity
-import java.math.BigInteger
+import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS
+
+    private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
+    private val txId by lazy { navArgs.txId }
 
     @Inject
     lateinit var viewModel: TransactionDetailsViewModel
@@ -35,26 +41,45 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         with(binding) {
 
-            txConfirmations.setExecutionData(
-                status = TransactionStatus.FAILED,
-                confirmations = listOf(
-                    Solidity.Address(BigInteger.ZERO)
-                ),
-                threshold = 1,
-                executor = Solidity.Address(BigInteger.ZERO)
-            )
-
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
             }
 
             refresh.setOnRefreshListener {
-                //TODO: add on refresh listener
+                viewModel.loadDetails(txId)
             }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-
+            when (val viewAction = state.viewAction) {
+                is BaseStateViewModel.ViewAction.Loading -> updateUi(state.txDetails, viewAction.isLoading)
+            }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadDetails(txId)
+    }
+
+    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
+        binding.refresh.isRefreshing = isLoading
+        txDetails?.let {
+            binding.content.visible(true)
+            binding.txConfirmations.setExecutionData(
+                status = txDetails.txStatus,
+                confirmations = txDetails.detailedExecutionInfo.confirmations.map { it.signer },
+                threshold = txDetails.detailedExecutionInfo.confirmationsRequired,
+                executor = txDetails.executor
+            )
+            binding.etherscan.setOnClickListener {
+                requireContext().openUrl(
+                    getString(
+                        R.string.etherscan_transaction_url,
+                        txDetails.txHash
+                    )
+                )
+            }
+        }
     }
 }

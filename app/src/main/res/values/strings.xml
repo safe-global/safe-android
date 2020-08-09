@@ -95,6 +95,7 @@
     <string name="tx_list_success">Success</string>
 
     <string name="tx_details_title">Transaction details</string>
+    <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
