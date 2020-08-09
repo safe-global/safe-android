@@ -8,6 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.notifications.firebase.HeimdallFirebaseService
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.activity.BaseActivity
@@ -41,6 +42,8 @@ interface ApplicationComponent {
     fun termsChecker(): TermsChecker
 
     fun tracker(): Tracker
+
+    fun notificationRepo(): NotificationRepository
 
     // Base injects
     fun inject(activity: BaseActivity)

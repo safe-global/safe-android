@@ -8,13 +8,13 @@ import retrofit2.http.Path
 
 interface NotificationServiceApi {
 
-    @POST("/notifications/devices/")
-    suspend fun register(@Body data: FirebaseDevice)
+    @POST("/api/v1/notifications/devices/")
+    suspend fun register(@Body data: FirebaseDevice): FirebaseDevice
 
-    @DELETE("/notifications/devices/{uuid}")
+    @DELETE("/api/v1/notifications/devices/{uuid}")
     suspend fun unregister(@Path("uuid") deviceUuid: String)
 
-    @DELETE("/notifications/devices/{uuid}/safes/{address}/")
+    @DELETE("/api/v1/notifications/devices/{uuid}/safes/{address}/")
     suspend fun unregisterSafe(@Path("uuid") deviceUuid: String, @Path("address") safe: String)
 
     companion object {

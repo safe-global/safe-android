@@ -4,6 +4,8 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.notifications.NotificationRepository
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,5 +38,8 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.d("Firebase token: $token")
+        runBlocking {
+            notificationRepo.register(token)
+        }
     }
 }

@@ -8,6 +8,7 @@ import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
@@ -108,7 +109,7 @@ class ApplicationModule(private val application: Application) {
     fun providesNotificationServiceApi(moshi: Moshi, client: OkHttpClient): NotificationServiceApi =
         Retrofit.Builder()
             .client(client)
-            .baseUrl(GatewayApi.BASE_URL)
+            .baseUrl(NotificationServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(NotificationServiceApi::class.java)
@@ -160,8 +161,8 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationRepo(notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
-        NotificationRepository(notificationServiceApi, notificationManager)
+    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
+        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
