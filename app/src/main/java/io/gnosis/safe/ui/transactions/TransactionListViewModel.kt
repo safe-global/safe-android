@@ -219,6 +219,7 @@ class TransactionListViewModel
     ): TransactionView.Transfer {
 
         return TransactionView.Transfer(
+            id = transfer.id,
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),

@@ -7,8 +7,12 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
 
-sealed class TransactionView(open val status: TransactionStatus?) {
+sealed class TransactionView(
+    open val status: TransactionStatus?,
+    open val id: String? = null
+) {
     data class Transfer(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -19,7 +23,7 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val amountColor: Int,
         val alpha: Float,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class TransferQueued(
         override val status: TransactionStatus,

@@ -330,8 +330,10 @@ class TransactionListViewModelTest {
             ),
             transactionViews[1]
         )
+        //FIXME: pass id's
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
@@ -347,6 +349,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -362,6 +365,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -377,6 +381,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -421,6 +426,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -436,6 +442,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -451,6 +458,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
@@ -466,6 +474,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                id = "",
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
@@ -851,6 +860,7 @@ class TransactionListViewModelTest {
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
             Transaction.Transfer(
+                id = "",
                 status = status,
                 confirmations = 2,
                 recipient = defaultToAddress,
@@ -876,6 +886,7 @@ class TransactionListViewModelTest {
         nonce: BigInteger = defaultNonce
     ): Transaction =
         Transaction.Transfer(
+            id = "",
             status = status,
             confirmations = confirmations,
             recipient = recipient,
@@ -897,6 +908,7 @@ class TransactionListViewModelTest {
         dataSize: Long = 0
     ): Transaction =
         Transaction.Custom(
+            id = "",
             status = status,
             confirmations = confirmations,
             value = value,
@@ -914,6 +926,7 @@ class TransactionListViewModelTest {
         dataDecoded: DataDecodedDto = buildDataDecodedDto()
     ): Transaction =
         Transaction.SettingsChange(
+            id = "",
             status = status,
             confirmations = confirmations,
             date = date,
