@@ -1,19 +1,10 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.Custom
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.SettingsChange
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.Transfer
-import io.gnosis.data.backend.dto.TransferInfo
+import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -48,9 +39,22 @@ class TransactionRepository(
             )
         }
 
+    suspend fun getTransactionDetails(txId: String): TransactionDetails =
+        gatewayApi.loadTransactionDetails(txId).let {
+            TransactionDetails(
+                it.txHash,
+                it.txStatus,
+                it.executedAt?.toDate(),
+                it.txInfo.sender,
+                it.txData,
+                it.detailedExecutionInfo
+            )
+        }
+
     private fun GateTransactionDto.toTransaction(): Transaction {
         return when (txInfo) {
             is Transfer -> Transaction.Transfer(
+                id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
                 nonce = executionInfo?.nonce,
@@ -62,6 +66,7 @@ class TransactionRepository(
                 incoming = txInfo.direction == TransactionDirection.INCOMING
             )
             is SettingsChange -> Transaction.SettingsChange(
+                id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
                 nonce = executionInfo?.nonce ?: BigInteger.ZERO,
@@ -69,6 +74,7 @@ class TransactionRepository(
                 dataDecoded = txInfo.dataDecoded
             )
             is Custom -> Transaction.Custom(
+                id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
                 nonce = executionInfo?.nonce,
