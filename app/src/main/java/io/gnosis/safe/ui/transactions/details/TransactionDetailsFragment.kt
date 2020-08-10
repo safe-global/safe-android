@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.backend.dto.MultisigExecutionDetails
-import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransferDetails
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
@@ -66,7 +66,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.loadDetails(txId)
     }
 
-    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
+    private fun updateUi(txDetails: TransferDetails?, isLoading: Boolean) {
         binding.refresh.isRefreshing = isLoading
         txDetails?.let {
             binding.content.visible(true)

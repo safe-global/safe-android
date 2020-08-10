@@ -105,7 +105,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             ellipsizedAddress.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
-                Navigation.findNavController(it).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment(viewTransfer.id))
+                navigateToTxDetails(it, viewTransfer.id)
             }
         }
     }
@@ -130,6 +130,10 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -152,6 +156,10 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             settingName.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -173,6 +181,10 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -204,6 +216,10 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -234,6 +250,10 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -263,6 +283,10 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
             nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
 }
@@ -297,8 +321,15 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             dataSize.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
 
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
         }
     }
+}
+
+private fun navigateToTxDetails(view: View, id: String) {
+    Navigation.findNavController(view).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment(id))
 }
 
 class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :

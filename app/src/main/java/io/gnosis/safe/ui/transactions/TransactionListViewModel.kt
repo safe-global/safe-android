@@ -237,6 +237,7 @@ class TransactionListViewModel
         val thresholdMet = checkThreshold(safeInfo.threshold, transfer.confirmations)
 
         return TransactionView.TransferQueued(
+            id = transfer.id,
             status = transfer.status,
             statusText = displayString(transfer.status),
             statusColorRes = statusTextColor(transfer.status),
@@ -255,6 +256,7 @@ class TransactionListViewModel
 
     private fun historicSettingsChange(transaction: SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -268,6 +270,7 @@ class TransactionListViewModel
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
 
         return TransactionView.SettingsChangeQueued(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -287,6 +290,7 @@ class TransactionListViewModel
         val version = getVersionForAddress(address)
 
         return TransactionView.SettingsChangeVariant(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -305,6 +309,7 @@ class TransactionListViewModel
         val version = getVersionForAddress(address)
 
         return TransactionView.SettingsChangeVariantQueued(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -335,6 +340,7 @@ class TransactionListViewModel
         val address = getAddress(transaction, "handler")
 
         return TransactionView.SettingsChangeVariant(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -353,6 +359,7 @@ class TransactionListViewModel
         val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
         return TransactionView.SettingsChangeVariantQueued(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -377,6 +384,7 @@ class TransactionListViewModel
         val label = if (transaction.dataDecoded.method == "enableModule") R.string.tx_list_enable_module else R.string.tx_list_disable_module
 
         return TransactionView.SettingsChangeVariant(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -398,6 +406,7 @@ class TransactionListViewModel
         val version = getVersionForAddress(address)
 
         return TransactionView.SettingsChangeVariantQueued(
+            id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
@@ -428,6 +437,7 @@ class TransactionListViewModel
     private fun historicCustomTransaction(custom: Custom, safeInfo: SafeInfo): TransactionView.CustomTransaction {
         val isIncoming: Boolean = custom.address == safeInfo.address
         return TransactionView.CustomTransaction(
+            id = custom.id,
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),
@@ -445,6 +455,7 @@ class TransactionListViewModel
         val isIncoming: Boolean = custom.address == safeInfo.address
         val thresholdMet = checkThreshold(safeInfo.threshold, custom.confirmations)
         return TransactionView.CustomTransactionQueued(
+            id = custom.id,
             status = custom.status,
             statusText = displayString(custom.status),
             statusColorRes = statusTextColor(custom.status),

@@ -3,7 +3,6 @@ package io.gnosis.data.backend
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.models.Page
-import io.gnosis.data.models.TransactionDetails
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Url

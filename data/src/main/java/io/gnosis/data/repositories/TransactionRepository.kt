@@ -12,13 +12,14 @@ import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
+import io.gnosis.data.backend.dto.TransactionInfo
 import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.backend.dto.Unknown
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.TransferDetails
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -54,17 +55,29 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): TransactionDetails =
+    suspend fun getTransactionDetails(txId: String): TransferDetails =
         gatewayApi.loadTransactionDetails(txId).let {
-            TransactionDetails(
+
+            // TODO: create different tx types for detail display: Custom, Settingschange & Transfer
+
+            TransferDetails(
                 it.txHash,
                 it.txStatus,
                 (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
                 it.executedAt?.toDate(),
-                (it.txInfo as Transfer).sender, // TODO: handle other transfer type
+                getExecutor(it.txInfo),  //(it.txInfo as? Transfer)?.sender, // TODO: handle other transfer type
                 it.txData,
                 it.detailedExecutionInfo
             )
+        }
+
+    private fun getExecutor(txInfo: TransactionInfo): Solidity.Address =
+         when (txInfo) {
+            is Custom -> txInfo.to // safe address ?
+            is SettingsChange -> "0x1234".asEthereumAddress()!! // safe address
+            is Transfer -> txInfo.sender
+            is Creation -> "0x5678".asEthereumAddress()!! // who is the creator
+            else -> "0x12345678".asEthereumAddress()!!
         }
 
     private fun GateTransactionDto.toTransaction(): Transaction {
