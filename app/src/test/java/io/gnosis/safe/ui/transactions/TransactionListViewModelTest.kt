@@ -296,6 +296,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.TransferQueued(
+                id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
@@ -314,6 +315,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.TransferQueued(
+                id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
@@ -520,6 +522,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.CustomTransactionQueued(
+                id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
@@ -538,6 +541,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransactionQueued(
+                id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
@@ -556,6 +560,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
@@ -571,6 +576,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                id = "",
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
@@ -586,6 +592,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
@@ -687,6 +694,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
+                id = "",
                 label = R.string.tx_list_change_mastercopy,
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
@@ -707,6 +715,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
@@ -722,6 +731,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
+                id = "",
                 label = R.string.tx_list_set_fallback_handler,
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
@@ -742,6 +752,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
+                id = "",
                 label = R.string.tx_list_disable_module,
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_list_awaiting_confirmations,
@@ -762,6 +773,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
+                id = "",
                 label = R.string.tx_list_enable_module,
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_list_awaiting_execution,
@@ -782,6 +794,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariant(
+                id = "",
                 label = R.string.tx_list_set_fallback_handler,
                 status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
@@ -799,6 +812,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariant(
+                id = "",
                 label = R.string.tx_list_change_mastercopy,
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
@@ -816,6 +830,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeVariant(
+                id = "",
                 label = R.string.tx_list_enable_module,
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
@@ -833,6 +848,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
+                id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
