@@ -6,12 +6,12 @@ import java.math.BigInteger
 
 //FIXME: (WIP) revise structure
 data class GateTransactionDetailsDto(
-    val txHash: String,
+    val txHash: String?,
     val txStatus: TransactionStatus,
     val txInfo: TxInfo,
     val executedAt: Long?,
-    val txData: TxData,
-    val detailedExecutionInfo: DetailedExecutionInfo
+    val txData: TxData?,
+    val detailedExecutionInfo: DetailedExecutionInfo?
 )
 
 //TODO: add missing fields
@@ -21,7 +21,7 @@ data class TxInfo(
 )
 
 data class TxData(
-    val hexData: String,
+    val hexData: String?,
     val dataDecoded: DataDecodedDto,
     val to: Solidity.Address,
     val value: BigInteger,
@@ -30,7 +30,7 @@ data class TxData(
 
 data class DetailedExecutionInfo(
     val type: String,
-    val sumbittedAt: Long?,
+    val submittedAt: Long?,
     val nonce: BigInteger,
     val safeTxHash: String,
     val signers: List<Solidity.Address>,

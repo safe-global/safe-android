@@ -21,7 +21,8 @@ data class ExecutionInfo(
 enum class GateTransactionType {
     Transfer,
     SettingsChange,
-    Custom
+    Custom,
+    Creation
 }
 
 interface TransactionInfo {
@@ -46,6 +47,10 @@ data class Transfer(
     val recipient: Solidity.Address,
     val transferInfo: TransferInfo,
     val direction : TransactionDirection
+) : TransactionInfo
+
+data class Creation(
+    override val type: GateTransactionType = GateTransactionType.Creation
 ) : TransactionInfo
 
 enum class TransactionDirection {

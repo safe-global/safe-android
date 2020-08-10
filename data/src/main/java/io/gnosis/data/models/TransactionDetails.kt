@@ -7,11 +7,11 @@ import java.util.*
 
 //FIXME: (WIP) revise structure
 data class TransactionDetails(
-    val txHash: String,
+    val txHash: String?,
     val txStatus: TransactionStatus,
     val createdAt: Date?,
     val executedAt: Date?,
     val executor: Solidity.Address,
-    val txData: TxData,
-    val detailedExecutionInfo: DetailedExecutionInfo
+    val txData: TxData?,
+    val detailedExecutionInfo: DetailedExecutionInfo?
 )

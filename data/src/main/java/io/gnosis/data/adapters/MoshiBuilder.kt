@@ -4,8 +4,23 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.backend.dto.*
-import pm.gnosis.common.adapters.moshi.*
+import io.gnosis.data.backend.dto.Creation
+import io.gnosis.data.backend.dto.Custom
+import io.gnosis.data.backend.dto.Erc20Transfer
+import io.gnosis.data.backend.dto.Erc721Transfer
+import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.GateTransactionType
+import io.gnosis.data.backend.dto.GateTransferType
+import io.gnosis.data.backend.dto.SettingsChange
+import io.gnosis.data.backend.dto.TransactionInfo
+import io.gnosis.data.backend.dto.Transfer
+import io.gnosis.data.backend.dto.TransferInfo
+import pm.gnosis.common.adapters.moshi.BigDecimalNumberAdapter
+import pm.gnosis.common.adapters.moshi.DecimalNumberAdapter
+import pm.gnosis.common.adapters.moshi.DefaultNumberAdapter
+import pm.gnosis.common.adapters.moshi.HexNumberAdapter
+import pm.gnosis.common.adapters.moshi.SolidityAddressAdapter
+import pm.gnosis.common.adapters.moshi.WeiAdapter
 import java.util.*
 
 internal val transferInfoAdapter =
@@ -19,6 +34,7 @@ internal val transactionInfoAdapter =
         .withSubtype(Transfer::class.java, GateTransactionType.Transfer.name)
         .withSubtype(SettingsChange::class.java, GateTransactionType.SettingsChange.name)
         .withSubtype(Custom::class.java, GateTransactionType.Custom.name)
+        .withSubtype(Creation::class.java, GateTransactionType.Creation.name)
 
 val dataMoshi =
     Moshi.Builder()

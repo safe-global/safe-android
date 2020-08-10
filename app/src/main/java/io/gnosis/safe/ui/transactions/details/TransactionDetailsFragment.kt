@@ -71,8 +71,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.content.visible(true)
             binding.txConfirmations.setExecutionData(
                 status = txDetails.txStatus,
-                confirmations = txDetails.detailedExecutionInfo.confirmations.map { it.signer },
-                threshold = txDetails.detailedExecutionInfo.confirmationsRequired,
+                confirmations = txDetails.detailedExecutionInfo?.confirmations?.map { it.signer } ?: listOf(),
+                threshold = txDetails.detailedExecutionInfo?.confirmationsRequired ?: 0,
                 executor = txDetails.executor
             )
             binding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""

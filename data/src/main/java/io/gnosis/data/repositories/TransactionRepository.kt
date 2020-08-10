@@ -1,10 +1,22 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.*
+import io.gnosis.data.backend.dto.Creation
+import io.gnosis.data.backend.dto.Custom
+import io.gnosis.data.backend.dto.Erc20Transfer
+import io.gnosis.data.backend.dto.Erc721Transfer
+import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.backend.dto.SettingsChange
+import io.gnosis.data.backend.dto.TransactionDirection
+import io.gnosis.data.backend.dto.Transfer
+import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -44,7 +56,7 @@ class TransactionRepository(
             TransactionDetails(
                 it.txHash,
                 it.txStatus,
-                it.detailedExecutionInfo.sumbittedAt?.toDate(),
+                it.detailedExecutionInfo?.submittedAt?.toDate(),
                 it.executedAt?.toDate(),
                 it.txInfo.sender,
                 it.txData,
@@ -84,6 +96,14 @@ class TransactionRepository(
                 dataSize = txInfo.dataSize.toLong(),
                 value = txInfo.value.toBigInteger()
             )
+
+            is Creation -> Transaction.Creation(
+                id = id,
+                confirmations = null,
+                status = TransactionStatus.SUCCESS
+            )
+
+            // TODO: Do not throw. Instead log with Timber
             else -> throw IllegalStateException()
         }
     }

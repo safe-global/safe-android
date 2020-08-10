@@ -9,6 +9,7 @@ import java.util.*
 sealed class Transaction {
     abstract val id: String
     abstract val status: TransactionStatus
+
     // If status is Successful, Failed or Canceled, the confirmations can be null
     abstract val confirmations: Int?
 
@@ -43,6 +44,12 @@ sealed class Transaction {
         val tokenInfo: ServiceTokenInfo?,
         val nonce: BigInteger?,
         val incoming: Boolean
+    ) : Transaction()
+
+    data class Creation(
+        override val id: String,
+        override val status: TransactionStatus,
+        override val confirmations: Int?
     ) : Transaction()
 }
 
