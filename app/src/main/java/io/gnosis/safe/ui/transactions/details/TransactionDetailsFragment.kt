@@ -33,6 +33,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
         FragmentTransactionDetailsBinding.inflate(inflater, container, false)
 
