@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.models.TransactionDetails
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -71,8 +72,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.content.visible(true)
             binding.txConfirmations.setExecutionData(
                 status = txDetails.txStatus,
-                confirmations = txDetails.detailedExecutionInfo?.confirmations?.map { it.signer } ?: listOf(),
-                threshold = txDetails.detailedExecutionInfo?.confirmationsRequired ?: 0,
+                confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
+                threshold = (txDetails.detailedExecutionInfo  as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
                 executor = txDetails.executor
             )
             binding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""

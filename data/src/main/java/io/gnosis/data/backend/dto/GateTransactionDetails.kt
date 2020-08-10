@@ -8,35 +8,43 @@ import java.math.BigInteger
 data class GateTransactionDetailsDto(
     val txHash: String?,
     val txStatus: TransactionStatus,
-    val txInfo: TxInfo,
+    val txInfo: TransactionInfo,
     val executedAt: Long?,
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?
 )
 
-//TODO: add missing fields
-data class TxInfo(
-    val type: String,
-    val sender: Solidity.Address
-)
-
 data class TxData(
     val hexData: String?,
-    val dataDecoded: DataDecodedDto,
+    val dataDecoded: DataDecodedDto?,
     val to: Solidity.Address,
-    val value: BigInteger,
+    val value: BigInteger?,
     val operation: Operation
 )
 
-data class DetailedExecutionInfo(
-    val type: String,
+interface DetailedExecutionInfo {
+    val type: DetailedExecutionInfoType
+}
+
+data class MultisigExecutionDetails(
+    override val type: DetailedExecutionInfoType,
     val submittedAt: Long?,
     val nonce: BigInteger,
     val safeTxHash: String,
     val signers: List<Solidity.Address>,
     val confirmationsRequired: Int,
     val confirmations: List<Confirmations>
-)
+) : DetailedExecutionInfo
+
+data class ModuleExecutionDetails(
+    override val type: DetailedExecutionInfoType,
+    val address: String
+) : DetailedExecutionInfo
+
+enum class DetailedExecutionInfoType {
+    MULTISIG,
+    MODULE
+}
 
 data class Confirmations(
     val signer: Solidity.Address,

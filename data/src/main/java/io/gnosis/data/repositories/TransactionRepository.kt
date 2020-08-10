@@ -7,12 +7,14 @@ import io.gnosis.data.backend.dto.Erc20Transfer
 import io.gnosis.data.backend.dto.Erc721Transfer
 import io.gnosis.data.backend.dto.EtherTransfer
 import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
+import io.gnosis.data.backend.dto.Unknown
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionDetails
@@ -20,6 +22,7 @@ import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -56,9 +59,9 @@ class TransactionRepository(
             TransactionDetails(
                 it.txHash,
                 it.txStatus,
-                it.detailedExecutionInfo?.submittedAt?.toDate(),
+                (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
                 it.executedAt?.toDate(),
-                it.txInfo.sender,
+                (it.txInfo as Transfer).sender, // TODO: handle other transfer type
                 it.txData,
                 it.detailedExecutionInfo
             )
@@ -103,7 +106,17 @@ class TransactionRepository(
                 status = TransactionStatus.SUCCESS
             )
 
-            // TODO: Do not throw. Instead log with Timber
+            is Unknown -> Transaction.Custom(
+                id = id,
+                address = "0x00".asEthereumAddress()!!,
+                status = TransactionStatus.SUCCESS,
+                value = BigInteger.ZERO,
+                dataSize = 0L,
+                confirmations = null,
+                nonce = BigInteger.ZERO,
+                date = null
+            )
+            // This should not happen as Unknown is the default value
             else -> throw IllegalStateException()
         }
     }
