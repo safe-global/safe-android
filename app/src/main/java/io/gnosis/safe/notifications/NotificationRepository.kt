@@ -24,7 +24,7 @@ class NotificationRepository(
 ) {
 
     private var deviceUuid: String?
-        get() = preferencesManager.prefs.getString(DEVICE_UUID, "null")
+        get() = preferencesManager.prefs.getString(DEVICE_UUID, null)
         set(value) {
             preferencesManager.prefs.edit {
                 putString(DEVICE_UUID, value)
@@ -66,20 +66,24 @@ class NotificationRepository(
                 it.address.asEthereumAddressChecksumString()
             }
 
-            notificationService.register(
-                FirebaseDevice(
-                    safes,
-                    token,
-                    BuildConfig.VERSION_CODE,
-                    BuildConfig.APPLICATION_ID,
-                    BuildConfig.VERSION_NAME,
-                    "ANDROID",
-                    deviceUuid
+            if (safes.isNotEmpty()) {
+                notificationService.register(
+                    FirebaseDevice(
+                        safes,
+                        token,
+                        BuildConfig.VERSION_CODE,
+                        BuildConfig.APPLICATION_ID,
+                        BuildConfig.VERSION_NAME,
+                        "ANDROID",
+                        deviceUuid
+                    )
                 )
-            )
+            } else {
+                null
+            }
         }
             .onSuccess {
-                deviceUuid = it.uuid
+                deviceUuid = it?.uuid
             }
             .onFailure {
                 deviceUuid = null
