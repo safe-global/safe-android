@@ -29,6 +29,7 @@ data class CustomDetails(
     val txStatus: TransactionStatus,
     val createdAt: Date?,
     val executedAt: Date?,
+    val executor: Solidity.Address,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val txData: TxData?
 ) : TransactionDetails
@@ -46,6 +47,7 @@ data class SettingsChangeDetails(
     val txStatus: TransactionStatus,
     val createdAt: Date?,
     val executedAt: Date?,
+    val executor: Solidity.Address,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val txData: TxData? // contains data decoded
 ) : TransactionDetails
@@ -56,6 +58,7 @@ data class CreationDetails(
     val txStatus: TransactionStatus,
     val createdAt: Date?,
     val executedAt: Date?,
+    val executor: Solidity.Address,
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?
 

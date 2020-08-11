@@ -82,7 +82,8 @@ class TransactionRepository(
                         },
                         detailedExecutionInfo = it.detailedExecutionInfo,
                         txStatus = it.txStatus,
-                        txData = it.txData
+                        txData = it.txData,
+                        executor = Solidity.Address(BigInteger.ZERO)  // TODO: handle other transfer type
                     )
                 }
                 is SettingsChange -> {
@@ -96,7 +97,9 @@ class TransactionRepository(
                         },
                         executedAt = it.executedAt?.let { date ->
                             Date(date)
-                        }
+                        },
+                        executor = Solidity.Address(BigInteger.ZERO) // TODO: handle other transfer type
+
                     )
                 }
                 is Creation -> {
@@ -106,7 +109,8 @@ class TransactionRepository(
                         txStatus = it.txStatus,
                         createdAt = null,
                         detailedExecutionInfo = null,
-                        executedAt = null
+                        executedAt = null,
+                        executor = Solidity.Address(BigInteger.ZERO)// TODO: handle other transfer type
                     )
                 }
                 is Unknown -> {
@@ -116,7 +120,8 @@ class TransactionRepository(
                         txStatus = it.txStatus,
                         executedAt = null,
                         detailedExecutionInfo = null,
-                        createdAt = null
+                        createdAt = null,
+                        executor = Solidity.Address(BigInteger.ZERO)
                     )
                 }
                 else -> CustomDetails(
@@ -125,7 +130,8 @@ class TransactionRepository(
                     txStatus = it.txStatus,
                     executedAt = null,
                     detailedExecutionInfo = null,
-                    createdAt = null
+                    createdAt = null,
+                    executor = Solidity.Address(BigInteger.ZERO)
                 )
             }
 

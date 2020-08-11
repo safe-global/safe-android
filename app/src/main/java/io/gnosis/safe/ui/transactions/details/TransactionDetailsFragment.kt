@@ -47,7 +47,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
         FragmentTransactionDetailsBinding.inflate(inflater, container, false)
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -85,7 +84,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         when (txDetails) {
             is TransferDetails -> {
-                val view =  stub_transfer.inflate()
+                val view = stub_transfer.inflate()
                 view.visibility = View.VISIBLE
 
                 Timber.i("---> updateUi(): inflated view: $view")
@@ -108,15 +107,51 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     )
                 }
             }
-            is CustomDetails -> {
-                val view =  stub_custom.inflate()
-                view.visibility = View.VISIBLE
-            }
             is SettingsChangeDetails -> {
-                val view =  stub_setttings_change.inflate()
+                val view = stub_setttings_change.inflate()
                 view.visibility = View.VISIBLE
-            }
+                Timber.i("---> updateUi(): inflated view: $view")
 
+                view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
+                    status = txDetails.txStatus,
+                    confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
+                    threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
+                    executor = txDetails.executor
+                )
+                view.findViewById<TimeInfoItem>(R.id.created).value = txDetails.createdAt?.formatBackendDate() ?: ""
+                view.findViewById<TimeInfoItem>(R.id.executed).value = txDetails.executedAt?.formatBackendDate() ?: ""
+
+                etherscan.setOnClickListener {
+                    requireContext().openUrl(
+                        getString(
+                            R.string.etherscan_transaction_url,
+                            txDetails.txHash
+                        )
+                    )
+                }
+            }
+            is CustomDetails -> {
+                val view = stub_custom.inflate()
+                view.visibility = View.VISIBLE
+                Timber.i("---> updateUi(): inflated view: $view")
+
+                view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
+                    status = txDetails.txStatus,
+                    confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
+                    threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
+                    executor = txDetails.executor
+                )
+                view.findViewById<TimeInfoItem>(R.id.created).value = txDetails.createdAt?.formatBackendDate() ?: ""
+                view.findViewById<TimeInfoItem>(R.id.executed).value = txDetails.executedAt?.formatBackendDate() ?: ""
+                etherscan.setOnClickListener {
+                    requireContext().openUrl(
+                        getString(
+                            R.string.etherscan_transaction_url,
+                            txDetails.txHash
+                        )
+                    )
+                }
+            }
         }
     }
 }
