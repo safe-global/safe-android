@@ -92,7 +92,11 @@
         android:id="@+id/transactionDetailsFragment"
         android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsFragment"
         android:label="TransactionDetailsFragment"
-        tools:layout="@layout/fragment_transaction_details" />
+        tools:layout="@layout/fragment_transaction_details">
+        <argument
+            android:name="txId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/addSafeFragment"

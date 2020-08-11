@@ -7,8 +7,12 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
 
-sealed class TransactionView(open val status: TransactionStatus?) {
+sealed class TransactionView(
+    open val status: TransactionStatus?,
+    open val id: String
+) {
     data class Transfer(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -19,9 +23,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val amountColor: Int,
         val alpha: Float,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class TransferQueued(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -35,9 +40,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class SettingsChange(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -45,9 +51,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val method: String,
         val alpha: Float,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class SettingsChangeQueued(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -58,9 +65,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class SettingsChangeVariant(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -74,9 +82,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val visibilityModuleAddress: Int = View.GONE,
         val nonce: String
 
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class SettingsChangeVariantQueued(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -92,9 +101,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val visibilityVersion: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
         val visibilityModuleAddress: Int = View.GONE
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class CustomTransaction(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -105,9 +115,10 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         @ColorRes val amountColor: Int,
         val alpha: Float,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
     data class CustomTransactionQueued(
+        override val id: String,
         override val status: TransactionStatus,
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
@@ -121,9 +132,9 @@ sealed class TransactionView(open val status: TransactionStatus?) {
         val amountText: String,
         @ColorRes val amountColor: Int,
         val nonce: String
-    ) : TransactionView(status)
+    ) : TransactionView(status, id)
 
-    data class SectionHeader(@StringRes val title: Int) : TransactionView(TransactionStatus.PENDING)
+    data class SectionHeader(@StringRes val title: Int, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
 
-    object Unknown : TransactionView(null)
+    object Unknown : TransactionView(null, "<unused>")
 }

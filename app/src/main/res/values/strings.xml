@@ -95,6 +95,10 @@
     <string name="tx_list_success">Success</string>
 
     <string name="tx_details_title">Transaction details</string>
+    <string name="tx_details_advanced">Advanced</string>
+    <string name="tx_details_created">Created:</string>
+    <string name="tx_details_executed">Executed:</string>
+    <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
@@ -117,6 +121,14 @@
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
     
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
+
+    <string name="tx_confirmations_created">Created</string>
+    <string name="tx_confirmations_confirmed">Confirmed</string>
+    <string name="tx_confirmations_failed">Failed</string>
+    <string name="tx_confirmations_canceled">Canceled</string>
+    <string name="tx_confirmations_execute_ready">Execute</string>
+    <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
+    <string name="tx_confirmations_executed">Executed</string>
 
     <string name="retry">RETRY</string>
     <string name="address_found">Address found</string>

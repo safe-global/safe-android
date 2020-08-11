@@ -7,11 +7,14 @@ import java.math.BigInteger
 import java.util.*
 
 sealed class Transaction {
+    abstract val id: String
     abstract val status: TransactionStatus
+
     // If status is Successful, Failed or Canceled, the confirmations can be null
     abstract val confirmations: Int?
 
     data class Custom(
+        override val id: String,
         override val status: TransactionStatus,
         override val confirmations: Int?,
         val nonce: BigInteger?,
@@ -22,6 +25,7 @@ sealed class Transaction {
     ) : Transaction()
 
     data class SettingsChange(
+        override val id: String,
         override val status: TransactionStatus,
         override val confirmations: Int?,
         val dataDecoded: DataDecodedDto,
@@ -30,6 +34,7 @@ sealed class Transaction {
     ) : Transaction()
 
     data class Transfer(
+        override val id: String,
         override val status: TransactionStatus,
         override val confirmations: Int?,
         val recipient: Solidity.Address,
@@ -39,6 +44,12 @@ sealed class Transaction {
         val tokenInfo: ServiceTokenInfo?,
         val nonce: BigInteger?,
         val incoming: Boolean
+    ) : Transaction()
+
+    data class Creation(
+        override val id: String,
+        override val status: TransactionStatus = TransactionStatus.SUCCESS,
+        override val confirmations: Int? = null
     ) : Transaction()
 }
 

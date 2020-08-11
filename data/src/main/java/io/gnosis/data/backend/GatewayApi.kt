@@ -1,5 +1,6 @@
 package io.gnosis.data.backend
 
+import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.models.Page
 import retrofit2.http.GET
@@ -13,6 +14,9 @@ interface GatewayApi {
 
     @GET
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<GateTransactionDto>
+
+    @GET("v1/transactions/{transactionId}")
+    suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): GateTransactionDetailsDto
 
     companion object {
         const val BASE_URL = "https://safe-client-gateway.herokuapp.com/"
