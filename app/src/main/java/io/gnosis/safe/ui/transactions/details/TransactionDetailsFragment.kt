@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_transaction_details.*
 import kotlinx.android.synthetic.main.tx_details_transfer.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -82,13 +81,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = isLoading
         binding.content.visible(true)
 
+        
+        // TODO: How can we use viewBindings for the ViewStubs after they have been replaced?
+
+
         when (txDetails) {
             is TransferDetails -> {
                 val view = stub_transfer.inflate()
                 view.visibility = View.VISIBLE
-
-                Timber.i("---> updateUi(): inflated view: $view")
-
                 view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
@@ -110,8 +110,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             is SettingsChangeDetails -> {
                 val view = stub_setttings_change.inflate()
                 view.visibility = View.VISIBLE
-                Timber.i("---> updateUi(): inflated view: $view")
-
                 view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
@@ -133,8 +131,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             is CustomDetails -> {
                 val view = stub_custom.inflate()
                 view.visibility = View.VISIBLE
-                Timber.i("---> updateUi(): inflated view: $view")
-
                 view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
