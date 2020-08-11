@@ -4,7 +4,6 @@ import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
-//FIXME: (WIP) revise structure
 data class GateTransactionDetailsDto(
     val txHash: String?,
     val txStatus: TransactionStatus,

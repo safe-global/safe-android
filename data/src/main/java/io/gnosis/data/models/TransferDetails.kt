@@ -5,7 +5,6 @@ import io.gnosis.data.backend.dto.TxData
 import pm.gnosis.model.Solidity
 import java.util.*
 
-//FIXME: (WIP) revise structure
 // Designs:
 // incoming Transfer https://zpl.io/V1KKZq5 (with data section)
 //
