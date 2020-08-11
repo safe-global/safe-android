@@ -5,6 +5,8 @@ import io.gnosis.data.backend.dto.TxData
 import pm.gnosis.model.Solidity
 import java.util.*
 
+interface TransactionDetails
+
 // Designs:
 // incoming Transfer https://zpl.io/V1KKZq5 (with data section)
 //
@@ -16,7 +18,7 @@ data class TransferDetails(
     val executor: Solidity.Address,
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?
-)
+) : TransactionDetails
 
 // Designs:
 // Contract interaction https://zpl.io/a79BYmp (data collapsed)
@@ -29,7 +31,7 @@ data class CustomDetails(
     val executedAt: Date?,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val txData: TxData?
-)
+) : TransactionDetails
 
 // enable module https://zpl.io/brwPG87
 // disable module https://zpl.io/V03pzqx
@@ -46,10 +48,10 @@ data class SettingsChangeDetails(
     val executedAt: Date?,
     val detailedExecutionInfo: DetailedExecutionInfo?,
     val txData: TxData? // contains data decoded
-)
+) : TransactionDetails
 
 // Safe created
-data class CreationChangeDetails(
+data class CreationDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
     val createdAt: Date?,
@@ -57,4 +59,4 @@ data class CreationChangeDetails(
     val txData: TxData?,
     val detailedExecutionInfo: DetailedExecutionInfo?
 
-)
+) : TransactionDetails

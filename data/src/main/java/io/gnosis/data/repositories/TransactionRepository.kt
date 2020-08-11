@@ -12,18 +12,20 @@ import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfo
 import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.backend.dto.Unknown
+import io.gnosis.data.models.CreationDetails
+import io.gnosis.data.models.CustomDetails
 import io.gnosis.data.models.Page
+import io.gnosis.data.models.SettingsChangeDetails
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.models.TransferDetails
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -55,29 +57,78 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): TransferDetails =
+    suspend fun getTransactionDetails(txId: String): TransactionDetails =
         gatewayApi.loadTransactionDetails(txId).let {
+            when (it.txInfo) {
+                is Transfer -> {
+                    TransferDetails(
+                        txHash = it.txHash,
+                        txStatus = it.txStatus,
+                        createdAt = (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
+                        executedAt = it.executedAt?.toDate(),
+                        executor = (it.txInfo as? Transfer)?.sender!!, // TODO: handle other transfer type
+                        txData = it.txData,
+                        detailedExecutionInfo = it.detailedExecutionInfo
+                    )
+                }
+                is Custom -> {
+                    CustomDetails(
+                        txHash = it.txHash,
+                        executedAt = it.executedAt?.let { date ->
+                            Date(date)
+                        },
+                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.let { date ->
+                            Date(date)
+                        },
+                        detailedExecutionInfo = it.detailedExecutionInfo,
+                        txStatus = it.txStatus,
+                        txData = it.txData
+                    )
+                }
+                is SettingsChange -> {
+                    SettingsChangeDetails(
+                        txHash = it.txHash,
+                        txData = it.txData,
+                        txStatus = it.txStatus,
+                        detailedExecutionInfo = it.detailedExecutionInfo,
+                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.let { date ->
+                            Date(date)
+                        },
+                        executedAt = it.executedAt?.let { date ->
+                            Date(date)
+                        }
+                    )
+                }
+                is Creation -> {
+                    CreationDetails(
+                        txHash = it.txHash,
+                        txData = it.txData,
+                        txStatus = it.txStatus,
+                        createdAt = null,
+                        detailedExecutionInfo = null,
+                        executedAt = null
+                    )
+                }
+                is Unknown -> {
+                    CustomDetails(
+                        txHash = it.txHash,
+                        txData = it.txData,
+                        txStatus = it.txStatus,
+                        executedAt = null,
+                        detailedExecutionInfo = null,
+                        createdAt = null
+                    )
+                }
+                else -> CustomDetails(
+                    txHash = it.txHash,
+                    txData = it.txData,
+                    txStatus = it.txStatus,
+                    executedAt = null,
+                    detailedExecutionInfo = null,
+                    createdAt = null
+                )
+            }
 
-            // TODO: create different tx types for detail display: Custom, Settingschange & Transfer
-
-            TransferDetails(
-                it.txHash,
-                it.txStatus,
-                (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
-                it.executedAt?.toDate(),
-                getExecutor(it.txInfo),  //(it.txInfo as? Transfer)?.sender, // TODO: handle other transfer type
-                it.txData,
-                it.detailedExecutionInfo
-            )
-        }
-
-    private fun getExecutor(txInfo: TransactionInfo): Solidity.Address =
-         when (txInfo) {
-            is Custom -> txInfo.to // safe address ?
-            is SettingsChange -> "0x1234".asEthereumAddress()!! // safe address
-            is Transfer -> txInfo.sender
-            is Creation -> "0x5678".asEthereumAddress()!! // who is the creator
-            else -> "0x12345678".asEthereumAddress()!!
         }
 
     private fun GateTransactionDto.toTransaction(): Transaction {
