@@ -57,6 +57,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> updateUi(state.txDetails, viewAction.isLoading)
+                is BaseStateViewModel.ViewAction.ShowError -> {
+                    binding.refresh.isRefreshing = false
+                    //TODO: handle error here
+                }
             }
         })
     }
