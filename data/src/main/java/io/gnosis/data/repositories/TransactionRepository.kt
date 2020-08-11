@@ -121,7 +121,7 @@ class TransactionRepository(
 
             is Unknown -> Transaction.Custom(
                 id = id,
-                address = "0x00".asEthereumAddress()!!,
+                address = Solidity.Address(BigInteger.ZERO),
                 status = TransactionStatus.SUCCESS,
                 value = BigInteger.ZERO,
                 dataSize = 0L,

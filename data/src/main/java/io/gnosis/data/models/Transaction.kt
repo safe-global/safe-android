@@ -48,8 +48,8 @@ sealed class Transaction {
 
     data class Creation(
         override val id: String,
-        override val status: TransactionStatus,
-        override val confirmations: Int?
+        override val status: TransactionStatus = TransactionStatus.SUCCESS,
+        override val confirmations: Int? = null
     ) : Transaction()
 }
 
