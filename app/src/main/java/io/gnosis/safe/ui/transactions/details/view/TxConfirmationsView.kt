@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
+import timber.log.Timber
 
 class TxConfirmationsView @JvmOverloads constructor(
     context: Context,
@@ -59,7 +60,8 @@ class TxConfirmationsView @JvmOverloads constructor(
                         addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
                         addAddressItem(executor)
                     } else {
-                        // fail silently
+                        // fail silently - this should never happen
+                        Timber.e("${TxConfirmationsView::class.java.simpleName}: missing executor for successful transaction")
                         addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
                     }
                 }
