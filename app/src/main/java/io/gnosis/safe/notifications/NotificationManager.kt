@@ -7,10 +7,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
+import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.utils.formatForTxList
 
 class NotificationManager(
@@ -47,6 +50,7 @@ class NotificationManager(
 
         var title = ""
         var text = ""
+        var intent: PendingIntent? = null
 
         val safeName =
             if (safe.localName.isNullOrBlank())
@@ -67,6 +71,7 @@ class NotificationManager(
                     title = context.getString(R.string.push_title_executed)
                     text = context.getString(R.string.push_text_executed, safeName)
                 }
+                intent = txDetailsIntent(pushNotification.safeTxHash)
             }
             is PushNotification.IncomingToken -> {
                 if (pushNotification.tokenId != null) {
@@ -76,14 +81,16 @@ class NotificationManager(
                     title = context.getString(R.string.push_title_received_erc20)
                     text = context.getString(R.string.push_text_received_erc20, safeName)
                 }
+                intent = txListIntent(pushNotification.txHash)
             }
             is PushNotification.IncomingEther -> {
                 title = context.getString(R.string.push_title_received_eth)
                 text = context.getString(R.string.push_text_received_eth, safeName)
+                intent = txListIntent(pushNotification.txHash)
             }
         }
 
-        return builder(title, text)
+        return builder(title, text, CHANNEL_ID, intent)
     }
 
     fun builder(
@@ -119,6 +126,27 @@ class NotificationManager(
     fun hide(id: Int) {
         notificationManager?.cancel(id)
     }
+
+    private fun txDetailsIntent(safeTxHash: String): PendingIntent =
+        NavDeepLinkBuilder(context)
+            .setComponentName(StartActivity::class.java)
+            .setGraph(R.navigation.main_nav)
+            .setDestination(R.id.transactionDetailsFragment)
+            .setArguments(Bundle().apply {
+                putString("txId", safeTxHash)
+            })
+            .createPendingIntent()
+
+    private fun txListIntent(txHash: String): PendingIntent =
+        NavDeepLinkBuilder(context)
+            .setComponentName(StartActivity::class.java)
+            .setGraph(R.navigation.main_nav)
+            .setDestination(R.id.transactionListFragment)
+            .setArguments(Bundle().apply {
+                putString("txHash", txHash)
+            })
+            .createPendingIntent()
+
 
     companion object {
         private val VIBRATE_PATTERN = longArrayOf(0, 100, 50, 100)
