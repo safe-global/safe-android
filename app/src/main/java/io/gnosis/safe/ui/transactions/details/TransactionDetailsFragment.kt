@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -15,14 +16,13 @@ import io.gnosis.data.models.TransferDetails
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
+import io.gnosis.safe.databinding.TxDetailsCustomBinding
+import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
+import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.view.TimeInfoItem
-import io.gnosis.safe.ui.transactions.details.view.TxConfirmationsView
 import io.gnosis.safe.utils.formatBackendDate
-import kotlinx.android.synthetic.main.fragment_transaction_details.*
-import kotlinx.android.synthetic.main.tx_details_transfer.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -62,7 +62,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
-                is BaseStateViewModel.ViewAction.Loading -> updateUi(state.txDetails, viewAction.isLoading)
+                is BaseStateViewModel.ViewAction.Loading -> {
+                    updateUi(state.txDetails, viewAction.isLoading, view)
+                }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
                     //TODO: handle error here
@@ -76,29 +78,26 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.loadDetails(txId)
     }
 
-    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
+    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean, rootView: View) {
 
         binding.refresh.isRefreshing = isLoading
         binding.content.visible(true)
 
-        
-        // TODO: How can we use viewBindings for the ViewStubs after they have been replaced?
-
-
         when (txDetails) {
             is TransferDetails -> {
-                val view = stub_transfer.inflate()
-                view.visibility = View.VISIBLE
-                view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
+                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_transfer).inflate()
+                viewStub.visibility = View.VISIBLE
+                val txDetailsTransferBinding = TxDetailsTransferBinding.bind(viewStub)
+                txDetailsTransferBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
                     threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
                     executor = txDetails.executor
                 )
-                view.findViewById<TimeInfoItem>(R.id.created).value = txDetails.createdAt?.formatBackendDate() ?: ""
+                txDetailsTransferBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
 
-                executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
-                etherscan.setOnClickListener {
+                txDetailsTransferBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
+                txDetailsTransferBinding.etherscan.setOnClickListener {
                     requireContext().openUrl(
                         getString(
                             R.string.etherscan_transaction_url,
@@ -108,18 +107,21 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is SettingsChangeDetails -> {
-                val view = stub_setttings_change.inflate()
-                view.visibility = View.VISIBLE
-                view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
+
+                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_setttings_change).inflate()
+                viewStub.visibility = View.VISIBLE
+                val txDetailsSettingsChangeBinding = TxDetailsSettingsChangeBinding.bind(viewStub)
+
+                txDetailsSettingsChangeBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
                     threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
                     executor = txDetails.executor
                 )
-                view.findViewById<TimeInfoItem>(R.id.created).value = txDetails.createdAt?.formatBackendDate() ?: ""
-                view.findViewById<TimeInfoItem>(R.id.executed).value = txDetails.executedAt?.formatBackendDate() ?: ""
+                txDetailsSettingsChangeBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
+                txDetailsSettingsChangeBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
 
-                etherscan.setOnClickListener {
+                txDetailsSettingsChangeBinding.etherscan.setOnClickListener {
                     requireContext().openUrl(
                         getString(
                             R.string.etherscan_transaction_url,
@@ -129,17 +131,19 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is CustomDetails -> {
-                val view = stub_custom.inflate()
-                view.visibility = View.VISIBLE
-                view.findViewById<TxConfirmationsView>(R.id.tx_confirmations).setExecutionData(
+                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_custom).inflate()
+                viewStub.visibility = View.VISIBLE
+                val txDetailsCustomBinding = TxDetailsCustomBinding.bind(viewStub)
+
+                txDetailsCustomBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
                     threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
                     executor = txDetails.executor
                 )
-                view.findViewById<TimeInfoItem>(R.id.created).value = txDetails.createdAt?.formatBackendDate() ?: ""
-                view.findViewById<TimeInfoItem>(R.id.executed).value = txDetails.executedAt?.formatBackendDate() ?: ""
-                etherscan.setOnClickListener {
+                txDetailsCustomBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
+                txDetailsCustomBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
+                txDetailsCustomBinding.etherscan.setOnClickListener {
                     requireContext().openUrl(
                         getString(
                             R.string.etherscan_transaction_url,
