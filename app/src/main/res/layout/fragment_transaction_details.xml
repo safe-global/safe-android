@@ -72,7 +72,7 @@
 
             <!-- Put SettingsChange ViewStub here  -->
             <ViewStub
-                android:id="@+id/stub_setttings_change"
+                android:id="@+id/stub_settings_change"
                 android:inflatedId="@+id/settings_change_details"
                 android:layout="@layout/tx_details_settings_change"
                 android:layout_width="fill_parent"

@@ -114,7 +114,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
             is SettingsChangeDetails -> {
-                val viewStub = binding.stubSetttingsChange
+                val viewStub = binding.stubSettingsChange
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
                 }
