@@ -1,5 +1,6 @@
 package io.gnosis.safe.notifications
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.safe.notifications.models.FirebaseDevice
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -18,7 +19,7 @@ interface NotificationServiceApi {
     suspend fun unregisterSafe(@Path("uuid") deviceUuid: String, @Path("address") safe: String)
 
     companion object {
-        const val BASE_URL = "https://safe-transaction.dev.gnosisdev.com/"
-        //const val BASE_URL = BuildConfig.NOTIFICATION_SERVICE_URL
+        //const val BASE_URL = "https://safe-transaction.dev.gnosisdev.com/"
+        const val BASE_URL = BuildConfig.TRANSACTION_SERVICE_URL
     }
 }
