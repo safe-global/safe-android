@@ -17,7 +17,8 @@ data class TransferDetails(
     val executedAt: Date?,
     val executor: Solidity.Address,
     val txData: TxData?,
-    val detailedExecutionInfo: DetailedExecutionInfo?
+    val detailedExecutionInfo: DetailedExecutionInfo?,
+    val incoming: Boolean?
 ) : TransactionDetails
 
 // Designs:

@@ -265,7 +265,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code)
+            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
 
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -298,7 +298,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code)
+            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))

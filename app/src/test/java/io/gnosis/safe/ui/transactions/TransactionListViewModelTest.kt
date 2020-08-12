@@ -322,7 +322,7 @@ class TransactionListViewModelTest {
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
-                txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 threshold = 2,
                 confirmationsTextColor = R.color.safe_green,
@@ -374,7 +374,7 @@ class TransactionListViewModelTest {
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
-                txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL,
                 nonce = "1"
@@ -390,7 +390,7 @@ class TransactionListViewModelTest {
                 amountText = "+10 ERC20",
                 amountColor = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
-                txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL,
                 nonce = "1"
@@ -435,7 +435,7 @@ class TransactionListViewModelTest {
                 amountText = "+1 ERC20",
                 amountColor = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
-                txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL,
                 nonce = "1"
@@ -451,7 +451,7 @@ class TransactionListViewModelTest {
                 amountText = "+1 NFT",
                 amountColor = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
-                txTypeIcon = R.drawable.ic_arrow_green_16dp,
+                txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 alpha = OPACITY_FULL,
                 nonce = "1"

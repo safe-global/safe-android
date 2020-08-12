@@ -22,6 +22,7 @@ import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.openUrl
 import javax.inject.Inject
@@ -86,7 +87,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         when (txDetails) {
             is TransferDetails -> {
                 val viewStub = binding.stubTransfer
-                if (viewStub?.parent != null) {
+                if (viewStub.parent != null) {
                     val inflate = viewStub.inflate()
                     contentBinding = TxDetailsTransferBinding.bind(inflate)
                 }
@@ -109,10 +110,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
                     )
                 }
+                val txType = if (txDetails.incoming == true) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
+
+                txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
             is SettingsChangeDetails -> {
                 val viewStub = binding.stubSetttingsChange
-                if (viewStub?.parent != null) {
+                if (viewStub.parent != null) {
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
@@ -137,7 +141,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
             is CustomDetails -> {
                 val viewStub = binding.stubCustom
-                if (viewStub?.parent != null) {
+                if (viewStub.parent != null) {
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding

@@ -68,7 +68,8 @@ class TransactionRepository(
                         executedAt = it.executedAt?.toDate(),
                         executor = (it.txInfo as? Transfer)?.sender!!, // TODO: handle other transfer type
                         txData = it.txData,
-                        detailedExecutionInfo = it.detailedExecutionInfo
+                        detailedExecutionInfo = it.detailedExecutionInfo,
+                        incoming = (it.txInfo as? Transfer)?.direction == TransactionDirection.INCOMING
                     )
                 }
                 is Custom -> {
