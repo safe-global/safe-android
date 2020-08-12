@@ -55,7 +55,7 @@ class SafeSettingsViewModel @Inject constructor(
             runCatching {
                 safe?.let {
                     safeRepository.removeSafe(safe)
-                    notificationRepository.unregisterSafe(safe)
+                    notificationRepository.unregisterSafe(safe.address)
                     val safes = safeRepository.getSafes()
                     if (safes.isEmpty()) {
                         safeRepository.clearActiveSafe()

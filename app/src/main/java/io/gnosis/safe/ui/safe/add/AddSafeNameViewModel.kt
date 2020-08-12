@@ -27,7 +27,7 @@ class AddSafeNameViewModel
             runCatching {
                 val safe = Safe(address, localName.trim())
                 safeRepository.saveSafe(safe)
-                notificationRepository.registerSafe(safe)
+                notificationRepository.registerSafe(safe.address)
                 safeRepository.setActiveSafe(safe)
             }.onFailure {
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }

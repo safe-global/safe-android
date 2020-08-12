@@ -2,15 +2,16 @@ package io.gnosis.safe.notifications
 
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.RemoteMessage
-import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.notifications.models.FirebaseDevice
-import io.gnosis.safe.notifications.models.Notification
+import io.gnosis.safe.notifications.models.PushNotification
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -31,19 +32,16 @@ class NotificationRepository(
             }
         }
 
-    fun handleNotification(notification: Notification) {
-
-    }
-
-    // TODO: remove when notification service available (use method above)
-    fun handleNotification(message: RemoteMessage) {
-        val notification = notificationManager.builder(
-            "Incomming transfer",
-            message.notification.toString()
-        ).build()
-        notificationManager.show(
-            0, notification
-        )
+    suspend fun handlePushNotification(pushNotification: PushNotification) {
+        val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
+        if(safe == null) {
+            unregisterSafe(pushNotification.safe)
+        } else {
+            val notification = notificationManager.builder(safe, pushNotification).build()
+            notificationManager.show(
+                0, notification
+            )
+        }
     }
 
     suspend fun register() {
@@ -56,7 +54,6 @@ class NotificationRepository(
                         register(it)
                     }
                 }
-
         }
     }
 
@@ -84,6 +81,9 @@ class NotificationRepository(
         }
             .onSuccess {
                 deviceUuid = it?.uuid
+                it?.safes?.forEach { safeAddressString ->
+                    safeRepository.saveSafeMeta(SafeMetaData(safeAddressString.asEthereumAddress()!!, true))
+                }
             }
             .onFailure {
                 deviceUuid = null
@@ -91,14 +91,14 @@ class NotificationRepository(
     }
 
 
-    suspend fun registerSafe(safe: Safe) {
+    suspend fun registerSafe(safeAddress: Solidity.Address) {
         kotlin.runCatching {
             deviceUuid?.let {
                 val token = getCloudMessagingToken()
                 token?.let {
                     notificationService.register(
                         FirebaseDevice(
-                            listOf(safe.address.asEthereumAddressChecksumString()),
+                            listOf(safeAddress.asEthereumAddressChecksumString()),
                             token,
                             BuildConfig.VERSION_CODE,
                             BuildConfig.APPLICATION_ID,
@@ -110,6 +110,9 @@ class NotificationRepository(
                 }
             }
         }
+            .onSuccess {
+                safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
+            }
     }
 
     suspend fun unregister() {
@@ -120,10 +123,11 @@ class NotificationRepository(
         }
     }
 
-    suspend fun unregisterSafe(safe: Safe) {
+    suspend fun unregisterSafe(safeAddress: Solidity.Address) {
+        // no need to update safe meta because on safe removal safe meta entry will be also deleted
         kotlin.runCatching {
             deviceUuid?.let {
-                notificationService.unregisterSafe(it, safe.address.asEthereumAddressChecksumString())
+                notificationService.unregisterSafe(it, safeAddress.asEthereumAddressChecksumString())
             }
         }
     }

@@ -109,7 +109,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafes()
             tracker.setNumSafes(0)
@@ -132,7 +132,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafes()
             tracker.setNumSafes(0)
