@@ -147,6 +147,26 @@
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
 
+    <string name="push_safe_name">Safe %1$s</string>
+
+    <string name="push_title_new_confirmation">Transaction confirmed</string>
+    <string name="push_text_new_confirmation">%1$s: %2$s confirmed transaction</string>
+
+    <string name="push_title_executed">Transaction successful</string>
+    <string name="push_text_executed">%1$s: Transaction succeeded</string>
+
+    <string name="push_title_failed">Transaction failed</string>
+    <string name="push_text_failed">%1$s: Transaction failed</string>
+
+    <string name="push_title_received_eth">Incoming ETH</string>
+    <string name="push_text_received_eth">%1$s: ETH received</string>
+
+    <string name="push_title_received_erc20">Incoming ERC20</string>
+    <string name="push_text_received_erc20">%1$s: ERC20 tokens received</string>
+
+    <string name="push_title_received_erc721">Incoming ERC721</string>
+    <string name="push_text_received_erc721">%1$s: ERC721 token received</string>
+
     <string name="retry">RETRY</string>
     <string name="address_found">Address found</string>
     <string name="confirm">Confirm</string>
