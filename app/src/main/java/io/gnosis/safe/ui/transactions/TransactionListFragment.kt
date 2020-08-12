@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -27,6 +28,9 @@ import javax.inject.Inject
 class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionListBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS
+
+    private val navArgs by navArgs<TransactionListFragmentArgs>()
+    private val txHash by lazy { navArgs.txHash }
 
     @Inject
     lateinit var viewModel: TransactionListViewModel

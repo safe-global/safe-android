@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph.xml"
-    app:startDestination="@id/safeBalancesFragment">
+    app:startDestination="@id/assetsFragment">
 
     <action
         android:id="@+id/action_to_add_safe_nav"
@@ -12,10 +12,10 @@
         app:launchSingleTop="true" />
 
     <fragment
-        android:id="@+id/safeBalancesFragment"
+        android:id="@+id/assetsFragment"
         android:name="io.gnosis.safe.ui.assets.AssetsFragment"
-        android:label="SafeBalancesFragment"
-        tools:layout="@layout/fragment_safe_balances" />
+        android:label="AssetsFragment"
+        tools:layout="@layout/fragment_assets" />
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -82,6 +82,10 @@
         android:label="TransactionListFragment"
         tools:layout="@layout/fragment_transaction_list">
 
+        <argument
+            android:name="txHash"
+            app:argType="string" />
+
         <action
             android:id="@+id/action_transactionListFragment_to_transactionDetailsFragment"
             app:destination="@id/transactionDetailsFragment" />
@@ -132,18 +136,23 @@
         android:name="io.gnosis.safe.ui.safe.add.AddSafeFragment"
         android:label="AddSafeFragment"
         tools:layout="@layout/fragment_add_safe">
+
         <action
             android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
             app:destination="@id/addSafeNameFragment" />
+
     </fragment>
+
     <fragment
         android:id="@+id/addSafeNameFragment"
         android:name="io.gnosis.safe.ui.safe.add.AddSafeNameFragment"
         android:label="AddSafeNameFragment"
         tools:layout="@layout/fragment_add_safe_name">
+
         <argument
             android:name="newAddress"
             app:argType="string" />
+
     </fragment>
 
     <fragment
