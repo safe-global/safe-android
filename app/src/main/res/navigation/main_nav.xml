@@ -82,10 +82,6 @@
         android:label="TransactionListFragment"
         tools:layout="@layout/fragment_transaction_list">
 
-        <argument
-            android:name="txHash"
-            app:argType="string" />
-
         <action
             android:id="@+id/action_transactionListFragment_to_transactionDetailsFragment"
             app:destination="@id/transactionDetailsFragment" />
