@@ -111,7 +111,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     )
                 }
                 val txType = if (txDetails.incoming == true) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
-
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
             is SettingsChangeDetails -> {
@@ -138,6 +137,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
                     )
                 }
+                txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
             }
             is CustomDetails -> {
                 val viewStub = binding.stubCustom
@@ -162,6 +162,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
                     )
                 }
+
+                txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
             }
         }
     }
