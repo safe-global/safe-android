@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.viewbinding.ViewBinding
 import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.models.CustomDetails
 import io.gnosis.data.models.SettingsChangeDetails
@@ -24,7 +24,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -63,7 +62,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> {
-                    updateUi(state.txDetails, viewAction.isLoading, view)
+                    updateUi(state.txDetails, viewAction.isLoading)
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
@@ -78,16 +77,21 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.loadDetails(txId)
     }
 
-    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean, rootView: View) {
+    private lateinit var contentBinding: ViewBinding
+
+    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
-        binding.content.visible(true)
 
         when (txDetails) {
             is TransferDetails -> {
-                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_transfer).inflate()
-                viewStub.visibility = View.VISIBLE
-                val txDetailsTransferBinding = TxDetailsTransferBinding.bind(viewStub)
+                val viewStub = binding.stubTransfer
+                if (viewStub?.parent != null) {
+                    val inflate = viewStub.inflate()
+                    contentBinding = TxDetailsTransferBinding.bind(inflate)
+                }
+                val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
+
                 txDetailsTransferBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
@@ -107,10 +111,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is SettingsChangeDetails -> {
-
-                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_setttings_change).inflate()
-                viewStub.visibility = View.VISIBLE
-                val txDetailsSettingsChangeBinding = TxDetailsSettingsChangeBinding.bind(viewStub)
+                val viewStub = binding.stubSetttingsChange
+                if (viewStub?.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
                 txDetailsSettingsChangeBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
@@ -131,9 +136,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is CustomDetails -> {
-                val viewStub = rootView.findViewById<ViewStub>(R.id.stub_custom).inflate()
-                viewStub.visibility = View.VISIBLE
-                val txDetailsCustomBinding = TxDetailsCustomBinding.bind(viewStub)
+                val viewStub = binding.stubCustom
+                if (viewStub?.parent != null) {
+                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                }
+                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
                 txDetailsCustomBinding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
