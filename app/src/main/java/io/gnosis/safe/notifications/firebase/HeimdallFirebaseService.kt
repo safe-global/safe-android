@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.notifications.NotificationRepository
-import kotlinx.coroutines.coroutineScope
+import io.gnosis.safe.notifications.models.PushNotification
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
@@ -14,24 +14,20 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     @Inject
     lateinit var notificationRepo: NotificationRepository
 
-
     override fun onCreate() {
         super.onCreate()
         HeimdallApplication[this].inject(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onMessageReceived(message: RemoteMessage) {
         // No data received
         if (message.data.isEmpty()) return
-
-        try {
-            notificationRepo.handleNotification(message)
-        } catch (e: IllegalArgumentException) {
-            Timber.e(e)
+        runBlocking {
+            try {
+                notificationRepo.handlePushNotification(PushNotification.fromMap(message.data))
+            } catch (e: IllegalArgumentException) {
+                Timber.e(e)
+            }
         }
     }
 

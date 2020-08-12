@@ -8,7 +8,10 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
+import io.gnosis.safe.notifications.models.PushNotification
+import io.gnosis.safe.utils.formatForTxList
 
 class NotificationManager(
     private val context: Context
@@ -38,6 +41,52 @@ class NotificationManager(
     }
 
     fun builder(
+        safe: Safe,
+        pushNotification: PushNotification
+    ): NotificationCompat.Builder {
+
+        var title = ""
+        var text = ""
+
+        val safeName =
+            if (safe.localName.isNullOrBlank())
+                context.getString(R.string.push_safe_name, safe.address.formatForTxList())
+            else
+                safe.localName
+
+        when (pushNotification) {
+            is PushNotification.NewConfirmation -> {
+                title = context.getString(R.string.push_title_new_confirmation)
+                text = context.getString(R.string.push_text_new_confirmation, safeName, pushNotification.owner.formatForTxList())
+            }
+            is PushNotification.ExecutedTransaction -> {
+                if (pushNotification.failed) {
+                    title = context.getString(R.string.push_title_failed)
+                    text = context.getString(R.string.push_text_failed, safeName)
+                } else {
+                    title = context.getString(R.string.push_title_executed)
+                    text = context.getString(R.string.push_text_executed, safeName)
+                }
+            }
+            is PushNotification.IncomingToken -> {
+                if (pushNotification.tokenId != null) {
+                    title = context.getString(R.string.push_title_received_erc721)
+                    text = context.getString(R.string.push_text_received_erc721, safeName)
+                } else {
+                    title = context.getString(R.string.push_title_received_erc20)
+                    text = context.getString(R.string.push_text_received_erc20, safeName)
+                }
+            }
+            is PushNotification.IncomingEther -> {
+                title = context.getString(R.string.push_title_received_eth)
+                text = context.getString(R.string.push_text_received_eth, safeName)
+            }
+        }
+
+        return builder(title, text)
+    }
+
+    fun builder(
         title: String,
         message: String,
         channelId: String = CHANNEL_ID,
@@ -56,6 +105,7 @@ class NotificationManager(
             .setCategory(category)
             .setPriority(priority)
             .setContentIntent(intent)!!
+
 
     fun show(id: Int, title: String, message: String, channelId: String?, intent: PendingIntent?) {
         val builder = builder(title, message, channelId ?: CHANNEL_ID, intent)
