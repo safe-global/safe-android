@@ -116,7 +116,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 if (txDetails.txData != null) {
                     txDetailsTransferBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsTransferBinding.txData.setData(it, it.length) } // TODO: calculate right size or pass it through
+                    txDetails.txData?.hexData?.let { txDetailsTransferBinding.txData.setData(it, hexStringByteSize(it)) } // TODO: calculate right size or pass it through
                 } else {
                     txDetailsTransferBinding.txData.visible(false)
                     txDetailsTransferBinding.txDataSeparator.visible(false)
@@ -149,7 +149,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
                 if (txDetails.txData != null) {
                     txDetailsSettingsChangeBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsSettingsChangeBinding.txData.setData(it, it.length) } // TODO: calculate right size or pass it through
+                    txDetails.txData?.hexData?.let { txDetailsSettingsChangeBinding.txData.setData(it, hexStringByteSize(it)) } // TODO: calculate right size or pass it through
                 } else {
                     txDetailsSettingsChangeBinding.txData.visible(false)
                     txDetailsSettingsChangeBinding.txDataSeparator.visible(false)
@@ -183,12 +183,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 if (txDetails.txData != null) {
                     txDetailsCustomBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, it.length) } // TODO: calculate right size or pass it through
+                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it,hexStringByteSize(it)) } // TODO: calculate right size or pass it through
                 } else {
                     txDetailsCustomBinding.txData.visible(false)
                     txDetailsCustomBinding.txDataSeparator.visible(false)
                 }
             }
         }
+    }
+
+    private fun hexStringByteSize(it: String): Int {
+        return (it.length - 2) / 2
     }
 }
