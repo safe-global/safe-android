@@ -113,14 +113,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txType = if (txDetails.incoming == true) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
-
-                if (txDetails.txData != null) {
-                    txDetailsTransferBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsTransferBinding.txData.setData(it, hexStringByteSize(it)) } // TODO: calculate right size or pass it through
-                } else {
-                    txDetailsTransferBinding.txData.visible(false)
-                    txDetailsTransferBinding.txDataSeparator.visible(false)
-                }
             }
             is SettingsChangeDetails -> {
                 val viewStub = binding.stubSettingsChange
@@ -147,13 +139,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     )
                 }
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
-                if (txDetails.txData != null) {
-                    txDetailsSettingsChangeBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsSettingsChangeBinding.txData.setData(it, hexStringByteSize(it)) } // TODO: calculate right size or pass it through
-                } else {
-                    txDetailsSettingsChangeBinding.txData.visible(false)
-                    txDetailsSettingsChangeBinding.txDataSeparator.visible(false)
-                }
             }
             is CustomDetails -> {
                 val viewStub = binding.stubCustom
