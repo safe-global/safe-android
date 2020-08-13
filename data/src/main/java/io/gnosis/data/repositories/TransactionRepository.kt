@@ -204,7 +204,6 @@ class TransactionRepository(
             is TransferInfo.Erc20Transfer -> value
             is TransferInfo.Erc721Transfer -> "1"
             is TransferInfo.EtherTransfer -> value
-            else -> "0"
         }
 
     private fun TransferInfo.tokenInfo(): ServiceTokenInfo? =
