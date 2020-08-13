@@ -71,12 +71,8 @@ class TransactionRepository(
                 is TransactionInfo.Custom -> {
                     CustomDetails(
                         txHash = it.txHash,
-                        executedAt = it.executedAt?.let { date ->
-                            Date(date)
-                        },
-                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.let { date ->
-                            Date(date)
-                        },
+                        executedAt = it.executedAt?.toDate(),
+                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.toDate(),
                         detailedExecutionInfo = it.detailedExecutionInfo,
                         txStatus = it.txStatus,
                         txData = it.txData,
@@ -89,12 +85,8 @@ class TransactionRepository(
                         txData = it.txData,
                         txStatus = it.txStatus,
                         detailedExecutionInfo = it.detailedExecutionInfo,
-                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.let { date ->
-                            Date(date)
-                        },
-                        executedAt = it.executedAt?.let { date ->
-                            Date(date)
-                        },
+                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.toDate(),
+                        executedAt = it.executedAt?.toDate(),
                         executor = Solidity.Address(BigInteger.ZERO) // TODO: handle other transfer type
 
                     )
