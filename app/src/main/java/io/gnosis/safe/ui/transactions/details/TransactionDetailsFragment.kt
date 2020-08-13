@@ -132,7 +132,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
-                    executor = executionInfo.signers.last()
+                    executor = executionInfo.signers.last() // TODO  Change this, when executor is available in client gateway response (https://github.com/gnosis/safe-client-gateway/issues/95)
                 )
 
                 binding.executed.value = executionInfo.submittedAt.formatBackendDate()
