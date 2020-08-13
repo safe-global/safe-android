@@ -93,6 +93,7 @@ class TransactionRepositoryTransferTest(
         }
     }
 }
+
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 class TransactionRepositoryTest {
     private val gatewayApi = mockk<GatewayApi>()
@@ -137,7 +138,7 @@ class TransactionRepositoryTest {
                     is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Custom).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, "${dataSize}")
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, dataSize)
                     }
                     is TransactionInfo.SettingsChange -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
@@ -173,7 +174,7 @@ class TransactionRepositoryTest {
                     is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Custom).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, "${dataSize}")
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, dataSize)
                     }
                     is TransactionInfo.SettingsChange -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
@@ -284,7 +285,7 @@ private fun buildGateTransactionDto(
 private fun buildCustomTxInfo(
     value: String = "1",
     to: Solidity.Address = "0x1234".asEthereumAddress()!!,
-    dataSize: String = "96"
+    dataSize: Int = 96
 ): TransactionInfo.Custom =
     TransactionInfo.Custom(
         type = GateTransactionType.SettingsChange,

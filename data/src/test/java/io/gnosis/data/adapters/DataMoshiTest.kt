@@ -63,7 +63,7 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Custom(
                 type = GateTransactionType.Custom,
-                dataSize = "0",
+                dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 value = "3140000000000000000"
             ),

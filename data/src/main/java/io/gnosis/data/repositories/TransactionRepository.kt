@@ -76,7 +76,8 @@ class TransactionRepository(
                         detailedExecutionInfo = it.detailedExecutionInfo,
                         txStatus = it.txStatus,
                         txData = it.txData,
-                        executor = Solidity.Address(BigInteger.ZERO)  // TODO: handle other transfer type
+                        executor = Solidity.Address(BigInteger.ZERO),  // TODO: handle other transfer type
+                        dataSize = it.txInfo.dataSize
                     )
                 }
                 is TransactionInfo.SettingsChange -> {
@@ -110,7 +111,8 @@ class TransactionRepository(
                         executedAt = null,
                         detailedExecutionInfo = null,
                         createdAt = null,
-                        executor = Solidity.Address(BigInteger.ZERO)
+                        executor = Solidity.Address(BigInteger.ZERO),
+                        dataSize = 0
                     )
                 }
             }
@@ -145,7 +147,7 @@ class TransactionRepository(
                 nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 address = txInfo.to,
-                dataSize = txInfo.dataSize.toLong(),
+                dataSize = txInfo.dataSize,
                 value = txInfo.value.toBigInteger()
             )
             is TransactionInfo.Creation -> Transaction.Creation(
@@ -158,7 +160,7 @@ class TransactionRepository(
                 address = Solidity.Address(BigInteger.ZERO),
                 status = TransactionStatus.SUCCESS,
                 value = BigInteger.ZERO,
-                dataSize = 0L,
+                dataSize = 0,
                 confirmations = null,
                 nonce = BigInteger.ZERO,
                 date = null

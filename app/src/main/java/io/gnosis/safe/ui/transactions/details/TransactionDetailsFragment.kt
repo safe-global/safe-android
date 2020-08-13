@@ -168,16 +168,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 if (txDetails.txData != null) {
                     txDetailsCustomBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it,hexStringByteSize(it)) } // TODO: calculate right size or pass it through
+                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txDetails.dataSize) }
                 } else {
                     txDetailsCustomBinding.txData.visible(false)
                     txDetailsCustomBinding.txDataSeparator.visible(false)
                 }
             }
         }
-    }
-
-    private fun hexStringByteSize(it: String): Int {
-        return (it.length - 2) / 2
     }
 }

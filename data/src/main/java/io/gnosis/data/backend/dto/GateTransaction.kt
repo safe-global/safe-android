@@ -32,7 +32,7 @@ sealed class TransactionInfo {
     data class Custom(
         override val type: GateTransactionType = GateTransactionType.Custom,
         val to: Solidity.Address,
-        val dataSize: String,
+        val dataSize: Int,
         val value: String
     ) : TransactionInfo()
 

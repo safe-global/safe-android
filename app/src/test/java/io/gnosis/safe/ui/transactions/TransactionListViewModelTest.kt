@@ -921,7 +921,7 @@ class TransactionListViewModelTest {
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
         address: Solidity.Address = defaultToAddress,
-        dataSize: Long = 0
+        dataSize: Int = 0
     ): Transaction =
         Transaction.Custom(
             id = "",

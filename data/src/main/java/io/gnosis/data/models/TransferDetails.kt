@@ -24,7 +24,7 @@ data class TransferDetails(
 // Designs:
 // Contract interaction https://zpl.io/a79BYmp (data collapsed)
 // Contract interaction https://zpl.io/aXAJdOE (data expanded)
-// Incoming custom transfer https://zpl.io/V1KKZq5
+// Incoming custom transfer https://zpl.io/V1KKZq5 // Not needed
 data class CustomDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
@@ -32,7 +32,8 @@ data class CustomDetails(
     val executedAt: Date?,
     val executor: Solidity.Address,
     val detailedExecutionInfo: DetailedExecutionInfo?,
-    val txData: TxData?
+    val txData: TxData?,
+    val dataSize: Int
 ) : TransactionDetails
 
 // enable module https://zpl.io/brwPG87
