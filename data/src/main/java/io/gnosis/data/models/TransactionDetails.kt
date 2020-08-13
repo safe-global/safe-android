@@ -7,9 +7,6 @@ import java.util.*
 
 interface TransactionDetails
 
-// Designs:
-// incoming Transfer https://zpl.io/V1KKZq5 (with data section)
-//
 data class TransferDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
@@ -21,10 +18,6 @@ data class TransferDetails(
     val incoming: Boolean?
 ) : TransactionDetails
 
-// Designs:
-// Contract interaction https://zpl.io/a79BYmp (data collapsed)
-// Contract interaction https://zpl.io/aXAJdOE (data expanded)
-// Incoming custom transfer https://zpl.io/V1KKZq5 // Not needed
 data class CustomDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
@@ -36,14 +29,7 @@ data class CustomDetails(
     val dataSize: Int
 ) : TransactionDetails
 
-// enable module https://zpl.io/brwPG87
-// disable module https://zpl.io/V03pzqx
-// change Threshold https://zpl.io/bAMW69q (Change required confirmations)
-// set fallback handler https://zpl.io/VOO1yPL
-// Add owner & change threshold https://zpl.io/aXAJd6E
-// Remove owner & change threshold https://zpl.io/VkRoJ45
-// Remove owner & Add owner https://zpl.io/2pGXZ8j
-// New mastercopy https://zpl.io/2yZYX3n
+
 data class SettingsChangeDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
@@ -54,7 +40,7 @@ data class SettingsChangeDetails(
     val txData: TxData? // contains data decoded
 ) : TransactionDetails
 
-// Safe created
+@Deprecated("Will not be returned from client gateway")
 data class CreationDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,

@@ -27,7 +27,7 @@ interface DetailedExecutionInfo {
 
 data class MultisigExecutionDetails(
     override val type: DetailedExecutionInfoType,
-    val submittedAt: Long?,
+    val submittedAt: Long,
     val nonce: BigInteger,
     val safeTxHash: String,
     val signers: List<Solidity.Address>,
