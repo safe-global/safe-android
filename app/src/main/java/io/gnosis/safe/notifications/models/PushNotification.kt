@@ -47,7 +47,7 @@ sealed class PushNotification(
         val txHash: String,
         val value: BigInteger,
         val tokenAddress: Solidity.Address,
-        val tokenId: String? // for ERC721 tokens
+        val tokenId: String? = null // for ERC721 tokens
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "INCOMING_TOKEN"
