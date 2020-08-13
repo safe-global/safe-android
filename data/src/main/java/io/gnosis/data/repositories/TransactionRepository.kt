@@ -1,24 +1,30 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.backend.dto.Confirmations
+import io.gnosis.data.backend.dto.DetailedExecutionInfo
 import io.gnosis.data.backend.dto.Erc20Transfer
 import io.gnosis.data.backend.dto.Erc721Transfer
 import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.ModuleExecutionDetails
 import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.TransactionInfo
 import io.gnosis.data.backend.dto.TransferInfo
-import io.gnosis.data.models.CreationDetails
-import io.gnosis.data.models.CustomDetails
+import io.gnosis.data.backend.dto.TxData
+import io.gnosis.data.models.DomainConfirmations
+import io.gnosis.data.models.DomainDetailedExecutionInfo
+import io.gnosis.data.models.DomainTransactionDetails
+import io.gnosis.data.models.DomainTransactionInfo
+import io.gnosis.data.models.DomainTransferInfo
+import io.gnosis.data.models.DomainTxData
 import io.gnosis.data.models.Page
-import io.gnosis.data.models.SettingsChangeDetails
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.TransferDetails
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -53,69 +59,103 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): TransactionDetails =
-        gatewayApi.loadTransactionDetails(txId).let {
-            when (it.txInfo) {
-                is TransactionInfo.Transfer -> {
-                    TransferDetails(
-                        txHash = it.txHash,
-                        txStatus = it.txStatus,
-                        createdAt = (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
-                        executedAt = it.executedAt?.toDate(),
-                        executor = (it.txInfo as? TransactionInfo.Transfer)?.sender!!, // TODO: handle other transfer type
-                        txData = it.txData,
-                        detailedExecutionInfo = it.detailedExecutionInfo,
-                        incoming = (it.txInfo as? TransactionInfo.Transfer)?.direction == TransactionDirection.INCOMING
-                    )
-                }
-                is TransactionInfo.Custom -> {
-                    CustomDetails(
-                        txHash = it.txHash,
-                        executedAt = it.executedAt?.toDate(),
-                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.toDate(),
-                        detailedExecutionInfo = it.detailedExecutionInfo,
-                        txStatus = it.txStatus,
-                        txData = it.txData,
-                        executor = Solidity.Address(BigInteger.ZERO),  // TODO: handle other transfer type
-                        dataSize = it.txInfo.dataSize
-                    )
-                }
-                is TransactionInfo.SettingsChange -> {
-                    SettingsChangeDetails(
-                        txHash = it.txHash,
-                        txData = it.txData,
-                        txStatus = it.txStatus,
-                        detailedExecutionInfo = it.detailedExecutionInfo,
-                        createdAt = (it.detailedExecutionInfo as MultisigExecutionDetails).submittedAt?.toDate(),
-                        executedAt = it.executedAt?.toDate(),
-                        executor = Solidity.Address(BigInteger.ZERO) // TODO: handle other transfer type
+    suspend fun getTransactionDetails(txId: String): DomainTransactionDetails =
+        gatewayApi.loadTransactionDetails(txId).let { transactionDto ->
+            return transactionDto.toDomainTransactionDetails()
+        }
 
-                    )
-                }
-                is TransactionInfo.Creation -> {
-                    CreationDetails(
-                        txHash = it.txHash,
-                        txData = it.txData,
-                        txStatus = it.txStatus,
-                        createdAt = null,
-                        detailedExecutionInfo = null,
-                        executedAt = null,
-                        executor = Solidity.Address(BigInteger.ZERO)// TODO: handle other transfer type
-                    )
-                }
-                is TransactionInfo.Unknown -> {
-                    CustomDetails(
-                        txHash = it.txHash,
-                        txData = it.txData,
-                        txStatus = it.txStatus,
-                        executedAt = null,
-                        detailedExecutionInfo = null,
-                        createdAt = null,
-                        executor = Solidity.Address(BigInteger.ZERO),
-                        dataSize = 0
-                    )
-                }
+    private fun GateTransactionDetailsDto.toDomainTransactionDetails(): DomainTransactionDetails =
+        DomainTransactionDetails(
+            txHash = txHash,
+            detailedExecutionInfo = detailedExecutionInfo.toDomainDetailedExecutionInfo(),
+            executedAt = executedAt,
+            txStatus = txStatus,
+            txData = txData?.toDomainTxData(),
+            txInfo = txInfo.toDomainTransactionInfo()
+        )
+
+    private fun DetailedExecutionInfo?.toDomainDetailedExecutionInfo(): DomainDetailedExecutionInfo? =
+
+        when (this) {
+            is MultisigExecutionDetails -> DomainDetailedExecutionInfo.DomainMultisigExecutionDetails(
+                submittedAt = submittedAt,
+                nonce = nonce,
+                safeTxHash = safeTxHash,
+                signers = signers,
+                confirmationsRequired = confirmationsRequired,
+                confirmations = confirmations.toDomainConfirmations()
+            )
+            is ModuleExecutionDetails -> DomainDetailedExecutionInfo.DomainModuleExecutionDetails(
+                address = address
+            )
+            else -> null // TODO  get rid of this by converting DetailedExecutionInfo to sealed class?
+        }
+
+    private fun TransactionInfo.toDomainTransactionInfo(): DomainTransactionInfo =
+        when (this) {
+            is TransactionInfo.Custom ->
+                DomainTransactionInfo.Custom(
+                    to = to,
+                    dataSize = dataSize,
+                    value = value
+                )
+            is TransactionInfo.SettingsChange ->
+                DomainTransactionInfo.SettingsChange(
+                    dataDecoded = dataDecoded
+                )
+            is TransactionInfo.Transfer ->
+                DomainTransactionInfo.Transfer(
+                    sender = sender,
+                    recipient = recipient,
+                    transferInfo = transferInfo.toDomainTransferInfo(),
+                    direction = direction
+                )
+
+            else -> throw IllegalStateException() // TODO make sealed class get rid of else branch
+        }
+
+    private fun TxData.toDomainTxData(): DomainTxData? =
+        DomainTxData(
+            hexData = hexData,
+            dataDecoded = dataDecoded,
+            to = to,
+            value = value,
+            operation = operation
+        )
+
+    private fun TransferInfo.toDomainTransferInfo(): DomainTransferInfo =
+        when (this) {
+            is Erc20Transfer -> {
+                DomainTransferInfo.DomainErc20Transfer(
+                    tokenAddress = tokenAddress,
+                    value = value,
+                    decimals = decimals,
+                    logoUri = logoUri,
+                    tokenName = tokenName,
+                    tokenSymbol = tokenSymbol
+                )
             }
+            is Erc721Transfer -> DomainTransferInfo.DomainErc721Transfer(
+                tokenAddress = tokenAddress,
+                tokenSymbol = tokenSymbol,
+                tokenName = tokenName,
+                logoUri = logoUri,
+                tokenId = tokenId
+            )
+            is EtherTransfer -> DomainTransferInfo.DomainEtherTransfer(
+                value = value
+            )
+            else -> DomainTransferInfo.DomainEtherTransfer( // TODO make sealed class get rid of else branch
+                value = "0"
+            )
+        }
+
+    private fun List<Confirmations>.toDomainConfirmations(): List<DomainConfirmations> =
+        this.map { confirmation ->
+            DomainConfirmations(
+                signer = confirmation.signer,
+                signature = confirmation.signature
+            )
         }
 
     private fun GateTransactionDto.toTransaction(): Transaction {
@@ -211,3 +251,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
+
