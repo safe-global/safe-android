@@ -6,13 +6,8 @@ import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.backend.dto.DetailedExecutionInfo
 import io.gnosis.data.backend.dto.DetailedExecutionInfoType
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
 import io.gnosis.data.backend.dto.GateTransactionType
 import io.gnosis.data.backend.dto.GateTransferType
-import io.gnosis.data.backend.dto.ModuleExecutionDetails
-import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.TransactionInfo
 import io.gnosis.data.backend.dto.TransferInfo
 import pm.gnosis.common.adapters.moshi.BigDecimalNumberAdapter
@@ -25,9 +20,9 @@ import java.util.*
 
 internal val transferInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())
-        .withSubtype(Erc20Transfer::class.java, GateTransferType.ERC20.name)
-        .withSubtype(Erc721Transfer::class.java, GateTransferType.ERC721.name)
-        .withSubtype(EtherTransfer::class.java, GateTransferType.ETHER.name)
+        .withSubtype(TransferInfo.Erc20Transfer::class.java, GateTransferType.ERC20.name)
+        .withSubtype(TransferInfo.Erc721Transfer::class.java, GateTransferType.ERC721.name)
+        .withSubtype(TransferInfo.EtherTransfer::class.java, GateTransferType.ETHER.name)
 
 internal val transactionInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, TransactionInfo::type::name.get())
@@ -39,8 +34,8 @@ internal val transactionInfoAdapter =
 
 internal val transactionExecutionDetailsAdapter =
     PolymorphicJsonAdapterFactory.of(DetailedExecutionInfo::class.java, DetailedExecutionInfo::type::name.get())
-        .withSubtype(MultisigExecutionDetails::class.java, DetailedExecutionInfoType.MULTISIG.name)
-        .withSubtype(ModuleExecutionDetails::class.java, DetailedExecutionInfoType.MODULE.name)
+        .withSubtype(DetailedExecutionInfo.MultisigExecutionDetails::class.java, DetailedExecutionInfoType.MULTISIG.name)
+        .withSubtype(DetailedExecutionInfo.ModuleExecutionDetails::class.java, DetailedExecutionInfoType.MODULE.name)
 
 val dataMoshi =
     Moshi.Builder()

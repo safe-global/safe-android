@@ -3,13 +3,8 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.Confirmations
 import io.gnosis.data.backend.dto.DetailedExecutionInfo
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.ModuleExecutionDetails
-import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.TransactionDirection
@@ -67,17 +62,17 @@ class TransactionRepository(
     private fun GateTransactionDetailsDto.toDomainTransactionDetails(): DomainTransactionDetails =
         DomainTransactionDetails(
             txHash = txHash,
-            detailedExecutionInfo = detailedExecutionInfo.toDomainDetailedExecutionInfo(),
+            detailedExecutionInfo = detailedExecutionInfo?.toDomainDetailedExecutionInfo(),
             executedAt = executedAt?.toDate(),
             txStatus = txStatus,
             txData = txData?.toDomainTxData(),
             txInfo = txInfo.toDomainTransactionInfo()
         )
 
-    private fun DetailedExecutionInfo?.toDomainDetailedExecutionInfo(): DomainDetailedExecutionInfo? =
+    private fun DetailedExecutionInfo.toDomainDetailedExecutionInfo(): DomainDetailedExecutionInfo? =
 
         when (this) {
-            is MultisigExecutionDetails -> DomainDetailedExecutionInfo.DomainMultisigExecutionDetails(
+            is DetailedExecutionInfo.MultisigExecutionDetails -> DomainDetailedExecutionInfo.DomainMultisigExecutionDetails(
                 submittedAt = submittedAt.toDate(),
                 nonce = nonce,
                 safeTxHash = safeTxHash,
@@ -85,10 +80,9 @@ class TransactionRepository(
                 confirmationsRequired = confirmationsRequired,
                 confirmations = confirmations.toDomainConfirmations()
             )
-            is ModuleExecutionDetails -> DomainDetailedExecutionInfo.DomainModuleExecutionDetails(
+            is DetailedExecutionInfo.ModuleExecutionDetails -> DomainDetailedExecutionInfo.DomainModuleExecutionDetails(
                 address = address
             )
-            else -> null // TODO  get rid of this by converting DetailedExecutionInfo to sealed class?
         }
 
     private fun TransactionInfo.toDomainTransactionInfo(): DomainTransactionInfo =
@@ -110,8 +104,8 @@ class TransactionRepository(
                     transferInfo = transferInfo.toDomainTransferInfo(),
                     direction = direction
                 )
-
-            else -> throw IllegalStateException() // TODO make sealed class get rid of else branch
+            is TransactionInfo.Creation -> DomainTransactionInfo.Creation
+            is TransactionInfo.Unknown -> DomainTransactionInfo.Unknown
         }
 
     private fun TxData.toDomainTxData(): DomainTxData? =
@@ -125,7 +119,7 @@ class TransactionRepository(
 
     private fun TransferInfo.toDomainTransferInfo(): DomainTransferInfo =
         when (this) {
-            is Erc20Transfer -> {
+            is TransferInfo.Erc20Transfer -> {
                 DomainTransferInfo.DomainErc20Transfer(
                     tokenAddress = tokenAddress,
                     value = value,
@@ -135,18 +129,15 @@ class TransactionRepository(
                     tokenSymbol = tokenSymbol
                 )
             }
-            is Erc721Transfer -> DomainTransferInfo.DomainErc721Transfer(
+            is TransferInfo.Erc721Transfer -> DomainTransferInfo.DomainErc721Transfer(
                 tokenAddress = tokenAddress,
                 tokenSymbol = tokenSymbol,
                 tokenName = tokenName,
                 logoUri = logoUri,
                 tokenId = tokenId
             )
-            is EtherTransfer -> DomainTransferInfo.DomainEtherTransfer(
+            is TransferInfo.EtherTransfer -> DomainTransferInfo.DomainEtherTransfer(
                 value = value
-            )
-            else -> DomainTransferInfo.DomainEtherTransfer( // TODO make sealed class get rid of else branch
-                value = "0"
             )
         }
 
@@ -210,15 +201,15 @@ class TransactionRepository(
 
     private fun TransferInfo.value(): String =
         when (this) {
-            is Erc20Transfer -> value
-            is Erc721Transfer -> "1"
-            is EtherTransfer -> value
+            is TransferInfo.Erc20Transfer -> value
+            is TransferInfo.Erc721Transfer -> "1"
+            is TransferInfo.EtherTransfer -> value
             else -> "0"
         }
 
     private fun TransferInfo.tokenInfo(): ServiceTokenInfo? =
         when (this) {
-            is Erc20Transfer -> ServiceTokenInfo(
+            is TransferInfo.Erc20Transfer -> ServiceTokenInfo(
                 address = tokenAddress,
                 decimals = decimals ?: 0,
                 symbol = tokenSymbol.orEmpty(),
@@ -226,15 +217,14 @@ class TransactionRepository(
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
-            is Erc721Transfer -> ServiceTokenInfo(
+            is TransferInfo.Erc721Transfer -> ServiceTokenInfo(
                 address = tokenAddress,
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC721
             )
-            is EtherTransfer -> ETH_SERVICE_TOKEN_INFO
-            else -> null
+            is TransferInfo.EtherTransfer -> ETH_SERVICE_TOKEN_INFO
         }
 
     private fun Long.toDate(): Date = Date(this)

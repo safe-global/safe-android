@@ -21,24 +21,24 @@ data class TxData(
     val operation: Operation
 )
 
-interface DetailedExecutionInfo {
-    val type: DetailedExecutionInfoType
+sealed class DetailedExecutionInfo {
+    abstract val type: DetailedExecutionInfoType
+
+    data class MultisigExecutionDetails(
+        override val type: DetailedExecutionInfoType,
+        val submittedAt: Long,
+        val nonce: BigInteger,
+        val safeTxHash: String,
+        val signers: List<Solidity.Address>,
+        val confirmationsRequired: Int,
+        val confirmations: List<Confirmations>
+    ) : DetailedExecutionInfo()
+
+    data class ModuleExecutionDetails(
+        override val type: DetailedExecutionInfoType,
+        val address: String
+    ) : DetailedExecutionInfo()
 }
-
-data class MultisigExecutionDetails(
-    override val type: DetailedExecutionInfoType,
-    val submittedAt: Long,
-    val nonce: BigInteger,
-    val safeTxHash: String,
-    val signers: List<Solidity.Address>,
-    val confirmationsRequired: Int,
-    val confirmations: List<Confirmations>
-) : DetailedExecutionInfo
-
-data class ModuleExecutionDetails(
-    override val type: DetailedExecutionInfoType,
-    val address: String
-) : DetailedExecutionInfo
 
 enum class DetailedExecutionInfoType {
     MULTISIG,

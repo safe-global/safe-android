@@ -2,9 +2,6 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
 import io.gnosis.data.backend.dto.ExecutionInfo
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.GateTransactionType
@@ -65,9 +62,9 @@ class TransactionRepositoryTransferTest(
             with(actual.results[i] as Transaction.Transfer) {
                 assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
                 when ((pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo) {
-                    is Erc20Transfer -> {
+                    is TransferInfo.Erc20Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
-                        val erc20Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as Erc20Transfer
+                        val erc20Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.Erc20Transfer
                         assertEquals(erc20Transfer.value, value.asDecimalString())
                         assertEquals(erc20Transfer.tokenAddress, tokenInfo?.address)
                         assertEquals(erc20Transfer.tokenSymbol, tokenInfo?.symbol)
@@ -75,17 +72,17 @@ class TransactionRepositoryTransferTest(
                         assertEquals(erc20Transfer.decimals, tokenInfo?.decimals)
                         assertEquals(erc20Transfer.logoUri, tokenInfo?.logoUri)
                     }
-                    is Erc721Transfer -> {
+                    is TransferInfo.Erc721Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
                         assertEquals(1.toBigInteger(), value)
-                        val erc721Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as Erc721Transfer
+                        val erc721Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.Erc721Transfer
                         assertEquals(erc721Transfer.tokenAddress, tokenInfo?.address)
                         assertEquals(erc721Transfer.tokenSymbol, tokenInfo?.symbol)
                         assertEquals(erc721Transfer.tokenName, tokenInfo?.name)
                     }
-                    is EtherTransfer -> {
+                    is TransferInfo.EtherTransfer -> {
                         assertEquals(null, this.tokenInfo?.type)
-                        val etherTransfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as EtherTransfer
+                        val etherTransfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.EtherTransfer
                         assertEquals(etherTransfer.value, value.asDecimalString())
                     }
                 }
@@ -183,23 +180,6 @@ class TransactionRepositoryTest {
                     }
                 }
             }
-        }
-    }
-
-    @Test
-    fun `getTransactions (unknown transferInfo) should have value 0`() = runBlockingTest {
-        val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(transferInfo = object : TransferInfo {
-                override val type: GateTransferType
-                    get() = GateTransferType.ETHER
-            }))
-        )
-        coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
-
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
-        assertEquals(1, actual.results.size)
-        with(actual.results[0] as Transaction.Transfer) {
-            assertEquals(0.toBigInteger(), value)
         }
     }
 
@@ -324,7 +304,7 @@ private fun buildTransferInfoERC20(
     uri: String = "https://www.erc20",
     decimals: Int? = 18
 ): TransferInfo =
-    Erc20Transfer(
+    TransferInfo.Erc20Transfer(
         type = GateTransferType.ERC20,
         value = value,
         tokenSymbol = symbol,
@@ -341,7 +321,7 @@ private fun buildTransferInfoERC721(
     uri: String = "https://www.erc721",
     id: String = "id"
 ): TransferInfo =
-    Erc721Transfer(
+    TransferInfo.Erc721Transfer(
         type = GateTransferType.ERC721,
         tokenSymbol = symbol,
         tokenName = name,
@@ -352,7 +332,7 @@ private fun buildTransferInfoERC721(
 
 private fun buildTransferInfoEther(
     value: String = "23"
-): TransferInfo = EtherTransfer(
+): TransferInfo = TransferInfo.EtherTransfer(
     type = GateTransferType.ETHER,
     value = value
 )

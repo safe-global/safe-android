@@ -68,32 +68,30 @@ enum class GateTransferType {
     ERC20, ERC721, ETHER
 }
 
-interface TransferInfo {
-    val type: GateTransferType
+sealed class TransferInfo {
+    abstract val type: GateTransferType
+
+    data class Erc20Transfer(
+        override val type: GateTransferType = GateTransferType.ERC20,
+        val tokenAddress: Solidity.Address,
+        val tokenName: String?,
+        val tokenSymbol: String?,
+        val logoUri: String?,
+        val decimals: Int?,
+        val value: String
+    ) : TransferInfo()
+
+    data class Erc721Transfer(
+        override val type: GateTransferType = GateTransferType.ERC721,
+        val tokenAddress: Solidity.Address,
+        val tokenId: String,
+        val tokenName: String?,
+        val tokenSymbol: String?,
+        val logoUri: String?
+    ) : TransferInfo()
+
+    data class EtherTransfer(
+        override val type: GateTransferType = GateTransferType.ETHER,
+        val value: String
+    ) : TransferInfo()
 }
-
-data class Erc20Transfer(
-    override val type: GateTransferType = GateTransferType.ERC20,
-    val tokenAddress: Solidity.Address,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?,
-    val decimals: Int?,
-    val value: String
-) : TransferInfo
-
-data class Erc721Transfer(
-    override val type: GateTransferType = GateTransferType.ERC721,
-    val tokenAddress: Solidity.Address,
-    val tokenId: String,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?
-) : TransferInfo
-
-data class EtherTransfer(
-    override val type: GateTransferType = GateTransferType.ETHER,
-    val value: String
-) : TransferInfo
-
-

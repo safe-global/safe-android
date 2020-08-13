@@ -1,7 +1,6 @@
 package io.gnosis.data.adapters
 
 import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.Erc20Transfer
 import io.gnosis.data.backend.dto.ExecutionInfo
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.GateTransactionType
@@ -9,6 +8,7 @@ import io.gnosis.data.backend.dto.GateTransferType
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.TransactionInfo
+import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.models.TransactionStatus.SUCCESS
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -36,7 +36,7 @@ class DataMoshiTest {
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                transferInfo = Erc20Transfer(
+                transferInfo = TransferInfo.Erc20Transfer(
                     type = GateTransferType.ERC20,
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
