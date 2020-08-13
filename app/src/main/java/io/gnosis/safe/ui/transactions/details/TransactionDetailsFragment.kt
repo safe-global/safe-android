@@ -95,7 +95,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
-
             }
             is DomainTransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
@@ -137,9 +136,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 )
 
                 binding.executed.value = executionInfo.submittedAt.formatBackendDate()
-
             }
-            is DomainDetailedExecutionInfo.DomainModuleExecutionDetails -> { // do nothing}
+            is DomainDetailedExecutionInfo.DomainModuleExecutionDetails -> { // do nothing
             }
         }
 
