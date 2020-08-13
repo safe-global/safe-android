@@ -5,7 +5,6 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionDetailsViewModel
@@ -19,14 +18,8 @@ class TransactionDetailsViewModel
 
     fun loadDetails(txId: String) {
         safeLaunch {
-
-            kotlin.runCatching {
-                val txDetails = transactionRepository.getTransactionDetails(txId)
-                updateState { TransactionDetailsViewState(txDetails, ViewAction.Loading(false)) }
-            }.onFailure {
-                // TODO stop spinner and show error state "Data cannot be loaded" Same as for tx list
-                Timber.e(it)
-            }
+            val txDetails = transactionRepository.getTransactionDetails(txId)
+            updateState { TransactionDetailsViewState(txDetails, ViewAction.Loading(false)) }
         }
     }
 }
