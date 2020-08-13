@@ -70,7 +70,12 @@ class PushNotificationTest {
                             "txHash" to TEST_TX_HASH,
                             "tokenAddress" to TEST_TOKEN_ADDRESS
                         ),
-                        PushNotification.IncomingToken(TEST_SAFE.asEthereumAddress()!!, TEST_TX_HASH, TEST_VALUE.toBigInteger(), TEST_TOKEN_ADDRESS.asEthereumAddress()!!)
+                        PushNotification.IncomingToken(
+                            TEST_SAFE.asEthereumAddress()!!,
+                            TEST_TX_HASH,
+                            TEST_VALUE.toBigInteger(),
+                            TEST_TOKEN_ADDRESS.asEthereumAddress()!!
+                        )
                     ),
             //ERC721
             PushNotification.IncomingToken::class to
@@ -83,7 +88,13 @@ class PushNotificationTest {
                             "tokenAddress" to TEST_TOKEN_ADDRESS,
                             "tokenId" to TEST_TOKEN_ID
                         ),
-                        PushNotification.IncomingToken(TEST_SAFE.asEthereumAddress()!!, TEST_TX_HASH, TEST_VALUE.toBigInteger(), TEST_TOKEN_ADDRESS.asEthereumAddress()!!, TEST_TOKEN_ID)
+                        PushNotification.IncomingToken(
+                            TEST_SAFE.asEthereumAddress()!!,
+                            TEST_TX_HASH,
+                            TEST_VALUE.toBigInteger(),
+                            TEST_TOKEN_ADDRESS.asEthereumAddress()!!,
+                            TEST_TOKEN_ID
+                        )
                     ),
             PushNotification.IncomingEther::class to
                     TestData(
