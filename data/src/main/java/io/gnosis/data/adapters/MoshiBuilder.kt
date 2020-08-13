@@ -4,8 +4,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.backend.dto.Creation
-import io.gnosis.data.backend.dto.Custom
 import io.gnosis.data.backend.dto.DetailedExecutionInfo
 import io.gnosis.data.backend.dto.DetailedExecutionInfoType
 import io.gnosis.data.backend.dto.Erc20Transfer
@@ -15,11 +13,8 @@ import io.gnosis.data.backend.dto.GateTransactionType
 import io.gnosis.data.backend.dto.GateTransferType
 import io.gnosis.data.backend.dto.ModuleExecutionDetails
 import io.gnosis.data.backend.dto.MultisigExecutionDetails
-import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionInfo
-import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
-import io.gnosis.data.backend.dto.Unknown
 import pm.gnosis.common.adapters.moshi.BigDecimalNumberAdapter
 import pm.gnosis.common.adapters.moshi.DecimalNumberAdapter
 import pm.gnosis.common.adapters.moshi.DefaultNumberAdapter
@@ -36,11 +31,11 @@ internal val transferInfoAdapter =
 
 internal val transactionInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, TransactionInfo::type::name.get())
-        .withSubtype(Transfer::class.java, GateTransactionType.Transfer.name)
-        .withSubtype(SettingsChange::class.java, GateTransactionType.SettingsChange.name)
-        .withSubtype(Custom::class.java, GateTransactionType.Custom.name)
-        .withSubtype(Creation::class.java, GateTransactionType.Creation.name)
-        .withDefaultValue(Unknown())
+        .withSubtype(TransactionInfo.Transfer::class.java, GateTransactionType.Transfer.name)
+        .withSubtype(TransactionInfo.SettingsChange::class.java, GateTransactionType.SettingsChange.name)
+        .withSubtype(TransactionInfo.Custom::class.java, GateTransactionType.Custom.name)
+        .withSubtype(TransactionInfo.Creation::class.java, GateTransactionType.Creation.name)
+        .withDefaultValue(TransactionInfo.Unknown())
 
 internal val transactionExecutionDetailsAdapter =
     PolymorphicJsonAdapterFactory.of(DetailedExecutionInfo::class.java, DetailedExecutionInfo::type::name.get())

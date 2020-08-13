@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.Custom
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.Erc20Transfer
 import io.gnosis.data.backend.dto.Erc721Transfer
@@ -12,10 +11,8 @@ import io.gnosis.data.backend.dto.GateTransactionType
 import io.gnosis.data.backend.dto.GateTransferType
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.TransactionInfo
-import io.gnosis.data.backend.dto.Transfer
 import io.gnosis.data.backend.dto.TransferInfo
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
@@ -67,10 +64,10 @@ class TransactionRepositoryTransferTest(
         (0..2).forEach { i ->
             with(actual.results[i] as Transaction.Transfer) {
                 assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
-                when ((pagedResult[i].txInfo as Transfer).transferInfo) {
+                when ((pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo) {
                     is Erc20Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
-                        val erc20Transfer = (pagedResult[i].txInfo as Transfer).transferInfo as Erc20Transfer
+                        val erc20Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as Erc20Transfer
                         assertEquals(erc20Transfer.value, value.asDecimalString())
                         assertEquals(erc20Transfer.tokenAddress, tokenInfo?.address)
                         assertEquals(erc20Transfer.tokenSymbol, tokenInfo?.symbol)
@@ -81,14 +78,14 @@ class TransactionRepositoryTransferTest(
                     is Erc721Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
                         assertEquals(1.toBigInteger(), value)
-                        val erc721Transfer = (pagedResult[i].txInfo as Transfer).transferInfo as Erc721Transfer
+                        val erc721Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as Erc721Transfer
                         assertEquals(erc721Transfer.tokenAddress, tokenInfo?.address)
                         assertEquals(erc721Transfer.tokenSymbol, tokenInfo?.symbol)
                         assertEquals(erc721Transfer.tokenName, tokenInfo?.name)
                     }
                     is EtherTransfer -> {
                         assertEquals(null, this.tokenInfo?.type)
-                        val etherTransfer = (pagedResult[i].txInfo as Transfer).transferInfo as EtherTransfer
+                        val etherTransfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as EtherTransfer
                         assertEquals(etherTransfer.value, value.asDecimalString())
                     }
                 }
@@ -132,20 +129,20 @@ class TransactionRepositoryTest {
         (0..2).forEach { i ->
             with(actual.results[i]) {
                 when (pagedResult[i].txInfo) {
-                    is Transfer -> {
+                    is TransactionInfo.Transfer -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Transfer).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as Transfer).direction != TransactionDirection.OUTGOING, incoming)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Transfer).direction != TransactionDirection.OUTGOING, incoming)
                     }
-                    is Custom -> {
+                    is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Custom).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as Custom).dataSize, "${dataSize}")
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, "${dataSize}")
                     }
-                    is SettingsChange -> {
+                    is TransactionInfo.SettingsChange -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as SettingsChange).dataDecoded, dataDecoded)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.SettingsChange).dataDecoded, dataDecoded)
                     }
                 }
             }
@@ -168,37 +165,24 @@ class TransactionRepositoryTest {
         (0..2).forEach { i ->
             with(actual.results[i]) {
                 when (pagedResult[i].txInfo) {
-                    is Transfer -> {
+                    is TransactionInfo.Transfer -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Transfer).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as Transfer).direction == TransactionDirection.INCOMING, incoming)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Transfer).direction == TransactionDirection.INCOMING, incoming)
                     }
-                    is Custom -> {
+                    is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.Custom).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as Custom).dataSize, "${dataSize}")
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, "${dataSize}")
                     }
-                    is SettingsChange -> {
+                    is TransactionInfo.SettingsChange -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
-                        assertEquals((pagedResult[i].txInfo as SettingsChange).dataDecoded, dataDecoded)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfo.SettingsChange).dataDecoded, dataDecoded)
                     }
                 }
             }
         }
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun `getTransactions (unknown txInfo) should throw exception Transfers`() = runBlockingTest {
-        val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = object : TransactionInfo {
-                override val type: GateTransactionType
-                    get() = GateTransactionType.Transfer
-            })
-        )
-        coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
-
-        transactionRepository.getTransactions(defaultSafeAddress)
     }
 
     @Test
@@ -301,8 +285,8 @@ private fun buildCustomTxInfo(
     value: String = "1",
     to: Solidity.Address = "0x1234".asEthereumAddress()!!,
     dataSize: String = "96"
-): Custom =
-    Custom(
+): TransactionInfo.Custom =
+    TransactionInfo.Custom(
         type = GateTransactionType.SettingsChange,
         value = value,
         to = to,
@@ -311,8 +295,8 @@ private fun buildCustomTxInfo(
 
 private fun buildSettingsChangeTxInfo(
     dataDecoded: DataDecodedDto = DataDecodedDto("defaultMethod", listOf())
-): SettingsChange =
-    SettingsChange(
+): TransactionInfo.SettingsChange =
+    TransactionInfo.SettingsChange(
         type = GateTransactionType.SettingsChange,
         dataDecoded = dataDecoded
     )
@@ -322,8 +306,8 @@ private fun buildTransferTxInfo(
     recipient: Solidity.Address = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
     direction: TransactionDirection = TransactionDirection.OUTGOING,
     transferInfo: TransferInfo = buildTransferInfoERC20()
-): Transfer =
-    Transfer(
+): TransactionInfo.Transfer =
+    TransactionInfo.Transfer(
         type = GateTransactionType.Transfer,
         sender = sender,
         recipient = recipient,

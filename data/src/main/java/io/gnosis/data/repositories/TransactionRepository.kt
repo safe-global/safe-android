@@ -1,8 +1,6 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.Creation
-import io.gnosis.data.backend.dto.Custom
 import io.gnosis.data.backend.dto.Erc20Transfer
 import io.gnosis.data.backend.dto.Erc721Transfer
 import io.gnosis.data.backend.dto.EtherTransfer
@@ -10,11 +8,9 @@ import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.Transfer
+import io.gnosis.data.backend.dto.TransactionInfo
 import io.gnosis.data.backend.dto.TransferInfo
-import io.gnosis.data.backend.dto.Unknown
 import io.gnosis.data.models.CreationDetails
 import io.gnosis.data.models.CustomDetails
 import io.gnosis.data.models.Page
@@ -60,19 +56,19 @@ class TransactionRepository(
     suspend fun getTransactionDetails(txId: String): TransactionDetails =
         gatewayApi.loadTransactionDetails(txId).let {
             when (it.txInfo) {
-                is Transfer -> {
+                is TransactionInfo.Transfer -> {
                     TransferDetails(
                         txHash = it.txHash,
                         txStatus = it.txStatus,
                         createdAt = (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
                         executedAt = it.executedAt?.toDate(),
-                        executor = (it.txInfo as? Transfer)?.sender!!, // TODO: handle other transfer type
+                        executor = (it.txInfo as? TransactionInfo.Transfer)?.sender!!, // TODO: handle other transfer type
                         txData = it.txData,
                         detailedExecutionInfo = it.detailedExecutionInfo,
-                        incoming = (it.txInfo as? Transfer)?.direction == TransactionDirection.INCOMING
+                        incoming = (it.txInfo as? TransactionInfo.Transfer)?.direction == TransactionDirection.INCOMING
                     )
                 }
-                is Custom -> {
+                is TransactionInfo.Custom -> {
                     CustomDetails(
                         txHash = it.txHash,
                         executedAt = it.executedAt?.let { date ->
@@ -87,7 +83,7 @@ class TransactionRepository(
                         executor = Solidity.Address(BigInteger.ZERO)  // TODO: handle other transfer type
                     )
                 }
-                is SettingsChange -> {
+                is TransactionInfo.SettingsChange -> {
                     SettingsChangeDetails(
                         txHash = it.txHash,
                         txData = it.txData,
@@ -103,7 +99,7 @@ class TransactionRepository(
 
                     )
                 }
-                is Creation -> {
+                is TransactionInfo.Creation -> {
                     CreationDetails(
                         txHash = it.txHash,
                         txData = it.txData,
@@ -114,7 +110,7 @@ class TransactionRepository(
                         executor = Solidity.Address(BigInteger.ZERO)// TODO: handle other transfer type
                     )
                 }
-                is Unknown -> {
+                is TransactionInfo.Unknown -> {
                     CustomDetails(
                         txHash = it.txHash,
                         txData = it.txData,
@@ -125,22 +121,12 @@ class TransactionRepository(
                         executor = Solidity.Address(BigInteger.ZERO)
                     )
                 }
-                else -> CustomDetails(
-                    txHash = it.txHash,
-                    txData = it.txData,
-                    txStatus = it.txStatus,
-                    executedAt = null,
-                    detailedExecutionInfo = null,
-                    createdAt = null,
-                    executor = Solidity.Address(BigInteger.ZERO)
-                )
             }
-
         }
 
     private fun GateTransactionDto.toTransaction(): Transaction {
         return when (txInfo) {
-            is Transfer -> Transaction.Transfer(
+            is TransactionInfo.Transfer -> Transaction.Transfer(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
@@ -152,7 +138,7 @@ class TransactionRepository(
                 tokenInfo = txInfo.transferInfo.tokenInfo(),
                 incoming = txInfo.direction == TransactionDirection.INCOMING
             )
-            is SettingsChange -> Transaction.SettingsChange(
+            is TransactionInfo.SettingsChange -> Transaction.SettingsChange(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
@@ -160,7 +146,7 @@ class TransactionRepository(
                 date = timestamp.toDate(),
                 dataDecoded = txInfo.dataDecoded
             )
-            is Custom -> Transaction.Custom(
+            is TransactionInfo.Custom -> Transaction.Custom(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
@@ -170,14 +156,12 @@ class TransactionRepository(
                 dataSize = txInfo.dataSize.toLong(),
                 value = txInfo.value.toBigInteger()
             )
-
-            is Creation -> Transaction.Creation(
+            is TransactionInfo.Creation -> Transaction.Creation(
                 id = id,
                 confirmations = null,
                 status = TransactionStatus.SUCCESS
             )
-
-            is Unknown -> Transaction.Custom(
+            is TransactionInfo.Unknown -> Transaction.Custom(
                 id = id,
                 address = Solidity.Address(BigInteger.ZERO),
                 status = TransactionStatus.SUCCESS,
@@ -187,8 +171,6 @@ class TransactionRepository(
                 nonce = BigInteger.ZERO,
                 date = null
             )
-            // This should not happen as Unknown is the default value
-            else -> throw IllegalStateException()
         }
     }
 
