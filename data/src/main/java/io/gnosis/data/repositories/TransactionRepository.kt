@@ -68,7 +68,7 @@ class TransactionRepository(
         DomainTransactionDetails(
             txHash = txHash,
             detailedExecutionInfo = detailedExecutionInfo.toDomainDetailedExecutionInfo(),
-            executedAt = executedAt,
+            executedAt = executedAt?.toDate(),
             txStatus = txStatus,
             txData = txData?.toDomainTxData(),
             txInfo = txInfo.toDomainTransactionInfo()
@@ -78,7 +78,7 @@ class TransactionRepository(
 
         when (this) {
             is MultisigExecutionDetails -> DomainDetailedExecutionInfo.DomainMultisigExecutionDetails(
-                submittedAt = submittedAt,
+                submittedAt = submittedAt.toDate(),
                 nonce = nonce,
                 safeTxHash = safeTxHash,
                 signers = signers,

@@ -8,12 +8,23 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.backend.dto.TransactionDirection
+import io.gnosis.data.models.DomainDetailedExecutionInfo
 import io.gnosis.data.models.DomainTransactionDetails
+import io.gnosis.data.models.DomainTransactionInfo
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
+import io.gnosis.safe.databinding.TxDetailsCustomBinding
+import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
+import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -73,95 +84,74 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         binding.refresh.isRefreshing = isLoading
 
-//        when (txDetails?.txInfo) {
-//            is DomainTransactionInfo.Transfer -> {
-//                val viewStub = binding.stubTransfer
-//                if (viewStub.parent != null) {
-//                    val inflate = viewStub.inflate()
-//                    contentBinding = TxDetailsTransferBinding.bind(inflate)
-//                }
-//                val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
-//
-//                txDetailsTransferBinding.txConfirmations.setExecutionData(
-//                    status = txDetails.txStatus,
-//                    confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
-//                    threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
-//                    executor = txDetails.executor
-//                )
-//                txDetailsTransferBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
-//
-//                txDetailsTransferBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
-//                txDetailsTransferBinding.etherscan.setOnClickListener {
-//                    requireContext().openUrl(
-//                        getString(
-//                            R.string.etherscan_transaction_url,
-//                            txDetails.txHash
-//                        )
-//                    )
-//                }
-//                val txType = if (txDetails.incoming == true) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
-//                txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
-//            }
-//            is DomainTransactionInfo.SettingsChange -> {
-//                val viewStub = binding.stubSettingsChange
-//                if (viewStub.parent != null) {
-//                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
-//                }
-//                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
-//
-//                txDetailsSettingsChangeBinding.txConfirmations.setExecutionData(
-//                    status = txDetails.txStatus,
-//                    confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
-//                    threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
-//                    executor = txDetails.executor
-//                )
-//                txDetailsSettingsChangeBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
-//                txDetailsSettingsChangeBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
-//
-//                txDetailsSettingsChangeBinding.etherscan.setOnClickListener {
-//                    requireContext().openUrl(
-//                        getString(
-//                            R.string.etherscan_transaction_url,
-//                            txDetails.txHash
-//                        )
-//                    )
-//                }
-//                txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
-//            }
-//            is DomainTransactionInfo.Custom -> {
-//                val viewStub = binding.stubCustom
-//                if (viewStub.parent != null) {
-//                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
-//                }
-//                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
-//
-//                txDetailsCustomBinding.txConfirmations.setExecutionData(
-//                    status = txDetails.txStatus,
-//                    confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
-//                    threshold = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
-//                    executor = txDetails.executor
-//                )
-//                txDetailsCustomBinding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
-//                txDetailsCustomBinding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
-//                txDetailsCustomBinding.etherscan.setOnClickListener {
-//                    requireContext().openUrl(
-//                        getString(
-//                            R.string.etherscan_transaction_url,
-//                            txDetails.txHash
-//                        )
-//                    )
-//                }
-//
-//                txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
-//
-//                if (txDetails.txData != null) {
-//                    txDetailsCustomBinding.txData.visible(true)
-//                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txDetails.dataSize) }
-//                } else {
-//                    txDetailsCustomBinding.txData.visible(false)
-//                    txDetailsCustomBinding.txDataSeparator.visible(false)
-//                }
-//            }
-//        }
+        when (val txInfo = txDetails?.txInfo) {
+            is DomainTransactionInfo.Transfer -> {
+                val viewStub = binding.stubTransfer
+                if (viewStub.parent != null) {
+                    val inflate = viewStub.inflate()
+                    contentBinding = TxDetailsTransferBinding.bind(inflate)
+                }
+                val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
+
+                val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
+                txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
+
+            }
+            is DomainTransactionInfo.SettingsChange -> {
+                val viewStub = binding.stubSettingsChange
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+
+                txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
+            }
+            is DomainTransactionInfo.Custom -> {
+                val viewStub = binding.stubCustom
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                }
+                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
+
+                txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
+
+                if (txDetails.txData != null) {
+                    txDetailsCustomBinding.txData.visible(true)
+                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txInfo.dataSize) }
+                } else {
+                    txDetailsCustomBinding.txData.visible(false)
+                    txDetailsCustomBinding.txDataSeparator.visible(false)
+                }
+            }
+
+        }
+
+        when (val executionInfo = txDetails?.detailedExecutionInfo) {
+            is DomainDetailedExecutionInfo.DomainMultisigExecutionDetails -> {
+
+                binding.txConfirmations.setExecutionData(
+                    status = txDetails.txStatus,
+                    confirmations = executionInfo.confirmations.map { it.signer },
+                    threshold = executionInfo.confirmationsRequired,
+                    executor = executionInfo.signers.last()
+                )
+
+                binding.executed.value = executionInfo.submittedAt.formatBackendDate()
+
+            }
+            is DomainDetailedExecutionInfo.DomainModuleExecutionDetails -> { // do nothing}
+            }
+        }
+
+        binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
+
+        binding.etherscan.setOnClickListener {
+            requireContext().openUrl(
+                getString(
+                    R.string.etherscan_transaction_url,
+                    txDetails?.txHash
+                )
+            )
+        }
     }
 }

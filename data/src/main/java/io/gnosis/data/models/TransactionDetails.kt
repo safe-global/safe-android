@@ -5,12 +5,13 @@ import io.gnosis.data.backend.dto.Operation
 import io.gnosis.data.backend.dto.TransactionDirection
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
+import java.util.*
 
 data class DomainTransactionDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
     val txInfo: DomainTransactionInfo,
-    val executedAt: Long?,
+    val executedAt: Date?,
     val txData: DomainTxData?,
     val detailedExecutionInfo: DomainDetailedExecutionInfo?
 )
@@ -25,7 +26,7 @@ data class DomainTxData(
 
 sealed class DomainDetailedExecutionInfo {
     data class DomainMultisigExecutionDetails(
-        val submittedAt: Long,
+        val submittedAt: Date,
         val nonce: BigInteger,
         val safeTxHash: String,
         val signers: List<Solidity.Address>,
