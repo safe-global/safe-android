@@ -11,12 +11,12 @@ import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.backend.dto.TransactionInfoDto
 import io.gnosis.data.backend.dto.TransferInfoDto
 import io.gnosis.data.backend.dto.TxDataDto
-import io.gnosis.data.models.DomainConfirmations
-import io.gnosis.data.models.DomainDetailedExecutionInfo
-import io.gnosis.data.models.DomainTransactionDetails
-import io.gnosis.data.models.DomainTransactionInfo
-import io.gnosis.data.models.DomainTransferInfo
-import io.gnosis.data.models.DomainTxData
+import io.gnosis.data.models.Confirmations
+import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionInfo
+import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.TxData
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
@@ -54,62 +54,62 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): DomainTransactionDetails =
-        gatewayApi.loadTransactionDetails(txId).let { transactionDto ->
-            return transactionDto.toDomainTransactionDetails()
+    suspend fun getTransactionDetails(txId: String): TransactionDetails =
+        gatewayApi.loadTransactionDetails(txId).let { transactionDetailsDto ->
+            return transactionDetailsDto.toTransactionDetails()
         }
 
-    private fun GateTransactionDetailsDto.toDomainTransactionDetails(): DomainTransactionDetails =
-        DomainTransactionDetails(
+    private fun GateTransactionDetailsDto.toTransactionDetails(): TransactionDetails =
+        TransactionDetails(
             txHash = txHash,
-            detailedExecutionInfo = detailedExecutionInfo?.toDomainDetailedExecutionInfo(),
+            detailedExecutionInfo = detailedExecutionInfo?.toDetailedExecutionInfo(),
             executedAt = executedAt?.toDate(),
             txStatus = txStatus,
-            txData = txData?.toDomainTxData(),
-            txInfo = txInfo.toDomainTransactionInfo()
+            txData = txData?.toTxData(),
+            txInfo = txInfo.toTransactionInfo()
         )
 
-    private fun DetailedExecutionInfoDto.toDomainDetailedExecutionInfo(): DomainDetailedExecutionInfo? =
+    private fun DetailedExecutionInfoDto.toDetailedExecutionInfo(): DetailedExecutionInfo? =
 
         when (this) {
-            is DetailedExecutionInfoDto.MultisigExecutionDetailsDto -> DomainDetailedExecutionInfo.DomainMultisigExecutionDetails(
+            is DetailedExecutionInfoDto.MultisigExecutionDetailsDto -> DetailedExecutionInfo.MultisigExecutionDetails(
                 submittedAt = submittedAt.toDate(),
                 nonce = nonce,
                 safeTxHash = safeTxHash,
                 signers = signers,
                 confirmationsRequired = confirmationsRequired,
-                confirmations = confirmations.toDomainConfirmations()
+                confirmations = confirmations.toConfirmations()
             )
-            is DetailedExecutionInfoDto.ModuleExecutionDetailsDto -> DomainDetailedExecutionInfo.DomainModuleExecutionDetails(
+            is DetailedExecutionInfoDto.ModuleExecutionDetailsDto -> DetailedExecutionInfo.ModuleExecutionDetails(
                 address = address
             )
         }
 
-    private fun TransactionInfoDto.toDomainTransactionInfo(): DomainTransactionInfo =
+    private fun TransactionInfoDto.toTransactionInfo(): TransactionInfo =
         when (this) {
             is TransactionInfoDto.Custom ->
-                DomainTransactionInfo.Custom(
+                TransactionInfo.Custom(
                     to = to,
                     dataSize = dataSize,
                     value = value
                 )
             is TransactionInfoDto.SettingsChange ->
-                DomainTransactionInfo.SettingsChange(
+                TransactionInfo.SettingsChange(
                     dataDecoded = dataDecoded
                 )
             is TransactionInfoDto.Transfer ->
-                DomainTransactionInfo.Transfer(
+                TransactionInfo.Transfer(
                     sender = sender,
                     recipient = recipient,
-                    transferInfo = transferInfo.toDomainTransferInfo(),
+                    transferInfo = transferInfo.toTransferInfo(),
                     direction = direction
                 )
-            is TransactionInfoDto.Creation -> DomainTransactionInfo.Creation
-            is TransactionInfoDto.Unknown -> DomainTransactionInfo.Unknown
+            is TransactionInfoDto.Creation -> TransactionInfo.Creation
+            is TransactionInfoDto.Unknown -> TransactionInfo.Unknown
         }
 
-    private fun TxDataDto.toDomainTxData(): DomainTxData? =
-        DomainTxData(
+    private fun TxDataDto.toTxData(): TxData? =
+        TxData(
             hexData = hexData,
             dataDecoded = dataDecoded,
             to = to,
@@ -117,10 +117,10 @@ class TransactionRepository(
             operation = operation
         )
 
-    private fun TransferInfoDto.toDomainTransferInfo(): DomainTransferInfo =
+    private fun TransferInfoDto.toTransferInfo(): TransferInfo =
         when (this) {
             is TransferInfoDto.Erc20Transfer -> {
-                DomainTransferInfo.DomainErc20Transfer(
+                TransferInfo.Erc20Transfer(
                     tokenAddress = tokenAddress,
                     value = value,
                     decimals = decimals,
@@ -129,21 +129,21 @@ class TransactionRepository(
                     tokenSymbol = tokenSymbol
                 )
             }
-            is TransferInfoDto.Erc721Transfer -> DomainTransferInfo.DomainErc721Transfer(
+            is TransferInfoDto.Erc721Transfer -> TransferInfo.Erc721Transfer(
                 tokenAddress = tokenAddress,
                 tokenSymbol = tokenSymbol,
                 tokenName = tokenName,
                 logoUri = logoUri,
                 tokenId = tokenId
             )
-            is TransferInfoDto.EtherTransfer -> DomainTransferInfo.DomainEtherTransfer(
+            is TransferInfoDto.EtherTransfer -> TransferInfo.EtherTransfer(
                 value = value
             )
         }
 
-    private fun List<ConfirmationsDto>.toDomainConfirmations(): List<DomainConfirmations> =
+    private fun List<ConfirmationsDto>.toConfirmations(): List<Confirmations> =
         this.map { confirmation ->
-            DomainConfirmations(
+            Confirmations(
                 signer = confirmation.signer,
                 signature = confirmation.signature
             )

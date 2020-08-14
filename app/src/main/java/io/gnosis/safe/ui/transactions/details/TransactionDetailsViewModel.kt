@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
-import io.gnosis.data.models.DomainTransactionDetails
+import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -25,6 +25,6 @@ class TransactionDetailsViewModel
 }
 
 data class TransactionDetailsViewState(
-    val txDetails: DomainTransactionDetails?,
+    val txDetails: TransactionDetails?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State

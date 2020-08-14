@@ -7,16 +7,16 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
 
-data class DomainTransactionDetails(
+data class TransactionDetails(
     val txHash: String?,
     val txStatus: TransactionStatus,
-    val txInfo: DomainTransactionInfo,
+    val txInfo: TransactionInfo,
     val executedAt: Date?,
-    val txData: DomainTxData?,
-    val detailedExecutionInfo: DomainDetailedExecutionInfo?
+    val txData: TxData?,
+    val detailedExecutionInfo: DetailedExecutionInfo?
 )
 
-data class DomainTxData(
+data class TxData(
     val hexData: String?,
     val dataDecoded: DataDecodedDto?,
     val to: Solidity.Address,
@@ -24,68 +24,68 @@ data class DomainTxData(
     val operation: Operation
 )
 
-sealed class DomainDetailedExecutionInfo {
-    data class DomainMultisigExecutionDetails(
+sealed class DetailedExecutionInfo {
+    data class MultisigExecutionDetails(
         val submittedAt: Date,
         val nonce: BigInteger,
         val safeTxHash: String,
         val signers: List<Solidity.Address>,
         val confirmationsRequired: Int,
-        val confirmations: List<DomainConfirmations>
-    ) : DomainDetailedExecutionInfo()
+        val confirmations: List<Confirmations>
+    ) : DetailedExecutionInfo()
 
-    data class DomainModuleExecutionDetails(
+    data class ModuleExecutionDetails(
         val address: String
-    ) : DomainDetailedExecutionInfo()
+    ) : DetailedExecutionInfo()
 }
 
-sealed class DomainTransactionInfo {
+sealed class TransactionInfo {
     data class Custom(
         val to: Solidity.Address,
         val dataSize: Int,
         val value: String
-    ) : DomainTransactionInfo()
+    ) : TransactionInfo()
 
     data class SettingsChange(
         val dataDecoded: DataDecodedDto
-    ) : DomainTransactionInfo()
+    ) : TransactionInfo()
 
     data class Transfer(
         val sender: Solidity.Address,
         val recipient: Solidity.Address,
-        val transferInfo: DomainTransferInfo,
+        val transferInfo: TransferInfo,
         val direction: TransactionDirection
-    ) : DomainTransactionInfo()
+    ) : TransactionInfo()
 
-    object Creation : DomainTransactionInfo()
+    object Creation : TransactionInfo()
 
-    object Unknown : DomainTransactionInfo()
+    object Unknown : TransactionInfo()
 }
 
-sealed class DomainTransferInfo {
-    data class DomainErc20Transfer(
+sealed class TransferInfo {
+    data class Erc20Transfer(
         val tokenAddress: Solidity.Address,
         val tokenName: String?,
         val tokenSymbol: String?,
         val logoUri: String?,
         val decimals: Int?,
         val value: String
-    ) : DomainTransferInfo()
+    ) : TransferInfo()
 
-    data class DomainErc721Transfer(
+    data class Erc721Transfer(
         val tokenAddress: Solidity.Address,
         val tokenId: String,
         val tokenName: String?,
         val tokenSymbol: String?,
         val logoUri: String?
-    ) : DomainTransferInfo()
+    ) : TransferInfo()
 
-    data class DomainEtherTransfer(
+    data class EtherTransfer(
         val value: String
-    ) : DomainTransferInfo()
+    ) : TransferInfo()
 }
 
-data class DomainConfirmations(
+data class Confirmations(
     val signer: Solidity.Address,
     val signature: String
 )

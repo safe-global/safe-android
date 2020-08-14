@@ -9,9 +9,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.DomainDetailedExecutionInfo
-import io.gnosis.data.models.DomainTransactionDetails
-import io.gnosis.data.models.DomainTransactionInfo
+import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
@@ -80,12 +80,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private lateinit var contentBinding: ViewBinding
 
-    private fun updateUi(txDetails: DomainTransactionDetails?, isLoading: Boolean) {
+    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
 
         when (val txInfo = txDetails?.txInfo) {
-            is DomainTransactionInfo.Transfer -> {
+            is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
                 if (viewStub.parent != null) {
                     val inflate = viewStub.inflate()
@@ -96,7 +96,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
-            is DomainTransactionInfo.SettingsChange -> {
+            is TransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
@@ -105,7 +105,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
             }
-            is DomainTransactionInfo.Custom -> {
+            is TransactionInfo.Custom -> {
                 val viewStub = binding.stubCustom
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
@@ -126,7 +126,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
 
         when (val executionInfo = txDetails?.detailedExecutionInfo) {
-            is DomainDetailedExecutionInfo.DomainMultisigExecutionDetails -> {
+            is DetailedExecutionInfo.MultisigExecutionDetails -> {
 
                 binding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
@@ -137,7 +137,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 binding.executed.value = executionInfo.submittedAt.formatBackendDate()
             }
-            is DomainDetailedExecutionInfo.DomainModuleExecutionDetails -> { // do nothing
+            is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
             }
         }
 
