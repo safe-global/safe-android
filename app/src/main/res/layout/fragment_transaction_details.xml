@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -59,20 +58,40 @@
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:visibility="visible">
+
+                <ViewStub
+                    android:id="@+id/stub_transfer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/transfer_details"
+                    android:layout="@layout/tx_details_transfer" />
+
+                <ViewStub
+                    android:id="@+id/stub_settings_change"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/settings_change_details"
+                    android:layout="@layout/tx_details_settings_change" />
+
+                <ViewStub
+                    android:id="@+id/stub_custom"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inflatedId="@+id/custom_details"
+                    android:layout="@layout/tx_details_custom" />
 
                 <io.gnosis.safe.ui.transactions.details.view.TxConfirmationsView
                     android:id="@+id/tx_confirmations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"/>
+                    android:layout_marginTop="16dp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/light_grey"/>
+                    android:background="@color/light_grey" />
 
                 <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/advanced"
@@ -84,43 +103,41 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/light_grey"/>
-                
+                    android:background="@color/light_grey" />
+
                 <io.gnosis.safe.ui.transactions.details.view.TimeInfoItem
                     android:id="@+id/created"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:time_info_name="@string/tx_details_created"/>
+                    app:time_info_name="@string/tx_details_created" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/light_grey"/>
+                    android:background="@color/light_grey" />
 
                 <io.gnosis.safe.ui.transactions.details.view.TimeInfoItem
                     android:id="@+id/executed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:time_info_name="@string/tx_details_executed"/>
+                    app:time_info_name="@string/tx_details_executed" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/light_grey"/>
+                    android:background="@color/light_grey" />
 
                 <TextView
                     android:id="@+id/etherscan"
                     style="@style/TextLink"
-                    android:layout_marginLeft="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/item_setting_openable_height"
-                    android:drawableRight="@drawable/ic_link_green_24dp"
+                    android:layout_marginStart="16dp"
+                    android:drawableEnd="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
-                    android:gravity="left|center_vertical"
-                    android:text="@string/tx_details_view_on_etherscan"/>
-
+                    android:gravity="start|center_vertical"
+                    android:text="@string/tx_details_view_on_etherscan" />
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

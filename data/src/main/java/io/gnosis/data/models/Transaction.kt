@@ -19,7 +19,7 @@ sealed class Transaction {
         override val confirmations: Int?,
         val nonce: BigInteger?,
         val address: Solidity.Address,
-        val dataSize: Long,
+        val dataSize: Int,
         val date: Date?,
         val value: BigInteger
     ) : Transaction()

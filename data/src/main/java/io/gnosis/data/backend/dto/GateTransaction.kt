@@ -8,11 +8,11 @@ data class GateTransactionDto(
     val id: String,
     val timestamp: Long,
     val txStatus: TransactionStatus,
-    val txInfo: TransactionInfo,
-    val executionInfo: ExecutionInfo?
+    val txInfo: TransactionInfoDto,
+    val executionInfo: ExecutionInfoDto?
 )
 
-data class ExecutionInfo(
+data class ExecutionInfoDto(
     val nonce: BigInteger,
     val confirmationsRequired: Int,
     val confirmationsSubmitted: Int
@@ -26,37 +26,37 @@ enum class GateTransactionType {
     Unknown
 }
 
-interface TransactionInfo {
-    val type: GateTransactionType
+sealed class TransactionInfoDto {
+    abstract val type: GateTransactionType
+
+    data class Custom(
+        override val type: GateTransactionType = GateTransactionType.Custom,
+        val to: Solidity.Address,
+        val dataSize: Int,
+        val value: String
+    ) : TransactionInfoDto()
+
+    data class SettingsChange(
+        override val type: GateTransactionType = GateTransactionType.SettingsChange,
+        val dataDecoded: DataDecodedDto
+    ) : TransactionInfoDto()
+
+    data class Transfer(
+        override val type: GateTransactionType = GateTransactionType.Transfer,
+        val sender: Solidity.Address,
+        val recipient: Solidity.Address,
+        val transferInfo: TransferInfoDto,
+        val direction: TransactionDirection
+    ) : TransactionInfoDto()
+
+    data class Creation(
+        override val type: GateTransactionType = GateTransactionType.Creation
+    ) : TransactionInfoDto()
+
+    data class Unknown(
+        override val type: GateTransactionType = GateTransactionType.Unknown
+    ) : TransactionInfoDto()
 }
-
-data class Custom(
-    override val type: GateTransactionType = GateTransactionType.Custom,
-    val to: Solidity.Address,
-    val dataSize: String,
-    val value: String
-) : TransactionInfo
-
-data class SettingsChange(
-    override val type: GateTransactionType = GateTransactionType.SettingsChange,
-    val dataDecoded: DataDecodedDto
-) : TransactionInfo
-
-data class Transfer(
-    override val type: GateTransactionType = GateTransactionType.Transfer,
-    val sender: Solidity.Address,
-    val recipient: Solidity.Address,
-    val transferInfo: TransferInfo,
-    val direction: TransactionDirection
-) : TransactionInfo
-
-data class Creation(
-    override val type: GateTransactionType = GateTransactionType.Creation
-) : TransactionInfo
-
-data class Unknown(
-    override val type: GateTransactionType = GateTransactionType.Unknown
-) : TransactionInfo
 
 enum class TransactionDirection {
     INCOMING,
@@ -68,32 +68,30 @@ enum class GateTransferType {
     ERC20, ERC721, ETHER
 }
 
-interface TransferInfo {
-    val type: GateTransferType
+sealed class TransferInfoDto {
+    abstract val type: GateTransferType
+
+    data class Erc20Transfer(
+        override val type: GateTransferType = GateTransferType.ERC20,
+        val tokenAddress: Solidity.Address,
+        val tokenName: String?,
+        val tokenSymbol: String?,
+        val logoUri: String?,
+        val decimals: Int?,
+        val value: String
+    ) : TransferInfoDto()
+
+    data class Erc721Transfer(
+        override val type: GateTransferType = GateTransferType.ERC721,
+        val tokenAddress: Solidity.Address,
+        val tokenId: String,
+        val tokenName: String?,
+        val tokenSymbol: String?,
+        val logoUri: String?
+    ) : TransferInfoDto()
+
+    data class EtherTransfer(
+        override val type: GateTransferType = GateTransferType.ETHER,
+        val value: String
+    ) : TransferInfoDto()
 }
-
-data class Erc20Transfer(
-    override val type: GateTransferType = GateTransferType.ERC20,
-    val tokenAddress: Solidity.Address,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?,
-    val decimals: Int?,
-    val value: String
-) : TransferInfo
-
-data class Erc721Transfer(
-    override val type: GateTransferType = GateTransferType.ERC721,
-    val tokenAddress: Solidity.Address,
-    val tokenId: String,
-    val tokenName: String?,
-    val tokenSymbol: String?,
-    val logoUri: String?
-) : TransferInfo
-
-data class EtherTransfer(
-    override val type: GateTransferType = GateTransferType.ETHER,
-    val value: String
-) : TransferInfo
-
-

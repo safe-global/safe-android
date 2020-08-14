@@ -1,29 +1,28 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.Creation
-import io.gnosis.data.backend.dto.Custom
-import io.gnosis.data.backend.dto.Erc20Transfer
-import io.gnosis.data.backend.dto.Erc721Transfer
-import io.gnosis.data.backend.dto.EtherTransfer
+import io.gnosis.data.backend.dto.ConfirmationsDto
+import io.gnosis.data.backend.dto.DetailedExecutionInfoDto
+import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.MultisigExecutionDetails
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.SettingsChange
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfo
-import io.gnosis.data.backend.dto.Transfer
-import io.gnosis.data.backend.dto.TransferInfo
-import io.gnosis.data.backend.dto.Unknown
+import io.gnosis.data.backend.dto.TransactionInfoDto
+import io.gnosis.data.backend.dto.TransferInfoDto
+import io.gnosis.data.backend.dto.TxDataDto
+import io.gnosis.data.models.Confirmations
+import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionInfo
+import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.TxData
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.TransferDetails
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -55,34 +54,104 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): TransferDetails =
-        gatewayApi.loadTransactionDetails(txId).let {
+    suspend fun getTransactionDetails(txId: String): TransactionDetails =
+        gatewayApi.loadTransactionDetails(txId).let { transactionDetailsDto ->
+            return transactionDetailsDto.toTransactionDetails()
+        }
 
-            // TODO: create different tx types for detail display: Custom, Settingschange & Transfer
+    private fun GateTransactionDetailsDto.toTransactionDetails(): TransactionDetails =
+        TransactionDetails(
+            txHash = txHash,
+            detailedExecutionInfo = detailedExecutionInfo?.toDetailedExecutionInfo(),
+            executedAt = executedAt?.toDate(),
+            txStatus = txStatus,
+            txData = txData?.toTxData(),
+            txInfo = txInfo.toTransactionInfo()
+        )
 
-            TransferDetails(
-                it.txHash,
-                it.txStatus,
-                (it.detailedExecutionInfo as? MultisigExecutionDetails)?.submittedAt?.toDate(),
-                it.executedAt?.toDate(),
-                getExecutor(it.txInfo),  //(it.txInfo as? Transfer)?.sender, // TODO: handle other transfer type
-                it.txData,
-                it.detailedExecutionInfo
+    private fun DetailedExecutionInfoDto.toDetailedExecutionInfo(): DetailedExecutionInfo? =
+
+        when (this) {
+            is DetailedExecutionInfoDto.MultisigExecutionDetailsDto -> DetailedExecutionInfo.MultisigExecutionDetails(
+                submittedAt = submittedAt.toDate(),
+                nonce = nonce,
+                safeTxHash = safeTxHash,
+                signers = signers,
+                confirmationsRequired = confirmationsRequired,
+                confirmations = confirmations.toConfirmations()
+            )
+            is DetailedExecutionInfoDto.ModuleExecutionDetailsDto -> DetailedExecutionInfo.ModuleExecutionDetails(
+                address = address
             )
         }
 
-    private fun getExecutor(txInfo: TransactionInfo): Solidity.Address =
-         when (txInfo) {
-            is Custom -> txInfo.to // safe address ?
-            is SettingsChange -> "0x1234".asEthereumAddress()!! // safe address
-            is Transfer -> txInfo.sender
-            is Creation -> "0x5678".asEthereumAddress()!! // who is the creator
-            else -> "0x12345678".asEthereumAddress()!!
+    private fun TransactionInfoDto.toTransactionInfo(): TransactionInfo =
+        when (this) {
+            is TransactionInfoDto.Custom ->
+                TransactionInfo.Custom(
+                    to = to,
+                    dataSize = dataSize,
+                    value = value
+                )
+            is TransactionInfoDto.SettingsChange ->
+                TransactionInfo.SettingsChange(
+                    dataDecoded = dataDecoded
+                )
+            is TransactionInfoDto.Transfer ->
+                TransactionInfo.Transfer(
+                    sender = sender,
+                    recipient = recipient,
+                    transferInfo = transferInfo.toTransferInfo(),
+                    direction = direction
+                )
+            is TransactionInfoDto.Creation -> TransactionInfo.Creation
+            is TransactionInfoDto.Unknown -> TransactionInfo.Unknown
+        }
+
+    private fun TxDataDto.toTxData(): TxData? =
+        TxData(
+            hexData = hexData,
+            dataDecoded = dataDecoded,
+            to = to,
+            value = value,
+            operation = operation
+        )
+
+    private fun TransferInfoDto.toTransferInfo(): TransferInfo =
+        when (this) {
+            is TransferInfoDto.Erc20Transfer -> {
+                TransferInfo.Erc20Transfer(
+                    tokenAddress = tokenAddress,
+                    value = value,
+                    decimals = decimals,
+                    logoUri = logoUri,
+                    tokenName = tokenName,
+                    tokenSymbol = tokenSymbol
+                )
+            }
+            is TransferInfoDto.Erc721Transfer -> TransferInfo.Erc721Transfer(
+                tokenAddress = tokenAddress,
+                tokenSymbol = tokenSymbol,
+                tokenName = tokenName,
+                logoUri = logoUri,
+                tokenId = tokenId
+            )
+            is TransferInfoDto.EtherTransfer -> TransferInfo.EtherTransfer(
+                value = value
+            )
+        }
+
+    private fun List<ConfirmationsDto>.toConfirmations(): List<Confirmations> =
+        this.map { confirmation ->
+            Confirmations(
+                signer = confirmation.signer,
+                signature = confirmation.signature
+            )
         }
 
     private fun GateTransactionDto.toTransaction(): Transaction {
         return when (txInfo) {
-            is Transfer -> Transaction.Transfer(
+            is TransactionInfoDto.Transfer -> Transaction.Transfer(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
@@ -94,7 +163,7 @@ class TransactionRepository(
                 tokenInfo = txInfo.transferInfo.tokenInfo(),
                 incoming = txInfo.direction == TransactionDirection.INCOMING
             )
-            is SettingsChange -> Transaction.SettingsChange(
+            is TransactionInfoDto.SettingsChange -> Transaction.SettingsChange(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
@@ -102,49 +171,44 @@ class TransactionRepository(
                 date = timestamp.toDate(),
                 dataDecoded = txInfo.dataDecoded
             )
-            is Custom -> Transaction.Custom(
+            is TransactionInfoDto.Custom -> Transaction.Custom(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
                 nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 address = txInfo.to,
-                dataSize = txInfo.dataSize.toLong(),
+                dataSize = txInfo.dataSize,
                 value = txInfo.value.toBigInteger()
             )
-
-            is Creation -> Transaction.Creation(
+            is TransactionInfoDto.Creation -> Transaction.Creation(
                 id = id,
                 confirmations = null,
                 status = TransactionStatus.SUCCESS
             )
-
-            is Unknown -> Transaction.Custom(
+            is TransactionInfoDto.Unknown -> Transaction.Custom(
                 id = id,
                 address = Solidity.Address(BigInteger.ZERO),
                 status = TransactionStatus.SUCCESS,
                 value = BigInteger.ZERO,
-                dataSize = 0L,
+                dataSize = 0,
                 confirmations = null,
                 nonce = BigInteger.ZERO,
                 date = null
             )
-            // This should not happen as Unknown is the default value
-            else -> throw IllegalStateException()
         }
     }
 
-    private fun TransferInfo.value(): String =
+    private fun TransferInfoDto.value(): String =
         when (this) {
-            is Erc20Transfer -> value
-            is Erc721Transfer -> "1"
-            is EtherTransfer -> value
-            else -> "0"
+            is TransferInfoDto.Erc20Transfer -> value
+            is TransferInfoDto.Erc721Transfer -> "1"
+            is TransferInfoDto.EtherTransfer -> value
         }
 
-    private fun TransferInfo.tokenInfo(): ServiceTokenInfo? =
+    private fun TransferInfoDto.tokenInfo(): ServiceTokenInfo? =
         when (this) {
-            is Erc20Transfer -> ServiceTokenInfo(
+            is TransferInfoDto.Erc20Transfer -> ServiceTokenInfo(
                 address = tokenAddress,
                 decimals = decimals ?: 0,
                 symbol = tokenSymbol.orEmpty(),
@@ -152,15 +216,14 @@ class TransactionRepository(
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC20
             )
-            is Erc721Transfer -> ServiceTokenInfo(
+            is TransferInfoDto.Erc721Transfer -> ServiceTokenInfo(
                 address = tokenAddress,
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
                 type = ServiceTokenInfo.TokenType.ERC721
             )
-            is EtherTransfer -> ETH_SERVICE_TOKEN_INFO
-            else -> null
+            is TransferInfoDto.EtherTransfer -> ETH_SERVICE_TOKEN_INFO
         }
 
     private fun Long.toDate(): Date = Date(this)
@@ -177,3 +240,4 @@ fun List<ParamsDto>?.getValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
+

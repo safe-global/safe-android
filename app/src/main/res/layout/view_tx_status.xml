@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <ImageView
+        android:id="@+id/type_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/type"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/type"
+        app:srcCompat="@drawable/ic_arrow_green_10dp" />
+
+    <TextView
+        android:id="@+id/status"
+        style="@style/TextMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/type"
+        app:layout_constraintStart_toEndOf="@+id/type"
+        app:layout_constraintTop_toTopOf="@+id/type"
+        tools:text="Failed"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/type"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/status_long"
+        app:layout_constraintStart_toEndOf="@+id/type_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/tx_status_type_transfer_incoming"
+        app:layout_goneMarginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/status_long"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/default_small_margin"
+        android:layout_marginBottom="16dp"
+        tools:text="@string/tx_status_status_awaiting_confirmations"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/type" />
+
+
+</merge>

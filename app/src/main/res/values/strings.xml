@@ -100,6 +100,19 @@
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
 
+    <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
+    <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
+    <string name="tx_status_type_modify_settings">Modify settings</string>
+    <string name="tx_status_type_custom">Custom transaction</string>
+    <string name="tx_status_type_creation">Safe created</string>
+
+    <string name="tx_status_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
+    <string name="tx_status_status_awaiting_execution">\u2022 Awaiting execution</string>
+    <string name="tx_status_status_pending">\u2022 Pending</string>
+    <string name="tx_status_status_cancelled">Cancelled</string>
+    <string name="tx_status_status_failed">Failed</string>
+    <string name="tx_status_status_success">Success</string>
+
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
@@ -135,4 +148,6 @@
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
+
+
 </resources>

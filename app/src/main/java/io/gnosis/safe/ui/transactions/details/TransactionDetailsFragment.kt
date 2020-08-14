@@ -7,14 +7,21 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.backend.dto.MultisigExecutionDetails
-import io.gnosis.data.models.TransferDetails
+import androidx.viewbinding.ViewBinding
+import io.gnosis.data.backend.dto.TransactionDirection
+import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
+import io.gnosis.safe.databinding.TxDetailsCustomBinding
+import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
+import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
@@ -39,7 +46,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsBinding =
         FragmentTransactionDetailsBinding.inflate(inflater, container, false)
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,7 +62,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
-                is BaseStateViewModel.ViewAction.Loading -> updateUi(state.txDetails, viewAction.isLoading)
+                is BaseStateViewModel.ViewAction.Loading -> {
+                    updateUi(state.txDetails, viewAction.isLoading)
+                }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
                     //TODO: handle error here
@@ -70,26 +78,78 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.loadDetails(txId)
     }
 
-    private fun updateUi(txDetails: TransferDetails?, isLoading: Boolean) {
+    private lateinit var contentBinding: ViewBinding
+
+    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
+
         binding.refresh.isRefreshing = isLoading
-        txDetails?.let {
-            binding.content.visible(true)
-            binding.txConfirmations.setExecutionData(
-                status = txDetails.txStatus,
-                confirmations = (txDetails.detailedExecutionInfo as? MultisigExecutionDetails)?.confirmations?.map { it.signer } ?: listOf(),
-                threshold = (txDetails.detailedExecutionInfo  as? MultisigExecutionDetails)?.confirmationsRequired ?: 0,
-                executor = txDetails.executor
-            )
-            binding.created.value = txDetails.createdAt?.formatBackendDate() ?: ""
-            binding.executed.value = txDetails.executedAt?.formatBackendDate() ?: ""
-            binding.etherscan.setOnClickListener {
-                requireContext().openUrl(
-                    getString(
-                        R.string.etherscan_transaction_url,
-                        txDetails.txHash
-                    )
-                )
+
+        when (val txInfo = txDetails?.txInfo) {
+            is TransactionInfo.Transfer -> {
+                val viewStub = binding.stubTransfer
+                if (viewStub.parent != null) {
+                    val inflate = viewStub.inflate()
+                    contentBinding = TxDetailsTransferBinding.bind(inflate)
+                }
+                val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
+
+                val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
+                txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
+            is TransactionInfo.SettingsChange -> {
+                val viewStub = binding.stubSettingsChange
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
+                }
+                val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
+
+                txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
+            }
+            is TransactionInfo.Custom -> {
+                val viewStub = binding.stubCustom
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                }
+                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
+
+                txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
+
+                if (txDetails.txData != null) {
+                    txDetailsCustomBinding.txData.visible(true)
+                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txInfo.dataSize) }
+                } else {
+                    txDetailsCustomBinding.txData.visible(false)
+                    txDetailsCustomBinding.txDataSeparator.visible(false)
+                }
+            }
+
+        }
+
+        when (val executionInfo = txDetails?.detailedExecutionInfo) {
+            is DetailedExecutionInfo.MultisigExecutionDetails -> {
+
+                binding.txConfirmations.setExecutionData(
+                    status = txDetails.txStatus,
+                    confirmations = executionInfo.confirmations.map { it.signer },
+                    threshold = executionInfo.confirmationsRequired,
+                    executor = executionInfo.signers.last() // TODO  Change this, when executor is available in client gateway response (https://github.com/gnosis/safe-client-gateway/issues/95)
+                )
+
+                binding.executed.value = executionInfo.submittedAt.formatBackendDate()
+            }
+            is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
+            }
+        }
+
+        binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
+
+        binding.etherscan.setOnClickListener {
+            requireContext().openUrl(
+                getString(
+                    R.string.etherscan_transaction_url,
+                    txDetails?.txHash
+                )
+            )
         }
     }
 }

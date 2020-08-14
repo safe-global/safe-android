@@ -7,13 +7,13 @@ import java.math.BigInteger
 data class GateTransactionDetailsDto(
     val txHash: String?,
     val txStatus: TransactionStatus,
-    val txInfo: TransactionInfo,
+    val txInfo: TransactionInfoDto,
     val executedAt: Long?,
-    val txData: TxData?,
-    val detailedExecutionInfo: DetailedExecutionInfo?
+    val txData: TxDataDto?,
+    val detailedExecutionInfo: DetailedExecutionInfoDto?
 )
 
-data class TxData(
+data class TxDataDto(
     val hexData: String?,
     val dataDecoded: DataDecodedDto?,
     val to: Solidity.Address,
@@ -21,31 +21,31 @@ data class TxData(
     val operation: Operation
 )
 
-interface DetailedExecutionInfo {
-    val type: DetailedExecutionInfoType
+sealed class DetailedExecutionInfoDto {
+    abstract val type: DetailedExecutionInfoType
+
+    data class MultisigExecutionDetailsDto(
+        override val type: DetailedExecutionInfoType,
+        val submittedAt: Long,
+        val nonce: BigInteger,
+        val safeTxHash: String,
+        val signers: List<Solidity.Address>,
+        val confirmationsRequired: Int,
+        val confirmations: List<ConfirmationsDto>
+    ) : DetailedExecutionInfoDto()
+
+    data class ModuleExecutionDetailsDto(
+        override val type: DetailedExecutionInfoType,
+        val address: String
+    ) : DetailedExecutionInfoDto()
 }
-
-data class MultisigExecutionDetails(
-    override val type: DetailedExecutionInfoType,
-    val submittedAt: Long?,
-    val nonce: BigInteger,
-    val safeTxHash: String,
-    val signers: List<Solidity.Address>,
-    val confirmationsRequired: Int,
-    val confirmations: List<Confirmations>
-) : DetailedExecutionInfo
-
-data class ModuleExecutionDetails(
-    override val type: DetailedExecutionInfoType,
-    val address: String
-) : DetailedExecutionInfo
 
 enum class DetailedExecutionInfoType {
     MULTISIG,
     MODULE
 }
 
-data class Confirmations(
+data class ConfirmationsDto(
     val signer: Solidity.Address,
     val signature: String
 )
