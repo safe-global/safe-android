@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.backend.dto.TransactionDirection
@@ -139,6 +140,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
             }
+        }
+
+        binding.advanced.setOnClickListener {
+            //TODO: pass arguments
+           findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(null, null, null))
         }
 
         binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
