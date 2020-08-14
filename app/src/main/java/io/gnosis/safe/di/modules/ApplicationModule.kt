@@ -166,5 +166,5 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationManager(@ApplicationContext context: Context): NotificationManager = NotificationManager(context)
+    fun providesNotificationManager(@ApplicationContext context: Context, preferencesManager: PreferencesManager): NotificationManager = NotificationManager(context, preferencesManager)
 }

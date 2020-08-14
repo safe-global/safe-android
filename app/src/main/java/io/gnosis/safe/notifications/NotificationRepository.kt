@@ -38,9 +38,7 @@ class NotificationRepository(
             unregisterSafe(pushNotification.safe)
         } else {
             val notification = notificationManager.builder(safe, pushNotification).build()
-            notificationManager.show(
-                0, notification
-            )
+            notificationManager.show(notification)
         }
     }
 

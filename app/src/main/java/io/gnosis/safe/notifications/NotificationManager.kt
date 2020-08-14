@@ -9,22 +9,34 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.utils.formatForTxList
+import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.utils.edit
 
 class NotificationManager(
-    private val context: Context
-) {
+    private val context: Context,
+    private val preferencesManager: PreferencesManager
+    ) {
 
-    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+    private val notificationManager = NotificationManagerCompat.from(context)
 
     init {
         createNotificationChannel(CHANNEL_ID)
     }
+
+    private var latestNotificationId: Int
+        get() = preferencesManager.prefs.getInt(LATEST_NOTIFICATION_ID, -1)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putInt(LATEST_NOTIFICATION_ID, value)
+            }
+        }
 
     private fun createNotificationChannel(channelId: String, importance: Int = NotificationManager.IMPORTANCE_HIGH) {
         if (Build.VERSION.SDK_INT < 26) {
@@ -40,7 +52,7 @@ class NotificationManager(
         channel.enableVibration(true)
         channel.vibrationPattern = VIBRATE_PATTERN
 
-        notificationManager?.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(channel)
     }
 
     fun builder(
@@ -119,12 +131,21 @@ class NotificationManager(
         show(id, builder.build())
     }
 
+    fun show(notification: Notification) {
+        notificationManager.notify(latestNotificationId, notification)
+    }
+
     fun show(id: Int, notification: Notification) {
-        notificationManager?.notify(id, notification)
+        notificationManager.notify(id, notification)
     }
 
     fun hide(id: Int) {
-        notificationManager?.cancel(id)
+        notificationManager.cancel(id)
+    }
+
+    fun hideAll() {
+        latestNotificationId = -1
+        notificationManager.cancelAll()
     }
 
     private fun txDetailsIntent(safeTxHash: String): PendingIntent =
@@ -149,6 +170,7 @@ class NotificationManager(
 
 
     companion object {
+        private const val LATEST_NOTIFICATION_ID = "prefs.int.latest_notification_id"
         private val VIBRATE_PATTERN = longArrayOf(0, 100, 50, 100)
         private const val LIGHT_COLOR = Color.MAGENTA
         private const val CHANNEL_ID = "channel_tx_notifications"
