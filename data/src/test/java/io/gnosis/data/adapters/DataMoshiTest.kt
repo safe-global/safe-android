@@ -1,14 +1,14 @@
 package io.gnosis.data.adapters
 
 import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ExecutionInfo
+import io.gnosis.data.backend.dto.ExecutionInfoDto
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.GateTransactionType
 import io.gnosis.data.backend.dto.GateTransferType
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfo
-import io.gnosis.data.backend.dto.TransferInfo
+import io.gnosis.data.backend.dto.TransactionInfoDto
+import io.gnosis.data.backend.dto.TransferInfoDto
 import io.gnosis.data.models.TransactionStatus.SUCCESS
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -31,12 +31,12 @@ class DataMoshiTest {
             id = "ethereum_0x1C8b9B78e3085866521FE206fa4c1a67F49f153A_6613439_0xa215ac5bc96fb65e",
             timestamp = 1591357055000,
             txStatus = SUCCESS,
-            txInfo = TransactionInfo.Transfer(
+            txInfo = TransactionInfoDto.Transfer(
                 type = GateTransactionType.Transfer,
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                transferInfo = TransferInfo.Erc20Transfer(
+                transferInfo = TransferInfoDto.Erc20Transfer(
                     type = GateTransferType.ERC20,
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
@@ -61,13 +61,13 @@ class DataMoshiTest {
             id = "multisig_0xa9b819d0123858cb3b37a849a2ed3d5c4341bd5ecb55bc7c2983301dc8d3cb5c",
             timestamp = 1591356920000,
             txStatus = SUCCESS,
-            txInfo = TransactionInfo.Custom(
+            txInfo = TransactionInfoDto.Custom(
                 type = GateTransactionType.Custom,
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 value = "3140000000000000000"
             ),
-            executionInfo = ExecutionInfo(
+            executionInfo = ExecutionInfoDto(
                 nonce = 8.toBigInteger(),
                 confirmationsRequired = 2,
                 confirmationsSubmitted = 2
@@ -86,7 +86,7 @@ class DataMoshiTest {
             id = "multisig_0x238f1fe1beac3cfd4ec98acb4e006f7ebbbd615ddac9d6b065fdb3ce01065a9a",
             timestamp = 1591137785000,
             txStatus = SUCCESS,
-            txInfo = TransactionInfo.SettingsChange(
+            txInfo = TransactionInfoDto.SettingsChange(
                 type = GateTransactionType.SettingsChange,
                 dataDecoded = DataDecodedDto(
                     method = "addOwnerWithThreshold",
@@ -96,7 +96,7 @@ class DataMoshiTest {
                     )
                 )
             ),
-            executionInfo = ExecutionInfo(
+            executionInfo = ExecutionInfoDto(
                 nonce = 4.toBigInteger(),
                 confirmationsRequired = 1,
                 confirmationsSubmitted = 1

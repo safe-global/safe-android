@@ -8,11 +8,11 @@ data class GateTransactionDto(
     val id: String,
     val timestamp: Long,
     val txStatus: TransactionStatus,
-    val txInfo: TransactionInfo,
-    val executionInfo: ExecutionInfo?
+    val txInfo: TransactionInfoDto,
+    val executionInfo: ExecutionInfoDto?
 )
 
-data class ExecutionInfo(
+data class ExecutionInfoDto(
     val nonce: BigInteger,
     val confirmationsRequired: Int,
     val confirmationsSubmitted: Int
@@ -26,7 +26,7 @@ enum class GateTransactionType {
     Unknown
 }
 
-sealed class TransactionInfo {
+sealed class TransactionInfoDto {
     abstract val type: GateTransactionType
 
     data class Custom(
@@ -34,28 +34,28 @@ sealed class TransactionInfo {
         val to: Solidity.Address,
         val dataSize: Int,
         val value: String
-    ) : TransactionInfo()
+    ) : TransactionInfoDto()
 
     data class SettingsChange(
         override val type: GateTransactionType = GateTransactionType.SettingsChange,
         val dataDecoded: DataDecodedDto
-    ) : TransactionInfo()
+    ) : TransactionInfoDto()
 
     data class Transfer(
         override val type: GateTransactionType = GateTransactionType.Transfer,
         val sender: Solidity.Address,
         val recipient: Solidity.Address,
-        val transferInfo: TransferInfo,
+        val transferInfo: TransferInfoDto,
         val direction: TransactionDirection
-    ) : TransactionInfo()
+    ) : TransactionInfoDto()
 
     data class Creation(
         override val type: GateTransactionType = GateTransactionType.Creation
-    ) : TransactionInfo()
+    ) : TransactionInfoDto()
 
     data class Unknown(
         override val type: GateTransactionType = GateTransactionType.Unknown
-    ) : TransactionInfo()
+    ) : TransactionInfoDto()
 }
 
 enum class TransactionDirection {
@@ -68,7 +68,7 @@ enum class GateTransferType {
     ERC20, ERC721, ETHER
 }
 
-sealed class TransferInfo {
+sealed class TransferInfoDto {
     abstract val type: GateTransferType
 
     data class Erc20Transfer(
@@ -79,7 +79,7 @@ sealed class TransferInfo {
         val logoUri: String?,
         val decimals: Int?,
         val value: String
-    ) : TransferInfo()
+    ) : TransferInfoDto()
 
     data class Erc721Transfer(
         override val type: GateTransferType = GateTransferType.ERC721,
@@ -88,10 +88,10 @@ sealed class TransferInfo {
         val tokenName: String?,
         val tokenSymbol: String?,
         val logoUri: String?
-    ) : TransferInfo()
+    ) : TransferInfoDto()
 
     data class EtherTransfer(
         override val type: GateTransferType = GateTransferType.ETHER,
         val value: String
-    ) : TransferInfo()
+    ) : TransferInfoDto()
 }

@@ -7,13 +7,13 @@ import java.math.BigInteger
 data class GateTransactionDetailsDto(
     val txHash: String?,
     val txStatus: TransactionStatus,
-    val txInfo: TransactionInfo,
+    val txInfo: TransactionInfoDto,
     val executedAt: Long?,
-    val txData: TxData?,
-    val detailedExecutionInfo: DetailedExecutionInfo?
+    val txData: TxDataDto?,
+    val detailedExecutionInfo: DetailedExecutionInfoDto?
 )
 
-data class TxData(
+data class TxDataDto(
     val hexData: String?,
     val dataDecoded: DataDecodedDto?,
     val to: Solidity.Address,
@@ -21,23 +21,23 @@ data class TxData(
     val operation: Operation
 )
 
-sealed class DetailedExecutionInfo {
+sealed class DetailedExecutionInfoDto {
     abstract val type: DetailedExecutionInfoType
 
-    data class MultisigExecutionDetails(
+    data class MultisigExecutionDetailsDto(
         override val type: DetailedExecutionInfoType,
         val submittedAt: Long,
         val nonce: BigInteger,
         val safeTxHash: String,
         val signers: List<Solidity.Address>,
         val confirmationsRequired: Int,
-        val confirmations: List<Confirmations>
-    ) : DetailedExecutionInfo()
+        val confirmations: List<ConfirmationsDto>
+    ) : DetailedExecutionInfoDto()
 
-    data class ModuleExecutionDetails(
+    data class ModuleExecutionDetailsDto(
         override val type: DetailedExecutionInfoType,
         val address: String
-    ) : DetailedExecutionInfo()
+    ) : DetailedExecutionInfoDto()
 }
 
 enum class DetailedExecutionInfoType {
@@ -45,7 +45,7 @@ enum class DetailedExecutionInfoType {
     MODULE
 }
 
-data class Confirmations(
+data class ConfirmationsDto(
     val signer: Solidity.Address,
     val signature: String
 )
