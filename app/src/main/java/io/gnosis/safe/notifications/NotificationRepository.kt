@@ -34,7 +34,7 @@ class NotificationRepository(
 
     suspend fun handlePushNotification(pushNotification: PushNotification) {
         val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
-        if(safe == null) {
+        if (safe == null) {
             unregisterSafe(pushNotification.safe)
         } else {
             val notification = notificationManager.builder(safe, pushNotification).build()
@@ -56,12 +56,13 @@ class NotificationRepository(
     }
 
     suspend fun register(token: String) {
-        kotlin.runCatching {
-            val safes = safeRepository.getSafes().map {
-                it.address.asEthereumAddressChecksumString()
-            }
 
-            if (safes.isNotEmpty()) {
+        val safes = safeRepository.getSafes().map {
+            it.address.asEthereumAddressChecksumString()
+        }
+
+        if (safes.isNotEmpty()) {
+            kotlin.runCatching {
                 notificationService.register(
                     FirebaseDevice(
                         safes,
@@ -73,19 +74,20 @@ class NotificationRepository(
                         deviceUuid
                     )
                 )
-            } else {
-                null
+
             }
-        }
-            .onSuccess {
-                deviceUuid = it?.uuid
-                it?.safes?.forEach { safeAddressString ->
-                    safeRepository.saveSafeMeta(SafeMetaData(safeAddressString.asEthereumAddress()!!, true))
+                .onSuccess {
+                    Timber.d("notification service registration success")
+                    deviceUuid = it.uuid
+                    it.safes.forEach { safeAddressString ->
+                        safeRepository.saveSafeMeta(SafeMetaData(safeAddressString.asEthereumAddress()!!, true))
+                    }
                 }
-            }
-            .onFailure {
-                deviceUuid = null
-            }
+                .onFailure {
+                    Timber.d("notification service registration failure")
+                    deviceUuid = null
+                }
+        }
     }
 
 
