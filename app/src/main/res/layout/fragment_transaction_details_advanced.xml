@@ -81,6 +81,12 @@
                 android:layout_height="wrap_content"
                 app:value_item_name="@string/tx_details_advanced_hash" />
 
+            <View
+                android:id="@+id/hash_separator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/background"/>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

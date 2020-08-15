@@ -144,7 +144,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         binding.advanced.setOnClickListener {
             //TODO: pass arguments
-           findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(null, null, null))
+           findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment("1", "call", null))
         }
 
         binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""

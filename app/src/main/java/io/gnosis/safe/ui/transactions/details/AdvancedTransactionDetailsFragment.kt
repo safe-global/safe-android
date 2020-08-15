@@ -10,6 +10,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.visible
 
 class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsAdvancedBinding>() {
 
@@ -33,6 +34,14 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         with(binding) {
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
+            }
+            nonceItem.value = nonce
+            operationItem.value = operation
+            if (hash.isNullOrBlank()) {
+                hashItem.visible(false)
+                hashSeparator.visible(false)
+            } else {
+                hashItem.value = hash
             }
         }
     }
