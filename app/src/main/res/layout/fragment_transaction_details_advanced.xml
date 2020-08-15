@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -61,8 +60,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
 
             <io.gnosis.safe.ui.transactions.details.view.ValueItem
                 android:id="@+id/operation_item"
@@ -72,8 +71,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
 
             <io.gnosis.safe.ui.transactions.details.view.ValueItem
                 android:id="@+id/hash_item"
@@ -84,8 +83,8 @@
             <View
                 android:id="@+id/hash_separator"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
 
         </LinearLayout>
 
