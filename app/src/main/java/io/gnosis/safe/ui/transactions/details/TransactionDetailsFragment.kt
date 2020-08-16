@@ -108,6 +108,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
+                txDetailsSettingsChangeBinding.txAction.setActionInfo(txInfo)
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
             }
             is TransactionInfo.Custom -> {

@@ -287,7 +287,7 @@ class TransactionListViewModel
     private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
 
         val address = getAddress(transaction, "_masterCopy")
-        val version = getVersionForAddress(address)
+        val version = address?.getVersionForAddress()
 
         return TransactionView.SettingsChangeVariant(
             id = transaction.id,
@@ -296,7 +296,7 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
-            version = version,
+            version = version ?: "Unknown",
             address = address,
             label = R.string.tx_list_change_mastercopy,
             nonce = transaction.nonce.toString()
@@ -306,7 +306,6 @@ class TransactionListViewModel
     private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "handler")
-        val version = getVersionForAddress(address)
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -403,7 +402,7 @@ class TransactionListViewModel
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "_masterCopy")
-        val version = getVersionForAddress(address)
+        val version = address?.getVersionForAddress()
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -416,20 +415,11 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = transaction.nonce.toString(),
-            version = version,
+            version = version ?: "Unknown",
             address = address,
             label = R.string.tx_list_change_mastercopy
         )
     }
-
-    private fun getVersionForAddress(address: Solidity.Address?): String =
-        when (address) {
-            SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
-            SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
-            SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
-            SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
-            else -> "unknown"
-        }
 
     private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
         transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
@@ -540,3 +530,12 @@ fun TransactionView.isHistory() = when (status) {
     TransactionStatus.SUCCESS -> true
     else -> false
 }
+
+fun Solidity.Address.getVersionForAddress(): String =
+    when (this) {
+        SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
+        SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
+        SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
+        SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
+        else -> "unknown"
+    }

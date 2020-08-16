@@ -27,8 +27,14 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     private val binding by lazy { ViewTxActionBinding.inflate(LayoutInflater.from(context), this) }
+    private fun clear() {
+        removeAllViews()
+    }
 
     fun setActionInfo(txInfo: TransactionInfo) {
+
+        clear()
+
         // Step 1
         when {
             txInfo is TransactionInfo.Custom -> addAmountItem(txInfo, "")
@@ -68,7 +74,7 @@ class TxTransferActionView @JvmOverloads constructor(
     private fun addArrow() {
         val arrowDownView = ImageView(context)
         val arrowDown = ContextCompat.getDrawable(context, R.drawable.ic_arrow_down)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
+        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dpToPx(24))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         arrowDownView.setImageDrawable(arrowDown)
         arrowDownView.layoutParams = layoutParams
@@ -76,9 +82,8 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val ADDRESS_ITEM_HEIGHT = 44
-        private const val ADDRESS_ITEM_MARGIN_LEFT = 24
-        private const val MARGIN_VERTICAL = 16
-
+        const val ADDRESS_ITEM_HEIGHT = 44
+        const val ADDRESS_ITEM_MARGIN_LEFT = 24
+        const val MARGIN_VERTICAL = 16
     }
 }
