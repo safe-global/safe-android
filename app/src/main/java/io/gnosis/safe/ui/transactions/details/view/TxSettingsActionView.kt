@@ -43,10 +43,8 @@ class TxSettingsActionView @JvmOverloads constructor(
     fun setActionInfo(txInfo: TransactionInfo) {
         clear()
         val settingsChange = txInfo as TransactionInfo.SettingsChange
-        binding.actionTitle.text = settingsMethodTitle.get(settingsChange.dataDecoded.method)
+        addStringItem(settingsMethodTitle.get(settingsChange.dataDecoded.method)!!)
 
-        println("decoded: " + settingsChange.dataDecoded)
-        println("address: " + settingsChange.dataDecoded.parameters.getValueByName("to"))
         val params = settingsChange.dataDecoded.parameters
         when (settingsChange.dataDecoded.method) {
             METHOD_CHANGE_MASTER_COPY -> {
@@ -79,6 +77,9 @@ class TxSettingsActionView @JvmOverloads constructor(
                 addAddressItem(params.getValueByName("oldOwner")?.asEthereumAddress()!!)
                 addStringItem(settingsMethodTitle[METHOD_ADD_OWNER_WITH_THRESHOLD]!!)
                 addAddressItem(params.getValueByName("newOwner")?.asEthereumAddress()!!)
+            }
+            METHOD_ENABLE_MODULE, METHOD_DISABLE_MODULE -> {
+                addAddressItem(params.getValueByName("module")?.asEthereumAddress()!!)
             }
         }
     }
