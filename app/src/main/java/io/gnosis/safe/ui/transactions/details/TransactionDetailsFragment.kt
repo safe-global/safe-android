@@ -85,6 +85,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         binding.refresh.isRefreshing = isLoading
 
+
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
@@ -94,8 +95,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
+                txDetailsTransferBinding.txAction.setActionInfo(txInfo)
+
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
+
             }
             is TransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
@@ -113,6 +117,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
+                txDetailsCustomBinding.txAction.setActionInfo(txInfo)
+
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
 
                 if (txDetails.txData != null) {
@@ -122,6 +128,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txDetailsCustomBinding.txData.visible(false)
                     txDetailsCustomBinding.txDataSeparator.visible(false)
                 }
+
             }
 
         }

@@ -6,6 +6,12 @@
     android:orientation="vertical"
     tools:visibility="visible">
 
+    <io.gnosis.safe.ui.transactions.details.view.TxTransferActionView
+        android:id="@+id/tx_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
         android:layout_width="match_parent"
