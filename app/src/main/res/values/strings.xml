@@ -100,6 +100,10 @@
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
 
+    <string name="tx_details_advanced_nonce">Nonce:</string>
+    <string name="tx_details_advanced_operation">Type of operation:</string>
+    <string name="tx_details_advanced_hash">Transaction hash:</string>
+
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
