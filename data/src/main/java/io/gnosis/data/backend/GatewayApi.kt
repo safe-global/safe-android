@@ -19,6 +19,6 @@ interface GatewayApi {
     suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): GateTransactionDetailsDto
 
     companion object {
-        const val BASE_URL = "https://safe-client-gateway.herokuapp.com/"
+        const val BASE_URL = "https://safe-client-rinkeby.staging.gnosisdev.com/"
     }
 }
