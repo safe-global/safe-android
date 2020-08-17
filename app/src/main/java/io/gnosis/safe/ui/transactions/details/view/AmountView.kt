@@ -31,7 +31,7 @@ class AmountView @JvmOverloads constructor(
                     is TransferInfo.EtherTransfer -> 18
                     else -> 0
                 }
-                val symbol:String = when (txInfo.transferInfo) {
+                val symbol: String = when (txInfo.transferInfo) {
                     is TransferInfo.Erc20Transfer -> {
                         (txInfo.transferInfo as TransferInfo.Erc20Transfer).tokenSymbol ?: ""
                     }
@@ -42,7 +42,7 @@ class AmountView @JvmOverloads constructor(
                         "ETH"
                     }
                 }
-                binding.amountTitle.text = txInfo.transferInfo.value()?.formatAmount(incoming, decimals!!, symbol )
+                binding.amountTitle.text = txInfo.transferInfo.value()?.formatAmount(incoming, decimals!!, symbol)
             }
         }
     }
