@@ -211,6 +211,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             version.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
+            nonce.text = viewTransfer.nonce
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             version.visibility = viewTransfer.visibilityVersion
