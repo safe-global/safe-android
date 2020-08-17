@@ -78,7 +78,8 @@ class TransactionRepository(
                 safeTxHash = safeTxHash,
                 signers = signers,
                 confirmationsRequired = confirmationsRequired,
-                confirmations = confirmations.toConfirmations()
+                confirmations = confirmations.toConfirmations(),
+                executor = executor
             )
             is DetailedExecutionInfoDto.ModuleExecutionDetailsDto -> DetailedExecutionInfo.ModuleExecutionDetails(
                 address = address

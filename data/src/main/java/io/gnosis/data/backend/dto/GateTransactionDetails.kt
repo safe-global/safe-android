@@ -31,7 +31,8 @@ sealed class DetailedExecutionInfoDto {
         val safeTxHash: String,
         val signers: List<Solidity.Address>,
         val confirmationsRequired: Int,
-        val confirmations: List<ConfirmationsDto>
+        val confirmations: List<ConfirmationsDto>,
+        val executor: Solidity.Address
     ) : DetailedExecutionInfoDto()
 
     data class ModuleExecutionDetailsDto(
