@@ -32,7 +32,7 @@ sealed class DetailedExecutionInfoDto {
         val signers: List<Solidity.Address>,
         val confirmationsRequired: Int,
         val confirmations: List<ConfirmationsDto>,
-        val executor: Solidity.Address
+        val executor: Solidity.Address?
     ) : DetailedExecutionInfoDto()
 
     data class ModuleExecutionDetailsDto(
