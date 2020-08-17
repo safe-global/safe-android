@@ -22,6 +22,8 @@ import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
+import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
@@ -287,7 +289,7 @@ class TransactionListViewModel
     private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
 
         val address = getAddress(transaction, "_masterCopy")
-        val version = address?.getVersionForAddress()
+        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
         return TransactionView.SettingsChangeVariant(
             id = transaction.id,
@@ -296,7 +298,7 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
-            version = version ?: "Unknown",
+            version = version,
             address = address,
             label = R.string.tx_list_change_mastercopy,
             nonce = transaction.nonce.toString()
@@ -402,7 +404,7 @@ class TransactionListViewModel
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "_masterCopy")
-        val version = address?.getVersionForAddress()
+        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -415,7 +417,7 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = transaction.nonce.toString(),
-            version = version ?: "Unknown",
+            version = version,
             address = address,
             label = R.string.tx_list_change_mastercopy
         )
@@ -525,11 +527,4 @@ fun TransactionView.isHistory() = when (status) {
     else -> false
 }
 
-fun Solidity.Address.getVersionForAddress(): String =
-    when (this) {
-        SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
-        SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
-        SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
-        SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
-        else -> "unknown"
-    }
+fun Solidity.Address.getVersionForAddress(): String = masterCopyVersion(this) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING

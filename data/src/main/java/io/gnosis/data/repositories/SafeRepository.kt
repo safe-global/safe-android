@@ -95,6 +95,8 @@ class SafeRepository(
         val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
+        const val DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING = "DefaultFallBackHandler"
+        const val SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING = "Unknown"
 
         fun masterCopyVersion(masterCopy: Solidity.Address?): String? = supportedContracts[masterCopy]
 

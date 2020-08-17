@@ -42,43 +42,44 @@ class TxSettingsActionView @JvmOverloads constructor(
     fun setActionInfo(txInfo: TransactionInfo) {
         clear()
         val settingsChange = txInfo as TransactionInfo.SettingsChange
-        addStringItem(settingsMethodTitle.get(settingsChange.dataDecoded.method)!!)
+        settingsMethodTitle[settingsChange.dataDecoded.method]?.let { addStringItem(it) }
 
         val params = settingsChange.dataDecoded.parameters
         when (settingsChange.dataDecoded.method) {
             METHOD_CHANGE_MASTER_COPY -> {
-                val mainCopy = params.getValueByName("_masterCopy")?.asEthereumAddress()!!
-                val label = mainCopy.getVersionForAddress()
-                addLabeledAddressItem(mainCopy, label)
+                val mainCopy = params.getValueByName("_masterCopy")?.asEthereumAddress()
+                val label = mainCopy?.let { it.getVersionForAddress() }
+                label?.let { addLabeledAddressItem(mainCopy, it) }
             }
-            METHOD_CHANGE_THRESHOLD -> addStringItem(params.getValueByName("_threshold")!!)
+            METHOD_CHANGE_THRESHOLD -> params.getValueByName("_threshold")?.let { addStringItem(it) }
             METHOD_ADD_OWNER_WITH_THRESHOLD -> {
-                addAddressItem(params.getValueByName("owner")?.asEthereumAddress()!!)
-                addStringItem(settingsMethodTitle[METHOD_CHANGE_THRESHOLD]!!)
-                addStringItem(params.getValueByName("_threshold")!!, R.color.dark_grey)
+                params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
+                settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
+                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey) }
             }
 
             METHOD_REMOVE_OWNER -> {
-                addAddressItem(params.getValueByName("owner")?.asEthereumAddress()!!)
-                addStringItem(settingsMethodTitle[METHOD_CHANGE_THRESHOLD]!!)
-                addStringItem(params.getValueByName("_threshold")!!, R.color.dark_grey)
+                params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
+                settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
+                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey) }
             }
             METHOD_SET_FALLBACK_HANDLER -> {
+                val fallbackHandler = params.getValueByName("handler")?.asEthereumAddress()
                 val label =
-                    if (DEFAULT_FALLBACK_HANDLER == params.getValueByName("handler")?.asEthereumAddress()) {
-                        "DefaultFallBackHandler"
+                    if (DEFAULT_FALLBACK_HANDLER == fallbackHandler) {
+                        R.string.tx_list_default_fallback_handler
                     } else {
-                        "Unknown"
+                        R.string.tx_list_default_fallback_handler_unknown
                     }
-                addLabeledAddressItem(params.getValueByName("handler")?.asEthereumAddress()!!, label)
+                addLabeledAddressItem(fallbackHandler, context.getString(label))
             }
             METHOD_SWAP_OWNER -> {
-                addAddressItem(params.getValueByName("oldOwner")?.asEthereumAddress()!!)
-                addStringItem(settingsMethodTitle[METHOD_ADD_OWNER_WITH_THRESHOLD]!!)
-                addAddressItem(params.getValueByName("newOwner")?.asEthereumAddress()!!)
+                params.getValueByName("oldOwner")?.asEthereumAddress()?.let { addAddressItem(it) }
+                settingsMethodTitle[METHOD_ADD_OWNER_WITH_THRESHOLD]?.let { addStringItem(it) }
+                params.getValueByName("newOwner")?.asEthereumAddress()?.let { addAddressItem(it) }
             }
             METHOD_ENABLE_MODULE, METHOD_DISABLE_MODULE -> {
-                addAddressItem(params.getValueByName("module")?.asEthereumAddress()!!)
+                params.getValueByName("module")?.asEthereumAddress()?.let { addAddressItem(it) }
             }
         }
     }
@@ -95,30 +96,21 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(addressItem)
     }
 
-    private fun addLabeledAddressItem(address: Solidity.Address, label: String) {
+    private fun addLabeledAddressItem(address: Solidity.Address?, label: String) {
         val addressItem = LabeledAddressItem(context)
-//        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
-//        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
-//        addressItem.layoutParams = layoutParams
         addressItem.address = address
         addressItem.label = label
         addView(addressItem)
     }
 
     private val settingsMethodTitle = mapOf(
-        METHOD_ADD_OWNER_WITH_THRESHOLD to "Add owner:",
-        METHOD_CHANGE_MASTER_COPY to "New mastercopy:",
-        METHOD_CHANGE_THRESHOLD to "Change required confirmations:",
-        METHOD_DISABLE_MODULE to "Disable module",
-        METHOD_ENABLE_MODULE to "Enable module",
-        METHOD_REMOVE_OWNER to "Remove owner: ",
-        METHOD_SET_FALLBACK_HANDLER to "Set fallback handler",
-        METHOD_SWAP_OWNER to "Remove owner:"
+        METHOD_ADD_OWNER_WITH_THRESHOLD to context.getString(R.string.tx_details_add_owner),
+        METHOD_CHANGE_MASTER_COPY to context.getString(R.string.tx_details_new_mastercopy),
+        METHOD_CHANGE_THRESHOLD to context.getString(R.string.tx_details_change_required_confirmations),
+        METHOD_DISABLE_MODULE to context.getString(R.string.tx_details_disable_module),
+        METHOD_ENABLE_MODULE to context.getString(R.string.tx_details_enable_module),
+        METHOD_REMOVE_OWNER to context.getString(R.string.tx_details_remove_owner),
+        METHOD_SET_FALLBACK_HANDLER to context.getString(R.string.tx_details_set_fallback_handler),
+        METHOD_SWAP_OWNER to context.getString(R.string.tx_details_remove_owner)
     )
-
-    companion object {
-        private const val ITEM_HEIGHT = 44
-        private const val DEFAULT_MARGIN = 16
-    }
 }
-
