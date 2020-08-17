@@ -27,6 +27,7 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     private val binding by lazy { ViewTxActionBinding.inflate(LayoutInflater.from(context), this) }
+
     private fun clear() {
         removeAllViews()
     }
@@ -52,8 +53,8 @@ class TxTransferActionView @JvmOverloads constructor(
 
     private fun addAmountItem(formattedAmount: TransactionInfo, icon: String) {
         val amountView = AmountView(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
+        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
+        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
         amountView.layoutParams = layoutParams
         amountView.setAmount(formattedAmount)
         addView(amountView)
@@ -61,8 +62,9 @@ class TxTransferActionView @JvmOverloads constructor(
 
     private fun addAddressItem(address: Solidity.Address) {
         val addressItem = AddressItem(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
+        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
+//        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
+        layoutParams.setMargins(0, 0, 0, dpToPx(DEFAULT_MARGIN))
         addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
@@ -72,15 +74,14 @@ class TxTransferActionView @JvmOverloads constructor(
         val arrowDownView = ImageView(context)
         val arrowDown = ContextCompat.getDrawable(context, R.drawable.ic_arrow_down)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dpToPx(24))
-        layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
+        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN + 4), 0, 0, dpToPx(DEFAULT_MARGIN))
         arrowDownView.setImageDrawable(arrowDown)
         arrowDownView.layoutParams = layoutParams
         addView(arrowDownView)
     }
 
     companion object {
-        const val ADDRESS_ITEM_HEIGHT = 44
-        const val ADDRESS_ITEM_MARGIN_LEFT = 24
-        const val MARGIN_VERTICAL = 16
+        private const val ITEM_HEIGHT = 44
+        private const val DEFAULT_MARGIN = 16
     }
 }

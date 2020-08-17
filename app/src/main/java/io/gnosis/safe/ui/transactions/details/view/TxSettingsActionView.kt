@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import android.widget.TextView
 import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
@@ -17,11 +16,11 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.getValueByName
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxActionBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.LabeledAddressItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
-import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
@@ -56,13 +55,13 @@ class TxSettingsActionView @JvmOverloads constructor(
             METHOD_ADD_OWNER_WITH_THRESHOLD -> {
                 addAddressItem(params.getValueByName("owner")?.asEthereumAddress()!!)
                 addStringItem(settingsMethodTitle[METHOD_CHANGE_THRESHOLD]!!)
-                addStringItem(params.getValueByName("_threshold")!!)
+                addStringItem(params.getValueByName("_threshold")!!, R.color.dark_grey)
             }
 
             METHOD_REMOVE_OWNER -> {
                 addAddressItem(params.getValueByName("owner")?.asEthereumAddress()!!)
                 addStringItem(settingsMethodTitle[METHOD_CHANGE_THRESHOLD]!!)
-                addStringItem(params.getValueByName("_threshold")!!)
+                addStringItem(params.getValueByName("_threshold")!!, R.color.dark_grey)
             }
             METHOD_SET_FALLBACK_HANDLER -> {
                 val label =
@@ -84,29 +83,23 @@ class TxSettingsActionView @JvmOverloads constructor(
         }
     }
 
-    private fun addStringItem(text: String) {
-        val addressItem = TextView(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(TxTransferActionView.ADDRESS_ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(TxTransferActionView.ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(TxTransferActionView.MARGIN_VERTICAL))
-        addressItem.layoutParams = layoutParams
-        addressItem.text = text
-        addView(addressItem)
+    private fun addStringItem(text: String, color: Int = R.color.gnosis_dark_blue) {
+        val actionLabel = ActionLabelView(context)
+        actionLabel.setLabel(text, color)
+        addView(actionLabel)
     }
 
     private fun addAddressItem(address: Solidity.Address) {
         val addressItem = AddressItem(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(TxTransferActionView.ADDRESS_ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(TxTransferActionView.ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(TxTransferActionView.MARGIN_VERTICAL))
-        addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
     }
 
     private fun addLabeledAddressItem(address: Solidity.Address, label: String) {
         val addressItem = LabeledAddressItem(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(TxTransferActionView.ADDRESS_ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(TxTransferActionView.ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(TxTransferActionView.MARGIN_VERTICAL))
-        addressItem.layoutParams = layoutParams
+//        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
+//        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
+//        addressItem.layoutParams = layoutParams
         addressItem.address = address
         addressItem.label = label
         addView(addressItem)
@@ -121,7 +114,11 @@ class TxSettingsActionView @JvmOverloads constructor(
         METHOD_REMOVE_OWNER to "Remove owner: ",
         METHOD_SET_FALLBACK_HANDLER to "Set fallback handler",
         METHOD_SWAP_OWNER to "Remove owner:"
-
     )
+
+    companion object {
+        private const val ITEM_HEIGHT = 44
+        private const val DEFAULT_MARGIN = 16
+    }
 }
 
