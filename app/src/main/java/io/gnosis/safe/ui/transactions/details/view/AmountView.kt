@@ -9,6 +9,7 @@ import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransferInfo
 import io.gnosis.safe.databinding.ViewTxAmountBinding
 import io.gnosis.safe.utils.formatAmount
+import io.gnosis.safe.utils.loadTokenLogo
 import java.math.BigInteger
 
 class AmountView @JvmOverloads constructor(
@@ -31,18 +32,31 @@ class AmountView @JvmOverloads constructor(
                     is TransferInfo.EtherTransfer -> 18
                     else -> 0
                 }
-                val symbol: String = when (txInfo.transferInfo) {
+                val symbol: String = when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc20Transfer -> {
-                        (txInfo.transferInfo as TransferInfo.Erc20Transfer).tokenSymbol ?: ""
+                        transferInfo.tokenSymbol ?: ""
                     }
                     is TransferInfo.Erc721Transfer -> {
-                        (txInfo.transferInfo as TransferInfo.Erc721Transfer).tokenSymbol ?: ""
+                        transferInfo.tokenSymbol ?: ""
                     }
                     else -> {
                         "ETH"
                     }
                 }
                 binding.amountTitle.text = txInfo.transferInfo.value()?.formatAmount(incoming, decimals!!, symbol)
+
+                val logoUri = when (val transferInfo = txInfo.transferInfo) {
+                    is TransferInfo.Erc20Transfer -> {
+                        transferInfo.logoUri
+                    }
+                    is TransferInfo.Erc721Transfer -> {
+                        transferInfo.logoUri
+                    }
+                    else -> {
+                        "local::ethereum"
+                    }
+                }
+                binding.logo.loadTokenLogo(logoUri)
             }
         }
     }

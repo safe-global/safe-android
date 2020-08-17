@@ -37,7 +37,7 @@ class TxConfirmationsView @JvmOverloads constructor(
     }
 
     fun setExecutionData(status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null) {
-        Timber.i("---> setExecutionData()")
+
         clear()
 
         addExecutionStep(TxExecutionStep.Type.CREATED)
