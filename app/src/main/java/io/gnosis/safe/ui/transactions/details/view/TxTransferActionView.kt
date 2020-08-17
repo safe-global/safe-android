@@ -53,8 +53,8 @@ class TxTransferActionView @JvmOverloads constructor(
 
     private fun addAmountItem(formattedAmount: TransactionInfo, icon: String) {
         val amountView = AmountView(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
-        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams
         amountView.setAmount(formattedAmount)
         addView(amountView)
@@ -63,8 +63,7 @@ class TxTransferActionView @JvmOverloads constructor(
     private fun addAddressItem(address: Solidity.Address) {
         val addressItem = AddressItem(context)
         val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
-//        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, dpToPx(DEFAULT_MARGIN))
-        layoutParams.setMargins(0, 0, 0, dpToPx(DEFAULT_MARGIN))
+        layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
         addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
@@ -73,8 +72,9 @@ class TxTransferActionView @JvmOverloads constructor(
     private fun addArrow() {
         val arrowDownView = ImageView(context)
         val arrowDown = ContextCompat.getDrawable(context, R.drawable.ic_arrow_down)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, dpToPx(24))
-        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN + 4), 0, 0, dpToPx(DEFAULT_MARGIN))
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
+        arrowDownView.setPadding(dpToPx(ARROW_ICON_PADDING_CORRECTION),0,dpToPx(ARROW_ICON_PADDING_CORRECTION),0)
         arrowDownView.setImageDrawable(arrowDown)
         arrowDownView.layoutParams = layoutParams
         addView(arrowDownView)
@@ -83,5 +83,9 @@ class TxTransferActionView @JvmOverloads constructor(
     companion object {
         private const val ITEM_HEIGHT = 44
         private const val DEFAULT_MARGIN = 16
+        private const val ADDRESS_BOTTOM_MARGIN = 8
+        private const val AMOUNT_ICON_MARGIN_TOP = 8
+        private const val AMOUNT_ICON_MARGIN_BOTTOM = 8
+        private const val ARROW_ICON_PADDING_CORRECTION = 6
     }
 }
