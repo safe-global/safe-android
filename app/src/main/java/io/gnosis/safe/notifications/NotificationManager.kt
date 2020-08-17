@@ -132,6 +132,7 @@ class NotificationManager(
     }
 
     fun show(notification: Notification) {
+        latestNotificationId += 1
         notificationManager.notify(latestNotificationId, notification)
     }
 

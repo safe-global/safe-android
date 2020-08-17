@@ -93,7 +93,6 @@ class NotificationRepository(
 
     suspend fun registerSafe(safeAddress: Solidity.Address) {
         kotlin.runCatching {
-            deviceUuid?.let {
                 val token = getCloudMessagingToken()
                 token?.let {
                     notificationService.register(
@@ -108,9 +107,9 @@ class NotificationRepository(
                         )
                     )
                 }
-            }
         }
             .onSuccess {
+                deviceUuid = it?.uuid
                 safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
             }
     }
