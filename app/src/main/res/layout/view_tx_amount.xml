@@ -21,11 +21,12 @@
 
     <TextView
         android:id="@+id/amount_title"
-        style="@style/TextDark.Bold"
+        style="@style/TextDark"
+        android:textColor="@color/dark_grey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Amount"
+        android:text="-0.00023 ETH"
         app:layout_constraintBottom_toBottomOf="@+id/logo"
         app:layout_constraintStart_toEndOf="@+id/logo"
         app:layout_constraintTop_toTopOf="@+id/logo" />
