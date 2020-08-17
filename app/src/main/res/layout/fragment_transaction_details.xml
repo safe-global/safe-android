@@ -105,22 +105,22 @@
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
 
-                <io.gnosis.safe.ui.transactions.details.view.ValueItem
+                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/created"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:value_item_name="@string/tx_details_created" />
+                    app:item_name="@string/tx_details_created" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
 
-                <io.gnosis.safe.ui.transactions.details.view.ValueItem
+                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/executed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:value_item_name="@string/tx_details_executed" />
+                    app:item_name="@string/tx_details_executed" />
 
                 <View
                     android:layout_width="match_parent"
