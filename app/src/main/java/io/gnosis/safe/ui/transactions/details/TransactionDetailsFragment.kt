@@ -99,7 +99,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
-
             }
             is TransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
@@ -129,14 +128,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txDetailsCustomBinding.txData.visible(false)
                     txDetailsCustomBinding.txDataSeparator.visible(false)
                 }
-
             }
 
         }
 
         when (val executionInfo = txDetails?.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
-
+                binding.txConfirmations.visible(true)
                 binding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.map { it.signer },
@@ -147,6 +145,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.executed.value = executionInfo.submittedAt.formatBackendDate()
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
+                binding.txConfirmations.visible(false)
+            }
+            else -> {
+                binding.txConfirmations.visible(false)
             }
         }
 
