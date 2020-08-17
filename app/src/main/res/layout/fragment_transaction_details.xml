@@ -93,18 +93,6 @@
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
 
-                <io.gnosis.safe.ui.settings.view.SettingItem
-                    android:id="@+id/advanced"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/item_setting_openable_height"
-                    app:setting_name="@string/tx_details_advanced"
-                    app:setting_openable="true" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
-
                 <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/created"
                     android:layout_width="match_parent"
@@ -121,6 +109,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:item_name="@string/tx_details_executed" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+                <io.gnosis.safe.ui.settings.view.SettingItem
+                    android:id="@+id/advanced"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_setting_openable_height"
+                    app:setting_name="@string/tx_details_advanced"
+                    app:setting_openable="true" />
 
                 <View
                     android:layout_width="match_parent"
