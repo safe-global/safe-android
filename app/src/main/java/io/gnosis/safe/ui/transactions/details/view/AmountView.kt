@@ -25,9 +25,9 @@ class AmountView @JvmOverloads constructor(
             is TransactionInfo.Custom -> binding.amountTitle.text = txInfo.value.formatAmount(true, 18, "ETH")
             is TransactionInfo.Transfer -> {
                 val incoming = txInfo.direction == TransactionDirection.INCOMING
-                val decimals = when (txInfo.transferInfo) {
+                val decimals: Int = when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc20Transfer -> {
-                        (txInfo.transferInfo as TransferInfo.Erc20Transfer).decimals
+                        transferInfo.decimals ?: 0
                     }
                     is TransferInfo.EtherTransfer -> 18
                     else -> 0
@@ -43,7 +43,7 @@ class AmountView @JvmOverloads constructor(
                         "ETH"
                     }
                 }
-                binding.amountTitle.text = txInfo.transferInfo.value()?.formatAmount(incoming, decimals!!, symbol)
+                binding.amountTitle.text = txInfo.transferInfo.value()?.formatAmount(incoming, decimals, symbol)
 
                 val logoUri = when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc20Transfer -> {
