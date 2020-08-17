@@ -13,13 +13,13 @@ import io.gnosis.data.backend.dto.TransferInfoDto
 import io.gnosis.data.backend.dto.TxDataDto
 import io.gnosis.data.models.Confirmations
 import io.gnosis.data.models.DetailedExecutionInfo
-import io.gnosis.data.models.TransactionDetails
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransferInfo
-import io.gnosis.data.models.TxData
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.TxData
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -159,7 +159,7 @@ class TransactionRepository(
                 date = timestamp.toDate(),
                 recipient = txInfo.recipient,
                 sender = txInfo.sender,
-                value = txInfo.transferInfo.value().toBigInteger(),
+                value = txInfo.transferInfo.value(),
                 tokenInfo = txInfo.transferInfo.tokenInfo(),
                 incoming = txInfo.direction == TransactionDirection.INCOMING
             )
@@ -179,7 +179,7 @@ class TransactionRepository(
                 date = timestamp.toDate(),
                 address = txInfo.to,
                 dataSize = txInfo.dataSize,
-                value = txInfo.value.toBigInteger()
+                value = txInfo.value
             )
             is TransactionInfoDto.Creation -> Transaction.Creation(
                 id = id,
@@ -199,10 +199,10 @@ class TransactionRepository(
         }
     }
 
-    private fun TransferInfoDto.value(): String =
+    private fun TransferInfoDto.value(): BigInteger =
         when (this) {
             is TransferInfoDto.Erc20Transfer -> value
-            is TransferInfoDto.Erc721Transfer -> "1"
+            is TransferInfoDto.Erc721Transfer -> BigInteger.ONE
             is TransferInfoDto.EtherTransfer -> value
         }
 

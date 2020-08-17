@@ -35,17 +35,14 @@ class TxTransferActionView @JvmOverloads constructor(
 
         clear()
 
-        // Step 1
         when {
             txInfo is TransactionInfo.Custom -> addAmountItem(txInfo, "")
             txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.OUTGOING -> addAmountItem(txInfo, "")
             txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.INCOMING -> addAddressItem(txInfo.sender)
         }
 
-        // Step 2
         addArrow()
 
-        // Step 3
         when {
             txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.OUTGOING -> addAddressItem(txInfo.recipient)
             txInfo is TransactionInfo.Custom -> addAddressItem(txInfo.to)

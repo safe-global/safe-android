@@ -33,7 +33,7 @@ sealed class TransactionInfoDto {
         override val type: GateTransactionType = GateTransactionType.Custom,
         val to: Solidity.Address,
         val dataSize: Int,
-        val value: String
+        val value: BigInteger
     ) : TransactionInfoDto()
 
     data class SettingsChange(
@@ -78,7 +78,7 @@ sealed class TransferInfoDto {
         val tokenSymbol: String?,
         val logoUri: String?,
         val decimals: Int?,
-        val value: String
+        val value: BigInteger
     ) : TransferInfoDto()
 
     data class Erc721Transfer(
@@ -92,6 +92,6 @@ sealed class TransferInfoDto {
 
     data class EtherTransfer(
         override val type: GateTransferType = GateTransferType.ETHER,
-        val value: String
+        val value: BigInteger
     ) : TransferInfoDto()
 }

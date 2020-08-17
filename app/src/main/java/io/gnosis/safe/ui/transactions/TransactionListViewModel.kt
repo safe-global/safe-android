@@ -28,8 +28,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.utils.formatAmount
 import io.gnosis.safe.utils.formatBackendDate
-import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -434,7 +434,7 @@ class TransactionListViewModel
             dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = custom.value.formatAmount(isIncoming,  ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
             nonce = custom.nonce.toString()
@@ -457,20 +457,14 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce.toString(),
             dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
 
     private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
-        val symbol = viewTransfer.tokenInfo?.symbol
-        return formatAmount(incoming, viewTransfer.value, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
-    }
-
-    private fun formatAmount(incoming: Boolean, value: BigInteger, decimals: Int, symbol: String?): String {
-        val inOut = if (value == BigInteger.ZERO) "" else if (incoming) "+" else "-"
-        val decimalValue = value.shiftedString(decimals = decimals)
-        return "%s%s %s".format(inOut, decimalValue, symbol)
+        val symbol = viewTransfer.tokenInfo?.symbol ?: ""
+        return viewTransfer.value.formatAmount(incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
     }
 
     private fun statusTextColor(status: TransactionStatus): Int {

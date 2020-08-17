@@ -43,7 +43,7 @@ sealed class TransactionInfo {
     data class Custom(
         val to: Solidity.Address,
         val dataSize: Int,
-        val value: String
+        val value: BigInteger
     ) : TransactionInfo()
 
     data class SettingsChange(
@@ -69,7 +69,7 @@ sealed class TransferInfo {
         val tokenSymbol: String?,
         val logoUri: String?,
         val decimals: Int?,
-        val value: String
+        val value: BigInteger
     ) : TransferInfo()
 
     data class Erc721Transfer(
@@ -81,7 +81,7 @@ sealed class TransferInfo {
     ) : TransferInfo()
 
     data class EtherTransfer(
-        val value: String
+        val value: BigInteger
     ) : TransferInfo()
 }
 

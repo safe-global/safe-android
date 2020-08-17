@@ -26,8 +26,8 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 
 @RunWith(Parameterized::class)
 @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,7 +65,7 @@ class TransactionRepositoryTransferTest(
                     is TransferInfoDto.Erc20Transfer -> {
                         assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
                         val erc20Transfer = (pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo as TransferInfoDto.Erc20Transfer
-                        assertEquals(erc20Transfer.value, value.asDecimalString())
+                        assertEquals(erc20Transfer.value, value)
                         assertEquals(erc20Transfer.tokenAddress, tokenInfo?.address)
                         assertEquals(erc20Transfer.tokenSymbol, tokenInfo?.symbol)
                         assertEquals(erc20Transfer.tokenName, tokenInfo?.name)
@@ -83,7 +83,7 @@ class TransactionRepositoryTransferTest(
                     is TransferInfoDto.EtherTransfer -> {
                         assertEquals(null, this.tokenInfo?.type)
                         val etherTransfer = (pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo as TransferInfoDto.EtherTransfer
-                        assertEquals(etherTransfer.value, value.asDecimalString())
+                        assertEquals(etherTransfer.value, value)
                     }
                 }
             }
@@ -263,7 +263,7 @@ private fun buildGateTransactionDto(
     )
 
 private fun buildCustomTxInfo(
-    value: String = "1",
+    value: BigInteger = BigInteger.ONE,
     to: Solidity.Address = "0x1234".asEthereumAddress()!!,
     dataSize: Int = 96
 ): TransactionInfoDto.Custom =
@@ -297,7 +297,7 @@ private fun buildTransferTxInfo(
     )
 
 private fun buildTransferInfoERC20(
-    value: String = "10000000",
+    value: BigInteger = "10000000".toBigInteger(),
     symbol: String = "WETH",
     name: String = "Wrapped Ether",
     address: Solidity.Address = "0x1234".asEthereumAddress()!!,
@@ -331,7 +331,7 @@ private fun buildTransferInfoERC721(
     )
 
 private fun buildTransferInfoEther(
-    value: String = "23"
+    value: BigInteger = "23".toBigInteger()
 ): TransferInfoDto = TransferInfoDto.EtherTransfer(
     type = GateTransferType.ETHER,
     value = value
