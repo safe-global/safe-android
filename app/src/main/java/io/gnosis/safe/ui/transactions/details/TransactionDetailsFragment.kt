@@ -26,6 +26,8 @@ import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
+import java.util.*
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -131,7 +133,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
 
         }
-
+        var nonce: BigInteger? = null
         when (val executionInfo = txDetails?.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
@@ -141,20 +143,25 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     threshold = executionInfo.confirmationsRequired,
                     executor = executionInfo.executor
                 )
-
+                nonce = executionInfo.nonce
                 binding.executed.value = executionInfo.submittedAt.formatBackendDate()
             }
-            is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
+            is DetailedExecutionInfo.ModuleExecutionDetails -> {
                 binding.txConfirmations.visible(false)
             }
             else -> {
                 binding.txConfirmations.visible(false)
             }
         }
-
         binding.advanced.setOnClickListener {
-            //TODO: pass arguments
-           findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment("1", "call", null))
+            val operation = txDetails?.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
+            findNavController().navigate(
+                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
+                    nonce = nonce?.toString() ?: "",
+                    operation = operation,
+                    hash = txDetails?.txHash
+                )
+            )
         }
 
         binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
