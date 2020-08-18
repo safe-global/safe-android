@@ -4,10 +4,14 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import dagger.Component
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.di.modules.*
 import io.gnosis.safe.helpers.AppInitManager
+import io.gnosis.safe.notifications.NotificationManager
+import io.gnosis.safe.notifications.NotificationRepository
+import io.gnosis.safe.notifications.firebase.HeimdallFirebaseService
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
@@ -41,6 +45,13 @@ interface ApplicationComponent {
 
     fun tracker(): Tracker
 
+    fun notificationManager(): NotificationManager
+
+    fun notificationRepo(): NotificationRepository
+
+    //TODO: remove
+    fun safeRepository(): SafeRepository
+
     // Base injects
     fun inject(activity: BaseActivity)
 
@@ -49,5 +60,5 @@ interface ApplicationComponent {
     fun inject(fragment: BaseDialogFragment)
 
 //    fun inject(service: BridgeService)
-//    fun inject(service: HeimdallFirebaseService)
+    fun inject(service: HeimdallFirebaseService)
 }

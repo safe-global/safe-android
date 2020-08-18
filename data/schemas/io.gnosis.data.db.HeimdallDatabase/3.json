@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
+    "version": 3,
     "identityHash": "b615b807dc0704ad3f4969bbbc39228b",
     "entities": [
       {
@@ -29,6 +29,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "safe_meta_data",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `registered_notifications` INTEGER NOT NULL, PRIMARY KEY(`address`), FOREIGN KEY(`address`) REFERENCES `safes`(`address`) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "registeredNotifications",
+            "columnName": "registered_notifications",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "address"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "safes",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "address"
+            ],
+            "referencedColumns": [
+              "address"
+            ]
+          }
+        ]
       },
       {
         "tableName": "erc20_tokens",

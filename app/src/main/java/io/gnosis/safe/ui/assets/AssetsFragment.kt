@@ -12,7 +12,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.FragmentSafeBalancesBinding
+import io.gnosis.safe.databinding.FragmentAssetsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.assets.coins.CoinsFragment
@@ -21,7 +21,7 @@ import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class AssetsFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
+class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
     @Inject
     lateinit var viewModel: SafeBalancesViewModel
@@ -32,8 +32,8 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentSafeBalancesBinding>() {
         component.inject(this)
     }
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSafeBalancesBinding =
-        FragmentSafeBalancesBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAssetsBinding =
+        FragmentAssetsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

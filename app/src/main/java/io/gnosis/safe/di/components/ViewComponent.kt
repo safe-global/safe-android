@@ -3,6 +3,7 @@ package io.gnosis.safe.di.components
 import dagger.Component
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
@@ -32,6 +33,8 @@ import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragment
 interface ViewComponent {
 
     fun inject(activity: SplashActivity)
+
+    fun inject(activity: StartActivity)
 
     // Fragments
 

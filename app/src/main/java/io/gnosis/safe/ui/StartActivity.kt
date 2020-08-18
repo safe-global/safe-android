@@ -1,20 +1,30 @@
 package io.gnosis.safe.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
-import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.utils.asMiddleEllipsized
+import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
+
+    @Inject
+    lateinit var safeRepository: SafeRepository
 
     private val toolbarBinding by lazy {
         ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
@@ -25,10 +35,38 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
+
+        viewComponent().inject(this)
+
         toolbarBinding.safeSelection.setOnClickListener {
             Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
         }
         setupNav()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        // Workaround in order to change active safe when push notification for unselected safe is received
+        intent?.let {
+            val safeAddress = it.getStringExtra(EXTRA_SAFE).asEthereumAddress()!!
+            val txId = it.getStringExtra(EXTRA_TX_ID)
+
+            lifecycleScope.launch {
+                val safe = safeRepository.getSafeBy(safeAddress)
+                safe?.let {
+                    safeRepository.setActiveSafe(it)
+                }
+                if (txId == null) {
+                    Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
+                } else {
+                    Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
+                       putString("txId", txId)
+                    })
+                }
+            }
+
+        }
     }
 
     private fun setupNav() {
@@ -46,7 +84,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     }
 
     private fun isFullscreen(id: Int?): Boolean =
-        id != R.id.safeBalancesFragment &&
+        id != R.id.assetsFragment &&
                 id != R.id.transactionListFragment &&
                 id != R.id.settingsFragment &&
                 id != R.id.safeSelectionDialog &&
@@ -84,4 +122,16 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     }
 
     override fun screenId() = null
+
+    companion object {
+        const val EXTRA_SAFE = "extra.string.safe"
+        const val EXTRA_TX_ID = "extra.string.tx_id"
+
+        fun createIntent(context: Context, safe: Safe, txId: String? = null) =
+            Intent(context, StartActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressString())
+                putExtra(EXTRA_TX_ID, txId)
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+    }
 }

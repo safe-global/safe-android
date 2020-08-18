@@ -8,10 +8,14 @@ import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
+import io.gnosis.safe.notifications.NotificationManager
+import io.gnosis.safe.notifications.NotificationRepository
+import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
@@ -102,6 +106,16 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun providesNotificationServiceApi(moshi: Moshi, client: OkHttpClient): NotificationServiceApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(NotificationServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(NotificationServiceApi::class.java)
+
+    @Provides
+    @Singleton
     @Named(INFURA_REST_CLIENT)
     fun providesInfuraOkHttpClient(
         okHttpClient: OkHttpClient,
@@ -144,4 +158,13 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesQrCodeGenerator(): QrCodeGenerator = ZxingQrCodeGenerator()
+
+    @Provides
+    @Singleton
+    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
+        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
+
+    @Provides
+    @Singleton
+    fun providesNotificationManager(@ApplicationContext context: Context, preferencesManager: PreferencesManager): NotificationManager = NotificationManager(context, preferencesManager)
 }

@@ -5,6 +5,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class SafeSettingsViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
     private val ensRepository: EnsRepository,
+    private val notificationRepository: NotificationRepository,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
@@ -53,6 +55,7 @@ class SafeSettingsViewModel @Inject constructor(
             runCatching {
                 safe?.let {
                     safeRepository.removeSafe(safe)
+                    notificationRepository.unregisterSafe(safe.address)
                     val safes = safeRepository.getSafes()
                     if (safes.isEmpty()) {
                         safeRepository.clearActiveSafe()

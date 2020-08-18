@@ -38,7 +38,7 @@ class SafeRepositoryTest {
 
     @Test
     fun `getSafes - should return safes in the database`() = runBlocking {
-        val safes = arrayOf(
+        val safes = listOf(
             Safe(Solidity.Address(BigInteger.ZERO), "zero"),
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
@@ -47,7 +47,7 @@ class SafeRepositoryTest {
 
         val actual = safeRepository.getSafes()
 
-        assert(actual == safes.asList())
+        assert(actual == safes)
         coVerify(exactly = 1) { safeDao.loadAll() }
     }
 

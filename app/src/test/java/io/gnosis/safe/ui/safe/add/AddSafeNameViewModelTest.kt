@@ -5,6 +5,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
@@ -25,13 +26,14 @@ class AddSafeNameViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val tracker: Tracker = mockk()
+    private val notificationRepository = mockk<NotificationRepository>()
     private val safeRepository = mockk<SafeRepository>()
 
     private lateinit var viewModel: AddSafeNameViewModel
 
     @Before
     fun setup() {
-        viewModel = AddSafeNameViewModel(safeRepository, appDispatchers, tracker)
+        viewModel = AddSafeNameViewModel(safeRepository, notificationRepository, appDispatchers, tracker)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 
@@ -95,6 +97,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name) should succeed`() {
         coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.saveSafe(any()) } just Runs
+        coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
@@ -106,6 +109,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafes()
             tracker.setNumSafes(0)
@@ -116,6 +120,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
         coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.saveSafe(any()) } just Runs
+        coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
@@ -127,6 +132,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafes()
             tracker.setNumSafes(0)
