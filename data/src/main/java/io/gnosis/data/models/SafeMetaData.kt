@@ -16,10 +16,6 @@ import pm.gnosis.model.Solidity
             deferred = true
         )
     ]
-//    ,
-//    indices = [
-//        Index(value = [SafeMetaData.COL_ADDRESS])
-//    ]
 )
 data class SafeMetaData(
     @PrimaryKey
