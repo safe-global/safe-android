@@ -47,12 +47,12 @@ class TxTransferActionView @JvmOverloads constructor(
         }
     }
 
-    private fun addAmountItem(formattedAmount: TransactionInfo, icon: String) {
+    private fun addAmountItem(txInfo: TransactionInfo, icon: String) {
         val amountView = AmountView(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams
-        amountView.setAmount(formattedAmount)
+        amountView.setAmount(txInfo.formattedAmount(), txInfo.logoUri() ?: "local::ethereum")
         addView(amountView)
     }
 
