@@ -19,6 +19,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.LabeledAddressItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
+import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
@@ -48,17 +49,17 @@ class TxSettingsActionView @JvmOverloads constructor(
                 val label = mainCopy?.let { it.getVersionForAddress() }
                 label?.let { addLabeledAddressItem(mainCopy, it) }
             }
-            METHOD_CHANGE_THRESHOLD -> params.getValueByName("_threshold")?.let { addStringItem(it) }
+            METHOD_CHANGE_THRESHOLD -> params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
             METHOD_ADD_OWNER_WITH_THRESHOLD -> {
                 params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
                 settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
-                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey) }
+                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
             }
 
             METHOD_REMOVE_OWNER -> {
                 params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
                 settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
-                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey) }
+                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
             }
             METHOD_SET_FALLBACK_HANDLER -> {
                 val fallbackHandler = params.getValueByName("handler")?.asEthereumAddress()
@@ -81,8 +82,11 @@ class TxSettingsActionView @JvmOverloads constructor(
         }
     }
 
-    private fun addStringItem(text: String, color: Int = R.color.gnosis_dark_blue) {
+    private fun addStringItem(text: String, color: Int = R.color.gnosis_dark_blue, marginBottom: Int = 0) {
         val actionLabel = ActionLabelView(context)
+        val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(0, 0, 0, dpToPx(marginBottom))
+        actionLabel.layoutParams = layoutParams
         actionLabel.setLabel(text, color)
         addView(actionLabel)
     }
@@ -110,4 +114,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         METHOD_SET_FALLBACK_HANDLER to context.getString(R.string.tx_details_set_fallback_handler),
         METHOD_SWAP_OWNER to context.getString(R.string.tx_details_remove_owner)
     )
+    companion object {
+        private const val DEFAULT_MARGIN = 16
+    }
 }
