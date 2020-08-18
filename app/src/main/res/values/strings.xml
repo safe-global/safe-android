@@ -178,8 +178,11 @@
     <string name="push_title_received_erc721">Incoming ERC721</string>
     <string name="push_text_received_erc721">%1$s: ERC721 token received</string>
 
-    <string name="retry">RETRY</string>
+    <string name="address_copied">Address copied</string>
+    <string name="address_copied_success">Address copied to clipboard</string>
+
     <string name="address_found">Address found</string>
+    <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>

@@ -11,8 +11,10 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddressString
 
 class AddressItem @JvmOverloads constructor(
@@ -28,13 +30,18 @@ class AddressItem @JvmOverloads constructor(
             with(binding) {
                 blockies.setAddress(value)
                 address.text = value?.formatOwnerAddress()
-                binding.root.setOnClickListener {
+                binding.link.setOnClickListener {
                     context.openUrl(
                         context.getString(
                             R.string.etherscan_address_url,
                             value?.asEthereumAddressChecksumString()
                         )
                     )
+                }
+                binding.address.setOnClickListener {
+                    context.copyToClipboard(context.getString(R.string.address_copied), address.text.toString()) {
+                        snackbar(view = root, textId = R.string.address_copied_success)
+                    }
                 }
             }
             field = value
