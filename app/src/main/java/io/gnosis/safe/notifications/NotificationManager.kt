@@ -7,10 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.navigation.NavDeepLinkBuilder
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
@@ -83,7 +81,7 @@ class NotificationManager(
                     title = context.getString(R.string.push_title_executed)
                     text = context.getString(R.string.push_text_executed, safeName)
                 }
-                intent = txDetailsIntent(pushNotification.safeTxHash)
+                intent = txDetailsIntent(safe, pushNotification.safeTxHash)
             }
             is PushNotification.IncomingToken -> {
                 if (pushNotification.tokenId != null) {
@@ -93,12 +91,12 @@ class NotificationManager(
                     title = context.getString(R.string.push_title_received_erc20)
                     text = context.getString(R.string.push_text_received_erc20, safeName)
                 }
-                intent = txListIntent(pushNotification.txHash)
+                intent = txListIntent(safe)
             }
             is PushNotification.IncomingEther -> {
                 title = context.getString(R.string.push_title_received_eth)
                 text = context.getString(R.string.push_text_received_eth, safeName)
-                intent = txListIntent(pushNotification.txHash)
+                intent = txListIntent(safe)
             }
         }
 
@@ -149,26 +147,15 @@ class NotificationManager(
         notificationManager.cancelAll()
     }
 
-    private fun txDetailsIntent(safeTxHash: String): PendingIntent =
-        NavDeepLinkBuilder(context)
-            .setComponentName(StartActivity::class.java)
-            .setGraph(R.navigation.main_nav)
-            .setDestination(R.id.transactionDetailsFragment)
-            .setArguments(Bundle().apply {
-                putString("txId", safeTxHash)
-            })
-            .createPendingIntent()
+    private fun txDetailsIntent(safe: Safe, safeTxHash: String): PendingIntent {
+        val intent = StartActivity.createIntent(context, safe, safeTxHash)
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
-    private fun txListIntent(txHash: String): PendingIntent =
-        NavDeepLinkBuilder(context)
-            .setComponentName(StartActivity::class.java)
-            .setGraph(R.navigation.main_nav)
-            .setDestination(R.id.transactionListFragment)
-            .setArguments(Bundle().apply {
-                putString("txHash", txHash)
-            })
-            .createPendingIntent()
-
+    private fun txListIntent(safe: Safe): PendingIntent {
+        val intent = StartActivity.createIntent(context, safe)
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
     companion object {
         private const val LATEST_NOTIFICATION_ID = "prefs.int.latest_notification_id"
