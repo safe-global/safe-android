@@ -49,23 +49,25 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         // Workaround in order to change active safe when push notification for unselected safe is received
         intent?.let {
-            val safeAddress = it.getStringExtra(EXTRA_SAFE).asEthereumAddress()!!
+            val safeAddress = it.getStringExtra(EXTRA_SAFE).asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
-            lifecycleScope.launch {
-                val safe = safeRepository.getSafeBy(safeAddress)
-                safe?.let {
-                    safeRepository.setActiveSafe(it)
-                }
-                if (txId == null) {
-                    Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
-                } else {
-                    Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
-                       putString("txId", txId)
-                    })
+            safeAddress?.let {
+
+                lifecycleScope.launch {
+                    val safe = safeRepository.getSafeBy(safeAddress)
+                    safe?.let {
+                        safeRepository.setActiveSafe(it)
+                    }
+                    if (txId == null) {
+                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
+                    } else {
+                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
+                            putString("txId", txId)
+                        })
+                    }
                 }
             }
-
         }
     }
 
