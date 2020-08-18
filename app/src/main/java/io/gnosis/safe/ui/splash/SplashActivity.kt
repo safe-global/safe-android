@@ -3,16 +3,22 @@ package io.gnosis.safe.ui.splash
 import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
 import io.gnosis.safe.notifications.NotificationManager
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction
 import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
+import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
+
+    @Inject
+    lateinit var notificationRepo: NotificationRepository
 
     @Inject
     lateinit var notificationManager: NotificationManager
@@ -61,5 +67,9 @@ class SplashActivity : BaseActivity() {
                 viewModel.skipGetStartedButtonWhenTermsAgreed()
             }, 500
         )
+
+        lifecycleScope.launch {
+            notificationRepo.register()
+        }
     }
 }
