@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.transactions.details.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.widget.LinearLayout
 import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
@@ -17,7 +16,6 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewTxActionBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.LabeledAddressItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
@@ -34,7 +32,6 @@ class TxSettingsActionView @JvmOverloads constructor(
         gravity = Gravity.LEFT
     }
 
-    private val binding by lazy { ViewTxActionBinding.inflate(LayoutInflater.from(context), this) }
     private fun clear() {
         removeAllViews()
     }

@@ -3,14 +3,12 @@ package io.gnosis.safe.ui.transactions.details.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.TransactionInfo
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewTxActionBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
@@ -25,8 +23,6 @@ class TxTransferActionView @JvmOverloads constructor(
         orientation = LinearLayout.VERTICAL
         gravity = Gravity.LEFT
     }
-
-    private val binding by lazy { ViewTxActionBinding.inflate(LayoutInflater.from(context), this) }
 
     private fun clear() {
         removeAllViews()
