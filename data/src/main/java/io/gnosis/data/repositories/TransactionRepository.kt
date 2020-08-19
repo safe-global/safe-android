@@ -146,7 +146,8 @@ class TransactionRepository(
         this.map { confirmation ->
             Confirmations(
                 signer = confirmation.signer,
-                signature = confirmation.signature
+                signature = confirmation.signature,
+                submissionTime = confirmation.submissionTime
             )
         }
 
