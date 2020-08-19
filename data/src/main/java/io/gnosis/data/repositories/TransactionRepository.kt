@@ -147,7 +147,7 @@ class TransactionRepository(
             Confirmations(
                 signer = confirmation.signer,
                 signature = confirmation.signature,
-                submissionTime = confirmation.submissionTime
+                submissionTime = confirmation.submissionTime.toDate()
             )
         }
 

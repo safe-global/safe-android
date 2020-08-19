@@ -3,7 +3,6 @@ package io.gnosis.data.backend.dto
 import io.gnosis.data.models.TransactionStatus
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
-import java.util.*
 
 data class GateTransactionDetailsDto(
     val txHash: String?,
@@ -50,5 +49,5 @@ enum class DetailedExecutionInfoType {
 data class ConfirmationsDto(
     val signer: Solidity.Address,
     val signature: String,
-    val submissionTime: Date
+    val submissionTime: Long
 )
