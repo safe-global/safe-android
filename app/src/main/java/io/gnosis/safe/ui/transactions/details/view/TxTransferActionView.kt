@@ -80,8 +80,6 @@ class TxTransferActionView @JvmOverloads constructor(
         private const val ITEM_HEIGHT = 44
         private const val DEFAULT_MARGIN = 16
         private const val ADDRESS_BOTTOM_MARGIN = 8
-        private const val AMOUNT_ICON_MARGIN_TOP = 8
-        private const val AMOUNT_ICON_MARGIN_BOTTOM = 8
         private const val ARROW_ICON_PADDING_CORRECTION = 6
     }
 }

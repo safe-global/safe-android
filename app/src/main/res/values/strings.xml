@@ -181,6 +181,9 @@
     <string name="address_copied">Address copied</string>
     <string name="address_copied_success">Address copied to clipboard</string>
 
+    <string name="hash_copied">Hash copied</string>
+    <string name="hash_copied_success">Hash copied to clipboard</string>
+
     <string name="address_found">Address found</string>
     <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
