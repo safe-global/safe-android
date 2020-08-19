@@ -11,6 +11,8 @@ import io.gnosis.data.models.TransactionInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.logoUri
 import pm.gnosis.model.Solidity
 
 class TxTransferActionView @JvmOverloads constructor(
