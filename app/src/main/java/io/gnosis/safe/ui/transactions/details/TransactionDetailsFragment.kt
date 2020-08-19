@@ -24,6 +24,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
+import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
@@ -113,7 +114,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
-                txDetailsSettingsChangeBinding.txAction.setActionInfo(txInfo)
+                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
             }
             is TransactionInfo.Custom -> {
@@ -124,13 +125,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
                 txDetailsCustomBinding.txAction.setActionInfo(txInfo)
-
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
-
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
-
             }
-
         }
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails?.detailedExecutionInfo) {

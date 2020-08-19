@@ -4,24 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
-import io.gnosis.data.repositories.getValueByName
+import androidx.annotation.StringRes
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.LabeledAddressItem
-import io.gnosis.safe.ui.transactions.getVersionForAddress
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 
 class TxSettingsActionView @JvmOverloads constructor(
     context: Context,
@@ -37,50 +25,29 @@ class TxSettingsActionView @JvmOverloads constructor(
         removeAllViews()
     }
 
-    fun setActionInfo(txInfo: TransactionInfo) {
+    fun setActionInfoItems(actionInfoItems: List<ActionInfoItem>) {
         clear()
-        val settingsChange = txInfo as TransactionInfo.SettingsChange
-        settingsMethodTitle[settingsChange.dataDecoded.method]?.let { addStringItem(it) }
+        actionInfoItems.forEach { actionInfoItem ->
+            addStringItem(context.getString(actionInfoItem.itemLabel!!))
 
-        val params = settingsChange.dataDecoded.parameters
-        when (settingsChange.dataDecoded.method) {
-            METHOD_CHANGE_MASTER_COPY -> {
-                val mainCopy = params.getValueByName("_masterCopy")?.asEthereumAddress()
-                val label = mainCopy?.let { it.getVersionForAddress() }
-                label?.let { addLabeledAddressItem(mainCopy, it) }
-            }
-            METHOD_CHANGE_THRESHOLD -> params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
-            METHOD_ADD_OWNER_WITH_THRESHOLD -> {
-                params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
-                settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
-                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
-            }
-
-            METHOD_REMOVE_OWNER -> {
-                params.getValueByName("owner")?.asEthereumAddress()?.let { addAddressItem(it) }
-                settingsMethodTitle[METHOD_CHANGE_THRESHOLD]?.let { addStringItem(it) }
-                params.getValueByName("_threshold")?.let { addStringItem(it, R.color.dark_grey, DEFAULT_MARGIN) }
-            }
-            METHOD_SET_FALLBACK_HANDLER -> {
-                val fallbackHandler = params.getValueByName("handler")?.asEthereumAddress()
-                val label =
-                    if (DEFAULT_FALLBACK_HANDLER == fallbackHandler) {
-                        R.string.tx_list_default_fallback_handler
-                    } else {
-                        R.string.tx_list_default_fallback_handler_unknown
-                    }
-                addLabeledAddressItem(fallbackHandler, context.getString(label))
-            }
-            METHOD_SWAP_OWNER -> {
-                params.getValueByName("oldOwner")?.asEthereumAddress()?.let { addAddressItem(it) }
-                settingsMethodTitle[METHOD_ADD_OWNER_WITH_THRESHOLD]?.let { addStringItem(it) }
-                params.getValueByName("newOwner")?.asEthereumAddress()?.let { addAddressItem(it) }
-            }
-            METHOD_ENABLE_MODULE, METHOD_DISABLE_MODULE -> {
-                params.getValueByName("module")?.asEthereumAddress()?.let { addAddressItem(it) }
+            when (actionInfoItem) {
+                is ActionInfoItem.Value -> {
+                    addStringItem(actionInfoItem.value, R.color.dark_grey, DEFAULT_MARGIN)
+                }
+                is ActionInfoItem.Address -> {
+                    addAddressItem(actionInfoItem.address)
+                }
+                is ActionInfoItem.AddressWithLabel -> {
+                    val addressLabel =
+                        actionInfoItem.addressLabel?.let {
+                            actionInfoItem.addressLabel
+                        } ?: context.getString(actionInfoItem.addressLabelRes)
+                    addLabeledAddressItem(actionInfoItem.address, addressLabel)
+                }
             }
         }
     }
+
 
     private fun addStringItem(text: String, color: Int = R.color.gnosis_dark_blue, marginBottom: Int = 0) {
         val actionLabel = ActionLabelView(context)
@@ -91,7 +58,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(actionLabel)
     }
 
-    private fun addAddressItem(address: Solidity.Address) {
+    private fun addAddressItem(address: Solidity.Address?) {
         val addressItem = AddressItem(context)
         addressItem.address = address
         addView(addressItem)
@@ -104,17 +71,29 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(addressItem)
     }
 
-    private val settingsMethodTitle = mapOf(
-        METHOD_ADD_OWNER_WITH_THRESHOLD to context.getString(R.string.tx_details_add_owner),
-        METHOD_CHANGE_MASTER_COPY to context.getString(R.string.tx_details_new_mastercopy),
-        METHOD_CHANGE_THRESHOLD to context.getString(R.string.tx_details_change_required_confirmations),
-        METHOD_DISABLE_MODULE to context.getString(R.string.tx_details_disable_module),
-        METHOD_ENABLE_MODULE to context.getString(R.string.tx_details_enable_module),
-        METHOD_REMOVE_OWNER to context.getString(R.string.tx_details_remove_owner),
-        METHOD_SET_FALLBACK_HANDLER to context.getString(R.string.tx_details_set_fallback_handler),
-        METHOD_SWAP_OWNER to context.getString(R.string.tx_details_remove_owner)
-    )
+
     companion object {
         private const val DEFAULT_MARGIN = 16
     }
+}
+
+sealed class ActionInfoItem {
+    abstract val itemLabel: Int?
+
+    data class Value(
+        @StringRes override val itemLabel: Int?,
+        val value: String
+    ) : ActionInfoItem()
+
+    data class Address(
+        @StringRes override val itemLabel: Int?,
+        val address: Solidity.Address?
+    ) : ActionInfoItem()
+
+    data class AddressWithLabel(
+        @StringRes override val itemLabel: Int?,
+        val address: Solidity.Address?,
+        val addressLabel: String? = null,
+        @StringRes val addressLabelRes: Int = 0
+    ) : ActionInfoItem()
 }
