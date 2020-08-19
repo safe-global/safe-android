@@ -10,22 +10,6 @@ sealed class PushNotification(
 
     abstract val safe: Solidity.Address
 
-    data class NewConfirmation(
-        override val safe: Solidity.Address,
-        val safeTxHash: String,
-        val owner: Solidity.Address
-    ) : PushNotification(TYPE) {
-        companion object {
-            const val TYPE = "NEW_CONFIRMATION"
-            fun fromMap(params: Map<String, String>) =
-                NewConfirmation(
-                    params.getOrThrow("address").asEthereumAddress()!!,
-                    params.getOrThrow("safeTxHash"),
-                    params.getOrThrow("owner").asEthereumAddress()!!
-                )
-        }
-    }
-
     data class ExecutedTransaction(
         override val safe: Solidity.Address,
         val safeTxHash: String,
@@ -81,7 +65,6 @@ sealed class PushNotification(
     companion object {
         fun fromMap(params: Map<String, String>) =
             when (params["type"]) {
-                "NEW_CONFIRMATION" -> NewConfirmation.fromMap(params)
                 "EXECUTED_MULTISIG_TRANSACTION" -> ExecutedTransaction.fromMap(params)
                 "INCOMING_TOKEN" -> IncomingToken.fromMap(params)
                 "INCOMING_ETHER" -> IncomingEther.fromMap(params)
