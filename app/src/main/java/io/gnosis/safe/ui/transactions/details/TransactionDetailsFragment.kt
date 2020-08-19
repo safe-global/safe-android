@@ -24,6 +24,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
+import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
@@ -87,8 +89,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
-
-
+        
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
@@ -98,7 +99,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
-                txDetailsTransferBinding.txAction.setActionInfo(txInfo)
+                val outgoing = txInfo.direction == TransactionDirection.OUTGOING
+                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", txInfo.sender)
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
@@ -124,7 +126,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                txDetailsCustomBinding.txAction.setActionInfo(txInfo)
+                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(), txInfo.logoUri()!!, txInfo.to)
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
             }

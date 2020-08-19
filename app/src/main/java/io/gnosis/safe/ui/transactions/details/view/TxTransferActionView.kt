@@ -6,13 +6,9 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.TransactionInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
-import io.gnosis.safe.utils.formattedAmount
-import io.gnosis.safe.utils.logoUri
 import pm.gnosis.model.Solidity
 
 class TxTransferActionView @JvmOverloads constructor(
@@ -30,31 +26,28 @@ class TxTransferActionView @JvmOverloads constructor(
         removeAllViews()
     }
 
-    fun setActionInfo(txInfo: TransactionInfo) {
-
-        clear()
-
-        when {
-            txInfo is TransactionInfo.Custom -> addAmountItem(txInfo, "")
-            txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.OUTGOING -> addAmountItem(txInfo, "")
-            txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.INCOMING -> addAddressItem(txInfo.sender)
+    fun setActionInfo(outgoing: Boolean, amount: String, logoUri: String, address: Solidity.Address) {
+        if (outgoing) {
+            addAmountItem(amount, logoUri)
+        } else {
+            addAddressItem(address)
         }
 
         addArrow()
 
-        when {
-            txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.OUTGOING -> addAddressItem(txInfo.recipient)
-            txInfo is TransactionInfo.Custom -> addAddressItem(txInfo.to)
-            txInfo is TransactionInfo.Transfer && txInfo.direction == TransactionDirection.INCOMING -> addAmountItem(txInfo, "")
+        if (outgoing) {
+            addAddressItem(address)
+        } else {
+            addAmountItem(amount, logoUri)
         }
     }
 
-    private fun addAmountItem(txInfo: TransactionInfo, icon: String) {
+    private fun addAmountItem(amount: String, logoUri: String) {
         val amountView = AmountView(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams
-        amountView.setAmount(txInfo.formattedAmount(), txInfo.logoUri() ?: "local::ethereum")
+        amountView.setAmount(amount, logoUri)
         addView(amountView)
     }
 
@@ -72,7 +65,7 @@ class TxTransferActionView @JvmOverloads constructor(
         val arrowDown = ContextCompat.getDrawable(context, R.drawable.ic_arrow_down)
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
-        arrowDownView.setPadding(dpToPx(ARROW_ICON_PADDING_CORRECTION),0,dpToPx(ARROW_ICON_PADDING_CORRECTION),0)
+        arrowDownView.setPadding(dpToPx(ARROW_ICON_PADDING_CORRECTION), 0, dpToPx(ARROW_ICON_PADDING_CORRECTION), 0)
         arrowDownView.setImageDrawable(arrowDown)
         arrowDownView.layoutParams = layoutParams
         addView(arrowDownView)
