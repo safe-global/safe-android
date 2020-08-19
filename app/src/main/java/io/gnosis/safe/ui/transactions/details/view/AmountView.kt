@@ -15,8 +15,7 @@ class AmountView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxAmountBinding.inflate(LayoutInflater.from(context), this) }
 
-
-    fun setAmount(formattedAmount: String?, logoUri: String = "local::ethereum") {
+    fun setAmount(formattedAmount: String, logoUri: String = "local::ethereum") {
         binding.amountTitle.text = formattedAmount
         binding.logo.loadTokenLogo(logoUri)
     }

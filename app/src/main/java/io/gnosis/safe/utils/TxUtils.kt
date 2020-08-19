@@ -5,7 +5,7 @@ import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransferInfo
 import java.math.BigInteger
 
-fun TransactionInfo.formattedAmount(): String? =
+fun TransactionInfo.formattedAmount(): String =
     when (val txInfo = this) {
         is TransactionInfo.Custom -> {
             txInfo.value.formatAmount(true, 18, "ETH")
