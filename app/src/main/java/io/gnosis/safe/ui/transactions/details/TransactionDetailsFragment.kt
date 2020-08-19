@@ -127,13 +127,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
 
-                if (txDetails.txData != null) {
-                    txDetailsCustomBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txInfo.dataSize) }
-                } else {
-                    txDetailsCustomBinding.txData.visible(false)
-                    txDetailsCustomBinding.txDataSeparator.visible(false)
-                }
+                txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
+
             }
 
         }
@@ -155,17 +150,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.created.value = executionInfo.submittedAt.formatBackendDate()
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> {
-                binding.txConfirmations.visible(false)
-                binding.txConfirmationsDivider.visible(false)
-
-                binding.created.visible(false)
-                binding.createdDivider.visible(false)
+                hideCreatedAndConfirmations()
             }
             else -> {
-                binding.txConfirmations.visible(false)
-                binding.txConfirmationsDivider.visible(false)
-                binding.created.visible(false)
-                binding.createdDivider.visible(false)
+                hideCreatedAndConfirmations()
             }
         }
         binding.advanced.setOnClickListener {
@@ -200,5 +188,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         } else {
             binding.etherscan.visible(false)
         }
+    }
+
+    private fun hideCreatedAndConfirmations() {
+        binding.txConfirmations.visible(false)
+        binding.txConfirmationsDivider.visible(false)
+        binding.created.visible(false)
+        binding.createdDivider.visible(false)
     }
 }
