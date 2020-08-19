@@ -49,7 +49,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         // Workaround in order to change active safe when push notification for unselected safe is received
         intent?.let {
-            val safeAddress = it.getStringExtra(EXTRA_SAFE).asEthereumAddress()
+            val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {

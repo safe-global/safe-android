@@ -40,16 +40,6 @@ class PushNotificationTest {
         private const val TEST_TOKEN_ID = "tokenId"
 
         private val TEST_DATA = mapOf(
-            PushNotification.NewConfirmation::class to
-                    TestData(
-                        mapOf(
-                            "type" to "NEW_CONFIRMATION",
-                            "address" to TEST_SAFE,
-                            "safeTxHash" to TEST_SAFE_TX_HASH,
-                            "owner" to TEST_OWNER
-                        ),
-                        PushNotification.NewConfirmation(TEST_SAFE.asEthereumAddress()!!, TEST_SAFE_TX_HASH, TEST_OWNER.asEthereumAddress()!!)
-                    ),
             PushNotification.ExecutedTransaction::class to
                     TestData(
                         mapOf(

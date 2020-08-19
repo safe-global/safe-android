@@ -69,10 +69,6 @@ class NotificationManager(
                 safe.localName
 
         when (pushNotification) {
-            is PushNotification.NewConfirmation -> {
-                title = context.getString(R.string.push_title_new_confirmation)
-                text = context.getString(R.string.push_text_new_confirmation, safeName, pushNotification.owner.formatForTxList())
-            }
             is PushNotification.ExecutedTransaction -> {
                 if (pushNotification.failed) {
                     title = context.getString(R.string.push_title_failed)
@@ -112,7 +108,7 @@ class NotificationManager(
         priority: Int = NotificationCompat.PRIORITY_HIGH
     ) =
         NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.img_app)
+            .setSmallIcon(R.drawable.ic_app_24dp)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
