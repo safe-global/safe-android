@@ -84,9 +84,9 @@ sealed class TransactionInfo {
                 }
                 value.formatAmount(incoming, decimals, symbol) ?: ""
             }
-            is SettingsChange -> TODO()
-            Creation -> TODO()
-            Unknown -> TODO()
+            is SettingsChange -> "0 ETH"
+            Creation -> "0 ETH"
+            Unknown -> "0 ETH"
         }
 
     fun logoUri(): String? =
@@ -102,12 +102,8 @@ sealed class TransactionInfo {
                     "local::ethereum"
                 }
             }
-            is Custom -> "local::ethereum"
-            is SettingsChange -> TODO()
-            Creation -> TODO()
-            Unknown -> TODO()
+            is Custom, is SettingsChange, Creation, Unknown -> "local::ethereum"
         }
-
 
     data class Custom(
         val to: Solidity.Address,
@@ -173,7 +169,3 @@ fun BigInteger.convertAmount(decimals: Int): BigDecimal =
 
 fun BigInteger.shifted(decimals: Int, decimalsToDisplay: Int = 5, roundingMode: RoundingMode = RoundingMode.DOWN): BigDecimal =
     convertAmount(decimals).setScale(decimalsToDisplay, roundingMode)
-
-fun BigDecimal.stringWithNoTrailingZeroes(): String =
-    if (this.unscaledValue() == BigInteger.ZERO) "0"
-    else this.stripTrailingZeros().toPlainString()
