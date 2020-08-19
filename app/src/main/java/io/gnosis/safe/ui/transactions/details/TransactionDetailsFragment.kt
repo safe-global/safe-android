@@ -99,7 +99,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 txDetailsTransferBinding.txAction.setActionInfo(txInfo)
 
-                val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
+                val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
+                    TxStatusView.TxType.TRANSFER_INCOMING
+                } else {
+                    TxStatusView.TxType.TRANSFER_OUTGOING
+                }
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
             is TransactionInfo.SettingsChange -> {
@@ -137,6 +141,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         when (val executionInfo = txDetails?.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
+                binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.map { it.signer },
@@ -144,13 +149,23 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     executor = executionInfo.executor
                 )
                 nonce = executionInfo.nonce
-                binding.executed.value = executionInfo.submittedAt.formatBackendDate()
+
+                binding.created.visible(true)
+                binding.createdDivider.visible(true)
+                binding.created.value = executionInfo.submittedAt.formatBackendDate()
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> {
                 binding.txConfirmations.visible(false)
+                binding.txConfirmationsDivider.visible(false)
+
+                binding.created.visible(false)
+                binding.createdDivider.visible(false)
             }
             else -> {
                 binding.txConfirmations.visible(false)
+                binding.txConfirmationsDivider.visible(false)
+                binding.created.visible(false)
+                binding.createdDivider.visible(false)
             }
         }
         binding.advanced.setOnClickListener {
@@ -163,16 +178,27 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 )
             )
         }
+        if (txDetails?.executedAt != null) {
+            binding.executed.visible(true)
+            binding.executedDivider.visible(true)
+            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
+        } else {
+            binding.executed.visible(false)
+            binding.executedDivider.visible(false)
+        }
 
-        binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
-
-        binding.etherscan.setOnClickListener {
-            requireContext().openUrl(
-                getString(
-                    R.string.etherscan_transaction_url,
-                    txDetails?.txHash
+        if (txDetails?.txHash != null) {
+            binding.etherscan.visible(true)
+            binding.etherscan.setOnClickListener {
+                requireContext().openUrl(
+                    getString(
+                        R.string.etherscan_transaction_url,
+                        txDetails.txHash
+                    )
                 )
-            )
+            }
+        } else {
+            binding.etherscan.visible(false)
         }
     }
 }

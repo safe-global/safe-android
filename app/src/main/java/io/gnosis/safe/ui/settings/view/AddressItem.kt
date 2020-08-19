@@ -40,7 +40,7 @@ class AddressItem @JvmOverloads constructor(
                 }
                 binding.address.setOnClickListener {
                     context.copyToClipboard(context.getString(R.string.address_copied), address.text.toString()) {
-                        snackbar(view = root, textId = R.string.address_copied_success)
+                        snackbar(view = root, textId = R.string.copied_success)
                     }
                 }
             }

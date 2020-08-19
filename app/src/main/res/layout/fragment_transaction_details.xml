@@ -89,6 +89,7 @@
                     android:layout_marginTop="@dimen/default_margin" />
 
                 <View
+                    android:id="@+id/tx_confirmations_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
@@ -100,6 +101,7 @@
                     app:item_name="@string/tx_details_created" />
 
                 <View
+                    android:id="@+id/created_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
@@ -111,6 +113,7 @@
                     app:item_name="@string/tx_details_executed" />
 
                 <View
+                    android:id="@+id/executed_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
@@ -123,6 +126,7 @@
                     app:setting_openable="true" />
 
                 <View
+                    android:id="@+id/advanced_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
