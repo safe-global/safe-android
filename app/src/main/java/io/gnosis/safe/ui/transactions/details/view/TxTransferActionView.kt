@@ -27,6 +27,9 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     fun setActionInfo(outgoing: Boolean, amount: String, logoUri: String, address: Solidity.Address) {
+
+        clear()
+
         if (outgoing) {
             addAmountItem(amount, logoUri)
         } else {
