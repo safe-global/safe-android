@@ -31,7 +31,7 @@ class TxTransferActionView @JvmOverloads constructor(
         clear()
 
         if (outgoing) {
-            addAmountItem(amount, logoUri)
+            addAmountItem(amount, logoUri, outgoing)
         } else {
             addAddressItem(address)
         }
@@ -41,16 +41,17 @@ class TxTransferActionView @JvmOverloads constructor(
         if (outgoing) {
             addAddressItem(address)
         } else {
-            addAmountItem(amount, logoUri)
+            addAmountItem(amount, logoUri, outgoing)
         }
     }
 
-    private fun addAmountItem(amount: String, logoUri: String) {
+    private fun addAmountItem(amount: String, logoUri: String, outgoing: Boolean) {
         val amountView = AmountView(context)
+        val color = if(outgoing) R.color.gnosis_dark_blue else R.color.safe_green
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams
-        amountView.setAmount(amount, logoUri)
+        amountView.setAmount(amount, logoUri, color)
         addView(amountView)
     }
 
