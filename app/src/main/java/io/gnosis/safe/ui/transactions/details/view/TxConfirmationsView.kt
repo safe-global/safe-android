@@ -47,30 +47,28 @@ class TxConfirmationsView @JvmOverloads constructor(
             addAddressItem(it)
         }
 
-        if (confirmations.size < threshold) {
-            addExecutionStep(TxExecutionStep.Type.EXECUTE_WAITING, threshold - confirmations.size)
-        } else {
-
-            when (status) {
-                TransactionStatus.AWAITING_EXECUTION -> {
+        when (status) {
+            TransactionStatus.AWAITING_CONFIRMATIONS -> {
+                addExecutionStep(TxExecutionStep.Type.EXECUTE_WAITING, threshold - confirmations.size)
+            }
+            TransactionStatus.AWAITING_EXECUTION -> {
+                addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
+            }
+            TransactionStatus.SUCCESS -> {
+                if (executor != null) {
+                    addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
+                    addAddressItem(executor)
+                } else {
+                    // fail silently - this should never happen
+                    Timber.e("${TxConfirmationsView::class.java.simpleName}: missing executor for successful transaction")
                     addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
                 }
-                TransactionStatus.SUCCESS -> {
-                    if (executor != null) {
-                        addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
-                        addAddressItem(executor)
-                    } else {
-                        // fail silently - this should never happen
-                        Timber.e("${TxConfirmationsView::class.java.simpleName}: missing executor for successful transaction")
-                        addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
-                    }
-                }
-                TransactionStatus.CANCELLED -> {
-                    addExecutionStep(TxExecutionStep.Type.CANCELED)
-                }
-                TransactionStatus.FAILED -> {
-                    addExecutionStep(TxExecutionStep.Type.FAILED)
-                }
+            }
+            TransactionStatus.CANCELLED -> {
+                addExecutionStep(TxExecutionStep.Type.CANCELED)
+            }
+            TransactionStatus.FAILED -> {
+                addExecutionStep(TxExecutionStep.Type.FAILED)
             }
         }
     }
