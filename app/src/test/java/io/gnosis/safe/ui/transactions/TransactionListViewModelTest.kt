@@ -5,17 +5,8 @@ import androidx.paging.PagingData
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamsDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.TransactionStatus.AWAITING_CONFIRMATIONS
-import io.gnosis.data.models.TransactionStatus.AWAITING_EXECUTION
-import io.gnosis.data.models.TransactionStatus.CANCELLED
-import io.gnosis.data.models.TransactionStatus.FAILED
-import io.gnosis.data.models.TransactionStatus.PENDING
-import io.gnosis.data.models.TransactionStatus.SUCCESS
+import io.gnosis.data.models.*
+import io.gnosis.data.models.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
@@ -29,21 +20,13 @@ import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERV
 import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.MainCoroutineScopeRule
-import io.gnosis.safe.R
-import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.TestLiveDataObserver
-import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.formatBackendDate
-import io.mockk.Called
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.coVerifySequence
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
@@ -531,7 +514,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
-                dataSizeText = "",
+                dataSizeText = "0 bytes",
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 confirmationsTextColor = R.color.safe_green,
@@ -550,7 +533,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
-                dataSizeText = "",
+                dataSizeText = "0 bytes",
                 threshold = 2,
                 confirmationsTextColor = R.color.medium_grey,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
@@ -570,7 +553,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
                 alpha = OPACITY_FULL,
-                dataSizeText = "",
+                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[2]
@@ -586,7 +569,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
-                dataSizeText = "",
+                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[3]
@@ -602,7 +585,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
-                dataSizeText = "",
+                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[4]
