@@ -10,8 +10,8 @@ import io.gnosis.safe.databinding.ItemAddSafeBinding
 import io.gnosis.safe.databinding.ItemSafeBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.utils.asMiddleEllipsized
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
 import java.lang.ref.WeakReference
 
 class SafeSelectionAdapter(
@@ -110,7 +110,7 @@ class SafeItemViewHolder(
 
     fun bind(safe: Safe, selected: Boolean) {
         binding.safeName.text = safe.localName
-        binding.safeAddress.text = safe.address.asEthereumAddressString().asMiddleEllipsized(4)
+        binding.safeAddress.text = safe.address.asEthereumAddressChecksumString().asMiddleEllipsized(4)
         binding.safeImage.setAddress(safe.address)
         binding.safeSelection.visible(selected, View.INVISIBLE)
         binding.root.setOnClickListener {

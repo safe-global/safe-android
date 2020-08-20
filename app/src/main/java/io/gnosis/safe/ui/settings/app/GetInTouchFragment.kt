@@ -19,9 +19,9 @@ import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -115,7 +115,7 @@ class GetInTouchViewModel
         val activeSafe = safeRepository.getActiveSafe()
         val text = StringBuilder()
         text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
-        text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressString() ?: ""))
+        text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressChecksumString() ?: ""))
         text.appendln(context.getString(R.string.feedback_feedback))
         return text.toString()
     }

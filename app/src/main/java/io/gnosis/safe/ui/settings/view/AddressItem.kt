@@ -15,7 +15,6 @@ import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.utils.asEthereumAddressString
 
 class AddressItem @JvmOverloads constructor(
     context: Context,
@@ -48,7 +47,7 @@ class AddressItem @JvmOverloads constructor(
         }
 
     private fun Solidity.Address.formatOwnerAddress(prefixLength: Int = 4, suffixLength: Int = 4): Spannable =
-        SpannableStringBuilder(this.asEthereumAddressString()).apply {
+        SpannableStringBuilder(this.asEthereumAddressChecksumString()).apply {
             setSpan(
                 ForegroundColorSpan(context.getColorCompat(R.color.gnosis_dark_blue)),
                 0,

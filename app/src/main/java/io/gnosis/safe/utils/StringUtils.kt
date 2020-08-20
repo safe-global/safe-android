@@ -8,12 +8,12 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import io.gnosis.safe.R
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
-import pm.gnosis.utils.*
-import io.gnosis.safe.R
+import pm.gnosis.utils.asEthereumAddress
 
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
     return if (this.length > boundariesLength * 2)
@@ -33,7 +33,7 @@ fun Solidity.Address.shortChecksumString() =
 
 // make first & last 4 characters black
 fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 4, suffixLength: Int = 4, addMiddleLinebreak: Boolean = true): Spannable {
-    return SpannableStringBuilder(this.asEthereumAddressString()).apply {
+    return SpannableStringBuilder(this.asEthereumAddressChecksumString()).apply {
         if (addMiddleLinebreak) insert(21, "\n")
         setSpan(
             ForegroundColorSpan(context.getColorCompat(R.color.address_boundaries)),

@@ -16,9 +16,9 @@ import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.utils.asMiddleEllipsized
 import kotlinx.coroutines.launch
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
@@ -118,7 +118,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeImage.setAddress(safe.address)
             safeName.visible(true)
             safeName.text = safe.localName
-            safeAddress.text = safe.address.asEthereumAddressString().asMiddleEllipsized(4)
+            safeAddress.text = safe.address.asEthereumAddressChecksumString().asMiddleEllipsized(4)
             safeSelection.visible(true)
         }
     }
@@ -131,7 +131,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         fun createIntent(context: Context, safe: Safe, txId: String? = null) =
             Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressString())
+                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressChecksumString())
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
