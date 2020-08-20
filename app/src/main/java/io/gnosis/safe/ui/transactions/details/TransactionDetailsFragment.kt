@@ -163,7 +163,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
                         nonce = nonce?.toString() ?: "",
                         operation = operation,
-                        hash = (txDetails.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails)?.safeTxHash
+                        hash = txDetails.txHash
                     )
                 )
             }
