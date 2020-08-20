@@ -1,9 +1,9 @@
 package io.gnosis.data.db
 
 import androidx.room.TypeConverter
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 class SolidityAddressConverter {
 
@@ -11,5 +11,5 @@ class SolidityAddressConverter {
     fun fromHexString(address: String) = address.asEthereumAddress()!!
 
     @TypeConverter
-    fun toHexString(address: Solidity.Address): String = address.asEthereumAddressChecksumString()
+    fun toHexString(address: Solidity.Address): String = address.asEthereumAddressString()
 }
