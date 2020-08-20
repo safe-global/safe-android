@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxAmountBinding
 import io.gnosis.safe.utils.loadTokenLogo
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 class AmountView @JvmOverloads constructor(
     context: Context,
@@ -20,6 +21,6 @@ class AmountView @JvmOverloads constructor(
     fun setAmount(formattedAmount: String, logoUri: String = "local::ethereum", @ColorRes color: Int = R.color.gnosis_dark_blue) {
         binding.amountTitle.text = formattedAmount
         binding.logo.loadTokenLogo(logoUri)
-        binding.amountTitle.setTextColor(context.resources.getColor(color))
+        binding.amountTitle.setTextColor(context.getColorCompat(color))
     }
 }
