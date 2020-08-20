@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 
 class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsAdvancedBinding>() {
@@ -42,6 +45,11 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 hashSeparator.visible(false)
             } else {
                 hashItem.value = hash
+                hashItem.setOnClickListener {
+                    context?.copyToClipboard(context?.getString(R.string.address_copied)!!, hashItem.value.toString()) {
+                        snackbar(view = root, textId = R.string.copied_success)
+                    }
+                }
             }
         }
     }

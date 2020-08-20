@@ -26,7 +26,7 @@
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="@dimen/default_margin"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_baseline_arrow_back_24"
                 android:text="@string/back" />
@@ -36,7 +36,7 @@
                 style="@style/ToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/default_margin"
                 android:text="@string/tx_details_title" />
 
         </LinearLayout>
@@ -86,9 +86,34 @@
                     android:id="@+id/tx_confirmations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" />
+                    android:layout_marginTop="@dimen/default_margin" />
 
                 <View
+                    android:id="@+id/tx_confirmations_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                    android:id="@+id/created"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:item_name="@string/tx_details_created" />
+
+                <View
+                    android:id="@+id/created_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/light_grey" />
+
+                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                    android:id="@+id/executed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:item_name="@string/tx_details_executed" />
+
+                <View
+                    android:id="@+id/executed_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />
@@ -101,28 +126,7 @@
                     app:setting_openable="true" />
 
                 <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
-
-                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
-                    android:id="@+id/created"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:item_name="@string/tx_details_created" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
-
-                <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
-                    android:id="@+id/executed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:item_name="@string/tx_details_executed" />
-
-                <View
+                    android:id="@+id/advanced_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/light_grey" />

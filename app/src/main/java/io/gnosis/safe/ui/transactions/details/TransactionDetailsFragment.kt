@@ -24,8 +24,13 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
+import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.logoUri
+import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
+import java.util.*
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -94,7 +99,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
-                val txType = if (txInfo.direction == TransactionDirection.INCOMING) TxStatusView.TxType.TRANSFER_INCOMING else TxStatusView.TxType.TRANSFER_OUTGOING
+                val outgoing = txInfo.direction == TransactionDirection.OUTGOING
+                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", txInfo.sender)
+
+                val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
+                    TxStatusView.TxType.TRANSFER_INCOMING
+                } else {
+                    TxStatusView.TxType.TRANSFER_OUTGOING
+                }
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
             }
             is TransactionInfo.SettingsChange -> {
@@ -104,6 +116,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
+                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
                 txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
             }
             is TransactionInfo.Custom -> {
@@ -113,49 +126,78 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
+                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(), txInfo.logoUri()!!, txInfo.to)
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
-
-                if (txDetails.txData != null) {
-                    txDetailsCustomBinding.txData.visible(true)
-                    txDetails.txData?.hexData?.let { txDetailsCustomBinding.txData.setData(it, txInfo.dataSize) }
-                } else {
-                    txDetailsCustomBinding.txData.visible(false)
-                    txDetailsCustomBinding.txDataSeparator.visible(false)
-                }
+                txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
             }
-
         }
-
+        var nonce: BigInteger? = null
         when (val executionInfo = txDetails?.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
-
+                binding.txConfirmations.visible(true)
+                binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
-                    executor = executionInfo.signers.last() // TODO  Change this, when executor is available in client gateway response (https://github.com/gnosis/safe-client-gateway/issues/95)
+                    executor = executionInfo.executor
                 )
+                nonce = executionInfo.nonce
 
-                binding.executed.value = executionInfo.submittedAt.formatBackendDate()
+                binding.created.visible(true)
+                binding.createdDivider.visible(true)
+                binding.created.value = executionInfo.submittedAt.formatBackendDate()
             }
-            is DetailedExecutionInfo.ModuleExecutionDetails -> { // do nothing
+            is DetailedExecutionInfo.ModuleExecutionDetails -> {
+                hideCreatedAndConfirmations()
+            }
+            else -> {
+                hideCreatedAndConfirmations()
             }
         }
-
-        binding.advanced.setOnClickListener {
-            //TODO: pass arguments
-           findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment("1", "call", null))
-        }
-
-        binding.created.value = txDetails?.executedAt?.formatBackendDate() ?: ""
-
-        binding.etherscan.setOnClickListener {
-            requireContext().openUrl(
-                getString(
-                    R.string.etherscan_transaction_url,
-                    txDetails?.txHash
+        if (txDetails?.detailedExecutionInfo != null) {
+            binding.advanced.visible(true)
+            binding.advanced.setOnClickListener {
+                val operation = txDetails.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
+                findNavController().navigate(
+                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
+                        nonce = nonce?.toString() ?: "",
+                        operation = operation,
+                        hash = txDetails.txHash
+                    )
                 )
-            )
+            }
+        } else {
+            binding.advanced.visible(false)
         }
+        if (txDetails?.executedAt != null) {
+            binding.executed.visible(true)
+            binding.executedDivider.visible(true)
+            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
+        } else {
+            binding.executed.visible(false)
+            binding.executedDivider.visible(false)
+        }
+
+        if (txDetails?.txHash != null) {
+            binding.etherscan.visible(true)
+            binding.etherscan.setOnClickListener {
+                requireContext().openUrl(
+                    getString(
+                        R.string.etherscan_transaction_url,
+                        txDetails.txHash
+                    )
+                )
+            }
+        } else {
+            binding.etherscan.visible(false)
+        }
+    }
+
+    private fun hideCreatedAndConfirmations() {
+        binding.txConfirmations.visible(false)
+        binding.txConfirmationsDivider.visible(false)
+        binding.created.visible(false)
+        binding.createdDivider.visible(false)
     }
 }

@@ -56,7 +56,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                     addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
                 }
                 TransactionStatus.SUCCESS -> {
-                    if(executor != null) {
+                    if (executor != null) {
                         addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
                         addAddressItem(executor)
                     } else {
@@ -83,7 +83,7 @@ class TxConfirmationsView @JvmOverloads constructor(
             setStep(type, missingConfirmations)
         })
     }
-    
+
     private fun addAddressItem(address: Solidity.Address) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))

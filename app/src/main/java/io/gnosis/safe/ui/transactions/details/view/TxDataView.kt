@@ -18,21 +18,24 @@ class TxDataView @JvmOverloads constructor(
 
     private var collapsed: Boolean = true
 
-    fun setData(txData: String, size: Int) {
-
-        binding.data.text = txData
+    fun setData(txData: String?, size: Int) {
         binding.dataSize.text = "$size bytes"
+        if (txData != null) {
+            binding.data.text = txData
+            binding.collapseChevron.visible(true)
+            binding.root.setOnClickListener {
+                if (collapsed) {
+                    expand()
+                } else {
+                    collapse()
+                }
+            }
+        } else {
+            binding.collapseChevron.visible(false)
+        }
 
         binding.collapseChevron.setImageResource(R.drawable.ic_chevron_down)
         binding.data.visible(false)
-
-        binding.root.setOnClickListener {
-            if (collapsed) {
-                expand()
-            } else {
-                collapse()
-            }
-        }
     }
 
     private fun collapse() {

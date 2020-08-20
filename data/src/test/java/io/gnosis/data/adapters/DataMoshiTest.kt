@@ -43,7 +43,7 @@ class DataMoshiTest {
                     tokenAddress = "0xc778417E063141139Fce010982780140Aa0cD5Ab".asEthereumAddress()!!,
                     tokenName = "Wrapped Ether",
                     tokenSymbol = "WETH",
-                    value = "1000000000000000000"
+                    value = "1000000000000000000".toBigInteger()
                 )
             ),
             executionInfo = null
@@ -65,7 +65,7 @@ class DataMoshiTest {
                 type = GateTransactionType.Custom,
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                value = "3140000000000000000"
+                value = "3140000000000000000".toBigInteger()
             ),
             executionInfo = ExecutionInfoDto(
                 nonce = 8.toBigInteger(),

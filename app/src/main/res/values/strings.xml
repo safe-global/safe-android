@@ -94,6 +94,10 @@
     <string name="tx_list_failed">Failed</string>
     <string name="tx_list_success">Success</string>
 
+    <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
+    <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
+    <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
+
     <string name="tx_details_title">Transaction details</string>
     <string name="tx_details_advanced">Advanced</string>
     <string name="tx_details_created">Created:</string>
@@ -103,6 +107,13 @@
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
+    <string name="tx_details_add_owner">Add owner:</string>
+    <string name="tx_details_new_mastercopy">New mastercopy:</string>
+    <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
+    <string name="tx_details_disable_module">Disable module:</string>
+    <string name="tx_details_enable_module">Enable module:</string>
+    <string name="tx_details_remove_owner">Remove owner:</string>
+    <string name="tx_details_set_fallback_handler">Set fallback handler:</string>
 
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
@@ -167,8 +178,12 @@
     <string name="push_title_received_erc721">Incoming ERC721</string>
     <string name="push_text_received_erc721">%1$s: ERC721 token received</string>
 
-    <string name="retry">RETRY</string>
+    <string name="address_copied">Address copied</string>
+    <string name="hash_copied">Transaction Hash copied</string>
+    <string name="copied_success">Copied to clipboard</string>
+
     <string name="address_found">Address found</string>
+    <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>

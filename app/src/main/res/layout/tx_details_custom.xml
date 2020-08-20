@@ -5,11 +5,21 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <io.gnosis.safe.ui.transactions.details.view.TxDataView
-        android:id="@+id/tx_data"
+    <io.gnosis.safe.ui.transactions.details.view.TxTransferActionView
+        android:id="@+id/tx_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey" />
+
+    <io.gnosis.safe.ui.transactions.details.view.TxDataView
+        android:id="@+id/tx_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <View
         android:id="@+id/tx_data_separator"
@@ -20,8 +30,7 @@
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_height="wrap_content" />
 
     <View
         android:layout_width="match_parent"

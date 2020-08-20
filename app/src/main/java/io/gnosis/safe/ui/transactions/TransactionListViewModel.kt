@@ -9,27 +9,23 @@ import androidx.paging.insertSeparators
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.Transaction.Custom
-import io.gnosis.data.models.Transaction.SettingsChange
-import io.gnosis.data.models.Transaction.Transfer
+import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_0_2
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_0_1_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
+import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.getValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.utils.formatAmount
 import io.gnosis.safe.utils.formatBackendDate
-import io.gnosis.safe.utils.shiftedString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -287,7 +283,7 @@ class TransactionListViewModel
     private fun historicMastercopyChange(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
 
         val address = getAddress(transaction, "_masterCopy")
-        val version = getVersionForAddress(address)
+        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
         return TransactionView.SettingsChangeVariant(
             id = transaction.id,
@@ -306,7 +302,6 @@ class TransactionListViewModel
     private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "handler")
-        val version = getVersionForAddress(address)
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -403,7 +398,7 @@ class TransactionListViewModel
     private fun queuedMastercopyChange(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "_masterCopy")
-        val version = getVersionForAddress(address)
+        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -422,15 +417,6 @@ class TransactionListViewModel
         )
     }
 
-    private fun getVersionForAddress(address: Solidity.Address?): String =
-        when (address) {
-            SAFE_MASTER_COPY_0_0_2 -> "0.0.2"
-            SAFE_MASTER_COPY_0_1_0 -> "0.1.0"
-            SAFE_MASTER_COPY_1_0_0 -> "1.0.0"
-            SAFE_MASTER_COPY_1_1_1 -> "1.1.1"
-            else -> "unknown"
-        }
-
     private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
         transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
 
@@ -443,8 +429,8 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(custom.status),
             dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
-            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
+            amountText = custom.value.formatAmount(isIncoming,  ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
             nonce = custom.nonce.toString()
@@ -466,21 +452,15 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce.toString(),
-            dataSizeText = if (custom.dataSize > 0) "${custom.dataSize} bytes" else "",
-            amountText = formatAmount(isIncoming, custom.value, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
+            amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
 
     private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
-        val symbol = viewTransfer.tokenInfo?.symbol
-        return formatAmount(incoming, viewTransfer.value, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
-    }
-
-    private fun formatAmount(incoming: Boolean, value: BigInteger, decimals: Int, symbol: String?): String {
-        val inOut = if (value == BigInteger.ZERO) "" else if (incoming) "+" else "-"
-        val decimalValue = value.shiftedString(decimals = decimals)
-        return "%s%s %s".format(inOut, decimalValue, symbol)
+        val symbol = viewTransfer.tokenInfo?.symbol ?: ""
+        return viewTransfer.value.formatAmount(incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
     }
 
     private fun statusTextColor(status: TransactionStatus): Int {
@@ -540,3 +520,5 @@ fun TransactionView.isHistory() = when (status) {
     TransactionStatus.SUCCESS -> true
     else -> false
 }
+
+fun Solidity.Address.getVersionForAddress(): String = masterCopyVersion(this) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
