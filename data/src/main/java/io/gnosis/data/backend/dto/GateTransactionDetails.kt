@@ -49,5 +49,5 @@ enum class DetailedExecutionInfoType {
 data class ConfirmationsDto(
     val signer: Solidity.Address,
     val signature: String,
-    val submissionTime: Long
+    val submittedAt: Long
 )

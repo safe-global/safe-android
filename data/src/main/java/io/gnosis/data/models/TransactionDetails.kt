@@ -89,5 +89,5 @@ sealed class TransferInfo {
 data class Confirmations(
     val signer: Solidity.Address,
     val signature: String,
-    val submissionTime: Date
+    val submittedAt: Date
 )
