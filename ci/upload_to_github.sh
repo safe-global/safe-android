@@ -11,6 +11,8 @@ export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
+export SIGNING_STORE_FILE="../gnosis-upload.jks"
+
 ./gradlew assembleRinkeby assembleRelease
 
 
