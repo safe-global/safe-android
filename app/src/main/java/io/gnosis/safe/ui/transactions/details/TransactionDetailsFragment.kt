@@ -89,7 +89,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
-        
+
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
@@ -155,15 +155,20 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 hideCreatedAndConfirmations()
             }
         }
-        binding.advanced.setOnClickListener {
-            val operation = txDetails?.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
-            findNavController().navigate(
-                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
-                    nonce = nonce?.toString() ?: "",
-                    operation = operation,
-                    hash = txDetails?.txHash
+        if (txDetails?.detailedExecutionInfo != null) {
+            binding.advanced.visible(true)
+            binding.advanced.setOnClickListener {
+                val operation = txDetails.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
+                findNavController().navigate(
+                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
+                        nonce = nonce?.toString() ?: "",
+                        operation = operation,
+                        hash = (txDetails.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails)?.safeTxHash
+                    )
                 )
-            )
+            }
+        } else {
+            binding.advanced.visible(false)
         }
         if (txDetails?.executedAt != null) {
             binding.executed.visible(true)
