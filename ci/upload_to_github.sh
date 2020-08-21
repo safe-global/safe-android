@@ -2,7 +2,6 @@
 # fail if any commands fails
 set -e
 
-
 # Buildkite uses a clean state for each step (for concurrency)
 source ./ci/prepare_env_buildkite.sh
 
@@ -11,10 +10,7 @@ export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
-export SIGNING_STORE_FILE="../gnosis-upload.jks"
-
 ./gradlew assembleRinkeby assembleRelease
-
 
 # -------- Upload to github ----------
 REPO="https://api.github.com/repos/gnosis/safe-android"

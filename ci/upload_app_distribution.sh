@@ -5,7 +5,6 @@ set -e
 # Buildkite uses a clean state for each step (for concurrency)
 source ./ci/prepare_env_buildkite.sh
 
-export SIGNING_STORE_FILE="../gnosis-release.jks"
 export FIREBASE_GROUP="$1"
 
 # Buildkite branch equals to tag name if build was triggered by tag
