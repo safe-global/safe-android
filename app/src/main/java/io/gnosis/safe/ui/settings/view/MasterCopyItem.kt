@@ -16,7 +16,6 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
 
 class MasterCopyItem @JvmOverloads constructor(
     context: Context,
@@ -31,7 +30,7 @@ class MasterCopyItem @JvmOverloads constructor(
             with(binding) {
                 blockies.setAddress(value)
                 setVersionName(value)
-                address.text = value?.asEthereumAddressString()?.asMiddleEllipsized(4)
+                address.text = value?.asEthereumAddressChecksumString()?.asMiddleEllipsized(4)
                 binding.root.setOnClickListener {
                     context.openUrl(
                         context.getString(

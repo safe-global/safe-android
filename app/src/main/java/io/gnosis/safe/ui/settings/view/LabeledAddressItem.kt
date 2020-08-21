@@ -11,7 +11,6 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
 
 class LabeledAddressItem @JvmOverloads constructor(
     context: Context,
@@ -25,7 +24,7 @@ class LabeledAddressItem @JvmOverloads constructor(
         set(value) {
             with(binding) {
                 blockies.setAddress(value)
-                address.text = value?.asEthereumAddressString()?.asMiddleEllipsized(4)
+                address.text = value?.asEthereumAddressChecksumString()?.asMiddleEllipsized(4)
                 binding.root.setOnClickListener {
                     context.openUrl(
                         context.getString(
