@@ -20,6 +20,6 @@ interface GatewayApi {
     suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): GateTransactionDetailsDto
 
     companion object {
-        const val BASE_URL = BuildConfig.CLIENT_GATEWAY_API
+        const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL
     }
 }
