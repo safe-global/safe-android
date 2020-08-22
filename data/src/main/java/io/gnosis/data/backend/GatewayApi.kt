@@ -1,5 +1,6 @@
 package io.gnosis.data.backend
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.models.Page
@@ -19,6 +20,6 @@ interface GatewayApi {
     suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): GateTransactionDetailsDto
 
     companion object {
-        const val BASE_URL = "https://safe-client-rinkeby.staging.gnosisdev.com/"
+        const val BASE_URL = BuildConfig.CLIENT_GATEWAY_API
     }
 }
