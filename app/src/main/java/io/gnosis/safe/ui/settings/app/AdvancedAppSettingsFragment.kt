@@ -45,6 +45,17 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 }
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
+            with(clientGatewayService) {
+                value = Uri.parse(CLIENT_GATEWAY_SERVICE_ENDPOINT).let {
+                    Uri.Builder()
+                        .scheme(it.scheme)
+                        .encodedAuthority(it.authority)
+                        .path("about")
+                        .build()
+                        .toString()
+                }
+                setOnLongClickListener { copyUrlToClipboard().let { true } }
+            }
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
@@ -68,5 +79,6 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
         // TODO: Add constants to respective repositories
         const val RPC_ENDPOINT = BuildConfig.BLOCKCHAIN_NET_URL
         const val TX_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.TRANSACTION_SERVICE_URL
+        const val CLIENT_GATEWAY_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.CLIENT_GATEWAY_URL
     }
 }
