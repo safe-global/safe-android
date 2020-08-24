@@ -58,7 +58,7 @@ android {
             storeFile file("../debug.keystore")
         }
         release {
-            storeFile file(getKey("SIGNING_KEYFILE_PATH", "../gnosis-upload.jks"))
+            storeFile file(getKey("SIGNING_STORE_FILE", "../gnosis-multisig-upload.jks"))
             storePassword getKey("SIGNING_STORE_PASSWORD")
             keyAlias "gnosis"
             keyPassword getKey("SIGNING_KEY_PASSWORD")

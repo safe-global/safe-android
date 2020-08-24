@@ -17,10 +17,6 @@ class DatabaseModule {
     @Singleton
     fun provideSafeDatabase(@ApplicationContext context: Context): HeimdallDatabase =
         Room.databaseBuilder(context, HeimdallDatabase::class.java, HeimdallDatabase.DB_NAME)
-            .addMigrations(
-                HeimdallDatabase.MIGRATION_1_2,
-                HeimdallDatabase.MIGRATION_1_3,
-                HeimdallDatabase.MIGRATION_2_3)
             .build()
 
     @Provides
