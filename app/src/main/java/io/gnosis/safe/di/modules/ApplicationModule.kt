@@ -2,6 +2,8 @@ package io.gnosis.safe.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
+import androidx.core.net.ConnectivityManagerCompat
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -13,6 +15,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
+import io.gnosis.safe.helpers.ConnectivityInfoProvider
 import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.notifications.NotificationServiceApi
@@ -52,6 +55,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesAppDispatchers(): AppDispatchers = AppDispatchers()
+
+    @Provides
+    @Singleton
+    fun providesConnectivityManager(@ApplicationContext context: Context): ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     @Singleton
@@ -134,6 +141,7 @@ class ApplicationModule(private val application: Application) {
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
             addInterceptor(interceptors[1])
+            addInterceptor(interceptors[2])
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
@@ -167,4 +175,9 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesNotificationManager(@ApplicationContext context: Context, preferencesManager: PreferencesManager): NotificationManager = NotificationManager(context, preferencesManager)
+
+    @Provides
+    @Singleton
+    fun providesConnectivityInfoProvider(connectivityManager: ConnectivityManager): ConnectivityInfoProvider =
+        ConnectivityInfoProvider(connectivityManager)
 }

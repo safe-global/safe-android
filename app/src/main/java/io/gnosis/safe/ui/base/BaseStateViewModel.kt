@@ -16,7 +16,8 @@ data class AppDispatchers(
     val background: CoroutineDispatcher = Dispatchers.IO
 )
 
-abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
+abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) :
+    ViewModel() where T : BaseStateViewModel.State {
 
     val state: LiveData<T> = liveData {
         onStateSubscribed()

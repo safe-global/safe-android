@@ -2,6 +2,7 @@ package io.gnosis.safe.di.components
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import io.gnosis.data.repositories.SafeRepository
@@ -40,6 +41,8 @@ interface ApplicationComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun appDispatchers(): AppDispatchers
+
+    fun connectivityManager(): ConnectivityManager
 
     fun termsChecker(): TermsChecker
 

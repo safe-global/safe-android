@@ -13,14 +13,18 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -82,6 +86,17 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                         lifecycleScope.launch {
                             // if safe changes we need to reset data for recycler to be at the top of the list
                             adapter.submitData(PagingData.empty())
+                        }
+                    }
+                    is ShowError -> {
+                        binding.progress.visible(false)
+                        when(viewAction.error) {
+                            is Offline -> {
+                                snackbar(requireView(), R.string.error_no_internet)
+                            }
+                            else -> {
+                                //TODO: handle error
+                            }
                         }
                     }
                     else -> {

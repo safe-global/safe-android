@@ -20,6 +20,7 @@ import io.gnosis.safe.databinding.TxDetailsCustomBinding
 import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
@@ -28,6 +29,7 @@ import io.gnosis.safe.utils.formattedAmount
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.HttpCodes
@@ -80,12 +82,19 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-                    val showError = getErrorMessageForException(viewAction.error)
-                    snackbar(requireView(), showError ?: getString(R.string.error_cannot_load_tx_details))
+                    when (viewAction.error) {
+                        is Offline -> {
+                            snackbar(requireView(), R.string.error_no_internet)
+                        }
+                        else -> {
+                            val showError = getErrorMessageForException(viewAction.error)
+                            snackbar(requireView(), showError ?: getString(R.string.error_cannot_load_tx_details))
 
-                    if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
-                        binding.content.visibility = View.GONE
-                        binding.error.visible(true)
+                            if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
+                                binding.content.visibility = View.GONE
+                                binding.error.visible(true)
+                            }
+                        }
                     }
                 }
             }
