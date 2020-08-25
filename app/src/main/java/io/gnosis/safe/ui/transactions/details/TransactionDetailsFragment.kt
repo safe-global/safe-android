@@ -77,7 +77,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     binding.refresh.isRefreshing = false
 
                     snackbar(requireView(), viewAction.error.message ?: getString(R.string.error_cannot_load_tx_details))
-                    Timber.e(viewAction.error)
 
                     if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
                         binding.content.visibility = View.GONE
