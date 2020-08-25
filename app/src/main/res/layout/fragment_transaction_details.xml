@@ -52,9 +52,10 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
             <LinearLayout
-                android:id="@+id/content_wrapper"
+                android:id="@+id/content_error_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
