@@ -135,7 +135,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
-                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", txInfo.sender)
+                val address = if (outgoing) txInfo.recipient else txInfo.sender
+                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", address)
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
