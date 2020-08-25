@@ -52,16 +52,11 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                         when (action) {
                             is UpdateBalances -> {
                                 binding.contentNoData.root.visibility = View.GONE
-                                binding.refresh.visible(true)
-
                                 adapter.setItems(action.newBalances)
                             }
                             is ShowError -> {
                                 hideLoading()
-
                                 binding.contentNoData.root.visible(true)
-                                binding.refresh.visible(false)
-
                                 when(action.error) {
                                     is Offline -> {
                                         snackbar(requireView(), R.string.error_no_internet)
