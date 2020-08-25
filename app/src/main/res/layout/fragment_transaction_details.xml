@@ -43,6 +43,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <include layout="@layout/empty_error_state"
+        android:id="@+id/content_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
@@ -51,7 +57,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -142,6 +148,7 @@
                     android:gravity="start|center_vertical"
                     android:text="@string/tx_details_view_on_etherscan" />
             </LinearLayout>
+
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

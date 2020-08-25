@@ -16,7 +16,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
@@ -80,7 +79,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     private fun handleError(throwable: Throwable) {
         snackbar(requireView(), R.string.error_loading_balances)
-        Timber.e(throwable)
     }
 
     companion object {

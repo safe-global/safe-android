@@ -26,14 +26,21 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
 import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.getErrorResForException
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.HttpCodes
+import retrofit2.HttpException
 import java.math.BigInteger
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
+import javax.net.ssl.SSLHandshakeException
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
@@ -75,12 +82,17 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-                    when(viewAction.error) {
+                    when (viewAction.error) {
                         is Offline -> {
                             snackbar(requireView(), R.string.error_no_internet)
                         }
                         else -> {
-                            //TODO: handle error
+                            snackbar(requireView(), viewAction.error.getErrorResForException())
+
+                            if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
+                                binding.content.visibility = View.GONE
+                                binding.contentNoData.root.visible(true)
+                            }
                         }
                     }
                 }
@@ -98,6 +110,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
+        binding.content.visible(true)
+        binding.contentNoData.root.visible(false)
 
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
