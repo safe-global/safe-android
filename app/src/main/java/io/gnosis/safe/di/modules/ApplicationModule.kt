@@ -2,6 +2,8 @@ package io.gnosis.safe.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.net.ConnectivityManager
+import androidx.core.net.ConnectivityManagerCompat
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -52,6 +54,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesAppDispatchers(): AppDispatchers = AppDispatchers()
+
+    @Provides
+    @Singleton
+    fun providesConnectivityManager(@ApplicationContext context: Context): ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     @Singleton
