@@ -18,6 +18,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
+    <include layout="@layout/empty_error_state"
+        android:id="@+id/content_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="0dp"

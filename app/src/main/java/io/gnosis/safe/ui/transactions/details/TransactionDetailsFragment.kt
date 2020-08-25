@@ -89,6 +89,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         else -> {
                             snackbar(requireView(), viewAction.error.getErrorResForException())
 
+                            // only show empty state if we don't have anything to show
                             if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
                                 binding.content.visibility = View.GONE
                                 binding.contentNoData.root.visible(true)
