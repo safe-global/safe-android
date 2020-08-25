@@ -1,6 +1,10 @@
 package io.gnosis.safe.ui.base
 
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -16,7 +20,36 @@ data class AppDispatchers(
     val background: CoroutineDispatcher = Dispatchers.IO
 )
 
-abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
+abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers, private val connectivityManager: ConnectivityManager? = null) :
+    ViewModel() where T : BaseStateViewModel.State {
+
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+
+    init {
+        connectivityManager?.let {
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network?) {
+                    super.onAvailable(network)
+                    safeLaunch {
+                        updateState(true) { viewAction = ViewAction.Connectivity(false); this }
+                    }
+                }
+
+                override fun onLost(network: Network?) {
+                    super.onLost(network)
+                    safeLaunch {
+                        updateState(true) { viewAction = ViewAction.Connectivity(true); this }
+                    }
+                }
+            }
+            val builder = NetworkRequest.Builder()
+            builder
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            it.registerNetworkCallback(builder.build(), networkCallback)
+        }
+    }
+
 
     val state: LiveData<T> = liveData {
         onStateSubscribed()
@@ -27,6 +60,11 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
     open fun onStateSubscribed() {
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        connectivityManager?.unregisterNetworkCallback(networkCallback)
+    }
+
     protected abstract fun initialState(): T
 
     interface State {
@@ -34,6 +72,7 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) : 
     }
 
     interface ViewAction {
+        data class Connectivity(val offline: Boolean) : ViewAction
         data class Loading(val isLoading: Boolean) : ViewAction
         data class ShowError(val error: Throwable) : ViewAction
         data class UpdateActiveSafe(val newSafe: Safe?) : ViewAction

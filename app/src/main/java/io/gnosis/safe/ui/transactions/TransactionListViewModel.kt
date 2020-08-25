@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions
 
+import android.net.ConnectivityManager
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
@@ -39,8 +40,9 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
-    appDispatchers: AppDispatchers
-) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
+    appDispatchers: AppDispatchers,
+    connectivityManager: ConnectivityManager
+) : BaseStateViewModel<TransactionsViewState>(appDispatchers, connectivityManager) {
 
     private var currentSafeAddress: Solidity.Address? = null
     private var currentSafeTxItems: Flow<PagingData<TransactionView>>? = null

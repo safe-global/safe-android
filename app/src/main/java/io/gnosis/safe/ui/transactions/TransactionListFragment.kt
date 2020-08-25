@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +17,12 @@ import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -83,6 +86,9 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                             // if safe changes we need to reset data for recycler to be at the top of the list
                             adapter.submitData(PagingData.empty())
                         }
+                    }
+                    is Connectivity -> {
+                        Toast.makeText(context, "offline: ${viewAction.offline}", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                     }
