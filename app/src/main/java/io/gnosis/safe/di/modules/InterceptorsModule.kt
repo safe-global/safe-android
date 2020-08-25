@@ -7,6 +7,8 @@ import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.helpers.ConnectivityInfoProvider
+import io.gnosis.safe.helpers.Offline
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -43,6 +45,19 @@ class InterceptorsModule {
     @Singleton
     @IntoMap
     @IntKey(1)
+    @Named(INTERCEPTORS_WITH_PRIORITY)
+    fun providesConnectivityInterceptor(connectivityInfoProvider: ConnectivityInfoProvider): Interceptor {
+        return Interceptor {
+            if (connectivityInfoProvider.offline)
+                throw Offline()
+            else it.proceed(it.request())
+        }
+    }
+
+    @Provides
+    @Singleton
+    @IntoMap
+    @IntKey(2)
     @Named(INTERCEPTORS_WITH_PRIORITY)
     fun providesLoggingInterceptor(): Interceptor {
         return HttpLoggingInterceptor().apply {

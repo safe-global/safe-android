@@ -14,7 +14,9 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
@@ -22,7 +24,6 @@ import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding>() {
@@ -54,8 +55,18 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is BaseStateViewModel.ViewAction.Loading -> updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
-                is BaseStateViewModel.ViewAction.ShowError -> showError(viewAction.error)
+                is Loading -> updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
+                is ShowError -> {
+                    when(viewAction.error) {
+                        is Offline -> {
+                            hideLoading()
+                            snackbar(requireView(), R.string.error_no_internet)
+                        }
+                        else -> {
+                            showError(viewAction.error)
+                        }
+                    }
+                }
             }
         })
     }
@@ -97,14 +108,17 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun showError(throwable: Throwable) {
+    private fun hideLoading() {
         with(binding) {
             refresh.isRefreshing = false
-            mainContainer.visible(false)
             progress.visible(false)
         }
+    }
+
+    private fun showError(throwable: Throwable) {
+        hideLoading()
+        binding.mainContainer.visible(false)
         snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
-        Timber.e(throwable)
     }
 
     private fun showRemoveDialog() {
