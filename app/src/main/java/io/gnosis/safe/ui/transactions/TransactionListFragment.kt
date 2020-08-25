@@ -93,10 +93,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     }
                     is ShowError -> {
                         binding.progress.visible(false)
+                        binding.contentNoData.root.visible(true)
 
-//                        if (!binding.transactions.isVisible) {
-                            binding.contentNoData.root.visible(true)
-//                        }
                         when (val errorException = viewAction.error) {
                             is Offline -> {
                                 snackbar(requireView(), R.string.error_no_internet)
