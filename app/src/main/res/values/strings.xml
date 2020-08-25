@@ -39,8 +39,12 @@
     <string name="transactions_empty">Transactions will appear here</string>
     <string name="settigns">Settings</string>
     <string name="remove_safe">Remove safe</string>
+
     <string name="error_loading_balances">Unable to load balances</string>
     <string name="error_no_internet">No Internet connection</string>
+    <string name="error_cannot_load_tx_details">Cannot load transaction details</string>
+    <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
+
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>

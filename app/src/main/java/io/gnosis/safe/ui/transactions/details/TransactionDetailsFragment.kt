@@ -28,7 +28,9 @@ import io.gnosis.safe.utils.formattedAmount
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import java.math.BigInteger
 import java.util.*
 import javax.inject.Inject
@@ -73,7 +75,15 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-                    //TODO: handle error here
+
+                    binding.content.visibility = View.GONE
+
+                    snackbar(requireView(), viewAction.error.message ?: getString(R.string.error_cannot_load_tx_details))
+                    Timber.e(viewAction.error)
+
+                    // TODO: show error content instead
+
+                    binding.error.visible(true)
                 }
             }
         })
@@ -89,6 +99,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
 
         binding.refresh.isRefreshing = isLoading
+        binding.content.visible(true)
+        binding.error.visible(false)
 
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
