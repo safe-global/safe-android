@@ -30,11 +30,15 @@ import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import java.io.IOException
+import pm.gnosis.utils.HttpCodes
+import retrofit2.HttpException
 import java.math.BigInteger
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
+import javax.net.ssl.SSLHandshakeException
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
@@ -76,10 +80,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-                    var showError = viewAction.error.message
-                    if (viewAction.error is IOException) {
-                        showError = getString(R.string.error_no_internet)
-                    }
+                    val showError = getErrorMessageForException(viewAction.error)
                     snackbar(requireView(), showError ?: getString(R.string.error_cannot_load_tx_details))
 
                     if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
@@ -90,6 +91,26 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         })
     }
+
+    private fun getErrorMessageForException(throwable: Throwable): String? =
+        when {
+            throwable is HttpException -> {
+                throwable.let {
+                    when (throwable.code()) {
+                        HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> getString(R.string.error_not_authorized_for_action)
+                        HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> getString(R.string.error_try_again)
+                        else -> getString(R.string.error_try_again)
+                    }
+                }
+            }
+            throwable is SSLHandshakeException, throwable.cause is SSLHandshakeException -> {
+                getString(R.string.error_ssl_handshake)
+            }
+            throwable is UnknownHostException, throwable is SocketTimeoutException, throwable is ConnectException -> {
+                getString(R.string.error_no_internet)
+            }
+            else -> getString(R.string.error_try_again)
+        }
 
     override fun onResume() {
         super.onResume()
