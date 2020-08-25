@@ -30,8 +30,9 @@ import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
+import java.io.IOException
 import java.math.BigInteger
+import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
 
@@ -75,8 +76,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-
-                    snackbar(requireView(), viewAction.error.message ?: getString(R.string.error_cannot_load_tx_details))
+                    var showError = viewAction.error.message
+                    if (viewAction.error is IOException) {
+                        showError = getString(R.string.error_no_internet)
+                    }
+                    snackbar(requireView(), showError ?: getString(R.string.error_cannot_load_tx_details))
 
                     if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
                         binding.content.visibility = View.GONE
