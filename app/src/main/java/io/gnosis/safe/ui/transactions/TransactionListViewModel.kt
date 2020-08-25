@@ -41,7 +41,7 @@ class TransactionListViewModel
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers,
-    connectivityManager: ConnectivityManager
+    connectivityManager: ConnectivityManager? = null
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers, connectivityManager) {
 
     private var currentSafeAddress: Solidity.Address? = null
