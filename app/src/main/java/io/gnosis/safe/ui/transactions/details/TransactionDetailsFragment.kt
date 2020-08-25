@@ -76,14 +76,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
 
-                    binding.content.visibility = View.GONE
-
                     snackbar(requireView(), viewAction.error.message ?: getString(R.string.error_cannot_load_tx_details))
                     Timber.e(viewAction.error)
 
-                    // TODO: show error content instead
-
-                    binding.error.visible(true)
+                    if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
+                        binding.content.visibility = View.GONE
+                        binding.error.visible(true)
+                    }
                 }
             }
         })
