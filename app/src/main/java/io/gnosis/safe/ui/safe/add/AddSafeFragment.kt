@@ -60,7 +60,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             when (val action = state.viewAction) {
                 is ShowValidSafe -> handleValid(action.address)
                 is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
-                is BaseStateViewModel.ViewAction.ShowError ->  handleError(action.error)
+                is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
             }
         })
     }

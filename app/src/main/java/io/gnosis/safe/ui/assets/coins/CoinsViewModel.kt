@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.assets.coins
 
-import android.net.ConnectivityManager
 import io.gnosis.data.models.Balance
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
