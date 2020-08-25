@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
+import io.gnosis.safe.utils.getErrorResForException
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -77,6 +78,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             binding.progress.visible(state.isLoading)
+            binding.contentNoData.root.visible(false)
+
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
@@ -90,12 +93,16 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     }
                     is ShowError -> {
                         binding.progress.visible(false)
-                        when(viewAction.error) {
+
+                        if (adapter.itemCount == 0) {
+                            binding.contentNoData.root.visible(true)
+                        }
+                        when (val errorException = viewAction.error) {
                             is Offline -> {
                                 snackbar(requireView(), R.string.error_no_internet)
                             }
                             else -> {
-                                //TODO: handle error
+                                snackbar(requireView(), errorException.getErrorResForException())
                             }
                         }
                     }
