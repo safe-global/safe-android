@@ -18,7 +18,7 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
 
         override fun onLost(network: Network?) {
             super.onLost(network)
-            offline = true
+            offline = connectivityManager.activeNetworkInfo == null
         }
     }
 
