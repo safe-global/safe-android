@@ -103,10 +103,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
             }
-            throwable is SSLHandshakeException, throwable.cause is SSLHandshakeException -> {
+            throwable is SSLHandshakeException || throwable.cause is SSLHandshakeException -> {
                 getString(R.string.error_ssl_handshake)
             }
-            throwable is UnknownHostException, throwable is SocketTimeoutException, throwable is ConnectException -> {
+            throwable is UnknownHostException || throwable is SocketTimeoutException || throwable is ConnectException -> {
                 getString(R.string.error_no_internet)
             }
             else -> getString(R.string.error_try_again)
