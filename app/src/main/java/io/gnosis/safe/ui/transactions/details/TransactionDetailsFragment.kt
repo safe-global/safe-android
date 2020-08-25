@@ -26,10 +26,10 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.formatBackendDate
 import io.gnosis.safe.utils.formattedAmount
+import io.gnosis.safe.utils.getErrorResForException
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.HttpCodes
@@ -87,8 +87,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             snackbar(requireView(), R.string.error_no_internet)
                         }
                         else -> {
-                            val showError = getErrorMessageForException(viewAction.error)
-                            snackbar(requireView(), showError ?: getString(R.string.error_cannot_load_tx_details))
+                            snackbar(requireView(), viewAction.error.getErrorResForException())
 
                             if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
                                 binding.content.visibility = View.GONE
@@ -100,26 +99,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         })
     }
-
-    private fun getErrorMessageForException(throwable: Throwable): String? =
-        when {
-            throwable is HttpException -> {
-                throwable.let {
-                    when (throwable.code()) {
-                        HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> getString(R.string.error_not_authorized_for_action)
-                        HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> getString(R.string.error_try_again)
-                        else -> getString(R.string.error_try_again)
-                    }
-                }
-            }
-            throwable is SSLHandshakeException || throwable.cause is SSLHandshakeException -> {
-                getString(R.string.error_ssl_handshake)
-            }
-            throwable is UnknownHostException || throwable is SocketTimeoutException || throwable is ConnectException -> {
-                getString(R.string.error_no_internet)
-            }
-            else -> getString(R.string.error_try_again)
-        }
 
     override fun onResume() {
         super.onResume()
