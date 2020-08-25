@@ -62,16 +62,16 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
                 }
                 is ShowError -> {
+                    if (!didLoadOnce) {
+                        showContentNoData()
+                    }
+                    hideLoading()
                     when (viewAction.error) {
                         is Offline -> {
-                            hideLoading()
                             snackbar(requireView(), R.string.error_no_internet)
-                            if (!didLoadOnce) {
-                                showContentNoData()
-                            }
                         }
                         else -> {
-                            showError(viewAction.error)
+                            snackbar(requireView(), viewAction.error.getErrorResForException())
                         }
                     }
                 }
@@ -126,14 +126,6 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             refresh.isRefreshing = false
             progress.visible(false)
         }
-    }
-
-    private fun showError(throwable: Throwable) {
-        hideLoading()
-        if (!didLoadOnce) {
-            showContentNoData()
-        }
-        snackbar(requireView(), throwable.getErrorResForException())
     }
 
     private fun showRemoveDialog() {

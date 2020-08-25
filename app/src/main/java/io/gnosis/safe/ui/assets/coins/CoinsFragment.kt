@@ -14,6 +14,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.getErrorResForException
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -49,15 +50,24 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                     binding.refresh.isRefreshing = state.refreshing
                     state.viewAction?.let { action ->
                         when (action) {
-                            is UpdateBalances -> adapter.setItems(action.newBalances)
+                            is UpdateBalances -> {
+                                binding.contentNoData.root.visibility = View.GONE
+                                binding.refresh.visible(true)
+
+                                adapter.setItems(action.newBalances)
+                            }
                             is ShowError -> {
                                 hideLoading()
+
+                                binding.contentNoData.root.visible(true)
+                                binding.refresh.visible(false)
+
                                 when(action.error) {
                                     is Offline -> {
                                         snackbar(requireView(), R.string.error_no_internet)
                                     }
                                     else -> {
-                                        handleError(action.error)
+                                        snackbar(requireView(), action.error.getErrorResForException())
                                     }
                                 }
                             }
@@ -75,10 +85,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
     private fun hideLoading() {
         binding.progress.visible(false)
         binding.refresh.isRefreshing = false
-    }
-
-    private fun handleError(throwable: Throwable) {
-        snackbar(requireView(), R.string.error_loading_balances)
     }
 
     companion object {
