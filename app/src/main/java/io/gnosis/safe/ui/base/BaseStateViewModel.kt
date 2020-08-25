@@ -35,7 +35,6 @@ abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) :
     }
 
     interface ViewAction {
-        data class Connectivity(val offline: Boolean) : ViewAction
         data class Loading(val isLoading: Boolean) : ViewAction
         data class ShowError(val error: Throwable) : ViewAction
         data class UpdateActiveSafe(val newSafe: Safe?) : ViewAction

@@ -17,7 +17,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Connectivity
+import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
@@ -87,11 +88,14 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                             adapter.submitData(PagingData.empty())
                         }
                     }
-                    is Connectivity -> {
-                        if (viewAction.offline) {
-                            snackbar(requireView(), R.string.error_no_internet)
-                        } else {
-
+                    is ShowError -> {
+                        when(viewAction.error) {
+                            is Offline -> {
+                                snackbar(requireView(), R.string.error_no_internet)
+                            }
+                            else -> {
+                                //TODO: handle error
+                            }
                         }
                     }
                     else -> {

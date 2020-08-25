@@ -11,8 +11,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Connectivity
+import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -50,13 +50,15 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                     binding.refresh.isRefreshing = state.refreshing
                     state.viewAction?.let { action ->
                         when (action) {
-                            is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
                             is UpdateBalances -> adapter.setItems(action.newBalances)
-                            is Connectivity -> {
-                                if (action.offline) {
-                                    snackbar(requireView(), R.string.error_no_internet)
-                                } else {
-
+                            is ShowError -> {
+                                when(action.error) {
+                                    is Offline -> {
+                                        snackbar(requireView(), R.string.error_no_internet)
+                                    }
+                                    else -> {
+                                        handleError(action.error)
+                                    }
                                 }
                             }
                             else -> {

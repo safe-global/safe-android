@@ -11,7 +11,6 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.repositories.ConnectivityRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -40,7 +39,6 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
-    private val connectivityRepository: ConnectivityRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
@@ -51,41 +49,26 @@ class TransactionListViewModel
         safeLaunch {
             safeRepository.activeSafeFlow().collect { load() }
         }
-
-        connectivityRepository.register(object : ConnectivityRepository.ConnectivityCallback {
-            override fun onConnectivityChange(offline: Boolean) {
-                safeLaunch {
-                    updateState(true) { viewAction = ViewAction.Connectivity(offline); this }
-                }
-            }
-        })
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        connectivityRepository.unregister()
     }
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
     fun load(forceLoad: Boolean = false) {
-        if (!connectivityRepository.offline) {
-            safeLaunch {
-                val safe = safeRepository.getActiveSafe()
-                updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
-                if (safe != null) {
-                    val safeInfo = safeRepository.getSafeInfo(safe.address)
-                    getTransactions(safe.address, safeInfo, forceLoad).collectLatest {
-                        updateState {
-                            TransactionsViewState(
-                                isLoading = false,
-                                viewAction = LoadTransactions(it)
-                            )
-                        }
+        safeLaunch {
+            val safe = safeRepository.getActiveSafe()
+            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+            if (safe != null) {
+                val safeInfo = safeRepository.getSafeInfo(safe.address)
+                getTransactions(safe.address, safeInfo, forceLoad).collectLatest {
+                    updateState {
+                        TransactionsViewState(
+                            isLoading = false,
+                            viewAction = LoadTransactions(it)
+                        )
                     }
-                } else {
-                    updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
                 }
+            } else {
+                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
             }
         }
     }
@@ -447,7 +430,7 @@ class TransactionListViewModel
             dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
-            amountText = custom.value.formatAmount(isIncoming,  ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
             nonce = custom.nonce.toString()
