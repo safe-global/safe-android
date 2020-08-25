@@ -91,7 +91,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                             if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
                                 binding.content.visibility = View.GONE
-                                binding.error.visible(true)
+                                binding.contentNoData.root.visible(true)
                             }
                         }
                     }
@@ -111,7 +111,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         binding.refresh.isRefreshing = isLoading
         binding.content.visible(true)
-        binding.error.visible(false)
+        binding.contentNoData.root.visible(false)
 
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
