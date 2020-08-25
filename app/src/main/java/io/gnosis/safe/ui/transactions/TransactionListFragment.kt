@@ -90,6 +90,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is Connectivity -> {
                         if (viewAction.offline) {
                             snackbar(requireView(), R.string.error_no_internet)
+                        } else {
+
                         }
                     }
                     else -> {

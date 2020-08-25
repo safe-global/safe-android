@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.assets.coins
 
+import android.net.ConnectivityManager
 import io.gnosis.data.models.Balance
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
@@ -12,8 +13,9 @@ class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
-    appDispatchers: AppDispatchers
-) : BaseStateViewModel<CoinsState>(appDispatchers) {
+    appDispatchers: AppDispatchers,
+    connectivityManager: ConnectivityManager? = null
+) : BaseStateViewModel<CoinsState>(appDispatchers, connectivityManager) {
 
     override fun initialState(): CoinsState = CoinsState(loading = false, refreshing = false, viewAction = null)
 
