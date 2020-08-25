@@ -52,6 +52,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                         when (action) {
                             is UpdateBalances -> adapter.setItems(action.newBalances)
                             is ShowError -> {
+                                hideLoading()
                                 when(action.error) {
                                     is Offline -> {
                                         snackbar(requireView(), R.string.error_no_internet)
@@ -70,6 +71,11 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
             }
         })
         viewModel.load()
+    }
+
+    private fun hideLoading() {
+        binding.progress.visible(false)
+        binding.refresh.isRefreshing = false
     }
 
     private fun handleError(throwable: Throwable) {

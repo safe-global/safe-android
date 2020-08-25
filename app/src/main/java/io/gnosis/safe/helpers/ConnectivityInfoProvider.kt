@@ -8,7 +8,7 @@ import java.io.IOException
 
 class ConnectivityInfoProvider(private val connectivityManager: ConnectivityManager) {
 
-    var offline: Boolean = false
+    var offline: Boolean = true
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
