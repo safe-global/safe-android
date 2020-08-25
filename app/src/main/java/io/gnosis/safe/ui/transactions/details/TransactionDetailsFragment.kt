@@ -20,6 +20,7 @@ import io.gnosis.safe.databinding.TxDetailsCustomBinding
 import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
@@ -28,6 +29,7 @@ import io.gnosis.safe.utils.formattedAmount
 import io.gnosis.safe.utils.logoUri
 import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import java.util.*
@@ -73,7 +75,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.refresh.isRefreshing = false
-                    //TODO: handle error here
+                    when(viewAction.error) {
+                        is Offline -> {
+                            snackbar(requireView(), R.string.error_no_internet)
+                        }
+                        else -> {
+                            //TODO: handle error
+                        }
+                    }
                 }
             }
         })
