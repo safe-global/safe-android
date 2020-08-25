@@ -56,8 +56,10 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                             }
                             is ShowError -> {
                                 hideLoading()
-                                binding.contentNoData.root.visible(true)
-                                when(action.error) {
+                                if (adapter.itemCount == 0) {
+                                    binding.contentNoData.root.visible(true)
+                                }
+                                when (action.error) {
                                     is Offline -> {
                                         snackbar(requireView(), R.string.error_no_internet)
                                     }
