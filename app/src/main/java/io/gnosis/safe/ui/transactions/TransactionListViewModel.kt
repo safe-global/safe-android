@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.transactions
 
-import android.net.ConnectivityManager
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
@@ -12,6 +11,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.repositories.ConnectivityRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -40,9 +40,9 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
-    appDispatchers: AppDispatchers,
-    connectivityManager: ConnectivityManager? = null
-) : BaseStateViewModel<TransactionsViewState>(appDispatchers, connectivityManager) {
+    private val connectivityRepository: ConnectivityRepository,
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
     private var currentSafeAddress: Solidity.Address? = null
     private var currentSafeTxItems: Flow<PagingData<TransactionView>>? = null
@@ -51,26 +51,41 @@ class TransactionListViewModel
         safeLaunch {
             safeRepository.activeSafeFlow().collect { load() }
         }
+
+        connectivityRepository.register(object : ConnectivityRepository.ConnectivityCallback {
+            override fun onConnectivityChange(offline: Boolean) {
+                safeLaunch {
+                    updateState(true) { viewAction = ViewAction.Connectivity(offline); this }
+                }
+            }
+        })
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        connectivityRepository.unregister()
     }
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
     fun load(forceLoad: Boolean = false) {
-        safeLaunch {
-            val safe = safeRepository.getActiveSafe()
-            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
-            if (safe != null) {
-                val safeInfo = safeRepository.getSafeInfo(safe.address)
-                getTransactions(safe.address, safeInfo, forceLoad).collectLatest {
-                    updateState {
-                        TransactionsViewState(
-                            isLoading = false,
-                            viewAction = LoadTransactions(it)
-                        )
+        if (!connectivityRepository.offline) {
+            safeLaunch {
+                val safe = safeRepository.getActiveSafe()
+                updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+                if (safe != null) {
+                    val safeInfo = safeRepository.getSafeInfo(safe.address)
+                    getTransactions(safe.address, safeInfo, forceLoad).collectLatest {
+                        updateState {
+                            TransactionsViewState(
+                                isLoading = false,
+                                viewAction = LoadTransactions(it)
+                            )
+                        }
                     }
+                } else {
+                    updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
                 }
-            } else {
-                updateState(forceViewAction = true) { TransactionsViewState(isLoading = false, viewAction = NoSafeSelected) }
             }
         }
     }

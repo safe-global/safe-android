@@ -1,5 +1,6 @@
 package io.gnosis.safe.di.modules
 
+import android.net.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
@@ -56,4 +57,9 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
+
+    @Provides
+    @Singleton
+    fun providesConnectivityRepository(connectivityManager: ConnectivityManager): ConnectivityRepository =
+        ConnectivityRepository(connectivityManager)
 }

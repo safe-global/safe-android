@@ -13,9 +13,8 @@ class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
-    appDispatchers: AppDispatchers,
-    connectivityManager: ConnectivityManager? = null
-) : BaseStateViewModel<CoinsState>(appDispatchers, connectivityManager) {
+    appDispatchers: AppDispatchers
+) : BaseStateViewModel<CoinsState>(appDispatchers) {
 
     override fun initialState(): CoinsState = CoinsState(loading = false, refreshing = false, viewAction = null)
 
