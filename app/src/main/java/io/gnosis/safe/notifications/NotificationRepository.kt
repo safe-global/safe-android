@@ -24,6 +24,12 @@ class NotificationRepository(
     private val notificationManager: NotificationManager
 ) {
 
+    //FIXME: workaround for versioning validation on notification service
+    private val appVersion: String = BuildConfig.VERSION_NAME
+        .replace("(\\d*)\\.(\\d*)\\.(\\d*)(.*)".toRegex()) {
+            "${it.groupValues[1]}.${it.groupValues[2]}.${it.groupValues[3]}"
+        }
+
     private var deviceUuid: String?
         get() = preferencesManager.prefs.getString(DEVICE_UUID, null)
         set(value) {
@@ -69,12 +75,11 @@ class NotificationRepository(
                         token,
                         BuildConfig.VERSION_CODE,
                         BuildConfig.APPLICATION_ID,
-                        BuildConfig.VERSION_NAME,
+                        appVersion,
                         "ANDROID",
                         deviceUuid
                     )
                 )
-
             }
                 .onSuccess {
                     Timber.d("notification service registration success")
@@ -101,7 +106,7 @@ class NotificationRepository(
                             token,
                             BuildConfig.VERSION_CODE,
                             BuildConfig.APPLICATION_ID,
-                            BuildConfig.VERSION_NAME,
+                            appVersion,
                             "ANDROID",
                             deviceUuid
                         )
