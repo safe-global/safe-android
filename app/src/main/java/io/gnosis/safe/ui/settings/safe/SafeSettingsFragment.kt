@@ -109,7 +109,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             ownersContainer.removeAllViews()
             safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
             masterCopy.address = safeInfo?.masterCopy
-            ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set)
+            ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
         }
     }
 
