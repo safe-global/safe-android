@@ -19,10 +19,11 @@ class EnsInputViewModel
                 it ?: throw EnsResolutionError()
             }
             .onFailure {
-                if (it is Offline)
+                if (it is Offline) {
                     throw it
-                else
+                } else {
                     throw EnsResolutionError(it.cause?.localizedMessage ?: it.localizedMessage)
+                }
             }
             .getOrNull()!!
     }
