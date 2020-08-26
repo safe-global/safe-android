@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Toolbar">
+    style="@style/SafeOverviewToolbar">
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/safe_image"
@@ -27,6 +27,7 @@
         app:layout_constraintEnd_toStartOf="@+id/safe_selection"
         app:layout_constraintStart_toEndOf="@+id/safe_image"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="My Company Funds" />
 
     <TextView
