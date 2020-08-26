@@ -115,8 +115,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
     private fun loadNoSafeFragment() {
         with(binding) {
             transactions.visible(false)
-            imageEmpty.visible(false)
-            labelEmpty.visible(false)
+            emptyPlaceholder.visible(false)
             noSafe.apply {
                 childFragmentManager.beginTransaction()
                     .replace(noSafe.id, noSafeFragment)
@@ -134,16 +133,14 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
     private fun showList() {
         with(binding) {
             transactions.visible(true)
-            imageEmpty.visible(false)
-            labelEmpty.visible(false)
+            emptyPlaceholder.visible(false)
         }
     }
 
     private fun showEmptyState() {
         with(binding) {
             transactions.visible(false)
-            imageEmpty.visible(true)
-            labelEmpty.visible(true)
+            emptyPlaceholder.visible(true)
         }
     }
 
