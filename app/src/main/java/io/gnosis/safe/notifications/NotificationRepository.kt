@@ -5,6 +5,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.models.FirebaseDevice
 import io.gnosis.safe.notifications.models.PushNotification
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -21,7 +22,8 @@ class NotificationRepository(
     private val safeRepository: SafeRepository,
     private val preferencesManager: PreferencesManager,
     private val notificationService: NotificationServiceApi,
-    private val notificationManager: NotificationManager
+    private val notificationManager: NotificationManager,
+    private val tracker: Tracker
 ) {
 
     //FIXME: workaround for versioning validation on notification service
@@ -38,6 +40,14 @@ class NotificationRepository(
             }
         }
 
+    private var pushInfo: String?
+        get() = preferencesManager.prefs.getString(PUSH_INFO, null)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putString(PUSH_INFO, value)
+            }
+        }
+
     suspend fun handlePushNotification(pushNotification: PushNotification) {
         val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
         if (safe == null) {
@@ -45,6 +55,15 @@ class NotificationRepository(
         } else {
             val notification = notificationManager.builder(safe, pushNotification).build()
             notificationManager.show(notification)
+        }
+    }
+
+    suspend fun checkPermissions() {
+        val enabled = notificationManager.notificationsEnabled()
+        val currentPushInfo = if(enabled) Tracker.ParamValues.PUSH_ENABLED else Tracker.ParamValues.PUSH_DISABLED
+        if (pushInfo != currentPushInfo) {
+            pushInfo = currentPushInfo
+            tracker.setPushInfo(enabled)
         }
     }
 
@@ -152,5 +171,6 @@ class NotificationRepository(
 
     companion object {
         private const val DEVICE_UUID = "prefs.string.device_uuid"
+        private const val PUSH_INFO = "prefs.boolean.push_info"
     }
 }

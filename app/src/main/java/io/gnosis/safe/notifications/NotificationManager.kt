@@ -20,7 +20,7 @@ import pm.gnosis.svalinn.common.utils.edit
 class NotificationManager(
     private val context: Context,
     private val preferencesManager: PreferencesManager
-    ) {
+) {
 
     private val notificationManager = NotificationManagerCompat.from(context)
 
@@ -141,6 +141,16 @@ class NotificationManager(
     fun hideAll() {
         latestNotificationId = -1
         notificationManager.cancelAll()
+    }
+
+    fun notificationsEnabled(): Boolean {
+        var enabled = notificationManager.areNotificationsEnabled()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = notificationManager.getNotificationChannel(CHANNEL_ID)
+            enabled = enabled && channel?.importance != NotificationManager.IMPORTANCE_NONE
+
+        }
+        return enabled
     }
 
     private fun txDetailsIntent(safe: Safe, safeTxHash: String): PendingIntent {
