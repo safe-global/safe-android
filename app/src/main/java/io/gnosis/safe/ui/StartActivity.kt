@@ -14,7 +14,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
-import io.gnosis.safe.utils.asMiddleEllipsized
+import io.gnosis.safe.utils.abbreviateEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -118,7 +118,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeImage.setAddress(safe.address)
             safeName.visible(true)
             safeName.text = safe.localName
-            safeAddress.text = safe.address.asEthereumAddressChecksumString().asMiddleEllipsized(4)
+            safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
             safeSelection.visible(true)
         }
     }

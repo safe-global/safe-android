@@ -2,7 +2,6 @@ package io.gnosis.safe.helpers
 
 import android.widget.TextView
 import io.gnosis.safe.utils.formatEthAddress
-import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity

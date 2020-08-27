@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewLabeledAddressItemBinding
-import io.gnosis.safe.utils.asMiddleEllipsized
+import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
@@ -24,7 +24,7 @@ class LabeledAddressItem @JvmOverloads constructor(
         set(value) {
             with(binding) {
                 blockies.setAddress(value)
-                address.text = value?.asEthereumAddressChecksumString()?.asMiddleEllipsized(4)
+                address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
                 binding.root.setOnClickListener {
                     context.openUrl(
                         context.getString(
