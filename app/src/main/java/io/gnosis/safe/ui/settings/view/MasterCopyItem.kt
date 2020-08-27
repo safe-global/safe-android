@@ -11,7 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewMastercopyItemBinding
-import io.gnosis.safe.utils.asMiddleEllipsized
+import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
@@ -30,7 +30,7 @@ class MasterCopyItem @JvmOverloads constructor(
             with(binding) {
                 blockies.setAddress(value)
                 setVersionName(value)
-                address.text = value?.asEthereumAddressChecksumString()?.asMiddleEllipsized(4)
+                address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
                 binding.root.setOnClickListener {
                     context.openUrl(
                         context.getString(
