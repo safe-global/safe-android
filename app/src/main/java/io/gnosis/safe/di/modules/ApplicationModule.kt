@@ -169,8 +169,8 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
-        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
+    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager, tracker: Tracker): NotificationRepository =
+        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager, tracker)
 
     @Provides
     @Singleton

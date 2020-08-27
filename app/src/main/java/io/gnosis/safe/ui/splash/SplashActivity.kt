@@ -69,6 +69,7 @@ class SplashActivity : BaseActivity() {
         )
 
         lifecycleScope.launch {
+            notificationRepo.checkPermissions()
             notificationRepo.register()
         }
     }
