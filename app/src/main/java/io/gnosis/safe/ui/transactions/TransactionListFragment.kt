@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
@@ -51,8 +52,10 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         super.onViewCreated(view, savedInstanceState)
 
         adapter.addLoadStateListener { loadState ->
-            binding.transactions.isVisible = loadState.refresh is LoadState.NotLoading
-            binding.progress.isVisible = loadState.refresh is LoadState.Loading
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                binding.transactions.isVisible = loadState.refresh is LoadState.NotLoading
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading
+            }
         }
         adapter.addDataRefreshListener { isEmpty ->
             // FIXME: find better solution
