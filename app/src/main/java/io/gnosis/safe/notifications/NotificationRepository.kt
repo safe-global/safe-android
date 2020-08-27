@@ -40,11 +40,11 @@ class NotificationRepository(
             }
         }
 
-    private var pushInfo: String?
-        get() = preferencesManager.prefs.getString(PUSH_INFO, null)
+    private var pushInfo: Boolean
+        get() = preferencesManager.prefs.getBoolean(PUSH_INFO, false)
         set(value) {
             preferencesManager.prefs.edit {
-                putString(PUSH_INFO, value)
+                putBoolean(PUSH_INFO, value)
             }
         }
 
@@ -60,9 +60,8 @@ class NotificationRepository(
 
     suspend fun checkPermissions() {
         val enabled = notificationManager.notificationsEnabled()
-        val currentPushInfo = if(enabled) Tracker.ParamValues.PUSH_ENABLED else Tracker.ParamValues.PUSH_DISABLED
-        if (pushInfo != currentPushInfo) {
-            pushInfo = currentPushInfo
+        if (pushInfo != enabled) {
+            pushInfo = enabled
             tracker.setPushInfo(enabled)
         }
     }
