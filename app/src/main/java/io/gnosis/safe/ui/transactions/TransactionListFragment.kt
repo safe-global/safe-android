@@ -58,15 +58,18 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
             }
         }
         adapter.addDataRefreshListener { isEmpty ->
-            // FIXME: find better solution
-            // show empty state only if data was updated due to loaded transactions
-            // and not reseted  due to safe switch
-            if (viewModel.state.value?.viewAction is LoadTransactions && isEmpty)
-                showEmptyState()
-            else
-                showList()
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                // FIXME: find better solution
+                // show empty state only if data was updated due to loaded transactions
+                // and not reseted  due to safe switch
+                if (viewModel.state.value?.viewAction is LoadTransactions && isEmpty) {
+                    showEmptyState()
+                } else {
+                    showList()
+                }
 
-            binding.refresh.isRefreshing = false
+                binding.refresh.isRefreshing = false
+            }
         }
 
         with(binding.transactions) {
