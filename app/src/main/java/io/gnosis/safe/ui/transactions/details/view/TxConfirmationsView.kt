@@ -164,7 +164,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                     }
                     Type.CANCELED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
-                        stepTitle.text = resources.getString(R.string.tx_confirmations_canceled)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_cancelled)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.gnosis_dark_blue))
                     }
                     Type.FAILED -> {
