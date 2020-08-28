@@ -92,8 +92,13 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
                         handleActiveSafe(viewAction.activeSafe)
+                        lifecycleScope.launch {
+                            // if safe changes we need to reset data for recycler
+                            adapter.submitData(PagingData.empty())
+                        }
                     }
                     is ShowError -> {
+                        binding.refresh.isRefreshing = false
                         binding.progress.visible(false)
                         binding.contentNoData.root.visible(true)
 
