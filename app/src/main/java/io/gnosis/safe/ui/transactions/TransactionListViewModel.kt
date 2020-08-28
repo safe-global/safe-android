@@ -44,16 +44,16 @@ class TransactionListViewModel
 
     init {
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { load() }
+            safeRepository.activeSafeFlow().collect { load(true) }
         }
     }
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load() {
+    fun load(safeChange: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
-            updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+            updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val safeInfo = safeRepository.getSafeInfo(safe.address)
                 getTransactions(safe.address, safeInfo).collectLatest {

@@ -53,7 +53,6 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                binding.transactions.isVisible = loadState.refresh is LoadState.NotLoading
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading
             }
         }
@@ -66,6 +65,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     showEmptyState()
                 } else {
                     showList()
+                    binding.transactions.scrollToPosition(0)
                 }
 
                 binding.refresh.isRefreshing = false
@@ -92,10 +92,6 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
                         handleActiveSafe(viewAction.activeSafe)
-                        lifecycleScope.launch {
-                            // if safe changes we need to reset data for recycler to be at the top of the list
-                            adapter.submitData(PagingData.empty())
-                        }
                     }
                     is ShowError -> {
                         binding.progress.visible(false)
