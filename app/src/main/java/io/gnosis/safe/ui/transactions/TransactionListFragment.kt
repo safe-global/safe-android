@@ -115,6 +115,10 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModel.load()
     }
 
