@@ -180,7 +180,7 @@
     <string name="push_text_failed">%1$s: Transaction failed</string>
 
     <string name="push_title_received_eth">Incoming ETH</string>
-    <string name="push_text_received_eth">%1$s: ETH received</string>
+    <string name="push_text_received_eth">%1$s: %2$s ETH received</string>
 
     <string name="push_title_received_erc20">Incoming ERC20</string>
     <string name="push_text_received_erc20">%1$s: ERC20 tokens received</string>

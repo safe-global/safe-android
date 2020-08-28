@@ -9,13 +9,18 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import io.gnosis.data.backend.dto.ServiceTokenInfo
+import io.gnosis.data.models.Erc20Token
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.utils.formatForTxList
+import io.gnosis.safe.utils.shifted
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import java.text.DecimalFormat
 
 class NotificationManager(
     private val context: Context,
@@ -91,7 +96,10 @@ class NotificationManager(
             }
             is PushNotification.IncomingEther -> {
                 title = context.getString(R.string.push_title_received_eth)
-                text = context.getString(R.string.push_text_received_eth, safeName)
+                //TODO: use balance formatter
+                val formatter = DecimalFormat("#0.0#####")
+                val value = formatter.format(pushNotification.value.shifted(TokenRepository.ETH_TOKEN_INFO.decimals))
+                text = context.getString(R.string.push_text_received_eth, safeName, value)
                 intent = txListIntent(safe)
             }
         }
