@@ -42,9 +42,6 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    private var currentSafeAddress: Solidity.Address? = null
-    private var currentSafeTxItems: Flow<PagingData<TransactionView>>? = null
-
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { load() }
@@ -53,13 +50,13 @@ class TransactionListViewModel
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load(forceLoad: Boolean = false) {
+    fun load() {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
             if (safe != null) {
                 val safeInfo = safeRepository.getSafeInfo(safe.address)
-                getTransactions(safe.address, safeInfo, forceLoad).collectLatest {
+                getTransactions(safe.address, safeInfo).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -73,14 +70,7 @@ class TransactionListViewModel
         }
     }
 
-    private fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo, forceLoad: Boolean): Flow<PagingData<TransactionView>> {
-
-        val lastResult = currentSafeTxItems
-        if (!forceLoad && safe == currentSafeAddress && lastResult != null) {
-            return lastResult
-        }
-
-        currentSafeAddress = safe
+    private fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo): Flow<PagingData<TransactionView>> {
 
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, safeInfo)
             .map { pagingData ->
@@ -120,7 +110,6 @@ class TransactionListViewModel
             }
             .cachedIn(viewModelScope)
 
-        currentSafeTxItems = safeTxItems
         return safeTxItems
     }
 
