@@ -35,6 +35,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : R
     fun bind(balanceItem: Balance) {
         with(viewBinding) {
             logoImage.loadTokenLogo(balanceItem.token.logoUrl)
+            //TODO: use balance formatter
             val formatter = DecimalFormat("#0.0#####")
             symbol.text = balanceItem.token.symbol
             balance.text = formatter.format(balanceItem.balance.shifted(balanceItem.token.decimals))

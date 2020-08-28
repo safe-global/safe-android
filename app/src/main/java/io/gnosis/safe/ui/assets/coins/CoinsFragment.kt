@@ -12,8 +12,8 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.getErrorResForException
 import pm.gnosis.svalinn.common.utils.snackbar
