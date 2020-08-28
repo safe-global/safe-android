@@ -9,8 +9,6 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.models.Erc20Token
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R

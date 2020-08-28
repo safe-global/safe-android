@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
@@ -42,12 +43,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
         }
         setupNav()
+
+        handleNotifications(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        handleNotifications(intent)
+    }
 
-        // Workaround in order to change active safe when push notification for unselected safe is received
+    // Workaround in order to change active safe when push notification for unselected safe is received
+    private fun handleNotifications(intent: Intent?) {
         intent?.let {
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
@@ -131,7 +137,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         fun createIntent(context: Context, safe: Safe, txId: String? = null) =
             Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressChecksumString())
+                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressString())
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
