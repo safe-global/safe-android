@@ -3,9 +3,7 @@ package io.gnosis.safe.ui.transactions
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.insertSeparators
+import androidx.paging.*
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.Transaction

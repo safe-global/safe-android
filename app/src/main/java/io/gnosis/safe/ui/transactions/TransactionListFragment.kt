@@ -54,6 +54,14 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading
+                val append = loadState.append
+                if(append is LoadState.Error) {
+                    handleError(append.error)
+                }
+                val prepend = loadState.prepend
+                if(prepend is LoadState.Error) {
+                    handleError(prepend.error)
+                }
             }
         }
         adapter.addDataRefreshListener { isEmpty ->
@@ -102,14 +110,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                         binding.progress.visible(false)
                         binding.contentNoData.root.visible(true)
 
-                        when (val errorException = viewAction.error) {
-                            is Offline -> {
-                                snackbar(requireView(), R.string.error_no_internet)
-                            }
-                            else -> {
-                                snackbar(requireView(), errorException.getErrorResForException())
-                            }
-                        }
+                        handleError(viewAction.error)
                     }
                     else -> {
                     }
@@ -121,6 +122,17 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
     override fun onResume() {
         super.onResume()
         viewModel.load()
+    }
+
+    private fun handleError(error: Throwable) {
+        when (error) {
+            is Offline -> {
+                snackbar(requireView(), R.string.error_no_internet)
+            }
+            else -> {
+                snackbar(requireView(), error.getErrorResForException())
+            }
+        }
     }
 
     private fun loadNoSafeFragment() {
