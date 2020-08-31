@@ -55,8 +55,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
-                binding.refresh.isRefreshing = false
-
+                binding.refresh.isRefreshing = adapter.itemCount != 0 &&
+                        (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading || loadState.prepend is LoadState.Loading)
                 val append = loadState.append
                 if (append is LoadState.Error) {
                     handleError(append.error)
@@ -115,7 +115,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     override fun onResume() {
         super.onResume()
-        binding.refresh.isRefreshing = true
+        binding.transactions.scrollToPosition(0)
         viewModel.load()
     }
 
