@@ -56,15 +56,15 @@ class PushNotificationTest {
                         mapOf(
                             "type" to "INCOMING_TOKEN",
                             "address" to TEST_SAFE,
-                            "value" to TEST_VALUE,
                             "txHash" to TEST_TX_HASH,
-                            "tokenAddress" to TEST_TOKEN_ADDRESS
+                            "tokenAddress" to TEST_TOKEN_ADDRESS,
+                            "value" to TEST_VALUE
                         ),
                         PushNotification.IncomingToken(
                             TEST_SAFE.asEthereumAddress()!!,
                             TEST_TX_HASH,
-                            TEST_VALUE.toBigInteger(),
-                            TEST_TOKEN_ADDRESS.asEthereumAddress()!!
+                            TEST_TOKEN_ADDRESS.asEthereumAddress()!!,
+                            TEST_VALUE.toBigInteger()
                         )
                     ),
             //ERC721
@@ -73,7 +73,6 @@ class PushNotificationTest {
                         mapOf(
                             "type" to "INCOMING_TOKEN",
                             "address" to TEST_SAFE,
-                            "value" to TEST_VALUE,
                             "txHash" to TEST_TX_HASH,
                             "tokenAddress" to TEST_TOKEN_ADDRESS,
                             "tokenId" to TEST_TOKEN_ID
@@ -81,8 +80,8 @@ class PushNotificationTest {
                         PushNotification.IncomingToken(
                             TEST_SAFE.asEthereumAddress()!!,
                             TEST_TX_HASH,
-                            TEST_VALUE.toBigInteger(),
                             TEST_TOKEN_ADDRESS.asEthereumAddress()!!,
+                            null,
                             TEST_TOKEN_ID
                         )
                     ),

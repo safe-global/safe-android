@@ -29,9 +29,9 @@ sealed class PushNotification(
     data class IncomingToken(
         override val safe: Solidity.Address,
         val txHash: String,
-        val value: BigInteger,
         val tokenAddress: Solidity.Address,
-        val tokenId: String? = null // for ERC721 tokens
+        val value: BigInteger? = null, // null for ERC721 tokens
+        val tokenId: String? = null    // null for ERC20 tokens
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "INCOMING_TOKEN"
@@ -39,8 +39,8 @@ sealed class PushNotification(
                 IncomingToken(
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("txHash"),
-                    params.getOrThrow("value").toBigInteger(),
                     params.getOrThrow("tokenAddress").asEthereumAddress()!!,
+                    params["value"]?.toBigInteger(),
                     params["tokenId"]
                 )
         }
