@@ -53,30 +53,24 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading
+                binding.refresh.isRefreshing = false
+
                 val append = loadState.append
-                if(append is LoadState.Error) {
+                if (append is LoadState.Error) {
                     handleError(append.error)
                 }
                 val prepend = loadState.prepend
-                if(prepend is LoadState.Error) {
+                if (prepend is LoadState.Error) {
                     handleError(prepend.error)
                 }
-            }
-        }
-        adapter.addDataRefreshListener { isEmpty ->
-            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                // FIXME: find better solution
-                // show empty state only if data was updated due to loaded transactions
-                // and not reseted  due to safe switch
-                if (viewModel.state.value?.viewAction is LoadTransactions && isEmpty) {
+
+                if (viewModel.state.value?.viewAction is LoadTransactions && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     showEmptyState()
                 } else {
                     showList()
-                    binding.transactions.scrollToPosition(0)
                 }
-
-                binding.refresh.isRefreshing = false
             }
         }
 
@@ -121,6 +115,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     override fun onResume() {
         super.onResume()
+        binding.transactions.scrollToPosition(0)
         viewModel.load()
     }
 
