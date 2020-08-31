@@ -54,7 +54,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
-                binding.progress.isVisible = loadState.refresh is LoadState.Loading
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
                 binding.refresh.isRefreshing = false
 
                 val append = loadState.append
@@ -85,7 +85,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         binding.refresh.setOnRefreshListener { viewModel.load() }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            binding.progress.visible(state.isLoading)
+
             binding.contentNoData.root.visible(false)
 
             state.viewAction.let { viewAction ->
