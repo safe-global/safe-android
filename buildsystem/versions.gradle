@@ -19,7 +19,7 @@ ext {
             androidx_room                   : '2.2.5',
             androidx_navigation             : '2.2.2',
             androidx_fragment               : '1.2.4',
-            androidx_paging                 : '3.0.0-alpha02',
+            androidx_paging                 : '3.0.0-alpha05',
             billing                         : '1.0',
             bivrost                         : '0.8.0',
             bouncycastle                    : '1.61',

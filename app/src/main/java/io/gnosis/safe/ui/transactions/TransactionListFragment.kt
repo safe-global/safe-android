@@ -53,22 +53,24 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                binding.transactions.isVisible = loadState.refresh is LoadState.NotLoading
-                binding.progress.isVisible = loadState.refresh is LoadState.Loading
-            }
-        }
-        adapter.addDataRefreshListener { isEmpty ->
-            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                // FIXME: find better solution
-                // show empty state only if data was updated due to loaded transactions
-                // and not reseted  due to safe switch
-                if (viewModel.state.value?.viewAction is LoadTransactions && isEmpty) {
+
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
+                binding.refresh.isRefreshing = false
+
+                val append = loadState.append
+                if (append is LoadState.Error) {
+                    handleError(append.error)
+                }
+                val prepend = loadState.prepend
+                if (prepend is LoadState.Error) {
+                    handleError(prepend.error)
+                }
+
+                if (viewModel.state.value?.viewAction is LoadTransactions && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     showEmptyState()
                 } else {
                     showList()
                 }
-
-                binding.refresh.isRefreshing = false
             }
         }
 
@@ -80,10 +82,10 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
             layoutManager = LinearLayoutManager(requireContext())
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
-        binding.refresh.setOnRefreshListener { viewModel.load(true) }
+        binding.refresh.setOnRefreshListener { viewModel.load() }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            binding.progress.visible(state.isLoading)
+
             binding.contentNoData.root.visible(false)
 
             state.viewAction.let { viewAction ->
@@ -93,22 +95,16 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is ActiveSafeChanged -> {
                         handleActiveSafe(viewAction.activeSafe)
                         lifecycleScope.launch {
-                            // if safe changes we need to reset data for recycler to be at the top of the list
+                            // if safe changes we need to reset data for recycler
                             adapter.submitData(PagingData.empty())
                         }
                     }
                     is ShowError -> {
+                        binding.refresh.isRefreshing = false
                         binding.progress.visible(false)
                         binding.contentNoData.root.visible(true)
 
-                        when (val errorException = viewAction.error) {
-                            is Offline -> {
-                                snackbar(requireView(), R.string.error_no_internet)
-                            }
-                            else -> {
-                                snackbar(requireView(), errorException.getErrorResForException())
-                            }
-                        }
+                        handleError(viewAction.error)
                     }
                     else -> {
                     }
@@ -119,7 +115,19 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     override fun onResume() {
         super.onResume()
+        binding.transactions.scrollToPosition(0)
         viewModel.load()
+    }
+
+    private fun handleError(error: Throwable) {
+        when (error) {
+            is Offline -> {
+                snackbar(requireView(), R.string.error_no_internet)
+            }
+            else -> {
+                snackbar(requireView(), error.getErrorResForException())
+            }
+        }
     }
 
     private fun loadNoSafeFragment() {
