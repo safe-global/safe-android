@@ -102,7 +102,9 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is ShowError -> {
                         binding.refresh.isRefreshing = false
                         binding.progress.visible(false)
-                        binding.contentNoData.root.visible(true)
+                        if (adapter.itemCount == 0) {
+                            binding.contentNoData.root.visible(true)
+                        }
 
                         handleError(viewAction.error)
                     }
