@@ -55,8 +55,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
-                binding.refresh.isRefreshing = adapter.itemCount != 0 &&
-                        (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading || loadState.prepend is LoadState.Loading)
+                binding.refresh.isRefreshing =
+                    loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading || loadState.prepend is LoadState.Loading
                 val append = loadState.append
                 if (append is LoadState.Error) {
                     handleError(append.error)
