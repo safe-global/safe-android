@@ -115,7 +115,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     override fun onResume() {
         super.onResume()
-        binding.transactions.scrollToPosition(0)
+        binding.refresh.isRefreshing = true
         viewModel.load()
     }
 
