@@ -163,7 +163,7 @@
     <string name="tx_confirmations_created">Created</string>
     <string name="tx_confirmations_confirmed">Confirmed</string>
     <string name="tx_confirmations_failed">Failed</string>
-    <string name="tx_confirmations_canceled">Canceled</string>
+    <string name="tx_confirmations_cancelled">Cancelled</string>
     <string name="tx_confirmations_execute_ready">Execute</string>
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>

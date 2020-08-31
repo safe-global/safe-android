@@ -65,7 +65,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                 }
             }
             TransactionStatus.CANCELLED -> {
-                addExecutionStep(TxExecutionStep.Type.CANCELED)
+                addExecutionStep(TxExecutionStep.Type.CANCELLED)
             }
             TransactionStatus.FAILED -> {
                 addExecutionStep(TxExecutionStep.Type.FAILED)
@@ -133,7 +133,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         enum class Type {
             CREATED,
             CONFIRMED,
-            CANCELED,
+            CANCELLED,
             FAILED,
             EXECUTE_WAITING,
             EXECUTE_READY,
@@ -162,9 +162,9 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepTitle.text = resources.getString(R.string.tx_confirmations_confirmed)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
                     }
-                    Type.CANCELED -> {
+                    Type.CANCELLED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
-                        stepTitle.text = resources.getString(R.string.tx_confirmations_canceled)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_cancelled)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.gnosis_dark_blue))
                     }
                     Type.FAILED -> {
