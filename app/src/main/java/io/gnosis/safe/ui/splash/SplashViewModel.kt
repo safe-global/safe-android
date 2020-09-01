@@ -33,7 +33,7 @@ constructor(
         val pushEnabled = notificationRepository.checkPermissions()
         tracker.setPushInfo(pushEnabled)
 
-        val numSafes = safeRepository.getSafes().size
+        val numSafes = safeRepository.getSafesCount()
         tracker.setNumSafes(numSafes)
     }
 
