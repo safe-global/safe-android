@@ -14,6 +14,9 @@ interface SafeDao {
     @Delete
     suspend fun delete(safe: Safe)
 
+    @Query("SELECT COUNT(*) FROM ${Safe.TABLE_NAME}")
+    suspend fun safeCount(): Int
+
     @Query("SELECT * FROM ${Safe.TABLE_NAME}")
     suspend fun loadAll(): List<Safe>
 

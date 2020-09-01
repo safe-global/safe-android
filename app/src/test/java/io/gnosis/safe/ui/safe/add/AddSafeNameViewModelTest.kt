@@ -95,7 +95,7 @@ class AddSafeNameViewModelTest {
 
     @Test
     fun `submitAddressAndName (name) should succeed`() {
-        coEvery { safeRepository.getSafes() } returns listOf()
+        coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
         coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
@@ -111,14 +111,14 @@ class AddSafeNameViewModelTest {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            safeRepository.getSafes()
+            safeRepository.getSafeCount()
             tracker.setNumSafes(0)
         }
     }
 
     @Test
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
-        coEvery { safeRepository.getSafes() } returns listOf()
+        coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
         coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
@@ -134,7 +134,7 @@ class AddSafeNameViewModelTest {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             notificationRepository.registerSafe(VALID_SAFE_ADDRESS)
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            safeRepository.getSafes()
+            safeRepository.getSafeCount()
             tracker.setNumSafes(0)
         }
     }

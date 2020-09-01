@@ -5,7 +5,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.models.FirebaseDevice
 import io.gnosis.safe.notifications.models.PushNotification
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -22,8 +21,7 @@ class NotificationRepository(
     private val safeRepository: SafeRepository,
     private val preferencesManager: PreferencesManager,
     private val notificationService: NotificationServiceApi,
-    private val notificationManager: NotificationManager,
-    private val tracker: Tracker
+    private val notificationManager: NotificationManager
 ) {
 
     //FIXME: workaround for versioning validation on notification service
@@ -40,14 +38,6 @@ class NotificationRepository(
             }
         }
 
-    private var pushInfo: Boolean
-        get() = preferencesManager.prefs.getBoolean(PUSH_INFO, false)
-        set(value) {
-            preferencesManager.prefs.edit {
-                putBoolean(PUSH_INFO, value)
-            }
-        }
-
     suspend fun handlePushNotification(pushNotification: PushNotification) {
         val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
         if (safe == null) {
@@ -58,12 +48,10 @@ class NotificationRepository(
         }
     }
 
-    suspend fun checkPermissions() {
-        val enabled = notificationManager.notificationsEnabled()
-        if (pushInfo != enabled) {
-            pushInfo = enabled
-            tracker.setPushInfo(enabled)
-        }
+    fun checkPermissions(): Boolean = notificationManager.notificationsEnabled()
+
+    fun clearNotifications() {
+        notificationManager.hideAll()
     }
 
     suspend fun register() {
@@ -116,20 +104,20 @@ class NotificationRepository(
 
     suspend fun registerSafe(safeAddress: Solidity.Address) {
         kotlin.runCatching {
-                val token = getCloudMessagingToken()
-                token?.let {
-                    notificationService.register(
-                        FirebaseDevice(
-                            listOf(safeAddress.asEthereumAddressChecksumString()),
-                            token,
-                            BuildConfig.VERSION_CODE,
-                            BuildConfig.APPLICATION_ID,
-                            appVersion,
-                            "ANDROID",
-                            deviceUuid
-                        )
+            val token = getCloudMessagingToken()
+            token?.let {
+                notificationService.register(
+                    FirebaseDevice(
+                        listOf(safeAddress.asEthereumAddressChecksumString()),
+                        token,
+                        BuildConfig.VERSION_CODE,
+                        BuildConfig.APPLICATION_ID,
+                        appVersion,
+                        "ANDROID",
+                        deviceUuid
                     )
-                }
+                )
+            }
         }
             .onSuccess {
                 deviceUuid = it?.uuid
@@ -170,6 +158,5 @@ class NotificationRepository(
 
     companion object {
         private const val DEVICE_UUID = "prefs.string.device_uuid"
-        private const val PUSH_INFO = "prefs.boolean.push_info"
     }
 }
