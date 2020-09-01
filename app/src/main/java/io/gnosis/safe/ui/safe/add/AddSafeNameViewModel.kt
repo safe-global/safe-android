@@ -33,7 +33,7 @@ class AddSafeNameViewModel
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
                 updateState { AddSafeNameState(ViewAction.CloseScreen) }
-                tracker.setNumSafes(safeRepository.getSafesCount())
+                tracker.setNumSafes(safeRepository.getSafeCount())
             }
         }
     }

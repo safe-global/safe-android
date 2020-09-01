@@ -119,7 +119,7 @@ class SplashViewModelTest {
         coEvery { notificationRepository.checkPermissions() } returns true
         coEvery { tracker.setPushInfo(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
-        coEvery { safeRepository.getSafesCount() } returns 0
+        coEvery { safeRepository.getSafeCount() } returns 0
 
         val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
 

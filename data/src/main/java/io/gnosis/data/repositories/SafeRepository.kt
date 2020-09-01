@@ -44,7 +44,7 @@ class SafeRepository(
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAll()
 
-    suspend fun getSafesCount(): Int = safeDao.safesCount()
+    suspend fun getSafeCount(): Int = safeDao.safeCount()
 
     suspend fun saveSafe(safe: Safe) = safeDao.insert(safe)
 
