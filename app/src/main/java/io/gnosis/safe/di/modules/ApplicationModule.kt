@@ -3,7 +3,6 @@ package io.gnosis.safe.di.modules
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import androidx.core.net.ConnectivityManagerCompat
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -169,8 +168,8 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager, tracker: Tracker): NotificationRepository =
-        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager, tracker)
+    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
+        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
