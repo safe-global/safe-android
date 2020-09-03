@@ -50,7 +50,11 @@ sealed class TransactionInfoDto {
     ) : TransactionInfoDto()
 
     data class Creation(
-        override val type: GateTransactionType = GateTransactionType.Creation
+        override val type: GateTransactionType = GateTransactionType.Creation,
+        val creator: Solidity.Address,
+        val transactionHash: String,
+        val implementation: Solidity.Address,
+        val factory: Solidity.Address
     ) : TransactionInfoDto()
 
     data class Unknown(

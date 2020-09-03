@@ -200,4 +200,5 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
+    <string name="tx_list_creation">Safe created</string>
 </resources>

@@ -7,13 +7,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ItemTxChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedChangeMastercopyBinding
-import io.gnosis.safe.databinding.ItemTxQueuedSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxQueuedTransferBinding
-import io.gnosis.safe.databinding.ItemTxSectionHeaderBinding
-import io.gnosis.safe.databinding.ItemTxSettingsChangeBinding
-import io.gnosis.safe.databinding.ItemTxTransferBinding
+import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
@@ -29,7 +23,8 @@ enum class TransactionViewType {
     SETTINGS_CHANGE_QUEUED,
     CUSTOM_TRANSACTION,
     CUSTOM_TRANSACTION_QUEUED,
-    SECTION_HEADER
+    SECTION_HEADER,
+    CREATION
 }
 
 class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<TransactionView>, TransactionView>() {
@@ -46,6 +41,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.CUSTOM_TRANSACTION.ordinal -> CustomTransactionViewHolder(viewBinding as ItemTxTransferBinding)
             TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> CustomTransactionQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
             TransactionViewType.SECTION_HEADER.ordinal -> SectionHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
+            TransactionViewType.CREATION.ordinal -> CreationTransactionViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -60,6 +56,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.TRANSFER_QUEUED.ordinal,
             TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> ItemTxQueuedTransferBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CREATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -74,6 +71,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
             is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
+            is TransactionView.Creation -> TransactionViewType.CREATION
             is TransactionView.Unknown -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
 }
@@ -325,6 +323,27 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             root.setOnClickListener {
                 navigateToTxDetails(it, viewTransfer.id)
             }
+        }
+    }
+}
+
+class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
+    BaseTransactionViewHolder<TransactionView.Creation>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.Creation, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+        with(viewBinding) {
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+
+            dateTime.text = viewTransfer.dateTimeText
+            settingName.setText(viewTransfer.label)
+
+            // TODO: Add in future PR
+//            root.setOnClickListener {
+//                // TBD
+//            }
         }
     }
 }

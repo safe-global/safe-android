@@ -134,6 +134,15 @@ sealed class TransactionView(
         val nonce: String
     ) : TransactionView(status, id)
 
+    data class Creation(
+        override val id: String,
+        override val status: TransactionStatus,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        @StringRes val label: Int
+    ) : TransactionView(status, id)
+
     data class SectionHeader(@StringRes val title: Int, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
 
     object Unknown : TransactionView(null, "<unused>")

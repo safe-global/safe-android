@@ -52,7 +52,7 @@ fun TransactionInfo.formattedAmount(): String =
             value.formatAmount(incoming, decimals, symbol)
         }
         is TransactionInfo.SettingsChange -> "0 ETH"
-        TransactionInfo.Creation -> "0 ETH"
+        is TransactionInfo.Creation -> "0 ETH"
         TransactionInfo.Unknown -> "0 ETH"
     }
 
@@ -69,7 +69,7 @@ fun TransactionInfo.logoUri(): String? =
                 "local::ethereum"
             }
         }
-        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, TransactionInfo.Creation, TransactionInfo.Unknown -> "local::ethereum"
+        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::ethereum"
     }
 
 fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {

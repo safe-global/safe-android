@@ -131,6 +131,7 @@ class TransactionListViewModel
             transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
             transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(transaction, safeInfo)
             transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction, safeInfo)
+            transaction is Creation -> historicCreation(transaction)
             else -> TransactionView.Unknown
         } as TransactionView
     }
@@ -442,6 +443,18 @@ class TransactionListViewModel
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
             amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
+        )
+    }
+
+    private fun historicCreation(transaction: Creation): TransactionView.Creation {
+
+        return TransactionView.Creation(
+            id = transaction.id,
+            status = transaction.status,
+            statusText = displayString(transaction.status),
+            statusColorRes = statusTextColor(transaction.status),
+            dateTimeText = transaction.timestamp.formatBackendDate(),
+            label = R.string.tx_list_creation
         )
     }
 

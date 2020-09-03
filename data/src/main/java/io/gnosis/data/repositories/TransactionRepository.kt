@@ -1,25 +1,8 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.ConfirmationsDto
-import io.gnosis.data.backend.dto.DetailedExecutionInfoDto
-import io.gnosis.data.backend.dto.GateTransactionDetailsDto
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfoDto
-import io.gnosis.data.backend.dto.TransferInfoDto
-import io.gnosis.data.backend.dto.TxDataDto
-import io.gnosis.data.models.Confirmations
-import io.gnosis.data.models.DetailedExecutionInfo
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionDetails
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransactionStatus
-import io.gnosis.data.models.TransferInfo
-import io.gnosis.data.models.TxData
+import io.gnosis.data.backend.dto.*
+import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -105,7 +88,12 @@ class TransactionRepository(
                     transferInfo = transferInfo.toTransferInfo(),
                     direction = direction
                 )
-            is TransactionInfoDto.Creation -> TransactionInfo.Creation
+            is TransactionInfoDto.Creation -> TransactionInfo.Creation(
+                creator = creator,
+                factory = factory,
+                implementation = implementation,
+                transactionHash = transactionHash
+            )
             is TransactionInfoDto.Unknown -> TransactionInfo.Unknown
         }
 
@@ -186,7 +174,15 @@ class TransactionRepository(
             is TransactionInfoDto.Creation -> Transaction.Creation(
                 id = id,
                 confirmations = null,
-                status = TransactionStatus.SUCCESS
+                status = TransactionStatus.SUCCESS,
+                executionInfo = null,
+                timestamp = timestamp.toDate(),
+                txInfo = TransactionInfo.Creation(
+                    creator = txInfo.creator,
+                    transactionHash = txInfo.transactionHash,
+                    implementation = txInfo.implementation,
+                    factory = txInfo.factory
+                )
             )
             is TransactionInfoDto.Unknown -> Transaction.Custom(
                 id = id,
