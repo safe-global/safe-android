@@ -58,7 +58,12 @@ sealed class TransactionInfo {
         val direction: TransactionDirection
     ) : TransactionInfo()
 
-    object Creation : TransactionInfo()
+    data class Creation(
+        val creator: Solidity.Address,
+        val transactionHash: String,
+        val implementation: Solidity.Address?,
+        val factory: Solidity.Address?
+    ) : TransactionInfo()
 
     object Unknown : TransactionInfo()
 }
