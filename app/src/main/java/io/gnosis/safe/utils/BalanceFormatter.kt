@@ -1,22 +1,45 @@
 package io.gnosis.safe.utils
 
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class BalanceFormatter {
 
     private val formatter1k = DecimalFormat("#.#####")
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
     private val formatter10k = DecimalFormat("#,###.####")
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
     private val formatter100k = DecimalFormat("##,###.###")
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
     private val formatter1M = DecimalFormat("###,###.##")
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
     private val formatter10M = DecimalFormat("#,###,###.#")
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
     private val formatter100M = DecimalFormat("#,###,###")
-    private val formatterBigNumber = DecimalFormat("#.###").apply {
+        .apply {
+            roundingMode = RoundingMode.DOWN
+        }
+    private val formatterBigNumber = DecimalFormat("#.###")
+        .apply {
         roundingMode = RoundingMode.DOWN
     }
 
     fun shortAmount(value: BigDecimal): String = when {
+        value <= BigDecimal.ZERO -> {
+            "0"
+        }
         value < LOWEST_LIMIT -> {
             "< 0.00001"
         }
@@ -53,6 +76,12 @@ class BalanceFormatter {
         else -> {
             "> 999T"
         }
+    }
+
+    fun formatAmount(amount: BigInteger, incoming: Boolean, decimals: Int = 18, symbol: String = "ETH"): String {
+        val inOut = if (amount == BigInteger.ZERO) "" else if (incoming) "+" else "-"
+        val decimalValue = amount.shifted(decimals = decimals)
+        return "%s%s %s".format(inOut, shortAmount(decimalValue), symbol)
     }
 
     companion object {

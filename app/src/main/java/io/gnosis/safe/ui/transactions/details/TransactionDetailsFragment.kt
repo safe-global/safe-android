@@ -24,23 +24,13 @@ import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
-import io.gnosis.safe.utils.formatBackendDate
-import io.gnosis.safe.utils.formattedAmount
-import io.gnosis.safe.utils.getErrorResForException
-import io.gnosis.safe.utils.logoUri
-import io.gnosis.safe.utils.txActionInfoItems
+import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.HttpCodes
-import retrofit2.HttpException
 import java.math.BigInteger
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
-import javax.net.ssl.SSLHandshakeException
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
@@ -51,6 +41,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     @Inject
     lateinit var viewModel: TransactionDetailsViewModel
+
+    @Inject
+    lateinit var balanceFormatter: BalanceFormatter
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -125,7 +118,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
-                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", address)
+                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri() ?: "", address)
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
@@ -151,7 +144,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(), txInfo.logoUri()!!, txInfo.to)
+                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
                 txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
             }
