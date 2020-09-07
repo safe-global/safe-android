@@ -53,18 +53,9 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             txHashItem.name = getString(R.string.tx_details_advanced_hash)
             txHashItem.value = transActionHash
 
-            if (creator != null) {
-                creatorItemTitle.visible(true)
-                creatorItem.visible(true)
-                creatorSeparator.visible(true)
+            creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
+            creatorItem.address = creator!!.asEthereumAddress()
 
-                creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
-                creatorItem.address = creator!!.asEthereumAddress()
-            } else {
-                creatorSeparator.visible(false)
-                creatorItemTitle.visible(false)
-                creatorItem.visible(false)
-            }
 
             if (implementation != null) {
                 implementationSeparator.visible(true)
@@ -95,19 +86,15 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             createdItem.name = getString(R.string.tx_details_created)
             createdItem.value = dateTimeText
 
-            if (transActionHash != null) {
-                etherscanItem.visible(true)
-                etherscanItem.setOnClickListener {
-                    requireContext().openUrl(
-                        getString(
-                            R.string.etherscan_transaction_url,
-                            transActionHash
-                        )
+            etherscanItem.setOnClickListener {
+                requireContext().openUrl(
+                    getString(
+                        R.string.etherscan_transaction_url,
+                        transActionHash
                     )
-                }
-            } else {
-                etherscanItem.visibility = View.GONE
+                )
             }
+
         }
     }
 }
