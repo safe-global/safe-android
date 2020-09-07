@@ -4,36 +4,33 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
 
 class BalanceFormatter {
 
-    private val formatter1k = DecimalFormat("#.#####")
-        .apply {
+    private val formatter1k: DecimalFormat
+    private val formatter10k: DecimalFormat
+    private val formatter100k: DecimalFormat
+    private val formatter1M: DecimalFormat
+    private val formatter10M: DecimalFormat
+    private val formatter100M: DecimalFormat
+    private val formatterBigNumber: DecimalFormat
+
+    init {
+        val otherSymbols = DecimalFormatSymbols(Locale.getDefault())
+        otherSymbols.decimalSeparator = '.'
+        otherSymbols.groupingSeparator = ','
+
+        formatter1k = DecimalFormat("#.#####", otherSymbols)
+        formatter10k = DecimalFormat("#,###.####", otherSymbols)
+        formatter100k = DecimalFormat("##,###.###", otherSymbols)
+        formatter1M = DecimalFormat("###,###.##", otherSymbols)
+        formatter10M = DecimalFormat("#,###,###.#", otherSymbols)
+        formatter100M = DecimalFormat("#,###,###", otherSymbols)
+        formatterBigNumber = DecimalFormat("#.###", otherSymbols).apply {
             roundingMode = RoundingMode.DOWN
         }
-    private val formatter10k = DecimalFormat("#,###.####")
-        .apply {
-            roundingMode = RoundingMode.DOWN
-        }
-    private val formatter100k = DecimalFormat("##,###.###")
-        .apply {
-            roundingMode = RoundingMode.DOWN
-        }
-    private val formatter1M = DecimalFormat("###,###.##")
-        .apply {
-            roundingMode = RoundingMode.DOWN
-        }
-    private val formatter10M = DecimalFormat("#,###,###.#")
-        .apply {
-            roundingMode = RoundingMode.DOWN
-        }
-    private val formatter100M = DecimalFormat("#,###,###")
-        .apply {
-            roundingMode = RoundingMode.DOWN
-        }
-    private val formatterBigNumber = DecimalFormat("#.###")
-        .apply {
-        roundingMode = RoundingMode.DOWN
     }
 
     fun shortAmount(value: BigDecimal): String = when {

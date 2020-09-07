@@ -22,13 +22,12 @@ class BalanceFormatterTest {
         // 5 decimals till 1k
         val value1 = BigDecimal.valueOf(0.123456789)
         val shortAmount1 = balanceFormatter.shortAmount(value1)
-
-        assertEquals("actual: $shortAmount1","0.12345", shortAmount1)
+        assertEquals("0.12346", shortAmount1)
 
         // 4 decimals till 10k
         val value2 = BigDecimal.valueOf(1000.123456789)
         val shortAmount2 = balanceFormatter.shortAmount(value2)
-        assertEquals("1,000.1234", shortAmount2)
+        assertEquals("1,000.1235", shortAmount2)
 
         //3 decimals till 100k
         val value3 = BigDecimal.valueOf(10_000.123456789)
