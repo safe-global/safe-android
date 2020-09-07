@@ -845,6 +845,39 @@ class TransactionListViewModelTest {
         )
     }
 
+    @Test
+    fun `mapToTransactionView (tx list with creation tx) should map to list with creation tx`() {
+
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, appDispatchers)
+
+        val transactions = createTransactionListWithCreationTx()
+        val transactionViews =
+            transactions.results.map {
+                transactionsViewModel.getTransactionView(
+                    it,
+                    SafeInfo(
+                        defaultSafeAddress,
+                        defaultNonce,
+                        defaultThreshold,
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE),
+                        emptyList(),
+                        Solidity.Address(BigInteger.ONE)
+                    )
+                )
+            }
+
+        assertEquals(true, transactionViews[0] is TransactionView.Creation)
+        val creationTransactionView = transactionViews[0] as TransactionView.Creation
+        assertEquals(SUCCESS, creationTransactionView.status)
+        assertEquals(R.string.tx_list_success, creationTransactionView.statusText)
+        assertEquals(R.string.tx_list_creation, creationTransactionView.label)
+        assertEquals(Date(1).formatBackendDate(), creationTransactionView.dateTimeText)
+        assertEquals(R.color.safe_green, creationTransactionView.statusColorRes)
+        assertEquals("<random-id>", creationTransactionView.id)
+
+    }
+
     private fun callVerification() {
         coVerify { safeRepository.getActiveSafe() }
         coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
@@ -855,6 +888,40 @@ class TransactionListViewModelTest {
 
     private fun createEmptyTransactionList(): Page<Transaction> {
         return Page(1, "", "", listOf())
+    }
+
+    private fun createTransactionListWithCreationTx(): Page<Transaction> {
+        val transfers = listOf(
+            Transaction.Creation(
+                id = "<random-id>",
+                status = SUCCESS,
+                confirmations = 2,
+                txInfo = TransactionInfo.Creation(
+                    creator = defaultFromAddress,
+                    factory = defaultToAddress,
+                    implementation = defaultSafeAddress,
+                    transactionHash = "0x00"
+                ),
+                timestamp = Date(1),
+                executionInfo = DetailedExecutionInfo.MultisigExecutionDetails(
+                    nonce = BigInteger.ZERO,
+                    confirmations = listOf(
+                        Confirmations(
+                            signer = defaultFromAddress,
+                            submittedAt = Date(2),
+                            signature = ""
+                        )
+                    ),
+                    confirmationsRequired = 1,
+                    executor = defaultFromAddress,
+                    safeTxHash = "0x00",
+                    signers = listOf(defaultFromAddress),
+                    submittedAt = Date(3)
+                )
+            )
+        )
+
+        return Page(1, "", "", transfers)
     }
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {

@@ -1,26 +1,16 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ExecutionInfoDto
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.GateTransactionType
-import io.gnosis.data.backend.dto.GateTransferType
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfoDto
-import io.gnosis.data.backend.dto.TransferInfoDto
+import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransactionStatus
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -117,14 +107,16 @@ class TransactionRepositoryTest {
         val pagedResult = listOf(
             buildGateTransactionDto(txInfo = buildTransferTxInfo()),
             buildGateTransactionDto(txInfo = buildCustomTxInfo()),
-            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo())
+            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo()),
+            buildGateTransactionDto(txInfo = buildCreationTxInfo())
+
         )
         coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
 
         val actual = transactionRepository.getTransactions(defaultSafeAddress)
 
-        assertEquals(3, actual.results.size)
-        (0..2).forEach { i ->
+        assertEquals(4, actual.results.size)
+        (0..3).forEach { i ->
             with(actual.results[i]) {
                 when (pagedResult[i].txInfo) {
                     is TransactionInfoDto.Transfer -> {
@@ -141,6 +133,20 @@ class TransactionRepositoryTest {
                         assertEquals(pagedResult[i].executionInfo?.nonce, (this as Transaction.SettingsChange).nonce)
                         assertEquals(pagedResult[i].txStatus, this.status)
                         assertEquals((pagedResult[i].txInfo as TransactionInfoDto.SettingsChange).dataDecoded, dataDecoded)
+                    }
+                    is TransactionInfoDto.Creation -> {
+                        assertEquals(pagedResult[i].timestamp, (this as Transaction.Creation).timestamp.time)
+                        assertEquals(pagedResult[i].txStatus, this.status)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfoDto.Creation).creator, (txInfo as TransactionInfo.Creation).creator)
+                        assertEquals((pagedResult[i].txInfo as TransactionInfoDto.Creation).factory, (txInfo as TransactionInfo.Creation).factory)
+                        assertEquals(
+                            (pagedResult[i].txInfo as TransactionInfoDto.Creation).implementation,
+                            (txInfo as TransactionInfo.Creation).implementation
+                        )
+                        assertEquals(
+                            (pagedResult[i].txInfo as TransactionInfoDto.Creation).transactionHash,
+                            (txInfo as TransactionInfo.Creation).transactionHash
+                        )
                     }
                 }
             }
@@ -272,6 +278,20 @@ private fun buildCustomTxInfo(
         value = value,
         to = to,
         dataSize = dataSize
+    )
+
+private fun buildCreationTxInfo(
+    factory: Solidity.Address = "0x12".asEthereumAddress()!!,
+    creator: Solidity.Address = "0x1234".asEthereumAddress()!!,
+    implementation: Solidity.Address = "0x123456".asEthereumAddress()!!,
+    hash: String = "0x12345678"
+): TransactionInfoDto.Creation =
+    TransactionInfoDto.Creation(
+        type = GateTransactionType.Creation,
+        transactionHash = hash,
+        implementation = implementation,
+        factory = factory,
+        creator = creator
     )
 
 private fun buildSettingsChangeTxInfo(
