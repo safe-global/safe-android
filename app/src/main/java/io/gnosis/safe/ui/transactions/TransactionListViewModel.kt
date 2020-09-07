@@ -4,11 +4,8 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
-import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -28,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -448,13 +446,24 @@ class TransactionListViewModel
 
     private fun historicCreation(transaction: Creation): TransactionView.Creation {
 
+        val txInfo = transaction.txInfo as TransactionInfo.Creation
+
         return TransactionView.Creation(
             id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.timestamp.formatBackendDate(),
-            label = R.string.tx_list_creation
+            label = R.string.tx_list_creation,
+            creationDetails = TransactionView.CreationDetails(
+                statusText = displayString(transaction.status),
+                statusColorRes = statusTextColor(transaction.status),
+                dateTimeText = transaction.timestamp.formatBackendDate(),
+                creator = txInfo.creator.asEthereumAddressChecksumString(),
+                factory = txInfo.factory?.asEthereumAddressChecksumString(),
+                implementation = txInfo.implementation?.asEthereumAddressChecksumString(),
+                transactionHash = txInfo.transactionHash
+            )
         )
     }
 

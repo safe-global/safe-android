@@ -140,8 +140,19 @@ sealed class TransactionView(
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
-        @StringRes val label: Int
+        @StringRes val label: Int,
+        val creationDetails: CreationDetails? = null
     ) : TransactionView(status, id)
+
+    data class CreationDetails(
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val creator: String,
+        val implementation: String?,
+        val factory: String?,
+        val transactionHash: String
+    )
 
     data class SectionHeader(@StringRes val title: Int, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
 

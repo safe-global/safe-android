@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
+            style="@style/Toolbar"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                android:text="@string/back" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:text="@string/tx_details_advanced" />
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <!--
+                    statusText = displayString(transaction.status),
+                statusColorRes = statusTextColor(transaction.status),
+
+                transactionHash = txInfo.transactionHash
+
+                creator = txInfo.creator.asEthereumAddressChecksumString(),
+
+                implementation = txInfo.implementation?.asEthereumAddressChecksumString(),
+
+                factory = txInfo.factory?.asEthereumAddressChecksumString(),
+
+                dateTimeText = transaction.timestamp.formatBackendDate(),
+    -->
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <io.gnosis.safe.ui.transactions.details.view.TxStatusView
+                android:id="@+id/status_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/tx_hash_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_operation" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/creator_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_hash" />
+
+            <View
+                android:id="@+id/hash_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/implementation_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_hash" />
+
+            <View
+                android:id="@+id/implementation_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/factory_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_hash" />
+
+            <View
+                android:id="@+id/factory_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/created_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_hash" />
+
+            <View
+                android:id="@+id/created_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/etherscan_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:item_name="@string/tx_details_advanced_hash" />
+
+            <View
+                android:id="@+id/etherscan_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_grey"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

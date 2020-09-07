@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -13,6 +15,7 @@ import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.DetailedExecutionInfo
 import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionInfo
+import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
@@ -24,23 +27,13 @@ import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
-import io.gnosis.safe.utils.formatBackendDate
-import io.gnosis.safe.utils.formattedAmount
-import io.gnosis.safe.utils.getErrorResForException
-import io.gnosis.safe.utils.logoUri
-import io.gnosis.safe.utils.txActionInfoItems
+import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.HttpCodes
-import retrofit2.HttpException
 import java.math.BigInteger
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
-import javax.net.ssl.SSLHandshakeException
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
@@ -132,7 +125,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 } else {
                     TxStatusView.TxType.TRANSFER_OUTGOING
                 }
-                txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
+                txDetailsTransferBinding.txStatus.setStatus(
+                    txType.titleRes,
+                    txType.iconRes,
+                    getStringResForStatus(txDetails.txStatus),
+                    getColorForStatus(txDetails.txStatus)
+                )
             }
             is TransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
@@ -142,7 +140,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
                 txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
-                txDetailsSettingsChangeBinding.txStatus.setStatus(TxStatusView.TxType.MODIFY_SETTINGS, txDetails.txStatus)
+                txDetailsSettingsChangeBinding.txStatus.setStatus(
+                    TxStatusView.TxType.MODIFY_SETTINGS.titleRes,
+                    TxStatusView.TxType.MODIFY_SETTINGS.iconRes,
+                    getStringResForStatus(txDetails.txStatus),
+                    getColorForStatus(txDetails.txStatus)
+                )
             }
             is TransactionInfo.Custom -> {
                 val viewStub = binding.stubCustom
@@ -152,7 +155,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
                 txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(), txInfo.logoUri()!!, txInfo.to)
-                txDetailsCustomBinding.txStatus.setStatus(TxStatusView.TxType.CUSTOM, txDetails.txStatus)
+                txDetailsCustomBinding.txStatus.setStatus(
+                    TxStatusView.TxType.CUSTOM.titleRes,
+                    TxStatusView.TxType.CUSTOM.iconRes,
+                    getStringResForStatus(txDetails.txStatus),
+                    getColorForStatus(txDetails.txStatus)
+                )
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
             }
         }
@@ -218,6 +226,29 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.etherscan.visible(false)
         }
     }
+
+    @ColorRes
+    private fun getColorForStatus(txStatus: TransactionStatus): Int =
+        when (txStatus) {
+            TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.safe_pending_orange
+            TransactionStatus.AWAITING_EXECUTION -> R.color.safe_pending_orange
+            TransactionStatus.SUCCESS -> R.color.safe_green
+            TransactionStatus.CANCELLED -> R.color.dark_grey
+            TransactionStatus.FAILED -> R.color.tomato
+            TransactionStatus.PENDING -> R.color.dark_grey
+        }
+
+    @StringRes
+    private fun getStringResForStatus(txStatus: TransactionStatus): Int =
+        when (txStatus) {
+            TransactionStatus.AWAITING_CONFIRMATIONS -> R.string.tx_status_status_awaiting_confirmations
+            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_status_awaiting_execution
+            TransactionStatus.SUCCESS -> R.string.tx_status_status_success
+            TransactionStatus.CANCELLED -> R.string.tx_status_status_cancelled
+            TransactionStatus.FAILED -> R.string.tx_status_status_failed
+            TransactionStatus.PENDING -> R.string.tx_status_status_pending
+        }
+
 
     private fun hideCreatedAndConfirmations() {
         binding.txConfirmations.visible(false)
