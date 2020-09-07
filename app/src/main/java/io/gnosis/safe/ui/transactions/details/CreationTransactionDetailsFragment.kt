@@ -6,11 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 
 class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsCreationBinding>() {
 
@@ -41,25 +45,69 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 Navigation.findNavController(it).navigateUp()
             }
             statusItem.setStatus(
-                titleRes =  TxStatusView.TxType.CREATION.titleRes,
+                titleRes = TxStatusView.TxType.CREATION.titleRes,
                 iconRes = TxStatusView.TxType.CREATION.iconRes,
                 statusTextRes = statusTextRes,
                 statusColorRes = statusColorRes
             )
+            txHashItem.name = getString(R.string.tx_details_advanced_hash)
+            txHashItem.value = transActionHash
 
-//            nonceItem.value = nonce
-//            operationItem.value = operation
-//            if (hash.isNullOrBlank()) {
-//                hashItem.visible(false)
-//                hashSeparator.visible(false)
-//            } else {
-//                hashItem.value = hash
-//                hashItem.setOnClickListener {
-//                    context?.copyToClipboard(context?.getString(R.string.address_copied)!!, hashItem.value.toString()) {
-//                        snackbar(view = root, textId = R.string.copied_success)
-//                    }
-//                }
-//            }
+            if (creator != null) {
+                creatorItemTitle.visible(true)
+                creatorItem.visible(true)
+                creatorSeparator.visible(true)
+
+                creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
+                creatorItem.address = creator!!.asEthereumAddress()
+            } else {
+                creatorSeparator.visible(false)
+                creatorItemTitle.visible(false)
+                creatorItem.visible(false)
+            }
+
+            if (implementation != null) {
+                implementationSeparator.visible(true)
+                implementationTitle.visible(true)
+                implementationItem.visible(true)
+
+                implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
+                implementationItem.address = implementation!!.asEthereumAddress()
+            } else {
+                implementationSeparator.visibility = View.GONE
+                implementationTitle.visibility = View.GONE
+                implementationItem.visibility = View.GONE
+            }
+
+            if (factory != null) {
+                factoryTitle.visible(true)
+                factoryItem.visible(true)
+                factorySeparator.visible(true)
+
+                factoryTitle.text = getString(R.string.tx_details_creation_factory_used)
+                factoryItem.address = factory!!.asEthereumAddress()
+            } else {
+                factoryTitle.visibility = View.GONE
+                factoryItem.visibility = View.GONE
+                factorySeparator.visibility = View.GONE
+            }
+
+            createdItem.name = getString(R.string.tx_details_created)
+            createdItem.value = dateTimeText
+
+            if (transActionHash != null) {
+                etherscanItem.visible(true)
+                etherscanItem.setOnClickListener {
+                    requireContext().openUrl(
+                        getString(
+                            R.string.etherscan_transaction_url,
+                            transActionHash
+                        )
+                    )
+                }
+            } else {
+                etherscanItem.visibility = View.GONE
+            }
         }
     }
 }

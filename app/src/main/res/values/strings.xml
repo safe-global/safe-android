@@ -201,4 +201,7 @@
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
     <string name="tx_list_creation">Safe created</string>
+    <string name="tx_details_creation_creator_address">Creator address</string>
+    <string name="tx_details_creation_implementation_used">Mastercopy used</string>
+    <string name="tx_details_creation_factory_used">Factory used</string>
 </resources>

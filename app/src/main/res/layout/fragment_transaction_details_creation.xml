@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -87,23 +88,39 @@
                 android:layout_height="1dp"
                 android:background="@color/light_grey"/>
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+            <TextView
+                android:id="@+id/creator_item_title"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                tools:text="Creator" />
+
+            <io.gnosis.safe.ui.settings.view.AddressItem
                 android:id="@+id/creator_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                android:layout_height="wrap_content" />
 
             <View
-                android:id="@+id/hash_separator"
+                android:id="@+id/creator_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/light_grey"/>
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+            <TextView
+                android:id="@+id/implementation_title"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                tools:text="Implementation" />
+
+            <io.gnosis.safe.ui.settings.view.MasterCopyItem
                 android:id="@+id/implementation_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:id="@+id/implementation_separator"
@@ -111,11 +128,19 @@
                 android:layout_height="1dp"
                 android:background="@color/light_grey"/>
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+            <TextView
+                android:id="@+id/factory_title"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                tools:text="Factory" />
+
+            <io.gnosis.safe.ui.settings.view.AddressItem
                 android:id="@+id/factory_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:id="@+id/factory_separator"
@@ -126,8 +151,7 @@
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:id="@+id/created_separator"
@@ -135,11 +159,16 @@
                 android:layout_height="1dp"
                 android:background="@color/light_grey"/>
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+            <TextView
                 android:id="@+id/etherscan_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                style="@style/TextLink"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginStart="16dp"
+                android:drawableEnd="@drawable/ic_link_green_24dp"
+                android:drawablePadding="6dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/tx_details_view_on_etherscan" />
 
             <View
                 android:id="@+id/etherscan_separator"
