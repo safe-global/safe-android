@@ -419,7 +419,7 @@ class TransactionListViewModel
             amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
-            nonce = custom.nonce.toString()
+            nonce = custom.nonce?.toString() ?: ""
         )
     }
 
@@ -437,7 +437,7 @@ class TransactionListViewModel
             threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = custom.nonce.toString(),
+            nonce = custom.nonce?.toString() ?: "",
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
             amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
