@@ -18,6 +18,7 @@ import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.terms.TermsChecker
+import io.gnosis.safe.utils.BalanceFormatter
 import javax.inject.Singleton
 
 @Singleton
@@ -43,6 +44,8 @@ interface ApplicationComponent {
     fun appDispatchers(): AppDispatchers
 
     fun connectivityManager(): ConnectivityManager
+
+    fun balanceFormatter(): BalanceFormatter
 
     fun termsChecker(): TermsChecker
 
