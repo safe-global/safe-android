@@ -21,7 +21,6 @@ import java.math.BigInteger
 class SafeRepositoryTest {
 
     private val safeDao = mockk<SafeDao>()
-    private val ethereumRepository = mockk<EthereumRepository>()
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private lateinit var preferences: TestPreferences
@@ -34,7 +33,7 @@ class SafeRepositoryTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         val preferencesManager = PreferencesManager(application)
-        safeRepository = SafeRepository(safeDao, preferencesManager, ethereumRepository, transactionServiceApi)
+        safeRepository = SafeRepository(safeDao, preferencesManager, transactionServiceApi)
     }
 
     @Test
@@ -132,7 +131,6 @@ class SafeRepositoryTest {
 
         assertEquals(true, actual)
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
-        coVerify { ethereumRepository wasNot Called }
     }
 
     @Test
@@ -145,7 +143,6 @@ class SafeRepositoryTest {
 
         assertEquals(false, actual)
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
-        coVerify { ethereumRepository wasNot Called }
     }
 
     @Test
@@ -226,11 +223,6 @@ class SafeRepositoryTest {
         }
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
-
-    private fun buildSuccessfulEthRequest(from: Solidity.Address, masterCopy: Solidity.Address) =
-        EthGetStorageAt(from, BigInteger.ZERO, block = Block.LATEST).apply {
-            response = EthRequest.Response.Success(masterCopy.asEthereumAddressString())
-        }
 
     companion object {
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
