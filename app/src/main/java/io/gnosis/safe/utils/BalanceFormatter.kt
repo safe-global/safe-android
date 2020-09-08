@@ -76,9 +76,21 @@ class BalanceFormatter {
     }
 
     fun formatAmount(amount: BigInteger, incoming: Boolean, decimals: Int = 18, symbol: String = "ETH"): String {
-        val inOut = if (amount == BigInteger.ZERO) "" else if (incoming) "+" else "-"
-        val decimalValue = amount.shifted(decimals = decimals)
-        return "%s%s %s".format(inOut, shortAmount(decimalValue), symbol)
+        val decimalValue = amount.convertAmount(decimals)
+        val shortAmount = shortAmount(decimalValue)
+        val formattedAmount = when {
+            shortAmount.contains("> ") -> {
+                shortAmount.replace("> ", if (incoming) "> +" else "> -")
+            }
+            shortAmount.contains("< ") -> {
+                shortAmount.replace("< ", if (incoming) "< +" else "< -")
+            }
+            else -> {
+                val prefix = if (amount == BigInteger.ZERO) "" else if (incoming) "+" else "-"
+                "$prefix$shortAmount"
+            }
+        }
+        return "$formattedAmount $symbol"
     }
 
     companion object {

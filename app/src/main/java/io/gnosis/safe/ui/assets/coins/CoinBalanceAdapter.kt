@@ -7,8 +7,8 @@ import io.gnosis.data.models.Balance
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.convertAmount
 import io.gnosis.safe.utils.loadTokenLogo
-import io.gnosis.safe.utils.shifted
 import java.math.RoundingMode
 
 class CoinBalanceAdapter(private val balanceFormatter: BalanceFormatter) : RecyclerView.Adapter<CoinBalanceViewHolder>() {
@@ -36,7 +36,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : R
         with(viewBinding) {
             logoImage.loadTokenLogo(balanceItem.token.logoUrl)
             symbol.text = balanceItem.token.symbol
-            balance.text = balanceFormatter.shortAmount(balanceItem.balance.shifted(balanceItem.token.decimals))
+            balance.text = balanceFormatter.shortAmount(balanceItem.balance.convertAmount(balanceItem.token.decimals))
             balanceUsd.text = viewBinding.root.context.getString(
                 R.string.usd_balance,
                 balanceFormatter.shortAmount(balanceItem.balanceUsd.setScale(2, RoundingMode.HALF_UP))
