@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -20,7 +21,6 @@ import java.math.BigInteger
 class SafeRepositoryTest {
 
     private val safeDao = mockk<SafeDao>()
-    private val ethereumRepository = mockk<EthereumRepository>()
     private val transactionServiceApi = mockk<TransactionServiceApi>()
 
     private lateinit var preferences: TestPreferences
@@ -33,7 +33,7 @@ class SafeRepositoryTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         val preferencesManager = PreferencesManager(application)
-        safeRepository = SafeRepository(safeDao, preferencesManager, ethereumRepository, transactionServiceApi)
+        safeRepository = SafeRepository(safeDao, preferencesManager, transactionServiceApi)
     }
 
     @Test
@@ -113,100 +113,36 @@ class SafeRepositoryTest {
     }
 
     @Test
-    fun `isValidSafe - (safe with master copy v0_0_2) should return true`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_0_0_2)
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
+    fun `isValidSafe - valid safe`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val safeInfoDto = SafeInfoDto(
+            Solidity.Address(BigInteger.ONE),
+            BigInteger.TEN,
+            1,
+            listOf(Solidity.Address(BigInteger.ONE)),
+            Solidity.Address(BigInteger.ONE),
+            listOf(Solidity.Address(BigInteger.ONE)),
+            Solidity.Address(BigInteger.ONE),
+            "v1"
+        )
+        coEvery { transactionServiceApi.getSafeInfo(any()) } returns safeInfoDto
 
         val actual = safeRepository.isValidSafe(safeAddress)
 
         assertEquals(true, actual)
-        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
+        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
-    fun `isValidSafe - (safe with master copy v0_1_0) should return true`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_0_1_0)
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
-
-        val actual = safeRepository.isValidSafe(safeAddress)
-
-        assertEquals(true, actual)
-        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-    }
-
-    @Test
-    fun `isValidSafe - (safe with master copy v1_0_0) should return true`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_1_0_0)
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
-
-        val actual = safeRepository.isValidSafe(safeAddress)
-
-        assertEquals(true, actual)
-        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-    }
-
-    @Test
-    fun `isValidSafe - (safe with master copy v1_1_1) should return true`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, SafeRepository.SAFE_MASTER_COPY_1_1_1)
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
-
-        val actual = safeRepository.isValidSafe(safeAddress)
-
-        assertEquals(true, actual)
-        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-    }
-
-    @Test
-    fun `isValidSafe - (safe with unknown master copy) should return false`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = buildSuccessfulEthRequest(safeAddress, Solidity.Address(BigInteger.ONE))
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
+    fun `isValidSafe - invalid safe`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val throwable = Throwable()
+        coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
 
         val actual = safeRepository.isValidSafe(safeAddress)
 
         assertEquals(false, actual)
-        coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-    }
-
-    @Test
-    fun `isValidSafe - (safe with mastercopy but request failure) should throw`() = runBlocking {
-        val errorMessage = "Error message"
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = EthGetStorageAt(safeAddress, BigInteger.ZERO, block = Block.LATEST).apply {
-            response = EthRequest.Response.Failure(errorMessage)
-        }
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
-
-        val actual = runCatching { safeRepository.isValidSafe(safeAddress) }
-
-        with(actual) {
-            assertEquals(true, isFailure)
-            val exception = exceptionOrNull()
-            assert(exception is RequestFailedException && true == exception.message?.contains(errorMessage))
-            coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-        }
-    }
-
-    @Test
-    fun `isValidSafe - (safe with mastercopy but request response is null) should throw`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ZERO)
-        val ethRequest = EthGetStorageAt(safeAddress, BigInteger.ZERO, block = Block.LATEST).apply {
-            response = null
-        }
-        coEvery { ethereumRepository.request(any<EthGetStorageAt>()) } returns ethRequest
-
-        val actual = runCatching { safeRepository.isValidSafe(safeAddress) }
-
-        with(actual) {
-            assertEquals(true, isFailure)
-            val exception = exceptionOrNull()
-            assert(exception is RequestNotExecutedException && exception.message == "Valid safe check failed")
-            coVerify(exactly = 1) { ethereumRepository.request(ethRequest) }
-        }
+        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
@@ -287,11 +223,6 @@ class SafeRepositoryTest {
         }
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
-
-    private fun buildSuccessfulEthRequest(from: Solidity.Address, masterCopy: Solidity.Address) =
-        EthGetStorageAt(from, BigInteger.ZERO, block = Block.LATEST).apply {
-            response = EthRequest.Response.Success(masterCopy.asEthereumAddressString())
-        }
 
     companion object {
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
