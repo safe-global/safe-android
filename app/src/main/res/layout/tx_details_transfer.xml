@@ -17,6 +17,17 @@
         android:layout_height="1dp"
         android:background="@color/light_grey" />
 
+    <io.gnosis.safe.ui.settings.view.LabeledAddressItem
+        android:id="@+id/contract_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/contract_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey" />
+
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
         android:layout_width="match_parent"

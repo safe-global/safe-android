@@ -13,6 +13,7 @@ import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.DetailedExecutionInfo
 import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionInfo
+import io.gnosis.data.models.TransferInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
@@ -32,15 +33,9 @@ import io.gnosis.safe.utils.txActionInfoItems
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.HttpCodes
-import retrofit2.HttpException
 import java.math.BigInteger
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
-import javax.net.ssl.SSLHandshakeException
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
 
@@ -133,6 +128,20 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     TxStatusView.TxType.TRANSFER_OUTGOING
                 }
                 txDetailsTransferBinding.txStatus.setStatus(txType, txDetails.txStatus)
+
+                when (val transferInfo = txInfo.transferInfo) {
+                    is TransferInfo.Erc721Transfer -> {
+                        txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
+                        txDetailsTransferBinding.contractAddress.label = "Asset Contract"
+                    }
+                    is TransferInfo.Erc20Transfer -> {
+
+                    }
+                    else -> {
+                        txDetailsTransferBinding.contractAddress.visible(false)
+                        txDetailsTransferBinding.contractSeparator.visible(false)
+                    }
+                }
             }
             is TransactionInfo.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
