@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.settings.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -45,7 +46,7 @@ class MasterCopyItem @JvmOverloads constructor(
         with(binding) {
             if (SafeRepository.masterCopyVersion(address).isNullOrBlank()) {
                 versionName.text = context.getString(R.string.safe_settings_unknown)
-                versionInfo.visible(false)
+                versionInfo.visible(false, View.INVISIBLE)
             } else {
                 versionName.text = SafeRepository.masterCopyVersion(address)
                 if (showUpdateAvailable) {
@@ -62,7 +63,7 @@ class MasterCopyItem @JvmOverloads constructor(
                         setText(versionInfoView.infoText)
                     }
                 } else {
-                    versionInfo.visible(false)
+                    versionInfo.visible(false, View.INVISIBLE)
                 }
             }
         }
