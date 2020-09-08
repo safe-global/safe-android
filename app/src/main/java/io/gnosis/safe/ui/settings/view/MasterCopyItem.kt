@@ -61,6 +61,8 @@ class MasterCopyItem @JvmOverloads constructor(
                         setTextColor(ResourcesCompat.getColor(resources, versionInfoView.infoColor, context.theme))
                         setText(versionInfoView.infoText)
                     }
+                } else {
+                    versionInfo.visible(false)
                 }
             }
         }
