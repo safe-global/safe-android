@@ -63,7 +63,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 implementationItem.visible(true)
 
                 implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
-                implementationItem.address = implementation!!.asEthereumAddress()
+                implementationItem.setAddress(implementation!!.asEthereumAddress(), false)
             } else {
                 implementationSeparator.visibility = View.GONE
                 implementationTitle.visibility = View.GONE

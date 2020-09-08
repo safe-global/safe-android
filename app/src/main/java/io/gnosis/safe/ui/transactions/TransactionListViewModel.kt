@@ -25,9 +25,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -459,9 +459,9 @@ class TransactionListViewModel
                 statusText = displayString(transaction.status),
                 statusColorRes = statusTextColor(transaction.status),
                 dateTimeText = transaction.timestamp.formatBackendDate(),
-                creator = txInfo.creator.asEthereumAddressChecksumString(),
-                factory = txInfo.factory?.asEthereumAddressChecksumString(),
-                implementation = txInfo.implementation?.asEthereumAddressChecksumString(),
+                creator = txInfo.creator.asEthereumAddressString(),
+                factory = txInfo.factory?.asEthereumAddressString(),
+                implementation = txInfo.implementation?.asEthereumAddressString(),
                 transactionHash = txInfo.transactionHash
             )
         )
