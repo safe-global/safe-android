@@ -12,7 +12,9 @@ import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 
@@ -52,6 +54,11 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             )
             txHashItem.name = getString(R.string.tx_details_advanced_hash)
             txHashItem.value = transActionHash
+            txHashItem.setOnClickListener {
+                context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, txHashItem.value.toString()) {
+                    snackbar(view = root, textId = R.string.copied_success)
+                }
+            }
 
             creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
             creatorItem.address = creator!!.asEthereumAddress()
