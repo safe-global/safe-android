@@ -14,15 +14,16 @@ import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
+import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.convertAmount
 import io.gnosis.safe.utils.formatForTxList
-import io.gnosis.safe.utils.shifted
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
-import java.text.DecimalFormat
 
 class NotificationManager(
     private val context: Context,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val balanceFormatter: BalanceFormatter
 ) {
 
     private val notificationManager = NotificationManagerCompat.from(context)
@@ -94,9 +95,7 @@ class NotificationManager(
             }
             is PushNotification.IncomingEther -> {
                 title = context.getString(R.string.push_title_received_eth)
-                //TODO: use balance formatter
-                val formatter = DecimalFormat("#0.0#####")
-                val value = formatter.format(pushNotification.value.shifted(TokenRepository.ETH_TOKEN_INFO.decimals))
+                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(TokenRepository.ETH_TOKEN_INFO.decimals))
                 text = context.getString(R.string.push_text_received_eth, safeName, value)
                 intent = txListIntent(safe)
             }
