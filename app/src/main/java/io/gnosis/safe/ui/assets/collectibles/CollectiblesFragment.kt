@@ -82,7 +82,6 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
                 }
             }
         })
-        viewModel.load()
     }
 
     private fun hideLoading() {
