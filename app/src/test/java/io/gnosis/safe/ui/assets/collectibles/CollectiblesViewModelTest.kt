@@ -1,11 +1,16 @@
 package io.gnosis.safe.ui.assets.collectibles
 
+import io.gnosis.data.models.Collectible
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.ui.assets.coins.CoinsState
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.adapter.Adapter
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
@@ -48,4 +53,85 @@ class CollectiblesViewModelTest {
             tokenRepository.loadCollectiblesOf(safe10.address)
         }
     }
+
+    @Test
+    fun `load - should emit collectibles view data list`() {
+
+        viewModel = CollectiblesViewModel(tokenRepository, safeRepository, appDispatchers)
+
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        val collectibles = buildCollectibleList()
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
+        coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { tokenRepository.loadCollectiblesOf(any()) } returns collectibles
+
+        val collectiblesViewData: List<CollectibleViewData> = listOf(
+            CollectibleViewData.NftHeader(
+                "tokenName1",
+                null,
+                true
+            ),
+            CollectibleViewData.CollectibleItem(
+                collectibles[0]
+            ),
+            CollectibleViewData.CollectibleItem(
+                collectibles[1]
+            ),
+            CollectibleViewData.NftHeader(
+                "tokenName2",
+                null,
+                false
+            ),
+            CollectibleViewData.CollectibleItem(
+                collectibles[2]
+            )
+        )
+
+        viewModel.state.observeForever(stateObserver)
+        stateObserver.assertValues(
+            CoinsState(loading = false, refreshing = false, viewAction = UpdateCollectibles(Adapter.Data(null, collectiblesViewData)))
+        )
+        coVerifySequence {
+            safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            tokenRepository.loadCollectiblesOf(safe.address)
+        }
+    }
+
+    private fun buildCollectibleList() = listOf(
+        Collectible(
+            "1",
+            Solidity.Address(BigInteger.ZERO),
+            "tokenName1",
+            "TS1",
+            null,
+            "name1",
+            null,
+            null,
+            null
+        ),
+        Collectible(
+            "2",
+            Solidity.Address(BigInteger.ZERO),
+            "tokenName1",
+            "TS1",
+            null,
+            "name2",
+            null,
+            null,
+            null
+        ),
+        Collectible(
+            "3",
+            Solidity.Address(BigInteger.ONE),
+            "tokenName2",
+            "TS2",
+            null,
+            "name3",
+            null,
+            null,
+            null
+        )
+    )
+
 }

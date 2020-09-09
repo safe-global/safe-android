@@ -96,18 +96,18 @@ class TokenRepositoryTest {
     fun `loadBalancesOf (address) should parse correct amounts`() = runBlocking {
         val jsonString: String = readResource("load_balances_usd.json")
 
-        val balances = balancesAdapter.fromJson(jsonString)
+        val balances = balancesAdapter.fromJson(jsonString)!!
 
         assertEquals(3, balances?.size)
 
-        assertEquals(balances!![0].balance, "1331553306076676".parseToBigInteger())
-        assertEquals(balances!![0].balanceUsd, "0.3248".toBigDecimal())
+        assertEquals(balances[0].balance, "1331553306076676".parseToBigInteger())
+        assertEquals(balances[0].balanceUsd, "0.3248".toBigDecimal())
 
-        assertEquals(balances!![1].balance, "234500000000000000".parseToBigInteger())
-        assertEquals(balances!![1].balanceUsd, "0.2371".toBigDecimal())
+        assertEquals(balances[1].balance, "234500000000000000".parseToBigInteger())
+        assertEquals(balances[1].balanceUsd, "0.2371".toBigDecimal())
 
-        assertEquals(balances!![2].balance, "100000000000000000".parseToBigInteger())
-        assertEquals(balances!![2].balanceUsd, "0.1346".toBigDecimal())
+        assertEquals(balances[2].balance, "100000000000000000".parseToBigInteger())
+        assertEquals(balances[2].balanceUsd, "0.1346".toBigDecimal())
     }
 
     @Test
@@ -145,7 +145,7 @@ class TokenRepositoryTest {
         assertEquals("Copernicus.20200210.212404", collectibles[5].tokenName)
         assertEquals(null, collectibles[5].name)
         assertEquals("0x7667A25a327ee97EEc7d5d69F846659238F3c078".asEthereumAddress(), collectibles[5].address)
-        
+
         coVerify {
             transactionServiceApi.loadCollectibles(address.asEthereumAddressChecksumString())
         }
