@@ -43,27 +43,21 @@ class CollectiblesViewModel
     }
 
     private suspend fun getCollectibles(safe: Solidity.Address): List<CollectibleViewData> {
+
         val collectiblesViewData = mutableListOf<CollectibleViewData>()
         val collectibles = tokenRepository.loadCollectiblesOf(safe)
+
         var currentNft: Solidity.Address? = null
+
         collectibles.forEach {
 
             if (currentNft != it.address) {
-                var contractLogoUri: String? = null
-                kotlin.runCatching {
-                    tokenRepository.loadTokenInfo(it.address)
-                }
-                    .onSuccess {
-                        contractLogoUri = it.logoUri
-                    }
-
                 collectiblesViewData.add(
                     CollectibleViewData.NftHeader(
                         it.tokenName,
-                        contractLogoUri
+                        it.logoUri
                     )
                 )
-
                 currentNft = it.address
             }
 
@@ -71,6 +65,7 @@ class CollectiblesViewModel
                 CollectibleViewData.CollectibleItem(it)
             )
         }
+
         return collectiblesViewData
     }
 }

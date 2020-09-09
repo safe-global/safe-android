@@ -26,7 +26,10 @@ data class CollectibleDto(
     val description: String?,
 
     // image of the collectible
-    val imageUri: String?
+    val imageUri: String?,
+
+    // image of the contract
+    val logoUri: String?
 ) {
     fun toCollectible(): Collectible {
         return Collectible(
@@ -37,7 +40,8 @@ data class CollectibleDto(
             uri,
             name,
             description,
-            imageUri
+            imageUri,
+            logoUri
         )
     }
 }

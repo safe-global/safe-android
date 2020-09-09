@@ -10,5 +10,6 @@ data class Collectible(
     val uri: String?,
     val name: String?,
     val description: String?,
-    val imageUri: String?
+    val imageUri: String?,
+    val logoUri: String?
 )

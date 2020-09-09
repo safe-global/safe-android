@@ -44,10 +44,6 @@ class TokenRepository(
             }
             .toList()
 
-    suspend fun loadTokenInfo(address: Solidity.Address): ServiceTokenInfo =
-        transactionServiceApi.loadTokenInfo(address.asEthereumAddressChecksumString())
-
-
     companion object {
         private val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
         val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
