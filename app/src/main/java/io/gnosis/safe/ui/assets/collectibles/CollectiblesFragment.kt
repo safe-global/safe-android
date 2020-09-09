@@ -11,8 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.MultiViewHolderAdapter
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -46,13 +45,18 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
         }
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
 
+            binding.emptyPlaceholder.visible(false)
+            binding.contentNoData.root.visible(false)
             binding.progress.visible(state.loading)
             binding.refresh.isRefreshing = state.refreshing
 
             state.viewAction?.let { action ->
                 when (action) {
-                    is BaseStateViewModel.ViewAction.UpdateActiveSafe -> {
+                    is UpdateActiveSafe -> {
                         adapter.updateData(Adapter.Data(null, listOf()))
+                    }
+                    is ShowEmptyState -> {
+                        binding.emptyPlaceholder.visible(true)
                     }
                     is UpdateCollectibles -> {
                         binding.contentNoData.root.visibility = View.GONE

@@ -54,6 +54,7 @@
     <string name="get_started">Get started</string>
     <string name="splash_text">The most trusted platform to store digital assets on Ethereum</string>
 
+    <string name="collectibles_empty">Collectibles will appear here</string>
     <string name="collectibles_unknown">Unknown</string>
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>

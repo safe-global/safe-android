@@ -24,6 +24,7 @@ class TokenRepository(
                 Balance(token, it.balance, it.balanceUsd)
             }
 
+    //FIXME: use client gateway (grouping and sorting will be done on the backend side)
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
         transactionServiceApi.loadCollectibles(safe.asEthereumAddressChecksumString())
             .sortedWith (

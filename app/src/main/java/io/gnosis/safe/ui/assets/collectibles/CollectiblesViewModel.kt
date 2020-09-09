@@ -40,9 +40,7 @@ class CollectiblesViewModel
                     CollectiblesState(
                         loading = false,
                         refreshing = false,
-                        viewAction = UpdateCollectibles(
-                            Adapter.Data(null, collectibles)
-                        )
+                        viewAction = if (collectibles.isEmpty()) ViewAction.ShowEmptyState else UpdateCollectibles(Adapter.Data(null, collectibles))
                     )
                 }
             }
