@@ -52,7 +52,11 @@ class NftHeaderViewHolder(private val viewBinding: ItemCollectibleNftHeaderBindi
 
     override fun bind(data: CollectibleViewData.NftHeader, payloads: List<Any>) {
         with(viewBinding) {
-            tokenName.text = data.tokenName
+            if(data.tokenName.isNullOrBlank()) {
+                tokenName.setText(R.string.collectibles_unknown)
+            } else {
+                tokenName.text = data.tokenName
+            }
             separator.visible(!data.first)
             tokenLogo.loadNftImage(data.contractLogoUri)
         }
@@ -64,7 +68,11 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
 
     override fun bind(data: CollectibleViewData.CollectibleItem, payloads: List<Any>) {
         with(viewBinding) {
-            name.text = data.collectible.name
+            if(data.collectible.name.isNullOrBlank()) {
+                name.setText(R.string.collectibles_unknown)
+            } else {
+                name.text = data.collectible.name
+            }
             description.text = data.collectible.description
             logo.loadCollectibleImage(data.collectible.imageUri, this@CollectibleItemViewHolder)
         }
