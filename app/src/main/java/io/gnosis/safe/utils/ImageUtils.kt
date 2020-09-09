@@ -7,7 +7,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import io.gnosis.safe.R
 
-fun ImageView.loadTokenLogo(icon: String?) {
+fun ImageView.loadTokenLogo(icon: String?, placeHolderResource: Int = R.drawable.ic_coin_placeholder) {
     setPadding(0)
     background = null
     setImageDrawable(null)
@@ -16,16 +16,16 @@ fun ImageView.loadTokenLogo(icon: String?) {
         icon == "local::ethereum" -> {
             setImageResource(R.drawable.ic_ethereum_logo)
         }
-        icon?.startsWith("local::") == true -> setImageResource(R.drawable.ic_coin_placeholder)
+        icon?.startsWith("local::") == true -> setImageResource(placeHolderResource)
 
         !icon.isNullOrBlank() ->
             Picasso.get()
                 .load(icon)
-                .placeholder(R.drawable.ic_coin_placeholder)
-                .error(R.drawable.ic_coin_placeholder)
+                .placeholder(placeHolderResource)
+                .error(placeHolderResource)
                 .transform(CircleTransformation)
                 .into(this)
-        else -> setImageResource(R.drawable.ic_coin_placeholder)
+        else -> setImageResource(placeHolderResource)
     }
 }
 

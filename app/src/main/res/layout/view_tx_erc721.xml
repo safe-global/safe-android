@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:paddingStart="5dp"
@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_ethereum_logo" />
+        app:srcCompat="@drawable/ic_nft_placeholder" />
 
     <TextView
         android:id="@+id/token_name"
@@ -54,6 +54,5 @@
         android:ellipsize="end"
         android:singleLine="true"
         tools:text="This NFT ticket gives you full access. Lorem ipsum dolor sit amet." />
-
 
 </merge>
