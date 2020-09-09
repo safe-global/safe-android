@@ -121,10 +121,6 @@
         android:label="CreationTransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details_creation">
 
-        <action
-            android:id="@+id/action_transactionListFragment_to_transactionCreationDetailsFragment"
-            app:destination="@id/creationTransactionDetailsFragment" />
-
         <argument
             android:name="statusTextRes"
             app:argType="reference" />
