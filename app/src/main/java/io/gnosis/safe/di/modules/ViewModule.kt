@@ -11,6 +11,7 @@ import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.assets.SafeBalancesViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
+import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
@@ -76,6 +77,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesCoinsViewModel(provider: ViewModelProvider) = provider[CoinsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesCollectiblesViewModel(provider: ViewModelProvider) = provider[CollectiblesViewModel::class.java]
 
     @Provides
     @ForView
