@@ -19,7 +19,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
-import io.gnosis.safe.utils.formatAmount
+import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.formatBackendDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -35,6 +35,7 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
+    private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
@@ -416,7 +417,7 @@ class TransactionListViewModel
             dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
-            amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
             nonce = custom.nonce?.toString() ?: ""
@@ -439,7 +440,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce?.toString() ?: "",
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
-            amountText = custom.value.formatAmount(isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
@@ -469,7 +470,7 @@ class TransactionListViewModel
 
     private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
         val symbol = viewTransfer.tokenInfo?.symbol ?: ""
-        return viewTransfer.value.formatAmount(incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
+        return balanceFormatter.formatAmount(viewTransfer.value, incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
     }
 
     private fun statusTextColor(status: TransactionStatus): Int {

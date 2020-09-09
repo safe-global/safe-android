@@ -10,20 +10,15 @@ import io.gnosis.data.models.SafeMetaData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.ethereum.Block
-import pm.gnosis.ethereum.EthGetStorageAt
-import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import java.math.BigInteger
 
 class SafeRepository(
     private val safeDao: SafeDao,
     private val preferencesManager: PreferencesManager,
-    private val ethereumRepository: EthereumRepository,
     private val transactionServiceApi: TransactionServiceApi
 ) {
 
@@ -51,9 +46,9 @@ class SafeRepository(
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
     suspend fun isValidSafe(safeAddress: Solidity.Address): Boolean =
-        ethereumRepository.request(EthGetStorageAt(from = safeAddress, location = BigInteger.ZERO, block = Block.LATEST)).let { request ->
-            isSupported(request.checkedResult("Valid safe check failed").asEthereumAddress())
-        }
+        runCatching {
+            transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
+        }.exceptionOrNull() == null
 
     suspend fun clearActiveSafe() {
         preferencesManager.prefs.edit {
@@ -102,10 +97,6 @@ class SafeRepository(
 
         fun masterCopyVersion(masterCopy: Solidity.Address?): String? = supportedContracts[masterCopy]
 
-
-        fun isSupported(masterCopy: Solidity.Address?) =
-            supportedContracts.containsKey(masterCopy)
-
         fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_MASTER_COPY_1_1_1
 
         private val supportedContracts = mapOf(
@@ -114,8 +105,6 @@ class SafeRepository(
             SAFE_MASTER_COPY_1_0_0 to "1.0.0",
             SAFE_MASTER_COPY_1_1_1 to "1.1.1"
         )
-
-        fun isSettingsMethod(methodName: String?): Boolean = settingMethodNames.contains(methodName)
 
         const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
         const val METHOD_ADD_OWNER_WITH_THRESHOLD = "addOwnerWithThreshold"
@@ -126,15 +115,5 @@ class SafeRepository(
         const val METHOD_ENABLE_MODULE = "enableModule"
         const val METHOD_DISABLE_MODULE = "disableModule"
 
-        private val settingMethodNames = listOf(
-            METHOD_SET_FALLBACK_HANDLER,
-            METHOD_ADD_OWNER_WITH_THRESHOLD,
-            METHOD_REMOVE_OWNER,
-            METHOD_SWAP_OWNER,
-            METHOD_CHANGE_THRESHOLD,
-            METHOD_CHANGE_MASTER_COPY,
-            METHOD_ENABLE_MODULE,
-            METHOD_DISABLE_MODULE
-        )
     }
 }

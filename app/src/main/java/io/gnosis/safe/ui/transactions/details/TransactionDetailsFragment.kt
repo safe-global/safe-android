@@ -45,6 +45,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     @Inject
     lateinit var viewModel: TransactionDetailsViewModel
 
+    @Inject
+    lateinit var balanceFormatter: BalanceFormatter
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -118,7 +121,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
-                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(), txInfo.logoUri() ?: "", address)
+                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri() ?: "", address)
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
@@ -154,7 +157,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(), txInfo.logoUri()!!, txInfo.to)
+                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxStatusView.TxType.CUSTOM.titleRes,
                     TxStatusView.TxType.CUSTOM.iconRes,

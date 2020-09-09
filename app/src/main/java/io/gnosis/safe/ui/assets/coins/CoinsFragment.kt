@@ -15,6 +15,7 @@ import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.getErrorResForException
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -23,9 +24,12 @@ import javax.inject.Inject
 class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     @Inject
+    lateinit var balanceFormatter: BalanceFormatter
+
+    @Inject
     lateinit var viewModel: CoinsViewModel
 
-    private val adapter = CoinBalanceAdapter()
+    private lateinit var adapter: CoinBalanceAdapter
 
     override fun screenId() = ScreenId.ASSETS_COINS
 
@@ -38,6 +42,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        adapter = CoinBalanceAdapter(balanceFormatter)
         with(binding) {
             coins.adapter = adapter
             coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
