@@ -4,6 +4,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.adapter.Adapter
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -32,7 +33,9 @@ class CollectiblesViewModel
                     CollectiblesState(
                         loading = false,
                         refreshing = false,
-                        viewAction = UpdateCollectibles(collectibles)
+                        viewAction = UpdateCollectibles(
+                            Adapter.Data(null, collectibles)
+                        )
                     )
                 }
             }
@@ -79,5 +82,5 @@ data class CollectiblesState(
 ) : BaseStateViewModel.State
 
 data class UpdateCollectibles(
-    val collectibles: List<CollectibleViewData>
+    val collectibles: Adapter.Data<CollectibleViewData>
 ) : BaseStateViewModel.ViewAction
