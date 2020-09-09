@@ -9,7 +9,7 @@ import pm.gnosis.model.Solidity
 @JsonClass(generateAdapter = true)
 data class ServiceTokenInfo(
     @Json(name = "address") val address: Solidity.Address,
-    @Json(name = "decimals") val decimals: Int = 0,
+    @Json(name = "decimals") val decimals: Int? = 0,
     @Json(name = "symbol") val symbol: String = "",
     @Json(name = "name") val name: String = "",
     @Json(name = "logoUri") val logoUri: String?,
@@ -19,7 +19,7 @@ data class ServiceTokenInfo(
         address,
         name,
         symbol,
-        decimals,
+        decimals!!,
         logoUri ?: "https://gnosis-safe-token-logos.s3.amazonaws.com/${address.asEthereumAddressChecksumString()}.png"
     )
 

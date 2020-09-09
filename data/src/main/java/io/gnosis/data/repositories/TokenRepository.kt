@@ -5,6 +5,7 @@ import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.tokenAsErc20Token
 import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.models.Balance
+import io.gnosis.data.models.Collectible
 import io.gnosis.data.models.Erc20Token
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -22,6 +23,30 @@ class TokenRepository(
                 erc20TokenDao.insertToken(token)
                 Balance(token, it.balance, it.balanceUsd)
             }
+
+    suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
+        transactionServiceApi.loadCollectibles(safe.asEthereumAddressChecksumString())
+            .sortedWith (
+                compareBy({ it.tokenName }, { it.name })
+            )
+            .asReversed()
+            .asSequence()
+            .groupBy {
+                it.address
+            }
+            .toList()
+            .map {
+                it.second
+            }
+            .flatten()
+            .map {
+               it.toCollectible()
+            }
+            .toList()
+
+    suspend fun loadTokenInfo(address: Solidity.Address): ServiceTokenInfo =
+        transactionServiceApi.loadTokenInfo(address.asEthereumAddressChecksumString())
+
 
     companion object {
         private val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
