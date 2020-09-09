@@ -45,11 +45,15 @@
     <TextView
         android:id="@+id/token_description"
         style="@style/TextDark"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="This NFT ticket gives you full access…"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/token_id"
-        app:layout_constraintTop_toBottomOf="@+id/token_id" />
+        app:layout_constraintTop_toBottomOf="@+id/token_id"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="This NFT ticket gives you full access. Lorem ipsum dolor sit amet." />
 
 
 </merge>
