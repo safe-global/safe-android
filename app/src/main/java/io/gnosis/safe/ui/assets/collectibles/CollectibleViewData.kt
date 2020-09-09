@@ -6,7 +6,8 @@ sealed class CollectibleViewData {
 
     data class NftHeader(
         val tokenName: String,
-        val contractLogoUri: String?
+        val contractLogoUri: String?,
+        val first: Boolean = false
     ) : CollectibleViewData()
 
     data class CollectibleItem(

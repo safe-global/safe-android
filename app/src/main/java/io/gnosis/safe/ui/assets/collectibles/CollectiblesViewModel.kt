@@ -55,7 +55,8 @@ class CollectiblesViewModel
                 collectiblesViewData.add(
                     CollectibleViewData.NftHeader(
                         it.tokenName,
-                        it.logoUri
+                        it.logoUri,
+                        collectiblesViewData.isEmpty()
                     )
                 )
                 currentNft = it.address

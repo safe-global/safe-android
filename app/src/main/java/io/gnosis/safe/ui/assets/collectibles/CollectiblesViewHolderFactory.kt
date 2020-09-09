@@ -8,6 +8,7 @@ import io.gnosis.safe.databinding.ItemCollectibleNftHeaderBinding
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
+import pm.gnosis.svalinn.common.utils.visible
 
 enum class CollectiblesViewType {
     NFT_HEADER,
@@ -43,7 +44,11 @@ class NftHeaderViewHolder(private val viewBinding: ItemCollectibleNftHeaderBindi
     BaseCollectiblesViewHolder<CollectibleViewData.NftHeader>(viewBinding) {
 
     override fun bind(data: CollectibleViewData.NftHeader, payloads: List<Any>) {
-        viewBinding.tokenName.text = data.tokenName
+        with(viewBinding) {
+            tokenName.text = data.tokenName
+            separator.visible(!data.first)
+            //tokenLogo
+        }
     }
 }
 
@@ -51,6 +56,9 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
     BaseCollectiblesViewHolder<CollectibleViewData.CollectibleItem>(viewBinding) {
 
     override fun bind(data: CollectibleViewData.CollectibleItem, payloads: List<Any>) {
-        viewBinding.name.text = data.collectible.name
+        with(viewBinding) {
+            name.text = data.collectible.name
+            description.text = data.collectible.description
+        }
     }
 }
