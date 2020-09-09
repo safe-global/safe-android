@@ -37,26 +37,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
-                android:text="@string/tx_details_advanced" />
+                android:text="@string/tx_details_title" />
 
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
-    <!--
-                    statusText = displayString(transaction.status),
-                statusColorRes = statusTextColor(transaction.status),
-
-                transactionHash = txInfo.transactionHash
-
-                creator = txInfo.creator.asEthereumAddressChecksumString(),
-
-                implementation = txInfo.implementation?.asEthereumAddressChecksumString(),
-
-                factory = txInfo.factory?.asEthereumAddressChecksumString(),
-
-                dateTimeText = transaction.timestamp.formatBackendDate(),
-    -->
-
+    
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
