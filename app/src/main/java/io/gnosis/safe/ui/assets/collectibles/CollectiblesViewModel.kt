@@ -5,6 +5,7 @@ import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
+import kotlinx.coroutines.flow.collect
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -14,6 +15,12 @@ class CollectiblesViewModel
     private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CollectiblesState>(appDispatchers) {
+
+    init {
+        safeLaunch {
+            safeRepository.activeSafeFlow().collect { load() }
+        }
+    }
 
     override fun initialState(): CollectiblesState = CollectiblesState(loading = false, refreshing = false, viewAction = null)
 
