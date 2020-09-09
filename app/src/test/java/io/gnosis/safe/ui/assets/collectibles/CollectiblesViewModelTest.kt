@@ -8,7 +8,6 @@ import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.ui.assets.coins.CoinsState
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.mockk.coEvery
@@ -56,12 +55,12 @@ class CollectiblesViewModelTest {
 
     @Test
     fun `load - should emit collectibles view data list`() {
-
-        viewModel = CollectiblesViewModel(tokenRepository, safeRepository, appDispatchers)
-
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val collectibles = buildCollectibleList()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
+        coEvery { safeRepository.activeSafeFlow() } returns flow {
+            emit(safe)
+        }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { tokenRepository.loadCollectiblesOf(any()) } returns collectibles
 
@@ -87,9 +86,11 @@ class CollectiblesViewModelTest {
             )
         )
 
+        viewModel = CollectiblesViewModel(tokenRepository, safeRepository, appDispatchers)
+
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = false, refreshing = false, viewAction = UpdateCollectibles(Adapter.Data(null, collectiblesViewData)))
+            CollectiblesState(loading = false, refreshing = false, viewAction = UpdateCollectibles(Adapter.Data(null, collectiblesViewData)))
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
