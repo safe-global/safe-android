@@ -5,11 +5,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.setPadding
 import androidx.viewbinding.ViewBinding
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.PicassoProvider
 import com.squareup.picasso.Target
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCollectibleCollectibleBinding
@@ -17,11 +14,8 @@ import io.gnosis.safe.databinding.ItemCollectibleNftHeaderBinding
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
-import io.gnosis.safe.utils.CircleTransformation
-import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
-import java.lang.Exception
 
 enum class CollectiblesViewType {
     NFT_HEADER,
@@ -60,7 +54,7 @@ class NftHeaderViewHolder(private val viewBinding: ItemCollectibleNftHeaderBindi
         with(viewBinding) {
             tokenName.text = data.tokenName
             separator.visible(!data.first)
-            //tokenLogo
+            tokenLogo.loadNftImage(data.contractLogoUri)
         }
     }
 }
@@ -72,39 +66,39 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
         with(viewBinding) {
             name.text = data.collectible.name
             description.text = data.collectible.description
-            logo.loadNftImage(data.collectible.imageUri, this@CollectibleItemViewHolder)
+            logo.loadCollectibleImage(data.collectible.imageUri, this@CollectibleItemViewHolder)
         }
     }
 
     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-        viewBinding.logo.setNftPlaceholder()
+        viewBinding.logo.setCollectiblePlaceholder()
     }
 
     override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-        viewBinding.logo.setNftPlaceholder()
+        viewBinding.logo.setCollectiblePlaceholder()
     }
 
     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-        viewBinding.logo.setNftBitmap(bitmap)
+        viewBinding.logo.setCollectibleBitmap(bitmap)
     }
 }
 
-fun ImageView.setNftPlaceholder() {
+fun ImageView.setCollectiblePlaceholder() {
     scaleType = ImageView.ScaleType.CENTER
     setImageResource(R.drawable.ic_collectible_placeholder)
     setBackgroundColor(context.getColorCompat(R.color.whitesmoke_two))
 }
 
-fun ImageView.setNftBitmap(bitmap: Bitmap?) {
+fun ImageView.setCollectibleBitmap(bitmap: Bitmap?) {
     scaleType = ImageView.ScaleType.FIT_CENTER
     background = null
     setImageBitmap(bitmap)
 }
 
-fun ImageView.loadNftImage(logo: String?, target: Target) {
+fun ImageView.loadCollectibleImage(logo: String?, target: Target) {
     when {
         logo == null -> {
-            setNftPlaceholder()
+            setCollectiblePlaceholder()
         }
         !logo.isNullOrBlank() -> {
             Picasso.get()
@@ -112,7 +106,25 @@ fun ImageView.loadNftImage(logo: String?, target: Target) {
                 .into(target)
         }
         else -> {
-            setNftPlaceholder()
+            setCollectiblePlaceholder()
+        }
+    }
+}
+
+fun ImageView.loadNftImage(logo: String?) {
+    when {
+        logo == null -> {
+            setImageResource(R.drawable.ic_nft_placeholder)
+        }
+        !logo.isNullOrBlank() -> {
+            Picasso.get()
+                .load(logo)
+                .placeholder(R.drawable.ic_nft_placeholder)
+                .error(R.drawable.ic_nft_placeholder)
+                .into(this)
+        }
+        else -> {
+            setImageResource(R.drawable.ic_nft_placeholder)
         }
     }
 }
