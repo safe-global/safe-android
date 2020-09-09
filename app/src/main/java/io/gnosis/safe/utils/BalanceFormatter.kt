@@ -40,33 +40,33 @@ class BalanceFormatter {
         value < LOWEST_LIMIT -> {
             "< 0.00001"
         }
-        value <= THOUSAND_LIMIT -> {
+        value < THOUSAND_LIMIT -> {
             formatter1k.format(value)
         }
-        value <= TEN_THOUSAND_LIMIT -> {
+        value < TEN_THOUSAND_LIMIT -> {
             formatter10k.format(value)
         }
-        value <= HUNDRED_THOUSAND_LIMIT -> {
+        value < HUNDRED_THOUSAND_LIMIT -> {
             formatter100k.format(value)
         }
-        value <= MILLION_LIMIT -> {
+        value < MILLION_LIMIT -> {
             formatter1M.format(value)
         }
-        value <= TEN_MILLION_LIMIT -> {
+        value < TEN_MILLION_LIMIT -> {
             formatter10M.format(value)
         }
-        value <= HUNDRED_MILLION_LIMIT -> {
+        value < HUNDRED_MILLION_LIMIT -> {
             formatter100M.format(value)
         }
-        value <= BILLION_LIMIT -> {
+        value < BILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(6))
             formatterBigNumber.format(formattedValue) + "M"
         }
-        value <= TRILLION_LIMIT -> {
+        value < TRILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(9))
             formatterBigNumber.format(formattedValue) + "B"
         }
-        value <= THOUSAND_TRILLION_LIMIT -> {
+        value < THOUSAND_TRILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(12))
             formatterBigNumber.format(formattedValue) + "T"
         }
