@@ -17,4 +17,7 @@
         <attr name="item_name" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="AddressItem">
+        <attr name="show_separator" format="boolean" />
+    </declare-styleable>
 </resources>
