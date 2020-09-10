@@ -65,7 +65,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="8dp">
+                app:cardCornerRadius="8dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/collectible_image"

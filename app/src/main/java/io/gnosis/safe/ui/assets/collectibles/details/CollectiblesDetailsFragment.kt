@@ -89,6 +89,7 @@ fun ImageView.loadCollectibleImage(logo: String?) {
                 }
 
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    (parent as View).visible(true)
                     setImageBitmap(bitmap)
                 }
             })
