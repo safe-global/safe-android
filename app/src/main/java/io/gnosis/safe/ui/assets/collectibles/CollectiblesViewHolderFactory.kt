@@ -5,17 +5,20 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemCollectibleCollectibleBinding
 import io.gnosis.safe.databinding.ItemCollectibleNftHeaderBinding
+import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 
 enum class CollectiblesViewType {
     NFT_HEADER,
@@ -75,6 +78,18 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
             }
             description.text = data.collectible.description
             logo.loadCollectibleImage(data.collectible.imageUri, this@CollectibleItemViewHolder)
+            root.setOnClickListener {
+                Navigation.findNavController(it).navigate(
+                    AssetsFragmentDirections.actionAssetsFragmentToCollectiblesDetailsFragment(
+                        data.collectible.address.asEthereumAddressString(),
+                        data.collectible.name,
+                        data.collectible.id,
+                        data.collectible.description,
+                        data.collectible.uri,
+                        data.collectible.imageUri
+                    )
+                )
+            }
         }
     }
 
@@ -98,7 +113,7 @@ fun ImageView.setCollectiblePlaceholder() {
 }
 
 fun ImageView.setCollectibleBitmap(bitmap: Bitmap?) {
-    scaleType = ImageView.ScaleType.FIT_CENTER
+    scaleType = ImageView.ScaleType.CENTER_CROP
     background = null
     setImageBitmap(bitmap)
 }

@@ -36,7 +36,55 @@
         android:id="@+id/assetsFragment"
         android:name="io.gnosis.safe.ui.assets.AssetsFragment"
         android:label="AssetsFragment"
-        tools:layout="@layout/fragment_assets" />
+        tools:layout="@layout/fragment_assets">
+
+        <action
+            android:id="@+id/action_assetsFragment_to_collectiblesDetailsFragment"
+            app:destination="@id/collectiblesDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/collectiblesDetailsFragment"
+        android:name="io.gnosis.safe.ui.assets.collectibles.details.CollectiblesDetailsFragment"
+        android:label="CollectiblesDetailsFragment"
+        tools:layout="@layout/fragment_collectibles_details">
+
+        <argument
+            android:name="contract"
+            app:argType="string" />
+
+        <argument
+            android:name="name"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="id"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="description"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="uri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="imageUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"

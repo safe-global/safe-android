@@ -56,6 +56,9 @@
 
     <string name="collectibles_empty">Collectibles will appear here</string>
     <string name="collectibles_unknown">Unknown</string>
+    <string name="collectibles_details">Collectible details</string>
+    <string name="collectibles_asset_contract">Asset Contract</string>
+    <string name="collectibles_view_on">View on %1$s</string>
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>
