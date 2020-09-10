@@ -53,6 +53,8 @@ class TransactionListViewModelTest {
     private val transactionPagingProvider = mockk<TransactionPagingProvider>()
 
     private val balanceFormatter = BalanceFormatter()
+    private val DS = balanceFormatter.decimalSeparator
+    private val GS = balanceFormatter.groupingSeparator
 
     private val defaultSafeName: String = "Default Name"
     private val defaultSafeAddress: Solidity.Address = "0x1234".asEthereumAddress()!!
@@ -326,7 +328,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
-                amountText = "-0.0001 ETH",
+                amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -467,7 +469,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_list_failed,
                 statusColorRes = R.color.safe_failed_red,
-                amountText = "-0.0001 ETH",
+                amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -551,7 +553,7 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_list_success,
                 statusColorRes = R.color.safe_green,
-                amountText = "+0.0001 ETH",
+                amountText = "+0${DS}0001 ETH",
                 amountColor = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
@@ -583,7 +585,7 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 statusText = R.string.tx_list_cancelled,
                 statusColorRes = R.color.dark_grey,
-                amountText = "-0.0001 ETH",
+                amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,

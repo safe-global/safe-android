@@ -31,6 +31,7 @@ private const val anotherAddressString = "0x000000000000000000000000000000000000
 class TxUtilsKtTest {
 
     private val balanceFormatter: BalanceFormatter = BalanceFormatter()
+    private val DS = balanceFormatter.decimalSeparator
 
     @Test
     fun `formattedAmount (Unknown txInfo) should return 0 ETH`() {
@@ -93,7 +94,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("+0.1 WETH", result)
+        assertEquals("+0${DS}1 WETH", result)
     }
 
     @Test

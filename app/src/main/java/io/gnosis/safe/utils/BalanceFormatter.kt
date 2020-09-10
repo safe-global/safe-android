@@ -1,5 +1,6 @@
 package io.gnosis.safe.utils
 
+import androidx.annotation.VisibleForTesting
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -17,10 +18,15 @@ class BalanceFormatter {
     private val formatter100M: DecimalFormat
     private val formatterBigNumber: DecimalFormat
 
+    @VisibleForTesting
+    val decimalSeparator: Char
+    @VisibleForTesting
+    val groupingSeparator: Char
+
     init {
         val otherSymbols = DecimalFormatSymbols(Locale.getDefault())
-        otherSymbols.decimalSeparator = '.'
-        otherSymbols.groupingSeparator = ','
+        decimalSeparator = otherSymbols.decimalSeparator
+        groupingSeparator = otherSymbols.groupingSeparator
 
         formatter1k = DecimalFormat("#.#####", otherSymbols)
         formatter10k = DecimalFormat("#,###.####", otherSymbols)
@@ -38,35 +44,35 @@ class BalanceFormatter {
             "0"
         }
         value < LOWEST_LIMIT -> {
-            "< 0.00001"
+            "< 0${decimalSeparator}00001"
         }
-        value <= THOUSAND_LIMIT -> {
+        value < THOUSAND_LIMIT -> {
             formatter1k.format(value)
         }
-        value <= TEN_THOUSAND_LIMIT -> {
+        value < TEN_THOUSAND_LIMIT -> {
             formatter10k.format(value)
         }
-        value <= HUNDRED_THOUSAND_LIMIT -> {
+        value < HUNDRED_THOUSAND_LIMIT -> {
             formatter100k.format(value)
         }
-        value <= MILLION_LIMIT -> {
+        value < MILLION_LIMIT -> {
             formatter1M.format(value)
         }
-        value <= TEN_MILLION_LIMIT -> {
+        value < TEN_MILLION_LIMIT -> {
             formatter10M.format(value)
         }
-        value <= HUNDRED_MILLION_LIMIT -> {
+        value < HUNDRED_MILLION_LIMIT -> {
             formatter100M.format(value)
         }
-        value <= BILLION_LIMIT -> {
+        value < BILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(6))
             formatterBigNumber.format(formattedValue) + "M"
         }
-        value <= TRILLION_LIMIT -> {
+        value < TRILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(9))
             formatterBigNumber.format(formattedValue) + "B"
         }
-        value <= THOUSAND_TRILLION_LIMIT -> {
+        value < THOUSAND_TRILLION_LIMIT -> {
             val formattedValue = value.divide(BigDecimal.TEN.pow(12))
             formatterBigNumber.format(formattedValue) + "T"
         }
