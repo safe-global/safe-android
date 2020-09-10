@@ -8,6 +8,8 @@
 
     <color name="background">@color/very_light_pink_two</color>
 
+    <color name="whitesmoke_two">#f0efee</color>
+
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
