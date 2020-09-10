@@ -123,7 +123,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
 
-
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
                 } else {
