@@ -17,7 +17,8 @@
             android:id="@+id/toolbar_layout"
             style="@style/Toolbar"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <ImageButton
                 android:id="@+id/back_button"
@@ -52,6 +53,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
