@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
@@ -17,6 +18,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -44,6 +46,8 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+            collectibleImage.layoutParams.width = resources.displayMetrics.widthPixels - dpToPx(32)
+            collectibleImage.layoutParams.height = resources.displayMetrics.widthPixels - dpToPx(32)
             collectibleImage.loadCollectibleImage(imageUri)
             collectibleName.text = name ?: getString(R.string.collectibles_unknown)
             collectibleId.text = id
