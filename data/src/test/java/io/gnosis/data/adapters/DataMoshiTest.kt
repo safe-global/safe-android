@@ -1,14 +1,6 @@
 package io.gnosis.data.adapters
 
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ExecutionInfoDto
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.GateTransactionType
-import io.gnosis.data.backend.dto.GateTransferType
-import io.gnosis.data.backend.dto.ParamsDto
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.backend.dto.TransactionInfoDto
-import io.gnosis.data.backend.dto.TransferInfoDto
+import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.TransactionStatus.SUCCESS
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -101,6 +93,28 @@ class DataMoshiTest {
                 confirmationsRequired = 1,
                 confirmationsSubmitted = 1
             )
+        )
+        assertEquals(expected, transactionDto)
+    }
+
+    @Test
+    fun `fromJson (creation TX) should not crash on certain null values `() {
+        val jsonString: String = readResource("creation_with_null_implementation.json")
+
+        val transactionDto = adapter.fromJson(jsonString)
+
+        val expected = GateTransactionDto(
+            id = "creation_0xFd0f138c1ca4741Ad6D4DecCb352Eb5c1E29D351",
+            timestamp = 1543431151000,
+            txStatus = SUCCESS,
+            txInfo = TransactionInfoDto.Creation(
+                type = GateTransactionType.Creation,
+                creator = "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!,
+                factory = null,
+                implementation = null,
+                transactionHash = "0xe4f00086442eadbac4975c6aa87110ac72700dca905da1d908947e04ed9cee47"
+            ),
+            executionInfo = null
         )
         assertEquals(expected, transactionDto)
     }
