@@ -1,5 +1,6 @@
 package io.gnosis.safe.utils
 
+import androidx.annotation.VisibleForTesting
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -17,10 +18,15 @@ class BalanceFormatter {
     private val formatter100M: DecimalFormat
     private val formatterBigNumber: DecimalFormat
 
+    @VisibleForTesting
+    val decimalSeparator: Char
+    @VisibleForTesting
+    val groupingSeparator: Char
+
     init {
         val otherSymbols = DecimalFormatSymbols(Locale.getDefault())
-        otherSymbols.decimalSeparator = '.'
-        otherSymbols.groupingSeparator = ','
+        decimalSeparator = otherSymbols.decimalSeparator
+        groupingSeparator = otherSymbols.groupingSeparator
 
         formatter1k = DecimalFormat("#.#####", otherSymbols)
         formatter10k = DecimalFormat("#,###.####", otherSymbols)
