@@ -218,6 +218,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
         if (txDetails?.detailedExecutionInfo != null) {
             binding.advanced.visible(true)
+            binding.advancedDivider.visible(true)
             binding.advanced.setOnClickListener {
                 val operation = txDetails.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
                 findNavController().navigate(
@@ -230,6 +231,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         } else {
             binding.advanced.visible(false)
+            binding.advancedDivider.visible(false)
         }
         if (txDetails?.executedAt != null) {
             binding.executed.visible(true)
