@@ -44,7 +44,7 @@ class BalanceFormatter {
             "0"
         }
         value < LOWEST_LIMIT -> {
-            "< 0.00001"
+            "< 0${decimalSeparator}00001"
         }
         value < THOUSAND_LIMIT -> {
             formatter1k.format(value)

@@ -93,7 +93,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("+0.1 WETH", result)
+        assertEquals("+0${balanceFormatter.decimalSeparator}1 WETH", result)
     }
 
     @Test
