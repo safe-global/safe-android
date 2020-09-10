@@ -47,7 +47,11 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
             collectibleImage.loadCollectibleImage(imageUri)
             collectibleName.text = name ?: getString(R.string.collectibles_unknown)
             collectibleId.text = id
-            collectibleDescription.text = description
+            if (description != null) {
+                collectibleDescription.text = description
+            } else {
+                collectibleDescription.visible(false)
+            }
             collectibleContract.label = getString(R.string.collectibles_asset_contract)
             collectibleContract.address = contract.asEthereumAddress()
 
