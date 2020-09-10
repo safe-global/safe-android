@@ -30,27 +30,14 @@
         style="@style/TextMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_small_margin"
         android:ellipsize="middle"
         android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/token_name"
         app:layout_constraintTop_toBottomOf="@+id/token_name"
         tools:text="2138746948" />
-
-    <TextView
-        android:id="@+id/token_description"
-        style="@style/TextDark"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_small_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/token_id"
-        app:layout_constraintTop_toBottomOf="@+id/token_id"
-        android:ellipsize="end"
-        android:singleLine="true"
-        tools:text="This NFT ticket gives you full access. Lorem ipsum dolor sit amet." />
 
 </merge>

@@ -7,7 +7,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxErc721Binding
 import io.gnosis.safe.utils.loadTokenLogo
-import pm.gnosis.svalinn.common.utils.visible
 
 class Erc721View @JvmOverloads constructor(
     context: Context,
@@ -21,10 +20,5 @@ class Erc721View @JvmOverloads constructor(
         binding.tokenName.text = tokenName
         binding.logo.loadTokenLogo(logoUri, R.drawable.ic_nft_placeholder)
         binding.tokenId.text = tokenId
-        if (tokenDescription.isNullOrEmpty()) {
-            binding.tokenDescription.visible(false)
-        } else {
-            binding.tokenDescription.text = tokenDescription
-        }
     }
 }
