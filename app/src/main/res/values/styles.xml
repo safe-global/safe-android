@@ -69,12 +69,6 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-
-    <style name="TextDark.Light" parent="Text">
-        <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:lineSpacingExtra">6sp</item>
-    </style>
-
     <style name="TextDark.Bold" parent="TextDark">
         <item name="fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
