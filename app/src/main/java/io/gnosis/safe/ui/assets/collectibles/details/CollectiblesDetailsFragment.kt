@@ -46,8 +46,9 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            collectibleImage.layoutParams.width = resources.displayMetrics.widthPixels - dpToPx(32)
-            collectibleImage.layoutParams.height = resources.displayMetrics.widthPixels - dpToPx(32)
+            val width = resources.displayMetrics.widthPixels - dpToPx(32)
+            collectibleImageContainer.layoutParams.width = width
+            collectibleImageContainer.layoutParams.height = width
             collectibleImage.loadCollectibleImage(imageUri)
             collectibleName.text = name ?: getString(R.string.collectibles_unknown)
             collectibleId.text = id
@@ -84,7 +85,7 @@ fun ImageView.loadCollectibleImage(logo: String?) {
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
 
                 override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                    visible(false)
+                    (parent as View).visible(false)
                 }
 
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
@@ -92,6 +93,6 @@ fun ImageView.loadCollectibleImage(logo: String?) {
                 }
             })
     } else {
-        visible(false)
+        (parent as View).visible(false)
     }
 }
