@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.settings.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -25,42 +26,44 @@ class MasterCopyItem @JvmOverloads constructor(
 
     private val binding by lazy { ViewMastercopyItemBinding.inflate(LayoutInflater.from(context), this) }
 
-    var address: Solidity.Address? = null
-        set(value) {
-            with(binding) {
-                blockies.setAddress(value)
-                setVersionName(value)
-                address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
-                binding.root.setOnClickListener {
-                    context.openUrl(
-                        context.getString(
-                            R.string.etherscan_address_url,
-                            value?.asEthereumAddressChecksumString()
-                        )
+    fun setAddress(value: Solidity.Address?, showUpdateAvailable: Boolean = true) {
+        with(binding) {
+            blockies.setAddress(value)
+            setVersionName(value, showUpdateAvailable)
+            address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
+            binding.root.setOnClickListener {
+                context.openUrl(
+                    context.getString(
+                        R.string.etherscan_address_url,
+                        value?.asEthereumAddressChecksumString()
                     )
-                }
+                )
             }
-            field = value
         }
+    }
 
-    private fun setVersionName(address: Solidity.Address?) {
+    private fun setVersionName(address: Solidity.Address?, showUpdateAvailable: Boolean) {
         with(binding) {
             if (SafeRepository.masterCopyVersion(address).isNullOrBlank()) {
                 versionName.text = context.getString(R.string.safe_settings_unknown)
-                versionInfo.visible(false)
+                versionInfo.visible(false, View.INVISIBLE)
             } else {
                 versionName.text = SafeRepository.masterCopyVersion(address)
-                versionInfo.apply {
-                    visible(true)
-                    val versionInfoView = buildVersionInfoView(address)
-                    setCompoundDrawablesWithIntrinsicBounds(
-                        ResourcesCompat.getDrawable(resources, versionInfoView.leftDrawable, context.theme),
-                        null,
-                        null,
-                        null
-                    )
-                    setTextColor(ResourcesCompat.getColor(resources, versionInfoView.infoColor, context.theme))
-                    setText(versionInfoView.infoText)
+                if (showUpdateAvailable) {
+                    versionInfo.apply {
+                        visible(true)
+                        val versionInfoView = buildVersionInfoView(address)
+                        setCompoundDrawablesWithIntrinsicBounds(
+                            ResourcesCompat.getDrawable(resources, versionInfoView.leftDrawable, context.theme),
+                            null,
+                            null,
+                            null
+                        )
+                        setTextColor(ResourcesCompat.getColor(resources, versionInfoView.infoColor, context.theme))
+                        setText(versionInfoView.infoText)
+                    }
+                } else {
+                    versionInfo.visible(false, View.INVISIBLE)
                 }
             }
         }

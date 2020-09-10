@@ -11,6 +11,27 @@
         app:destination="@id/addSafeFragment"
         app:launchSingleTop="true" />
 
+    <dialog
+        android:id="@+id/safeSelectionDialog"
+        android:name="io.gnosis.safe.ui.safe.selection.SafeSelectionDialog"
+        android:label="SafeSelectionDialog"
+        tools:layout="@layout/dialog_safe_selection">
+
+        <action
+            android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
+            app:destination="@id/addSafeFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/addSafeFragment"
+            app:popUpToInclusive="true" />
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/shareSafeDialog"
+        android:name="io.gnosis.safe.ui.safe.share.ShareSafeDialog"
+        android:label="ShareSafeDialog"
+        tools:layout="@layout/dialog_share_safe" />
+
     <fragment
         android:id="@+id/assetsFragment"
         android:name="io.gnosis.safe.ui.assets.AssetsFragment"
@@ -61,21 +82,6 @@
         android:label="AdvancedAppSettingsFragment"
         tools:layout="@layout/fragment_settings_app_advanced" />
 
-    <dialog
-        android:id="@+id/safeSelectionDialog"
-        android:name="io.gnosis.safe.ui.safe.selection.SafeSelectionDialog"
-        android:label="SafeSelectionDialog"
-        tools:layout="@layout/dialog_safe_selection">
-
-        <action
-            android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
-            app:destination="@id/addSafeFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/addSafeFragment"
-            app:popUpToInclusive="true" />
-
-    </dialog>
-
     <fragment
         android:id="@+id/transactionListFragment"
         android:name="io.gnosis.safe.ui.transactions.TransactionListFragment"
@@ -86,6 +92,10 @@
             android:id="@+id/action_transactionListFragment_to_transactionDetailsFragment"
             app:destination="@id/transactionDetailsFragment" />
 
+        <action
+            android:id="@+id/action_transactionListFragment_to_transactionCreationDetailsFragment"
+            app:destination="@id/creationTransactionDetailsFragment" />
+
     </fragment>
 
     <fragment
@@ -94,14 +104,60 @@
         android:label="TransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details">
 
-        <argument
-            android:name="txId"
-            app:argType="string" />
-
         <action
             android:id="@+id/action_transactionDetailsFragment_to_advancedTransactionDetailsFragment"
             app:destination="@id/advancedTransactionDetailsFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
+
+        <argument
+            android:name="txId"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/creationTransactionDetailsFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.CreationTransactionDetailsFragment"
+        android:label="CreationTransactionDetailsFragment"
+        tools:layout="@layout/fragment_transaction_details_creation">
+
+        <argument
+            android:name="statusTextRes"
+            app:argType="reference" />
+
+        <argument
+            android:name="statusColorRes"
+            app:argType="reference" />
+
+        <argument
+            android:name="dateTimeText"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="creator"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="factory"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="implementation"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="transActionHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -121,9 +177,9 @@
 
         <argument
             android:name="hash"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            app:nullable="true" />
 
     </fragment>
 
@@ -156,11 +212,5 @@
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_settings_safe_advanced" />
-
-    <dialog
-        android:id="@+id/shareSafeDialog"
-        android:name="io.gnosis.safe.ui.safe.share.ShareSafeDialog"
-        android:label="ShareSafeDialog"
-        tools:layout="@layout/dialog_share_safe" />
 
 </navigation>

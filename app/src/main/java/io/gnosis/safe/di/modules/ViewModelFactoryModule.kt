@@ -9,6 +9,7 @@ import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
 import io.gnosis.safe.ui.assets.SafeBalancesViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
+import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
@@ -51,6 +52,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CoinsViewModel::class)
     abstract fun providesCoinsViewModel(viewModel: CoinsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CollectiblesViewModel::class)
+    abstract fun providesCollectiblesViewModel(viewModel: CollectiblesViewModel): ViewModel
 
     @Binds
     @IntoMap

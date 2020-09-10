@@ -340,12 +340,28 @@ class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChang
             dateTime.text = viewTransfer.dateTimeText
             settingName.setText(viewTransfer.label)
 
-            // TODO: Add in future PR
-//            root.setOnClickListener {
-//                // TBD
-//            }
+            if (viewTransfer.creationDetails != null) {
+                root.setOnClickListener {
+                    navigateToCreationDetails(it, viewTransfer.creationDetails)
+                }
+            }
         }
     }
+}
+
+private fun navigateToCreationDetails(view: View, details: TransactionView.CreationDetails) {
+    Navigation.findNavController(view)
+        .navigate(
+            TransactionListFragmentDirections.actionTransactionListFragmentToTransactionCreationDetailsFragment(
+                statusColorRes = details.statusColorRes,
+                statusTextRes = details.statusText,
+                dateTimeText = details.dateTimeText,
+                implementation = details.implementation,
+                factory = details.factory,
+                creator = details.creator,
+                transActionHash = details.transactionHash
+            )
+        )
 }
 
 private fun navigateToTxDetails(view: View, id: String) {

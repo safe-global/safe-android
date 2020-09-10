@@ -4,11 +4,8 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
-import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -30,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -422,7 +420,7 @@ class TransactionListViewModel
             amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
-            nonce = custom.nonce.toString()
+            nonce = custom.nonce?.toString() ?: ""
         )
     }
 
@@ -440,7 +438,7 @@ class TransactionListViewModel
             threshold = safeInfo.threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = custom.nonce.toString(),
+            nonce = custom.nonce?.toString() ?: "",
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
             amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
@@ -449,13 +447,24 @@ class TransactionListViewModel
 
     private fun historicCreation(transaction: Creation): TransactionView.Creation {
 
+        val txInfo = transaction.txInfo as TransactionInfo.Creation
+
         return TransactionView.Creation(
             id = transaction.id,
             status = transaction.status,
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.timestamp.formatBackendDate(),
-            label = R.string.tx_list_creation
+            label = R.string.tx_list_creation,
+            creationDetails = TransactionView.CreationDetails(
+                statusText = displayString(transaction.status),
+                statusColorRes = statusTextColor(transaction.status),
+                dateTimeText = transaction.timestamp.formatBackendDate(),
+                creator = txInfo.creator.asEthereumAddressString(),
+                factory = txInfo.factory?.asEthereumAddressString(),
+                implementation = txInfo.implementation?.asEthereumAddressString(),
+                transactionHash = txInfo.transactionHash
+            )
         )
     }
 

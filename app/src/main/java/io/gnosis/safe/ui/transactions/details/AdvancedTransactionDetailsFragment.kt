@@ -46,7 +46,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             } else {
                 hashItem.value = hash
                 hashItem.setOnClickListener {
-                    context?.copyToClipboard(context?.getString(R.string.address_copied)!!, hashItem.value.toString()) {
+                    context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, hashItem.value.toString()) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }
                 }

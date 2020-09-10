@@ -182,6 +182,5 @@ class ApplicationModule(private val application: Application) {
         ConnectivityInfoProvider(connectivityManager)
 
     @Provides
-    @Singleton
     fun providesBalanceFormatter(): BalanceFormatter = BalanceFormatter()
 }

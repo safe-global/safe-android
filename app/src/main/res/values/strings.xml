@@ -54,6 +54,8 @@
     <string name="get_started">Get started</string>
     <string name="splash_text">The most trusted platform to store digital assets on Ethereum</string>
 
+    <string name="collectibles_empty">Collectibles will appear here</string>
+    <string name="collectibles_unknown">Unknown</string>
 
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>
@@ -96,6 +98,8 @@
     <string name="tx_list_set_fallback_handler">Set fallback handler</string>
     <string name="tx_list_enable_module">Enable module</string>
     <string name="tx_list_disable_module">Disable module</string>
+    <string name="tx_list_creation">Safe created</string>
+
     <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
     <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
     <string name="tx_list_pending">\u2022 Pending</string>
@@ -106,6 +110,7 @@
     <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
+    <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_details_title">Transaction details</string>
     <string name="tx_details_advanced">Advanced</string>
@@ -113,6 +118,9 @@
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
     <string name="tx_details_token_name_unknown">Unknown</string>
+    <string name="tx_details_creation_creator_address">Creator address</string>
+    <string name="tx_details_creation_implementation_used">Mastercopy used</string>
+    <string name="tx_details_creation_factory_used">Factory used</string>
 
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
@@ -159,8 +167,6 @@
     <string name="safe_settings_modules">Addresses of enabled modules</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
-    
-    <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_confirmations_created">Created</string>
     <string name="tx_confirmations_confirmed">Confirmed</string>
@@ -202,5 +208,4 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
-    <string name="tx_list_creation">Safe created</string>
 </resources>
