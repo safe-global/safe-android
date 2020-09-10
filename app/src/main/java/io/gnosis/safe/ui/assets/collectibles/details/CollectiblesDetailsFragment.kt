@@ -1,12 +1,17 @@
 package io.gnosis.safe.ui.assets.collectibles.details
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesDetailsBinding
@@ -15,6 +20,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import java.lang.Exception
 
 class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectiblesDetailsBinding>() {
 
@@ -38,8 +44,8 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-
-            collectibleName.text = name
+            collectibleImage.loadCollectibleImage(imageUri)
+            collectibleName.text = name ?: getString(R.string.collectibles_unknown)
             collectibleId.text = id
             collectibleDescription.text = description
             collectibleContract.label = getString(R.string.collectibles_asset_contract)
@@ -58,5 +64,26 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
                 Navigation.findNavController(it).navigateUp()
             }
         }
+    }
+}
+
+fun ImageView.loadCollectibleImage(logo: String?) {
+    if (!logo.isNullOrBlank()) {
+        Picasso.get()
+            .load(logo)
+            .into(object : Target {
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                    visible(false)
+                }
+
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    setImageBitmap(bitmap)
+                }
+            })
+    } else {
+        visible(false)
     }
 }
