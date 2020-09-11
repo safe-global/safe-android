@@ -72,7 +72,10 @@ fun Throwable.getErrorResForException(): Int =
         this is SSLHandshakeException || this.cause is SSLHandshakeException -> {
             R.string.error_ssl_handshake
         }
-        this is UnknownHostException || this is SocketTimeoutException || this is ConnectException -> {
+        this is SocketTimeoutException -> {
+            R.string.error_timeout
+        }
+        this is UnknownHostException || this is ConnectException -> {
             R.string.error_no_internet
         }
         else -> R.string.error_try_again
