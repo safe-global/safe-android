@@ -85,7 +85,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                 }
             }
         })
-        viewModel.load()
     }
 
     private fun hideLoading() {
