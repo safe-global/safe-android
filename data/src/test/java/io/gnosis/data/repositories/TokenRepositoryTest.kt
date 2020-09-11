@@ -120,7 +120,7 @@ class TokenRepositoryTest {
 
         val collectibles = tokenRepository.loadCollectiblesOf(address)
 
-        assertEquals(6, collectibles.size)
+        assertEquals(7, collectibles.size)
 
         assertEquals("Copernicus.20200210.212404", collectibles[0].tokenName)
         assertEquals(null, collectibles[0].name)
@@ -145,6 +145,10 @@ class TokenRepositoryTest {
         assertEquals("SpecialToken", collectibles[5].tokenName)
         assertEquals("Luxury Home", collectibles[5].name)
         assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[5].address)
+
+        assertEquals("SpecialToken", collectibles[6].tokenName)
+        assertEquals("", collectibles[6].name)
+        assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[6].address)
 
         coVerify {
             transactionServiceApi.loadCollectibles(address.asEthereumAddressChecksumString())
