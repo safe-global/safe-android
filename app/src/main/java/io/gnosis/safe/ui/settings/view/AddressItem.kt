@@ -20,11 +20,12 @@ class AddressItem @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
+
+    private val binding by lazy { ViewAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+
     init {
         readAttributesAndSetupFields(context, attrs)
     }
-
-    private val binding by lazy { ViewAddressItemBinding.inflate(LayoutInflater.from(context), this) }
 
     var address: Solidity.Address? = null
         set(value) {
