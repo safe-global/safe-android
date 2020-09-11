@@ -60,14 +60,16 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
             collectibleContract.label = getString(R.string.collectibles_asset_contract)
             collectibleContract.address = contract.asEthereumAddress()
 
-            if (uri != null) {
-                collectibleUri.text = getString(R.string.collectibles_view_on, Uri.parse(uri).let { it.encodedAuthority })
-                collectibleUri.setOnClickListener {
-                    requireContext().openUrl(uri!!)
-                }
-            } else {
-                collectibleUri.visible(false)
-            }
+            collectibleUri.visible(false)
+            //FIXME: uncomment when collectible uri should be visible
+//            if (uri != null) {
+//                collectibleUri.text = getString(R.string.collectibles_view_on, Uri.parse(uri).let { it.encodedAuthority })
+//                collectibleUri.setOnClickListener {
+//                    requireContext().openUrl(uri!!)
+//                }
+//            } else {
+//                collectibleUri.visible(false)
+//            }
 
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
