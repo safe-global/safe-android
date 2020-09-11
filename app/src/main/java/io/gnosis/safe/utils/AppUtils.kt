@@ -78,6 +78,5 @@ fun Throwable.getErrorResForException(): Int =
         this is UnknownHostException || this is ConnectException -> {
             R.string.error_no_internet
         }
-
         else -> R.string.error_try_again
     }
