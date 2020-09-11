@@ -1,5 +1,15 @@
 [
   {
+    "address": "0xc885a55113De4DE859be93ee4A0B955fD7145947",
+    "tokenName": "SpecialToken",
+    "tokenSymbol": "STK",
+    "id": "",
+    "uri": "",
+    "name": "",
+    "description": "",
+    "imageUri": ""
+  },
+  {
     "address": "0xFFadE30f03a17581362171982F95657C1306a68f",
     "tokenName": "ProjectP",
     "tokenSymbol": "PP",

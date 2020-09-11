@@ -27,29 +27,51 @@ class TokenRepository(
     //FIXME: use client gateway (grouping and sorting will be done on the backend side)
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
         transactionServiceApi.loadCollectibles(safe.asEthereumAddressChecksumString())
-            .sortedWith (
-                compareBy({ it.tokenName }, { it.name })
-            )
-            .asReversed()
             .asSequence()
             .groupBy {
                 it.address
             }
             .toList()
             .map {
-                it.second
+                it.second.sortedWith(Comparator { c1, c2 ->
+                    if (c1.name.isNullOrBlank()) {
+                        if (c2.name.isNullOrBlank())
+                            0
+                        else
+                            1
+                    } else if (c2.name.isNullOrBlank()) {
+                        -1
+                    } else {
+                        c1.name.compareTo(c2.name)
+                    }
+                })
             }
+            .sortedWith(Comparator { l1, l2 ->
+                if (l1.first().tokenName.isBlank()) {
+                    if (l2.first().tokenName.isBlank())
+                        0
+                    else
+                        1
+                } else if (l2.first().tokenName.isBlank()) {
+                    -1
+                } else {
+                    l1.first().tokenName.compareTo(l2.first().tokenName)
+                }
+            })
             .flatten()
             .map {
-               it.toCollectible()
+                it.toCollectible()
             }
-            .toList()
 
     companion object {
         private val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
         val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
         val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
-        val ERC20_FALLBACK_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 0, "ERC20", "ERC20", "local::ethereum", ServiceTokenInfo.TokenType.ERC20)
-        val ERC721_FALLBACK_SERVICE_TOKEN_INFO = ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum", ServiceTokenInfo.TokenType.ERC721)
+        val ERC20_FALLBACK_SERVICE_TOKEN_INFO =
+            ServiceTokenInfo(ZERO_ADDRESS, 0, "ERC20", "ERC20", "local::ethereum", ServiceTokenInfo.TokenType.ERC20)
+        val ERC721_FALLBACK_SERVICE_TOKEN_INFO =
+            ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "NFT", "", "local::ethereum", ServiceTokenInfo.TokenType.ERC721)
     }
 }
+
+
