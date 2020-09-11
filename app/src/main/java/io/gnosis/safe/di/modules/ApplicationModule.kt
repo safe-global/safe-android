@@ -142,9 +142,9 @@ class ApplicationModule(private val application: Application) {
         OkHttpClient.Builder().apply {
             addInterceptor(interceptors[1])
             addInterceptor(interceptors[2])
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
+            connectTimeout(30, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
+            writeTimeout(30, TimeUnit.SECONDS)
             pingInterval(5, TimeUnit.SECONDS)
             certificatePinner(
                 CertificatePinner.Builder().apply {
