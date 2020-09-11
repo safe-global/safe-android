@@ -144,16 +144,17 @@ class NotificationRepository(
 
     private suspend fun getCloudMessagingToken() = suspendCoroutine<String?> { cont ->
         FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener(OnCompleteListener { task ->
+            .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Timber.e(task.exception)
                     cont.resumeWithException(task.exception!!)
+                } else {
+                    // Get new Instance ID token
+                    val token = task.result?.token
+                    Timber.d("Firebase token: $token")
+                    cont.resume(token)
                 }
-                // Get new Instance ID token
-                val token = task.result?.token
-                Timber.d("Firebase token: $token")
-                cont.resume(token)
-            })
+            }
     }
 
     companion object {
