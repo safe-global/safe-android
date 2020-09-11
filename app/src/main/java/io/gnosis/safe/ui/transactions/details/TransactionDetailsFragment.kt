@@ -15,6 +15,7 @@ import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.DetailedExecutionInfo
 import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.models.TransactionInfo
+import io.gnosis.data.models.TransferInfo
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -121,12 +122,36 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
-                txDetailsTransferBinding.txAction.setActionInfo(outgoing, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri() ?: "", address)
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
                     TxStatusView.TxType.TRANSFER_INCOMING
                 } else {
                     TxStatusView.TxType.TRANSFER_OUTGOING
+                }
+                when (val transferInfo = txInfo.transferInfo) {
+                    is TransferInfo.Erc721Transfer -> {
+                        txDetailsTransferBinding.txAction.setActionInfo(
+                            outgoing = outgoing,
+                            amount = txInfo.formattedAmount(balanceFormatter),
+                            logoUri = txInfo.logoUri() ?: "",
+                            address = address,
+                            tokenName = transferInfo.tokenName ?: getString(R.string.tx_details_token_name_unknown),
+                            tokenId = transferInfo.tokenId
+                        )
+
+                        txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
+                        txDetailsTransferBinding.contractAddress.label = getString(R.string.tx_details_asset_contract)
+                    }
+                    else -> {
+                        txDetailsTransferBinding.txAction.setActionInfo(
+                            outgoing = outgoing,
+                            amount = txInfo.formattedAmount(balanceFormatter),
+                            logoUri = txInfo.logoUri() ?: "",
+                            address = address
+                        )
+                        txDetailsTransferBinding.contractAddress.visible(false)
+                        txDetailsTransferBinding.contractSeparator.visible(false)
+                    }
                 }
                 txDetailsTransferBinding.txStatus.setStatus(
                     txType.titleRes,
@@ -193,6 +218,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
         if (txDetails?.detailedExecutionInfo != null) {
             binding.advanced.visible(true)
+            binding.advancedDivider.visible(true)
             binding.advanced.setOnClickListener {
                 val operation = txDetails.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
                 findNavController().navigate(
@@ -205,6 +231,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         } else {
             binding.advanced.visible(false)
+            binding.advancedDivider.visible(false)
         }
         if (txDetails?.executedAt != null) {
             binding.executed.visible(true)

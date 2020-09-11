@@ -26,12 +26,24 @@ class TxTransferActionView @JvmOverloads constructor(
         removeAllViews()
     }
 
-    fun setActionInfo(outgoing: Boolean, amount: String, logoUri: String, address: Solidity.Address) {
+    fun setActionInfo(
+        outgoing: Boolean,
+        amount: String,
+        logoUri: String,
+        address: Solidity.Address,
+        tokenName: String = "",
+        tokenId: String = "",
+        tokenDescription: String = ""
+    ) {
 
         clear()
 
         if (outgoing) {
-            addAmountItem(amount, logoUri, outgoing)
+            if (tokenId.isNotEmpty() || tokenName.isNotEmpty() || tokenDescription.isNotEmpty()) {
+                addErc721Item(logoUri, outgoing, tokenId, tokenName, tokenDescription)
+            } else {
+                addAmountItem(amount, logoUri, outgoing)
+            }
         } else {
             addAddressItem(address)
         }
@@ -41,13 +53,26 @@ class TxTransferActionView @JvmOverloads constructor(
         if (outgoing) {
             addAddressItem(address)
         } else {
-            addAmountItem(amount, logoUri, outgoing)
+            if (tokenId.isNotEmpty() || tokenName.isNotEmpty() || tokenDescription.isNotEmpty()) {
+                addErc721Item(logoUri, outgoing, tokenId, tokenName, tokenDescription)
+            } else {
+                addAmountItem(amount, logoUri, outgoing)
+            }
         }
+    }
+
+    private fun addErc721Item(logoUri: String, outgoing: Boolean, tokenId: String?, tokenName: String?, tokenDescription: String?) {
+        val tokenView = Erc721View(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
+        tokenView.layoutParams = layoutParams
+        tokenView.setToken(logoUri, tokenId, tokenName, tokenDescription)
+        addView(tokenView)
     }
 
     private fun addAmountItem(amount: String, logoUri: String, outgoing: Boolean) {
         val amountView = AmountView(context)
-        val color = if(outgoing) R.color.gnosis_dark_blue else R.color.safe_green
+        val color = if (outgoing) R.color.gnosis_dark_blue else R.color.safe_green
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams

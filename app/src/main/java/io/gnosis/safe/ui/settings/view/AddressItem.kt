@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.view
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -11,10 +12,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.getColorCompat
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.*
+import timber.log.Timber
 
 class AddressItem @JvmOverloads constructor(
     context: Context,
@@ -23,6 +22,10 @@ class AddressItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by lazy { ViewAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+
+    init {
+        readAttributesAndSetupFields(context, attrs)
+    }
 
     var address: Solidity.Address? = null
         set(value) {
@@ -46,6 +49,12 @@ class AddressItem @JvmOverloads constructor(
             field = value
         }
 
+    var showSeparator: Boolean = false
+        set(value) {
+            binding.addressDivider.visible(value)
+            field = value
+        }
+
     private fun Solidity.Address.formatOwnerAddress(prefixLength: Int = 6, suffixLength: Int = 4): Spannable =
         SpannableStringBuilder(this.asEthereumAddressChecksumString()).apply {
             setSpan(
@@ -61,4 +70,22 @@ class AddressItem @JvmOverloads constructor(
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+
+    private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.AddressItem,
+            0, 0
+        ).also {
+            runCatching {
+                applyAttributes(context, it)
+            }
+                .onFailure { Timber.e(it) }
+            it.recycle()
+        }
+    }
+
+    private fun applyAttributes(context: Context, a: TypedArray) {
+        binding.addressDivider.visible(a.getBoolean(R.styleable.AddressItem_show_separator, false))
+    }
 }

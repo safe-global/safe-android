@@ -47,8 +47,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/address_divider"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone" />
 </merge>

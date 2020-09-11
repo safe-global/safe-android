@@ -120,6 +120,7 @@
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_etherscan">View transaction on Etherscan</string>
+    <string name="tx_details_token_name_unknown">Unknown</string>
     <string name="tx_details_creation_creator_address">Creator address</string>
     <string name="tx_details_creation_implementation_used">Mastercopy used</string>
     <string name="tx_details_creation_factory_used">Factory used</string>
@@ -134,6 +135,7 @@
     <string name="tx_details_enable_module">Enable module:</string>
     <string name="tx_details_remove_owner">Remove owner:</string>
     <string name="tx_details_set_fallback_handler">Set fallback handler:</string>
+    <string name="tx_details_asset_contract">Asset Contract</string>
 
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
