@@ -28,12 +28,24 @@ class BalanceFormatter {
         decimalSeparator = otherSymbols.decimalSeparator
         groupingSeparator = otherSymbols.groupingSeparator
 
-        formatter1k = DecimalFormat("#.#####", otherSymbols)
-        formatter10k = DecimalFormat("#,###.####", otherSymbols)
-        formatter100k = DecimalFormat("##,###.###", otherSymbols)
-        formatter1M = DecimalFormat("###,###.##", otherSymbols)
-        formatter10M = DecimalFormat("#,###,###.#", otherSymbols)
-        formatter100M = DecimalFormat("#,###,###", otherSymbols)
+        formatter1k = DecimalFormat("#.#####", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
+        formatter10k = DecimalFormat("#,###.####", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
+        formatter100k = DecimalFormat("##,###.###", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
+        formatter1M = DecimalFormat("###,###.##", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
+        formatter10M = DecimalFormat("#,###,###.#", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
+        formatter100M = DecimalFormat("#,###,###", otherSymbols).apply {
+            roundingMode = RoundingMode.DOWN
+        }
         formatterBigNumber = DecimalFormat("#.###", otherSymbols).apply {
             roundingMode = RoundingMode.DOWN
         }
