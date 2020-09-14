@@ -30,7 +30,7 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
                 } ?: true
             } else {
                 val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                activeNetworkInfo == null || !activeNetworkInfo.isConnectedOrConnecting
+                activeNetworkInfo == null || !activeNetworkInfo.isConnected
             }
         }
     }
