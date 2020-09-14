@@ -13,11 +13,6 @@ class BalanceFormatterTest {
     @Test
     fun `shortAmount () should remove trailing zeroes`() {
 
-        // 5 decimals till 1k
-        val value1 = BigDecimal.valueOf(73.23706988)
-        val shortAmount1 = balanceFormatter.shortAmount(value1)
-        assertEquals("0${DS}12345", shortAmount1)
-
         val value = BigDecimal.valueOf(0.100000)
         val shortAmount = balanceFormatter.shortAmount(value)
         assertEquals("0${DS}1", shortAmount)
