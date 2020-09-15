@@ -221,7 +221,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getValueByName (single param) should return right value`() {
-        val params = listOf(ParamDto.IntParam(name = "foo", type = "uint256", value = "12"))
+        val params = listOf(ParamDto.ValueParam(name = "foo", type = "uint256", value = "12"))
 
         val result = params.getIntValueByName("foo")
 
@@ -231,9 +231,9 @@ class TransactionRepositoryTest {
     @Test
     fun `getValueByName (several params) should return right value`() {
         val params = listOf(
-            ParamDto.IntParam(name = "foo", type = "uint256", value = "1"),
-            ParamDto.IntParam(name = "bar", type = "uint256", value = "2"),
-            ParamDto.IntParam(name = "baz", type = "uint256", value = "3")
+            ParamDto.ValueParam(name = "foo", type = "uint256", value = "1"),
+            ParamDto.ValueParam(name = "bar", type = "uint256", value = "2"),
+            ParamDto.ValueParam(name = "baz", type = "uint256", value = "3")
         )
 
         val result = params.getIntValueByName("bar")
@@ -243,7 +243,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getValueByName (unavailable name) should return null`() {
-        val params = listOf(ParamDto.IntParam(name = "foo", type = "uint256", value = "12"))
+        val params = listOf(ParamDto.ValueParam(name = "foo", type = "uint256", value = "12"))
 
         val result = params.getIntValueByName("bar")
 

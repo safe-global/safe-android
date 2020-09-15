@@ -84,7 +84,7 @@ class DataMoshiTest {
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
                         ParamDto.AddressParam(name = "owner", value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!, type = "address"),
-                        ParamDto.IntParam(name = "_threshold", value = "1", type = "uint256")
+                        ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
                     )
                 )
             ),
