@@ -153,6 +153,11 @@
         tools:layout="@layout/fragment_transaction_details">
 
         <action
+            android:id="@+id/action_transactionDetailsFragment_to_transactionDetailsActionFragment"
+            app:destination="@id/transactionDetailsActionFragment"
+            app:popUpTo="@id/transactionDetailsFragment" />
+
+        <action
             android:id="@+id/action_transactionDetailsFragment_to_advancedTransactionDetailsFragment"
             app:destination="@id/advancedTransactionDetailsFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
@@ -162,6 +167,12 @@
             app:argType="string" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/transactionDetailsActionFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsActionFragment"
+        android:label="TransactionDetailsActionFragment"
+        tools:layout="@layout/fragment_transaction_details_action"/>
 
     <fragment
         android:id="@+id/creationTransactionDetailsFragment"

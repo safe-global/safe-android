@@ -178,6 +178,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
                 txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
+                txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                    findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment())
+                }
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxStatusView.TxType.CUSTOM.titleRes,
                     TxStatusView.TxType.CUSTOM.iconRes,

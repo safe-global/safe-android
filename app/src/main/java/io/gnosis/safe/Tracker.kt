@@ -88,6 +88,7 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
     TRANSACTIONS("screen_transactions"),
     TRANSACTIONS_DETAILS("screen_transactions_details"),
+    TRANSACTIONS_DETAILS_ACTION("transaction_details_action"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),

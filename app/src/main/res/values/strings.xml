@@ -117,6 +117,7 @@
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_details_title">Transaction details</string>
+    <string name="tx_details_action">Action (%1$s)</string>
     <string name="tx_details_advanced">Advanced</string>
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
