@@ -1,15 +1,11 @@
 package io.gnosis.data.adapters
 
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.backend.dto.DetailedExecutionInfoDto
-import io.gnosis.data.backend.dto.DetailedExecutionInfoType
-import io.gnosis.data.backend.dto.GateTransactionType
-import io.gnosis.data.backend.dto.GateTransferType
-import io.gnosis.data.backend.dto.TransactionInfoDto
-import io.gnosis.data.backend.dto.TransferInfoDto
+import io.gnosis.data.backend.dto.*
 import pm.gnosis.common.adapters.moshi.BigDecimalNumberAdapter
 import pm.gnosis.common.adapters.moshi.DecimalNumberAdapter
 import pm.gnosis.common.adapters.moshi.DefaultNumberAdapter
@@ -37,6 +33,31 @@ internal val transactionExecutionDetailsAdapter =
         .withSubtype(DetailedExecutionInfoDto.MultisigExecutionDetailsDto::class.java, DetailedExecutionInfoType.MULTISIG.name)
         .withSubtype(DetailedExecutionInfoDto.ModuleExecutionDetailsDto::class.java, DetailedExecutionInfoType.MODULE.name)
 
+internal val paramAdapter = createParamAdapter()
+
+fun createParamAdapter(): JsonAdapter.Factory {
+    var factory = PolymorphicJsonAdapterFactory.of(ParamDto::class.java, ParamDto::type::name.get())
+    ParamType.ADDRESS.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.AddressParam::class.java, it)
+    }
+    ParamType.ARRAY.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.ArrayParam::class.java, it)
+    }
+    ParamType.BYTES.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.BytesParam::class.java, it)
+    }
+    ParamType.INT.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.ValueParam::class.java, it)
+    }
+    ParamType.BOOL.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.ValueParam::class.java, it)
+    }
+    ParamType.STRING.mappedSolidityTypes.forEach {
+        factory = factory.withSubtype(ParamDto.ValueParam::class.java, it)
+    }
+    return factory
+}
+
 val dataMoshi =
     Moshi.Builder()
         .add(Date::class.java, Rfc3339DateJsonAdapter())
@@ -50,5 +71,6 @@ val dataMoshi =
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
         .add(transactionExecutionDetailsAdapter)
+        .add(paramAdapter)
         .add(KotlinJsonAdapterFactory())
         .build()
