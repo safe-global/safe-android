@@ -25,5 +25,7 @@ If applicable, add screenshots to help explain your problem.
  - Android Version: [e.g. Android 9]
  - App Version [e.g. 1.0.1]
 
+**Environment**
+
 **Additional context**
 Add any other context about the problem here.
