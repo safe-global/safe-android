@@ -229,8 +229,8 @@ class TransactionRepository(
 
 fun List<ParamsDto>?.getValueByName(name: String): String? {
     this?.map {
-        if (it.name == name) {
-            return it.value
+        if (it.name == name && it.value is String) {
+            return (it.value as String)
         }
     }
     return null
