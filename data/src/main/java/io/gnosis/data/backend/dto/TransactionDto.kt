@@ -8,7 +8,7 @@ data class DataDecodedDto(
 data class ParamsDto(
     val name: String,
     val type: String,
-    val value: String
+    val value: Any
 )
 
 enum class Operation(val id: Int) {
