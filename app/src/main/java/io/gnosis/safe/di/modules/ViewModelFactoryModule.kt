@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
+import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import javax.inject.Singleton
 
@@ -92,6 +93,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TransactionDetailsViewModel::class)
     abstract fun providesTransactionDetailsViewModel(viewModel: TransactionDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TransactionDetailsActionViewModel::class)
+    abstract fun providesTransactionDetailsActionViewModel(viewModel: TransactionDetailsActionViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -172,7 +172,13 @@
         android:id="@+id/transactionDetailsActionFragment"
         android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsActionFragment"
         android:label="TransactionDetailsActionFragment"
-        tools:layout="@layout/fragment_transaction_details_action"/>
+        tools:layout="@layout/fragment_transaction_details_action">
+
+        <argument
+            android:name="decodedData"
+            app:argType="string" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/creationTransactionDetailsFragment"

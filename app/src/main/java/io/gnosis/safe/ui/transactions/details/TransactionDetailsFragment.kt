@@ -22,7 +22,7 @@ import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxStatusView
 import io.gnosis.safe.utils.*
@@ -70,10 +70,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
-                is BaseStateViewModel.ViewAction.Loading -> {
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
+                }
+                is Loading -> {
                     updateUi(state.txDetails, viewAction.isLoading)
                 }
-                is BaseStateViewModel.ViewAction.ShowError -> {
+                is ShowError -> {
                     binding.refresh.isRefreshing = false
                     when (viewAction.error) {
                         is Offline -> {
@@ -180,7 +183,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
                 txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
                 txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                    findNavController().navigate(TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment())
+                    txDetails.txData?.dataDecoded?.let {
+                        viewModel.handleDetailAction(it)
+                    }
                 }
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxStatusView.TxType.CUSTOM.titleRes,
