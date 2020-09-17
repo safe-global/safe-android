@@ -227,14 +227,14 @@ class TransactionRepository(
     private fun Long.toDate(): Date = Date(this)
 }
 
-fun List<ParamDto>?.getAddressValueByName(name: String): Solidity.Address? {
-    return this?.find {
+fun List<ParamDto>.getAddressValueByName(name: String): Solidity.Address? {
+    return this.find {
         it is ParamDto.AddressParam && it.name == name
     }?.value as Solidity.Address?
 }
 
-fun List<ParamDto>?.getIntValueByName(name: String): String? {
-    return this?.find {
+fun List<ParamDto>.getIntValueByName(name: String): String? {
+    return this.find {
         it is ParamDto.ValueParam && it.name == name
     }?.value as String?
 }
