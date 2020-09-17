@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.backend.dto.Operation
+import io.gnosis.data.backend.dto.ParamDto
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.*
 import io.gnosis.safe.R
@@ -181,12 +182,25 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
                 txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
-                txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
-                txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                    txDetails.txData?.dataDecoded?.let {
-                        viewModel.handleDetailAction(it)
+
+                val decodedData = txDetails.txData?.dataDecoded
+                if (decodedData == null) {
+                    txDetailsCustomBinding.txDataDecoded.visible(false)
+                    txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
+                } else {
+                    txDetailsCustomBinding.txDataDecoded.name = if(decodedData.method.toLowerCase() == "multisend") {
+                        val valueDecoded = (decodedData.parameters?.get(0) as ParamDto.BytesParam).valueDecoded
+                        getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                    } else {
+                        getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                    }
+                    txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                        txDetails.txData?.dataDecoded?.let {
+                            viewModel.handleDetailAction(it)
+                        }
                     }
                 }
+
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxStatusView.TxType.CUSTOM.titleRes,
                     TxStatusView.TxType.CUSTOM.iconRes,

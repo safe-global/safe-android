@@ -25,6 +25,7 @@
         app:setting_openable="true" />
 
     <View
+        android:id="@+id/tx_data_decoded_separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/light_grey" />
