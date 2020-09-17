@@ -68,6 +68,27 @@
         }
       }
     ]
-
+  },
+  {
+    "name": "data",
+    "type": "bytes",
+    "value": "0x00",
+    "valueDecoded": {
+      "operation": 0,
+      "to": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "value": 19999999999999980,
+      "data": "0xd0e30db0",
+      "dataDecoded": null
+    }
+  },
+  {
+    "name": "data",
+    "type": "bytes",
+    "value": "0x00",
+    "valueDecoded": [
+      {
+        "someRandomStuff": 0
+      }
+    ]
   }
 ]

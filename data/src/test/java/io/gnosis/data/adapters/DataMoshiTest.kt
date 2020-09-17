@@ -129,7 +129,7 @@ class DataMoshiTest {
 
         val params = paramAdapter.fromJson(jsonString)!!
 
-        assertEquals(6, params?.size)
+        assertEquals(8, params?.size)
         assertTrue(params[0] is ParamDto.AddressParam)
         assertTrue(params[1] is ParamDto.AddressParam)
         assertTrue(params[2] is ParamDto.ArrayParam)
