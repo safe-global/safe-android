@@ -19,7 +19,7 @@ import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.view.LabeledAddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
@@ -95,11 +95,11 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             else -> labeledAddress(fallbackHandler, R.string.safe_settings_unknown)
         }
 
-    private fun labeledAddress(address: Solidity.Address, @StringRes labelId: Int): LabeledAddressItem =
+    private fun labeledAddress(address: Solidity.Address, @StringRes labelId: Int): NamedAddressItem =
         labeledAddress(address, getString(labelId))
 
-    private fun labeledAddress(address: Solidity.Address, label: String = ""): LabeledAddressItem {
-        return LabeledAddressItem(requireContext()).apply {
+    private fun labeledAddress(address: Solidity.Address, label: String = ""): NamedAddressItem {
+        return NamedAddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             this.address = address

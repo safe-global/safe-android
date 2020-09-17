@@ -18,7 +18,10 @@ class TxDataView @JvmOverloads constructor(
 
     private var collapsed: Boolean = true
 
-    fun setData(txData: String?, size: Int) {
+    fun setData(txData: String?, size: Int, title: String? = null) {
+        if(!title.isNullOrBlank()) {
+            binding.actionTitle.text = title
+        }
         binding.dataSize.text = "$size bytes"
         if (txData != null) {
             binding.data.text = txData

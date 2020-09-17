@@ -4,65 +4,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="68dp"
+    android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
-        android:id="@+id/label"
-        style="@style/TextDark.Bold"
+        android:id="@+id/name"
+        style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/address"
-        app:layout_constraintEnd_toStartOf="@id/link"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/address"
+        android:layout_marginStart="@dimen/default_margin"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@string/safe_settings_default_fallback_handler" />
+        tools:text="Created:" />
 
-    <TextView
-        android:id="@+id/address"
+    <io.gnosis.safe.ui.settings.view.AddressItem
+        android:id="@+id/value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="1"
-        android:textColor="@color/medium_grey"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/link"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toBottomOf="@id/label"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_goneMarginLeft="16dp"
-        tools:text="0x12..1235" />
-
-    <ImageView
-        android:id="@+id/link"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginHorizontal="16dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/address"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_link_green_24dp" />
-
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/blockies"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/name" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </merge>

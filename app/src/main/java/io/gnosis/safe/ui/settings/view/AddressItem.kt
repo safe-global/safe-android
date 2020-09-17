@@ -21,7 +21,7 @@ class AddressItem @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding by lazy { ViewAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+    private val binding = ViewAddressItemBinding.inflate(LayoutInflater.from(context), this)
 
     init {
         readAttributesAndSetupFields(context, attrs)
