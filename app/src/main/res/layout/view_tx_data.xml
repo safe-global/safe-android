@@ -6,10 +6,9 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-
     <TextView
         android:id="@+id/action_title"
-        style="@style/TextDark.Bold"
+        style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
