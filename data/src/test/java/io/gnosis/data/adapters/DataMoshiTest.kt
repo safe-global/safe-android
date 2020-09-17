@@ -87,7 +87,11 @@ class DataMoshiTest {
                 dataDecoded = DataDecodedDto(
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
-                        ParamDto.AddressParam(name = "owner", value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!, type = "address"),
+                        ParamDto.AddressParam(
+                            name = "owner",
+                            value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
+                            type = "address"
+                        ),
                         ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
                     )
                 )
@@ -130,12 +134,49 @@ class DataMoshiTest {
         val params = paramAdapter.fromJson(jsonString)!!
 
         assertEquals(8, params?.size)
+
         assertTrue(params[0] is ParamDto.AddressParam)
+        assertEquals("from", params[0].name)
+        assertEquals("address", params[0].type)
+        assertEquals("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress(), params[0].value)
+
         assertTrue(params[1] is ParamDto.AddressParam)
+        assertEquals("to", params[1].name)
+        assertEquals("address", params[1].type)
+        assertEquals("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress(), params[1].value)
+
         assertTrue(params[2] is ParamDto.ArrayParam)
+        assertEquals("ids", params[2].name)
+        assertEquals("uint256[]", params[2].type)
+        assertEquals(listOf("1000"), params[2].value)
+
         assertTrue(params[3] is ParamDto.ArrayParam)
+        assertEquals("values", params[3].name)
+        assertEquals("uint256[][]", params[3].type)
+        assertEquals(listOf(listOf("100"), listOf("100000", "2000")), params[3].value)
+
         assertTrue(params[4] is ParamDto.BytesParam)
+        assertEquals("data", params[4].name)
+        assertEquals("bytes", params[4].type)
+        assertEquals("0x00", params[4].value)
+
         assertTrue(params[5] is ParamDto.BytesParam)
+        assertEquals("transactions", params[5].name)
+        assertEquals("bytes", params[5].type)
+        assertEquals(
+            "0x00c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000470de4df81ffec0000000000000000000000000000000000000000000000000000000000000004d0e30db000c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044095ea7b30000000000000000000000007ee114c3628ca90119fc699f03665bf9db8f5faf00000000000000000000000000000000000000000000000000470de4df81ffec007ee114c3628ca90119fc699f03665bf9db8f5faf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4dc7d93690000000000000000000000006e45d69a383ceca3d54688e833bd0e1388747e6b00000000000000000000000000000000000000000000000000470de4df81ffec000000000000000000000000c778417e063141139fce010982780140aa0cd5ab000000000000000000000000000000000000000000000000000000005f59386c000000000000000000000000000000000000000000000000000000005f593920",
+            params[5].value
+        )
+
+        assertTrue(params[6] is ParamDto.BytesParam)
+        assertEquals("data", params[6].name)
+        assertEquals("bytes", params[6].type)
+        assertEquals("0x00", params[6].value)
+
+        assertTrue(params[7] is ParamDto.BytesParam)
+        assertEquals("data", params[7].name)
+        assertEquals("bytes", params[7].type)
+        assertEquals("0x00", params[7].value)
 
         val json = paramAdapter.toJson(params)
         assertTrue(json.isNotEmpty())
