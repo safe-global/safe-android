@@ -182,6 +182,13 @@ class DataMoshiTest {
         assertTrue(json.isNotEmpty())
     }
 
+    @Test
+    fun `fromJson (empty param list) - should handle empty list`() {
+        val jsonString = "[]"
+        val params = paramAdapter.fromJson(jsonString)!!
+        assertEquals(0, params.size)
+    }
+
     private fun readResource(fileName: String): String {
         return BufferedReader(
             InputStreamReader(
