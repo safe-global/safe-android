@@ -14,7 +14,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
-import io.gnosis.data.repositories.getValueByName
+import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -405,7 +405,7 @@ class TransactionListViewModel
     }
 
     private fun getAddress(transaction: SettingsChange, key: String): Solidity.Address? =
-        transaction.dataDecoded.parameters.getValueByName(key)?.asEthereumAddress()
+        transaction.dataDecoded.parameters.getAddressValueByName(key)
 
     private fun historicCustomTransaction(custom: Custom, safeInfo: SafeInfo): TransactionView.CustomTransaction {
         val isIncoming: Boolean = custom.address == safeInfo.address

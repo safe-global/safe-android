@@ -3,7 +3,7 @@ package io.gnosis.safe.ui.transactions
 import android.view.View
 import androidx.paging.PagingData
 import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ParamsDto
+import io.gnosis.data.backend.dto.ParamDto
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.TransactionStatus.*
@@ -35,7 +35,6 @@ import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import java.util.*
 
@@ -609,7 +608,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamsDto("_masterCopy", "address", SAFE_MASTER_COPY_1_1_1.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
                 )
             ),
             buildSettingsChange(
@@ -624,7 +623,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_DISABLE_MODULE,
-                    listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
                 )
             ),
             buildSettingsChange(
@@ -632,7 +631,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
                 )
             ),
             // history
@@ -640,7 +639,7 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_SET_FALLBACK_HANDLER,
-                    listOf(ParamsDto("handler", "address", defaultFallbackHandler.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "handler", defaultFallbackHandler))
                 )
             ),
             buildSettingsChange(
@@ -648,14 +647,14 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamsDto("_masterCopy", "address", SAFE_MASTER_COPY_1_0_0.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
                 )
             ),
             buildSettingsChange(
                 status = FAILED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamsDto("module", "address", defaultModuleAddress.asEthereumAddressString()))
+                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
                 )
             ),
             buildSettingsChange(
@@ -1009,7 +1008,7 @@ class TransactionListViewModelTest {
 
     private fun buildDataDecodedDto(
         method: String = METHOD_REMOVE_OWNER,
-        parameters: List<ParamsDto> = listOf()
+        parameters: List<ParamDto> = listOf()
     ): DataDecodedDto {
         return DataDecodedDto(
             method = method,
