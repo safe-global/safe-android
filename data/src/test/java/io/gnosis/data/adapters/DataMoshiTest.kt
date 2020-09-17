@@ -1,8 +1,10 @@
 package io.gnosis.data.adapters
 
+import com.squareup.moshi.Types
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.TransactionStatus.SUCCESS
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
 import java.io.BufferedReader
@@ -10,14 +12,16 @@ import java.io.InputStreamReader
 import java.util.stream.Collectors
 
 class DataMoshiTest {
+
     private val moshi = dataMoshi
-    private val adapter = moshi.adapter(GateTransactionDto::class.java)
+    private val txAdapter = moshi.adapter(GateTransactionDto::class.java)
+    private val paramAdapter = moshi.adapter<List<ParamDto>>(Types.newParameterizedType(List::class.java, ParamDto::class.java))
 
     @Test
     fun `fromJson (ERC20 Transfer) should return Transfer`() {
         val jsonString: String = readResource("transfer_erc20.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "ethereum_0x1C8b9B78e3085866521FE206fa4c1a67F49f153A_6613439_0xa215ac5bc96fb65e",
@@ -47,7 +51,7 @@ class DataMoshiTest {
     fun `fromJson (Custom tx) should return Custom`() {
         val jsonString: String = readResource("custom.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "multisig_0xa9b819d0123858cb3b37a849a2ed3d5c4341bd5ecb55bc7c2983301dc8d3cb5c",
@@ -72,7 +76,7 @@ class DataMoshiTest {
     fun `fromJson (settings change tx) should return SettingsChange`() {
         val jsonString: String = readResource("settings_change.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "multisig_0x238f1fe1beac3cfd4ec98acb4e006f7ebbbd615ddac9d6b065fdb3ce01065a9a",
@@ -101,7 +105,7 @@ class DataMoshiTest {
     fun `fromJson (creation TX) should not crash on certain null values `() {
         val jsonString: String = readResource("creation_with_null_implementation.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "creation_0xFd0f138c1ca4741Ad6D4DecCb352Eb5c1E29D351",
@@ -117,6 +121,24 @@ class DataMoshiTest {
             executionInfo = null
         )
         assertEquals(expected, transactionDto)
+    }
+
+    @Test
+    fun `fromJson (param list) - should map to correct param types`() {
+        val jsonString: String = readResource("params.json")
+
+        val params = paramAdapter.fromJson(jsonString)!!
+
+        assertEquals(6, params?.size)
+        assertTrue(params[0] is ParamDto.AddressParam)
+        assertTrue(params[1] is ParamDto.AddressParam)
+        assertTrue(params[2] is ParamDto.ArrayParam)
+        assertTrue(params[3] is ParamDto.ArrayParam)
+        assertTrue(params[4] is ParamDto.BytesParam)
+        assertTrue(params[5] is ParamDto.BytesParam)
+
+        val json = paramAdapter.toJson(params)
+        assertTrue(json.isNotEmpty())
     }
 
     private fun readResource(fileName: String): String {
