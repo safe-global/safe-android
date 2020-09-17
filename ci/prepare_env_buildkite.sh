@@ -4,16 +4,16 @@ set -e
 
 export APP_VERSION_CODE=$((BUILDKITE_BUILD_NUMBER))
 
-# use version name from gradle for release builds - needs to be updated manually
-if [[ $BUILDKITE_BRANCH  != "release" ]]; then
-  # get newest tags from origin
-  git fetch
-  # strip the first char as that should always be "v" (as tags should be in the format "vX.X.X")
-  description="$(git describe --tags --always)"
-  export APP_VERSION_NAME=${description:1}
+# Buildkite branch equals to tag name if build was triggered by tag
+if [[ $BUILDKITE_BRANCH  =~ ^v[0-9]+.* ]]; then
+    export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 else
+  export RC_INDICATOR=""
+  if [[ $BUILDKITE_BRANCH  == "release" ]]; then
+      RC_INDICATOR="rc"
+  fi
   version="$(./gradlew -q pV | tail -1)"
-  export APP_VERSION_NAME="${version}-${APP_VERSION_CODE}"
+  export APP_VERSION_NAME="${version}-${APP_VERSION_CODE}${RC_INDICATOR}"
 fi
 
 export APP_RELEASE_NOTES=$BUILDKITE_MESSAGE
