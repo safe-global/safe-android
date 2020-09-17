@@ -85,9 +85,15 @@ class ParamAdapter {
                                 type == "bytes" -> {
                                     val value = reader.nextString()
                                     if(reader.peek() ==  JsonReader.Token.NAME && reader.nextName() == "valueDecoded") {
-                                        val valueDecoded = valueDecodedAdapter.fromJson(reader)
-                                        reader.endObject()
-                                        return ParamDto.BytesParam(type, name, value, valueDecoded)
+                                        if(reader.peek() == JsonReader.Token.BEGIN_ARRAY) {
+                                            val valueDecoded = valueDecodedAdapter.fromJson(reader)
+                                            reader.endObject()
+                                            return ParamDto.BytesParam(type, name, value, valueDecoded)
+                                        } else {
+                                            reader.skipValue()
+                                            reader.endObject()
+                                            return ParamDto.BytesParam(type, name, value, null)
+                                        }
                                     } else {
                                         reader.endObject()
                                         return ParamDto.BytesParam(type, name, value, null)
