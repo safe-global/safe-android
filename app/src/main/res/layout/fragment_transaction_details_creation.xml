@@ -158,12 +158,6 @@
                 android:gravity="start|center_vertical"
                 android:text="@string/tx_details_view_on_etherscan" />
 
-            <View
-                android:id="@+id/etherscan_separator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_grey"/>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

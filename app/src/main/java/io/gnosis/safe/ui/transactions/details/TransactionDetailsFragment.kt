@@ -254,6 +254,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         } else {
             binding.etherscan.visible(false)
+            binding.advancedDivider.visible(false)
         }
     }
 
