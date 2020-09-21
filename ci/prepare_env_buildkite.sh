@@ -9,10 +9,15 @@ if [[ $BUILDKITE_BRANCH  =~ ^v[0-9]+.* ]]; then
     export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 else
   export RC_INDICATOR=""
-  if [[ $BUILDKITE_BRANCH  == "release" ]]; then
-      RC_INDICATOR="rc"
-  fi
   version="$(./gradlew -q pV | tail -1)"
+  if [[ $BUILDKITE_BRANCH  == "release" ]]; then
+      git fetch
+      tag="${$(git describe --tags --always):1}"
+      # if there is a tag with same version => release was already built 
+      if [[ $tag  != $version ]]; then
+          RC_INDICATOR="rc"
+      fi
+  fi
   export APP_VERSION_NAME="${version}-${APP_VERSION_CODE}${RC_INDICATOR}"
 fi
 
