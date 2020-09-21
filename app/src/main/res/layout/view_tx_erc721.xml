@@ -20,7 +20,7 @@
         style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_small_margin"
+        android:layout_marginStart="@dimen/default_margin"
         tools:text="-1 LBB"
         app:layout_constraintStart_toEndOf="@+id/logo"
         app:layout_constraintTop_toTopOf="@+id/logo" />
