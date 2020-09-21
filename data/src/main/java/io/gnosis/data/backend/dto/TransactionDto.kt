@@ -45,7 +45,7 @@ sealed class ParamDto {
         override val value: Any
     ) : ParamDto()
 
-    object UnknownParam: ParamDto() {
+    object UnknownParam : ParamDto() {
         override val type: String
             get() = "unknown"
         override val name: String
@@ -57,5 +57,11 @@ sealed class ParamDto {
 
 enum class Operation(val id: Int) {
     CALL(0),
-    DELEGATE(1)
+    DELEGATE(1);
+
+    fun displayName(): String =
+        when (this) {
+            CALL -> "call"
+            DELEGATE -> "delegateCall"
+        }
 }
