@@ -31,16 +31,14 @@ class TxTransferActionView @JvmOverloads constructor(
         amount: String,
         logoUri: String,
         address: Solidity.Address,
-        tokenName: String = "",
-        tokenId: String = "",
-        tokenDescription: String = ""
+        tokenId: String = ""
     ) {
 
         clear()
 
         if (outgoing) {
-            if (tokenId.isNotEmpty() || tokenName.isNotEmpty() || tokenDescription.isNotEmpty()) {
-                addErc721Item(logoUri, outgoing, tokenId, tokenName, tokenDescription)
+            if (tokenId.isNotEmpty()) {
+                addErc721Item(logoUri, outgoing, tokenId, amount)
             } else {
                 addAmountItem(amount, logoUri, outgoing)
             }
@@ -53,20 +51,20 @@ class TxTransferActionView @JvmOverloads constructor(
         if (outgoing) {
             addAddressItem(address)
         } else {
-            if (tokenId.isNotEmpty() || tokenName.isNotEmpty() || tokenDescription.isNotEmpty()) {
-                addErc721Item(logoUri, outgoing, tokenId, tokenName, tokenDescription)
+            if (tokenId.isNotEmpty()) {
+                addErc721Item(logoUri, outgoing, tokenId, amount)
             } else {
                 addAmountItem(amount, logoUri, outgoing)
             }
         }
     }
 
-    private fun addErc721Item(logoUri: String, outgoing: Boolean, tokenId: String?, tokenName: String?, tokenDescription: String?) {
+    private fun addErc721Item(logoUri: String, outgoing: Boolean, tokenId: String?, amount: String?) {
         val tokenView = Erc721View(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         tokenView.layoutParams = layoutParams
-        tokenView.setToken(logoUri, tokenId, tokenName, tokenDescription)
+        tokenView.setToken(logoUri, tokenId, outgoing, amount)
         addView(tokenView)
     }
 
