@@ -14,8 +14,9 @@ else
       git fetch
       description="$(git describe --tags --always)"
       tag=${description:1}
+      tag_version = echo $tag | cut -d'-' -f 1
       # if there is a tag with same version => release was already built 
-      if [[ $tag  != $version ]]; then
+      if [[ $tag_version  != $version ]]; then
           RC_INDICATOR="rc"
       fi
   fi
