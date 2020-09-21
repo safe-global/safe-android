@@ -1,8 +1,10 @@
 package io.gnosis.data.adapters
 
+import com.squareup.moshi.Types
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.TransactionStatus.SUCCESS
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
 import java.io.BufferedReader
@@ -10,14 +12,16 @@ import java.io.InputStreamReader
 import java.util.stream.Collectors
 
 class DataMoshiTest {
+
     private val moshi = dataMoshi
-    private val adapter = moshi.adapter(GateTransactionDto::class.java)
+    private val txAdapter = moshi.adapter(GateTransactionDto::class.java)
+    private val paramAdapter = moshi.adapter<List<ParamDto>>(Types.newParameterizedType(List::class.java, ParamDto::class.java))
 
     @Test
     fun `fromJson (ERC20 Transfer) should return Transfer`() {
         val jsonString: String = readResource("transfer_erc20.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "ethereum_0x1C8b9B78e3085866521FE206fa4c1a67F49f153A_6613439_0xa215ac5bc96fb65e",
@@ -47,7 +51,7 @@ class DataMoshiTest {
     fun `fromJson (Custom tx) should return Custom`() {
         val jsonString: String = readResource("custom.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "multisig_0xa9b819d0123858cb3b37a849a2ed3d5c4341bd5ecb55bc7c2983301dc8d3cb5c",
@@ -72,7 +76,7 @@ class DataMoshiTest {
     fun `fromJson (settings change tx) should return SettingsChange`() {
         val jsonString: String = readResource("settings_change.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "multisig_0x238f1fe1beac3cfd4ec98acb4e006f7ebbbd615ddac9d6b065fdb3ce01065a9a",
@@ -83,8 +87,12 @@ class DataMoshiTest {
                 dataDecoded = DataDecodedDto(
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
-                        ParamsDto(name = "owner", value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0", type = "address"),
-                        ParamsDto(name = "_threshold", value = "1", type = "uint256")
+                        ParamDto.AddressParam(
+                            name = "owner",
+                            value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
+                            type = "address"
+                        ),
+                        ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
                     )
                 )
             ),
@@ -101,7 +109,7 @@ class DataMoshiTest {
     fun `fromJson (creation TX) should not crash on certain null values `() {
         val jsonString: String = readResource("creation_with_null_implementation.json")
 
-        val transactionDto = adapter.fromJson(jsonString)
+        val transactionDto = txAdapter.fromJson(jsonString)
 
         val expected = GateTransactionDto(
             id = "creation_0xFd0f138c1ca4741Ad6D4DecCb352Eb5c1E29D351",
@@ -117,6 +125,68 @@ class DataMoshiTest {
             executionInfo = null
         )
         assertEquals(expected, transactionDto)
+    }
+
+    @Test
+    fun `fromJson (param list) - should map to correct param types`() {
+        val jsonString: String = readResource("params.json")
+
+        val params = paramAdapter.fromJson(jsonString)!!
+
+        assertEquals(8, params?.size)
+
+        assertTrue(params[0] is ParamDto.AddressParam)
+        assertEquals("from", params[0].name)
+        assertEquals("address", params[0].type)
+        assertEquals("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress(), params[0].value)
+
+        assertTrue(params[1] is ParamDto.AddressParam)
+        assertEquals("to", params[1].name)
+        assertEquals("address", params[1].type)
+        assertEquals("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress(), params[1].value)
+
+        assertTrue(params[2] is ParamDto.ArrayParam)
+        assertEquals("ids", params[2].name)
+        assertEquals("uint256[]", params[2].type)
+        assertEquals(listOf("1000"), params[2].value)
+
+        assertTrue(params[3] is ParamDto.ArrayParam)
+        assertEquals("values", params[3].name)
+        assertEquals("uint256[][]", params[3].type)
+        assertEquals(listOf(listOf("100"), listOf("100000", "2000")), params[3].value)
+
+        assertTrue(params[4] is ParamDto.BytesParam)
+        assertEquals("data", params[4].name)
+        assertEquals("bytes", params[4].type)
+        assertEquals("0x00", params[4].value)
+
+        assertTrue(params[5] is ParamDto.BytesParam)
+        assertEquals("transactions", params[5].name)
+        assertEquals("bytes", params[5].type)
+        assertEquals(
+            "0x00c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000470de4df81ffec0000000000000000000000000000000000000000000000000000000000000004d0e30db000c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044095ea7b30000000000000000000000007ee114c3628ca90119fc699f03665bf9db8f5faf00000000000000000000000000000000000000000000000000470de4df81ffec007ee114c3628ca90119fc699f03665bf9db8f5faf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4dc7d93690000000000000000000000006e45d69a383ceca3d54688e833bd0e1388747e6b00000000000000000000000000000000000000000000000000470de4df81ffec000000000000000000000000c778417e063141139fce010982780140aa0cd5ab000000000000000000000000000000000000000000000000000000005f59386c000000000000000000000000000000000000000000000000000000005f593920",
+            params[5].value
+        )
+
+        assertTrue(params[6] is ParamDto.BytesParam)
+        assertEquals("data", params[6].name)
+        assertEquals("bytes", params[6].type)
+        assertEquals("0x00", params[6].value)
+
+        assertTrue(params[7] is ParamDto.BytesParam)
+        assertEquals("data", params[7].name)
+        assertEquals("bytes", params[7].type)
+        assertEquals("0x00", params[7].value)
+
+        val json = paramAdapter.toJson(params)
+        assertTrue(json.isNotEmpty())
+    }
+
+    @Test
+    fun `fromJson (empty param list) - should handle empty list`() {
+        val jsonString = "[]"
+        val params = paramAdapter.fromJson(jsonString)!!
+        assertEquals(0, params.size)
     }
 
     private fun readResource(fileName: String): String {

@@ -4,18 +4,8 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.backend.dto.DetailedExecutionInfoDto
-import io.gnosis.data.backend.dto.DetailedExecutionInfoType
-import io.gnosis.data.backend.dto.GateTransactionType
-import io.gnosis.data.backend.dto.GateTransferType
-import io.gnosis.data.backend.dto.TransactionInfoDto
-import io.gnosis.data.backend.dto.TransferInfoDto
-import pm.gnosis.common.adapters.moshi.BigDecimalNumberAdapter
-import pm.gnosis.common.adapters.moshi.DecimalNumberAdapter
-import pm.gnosis.common.adapters.moshi.DefaultNumberAdapter
-import pm.gnosis.common.adapters.moshi.HexNumberAdapter
-import pm.gnosis.common.adapters.moshi.SolidityAddressAdapter
-import pm.gnosis.common.adapters.moshi.WeiAdapter
+import io.gnosis.data.backend.dto.*
+import pm.gnosis.common.adapters.moshi.*
 import java.util.*
 
 internal val transferInfoAdapter =
@@ -50,5 +40,6 @@ val dataMoshi =
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
         .add(transactionExecutionDetailsAdapter)
+        .add(ParamAdapter())
         .add(KotlinJsonAdapterFactory())
         .build()

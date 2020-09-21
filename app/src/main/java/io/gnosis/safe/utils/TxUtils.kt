@@ -4,11 +4,11 @@ import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.getValueByName
+import io.gnosis.data.repositories.getAddressValueByName
+import io.gnosis.data.repositories.getIntValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
-import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
@@ -89,7 +89,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
     val params = settingsChange.dataDecoded.parameters
     when (settingsChange.dataDecoded.method) {
         SafeRepository.METHOD_CHANGE_MASTER_COPY -> {
-            val mainCopy = params.getValueByName("_masterCopy")?.asEthereumAddress()
+            val mainCopy = params.getAddressValueByName("_masterCopy")
             val label = mainCopy?.let { it.getVersionForAddress() } ?: ""
 
             result.add(
@@ -101,29 +101,29 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
             )
         }
         SafeRepository.METHOD_CHANGE_THRESHOLD -> {
-            val value = params.getValueByName("_threshold") ?: ""
+            val value = params.getIntValueByName("_threshold") ?: ""
             result.add(ActionInfoItem.Value(itemLabel = settingsMethodTitle[settingsChange.dataDecoded.method], value = value))
         }
         SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD -> {
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    params.getValueByName("owner")?.asEthereumAddress()
+                    params.getAddressValueByName("owner")
                 )
             )
-            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getValueByName("_threshold")!!))
+            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getIntValueByName("_threshold")!!))
         }
         SafeRepository.METHOD_REMOVE_OWNER -> {
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
-                    params.getValueByName("owner")?.asEthereumAddress()
+                    params.getAddressValueByName("owner")
                 )
             )
-            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getValueByName("_threshold")!!))
+            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getIntValueByName("_threshold")!!))
         }
         SafeRepository.METHOD_SET_FALLBACK_HANDLER -> {
-            val fallbackHandler = params.getValueByName("handler")?.asEthereumAddress()
+            val fallbackHandler = params.getAddressValueByName("handler")
             val label =
                 if (SafeRepository.DEFAULT_FALLBACK_HANDLER == fallbackHandler) {
                     R.string.tx_list_default_fallback_handler
@@ -142,13 +142,13 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
-                    params.getValueByName("oldOwner")?.asEthereumAddress()
+                    params.getAddressValueByName("oldOwner")
                 )
             )
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    params.getValueByName("newOwner")?.asEthereumAddress()
+                    params.getAddressValueByName("newOwner")
                 )
             )
         }
@@ -156,7 +156,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_ENABLE_MODULE],
-                    params.getValueByName("module")?.asEthereumAddress()
+                    params.getAddressValueByName("module")
                 )
             )
         }
@@ -164,7 +164,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
             result.add(
                 ActionInfoItem.Address(
                     settingsMethodTitle[SafeRepository.METHOD_DISABLE_MODULE],
-                    params.getValueByName("module")?.asEthereumAddress()
+                    params.getAddressValueByName("module")
                 )
             )
         }
