@@ -119,14 +119,27 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun setSafe(safe: Safe) {
         with(toolbarBinding) {
             safeImage.setOnClickListener {
-                Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
+                navigateToShareSafeDialog()
             }
             safeImage.setAddress(safe.address)
+
             safeName.visible(true)
             safeName.text = safe.localName
+            safeName.setOnClickListener {
+                navigateToShareSafeDialog()
+            }
+
             safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeAddress.setOnClickListener {
+                navigateToShareSafeDialog()
+            }
+
             safeSelection.visible(true)
         }
+    }
+
+    private fun navigateToShareSafeDialog() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
     }
 
     override fun screenId() = null
