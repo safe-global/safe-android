@@ -12,7 +12,8 @@ else
   version="$(./gradlew -q pV | tail -1)"
   if [[ $BUILDKITE_BRANCH  == "release" ]]; then
       git fetch
-      tag="${$(git describe --tags --always):1}"
+      description="$(git describe --tags --always)"
+      tag=${description:1}
       # if there is a tag with same version => release was already built 
       if [[ $tag  != $version ]]; then
           RC_INDICATOR="rc"
