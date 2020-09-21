@@ -7,7 +7,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
-        android:id="@+id/action_title"
+        android:id="@+id/data_title"
         style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,13 +15,14 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="Data" />
+        tools:text="Data" />
 
     <ImageView
         android:id="@+id/collapse_chevron"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        app:layout_goneMarginTop="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/data_size"
         app:layout_constraintStart_toEndOf="@+id/data_size"
         app:layout_constraintTop_toTopOf="@+id/data_size"
@@ -34,8 +35,8 @@
         android:layout_marginTop="8dp"
         app:layout_goneMarginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/data"
-        app:layout_constraintStart_toStartOf="@+id/action_title"
-        app:layout_constraintTop_toBottomOf="@+id/action_title"
+        app:layout_constraintStart_toStartOf="@+id/data_title"
+        app:layout_constraintTop_toBottomOf="@+id/data_title"
         tools:text="96 bytes" />
 
     <TextView

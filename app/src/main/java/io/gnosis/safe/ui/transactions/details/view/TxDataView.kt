@@ -20,7 +20,9 @@ class TxDataView @JvmOverloads constructor(
 
     fun setData(txData: String?, size: Int, title: String? = null) {
         if(!title.isNullOrBlank()) {
-            binding.actionTitle.text = title
+            binding.dataTitle.text = title
+        } else {
+            binding.dataTitle.visible(false)
         }
         binding.dataSize.text = "$size bytes"
         if (txData != null) {

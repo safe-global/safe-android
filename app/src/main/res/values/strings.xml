@@ -119,6 +119,7 @@
     <string name="tx_details_title">Transaction details</string>
     <string name="tx_details_action">Action (%1$s)</string>
     <string name="tx_details_action_multisend">Multisend (%1$d actions)</string>
+    <string name="tx_details_data">Data</string>
     <string name="tx_details_advanced">Advanced</string>
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>

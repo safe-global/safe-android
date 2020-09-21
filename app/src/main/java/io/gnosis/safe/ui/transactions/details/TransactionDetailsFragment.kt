@@ -207,7 +207,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     getStringResForStatus(txDetails.txStatus),
                     getColorForStatus(txDetails.txStatus)
                 )
-                txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize)
+                txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
             }
         }
         var nonce: BigInteger? = null
