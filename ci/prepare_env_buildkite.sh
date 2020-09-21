@@ -9,7 +9,7 @@ if [[ $BUILDKITE_BRANCH  =~ ^v[0-9]+.* ]]; then
     export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
 else
   export RC_INDICATOR=""
-  version="$(./gradlew -q pV | tail -1)"
+  version="$(./gradlew -q printVersion | tail -1)"
   if [[ $BUILDKITE_BRANCH  == "release" ]]; then
       git fetch
       description="$(git describe --tags --always)"
