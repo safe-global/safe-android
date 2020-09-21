@@ -12,12 +12,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamDto
+import io.gnosis.data.backend.dto.ParamType
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.LabeledAddressItem
+import io.gnosis.safe.ui.transactions.details.view.LabeledArrayItem
 import io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
 import io.gnosis.safe.ui.transactions.details.view.TxDataView
 import pm.gnosis.model.Solidity
@@ -67,6 +69,10 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                         is ParamDto.AddressParam -> {
                             content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value))
                         }
+                        is ParamDto.ArrayParam -> {
+                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType()))
+                        }
+
                         is ParamDto.BytesParam -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
                         }
@@ -77,6 +83,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 }
             }
         }
+    }
+
+    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType): LabeledArrayItem {
+        val item = LabeledArrayItem(requireContext())
+        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        layoutParams.setMargins(0, 0, 0, 0)
+        item.layoutParams = layoutParams
+        item.label = name
+        item.showArray(value, paramType)
+        return item
     }
 
     private fun getDataItem(name: String, value: String): TxDataView {

@@ -30,7 +30,14 @@ sealed class ParamDto {
         override val type: String,
         override val name: String,
         override val value: List<Any>
-    ) : ParamDto()
+    ) : ParamDto() {
+
+        fun getItemType(): ParamType = when (type.split("[")[0]) {
+            "address" -> ParamType.ADDRESS
+            "bytes" -> ParamType.BYTES
+            else -> ParamType.VALUE
+        }
+    }
 
     data class BytesParam(
         override val type: String,
@@ -53,6 +60,12 @@ sealed class ParamDto {
         override val value: Any?
             get() = null
     }
+}
+
+enum class ParamType {
+    ADDRESS,
+    BYTES,
+    VALUE
 }
 
 enum class Operation(val id: Int) {

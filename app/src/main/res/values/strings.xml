@@ -214,6 +214,9 @@
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
 
+    <string name="empty">empty</string>
+    <string name="array">array</string>
+
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
 </resources>
