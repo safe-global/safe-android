@@ -17,16 +17,18 @@ class Erc721View @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxErc721Binding.inflate(LayoutInflater.from(context), this) }
 
-    fun setToken(logoUri: String, tokenId: String?, outgoing: Boolean, amount: String?) {
-        binding.logo.loadTokenLogo(logoUri, R.drawable.ic_nft_placeholder)
-        binding.tokenId.text = tokenId
+    fun setToken(logoUri: String, nftId: String?, outgoing: Boolean, amount: String?) {
+        with(binding) {
+            logo.loadTokenLogo(logoUri, R.drawable.ic_nft_placeholder)
+            tokenId.text = nftId
 
-        if (outgoing) {
-            binding.tokenAmount.text = amount
-            binding.tokenAmount.setTextColor(context.getColorCompat(R.color.gnosis_dark_blue))
-        } else {
-            binding.tokenAmount.text = amount
-            binding.tokenAmount.setTextColor(context.getColorCompat(R.color.safe_green))
+            if (outgoing) {
+                tokenAmount.text = amount
+                tokenAmount.setTextColor(context.getColorCompat(R.color.gnosis_dark_blue))
+            } else {
+                tokenAmount.text = amount
+                tokenAmount.setTextColor(context.getColorCompat(R.color.safe_green))
+            }
         }
     }
 }
