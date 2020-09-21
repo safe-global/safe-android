@@ -62,12 +62,11 @@ class LabeledArrayItem @JvmOverloads constructor(
                 }
             }
         }
+
         container.addView(arrayItem)
     }
 
-
     private fun addValueItem(container: ViewGroup, value: String, paramType: ParamType) {
-
         when (paramType) {
             ParamType.ADDRESS -> {
                 val addressItem = AddressItem(context)
@@ -76,6 +75,14 @@ class LabeledArrayItem @JvmOverloads constructor(
                 addressItem.layoutParams = layoutParams
                 addressItem.address = value.asEthereumAddress()
                 container.addView(addressItem)
+            }
+            ParamType.BYTES -> {
+                val bytesItem = TxDataView(context)
+                val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                layoutParams.setMargins(0, dpToPx(6), 0, 0)
+                bytesItem.layoutParams = layoutParams
+                bytesItem.setData(value, value.length / 2)
+                container.addView(bytesItem)
             }
             ParamType.VALUE -> {
                 val valueItem = TextView(context, null, 0, R.style.TextMedium)
@@ -97,7 +104,6 @@ class LabeledArrayItem @JvmOverloads constructor(
         valueItem.setText(R.string.empty)
         container.addView(valueItem)
     }
-
 
     class ArrayItem @JvmOverloads constructor(
         context: Context,
