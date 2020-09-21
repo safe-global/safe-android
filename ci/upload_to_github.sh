@@ -5,9 +5,6 @@ set -e
 # Buildkite uses a clean state for each step (for concurrency)
 source ./ci/prepare_env_buildkite.sh
 
-# Buildkite branch equals to tag name if build was triggered by tag
-export APP_VERSION_NAME=${BUILDKITE_BRANCH:1}
-
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
 ./gradlew assembleRinkeby assembleRelease
