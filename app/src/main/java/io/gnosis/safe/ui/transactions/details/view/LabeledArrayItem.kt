@@ -26,6 +26,8 @@ class LabeledArrayItem @JvmOverloads constructor(
 
     private val binding = ViewLabeledArrayItemBinding.inflate(LayoutInflater.from(context), this)
 
+    private var nestingLevel = 0
+
     var label: CharSequence? = null
         set(value) {
             binding.arrayItemLabel.text = value
@@ -34,6 +36,7 @@ class LabeledArrayItem @JvmOverloads constructor(
 
     fun showArray(array: List<Any>?, paramType: ParamType) {
         binding.arrayItemValues.removeAllViews()
+        nestingLevel = 1
         array?.forEach {
             if (it is List<*>) {
                 addArrayItem(binding.arrayItemValues, it as List<Any>, paramType)
@@ -55,14 +58,18 @@ class LabeledArrayItem @JvmOverloads constructor(
         } else {
             values.forEach {
                 if (it is List<*>) {
-                    addArrayItem(arrayItem.container, it as List<Any>, paramType)
-
+                    if (nestingLevel < NESTING_LEVEL_THRESHOLD) {
+                        nestingLevel++
+                        addArrayItem(arrayItem.container, it as List<Any>, paramType)
+                    } else {
+                        addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE)
+                    }
                 } else {
                     addValueItem(arrayItem.container, it as String, paramType)
                 }
             }
         }
-
+        nestingLevel--
         container.addView(arrayItem)
     }
 
@@ -148,5 +155,9 @@ class LabeledArrayItem @JvmOverloads constructor(
                 arrayItemValues.visible(true)
             }
         }
+    }
+
+    companion object {
+        private const val NESTING_LEVEL_THRESHOLD = 10
     }
 }
