@@ -68,16 +68,20 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 implementationItem.setAddress(implementation!!.asEthereumAddress(), false)
                 noImplementationItem.visible(false)
             } else {
-                noImplementationItem.text = "Not available"
+                noImplementationItem.text = getString(R.string.tx_details_creation_no_implementation_available)
                 noImplementationItem.visible(true)
             }
 
             factoryTitle.text = getString(R.string.tx_details_creation_factory_used)
             if (factory != null) {
                 factoryItem.address = factory!!.asEthereumAddress()
+                factoryItem.visible(true)
+
                 noFactoryItem.visible(false)
             } else {
-                noFactoryItem.text = "No factory used"
+                factoryItem.visible(false)
+
+                noFactoryItem.text = getString(R.string.tx_details_creation_no_factory_used)
                 noFactoryItem.visible(true)
             }
 

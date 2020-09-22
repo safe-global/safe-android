@@ -125,6 +125,8 @@
     <string name="tx_details_creation_creator_address">Creator address</string>
     <string name="tx_details_creation_implementation_used">Mastercopy used</string>
     <string name="tx_details_creation_factory_used">Factory used</string>
+    <string name="tx_details_creation_no_factory_used">No factory used</string>
+    <string name="tx_details_creation_no_implementation_available">Not available</string>
 
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
