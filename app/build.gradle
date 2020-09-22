@@ -13,7 +13,7 @@ apply from: '../buildsystem/test_android_dependencies.gradle'
 android {
     defaultConfig {
         applicationId "io.gnosis.safe"
-        versionCode getInt("APP_VERSION_CODE", 703)
+        versionCode getInt("APP_VERSION_CODE", 1090)
         versionName getKey("APP_VERSION_NAME", "2.1.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -258,6 +258,9 @@ dependencies {
 //    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar_jdk_libs"
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
+
 }
 
 
