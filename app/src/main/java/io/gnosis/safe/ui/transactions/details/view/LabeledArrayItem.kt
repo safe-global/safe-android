@@ -119,30 +119,34 @@ class LabeledArrayItem @JvmOverloads constructor(
             get() = binding.arrayItemValues
 
         init {
-
-            binding.arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_down)
-            binding.arrayItemCollapseChevron.visible(true)
-            binding.arrayItemValues.visible(false)
-
-            binding.root.setOnClickListener {
-                if (collapsed) {
-                    expand()
-                } else {
-                    collapse()
+            with(binding) {
+                arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_down)
+                arrayItemCollapseChevron.visible(true)
+                arrayItemValues.visible(false)
+                root.setOnClickListener {
+                    if (collapsed) {
+                        expand()
+                    } else {
+                        collapse()
+                    }
                 }
             }
         }
 
         private fun collapse() {
             collapsed = true
-            binding.arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_down)
-            binding.arrayItemValues.visible(false)
+            with(binding) {
+                arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_down)
+                arrayItemValues.visible(false)
+            }
         }
 
         private fun expand() {
             collapsed = false
-            binding.arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_up)
-            binding.arrayItemValues.visible(true)
+            with(binding) {
+                arrayItemCollapseChevron.setImageResource(R.drawable.ic_chevron_up)
+                arrayItemValues.visible(true)
+            }
         }
     }
 }
