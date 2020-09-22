@@ -135,7 +135,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
                             address = address,
-                            tokenName = transferInfo.tokenName ?: getString(R.string.tx_details_token_name_unknown),
                             tokenId = transferInfo.tokenId
                         )
 

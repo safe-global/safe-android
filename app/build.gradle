@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
+        versionName getKey("APP_VERSION_NAME", "2.1.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Debug Settings
@@ -263,4 +263,10 @@ dependencies {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
     kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]
+}
+
+task printVersion {
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }
