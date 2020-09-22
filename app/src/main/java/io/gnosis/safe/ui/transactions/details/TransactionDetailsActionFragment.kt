@@ -73,7 +73,6 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                         is ParamDto.ArrayParam -> {
                             content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType()))
                         }
-
                         is ParamDto.BytesParam -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
                         }
