@@ -119,7 +119,7 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_small_margin"
                 android:layout_marginBottom="@dimen/default_margin"
-                tools:text="Not available"
+                tools:text="@string/tx_details_creation_no_implementation_available"
                 />
 
             <View
@@ -151,7 +151,7 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_small_margin"
                 android:layout_marginBottom="@dimen/default_margin"
-                tools:text="No factory used"/>
+                tools:text="@string/tx_details_creation_no_factory_used"/>
 
             <View
                 android:id="@+id/factory_separator"
