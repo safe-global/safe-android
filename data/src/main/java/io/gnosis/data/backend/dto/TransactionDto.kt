@@ -45,7 +45,7 @@ sealed class ParamDto {
         override val value: Any
     ) : ParamDto()
 
-    object UnknownParam: ParamDto() {
+    object UnknownParam : ParamDto() {
         override val type: String
             get() = "unknown"
         override val name: String
