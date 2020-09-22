@@ -110,6 +110,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <TextView
+                android:id="@+id/no_implementation_item"
+                style="@style/TextDark"
+                android:textColor="@color/dark_grey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_small_margin"
+                android:layout_marginBottom="@dimen/default_margin"
+                tools:text="Not available"
+                />
+
             <View
                 android:id="@+id/implementation_separator"
                 android:layout_width="match_parent"
@@ -129,6 +141,17 @@
                 android:id="@+id/factory_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/no_factory_item"
+                style="@style/TextDark"
+                android:textColor="@color/dark_grey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_small_margin"
+                android:layout_marginBottom="@dimen/default_margin"
+                tools:text="No factory used"/>
 
             <View
                 android:id="@+id/factory_separator"
