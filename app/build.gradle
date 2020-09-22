@@ -13,7 +13,7 @@ apply from: '../buildsystem/test_android_dependencies.gradle'
 android {
     defaultConfig {
         applicationId "io.gnosis.safe"
-        versionCode getInt("APP_VERSION_CODE", 1090)
+        versionCode getInt("APP_VERSION_CODE", 703)
         versionName getKey("APP_VERSION_NAME", "2.1.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
