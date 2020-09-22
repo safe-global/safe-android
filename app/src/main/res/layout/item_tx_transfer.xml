@@ -90,8 +90,8 @@
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/blockies"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/safe_blockie_size"
+        android:layout_height="@dimen/safe_blockie_size"
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
