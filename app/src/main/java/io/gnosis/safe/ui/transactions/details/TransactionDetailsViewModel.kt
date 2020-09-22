@@ -17,12 +17,14 @@ class TransactionDetailsViewModel
 
     private val dataDecodedAdapter = moshi.adapter(DataDecodedDto::class.java)
 
-    override fun initialState() = TransactionDetailsViewState(null, ViewAction.Loading(true))
+    override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
     fun loadDetails(txId: String) {
         safeLaunch {
+            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
             val txDetails = transactionRepository.getTransactionDetails(txId)
-            updateState { TransactionDetailsViewState(txDetails, ViewAction.Loading(false)) }
+            updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
+            updateState { TransactionDetailsViewState(UpdateDetails(txDetails)) }
         }
     }
 
@@ -30,7 +32,6 @@ class TransactionDetailsViewModel
         safeLaunch {
             updateState {
                 TransactionDetailsViewState(
-                    null,
                     ViewAction.NavigateTo(
                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                             dataDecodedAdapter.toJson(
@@ -40,12 +41,15 @@ class TransactionDetailsViewModel
                     )
                 )
             }
-            updateState { TransactionDetailsViewState(null, ViewAction.None) }
+            updateState { TransactionDetailsViewState(ViewAction.None) }
         }
     }
 }
 
 data class TransactionDetailsViewState(
-    val txDetails: TransactionDetails?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
+
+data class UpdateDetails(
+    val txDetails: TransactionDetails?
+) : BaseStateViewModel.ViewAction

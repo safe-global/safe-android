@@ -17,7 +17,7 @@ class TxSettingsActionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
     init {
-        orientation = LinearLayout.VERTICAL
+        orientation = VERTICAL
         gravity = Gravity.LEFT
     }
 
@@ -60,6 +60,8 @@ class TxSettingsActionView @JvmOverloads constructor(
 
     private fun addAddressItem(address: Solidity.Address?) {
         val addressItem = AddressItem(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+        addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
     }
@@ -70,7 +72,6 @@ class TxSettingsActionView @JvmOverloads constructor(
         addressItem.label = label
         addView(addressItem)
     }
-
 
     companion object {
         private const val DEFAULT_MARGIN = 16

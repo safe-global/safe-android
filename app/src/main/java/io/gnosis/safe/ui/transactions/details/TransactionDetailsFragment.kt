@@ -71,11 +71,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
+                is UpdateDetails -> {
+                    updateUi(viewAction.txDetails)
+                }
                 is NavigateTo -> {
                     findNavController().navigate(viewAction.navDirections)
                 }
                 is Loading -> {
-                    updateUi(state.txDetails, viewAction.isLoading)
+                    showLoading(viewAction.isLoading)
                 }
                 is ShowError -> {
                     binding.refresh.isRefreshing = false
@@ -105,11 +108,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private lateinit var contentBinding: ViewBinding
 
-    private fun updateUi(txDetails: TransactionDetails?, isLoading: Boolean) {
+    private fun showLoading(loading: Boolean) {
+        binding.refresh.isRefreshing = loading
+    }
 
-        binding.refresh.isRefreshing = isLoading
-        binding.content.visible(true)
-        binding.contentNoData.root.visible(false)
+    private fun updateUi(txDetails: TransactionDetails?) {
 
         when (val txInfo = txDetails?.txInfo) {
             is TransactionInfo.Transfer -> {
@@ -274,6 +277,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.etherscan.visible(false)
             binding.advancedDivider.visible(false)
         }
+
+        binding.content.visible(true)
+        binding.contentNoData.root.visible(false)
     }
 
     @ColorRes
