@@ -75,8 +75,8 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             safeDetails.safe.address.let { address ->
                 safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
                 safeAddress.setOnClickListener {
-                    requireContext().copyToClipboard(getString(R.string.url_copied), address.asEthereumAddressChecksumString()) {
-                        snackbar(requireView(), getString(R.string.url_copied_success))
+                    requireContext().copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+                        snackbar(requireView(), getString(R.string.copied_success))
                     }
                 }
                 link.setOnClickListener {
