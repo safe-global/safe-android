@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.backend.dto.Operation
 import io.gnosis.data.backend.dto.TransactionDirection
 import io.gnosis.data.models.*
 import io.gnosis.safe.R
@@ -282,3 +283,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.createdDivider.visible(false)
     }
 }
+
+private fun Operation.displayName(): String =
+    when (this) {
+        Operation.CALL -> "call"
+        Operation.DELEGATE -> "delegateCall"
+    }

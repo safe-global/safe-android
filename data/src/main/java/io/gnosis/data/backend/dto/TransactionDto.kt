@@ -57,11 +57,5 @@ sealed class ParamDto {
 
 enum class Operation(val id: Int) {
     CALL(0),
-    DELEGATE(1);
-
-    fun displayName(): String =
-        when (this) {
-            CALL -> "call"
-            DELEGATE -> "delegateCall"
-        }
+    DELEGATE(1)
 }
