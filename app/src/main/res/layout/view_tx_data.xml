@@ -11,8 +11,6 @@
         style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Data" />
@@ -33,7 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="19dp"
         android:layout_marginTop="8dp"
-        app:layout_goneMarginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/data"
         app:layout_constraintStart_toStartOf="@+id/data_title"
         app:layout_constraintTop_toBottomOf="@+id/data_title"
@@ -44,15 +41,11 @@
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/data_size"
-        app:layout_goneMarginBottom="32dp"
 
         tools:text="0x8be6524600000000000000000000000000000000000000000000000000000000000001230000000x8be652460000000000000000000000000000000000000000000000000000000x8be652460000000000000000000000000000000000000000000000000000000x8be65246000000000000000000000000000000000000000000000000000000" />
 

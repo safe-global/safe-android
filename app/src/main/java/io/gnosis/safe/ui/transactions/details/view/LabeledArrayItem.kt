@@ -47,18 +47,18 @@ class LabeledArrayItem @JvmOverloads constructor(
     private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType) {
         val arrayItem = ArrayItem(context)
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        layoutParams.setMargins(dpToPx(16), dpToPx(6), dpToPx(16), 0)
+        layoutParams.setMargins(0, dpToPx(6), 0, 0)
         arrayItem.layoutParams = layoutParams
 
         if (values.isEmpty()) {
-            addEmptyValue(arrayItem)
+            addEmptyValue(arrayItem.container)
         } else {
             values.forEach {
                 if (it is List<*>) {
-                    addArrayItem(arrayItem, it as List<Any>, paramType)
+                    addArrayItem(arrayItem.container, it as List<Any>, paramType)
 
                 } else {
-                    addValueItem(arrayItem, it as String, paramType)
+                    addValueItem(arrayItem.container, it as String, paramType)
                 }
             }
         }
@@ -71,7 +71,7 @@ class LabeledArrayItem @JvmOverloads constructor(
             ParamType.ADDRESS -> {
                 val addressItem = AddressItem(context)
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                layoutParams.setMargins(0, dpToPx(6), 0, 0)
+                layoutParams.setMargins(0, dpToPx(8), 0, 0)
                 addressItem.layoutParams = layoutParams
                 addressItem.address = value.asEthereumAddress()
                 container.addView(addressItem)
@@ -114,6 +114,9 @@ class LabeledArrayItem @JvmOverloads constructor(
         private val binding by lazy { ViewLabeledArrayArrayItemBinding.inflate(LayoutInflater.from(context), this) }
 
         private var collapsed: Boolean = true
+
+        val container
+            get() = binding.arrayItemValues
 
         init {
 

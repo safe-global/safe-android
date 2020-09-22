@@ -40,6 +40,7 @@ class TransactionDetailsViewModel
                     )
                 )
             }
+            updateState { TransactionDetailsViewState(null, ViewAction.None) }
         }
     }
 }

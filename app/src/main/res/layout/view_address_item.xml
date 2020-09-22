@@ -40,7 +40,7 @@
         android:id="@+id/blockies"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/address"
         app:layout_constraintStart_toStartOf="parent"

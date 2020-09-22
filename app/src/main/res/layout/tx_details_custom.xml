@@ -32,6 +32,7 @@
 
     <io.gnosis.safe.ui.transactions.details.view.TxDataView
         android:id="@+id/tx_data"
+        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

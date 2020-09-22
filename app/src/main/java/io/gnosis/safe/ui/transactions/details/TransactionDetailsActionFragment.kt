@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.transactions.details.view.LabeledAddressItem
 import io.gnosis.safe.ui.transactions.details.view.LabeledArrayItem
 import io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
 import io.gnosis.safe.ui.transactions.details.view.TxDataView
+import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -98,7 +99,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     private fun getDataItem(name: String, value: String): TxDataView {
         val item = TxDataView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(0, 0, 0, 0)
+        layoutParams.setMargins(dpToPx(16), dpToPx(16), dpToPx(16), 0)
         item.layoutParams = layoutParams
         item.setData(value, value.length / 2, name)
         return item
