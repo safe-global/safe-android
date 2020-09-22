@@ -11,12 +11,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.backend.dto.Operation
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.DetailedExecutionInfo
-import io.gnosis.data.models.TransactionDetails
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransferInfo
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
@@ -33,7 +30,6 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
-import java.util.*
 import javax.inject.Inject
 
 class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsBinding>() {
@@ -219,7 +215,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.advanced.visible(true)
             binding.advancedDivider.visible(true)
             binding.advanced.setOnClickListener {
-                val operation = txDetails.txData?.operation?.name?.toLowerCase(Locale.getDefault()) ?: ""
+                val operation = txDetails.txData?.operation?.displayName() ?: ""
                 findNavController().navigate(
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
                         nonce = nonce?.toString() ?: "",
@@ -287,3 +283,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.createdDivider.visible(false)
     }
 }
+
+private fun Operation.displayName(): String =
+    when (this) {
+        Operation.CALL -> "call"
+        Operation.DELEGATE -> "delegateCall"
+    }
