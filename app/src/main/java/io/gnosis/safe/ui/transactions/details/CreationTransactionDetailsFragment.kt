@@ -11,7 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import io.gnosis.safe.ui.transactions.details.view.TxType
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -47,8 +47,8 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 Navigation.findNavController(it).navigateUp()
             }
             statusItem.setStatus(
-                titleRes = TxStatusView.TxType.CREATION.titleRes,
-                iconRes = TxStatusView.TxType.CREATION.iconRes,
+                titleRes = TxType.CREATION.titleRes,
+                iconRes = TxType.CREATION.iconRes,
                 statusTextRes = statusTextRes,
                 statusColorRes = statusColorRes
             )
