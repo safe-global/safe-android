@@ -63,31 +63,26 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
             creatorItem.address = creator!!.asEthereumAddress()
 
-
+            implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
             if (implementation != null) {
-                implementationSeparator.visible(true)
-                implementationTitle.visible(true)
-                implementationItem.visible(true)
-
-                implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
                 implementationItem.setAddress(implementation!!.asEthereumAddress(), false)
+                noImplementationItem.visible(false)
             } else {
-                implementationSeparator.visibility = View.GONE
-                implementationTitle.visibility = View.GONE
-                implementationItem.visibility = View.GONE
+                noImplementationItem.text = getString(R.string.tx_details_creation_no_implementation_available)
+                noImplementationItem.visible(true)
             }
 
+            factoryTitle.text = getString(R.string.tx_details_creation_factory_used)
             if (factory != null) {
-                factoryTitle.visible(true)
-                factoryItem.visible(true)
-                factorySeparator.visible(true)
-
-                factoryTitle.text = getString(R.string.tx_details_creation_factory_used)
                 factoryItem.address = factory!!.asEthereumAddress()
+                factoryItem.visible(true)
+
+                noFactoryItem.visible(false)
             } else {
-                factoryTitle.visibility = View.GONE
-                factoryItem.visibility = View.GONE
-                factorySeparator.visibility = View.GONE
+                factoryItem.visible(false)
+
+                noFactoryItem.text = getString(R.string.tx_details_creation_no_factory_used)
+                noFactoryItem.visible(true)
             }
 
             createdItem.name = getString(R.string.tx_details_created)
