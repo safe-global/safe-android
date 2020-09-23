@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
 import io.gnosis.safe.ui.transactions.details.view.TxDataView
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.removeHexPrefix
 
 class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransactionDetailsActionBinding>() {
 
@@ -87,7 +88,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(16), dpToPx(16), dpToPx(16), 0)
         item.layoutParams = layoutParams
-        item.setData(value, value.length / 2, name)
+        item.setData(value, value.removeHexPrefix().length / 2, name)
         return item
     }
 

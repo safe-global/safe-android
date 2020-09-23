@@ -16,6 +16,7 @@ import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.removeHexPrefix
 
 
 class LabeledArrayItem @JvmOverloads constructor(
@@ -88,7 +89,7 @@ class LabeledArrayItem @JvmOverloads constructor(
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(0, dpToPx(6), 0, 0)
                 bytesItem.layoutParams = layoutParams
-                bytesItem.setData(value as String, value.length / 2)
+                bytesItem.setData(value as String, value.removeHexPrefix().length / 2)
                 container.addView(bytesItem)
             }
             ParamType.VALUE -> {
