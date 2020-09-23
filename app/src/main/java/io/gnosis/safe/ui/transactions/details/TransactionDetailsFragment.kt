@@ -142,7 +142,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
-                        txDetailsTransferBinding.contractAddress.label = getString(R.string.tx_details_asset_contract)
+                        txDetailsTransferBinding.contractAddress.name = getString(R.string.tx_details_asset_contract)
                     }
                     else -> {
                         txDetailsTransferBinding.txAction.setActionInfo(
