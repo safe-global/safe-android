@@ -25,11 +25,12 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import java.io.Serializable
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -72,10 +73,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is UpdateDetails -> {
-                    updateUi(viewAction.txDetails)
-                }
-                is NavigateTo -> {
-                    findNavController().navigate(viewAction.navDirections)
+                    viewAction.txDetails?.let {
+                        updateUi(it)
+                    }
                 }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
@@ -112,9 +112,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    private fun updateUi(txDetails: TransactionDetails?) {
+    private fun updateUi(txDetails: TransactionDetails) {
 
-        when (val txInfo = txDetails?.txInfo) {
+        when (val txInfo = txDetails.txInfo) {
             is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
                 if (viewStub.parent != null) {
@@ -127,9 +127,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
 
                 val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
-                    TxStatusView.TxType.TRANSFER_INCOMING
+                    TxType.TRANSFER_INCOMING
                 } else {
-                    TxStatusView.TxType.TRANSFER_OUTGOING
+                    TxType.TRANSFER_OUTGOING
                 }
                 when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc721Transfer -> {
@@ -171,8 +171,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
                 txDetailsSettingsChangeBinding.txStatus.setStatus(
-                    TxStatusView.TxType.MODIFY_SETTINGS.titleRes,
-                    TxStatusView.TxType.MODIFY_SETTINGS.iconRes,
+                    TxType.MODIFY_SETTINGS.titleRes,
+                    TxType.MODIFY_SETTINGS.iconRes,
                     getStringResForStatus(txDetails.txStatus),
                     getColorForStatus(txDetails.txStatus)
                 )
@@ -191,7 +191,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txDetailsCustomBinding.txDataDecoded.visible(false)
                     txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
                 } else {
-                    txDetailsCustomBinding.txDataDecoded.name = if(decodedData.method.toLowerCase() == "multisend") {
+                    txDetailsCustomBinding.txDataDecoded.name = if (decodedData.method.toLowerCase() == "multisend") {
                         val valueDecoded = (decodedData.parameters?.get(0) as ParamDto.BytesParam).valueDecoded
                         getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
                     } else {
@@ -199,14 +199,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                     txDetailsCustomBinding.txDataDecoded.setOnClickListener {
                         txDetails.txData?.dataDecoded?.let {
-                            viewModel.handleDetailAction(it)
+                            findNavController().navigate(
+                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                    it as Serializable
+                                )
+                            )
                         }
                     }
                 }
 
                 txDetailsCustomBinding.txStatus.setStatus(
-                    TxStatusView.TxType.CUSTOM.titleRes,
-                    TxStatusView.TxType.CUSTOM.iconRes,
+                    TxType.CUSTOM.titleRes,
+                    TxType.CUSTOM.iconRes,
                     getStringResForStatus(txDetails.txStatus),
                     getColorForStatus(txDetails.txStatus)
                 )
@@ -214,7 +218,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         }
         var nonce: BigInteger? = null
-        when (val executionInfo = txDetails?.detailedExecutionInfo) {
+        when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
                 binding.txConfirmationsDivider.visible(true)
@@ -237,7 +241,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 hideCreatedAndConfirmations()
             }
         }
-        if (txDetails?.detailedExecutionInfo != null) {
+        if (txDetails.detailedExecutionInfo != null) {
             binding.advanced.visible(true)
             binding.advancedDivider.visible(true)
             binding.advanced.setOnClickListener {
@@ -254,7 +258,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.advanced.visible(false)
             binding.advancedDivider.visible(false)
         }
-        if (txDetails?.executedAt != null) {
+        if (txDetails.executedAt != null) {
             binding.executed.visible(true)
             binding.executedDivider.visible(true)
             binding.executed.value = txDetails.executedAt!!.formatBackendDate()
@@ -263,7 +267,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             binding.executedDivider.visible(false)
         }
 
-        if (txDetails?.txHash != null) {
+        if (txDetails.txHash != null) {
             binding.etherscan.visible(true)
             binding.etherscan.setOnClickListener {
                 requireContext().openUrl(
