@@ -16,9 +16,9 @@ class LabeledAddressItem @JvmOverloads constructor(
 
     private val binding = ViewLabeledAddressItemBinding.inflate(LayoutInflater.from(context), this)
 
-    var name: CharSequence? = null
+    var label: CharSequence? = null
         set(value) {
-            binding.name.text = value
+            binding.label.text = value
             field = value
         }
 

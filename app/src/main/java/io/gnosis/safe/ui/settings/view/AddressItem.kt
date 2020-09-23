@@ -22,7 +22,7 @@ class AddressItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by lazy { ViewAddressItemBinding.inflate(LayoutInflater.from(context), this) }
-    
+
     init {
         readAttributesAndSetupFields(context, attrs)
     }
