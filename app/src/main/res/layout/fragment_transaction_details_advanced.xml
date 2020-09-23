@@ -57,7 +57,7 @@
                 android:id="@+id/nonce_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_nonce" />
+                app:item_label="@string/tx_details_advanced_nonce" />
 
             <View
                 android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                 android:id="@+id/operation_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_operation" />
+                app:item_label="@string/tx_details_advanced_operation" />
 
             <View
                 android:layout_width="match_parent"
@@ -79,7 +79,7 @@
                 android:id="@+id/hash_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:item_name="@string/tx_details_advanced_hash" />
+                app:item_label="@string/tx_details_advanced_hash" />
 
             <View
                 android:id="@+id/hash_separator"

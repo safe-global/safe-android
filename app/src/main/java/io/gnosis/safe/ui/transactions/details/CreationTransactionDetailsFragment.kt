@@ -52,7 +52,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 statusTextRes = statusTextRes,
                 statusColorRes = statusColorRes
             )
-            txHashItem.name = getString(R.string.tx_details_advanced_hash)
+            txHashItem.label = getString(R.string.tx_details_advanced_hash)
             txHashItem.value = transActionHash
             txHashItem.setOnClickListener {
                 context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, txHashItem.value.toString()) {
@@ -85,7 +85,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 noFactoryItem.visible(true)
             }
 
-            createdItem.name = getString(R.string.tx_details_created)
+            createdItem.label = getString(R.string.tx_details_created)
             createdItem.value = dateTimeText
 
             etherscanItem.setOnClickListener {
