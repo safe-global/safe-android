@@ -13,9 +13,9 @@ import io.gnosis.safe.databinding.ViewLabeledArrayArrayItemBinding
 import io.gnosis.safe.databinding.ViewLabeledArrayItemBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddress
 
 
 class LabeledArrayItem @JvmOverloads constructor(
@@ -42,7 +42,7 @@ class LabeledArrayItem @JvmOverloads constructor(
                 addArrayItem(binding.arrayItemValues, it as List<Any>, paramType)
 
             } else {
-                addValueItem(binding.arrayItemValues, it as String, paramType)
+                addValueItem(binding.arrayItemValues, it, paramType)
             }
         }
     }
@@ -65,7 +65,7 @@ class LabeledArrayItem @JvmOverloads constructor(
                         addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE)
                     }
                 } else {
-                    addValueItem(arrayItem.container, it as String, paramType)
+                    addValueItem(arrayItem.container, it, paramType)
                 }
             }
         }
@@ -73,14 +73,14 @@ class LabeledArrayItem @JvmOverloads constructor(
         container.addView(arrayItem)
     }
 
-    private fun addValueItem(container: ViewGroup, value: String, paramType: ParamType) {
+    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType) {
         when (paramType) {
             ParamType.ADDRESS -> {
                 val addressItem = AddressItem(context)
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(0, dpToPx(8), 0, 0)
                 addressItem.layoutParams = layoutParams
-                addressItem.address = value.asEthereumAddress()
+                addressItem.address = value as Solidity.Address
                 container.addView(addressItem)
             }
             ParamType.BYTES -> {
@@ -88,7 +88,7 @@ class LabeledArrayItem @JvmOverloads constructor(
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(0, dpToPx(6), 0, 0)
                 bytesItem.layoutParams = layoutParams
-                bytesItem.setData(value, value.length / 2)
+                bytesItem.setData(value as String, value.length / 2)
                 container.addView(bytesItem)
             }
             ParamType.VALUE -> {
@@ -96,7 +96,7 @@ class LabeledArrayItem @JvmOverloads constructor(
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(0, dpToPx(6), 0, 0)
                 valueItem.layoutParams = layoutParams
-                valueItem.text = value
+                valueItem.text = value as String
                 container.addView(valueItem)
             }
         }
