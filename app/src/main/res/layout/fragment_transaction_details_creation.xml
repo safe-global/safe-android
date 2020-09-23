@@ -63,7 +63,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/light_grey" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/tx_hash_item"
@@ -74,7 +74,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/light_grey" />
 
             <TextView
                 android:id="@+id/creator_item_title"
@@ -89,13 +89,14 @@
                 android:id="@+id/creator_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp" />
 
             <View
                 android:id="@+id/creator_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/light_grey" />
 
             <TextView
                 android:id="@+id/implementation_title"
@@ -120,14 +121,13 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_small_margin"
                 android:layout_marginBottom="@dimen/default_margin"
-                tools:text="@string/tx_details_creation_no_implementation_available"
-                />
+                tools:text="@string/tx_details_creation_no_implementation_available" />
 
             <View
                 android:id="@+id/implementation_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/light_grey" />
 
             <TextView
                 android:id="@+id/factory_title"
@@ -142,6 +142,7 @@
                 android:id="@+id/factory_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp" />
 
             <TextView
@@ -153,7 +154,7 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_small_margin"
                 android:layout_marginBottom="@dimen/default_margin"
-                tools:text="@string/tx_details_creation_no_factory_used"/>
+                tools:text="@string/tx_details_creation_no_factory_used" />
 
             <View
                 android:id="@+id/factory_separator"
@@ -170,7 +171,7 @@
                 android:id="@+id/created_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/light_grey" />
 
             <TextView
                 android:id="@+id/etherscan_item"
