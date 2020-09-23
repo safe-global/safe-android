@@ -96,7 +96,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
-        item.name = name
+        item.label = name
         item.address = value
         return item
     }
@@ -106,7 +106,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
-        item.name = name
+        item.label = name
         item.value = value
         return item
     }
