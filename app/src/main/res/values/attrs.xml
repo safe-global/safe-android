@@ -14,7 +14,7 @@
     </declare-styleable>
 
     <declare-styleable name="LabeledValueItem">
-        <attr name="item_name" format="string" />
+        <attr name="item_label" format="string" />
     </declare-styleable>
 
     <declare-styleable name="AddressItem">

@@ -117,6 +117,9 @@
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_details_title">Transaction details</string>
+    <string name="tx_details_action">Action (%1$s)</string>
+    <string name="tx_details_action_multisend">Multisend (%1$d actions)</string>
+    <string name="tx_details_data">Data</string>
     <string name="tx_details_advanced">Advanced</string>
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
@@ -211,6 +214,9 @@
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
+
+    <string name="empty">empty</string>
+    <string name="array">array</string>
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>

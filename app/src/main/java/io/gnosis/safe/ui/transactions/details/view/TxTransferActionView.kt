@@ -18,7 +18,7 @@ class TxTransferActionView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     init {
-        orientation = LinearLayout.VERTICAL
+        orientation = VERTICAL
         gravity = Gravity.LEFT
     }
 

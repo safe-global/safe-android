@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
-import io.gnosis.safe.ui.settings.view.LabeledAddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 
@@ -17,7 +17,7 @@ class TxSettingsActionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
     init {
-        orientation = LinearLayout.VERTICAL
+        orientation = VERTICAL
         gravity = Gravity.LEFT
     }
 
@@ -42,7 +42,7 @@ class TxSettingsActionView @JvmOverloads constructor(
                         actionInfoItem.addressLabel?.let {
                             actionInfoItem.addressLabel
                         } ?: context.getString(actionInfoItem.addressLabelRes)
-                    addLabeledAddressItem(actionInfoItem.address, addressLabel)
+                    addNamedAddressItem(actionInfoItem.address, addressLabel)
                 }
             }
         }
@@ -60,17 +60,18 @@ class TxSettingsActionView @JvmOverloads constructor(
 
     private fun addAddressItem(address: Solidity.Address?) {
         val addressItem = AddressItem(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+        addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
     }
 
-    private fun addLabeledAddressItem(address: Solidity.Address?, label: String) {
-        val addressItem = LabeledAddressItem(context)
+    private fun addNamedAddressItem(address: Solidity.Address?, label: String) {
+        val addressItem = NamedAddressItem(context)
         addressItem.address = address
-        addressItem.label = label
+        addressItem.name = label
         addView(addressItem)
     }
-
 
     companion object {
         private const val DEFAULT_MARGIN = 16

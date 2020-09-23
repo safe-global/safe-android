@@ -8,7 +8,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/array_item_label"
         style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,21 +16,17 @@
         android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Created:" />
+        android:text="@string/array" />
 
-    <TextView
-        android:id="@+id/value"
-        style="@style/TextMedium"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/array_item_values"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_margin"
-        android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="@dimen/default_small_margin"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label"
-        tools:text="Apr 27, 2020 — 1:01:42PM" />
+        app:layout_constraintTop_toBottomOf="@+id/array_item_label" />
 
 </merge>

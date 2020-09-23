@@ -21,9 +21,9 @@ class LabeledValueItem @JvmOverloads constructor(
         readAttributesAndSetupFields(context, attrs)
     }
 
-    var name: CharSequence? = null
+    var label: CharSequence? = null
         set(value) {
-            binding.name.text = value
+            binding.label.text = value
             field = value
         }
 
@@ -48,6 +48,6 @@ class LabeledValueItem @JvmOverloads constructor(
     }
 
     private fun applyAttributes(context: Context, a: TypedArray) {
-        name = a.getString(R.styleable.LabeledValueItem_item_name)
+        label = a.getString(R.styleable.LabeledValueItem_item_label)
     }
 }

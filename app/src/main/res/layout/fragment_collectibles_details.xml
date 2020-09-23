@@ -109,7 +109,7 @@
                 android:layout_marginTop="18dp"
                 android:background="@color/whitesmoke_two" />
 
-            <io.gnosis.safe.ui.settings.view.LabeledAddressItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/collectible_contract"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
