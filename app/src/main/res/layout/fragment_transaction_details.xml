@@ -66,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:visibility="gone"
                 tools:visibility="visible">
 
                 <ViewStub
@@ -105,7 +106,7 @@
                     android:id="@+id/created"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:item_name="@string/tx_details_created" />
+                    app:item_label="@string/tx_details_created" />
 
                 <View
                     android:id="@+id/created_divider"
@@ -117,7 +118,7 @@
                     android:id="@+id/executed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:item_name="@string/tx_details_executed" />
+                    app:item_label="@string/tx_details_executed" />
 
                 <View
                     android:id="@+id/executed_divider"

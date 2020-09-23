@@ -17,7 +17,7 @@
         android:layout_height="1dp"
         android:background="@color/light_grey" />
 
-    <io.gnosis.safe.ui.settings.view.LabeledAddressItem
+    <io.gnosis.safe.ui.settings.view.NamedAddressItem
         android:id="@+id/contract_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

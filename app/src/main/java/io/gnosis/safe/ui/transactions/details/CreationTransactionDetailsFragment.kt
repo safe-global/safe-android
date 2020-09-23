@@ -11,7 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.view.TxStatusView
+import io.gnosis.safe.ui.transactions.details.view.TxType
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -47,12 +47,12 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 Navigation.findNavController(it).navigateUp()
             }
             statusItem.setStatus(
-                titleRes = TxStatusView.TxType.CREATION.titleRes,
-                iconRes = TxStatusView.TxType.CREATION.iconRes,
+                titleRes = TxType.CREATION.titleRes,
+                iconRes = TxType.CREATION.iconRes,
                 statusTextRes = statusTextRes,
                 statusColorRes = statusColorRes
             )
-            txHashItem.name = getString(R.string.tx_details_advanced_hash)
+            txHashItem.label = getString(R.string.tx_details_advanced_hash)
             txHashItem.value = transActionHash
             txHashItem.setOnClickListener {
                 context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, txHashItem.value.toString()) {
@@ -85,7 +85,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 noFactoryItem.visible(true)
             }
 
-            createdItem.name = getString(R.string.tx_details_created)
+            createdItem.label = getString(R.string.tx_details_created)
             createdItem.value = dateTimeText
 
             etherscanItem.setOnClickListener {

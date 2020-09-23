@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewLabeledAddressItemBinding
+import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -14,13 +14,13 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 
-class LabeledAddressItem @JvmOverloads constructor(
+class NamedAddressItem @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding by lazy { ViewLabeledAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+    private val binding by lazy { ViewNamedAddressItemBinding.inflate(LayoutInflater.from(context), this) }
 
     var address: Solidity.Address? = null
         set(value) {
@@ -46,13 +46,13 @@ class LabeledAddressItem @JvmOverloads constructor(
             field = value
         }
 
-    var label: String? = null
+    var name: String? = null
         set(value) {
             if(value.isNullOrBlank()) {
-                binding.label.visible(false)
+                binding.name.visible(false)
             } else {
-                binding.label.visible(true)
-                binding.label.text = value
+                binding.name.visible(true)
+                binding.name.text = value
             }
             field = value
         }

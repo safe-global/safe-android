@@ -116,7 +116,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     private fun ownerView(owner: Solidity.Address): AddressItem {
         return AddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
             address = owner
             showSeparator = true
         }

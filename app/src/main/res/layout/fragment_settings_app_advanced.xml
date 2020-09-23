@@ -60,7 +60,7 @@
             <io.gnosis.safe.ui.settings.view.AddressItem
                 android:id="@+id/ens"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/item_address"
                 android:background="@drawable/background_selectable_white"/>
 
             <TextView
