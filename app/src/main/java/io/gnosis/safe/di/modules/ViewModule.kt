@@ -25,7 +25,6 @@ import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import java.lang.ref.WeakReference
 
@@ -110,10 +109,6 @@ class ViewModule(
     @Provides
     @ForView
     fun providesTransactionDetailsViewModel(provider: ViewModelProvider) = provider[TransactionDetailsViewModel::class.java]
-
-    @Provides
-    @ForView
-    fun providesTransactionDetailsActionViewModel(provider: ViewModelProvider) = provider[TransactionDetailsActionViewModel::class.java]
 
     @Provides
     @ForView

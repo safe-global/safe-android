@@ -1,21 +1,19 @@
 package io.gnosis.safe.ui.transactions.details
 
-import com.squareup.moshi.Moshi
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.models.TransactionDetails
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import java.io.Serializable
 import javax.inject.Inject
 
 class TransactionDetailsViewModel
 @Inject constructor(
     private val transactionRepository: TransactionRepository,
-    moshi: Moshi,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
 
-    private val dataDecodedAdapter = moshi.adapter(DataDecodedDto::class.java)
 
     override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
@@ -34,9 +32,7 @@ class TransactionDetailsViewModel
                 TransactionDetailsViewState(
                     ViewAction.NavigateTo(
                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                            dataDecodedAdapter.toJson(
-                                decodedData
-                            )
+                            decodedData as Serializable
                         )
                     )
                 )

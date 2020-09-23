@@ -176,7 +176,7 @@
 
         <argument
             android:name="decodedData"
-            app:argType="string" />
+            app:argType="java.io.Serializable" />
 
     </fragment>
 

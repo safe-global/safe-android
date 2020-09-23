@@ -1,11 +1,12 @@
 package io.gnosis.data.backend.dto
 
 import pm.gnosis.model.Solidity
+import java.io.Serializable
 
 data class DataDecodedDto(
     val method: String,
     val parameters: List<ParamDto>?
-)
+) : Serializable
 
 data class ValueDecodedDto(
     val operation: Operation,
