@@ -14,15 +14,13 @@ import io.gnosis.safe.utils.handleAddressBookResult
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.parseEthereumAddress
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.exceptions.InvalidAddressException
 
 class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: ((Throwable) -> Unit),
-    allowAddressBook: Boolean = false
+    private val errorCallback: ((Throwable) -> Unit)
 ) {
 
     private val dialog =
@@ -32,17 +30,6 @@ class AddressInputHelper(
             with(binding) {
                 setContentView(root)
 
-                bottomSheetAddressInputBook.visible(allowAddressBook)
-                bottomSheetAddressInputBookIcon.visible(allowAddressBook)
-                bottomSheetAddressInputBookTouch.visible(allowAddressBook)
-
-                if (allowAddressBook) {
-                    bottomSheetAddressInputBookTouch.setOnClickListener {
-                        // TODO uncomment when address book functionality is ready
-//                    activity.selectFromAddressBook()
-                        hide()
-                    }
-                }
                 bottomSheetAddressInputEnsTouch.setOnClickListener {
                     EnsInputDialog.create().apply {
                         callback = addressCallback
