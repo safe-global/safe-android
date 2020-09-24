@@ -106,6 +106,7 @@
                     android:id="@+id/created"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/default_margin"
                     app:item_label="@string/tx_details_created" />
 
                 <View
@@ -118,6 +119,7 @@
                     android:id="@+id/executed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/default_margin"
                     app:item_label="@string/tx_details_executed" />
 
                 <View
