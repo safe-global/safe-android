@@ -16,8 +16,8 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
-import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO
-import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC20_FALLBACK_SERVICE_TOKEN_INFO_NO_SYMBOL
+import io.gnosis.data.repositories.TokenRepository.Companion.ERC721_FALLBACK_SERVICE_TOKEN_INFO_NO_SYMBOL
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
@@ -261,7 +261,7 @@ class TransactionListViewModelTest {
             buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
             buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
             buildTransfer(
-                serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO,
+                serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO_NO_SYMBOL,
                 value = BigInteger.TEN,
                 recipient = defaultSafeAddress
             )
@@ -393,8 +393,8 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildTransfer(serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ERC20_FALLBACK_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ERC721_FALLBACK_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
             buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = CANCELLED),
             buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
