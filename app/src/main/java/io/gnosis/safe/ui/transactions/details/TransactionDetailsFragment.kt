@@ -23,14 +23,14 @@ import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import java.io.Serializable
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -47,6 +47,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     @Inject
     lateinit var balanceFormatter: BalanceFormatter
 
+    @Inject
+    lateinit var paramSerializer: ParamSerializer
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -60,7 +63,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
             }
@@ -191,20 +193,25 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txDetailsCustomBinding.txDataDecoded.visible(false)
                     txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
                 } else {
-                    txDetailsCustomBinding.txDataDecoded.name = if (decodedData.method.toLowerCase() == "multisend") {
+                    if (decodedData.method.toLowerCase() == "multisend") {
+
                         val valueDecoded = (decodedData.parameters?.get(0) as ParamDto.BytesParam).valueDecoded
-                        getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+
+                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+
                     } else {
-                        getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
                     }
+
                     txDetailsCustomBinding.txDataDecoded.setOnClickListener {
                         txDetails.txData?.dataDecoded?.let {
                             findNavController().navigate(
                                 TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                    it as Serializable
+                                    paramSerializer.serializeDecodedData(it)
                                 )
                             )
                         }
+
                     }
                 }
 
