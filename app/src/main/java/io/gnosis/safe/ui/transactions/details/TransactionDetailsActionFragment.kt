@@ -20,16 +20,21 @@ import io.gnosis.safe.ui.transactions.details.view.LabeledAddressItem
 import io.gnosis.safe.ui.transactions.details.view.LabeledArrayItem
 import io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
 import io.gnosis.safe.ui.transactions.details.view.TxDataView
+import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.removeHexPrefix
+import javax.inject.Inject
 
 class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransactionDetailsActionBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION
 
     private val navArgs by navArgs<TransactionDetailsActionFragmentArgs>()
-    private val decodedData by lazy { navArgs.decodedData as DataDecodedDto? }
+    private val decodedData by lazy { paramSerializer.unserializeDecodedData(navArgs.decodedData) }
+
+    @Inject
+    lateinit var paramSerializer: ParamSerializer
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -48,8 +53,10 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         updateUi(decodedData)
     }
 
-    private fun updateUi(decodedDto: DataDecodedDto?) {
+    private fun updateUi(decodedDto: DataDecodedDto?, address: Solidity.Address? = null, amount: String? = null) {
+
         binding.content.removeAllViews()
+
         decodedDto?.let {
             with(binding) {
                 title.text = it.method

@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.ParamSerializer
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -183,4 +184,8 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     fun providesBalanceFormatter(): BalanceFormatter = BalanceFormatter()
+
+    @Provides
+    @Singleton
+    fun providesParamSerializer(moshi: Moshi): ParamSerializer = ParamSerializer(moshi)
 }
