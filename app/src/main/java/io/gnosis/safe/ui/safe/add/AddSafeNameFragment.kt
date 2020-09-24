@@ -15,7 +15,6 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.formatEthAddress
-import kotlinx.android.synthetic.main.fragment_add_safe.*
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -65,7 +64,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                             }
                             is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                             is BaseStateViewModel.ViewAction.ShowError -> {
-                                progress.visible(false)
+                                binding.progress.visible(false)
                                 binding.addSafeNameLayout.isErrorEnabled = true
                                 binding.addSafeNameLayout.error = getString(R.string.error_invalid_name)
                                 binding.nextButton.isEnabled = false
