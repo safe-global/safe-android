@@ -223,6 +223,7 @@
     <string name="hash_copied">Transaction Hash copied</string>
     <string name="copied_success">Copied to clipboard</string>
 
+    <string name="multisend">Multisend</string>
     <string name="address_found">Address found</string>
     <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
