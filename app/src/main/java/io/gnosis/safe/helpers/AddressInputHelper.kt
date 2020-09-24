@@ -4,63 +4,52 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import io.gnosis.safe.qrscanner.QRCodeScanActivity
-import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
+import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.utils.handleAddressBookResult
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.parseEthereumAddress
-import kotlinx.android.synthetic.main.bottom_sheet_address_input.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.toast
-import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.exceptions.InvalidAddressException
 
 class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: ((Throwable) -> Unit),
-    allowAddressBook: Boolean = false
+    private val errorCallback: ((Throwable) -> Unit)
 ) {
 
     private val dialog =
         BottomSheetDialog(fragment.requireContext()).apply {
             val clipboard = fragment.activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val binding = BottomSheetAddressInputBinding.inflate(layoutInflater)
+            with(binding) {
+                setContentView(root)
 
-            setContentView(layoutInflater.inflate(R.layout.bottom_sheet_address_input, null))
-            bottom_sheet_address_input_book.visible(allowAddressBook)
-            bottom_sheet_address_input_book_icon.visible(allowAddressBook)
-            bottom_sheet_address_input_book_touch.visible(allowAddressBook)
-            if (allowAddressBook) {
-                bottom_sheet_address_input_book_touch.setOnClickListener {
-                    // TODO uncomment when address book functionality is ready
-//                    activity.selectFromAddressBook()
+                bottomSheetAddressInputEnsTouch.setOnClickListener {
+                    EnsInputDialog.create().apply {
+                        callback = addressCallback
+                        show(fragment.childFragmentManager, null)
+                    }
                     hide()
                 }
-            }
-            bottom_sheet_address_input_ens_touch.setOnClickListener {
-                EnsInputDialog.create().apply {
-                    callback = addressCallback
-                    show(fragment.childFragmentManager, null)
+                bottomSheetAddressInputQrTouch.setOnClickListener {
+                    QRCodeScanActivity.startForResult(fragment)
+                    tracker.logScreen(ScreenId.SCANNER)
+                    hide()
                 }
-                hide()
-            }
-            bottom_sheet_address_input_qr_touch.setOnClickListener {
-                QRCodeScanActivity.startForResult(fragment)
-                tracker.logScreen(ScreenId.SCANNER)
-                hide()
-            }
-            bottom_sheet_address_input_paste_touch.setOnClickListener {
-                (clipboard.primaryClip?.getItemAt(0)?.text?.trim()?.let { parseEthereumAddress(it.toString()) }
-                    ?: run {
-                        handleError(InvalidAddressException("No Ethereum address found"))
-                        null
-                    })?.let { addressCallback(it) }
-                hide()
+                bottomSheetAddressInputPasteTouch.setOnClickListener {
+                    (clipboard.primaryClip?.getItemAt(0)?.text?.trim()?.let { parseEthereumAddress(it.toString()) }
+                        ?: run {
+                            handleError(InvalidAddressException("No Ethereum address found"))
+                            null
+                        })?.let { addressCallback(it) }
+                    hide()
+                }
             }
         }
 
