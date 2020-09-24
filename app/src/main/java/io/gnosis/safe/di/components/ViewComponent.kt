@@ -25,10 +25,7 @@ import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
 import io.gnosis.safe.ui.splash.SplashActivity
 import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.transactions.TransactionListFragment
-import io.gnosis.safe.ui.transactions.details.AdvancedTransactionDetailsFragment
-import io.gnosis.safe.ui.transactions.details.CreationTransactionDetailsFragment
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionFragment
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragment
+import io.gnosis.safe.ui.transactions.details.*
 
 @ForView
 @Component(
@@ -52,6 +49,8 @@ interface ViewComponent {
     fun inject(fragment: TransactionDetailsFragment)
 
     fun inject(fragment: TransactionDetailsActionFragment)
+
+    fun inject(fragment: TransactionDetailsActionMultisendFragment)
 
     fun inject(fragment: AdvancedTransactionDetailsFragment)
 
