@@ -11,6 +11,9 @@ import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
 import java.math.BigInteger
 
+const val DEFAULT_ERC20_SYMBOL = "ERC20"
+const val DEFAULT_ERC721_SYMBOL = "NFT"
+
 fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
         is TransactionInfo.Custom -> {
@@ -27,10 +30,10 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
             }
             val symbol: String = when (val transferInfo = txInfo.transferInfo) {
                 is TransferInfo.Erc20Transfer -> {
-                    transferInfo.tokenSymbol ?: ""
+                    transferInfo.tokenSymbol ?: DEFAULT_ERC20_SYMBOL
                 }
                 is TransferInfo.Erc721Transfer -> {
-                    transferInfo.tokenSymbol ?: ""
+                    transferInfo.tokenSymbol ?: DEFAULT_ERC721_SYMBOL
                 }
                 else -> {
                     "ETH"
