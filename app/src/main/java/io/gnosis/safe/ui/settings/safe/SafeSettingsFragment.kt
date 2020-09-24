@@ -131,7 +131,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     private fun showRemoveDialog() {
         CustomAlertDialogBuilder.build(
-            requireContext(),
+            context = requireContext(),
             confirmCallback = { dialog ->
                 viewModel.removeSafe()
                 dialog.dismiss()
