@@ -31,7 +31,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION
 
     private val navArgs by navArgs<TransactionDetailsActionFragmentArgs>()
-    private val decodedData by lazy { paramSerializer.unserializeDecodedData(navArgs.decodedData) }
+    private val decodedData by lazy { paramSerializer.deserializeDecodedData(navArgs.decodedData) }
 
     @Inject
     lateinit var paramSerializer: ParamSerializer

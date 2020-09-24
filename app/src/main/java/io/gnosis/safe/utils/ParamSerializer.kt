@@ -21,7 +21,7 @@ class ParamSerializer(
         return decodedDataAdapter.toJson(decodedData)
     }
 
-    fun unserializeDecodedData(decodedDataString: String): DataDecodedDto? {
+    fun deserializeDecodedData(decodedDataString: String): DataDecodedDto? {
         return decodedDataAdapter.fromJson(decodedDataString)
     }
 
@@ -29,7 +29,7 @@ class ParamSerializer(
         return decodedValuesAdapter.toJson(decodedValues)
     }
 
-    fun unserializeDecodedValues(decodedValuesString: String): List<ValueDecodedDto>? {
+    fun deserializeDecodedValues(decodedValuesString: String): List<ValueDecodedDto>? {
         return decodedValuesAdapter.fromJson(decodedValuesString)
     }
 }
