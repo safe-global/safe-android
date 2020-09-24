@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.ParamSerializer
 import javax.inject.Singleton
 
 @Singleton
@@ -46,6 +47,8 @@ interface ApplicationComponent {
     fun connectivityManager(): ConnectivityManager
 
     fun balanceFormatter(): BalanceFormatter
+
+    fun paramSerializer(): ParamSerializer
 
     fun termsChecker(): TermsChecker
 
