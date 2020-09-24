@@ -38,13 +38,17 @@ class LabeledArrayItem @JvmOverloads constructor(
     fun showArray(array: List<Any>?, paramType: ParamType) {
         binding.arrayItemValues.removeAllViews()
         nestingLevel = 1
-        array?.forEach {
-            if (it is List<*>) {
-                addArrayItem(binding.arrayItemValues, it as List<Any>, paramType)
+        if (!array.isNullOrEmpty()) {
+            array.forEach {
+                if (it is List<*>) {
+                    addArrayItem(binding.arrayItemValues, it as List<Any>, paramType)
 
-            } else {
-                addValueItem(binding.arrayItemValues, it, paramType)
+                } else {
+                    addValueItem(binding.arrayItemValues, it, paramType)
+                }
             }
+        } else {
+            addEmptyValue(binding.arrayItemValues)
         }
     }
 
