@@ -80,7 +80,7 @@ class TxTransferActionView @JvmOverloads constructor(
 
     private fun addAddressItem(address: Solidity.Address) {
         val addressItem = AddressItem(context)
-        val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
         layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
         addressItem.layoutParams = layoutParams
         addressItem.address = address

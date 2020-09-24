@@ -156,6 +156,7 @@ android {
 
 androidExtensions {
     experimental = true
+    features = []
 }
 
 dependencies {

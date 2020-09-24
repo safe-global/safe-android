@@ -10,7 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import io.gnosis.safe.R
-import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*
+import io.gnosis.safe.databinding.LayoutAlertDialogTitleBinding
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 
@@ -26,19 +26,21 @@ object CustomAlertDialogBuilder {
         @ColorRes confirmColor: Int = R.color.safe_green,
         @ColorRes cancelColor: Int = R.color.safe_green,
         dismissCallback: DialogInterface.OnDismissListener? = null
-    ): AlertDialog =
-        AlertDialog.Builder(context).apply {
+    ): AlertDialog {
+        val binding = LayoutAlertDialogTitleBinding.inflate(LayoutInflater.from(context))
+
+        return AlertDialog.Builder(context).apply {
             if (confirmRes != 0) setPositiveButton(confirmRes, null)
             if (cancelRes != 0) setNegativeButton(cancelRes, null)
             if (dismissCallback != null) setOnDismissListener(dismissCallback)
         }
             .setView(contentView)
-            .setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
+            .setCustomTitle(binding.root.apply {
                 if (title == null) {
-                    layout_alert_dialog_title_text.visible(false)
+                    binding.layoutAlertDialogTitleText.visible(false)
                 } else {
-                    layout_alert_dialog_title_text.visible(true)
-                    layout_alert_dialog_title_text.text = title
+                    binding.layoutAlertDialogTitleText.visible(true)
+                    binding.layoutAlertDialogTitleText.text = title
                 }
             })
             .create()
@@ -64,6 +66,7 @@ object CustomAlertDialogBuilder {
                     }
                 }
             }
+    }
 }
 
 object InfoTipDialogBuilder {

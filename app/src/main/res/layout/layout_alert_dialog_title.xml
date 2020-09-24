@@ -8,4 +8,4 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:textSize="18sp"
-    tools:text="Edit Safe Name" />
+    tools:text="@string/safe_settings_edit_name_title" />

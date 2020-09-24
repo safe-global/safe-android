@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.ScreenId
@@ -39,12 +40,13 @@ class SafeSettingsEditNameFragment : BaseViewBindingFragment<FragmentSettingsSaf
                 close()
             }
             saveButton.setOnClickListener {
-                viewModel.saveLocalName(safeName.text.toString())
+                viewModel.saveLocalName(safeName.text.trim().toString())
             }
             safeName.showKeyboardForView()
-            safeName.setOnEditorActionListener listener@ { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    viewModel.saveLocalName(safeName.text.toString())
+            safeName.doOnTextChanged { text, _, _, _ -> binding.saveButton.isEnabled = !text.isNullOrBlank() }
+            safeName.setOnEditorActionListener listener@{ v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && !safeName.text.isNullOrBlank()) {
+                    viewModel.saveLocalName(safeName.text.trim().toString())
                     return@listener true
                 }
                 return@listener false
