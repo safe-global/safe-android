@@ -15,7 +15,9 @@ import io.gnosis.safe.databinding.ViewMastercopyItemBinding
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 
 class MasterCopyItem @JvmOverloads constructor(
@@ -31,13 +33,22 @@ class MasterCopyItem @JvmOverloads constructor(
             blockies.setAddress(value)
             setVersionName(value, showUpdateAvailable)
             address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
-            binding.root.setOnClickListener {
+
+            binding.link.setOnClickListener {
                 context.openUrl(
                     context.getString(
                         R.string.etherscan_address_url,
                         value?.asEthereumAddressChecksumString()
                     )
                 )
+            }
+
+            binding.root.setOnClickListener {
+                value?.let {
+                    context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
+                        snackbar(view = root, textId = R.string.copied_success)
+                    }
+                }
             }
         }
     }
