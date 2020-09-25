@@ -21,8 +21,7 @@ import javax.inject.Inject
 
 class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<FragmentTransactionDetailsActionMultisendBinding>() {
 
-    //TODO: clarify screen id
-    override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION
+    override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION_LIST
 
     private val navArgs by navArgs<TransactionDetailsActionMultisendFragmentArgs>()
     private val decodedValues by lazy { paramSerializer.deserializeDecodedValues(navArgs.decodedValues) }
