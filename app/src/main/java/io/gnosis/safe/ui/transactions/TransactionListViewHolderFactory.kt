@@ -207,6 +207,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             version.alpha = viewTransfer.alpha
+            label.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
             nonce.text = viewTransfer.nonce
