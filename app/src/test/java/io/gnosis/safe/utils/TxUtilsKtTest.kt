@@ -89,11 +89,39 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ZERO)
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
         assertEquals("+0${DS}1 WETH", result)
+    }
+
+    @Test
+    fun `formattedAmount (null ERC20 tokenSymbol) should return +0_1 ERC20`() {
+
+        val txInfo = TransactionInfo.Transfer(
+            sender = Solidity.Address(BigInteger.ZERO),
+            recipient = Solidity.Address(BigInteger.ONE),
+            direction = TransactionDirection.INCOMING,
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
+        )
+        val result = txInfo.formattedAmount(balanceFormatter)
+
+        assertEquals("+0${DS}1 ERC20", result)
+    }
+
+    @Test
+    fun `formattedAmount (null ERC721 tokenSymbol) should return +1 NFT`() {
+
+        val txInfo = TransactionInfo.Transfer(
+            sender = Solidity.Address(BigInteger.ZERO),
+            recipient = Solidity.Address(BigInteger.ONE),
+            direction = TransactionDirection.INCOMING,
+            transferInfo = buildErc721TransferInfo(tokenSymbol = null)
+        )
+        val result = txInfo.formattedAmount(balanceFormatter)
+
+        assertEquals("+1 NFT", result)
     }
 
     @Test
@@ -326,13 +354,22 @@ class TxUtilsKtTest {
     }
 
     private fun buildTransferInfo(value: BigInteger): TransferInfo = TransferInfo.EtherTransfer(value)
-    private fun buildErc20TransferInfo(value: BigInteger): TransferInfo =
+    private fun buildErc20TransferInfo(value: BigInteger, tokenSymbol: String? = "WETH"): TransferInfo =
         TransferInfo.Erc20Transfer(
             tokenAddress = Solidity.Address(BigInteger.ONE),
-            value = BigInteger.ONE,
+            value = value,
             logoUri = "dummy",
             decimals = 1,
             tokenName = "",
-            tokenSymbol = "WETH"
+            tokenSymbol = tokenSymbol
+        )
+
+    private fun buildErc721TransferInfo(tokenSymbol: String? = "CK"): TransferInfo =
+        TransferInfo.Erc721Transfer(
+            tokenAddress = Solidity.Address(BigInteger.ONE),
+            logoUri = "dummy",
+            tokenName = "",
+            tokenSymbol = tokenSymbol,
+            tokenId = "dummy"
         )
 }

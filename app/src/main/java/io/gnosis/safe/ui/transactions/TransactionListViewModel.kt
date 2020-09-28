@@ -4,6 +4,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
+import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -20,13 +21,14 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.DEFAULT_ERC20_SYMBOL
+import io.gnosis.safe.utils.DEFAULT_ERC721_SYMBOL
 import io.gnosis.safe.utils.formatBackendDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
@@ -469,8 +471,20 @@ class TransactionListViewModel
     }
 
     private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
-        val symbol = viewTransfer.tokenInfo?.symbol ?: ""
+        val symbol = viewTransfer.tokenInfo?.symbol.let { symbol ->
+            if (symbol.isNullOrEmpty()) {
+                getDefaultSymbol(viewTransfer.tokenInfo?.type)
+            } else {
+                symbol
+            }
+        }
         return balanceFormatter.formatAmount(viewTransfer.value, incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
+    }
+
+    private fun getDefaultSymbol(type: ServiceTokenInfo.TokenType?): String = when (type) {
+        ServiceTokenInfo.TokenType.ERC721 -> DEFAULT_ERC721_SYMBOL
+        ServiceTokenInfo.TokenType.ERC20 -> DEFAULT_ERC20_SYMBOL
+        else -> ""
     }
 
     private fun statusTextColor(status: TransactionStatus): Int {
