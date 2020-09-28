@@ -138,6 +138,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             },
             contentView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_remove_safe, null),
             confirmRes = R.string.safe_settings_dialog_remove,
+            cancelRes = R.string.safe_settings_dialog_cancel,
             confirmColor = R.color.tomato,
             cancelColor = R.color.safe_green
         ).show()
