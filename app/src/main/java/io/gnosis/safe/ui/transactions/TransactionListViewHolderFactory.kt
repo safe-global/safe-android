@@ -154,6 +154,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             settingName.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
                 navigateToTxDetails(it, viewTransfer.id)
@@ -206,6 +207,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
             finalStatus.alpha = OPACITY_FULL
+            txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             version.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
@@ -303,12 +305,9 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
-
             dateTime.text = viewTransfer.dateTimeText
-
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
-
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
@@ -321,6 +320,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             ellipsizedAddress.alpha = viewTransfer.alpha
             dataSize.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
                 navigateToTxDetails(it, viewTransfer.id)
