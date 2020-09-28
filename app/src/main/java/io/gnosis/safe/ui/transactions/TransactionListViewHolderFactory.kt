@@ -194,25 +194,26 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
         with(viewBinding) {
+
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
-
             dateTime.text = viewTransfer.dateTimeText
-
             version.text = viewTransfer.version
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
+            nonce.text = viewTransfer.nonce
+            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             version.alpha = viewTransfer.alpha
-            label.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
-            nonce.text = viewTransfer.nonce
+            label.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+            moduleAddress.alpha = viewTransfer.alpha
 
-            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             version.visibility = viewTransfer.visibilityVersion
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
