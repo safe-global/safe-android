@@ -23,6 +23,7 @@ Version X.Y.Z for gnosis/safe-android is out!
 ```
 5. Download mainnet apk (prefixed with `-release`) from release page (https://github.com/gnosis/safe-android/releases/tag/vX.Y.Z) and upload it to playstore
   - Check if version should be published as Alpha/Beta to signed up users first
+  - Add external testers in firebase console for mainnet and rinkeby if any
   - Check with communications and product team for PlayStore assets
     - Version release notes
     - Updates to screenshots or store description
