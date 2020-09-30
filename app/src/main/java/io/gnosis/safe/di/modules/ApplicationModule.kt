@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivation
 import io.gnosis.safe.utils.ParamSerializer
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
@@ -29,6 +30,10 @@ import okhttp3.OkHttpClient
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
+import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.android.AndroidWordListProvider
+import pm.gnosis.mnemonic.wordlists.WordListProvider
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
@@ -188,4 +193,13 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesParamSerializer(moshi: Moshi): ParamSerializer = ParamSerializer(moshi)
+
+    @Provides
+    fun providesBip39(wordListProvider: WordListProvider): Bip39 = Bip39Generator(wordListProvider)
+
+    @Provides
+    fun providesWordListProvider(@ApplicationContext context: Context): WordListProvider = AndroidWordListProvider(context)
+
+    @Provides
+    fun providesMnemonicKeyAndAddressDerivation(bip39: Bip39): MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(bip39)
 }
