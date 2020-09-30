@@ -1,15 +1,23 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.safe.utils.mnemonic.InlineWordListProvider
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import pm.gnosis.mnemonic.Bip39Generator
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
 
 class MnemonicKeyAndAddressDerivationTest {
 
-    val keyAndAddressDerivation: MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(InlineWordListProvider())
+    val mockBip39 = mockk<Bip39Generator>(relaxed = true).apply {
+        every { mnemonicToSeed(any()) } returns "1a1db8ccb5c4ae76d76ffe1999800f9e182d842e2bf5503759c5865053267cd6c6ec89f44b0c8a8460a709587eb2d869a1c698003e736959bb9e167598b47c25".hexToByteArray()
+    }
+    
+    val keyAndAddressDerivation: MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(mockBip39)
+//    val keyAndAddressDerivation: MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(Bip39Generator(InlineWordListProvider()))
 
     @Before
     fun setUp() {

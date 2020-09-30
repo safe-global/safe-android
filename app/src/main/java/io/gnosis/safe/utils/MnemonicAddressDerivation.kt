@@ -4,7 +4,6 @@ import okio.ByteString
 import pm.gnosis.crypto.HDNode
 import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.mnemonic.Bip39Generator
-import pm.gnosis.mnemonic.wordlists.WordListProvider
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
@@ -21,11 +20,10 @@ interface MnemonicKeyDerivation {
 }
 
 class MnemonicKeyAndAddressDerivation(
-        wordListProvider: WordListProvider
+        private val bip39 : Bip39Generator
 ) : MnemonicKeyDerivation, MnemonicAddressDerivation {
 
     private lateinit var masterKey: HDNode
-    private val bip39 = Bip39Generator(wordListProvider)
 
     override fun initialize(mnemonic: String) {
         val mnemonicSeed = bip39.mnemonicToSeed(mnemonic)
