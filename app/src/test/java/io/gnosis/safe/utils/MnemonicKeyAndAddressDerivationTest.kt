@@ -13,16 +13,16 @@ import pm.gnosis.utils.toHexString
 class MnemonicKeyAndAddressDerivationTest {
 
     val mockBip39 = mockk<Bip39Generator>(relaxed = true).apply {
-        every { mnemonicToSeed(any()) } returns "1a1db8ccb5c4ae76d76ffe1999800f9e182d842e2bf5503759c5865053267cd6c6ec89f44b0c8a8460a709587eb2d869a1c698003e736959bb9e167598b47c25".hexToByteArray()
+        every {
+            mnemonicToSeed("creek banner employ mix teach sunny sure mutual pole mom either lion")
+        } returns "1a1db8ccb5c4ae76d76ffe1999800f9e182d842e2bf5503759c5865053267cd6c6ec89f44b0c8a8460a709587eb2d869a1c698003e736959bb9e167598b47c25".hexToByteArray()
     }
-    
+
     val keyAndAddressDerivation: MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(mockBip39)
-//    val keyAndAddressDerivation: MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(Bip39Generator(InlineWordListProvider()))
 
     @Before
     fun setUp() {
         keyAndAddressDerivation.initialize("creek banner employ mix teach sunny sure mutual pole mom either lion")
-
     }
 
     @Test
