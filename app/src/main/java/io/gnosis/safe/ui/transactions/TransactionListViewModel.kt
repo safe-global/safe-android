@@ -8,6 +8,9 @@ import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
+import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
+import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
@@ -291,6 +294,9 @@ class TransactionListViewModel
     private fun queuedSetFallbackHandler(transaction: SettingsChange, threshold: Int): TransactionView.SettingsChangeVariantQueued {
         val thresholdMet = checkThreshold(threshold, transaction.confirmations)
         val address = getAddress(transaction, "handler")
+        val version =
+            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
+
 
         return TransactionView.SettingsChangeVariantQueued(
             id = transaction.id,
@@ -298,7 +304,7 @@ class TransactionListViewModel
             statusText = displayString(transaction.status),
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date?.formatBackendDate() ?: "",
-            version = "DefaultFallbackHandler",
+            version = version,
             address = address,
             label = R.string.tx_list_set_fallback_handler,
             confirmations = transaction.confirmations ?: 0,
@@ -322,6 +328,8 @@ class TransactionListViewModel
 
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.SettingsChangeVariant {
         val address = getAddress(transaction, "handler")
+        val version =
+            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 
         return TransactionView.SettingsChangeVariant(
             id = transaction.id,
@@ -330,7 +338,7 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(transaction.status),
             dateTimeText = transaction.date?.formatBackendDate() ?: "",
             alpha = alpha(transaction),
-            version = "DefaultFallbackHandler",
+            version = version,
             address = address,
             label = R.string.tx_list_set_fallback_handler,
             nonce = transaction.nonce.toString()
