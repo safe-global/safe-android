@@ -5,14 +5,14 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
 
 class MnemonicKeyAndAddressDerivationTest {
 
-    val mockBip39 = mockk<Bip39Generator>(relaxed = true).apply {
+    val mockBip39 = mockk<Bip39>(relaxed = true).apply {
         every {
             mnemonicToSeed("creek banner employ mix teach sunny sure mutual pole mom either lion")
         } returns "1a1db8ccb5c4ae76d76ffe1999800f9e182d842e2bf5503759c5865053267cd6c6ec89f44b0c8a8460a709587eb2d869a1c698003e736959bb9e167598b47c25".hexToByteArray()
