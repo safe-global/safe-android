@@ -22,7 +22,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivation
+import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
@@ -201,5 +201,5 @@ class ApplicationModule(private val application: Application) {
     fun providesWordListProvider(@ApplicationContext context: Context): WordListProvider = AndroidWordListProvider(context)
 
     @Provides
-    fun providesMnemonicKeyAndAddressDerivation(bip39: Bip39): MnemonicKeyAndAddressDerivation = MnemonicKeyAndAddressDerivation(bip39)
+    fun providesMnemonicKeyAndAddressDerivator(bip39: Bip39): MnemonicKeyAndAddressDerivator = MnemonicKeyAndAddressDerivator(bip39)
 }

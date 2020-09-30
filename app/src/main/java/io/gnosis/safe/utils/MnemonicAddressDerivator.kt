@@ -8,20 +8,20 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
 
-interface MnemonicAddressDerivation {
+interface MnemonicAddressDerivator {
     fun initialize(mnemonic: String)
     fun addressesForRange(range: LongRange): List<Solidity.Address>
     fun addressesForPage(start: Long, pageSize: Int): List<Solidity.Address>
 }
 
-interface MnemonicKeyDerivation {
+interface MnemonicKeyDerivator {
     fun initialize(mnemonic: String)
     fun keyForIndex(index: Long): BigInteger
 }
 
-class MnemonicKeyAndAddressDerivation(
-        private val bip39 : Bip39
-) : MnemonicKeyDerivation, MnemonicAddressDerivation {
+class MnemonicKeyAndAddressDerivator(
+        private val bip39: Bip39
+) : MnemonicKeyDerivator, MnemonicAddressDerivator {
 
     private lateinit var masterKey: HDNode
 
@@ -33,7 +33,7 @@ class MnemonicKeyAndAddressDerivation(
 
     override fun addressesForRange(range: LongRange): List<Solidity.Address> {
         val result = mutableListOf<Solidity.Address>()
-        (range).map {
+        range.map {
             val key = masterKey.deriveChild(it).keyPair
             val address = key.address.asBigInteger()
             result.add(Solidity.Address(address))

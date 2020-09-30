@@ -19,7 +19,7 @@ import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivation
+import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
 import javax.inject.Singleton
 
@@ -62,7 +62,7 @@ interface ApplicationComponent {
     //TODO: remove
     fun safeRepository(): SafeRepository
 
-    fun mnemonicKeyAndAddressDerivation(): MnemonicKeyAndAddressDerivation
+    fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
 
     // Base injects
     fun inject(activity: BaseActivity)
