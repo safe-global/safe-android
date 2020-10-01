@@ -21,17 +21,19 @@ import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
+import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.KeyStorage
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [
-        ApplicationModule::class,
-        InterceptorsModule::class,
-        ViewModelFactoryModule::class,
-        DatabaseModule::class,
-        RepositoryModule::class
-    ]
+        modules = [
+            ApplicationModule::class,
+            InterceptorsModule::class,
+            ViewModelFactoryModule::class,
+            DatabaseModule::class,
+            RepositoryModule::class
+        ]
 )
 interface ApplicationComponent {
     fun application(): Application
@@ -63,6 +65,10 @@ interface ApplicationComponent {
     fun safeRepository(): SafeRepository
 
     fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
+
+    fun keyStorage(): KeyStorage
+
+    fun encryptionManager(): EncryptionManager
 
     // Base injects
     fun inject(activity: BaseActivity)
