@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.repositories.SafeRepository
@@ -18,8 +16,6 @@ import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.gnosis.safe.ui.settings.view.SettingItem
-import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
