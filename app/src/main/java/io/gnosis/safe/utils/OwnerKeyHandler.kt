@@ -58,13 +58,17 @@ class OwnerKeyHandler(
         isInitialized()
 
         val result = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        println("---> unlockWithPassword: result: $result")
         Timber.i("---> unlockWithPassword: result: $result")
 
         val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
         val iv = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")!!.hexToByteArray()
+        println("---> encrypted: data: ${encrypted.toHexString()} iv: ${iv.toHexString()}")
         Timber.i("---> encrypted: data: ${encrypted.toHexString()} iv: ${iv.toHexString()}")
 
         val decrypted = encryptionManager.decrypt(EncryptionManager.CryptoData(encrypted, iv))
+
+        println("---> decrypted: ${decrypted.toHexString()}")
         Timber.i("---> decrypted: ${decrypted.toHexString()}")
 
         // TODO Maybe change type to a more generic ByteArray?

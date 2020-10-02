@@ -4,6 +4,7 @@ import android.app.Application
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
+import io.mockk.verify
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -42,7 +43,7 @@ class OwnerKeyHandlerTest {
             } returns true
 
             every {
-//                decrypt(EncryptionManager.CryptoData("0xbe5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()))
+//                decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()))
                 decrypt(any())
             } returns "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray()
 
@@ -63,11 +64,10 @@ class OwnerKeyHandlerTest {
         Assert.assertEquals("Wrong iv", "0d606ea9dba4abfee35e2119babd9d9e", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, ""))
 
         // verifyCalls ?
-//        verify {
-//            // initialized
-//            // unlockWithPassword
-//            // encrypt
-//        }
+        verify { encryptionManager.initialized() }
+        verify { encryptionManager.unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) }
+        verify { encryptionManager.encrypt(any()) }
+
     }
 
     @Test
@@ -80,12 +80,10 @@ class OwnerKeyHandlerTest {
         // Assert value in preferences
         Assert.assertEquals("Wrong result", "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger(), result)
 
-        //verifyCalls
-//        verify {
-//            // initialized
-//            // unlockWithPassword
-//            // decrypt
-//        }
+        verify { encryptionManager.initialized() }
+        verify { encryptionManager.unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) }
+        verify { encryptionManager.decrypt(any()) }
+
     }
 
     @Test
@@ -96,3 +94,5 @@ class OwnerKeyHandlerTest {
     fun retrieveOwnerAddress() {
     }
 }
+
+
