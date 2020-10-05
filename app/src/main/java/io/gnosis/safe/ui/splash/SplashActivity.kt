@@ -40,7 +40,10 @@ class SplashActivity : BaseActivity() {
                         onAgreeClickListener = {
                             viewModel.handleAgreeClicked()
                         }
-                    }.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
+                    }
+                    if (!termsBottomSheetDialog.isAdded) {
+                        termsBottomSheetDialog.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
+                    }
                 }
                 is SplashViewModel.ShowButton -> {
                     binding.continueButton.visible(true)
