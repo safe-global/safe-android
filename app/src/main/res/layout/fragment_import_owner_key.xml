@@ -103,7 +103,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:imeOptions="actionDone"
-            android:inputType="textUri"
+            android:inputType="text|textMultiLine"
+            android:maxLines="4"
+            android:scrollHorizontally="false"
             android:textColor="@color/default_text"
             android:textCursorDrawable="@drawable/cursor_drawable" />
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentImportOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.snackbar
 import java.lang.Error
 import javax.inject.Inject
 
@@ -29,6 +31,12 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener { viewModel.validate(seedPhraseText.text.toString()) }
             seedPhraseText.doOnTextChanged { _, _, _, _ -> binding.seedPhraseLayout.isErrorEnabled = false }
+            seedPhraseText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    viewModel.validate(seedPhraseText.text.toString())
+                }
+                true
+            }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
@@ -40,6 +48,8 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
                 }
                 is ImportOwnerKeyState.ValidSeedPhraseSubmitted -> {
                     // TODO navigate to what goes next
+                    binding.seedPhraseLayout.isErrorEnabled = false
+                    snackbar(requireView(), "Valid seed phrase submitted")
                 }
             }
         })
