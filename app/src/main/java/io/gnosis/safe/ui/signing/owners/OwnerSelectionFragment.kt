@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.signing.owners
 
+import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -77,8 +78,23 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             owners.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
             showMoreOwners.setOnClickListener {
                 adapter.pagesVisible++
-                adapter.notifyDataSetChanged()
-                it.visible(adapter.pagesVisible < MAX_PAGES)
+                val visualFeedback = it.animate().alpha(0.0f)
+                visualFeedback.duration = 100
+                visualFeedback.setListener(object : Animator.AnimatorListener {
+
+                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        adapter.notifyDataSetChanged()
+                        showMoreOwners.alpha = 1.0f
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {}
+
+                    override fun onAnimationStart(animation: Animator?) {}
+                })
+                visualFeedback.start()
+                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
             }
         }
 
