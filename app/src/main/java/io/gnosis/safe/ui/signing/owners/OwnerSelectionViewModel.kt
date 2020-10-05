@@ -17,7 +17,7 @@ class OwnerSelectionViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
 
-    private var ownerIndex: Long = -1
+    private var ownerIndex: Long = 1
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
