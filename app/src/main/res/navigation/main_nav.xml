@@ -87,6 +87,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerSelectionFragment"
+        android:name="io.gnosis.safe.ui.signing.owners.OwnerSelectionFragment"
+        android:label="OwnerSelectionFragment"
+        tools:layout="@layout/fragment_owner_selection">
+
+        <argument
+            android:name="seedPhrase"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/settingsFragment"
         android:name="io.gnosis.safe.ui.settings.SettingsFragment"
         android:label="SafeSettingsFragment"
