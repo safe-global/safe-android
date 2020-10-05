@@ -12,7 +12,7 @@
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/safe_name_layout"
+        app:layout_constraintBottom_toTopOf="@id/seed_phrase_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
             android:text="@string/import_owner_key_title" />
 
         <TextView
-            android:id="@+id/save_button"
+            android:id="@+id/next_button"
             style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         app:layout_constraintTop_toBottomOf="@id/enter_seed_phrase_title" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/safe_name_layout"
+        android:id="@+id/seed_phrase_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
         app:layout_constraintTop_toBottomOf="@id/enter_seed_phrase_description">
 
         <EditText
-            android:id="@+id/safe_name"
+            android:id="@+id/seed_phrase_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:imeOptions="actionDone"

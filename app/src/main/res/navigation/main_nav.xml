@@ -301,7 +301,7 @@
 
     <fragment
         android:id="@+id/importOwnerKeyFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.import.ImportOwnerKeyFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ImportOwnerKeyFragment"
         android:label="ImportOwnerKeyFragment"
         tools:layout="@layout/fragment_import_owner_key" />
 

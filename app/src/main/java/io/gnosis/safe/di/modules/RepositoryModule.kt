@@ -1,5 +1,6 @@
 package io.gnosis.safe.di.modules
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
@@ -7,9 +8,12 @@ import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
+import io.gnosis.safe.di.ApplicationContext
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
+import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.android.AndroidWordListProvider
 import pm.gnosis.svalinn.common.PreferencesManager
 import javax.inject.Singleton
 
@@ -55,4 +59,9 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
+
+    @Provides
+    @Singleton
+    fun providesBip39Generator(@ApplicationContext context: Context): Bip39Generator =
+        Bip39Generator(AndroidWordListProvider(context))
 }
