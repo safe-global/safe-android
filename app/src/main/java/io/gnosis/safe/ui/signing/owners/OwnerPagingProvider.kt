@@ -19,16 +19,16 @@ class OwnerPagingProvider(
                 prefetchDistance = 1,
                 enablePlaceholders = false,
                 initialLoadSize = PAGE_SIZE,
-                maxSize = PAGE_SIZE * PAGES_THRESHOLD
+                maxSize = PAGE_SIZE * MAX_PAGES
             ),
             pagingSourceFactory = {
-                OwnerPagingSource(derivator, PAGES_THRESHOLD)
+                OwnerPagingSource(derivator, MAX_PAGES)
             }
         ).flow
     }
 
     companion object {
         const val PAGE_SIZE = 20
-        const val PAGES_THRESHOLD = 5
+        const val MAX_PAGES = 5
     }
 }

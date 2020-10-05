@@ -60,7 +60,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                 } else {
                     binding.progress.visible(false)
                     binding.nextButton.isEnabled = true
-                    binding.showMoreOwners.visible(adapter.pagesVisible < PAGES_THRESHOLD)
+                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
         }
@@ -78,7 +78,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             showMoreOwners.setOnClickListener {
                 adapter.pagesVisible++
                 adapter.notifyDataSetChanged()
-                it.visible(adapter.pagesVisible < PAGES_THRESHOLD)
+                it.visible(adapter.pagesVisible < MAX_PAGES)
             }
         }
 
@@ -110,6 +110,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     }
 
     companion object {
-        private const val PAGES_THRESHOLD = OwnerPagingProvider.PAGES_THRESHOLD
+        private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES
     }
 }
