@@ -99,4 +99,6 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_EDIT_NAME("screen_settings_safe_edit_name"),
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
+    OWNER_ENTER_SEED("owner_enter_seed"),
+    OWNER_SELECT_ACCOUNT("owner_select_account")
 }
