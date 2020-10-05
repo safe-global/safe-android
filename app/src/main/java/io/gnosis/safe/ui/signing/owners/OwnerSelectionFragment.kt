@@ -47,6 +47,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         super.onViewCreated(view, savedInstanceState)
 
         adapter = OwnerListAdapter()
+        adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
