@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.backend.dto.ValueDecodedDto
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionMultisendBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -57,8 +58,8 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
             content.removeAllViews()
 
             decodedValues?.let {
-                it.forEach { value ->
-                    val item = getMultisendActionItem(value.to, value.dataDecoded?.method ?: "")
+                it.forEachIndexed { index, value ->
+                    val item = getMultisendActionItem(value.to, value.dataDecoded?.method ?: getString(R.string.tx_multisend_action, index + 1))
                     value.dataDecoded?.let { data ->
                         item.setOnClickListener {
                             findNavController().navigate(
