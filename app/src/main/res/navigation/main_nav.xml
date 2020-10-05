@@ -104,6 +104,12 @@
         android:label="SafeSettingsFragment"
         tools:layout="@layout/fragment_settings">
 
+        <!-- TODO: remove -->
+        <action
+            android:id="@+id/action_settingsFragment_to_ownerSelectionFragment"
+            app:destination="@id/ownerSelectionFragment"
+            app:popUpTo="@id/settingsFragment" />
+
         <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
             app:destination="@id/getInTouchFragment"
