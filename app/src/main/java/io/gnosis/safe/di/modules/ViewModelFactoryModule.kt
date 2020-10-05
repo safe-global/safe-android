@@ -20,6 +20,7 @@ import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
+import io.gnosis.safe.ui.signing.owners.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
@@ -67,6 +68,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeSelectionViewModel::class)
     abstract fun providesSafeSelectionViewModel(viewModel: SafeSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerSelectionViewModel::class)
+    abstract fun providesAccountSelectionViewModel(viewModel: OwnerSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap
