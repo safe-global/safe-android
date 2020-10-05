@@ -74,6 +74,10 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
                     remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
                     blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
+                    root.setOnClickListener {
+                        //TODO: remove next line and owner from storage
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSelectionFragment("random seed phrase"))
+                    }
                 }
             } else {
                 val viewStub = stubImportOwnerKey
@@ -81,7 +85,10 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    importOwnerKey.setOnClickListener { snackbar(requireView(), "Import key navigation") }
+                    //TODO: navigate to seed phrase import instead
+                    importOwnerKey.setOnClickListener {
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSelectionFragment("random seed phrase"))
+                    }
                 }
             }
         }
