@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.import
+package io.gnosis.safe.ui.settings.owner
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

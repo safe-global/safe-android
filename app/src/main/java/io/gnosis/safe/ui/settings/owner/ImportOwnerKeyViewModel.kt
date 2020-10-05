@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.import
+package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
