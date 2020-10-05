@@ -85,9 +85,8 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    //TODO: navigate to seed phrase import instead
                     importOwnerKey.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSelectionFragment("random seed phrase"))
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
                     }
                 }
             }

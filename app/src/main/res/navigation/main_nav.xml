@@ -127,6 +127,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_safeSettingsEditNameFragment"
             app:destination="@id/safeSettingsEditNameFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_importOwnerKeyFragment"
+            app:destination="@id/importOwnerKeyFragment" />
 
     </fragment>
 
@@ -295,5 +298,11 @@
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_settings_safe_advanced" />
+
+    <fragment
+        android:id="@+id/importOwnerKeyFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.import.ImportOwnerKeyFragment"
+        android:label="ImportOwnerKeyFragment"
+        tools:layout="@layout/fragment_import_owner_key" />
 
 </navigation>

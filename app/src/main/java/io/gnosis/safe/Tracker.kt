@@ -80,6 +80,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
+    OWNER_ENTER_SEED("owner_enter_seed"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
