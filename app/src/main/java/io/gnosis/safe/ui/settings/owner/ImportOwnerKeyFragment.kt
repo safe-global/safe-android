@@ -14,7 +14,6 @@ import io.gnosis.safe.databinding.FragmentImportOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.snackbar
-import java.lang.Error
 import javax.inject.Inject
 
 class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBinding>() {
@@ -48,6 +47,7 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
                 }
                 is ImportOwnerKeyState.ValidSeedPhraseSubmitted -> {
                     // TODO navigate to what goes next
+                    // The value `state.validSeedPhrase` contains what to pass to the generator next
                     binding.seedPhraseLayout.isErrorEnabled = false
                     snackbar(requireView(), "Valid seed phrase submitted")
                 }

@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
 import javax.inject.Inject
 
@@ -15,19 +14,26 @@ class ImportOwnerKeyViewModel
     override fun initialState(): ImportOwnerKeyState = ImportOwnerKeyState.AwaitingInput
 
     fun validate(seedPhrase: String) {
-        runCatching { bip39Generator.validateMnemonic(seedPhrase) == seedPhrase }
-            .getOrElse { false }
-            .also { valid ->
+        val cleanedUpSeedPhrase = cleanupSeedPhrase(seedPhrase)
+        runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
+            .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(ViewAction.ShowError(InvalidSeedPhrase)) } } }
+            .onSuccess { mnemonic ->
                 safeLaunch {
                     updateState {
-                        if (valid) {
-                            ImportOwnerKeyState.ValidSeedPhraseSubmitted
+                        if (mnemonic == cleanedUpSeedPhrase) {
+                            ImportOwnerKeyState.ValidSeedPhraseSubmitted(cleanedUpSeedPhrase)
                         } else {
                             ImportOwnerKeyState.Error(ViewAction.ShowError(InvalidSeedPhrase))
                         }
                     }
                 }
             }
+    }
+
+    private fun cleanupSeedPhrase(seedPhrase: String): String {
+        return seedPhrase.split("\\s+?|\\p{Punct}+?".toRegex())
+            .filter { it.isNotBlank() }
+            .joinToString(separator = " ")
     }
 
 }
@@ -39,6 +45,6 @@ sealed class ImportOwnerKeyState : BaseStateViewModel.State {
     override var viewAction: BaseStateViewModel.ViewAction? = null
 
     object AwaitingInput : ImportOwnerKeyState()
-    object ValidSeedPhraseSubmitted : ImportOwnerKeyState()
+    data class ValidSeedPhraseSubmitted(val validSeedPhrase: String) : ImportOwnerKeyState()
     data class Error(override var viewAction: BaseStateViewModel.ViewAction?) : ImportOwnerKeyState()
 }

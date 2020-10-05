@@ -46,7 +46,7 @@ class ImportOwnerKeyViewModelTest {
 
         stateObserver.assertValues(
             ImportOwnerKeyState.AwaitingInput,
-            ImportOwnerKeyState.ValidSeedPhraseSubmitted
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(seedPhrase)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
     }
@@ -83,5 +83,113 @@ class ImportOwnerKeyViewModelTest {
             ImportOwnerKeyState.Error(BaseStateViewModel.ViewAction.ShowError(InvalidSeedPhrase))
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
+    }
+
+    @Test
+    fun `validate - (contains linebreak) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "first\nsecond"
+        val expected = "first second"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
+    }
+
+    @Test
+    fun `validate - (punctuation mark) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "first.second"
+        val expected = "first second"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
+    }
+
+    @Test
+    fun `validate - (contains multiple punctuation marks) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "first........second"
+        val expected = "first second"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
+    }
+
+    @Test
+    fun `validate - (contains multiple line breaks) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "first\n\n\nsecond"
+        val expected = "first second"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
+    }
+
+    @Test
+    fun `validate - (contains mixed whitespace and punctuation) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "first\n\n\n  . . ?! !  \n\tsecond"
+        val expected = "first second"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
+    }
+
+    @Test
+    fun `validate - (casing remains intact) should emit ValidSeedPhraseSubmitted`() {
+        val seedPhrase = "fIrSt\n\n\n  . . ?! !  \n\tsecOnD ???Third;;:;:?!\t\tFOURTH"
+        val expected = "fIrSt secOnD Third FOURTH"
+        every { bip39Generator.validateMnemonic(any()) } returns expected
+        viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        viewModel.state.observeForever(stateObserver)
+
+        viewModel.validate(seedPhrase)
+
+        stateObserver.assertValues(
+            ImportOwnerKeyState.AwaitingInput,
+            ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
+        )
+        verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
     }
 }
