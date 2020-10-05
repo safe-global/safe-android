@@ -12,7 +12,6 @@
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/seed_phrase_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -59,56 +58,66 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <TextView
-        android:id="@+id/enter_seed_phrase_title"
-        style="@style/TextDark.Bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="@string/enter_your_seed_phrase"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
-    <TextView
-        android:id="@+id/enter_seed_phrase_description"
-        style="@style/TextMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:paddingHorizontal="16dp"
-        android:text="@string/enter_seed_phrase_description"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/enter_seed_phrase_title" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/seed_phrase_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="22dp"
-        android:hint="@string/enter_seed_phrase_hint"
-        android:textColorHint="@color/medium_grey"
-        app:boxStrokeColor="@color/outline_box"
-        app:errorIconDrawable="@null"
-        app:errorTextColor="@color/tomato"
-        app:hintTextColor="@color/medium_grey"
-        app:layout_constraintTop_toBottomOf="@id/enter_seed_phrase_description">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
-        <EditText
-            android:id="@+id/seed_phrase_text"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:imeOptions="actionDone"
-            android:inputType="text|textMultiLine"
-            android:maxLines="4"
-            android:scrollHorizontally="false"
-            android:textColor="@color/default_text"
-            android:textCursorDrawable="@drawable/cursor_drawable" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/enter_seed_phrase_title"
+                style="@style/TextDark.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="28dp"
+                android:text="@string/enter_your_seed_phrase" />
+
+            <TextView
+                android:id="@+id/enter_seed_phrase_description"
+                style="@style/TextMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="16dp"
+                android:text="@string/enter_seed_phrase_description"
+                android:textAlignment="center" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/seed_phrase_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="22dp"
+                android:hint="@string/enter_seed_phrase_hint"
+                android:textColorHint="@color/medium_grey"
+                app:boxStrokeColor="@color/outline_box"
+                app:errorIconDrawable="@null"
+                app:errorTextColor="@color/tomato"
+                app:hintTextColor="@color/medium_grey">
+
+                <EditText
+                    android:id="@+id/seed_phrase_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:imeOptions="actionDone"
+                    android:inputType="text|textMultiLine"
+                    android:maxLines="4"
+                    android:scrollHorizontally="false"
+                    android:textColor="@color/default_text"
+                    android:textCursorDrawable="@drawable/cursor_drawable" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
