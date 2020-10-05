@@ -8,21 +8,22 @@ import timber.log.Timber
 
 class OwnerPagingSource(
     private val derivator: MnemonicAddressDerivator,
-    private val numPages: Int
+    private val maxPages: Int
 ) : PagingSource<Long, Solidity.Address>() {
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Solidity.Address> {
 
         val pageLink = params.key
+        val pageSize = params.loadSize
 
         kotlin.runCatching {
-            pageLink?.let { derivator.addressesForPage(pageLink, 20) } ?: derivator.addressesForPage(0, 20)
+            pageLink?.let { derivator.addressesForPage(pageLink, pageSize) } ?: derivator.addressesForPage(0, pageSize)
 
         }.onSuccess {
             return LoadResult.Page(
                 data = it,
-                prevKey =  if (pageLink == null || pageLink == 0L) null else pageLink - (20),
-                nextKey = if ((pageLink ?: 0) < (numPages - 1) * 20) (pageLink ?: 0)  + 20 else null
+                prevKey =  if (pageLink == null || pageLink == 0L) null else pageLink - pageSize,
+                nextKey = if ((pageLink ?: 0) < (maxPages - 1) * pageSize) (pageLink ?: 0) + pageSize else null
             )
         }
             .onFailure {

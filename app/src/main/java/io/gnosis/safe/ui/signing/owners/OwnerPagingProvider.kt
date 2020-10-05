@@ -18,14 +18,11 @@ class OwnerPagingProvider(
                 pageSize = PAGE_SIZE,
                 prefetchDistance = 1,
                 enablePlaceholders = false,
-                initialLoadSize = 0,
+                initialLoadSize = PAGE_SIZE,
                 maxSize = PAGE_SIZE * PAGES_THRESHOLD
             ),
             pagingSourceFactory = {
-                OwnerPagingSource(
-                    derivator,
-                    PAGES_THRESHOLD
-                )
+                OwnerPagingSource(derivator, PAGES_THRESHOLD)
             }
         ).flow
     }
