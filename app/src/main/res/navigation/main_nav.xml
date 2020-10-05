@@ -225,6 +225,10 @@
         tools:layout="@layout/fragment_transaction_details_action">
 
         <argument
+            android:name="action"
+            app:argType="string" />
+
+        <argument
             android:name="data"
             app:argType="string" />
 

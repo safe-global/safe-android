@@ -218,7 +218,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             txDetails.txData?.let {
                                 findNavController().navigate(
                                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                        it.hexData ?: "", it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                        it.dataDecoded?.method ?: "", it.hexData ?: "", it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
                                     )
                                 )
                             }

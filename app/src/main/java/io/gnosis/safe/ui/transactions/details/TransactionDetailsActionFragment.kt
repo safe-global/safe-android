@@ -32,6 +32,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
     private val navArgs by navArgs<TransactionDetailsActionFragmentArgs>()
 
+    private val action by lazy { navArgs.action }
     private val data by lazy { navArgs.data }
     private val decodedData by lazy { navArgs.decodedData?.let { paramSerializer.deserializeDecodedData(it) } }
     private val address by lazy { navArgs.address?.asEthereumAddress() }
@@ -50,6 +51,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+            title.text = action
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
@@ -77,7 +79,6 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                     content.addView(getDivider())
                 }
 
-                title.text = it.method
                 it.parameters?.forEach {
                     when (it) {
                         is ParamDto.AddressParam -> {
