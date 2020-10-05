@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout.LayoutParams
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.backend.dto.DataDecodedDto
@@ -63,14 +64,19 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         address?.let {
             with(binding) {
                 content.addView(getTransferItem(it, amount ?: ""))
+                content.addView(getDivider())
             }
         }
 
-        //TODO: add separators
         binding.content.addView(getDataItem(getString(R.string.tx_details_data), data))
 
         decodedDto?.let {
             with(binding) {
+
+                if (it.parameters?.size ?: 0 > 0) {
+                    content.addView(getDivider())
+                }
+
                 title.text = it.method
                 it.parameters?.forEach {
                     when (it) {
@@ -137,6 +143,15 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         item.layoutParams = layoutParams
         item.label = name
         item.value = value
+        return item
+    }
+
+    private fun getDivider(): View {
+        val item = View(requireContext())
+        val layoutParams = LayoutParams(MATCH_PARENT, dpToPx(1))
+        layoutParams.setMargins(0, dpToPx(16), 0, 0)
+        item.layoutParams = layoutParams
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_grey))
         return item
     }
 }
