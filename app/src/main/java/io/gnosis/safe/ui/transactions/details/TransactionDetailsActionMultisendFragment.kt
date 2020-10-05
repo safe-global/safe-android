@@ -60,16 +60,15 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
             decodedValues?.let {
                 it.forEachIndexed { index, value ->
                     val item = getMultisendActionItem(value.to, value.dataDecoded?.method ?: getString(R.string.tx_multisend_action, index + 1))
-                    value.dataDecoded?.let { data ->
-                        item.setOnClickListener {
-                            findNavController().navigate(
-                                TransactionDetailsActionMultisendFragmentDirections.actionTransactionDetailsActionMultisendFragmentToTransactionDetailsActionFragment(
-                                    paramSerializer.serializeDecodedData(data),
-                                    value.to.asEthereumAddressString(),
-                                    balanceFormatter.formatAmount(value.value, true)
-                                )
+                    item.setOnClickListener {
+                        findNavController().navigate(
+                            TransactionDetailsActionMultisendFragmentDirections.actionTransactionDetailsActionMultisendFragmentToTransactionDetailsActionFragment(
+                                value.data,
+                                value.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
+                                value.to.asEthereumAddressString(),
+                                balanceFormatter.formatAmount(value.value, true)
                             )
-                        }
+                        )
                     }
                     content.addView(item)
                 }

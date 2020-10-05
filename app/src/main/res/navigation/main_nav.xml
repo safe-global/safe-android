@@ -225,8 +225,14 @@
         tools:layout="@layout/fragment_transaction_details_action">
 
         <argument
-            android:name="decodedData"
+            android:name="data"
             app:argType="string" />
+
+        <argument
+            android:name="decodedData"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
         <argument
             android:name="address"

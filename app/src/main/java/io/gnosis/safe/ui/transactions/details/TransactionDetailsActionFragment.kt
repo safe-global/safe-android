@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamDto
 import io.gnosis.data.backend.dto.ParamType
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -30,7 +31,8 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
     private val navArgs by navArgs<TransactionDetailsActionFragmentArgs>()
 
-    private val decodedData by lazy { paramSerializer.deserializeDecodedData(navArgs.decodedData) }
+    private val data by lazy { navArgs.data }
+    private val decodedData by lazy { navArgs.decodedData?.let { paramSerializer.deserializeDecodedData(it) } }
     private val address by lazy { navArgs.address?.asEthereumAddress() }
     private val amount by lazy { navArgs.amount }
 
@@ -63,6 +65,9 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 content.addView(getTransferItem(it, amount ?: ""))
             }
         }
+
+        //TODO: add separators
+        binding.content.addView(getDataItem(getString(R.string.tx_details_data), data))
 
         decodedDto?.let {
             with(binding) {

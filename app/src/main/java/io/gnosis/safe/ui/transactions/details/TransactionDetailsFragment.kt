@@ -215,10 +215,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
 
                         txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                            txDetails.txData?.dataDecoded?.let {
+                            txDetails.txData?.let {
                                 findNavController().navigate(
                                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                        paramSerializer.serializeDecodedData(it)
+                                        it.hexData ?: "", it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
                                     )
                                 )
                             }
