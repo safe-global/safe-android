@@ -50,16 +50,15 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
-               if(loadState.refresh is LoadState.Loading && adapter.itemCount == 0) {
-                   binding.progress.visible(true)
-               } else {
-                   binding.progress.visible(false)
-                   binding.nextButton.isEnabled = true
-               }
+                if (loadState.refresh is LoadState.Loading && adapter.itemCount == 0) {
+                    binding.progress.visible(true)
+                }
 
                 if (viewModel.state.value?.viewAction is LoadedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     binding.showMoreOwners.visible(false)
                 } else {
+                    binding.progress.visible(false)
+                    binding.nextButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < PAGES_THRESHOLD)
                 }
             }
