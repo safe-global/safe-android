@@ -16,6 +16,7 @@ import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.utils.showRemoveDialog
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
@@ -66,30 +67,33 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     private fun setupOwnerKeyView() {
         with(binding) {
-            //TODO I commented this out because the random was annoying me too much
-//            if (Random.nextBoolean()) {
-//                val viewStub = stubRemoveOwnerKey
-//                if (viewStub.parent != null) {
-//                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
-//                }
-//                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-//                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
-//                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
-//                    root.setOnClickListener {
-//                        //TODO: remove owner from storage
-//                    }
-//                }
-//            } else {
-            val viewStub = stubImportOwnerKey
-            if (viewStub.parent != null) {
-                ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
-            }
-            with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                importOwnerKey.setOnClickListener {
-                    findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
+            //TODO: check if app has owner key saved instead of using random
+            if (Random.nextBoolean()) {
+                val viewStub = stubRemoveOwnerKey
+                if (viewStub.parent != null) {
+                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
+                }
+                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
+                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
+                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
+                    root.setOnClickListener {
+                        showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
+                            //TODO: remove owner key
+                        }
+                    }
+                }
+            } else {
+                val viewStub = stubImportOwnerKey
+                if (viewStub.parent != null) {
+                    ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
+                }
+                with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
+                    //TODO: navigate to seed phrase import instead
+                    importOwnerKey.setOnClickListener {
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
+                    }
                 }
             }
-//            }
         }
     }
 
