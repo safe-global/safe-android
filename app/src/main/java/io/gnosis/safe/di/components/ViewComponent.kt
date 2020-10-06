@@ -20,6 +20,7 @@ import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsFragment
+import io.gnosis.safe.ui.signing.owners.OwnerSelectionFragment
 import io.gnosis.safe.ui.splash.SplashActivity
 import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.transactions.TransactionListFragment
@@ -56,6 +57,8 @@ interface ViewComponent {
     fun inject(dialog: EnsInputDialog)
 
     fun inject(fragment: SettingsFragment)
+
+    fun inject(fragment: OwnerSelectionFragment)
 
     fun inject(fragment: AppSettingsFragment)
 
