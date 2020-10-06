@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
-import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.InvalidChecksum
 
 class ImportOwnerKeyViewModelTest {
@@ -20,7 +20,7 @@ class ImportOwnerKeyViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
-    private val bip39Generator = mockk<Bip39Generator>()
+    private val bip39Generator = mockk<Bip39>()
 
     private lateinit var viewModel: ImportOwnerKeyViewModel
 

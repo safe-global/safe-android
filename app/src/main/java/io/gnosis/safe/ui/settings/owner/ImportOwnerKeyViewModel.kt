@@ -3,12 +3,12 @@ package io.gnosis.safe.ui.settings.owner
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.PublishViewModel
-import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 
 class ImportOwnerKeyViewModel
 @Inject constructor(
-    private val bip39Generator: Bip39Generator,
+    private val bip39Generator: Bip39,
     appDispatchers: AppDispatchers
 ) : PublishViewModel<ImportOwnerKeyState>(appDispatchers) {
 

@@ -43,7 +43,7 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
         viewModel.state().observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is ImportOwnerKeyState.Error -> {
-                    (state.viewAction as? BaseStateViewModel.ViewAction.ShowError)?.let { Timber.e(it.error) }
+                    Timber.e(state.throwable)
                     with(binding) {
                         seedPhraseLayout.isErrorEnabled = true
                         seedPhraseLayout.error = getString(R.string.enter_seed_phrase_error)
@@ -69,10 +69,5 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
 
     private fun submit() {
         viewModel.validate(binding.seedPhraseText.text.toString())
-//        binding.seedPhraseLayout.isErrorEnabled = false
-//        val seedPhrase = viewModel.cleanupSeedPhrase(binding.seedPhraseText.text.toString())
-//        viewModel.validate(seedPhrase).takeIf { it }?.run {
-//            findNavController().navigate(ImportOwnerKeyFragmentDirections.actionImportOwnerKeyFragmentToOwnerSelectionFragment(seedPhrase))
-//        }
     }
 }
