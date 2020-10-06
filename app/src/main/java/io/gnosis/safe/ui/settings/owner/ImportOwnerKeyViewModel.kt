@@ -13,24 +13,16 @@ class ImportOwnerKeyViewModel
 
     override fun initialState(): ImportOwnerKeyState = ImportOwnerKeyState.AwaitingInput
 
-    fun validate(seedPhrase: String) {
+    fun validate(seedPhrase: String): Boolean {
         val cleanedUpSeedPhrase = cleanupSeedPhrase(seedPhrase)
-        runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
-            .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(ViewAction.ShowError(InvalidSeedPhrase)) } } }
-            .onSuccess { mnemonic ->
-                safeLaunch {
-                    updateState {
-                        if (mnemonic == cleanedUpSeedPhrase) {
-                            ImportOwnerKeyState.ValidSeedPhraseSubmitted(cleanedUpSeedPhrase)
-                        } else {
-                            ImportOwnerKeyState.Error(ViewAction.ShowError(InvalidSeedPhrase))
-                        }
-                    }
-                }
-            }
+        return runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
+            .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(it) } } }
+            .getOrDefault(false)
+            .let { mnemonic -> cleanedUpSeedPhrase == mnemonic }
+            .also { valid -> if (!valid) safeLaunch { updateState { ImportOwnerKeyState.Error(InvalidSeedPhrase) } } }
     }
 
-    private fun cleanupSeedPhrase(seedPhrase: String): String {
+    fun cleanupSeedPhrase(seedPhrase: String): String {
         return seedPhrase.split("\\s+?|\\p{Punct}+?".toRegex())
             .filter { it.isNotBlank() }
             .joinToString(separator = " ")
@@ -40,11 +32,10 @@ class ImportOwnerKeyViewModel
 
 object InvalidSeedPhrase : Throwable()
 
-sealed class ImportOwnerKeyState : BaseStateViewModel.State {
-
+sealed class ImportOwnerKeyState(
     override var viewAction: BaseStateViewModel.ViewAction? = null
+) : BaseStateViewModel.State {
 
     object AwaitingInput : ImportOwnerKeyState()
-    data class ValidSeedPhraseSubmitted(val validSeedPhrase: String) : ImportOwnerKeyState()
-    data class Error(override var viewAction: BaseStateViewModel.ViewAction?) : ImportOwnerKeyState()
+    data class Error(val throwable: Throwable) : ImportOwnerKeyState(BaseStateViewModel.ViewAction.ShowError(throwable))
 }

@@ -105,10 +105,6 @@
         tools:layout="@layout/fragment_settings">
 
         <!-- TODO: remove -->
-        <action
-            android:id="@+id/action_settingsFragment_to_ownerSelectionFragment"
-            app:destination="@id/ownerSelectionFragment"
-            app:popUpTo="@id/settingsFragment" />
 
         <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
@@ -303,6 +299,10 @@
         android:id="@+id/importOwnerKeyFragment"
         android:name="io.gnosis.safe.ui.settings.owner.ImportOwnerKeyFragment"
         android:label="ImportOwnerKeyFragment"
-        tools:layout="@layout/fragment_import_owner_key" />
+        tools:layout="@layout/fragment_import_owner_key" >
+        <action
+            android:id="@+id/action_importOwnerKeyFragment_to_ownerSelectionFragment"
+            app:destination="@id/ownerSelectionFragment" />
+    </fragment>
 
 </navigation>

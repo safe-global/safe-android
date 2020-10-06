@@ -21,8 +21,7 @@ import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
-import pm.gnosis.mnemonic.Bip39Generator
-import pm.gnosis.mnemonic.android.AndroidWordListProvider
+import pm.gnosis.mnemonic.Bip39
 import javax.inject.Singleton
 
 @Singleton
@@ -73,6 +72,5 @@ interface ApplicationComponent {
 
     fun inject(fragment: BaseDialogFragment)
 
-    //    fun inject(service: BridgeService)
     fun inject(service: HeimdallFirebaseService)
 }

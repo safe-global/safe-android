@@ -66,30 +66,30 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     private fun setupOwnerKeyView() {
         with(binding) {
-            if (Random.nextBoolean()) {
-                val viewStub = stubRemoveOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
-                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
-                    root.setOnClickListener {
-                        //TODO: remove next line and owner from storage
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSelectionFragment("random seed phrase"))
-                    }
-                }
-            } else {
-                val viewStub = stubImportOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    importOwnerKey.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
-                    }
+            //TODO I commented this out because the random was annoying me too much
+//            if (Random.nextBoolean()) {
+//                val viewStub = stubRemoveOwnerKey
+//                if (viewStub.parent != null) {
+//                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
+//                }
+//                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
+//                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
+//                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
+//                    root.setOnClickListener {
+//                        //TODO: remove owner from storage
+//                    }
+//                }
+//            } else {
+            val viewStub = stubImportOwnerKey
+            if (viewStub.parent != null) {
+                ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
+            }
+            with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
+                importOwnerKey.setOnClickListener {
+                    findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
                 }
             }
+//            }
         }
     }
 
