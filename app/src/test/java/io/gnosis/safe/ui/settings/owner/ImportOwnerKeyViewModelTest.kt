@@ -171,7 +171,7 @@ class ImportOwnerKeyViewModelTest {
     @Test
     fun `validate - (casing remains intact) should emit ValidSeedPhraseSubmitted`() {
         val seedPhrase = "fIrSt\n\n\n  . . ?! !  \n\tsecOnD ???Third;;:;:?!\t\tFOURTH"
-        val expected = "fIrSt secOnD Third FOURTH"
+        val expected = "first second third fourth"
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
