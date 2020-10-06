@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
+import io.gnosis.safe.ui.signing.owners.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
@@ -89,6 +90,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesSafeSelectionViewModel(provider: ViewModelProvider) = provider[SafeSelectionViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAccountSelectionViewModel(provider: ViewModelProvider) = provider[OwnerSelectionViewModel::class.java]
 
     @Provides
     @ForView
