@@ -5,7 +5,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
-import timber.log.Timber
 import java.math.BigInteger
 
 interface PrivateKeyHandler {
@@ -21,9 +20,8 @@ interface OwnerAddressHandler {
 class OwnerKeyHandler(
         private val encryptionManager: EncryptionManager,
         private val preferencesManager: PreferencesManager
-) : PrivateKeyHandler, OwnerAddressHandler { // TODO:  should be two classes
+) : PrivateKeyHandler, OwnerAddressHandler {
     override fun storeKey(key: BigInteger) {
-
         isInitialized()
         val result = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
 
@@ -31,16 +29,12 @@ class OwnerKeyHandler(
 
         preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, keyCryptoData.data.toHexString()) }
         preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, keyCryptoData.iv.toHexString()) }
-
     }
 
     private fun isInitialized() {
-        Timber.i("---> initialized(): result: ${encryptionManager.initialized()}")
         if (!encryptionManager.initialized()) {
             val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray())
             if (!result) {
-                Timber.i("---> setupPassword: result(): $result")
-
                 // TODO this needs to be handled better
                 throw RuntimeException("EncryptionManger init failed")
             }
