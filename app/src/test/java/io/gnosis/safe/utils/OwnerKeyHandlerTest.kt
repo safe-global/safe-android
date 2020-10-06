@@ -11,6 +11,7 @@ import org.junit.Test
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 
@@ -30,21 +31,14 @@ class OwnerKeyHandlerTest {
         preferencesManager = PreferencesManager(application)
 
         encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
-            every {
-                initialized()
-            } returns true
+            every { initialized() } returns true
+
+            every { unlocked() } returns true
+
+            every { unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) } returns true
 
             every {
-                unlocked()
-            } returns true
-
-            every {
-                unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray())
-            } returns true
-
-            every {
-//                decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()))
-                decrypt(any())
+                decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()))
             } returns "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray()
 
             every {
@@ -71,7 +65,7 @@ class OwnerKeyHandlerTest {
     }
 
     @Test
-    fun `retrieveKey (___) should ___`() {
+    fun `retrieveKey should return decrypted key`() {
         preferences.putString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249")
         preferences.putString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
 
@@ -82,16 +76,24 @@ class OwnerKeyHandlerTest {
 
         verify { encryptionManager.initialized() }
         verify { encryptionManager.unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) }
-        verify { encryptionManager.decrypt(any()) }
+        verify { encryptionManager.decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray())) }
 
     }
 
     @Test
-    fun storeOwnerAddress() {
+    fun `storeOwnerAddress should store address in prefs`() {
+        ownerKeyHandler.storeOwnerAddress("0x0000000000000000000000000000000000001234".asEthereumAddress()!!)
+
+        Assert.assertEquals("Wrong address", "0x0000000000000000000000000000000000001234", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, ""))
     }
 
     @Test
-    fun retrieveOwnerAddress() {
+    fun `retrieveOwnerAddress should return stored address`() {
+        preferences.putString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+
+        val result = ownerKeyHandler.retrieveOwnerAddress()
+
+        Assert.assertEquals("Wrong address", "0x123456".asEthereumAddress(), result)
     }
 }
 
