@@ -14,10 +14,7 @@ import io.gnosis.safe.databinding.FragmentImportOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.signing.owners.OwnerSelectionFragmentDirections
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -43,17 +40,17 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
                 true
             }
         }
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state().observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                is ImportOwnerKeyState.AwaitingInput -> {
-                    binding.seedPhraseLayout.isErrorEnabled = false
-                }
                 is ImportOwnerKeyState.Error -> {
                     (state.viewAction as? BaseStateViewModel.ViewAction.ShowError)?.let { Timber.e(it.error) }
                     with(binding) {
                         seedPhraseLayout.isErrorEnabled = true
                         seedPhraseLayout.error = getString(R.string.enter_seed_phrase_error)
                     }
+                }
+                is ImportOwnerKeyState.ValidSeedPhraseSubmitted -> {
+                    findNavController().navigate(ImportOwnerKeyFragmentDirections.actionImportOwnerKeyFragmentToOwnerSelectionFragment(state.validSeedPhrase))
                 }
             }
         })
@@ -71,10 +68,11 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
     }
 
     private fun submit() {
-        binding.seedPhraseLayout.isErrorEnabled = false
-        val seedPhrase = viewModel.cleanupSeedPhrase(binding.seedPhraseText.text.toString())
-        viewModel.validate(seedPhrase).takeIf { it }?.run {
-            findNavController().navigate(ImportOwnerKeyFragmentDirections.actionImportOwnerKeyFragmentToOwnerSelectionFragment(seedPhrase))
-        }
+        viewModel.validate(binding.seedPhraseText.text.toString())
+//        binding.seedPhraseLayout.isErrorEnabled = false
+//        val seedPhrase = viewModel.cleanupSeedPhrase(binding.seedPhraseText.text.toString())
+//        viewModel.validate(seedPhrase).takeIf { it }?.run {
+//            findNavController().navigate(ImportOwnerKeyFragmentDirections.actionImportOwnerKeyFragmentToOwnerSelectionFragment(seedPhrase))
+//        }
     }
 }

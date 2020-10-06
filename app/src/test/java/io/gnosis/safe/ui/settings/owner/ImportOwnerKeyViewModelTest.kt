@@ -29,9 +29,9 @@ class ImportOwnerKeyViewModelTest {
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
-        stateObserver.assertValues(ImportOwnerKeyState.AwaitingInput)
+        stateObserver.assertEmpty()
     }
 
     @Test
@@ -40,12 +40,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(seedPhrase) } returns seedPhrase
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(seedPhrase)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
@@ -57,13 +56,12 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(seedPhrase) } returns seedPhrase.plus("invalid")
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
-            ImportOwnerKeyState.Error(BaseStateViewModel.ViewAction.ShowError(InvalidSeedPhrase))
+            ImportOwnerKeyState.Error(InvalidSeedPhrase)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
     }
@@ -71,16 +69,16 @@ class ImportOwnerKeyViewModelTest {
     @Test
     fun `validate - (Bip39Generator exception) should emit Error`() {
         val seedPhrase = "some valid seed phrase"
-        every { bip39Generator.validateMnemonic(seedPhrase) } throws InvalidChecksum(seedPhrase, "", "")
+        val invalidChecksum = InvalidChecksum(seedPhrase, "", "")
+        every { bip39Generator.validateMnemonic(seedPhrase) } throws invalidChecksum
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
-            ImportOwnerKeyState.Error(BaseStateViewModel.ViewAction.ShowError(InvalidSeedPhrase))
+            ImportOwnerKeyState.Error(invalidChecksum)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
     }
@@ -92,12 +90,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
@@ -110,12 +107,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
@@ -128,12 +124,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
@@ -146,12 +141,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
@@ -164,12 +158,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }
@@ -182,12 +175,11 @@ class ImportOwnerKeyViewModelTest {
         every { bip39Generator.validateMnemonic(any()) } returns expected
         viewModel = ImportOwnerKeyViewModel(bip39Generator, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state.observeForever(stateObserver)
+        viewModel.state().observeForever(stateObserver)
 
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.AwaitingInput,
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(expected) }

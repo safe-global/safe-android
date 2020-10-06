@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.PublishViewModel
 import pm.gnosis.mnemonic.Bip39Generator
 import javax.inject.Inject
 
@@ -9,20 +10,26 @@ class ImportOwnerKeyViewModel
 @Inject constructor(
     private val bip39Generator: Bip39Generator,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<ImportOwnerKeyState>(appDispatchers) {
+) : PublishViewModel<ImportOwnerKeyState>(appDispatchers) {
 
-    override fun initialState(): ImportOwnerKeyState = ImportOwnerKeyState.AwaitingInput
-
-    fun validate(seedPhrase: String): Boolean {
+    fun validate(seedPhrase: String) {
         val cleanedUpSeedPhrase = cleanupSeedPhrase(seedPhrase)
-        return runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
+        runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
             .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(it) } } }
-            .getOrDefault(false)
-            .let { mnemonic -> cleanedUpSeedPhrase == mnemonic }
-            .also { valid -> if (!valid) safeLaunch { updateState { ImportOwnerKeyState.Error(InvalidSeedPhrase) } } }
+            .onSuccess { mnemonic ->
+                safeLaunch {
+                    updateState {
+                        if (cleanedUpSeedPhrase == mnemonic) {
+                            ImportOwnerKeyState.ValidSeedPhraseSubmitted(mnemonic)
+                        } else {
+                            ImportOwnerKeyState.Error(InvalidSeedPhrase)
+                        }
+                    }
+                }
+            }
     }
 
-    fun cleanupSeedPhrase(seedPhrase: String): String {
+    private fun cleanupSeedPhrase(seedPhrase: String): String {
         return seedPhrase.split("\\s+?|\\p{Punct}+?".toRegex())
             .filter { it.isNotBlank() }
             .joinToString(separator = " ")
@@ -36,6 +43,6 @@ sealed class ImportOwnerKeyState(
     override var viewAction: BaseStateViewModel.ViewAction? = null
 ) : BaseStateViewModel.State {
 
-    object AwaitingInput : ImportOwnerKeyState()
+    data class ValidSeedPhraseSubmitted(val validSeedPhrase: String) : ImportOwnerKeyState()
     data class Error(val throwable: Throwable) : ImportOwnerKeyState(BaseStateViewModel.ViewAction.ShowError(throwable))
 }
