@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
+import io.gnosis.safe.utils.OwnerKeyHandler
 import io.gnosis.safe.utils.ParamSerializer
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
@@ -220,5 +221,12 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage = AndroidKeyStorage(context)
+
+    @Provides
+    @Singleton
+    fun providesOwnerKeyHandler(
+            encryptionManager: EncryptionManager,
+            preferencesManager: PreferencesManager
+    ): OwnerKeyHandler = OwnerKeyHandler(encryptionManager, preferencesManager)
 
 }
