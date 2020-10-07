@@ -1,8 +1,8 @@
 package io.gnosis.safe.utils
 
-import androidx.core.content.edit
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
 import java.math.BigInteger
@@ -22,18 +22,30 @@ class OwnerKeyHandler(
         private val preferencesManager: PreferencesManager
 ) : PrivateKeyHandler, OwnerAddressHandler {
     override fun storeKey(key: BigInteger) {
-        isInitialized()
-        val result = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
-
+        initialize()
+        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!success) {
+            resetPasswordAndUnlock()
+        }
         val keyCryptoData = encryptionManager.encrypt(key.toByteArray())
 
         preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, keyCryptoData.data.toHexString()) }
         preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, keyCryptoData.iv.toHexString()) }
     }
 
-    private fun isInitialized() {
+    private fun resetPasswordAndUnlock() {
+        encryptionManager.removePassword()
+        val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!result) {
+            // This should not happen
+            throw RuntimeException("EncryptionManger init failed")
+        }
+        encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+    }
+
+    private fun initialize() {
         if (!encryptionManager.initialized()) {
-            val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray())
+            val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray(), HARDCODED_PASSWORD.toByteArray())
             if (!result) {
                 // TODO this needs to be handled better
                 throw RuntimeException("EncryptionManger init failed")
@@ -42,9 +54,12 @@ class OwnerKeyHandler(
     }
 
     override fun retrieveKey(): BigInteger {
-        isInitialized()
+        initialize()
 
-        encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!success ) {
+            return BigInteger.ZERO
+        }
         val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
         val iv = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")!!.hexToByteArray()
 
