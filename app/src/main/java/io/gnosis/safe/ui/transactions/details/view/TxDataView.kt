@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxDataBinding
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 
 class TxDataView @JvmOverloads constructor(
@@ -19,39 +21,52 @@ class TxDataView @JvmOverloads constructor(
     private var collapsed: Boolean = true
 
     fun setData(txData: String?, size: Int, title: String? = null) {
-        if(!title.isNullOrBlank()) {
-            binding.dataTitle.text = title
-        } else {
-            binding.dataTitle.visible(false)
-        }
-        binding.dataSize.text = "$size bytes"
-        if (txData != null) {
-            binding.data.text = txData
-            binding.collapseChevron.visible(true)
-            binding.root.setOnClickListener {
-                if (collapsed) {
-                    expand()
-                } else {
-                    collapse()
-                }
+        with(binding) {
+            if (!title.isNullOrBlank()) {
+                dataTitle.text = title
+            } else {
+                dataTitle.visible(false)
             }
-        } else {
-            binding.collapseChevron.visible(false)
-        }
+            dataSize.text = "$size bytes"
+            if (txData != null) {
+                data.text = txData
+                collapseChevron.visible(true)
 
-        binding.collapseChevron.setImageResource(R.drawable.ic_chevron_down)
-        binding.data.visible(false)
+                data.setOnClickListener {
+                    context.copyToClipboard(context.getString(R.string.data_copied), data.text.toString()) {
+                        snackbar(view = root, textId = R.string.copied_success)
+                    }
+                }
+
+                root.setOnClickListener {
+                    if (collapsed) {
+                        expand()
+                    } else {
+                        collapse()
+                    }
+                }
+            } else {
+                collapseChevron.visible(false)
+            }
+
+            collapseChevron.setImageResource(R.drawable.ic_chevron_down)
+            data.visible(false)
+        }
     }
 
     private fun collapse() {
         collapsed = true
-        binding.collapseChevron.setImageResource(R.drawable.ic_chevron_down)
-        binding.data.visible(false)
+        with(binding) {
+            collapseChevron.setImageResource(R.drawable.ic_chevron_down)
+            data.visible(false)
+        }
     }
 
     private fun expand() {
         collapsed = false
-        binding.collapseChevron.setImageResource(R.drawable.ic_chevron_up)
-        binding.data.visible(true)
+        with(binding) {
+            collapseChevron.setImageResource(R.drawable.ic_chevron_up)
+            data.visible(true)
+        }
     }
 }
