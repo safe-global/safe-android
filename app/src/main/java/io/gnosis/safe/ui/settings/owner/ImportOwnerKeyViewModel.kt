@@ -32,7 +32,7 @@ class ImportOwnerKeyViewModel
     private fun cleanupSeedPhrase(seedPhrase: String): String {
         return seedPhrase.split("\\s+?|\\p{Punct}+?".toRegex())
             .filter { it.isNotBlank() }
-            .joinToString(separator = " ")
+            .joinToString(separator = " ", transform = String::toLowerCase)
     }
 
 }
