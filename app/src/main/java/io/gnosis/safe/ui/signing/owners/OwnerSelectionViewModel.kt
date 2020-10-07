@@ -5,15 +5,18 @@ import androidx.paging.insertSeparators
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
+import io.gnosis.safe.utils.OwnerKeyHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerSelectionViewModel
 @Inject constructor(
     private val derivator: MnemonicKeyAndAddressDerivator,
+    private val ownerKeyHandler: OwnerKeyHandler,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
 
@@ -54,6 +57,9 @@ class OwnerSelectionViewModel
         safeLaunch {
             val key = derivator.keyForIndex(ownerIndex)
             //TODO: store key
+            Timber.i("---> Storing private key")
+            ownerKeyHandler.storeKey(key)
+
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
             }
