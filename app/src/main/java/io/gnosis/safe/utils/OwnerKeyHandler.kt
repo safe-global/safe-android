@@ -13,7 +13,7 @@ interface PrivateKeyHandler {
 }
 
 interface OwnerAddressHandler {
-    fun storeOwnerAddress(address: Solidity.Address)
+    fun storeOwnerAddress(address: Solidity.Address?)
     fun retrieveOwnerAddress(): Solidity.Address?
 }
 
@@ -57,7 +57,7 @@ class OwnerKeyHandler(
         initialize()
 
         val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
-        if (!success ) {
+        if (!success) {
             return BigInteger.ZERO
         }
         val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
@@ -68,8 +68,12 @@ class OwnerKeyHandler(
         return decrypted.asBigInteger()
     }
 
-    override fun storeOwnerAddress(address: Solidity.Address) {
-        preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, address.asEthereumAddressString()) }
+    override fun storeOwnerAddress(address: Solidity.Address?) {
+        if (address == null) {
+            preferencesManager.prefs.edit { remove(PREF_KEY_ENCRYPTED_OWNER_ADDRESS) }
+        } else {
+            preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, address.asEthereumAddressString()) }
+        }
     }
 
     override fun retrieveOwnerAddress(): Solidity.Address? = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()

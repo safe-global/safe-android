@@ -28,7 +28,6 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
-        android:text="0x1C8b..153A"
         android:textColor="@color/medium_grey"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

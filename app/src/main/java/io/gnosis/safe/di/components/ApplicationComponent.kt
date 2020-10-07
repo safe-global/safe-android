@@ -19,10 +19,8 @@ import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
+import io.gnosis.safe.utils.OwnerKeyHandler
 import io.gnosis.safe.utils.ParamSerializer
-import pm.gnosis.svalinn.security.EncryptionManager
-import pm.gnosis.svalinn.security.KeyStorage
 import javax.inject.Singleton
 
 @Singleton
@@ -64,11 +62,7 @@ interface ApplicationComponent {
     //TODO: remove
     fun safeRepository(): SafeRepository
 
-//    fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
-//
-//    fun keyStorage(): KeyStorage
-//
-//    fun encryptionManager(): EncryptionManager
+    fun ownerKeyHandler(): OwnerKeyHandler
 
     // Base injects
     fun inject(activity: BaseActivity)

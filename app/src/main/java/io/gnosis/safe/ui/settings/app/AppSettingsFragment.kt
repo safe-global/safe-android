@@ -16,17 +16,21 @@ import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.utils.OwnerKeyHandler
+import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
 import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.utils.asEthereumAddress
+import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
-import kotlin.random.Random
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
 
     @Inject
     lateinit var safeRepository: SafeRepository
+
+    @Inject
+    lateinit var ownerKeyHandler: OwnerKeyHandler
 
     override fun screenId() = ScreenId.SETTINGS_APP
 
@@ -35,7 +39,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppBinding =
-        FragmentSettingsAppBinding.inflate(inflater, container, false)
+            FragmentSettingsAppBinding.inflate(inflater, container, false)
 
     private lateinit var ownerKeyStubBinding: ViewBinding
 
@@ -68,19 +72,34 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     private fun setupOwnerKeyView() {
         with(binding) {
             //TODO: check if app has owner key saved instead of using random
-            if (Random.nextBoolean()) {
+
+            val address = ownerKeyHandler.retrieveOwnerAddress()
+            val key = ownerKeyHandler.retrieveKey()
+
+            if (address != null && key != BigInteger.ZERO) {
                 val viewStub = stubRemoveOwnerKey
                 if (viewStub.parent != null) {
                     ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
-                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
-                    root.setOnClickListener {
+                    blockies.setAddress(address)
+                    ownerAddress.text = address.shortChecksumString()
+                    remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
                             //TODO: remove owner key
+
+                            Timber.i("---> Remove owner key")
+                            ownerKeyHandler.storeKey(BigInteger.ZERO)
+                            ownerKeyHandler.storeOwnerAddress(null)
+
+                            // TODO: refresh view to show import owner key after deletion
+
+                            // refreshView()
                         }
                     }
+//                    root.setOnClickListener {
+//
+//                    }
                 }
             } else {
                 val viewStub = stubImportOwnerKey
