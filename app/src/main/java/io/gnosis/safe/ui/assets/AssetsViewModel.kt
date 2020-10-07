@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class SafeBalancesViewModel @Inject constructor(
-        private val safeRepository: SafeRepository
+        private val safeRepository: SafeRepository,
         appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeBalancesState>(appDispatchers) {
 
