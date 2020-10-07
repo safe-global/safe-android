@@ -1,13 +1,12 @@
 package io.gnosis.safe.ui.base
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.navigation.NavDirections
 import io.gnosis.data.models.Safe
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import timber.log.Timber
 
@@ -15,6 +14,25 @@ data class AppDispatchers(
     val main: CoroutineDispatcher = Dispatchers.Main,
     val background: CoroutineDispatcher = Dispatchers.IO
 )
+
+abstract class PublishViewModel<T>(private val dispatchers: AppDispatchers) : ViewModel() where T : BaseStateViewModel.State {
+
+    private val stateChannel: BroadcastChannel<T> = BroadcastChannel(BUFFERED)
+
+    fun state(): LiveData<T> = liveData {
+        for (event in stateChannel.openSubscription())
+            emit(event)
+    }
+
+    protected suspend fun updateState(update: () -> T) {
+        val nextState = update()
+        stateChannel.send(nextState)
+    }
+
+    protected fun safeLaunch(block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(dispatchers.background, block = block)
+
+}
 
 abstract class BaseStateViewModel<T>(private val dispatchers: AppDispatchers) :
     ViewModel() where T : BaseStateViewModel.State {
