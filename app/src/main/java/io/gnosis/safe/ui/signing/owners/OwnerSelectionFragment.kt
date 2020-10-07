@@ -9,10 +9,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -20,6 +22,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), OwnerListAdapter.OnOwnerItemClickedListener {
@@ -108,8 +111,9 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         }
                     }
                     is CloseScreen -> {
-                        //TODO: pop back stack to land back on app settings
-                        //findNavController().popBackStack(R.id., true)
+
+                        Timber.i("---> Close Screen")
+                        findNavController().popBackStack(R.id.ownerSelectionFragment, true)
                     }
                     else -> {
 
