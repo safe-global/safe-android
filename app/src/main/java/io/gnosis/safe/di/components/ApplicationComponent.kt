@@ -64,11 +64,11 @@ interface ApplicationComponent {
     //TODO: remove
     fun safeRepository(): SafeRepository
 
-    fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
-
-    fun keyStorage(): KeyStorage
-
-    fun encryptionManager(): EncryptionManager
+//    fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
+//
+//    fun keyStorage(): KeyStorage
+//
+//    fun encryptionManager(): EncryptionManager
 
     // Base injects
     fun inject(activity: BaseActivity)
@@ -77,6 +77,5 @@ interface ApplicationComponent {
 
     fun inject(fragment: BaseDialogFragment)
 
-//    fun inject(service: BridgeService)
     fun inject(service: HeimdallFirebaseService)
 }

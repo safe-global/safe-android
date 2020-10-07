@@ -56,7 +56,6 @@ class OwnerSelectionViewModel
     fun importOwner() {
         safeLaunch {
             val key = derivator.keyForIndex(ownerIndex)
-            //TODO: store key
             Timber.i("---> Storing private key")
             ownerKeyHandler.storeKey(key)
 

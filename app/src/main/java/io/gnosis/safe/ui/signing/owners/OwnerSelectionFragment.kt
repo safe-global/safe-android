@@ -113,7 +113,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     is CloseScreen -> {
 
                         Timber.i("---> Close Screen")
-                        findNavController().popBackStack(R.id.ownerSelectionFragment, true)
+                        findNavController().popBackStack(R.id.settingsFragment, false)
                     }
                     else -> {
 

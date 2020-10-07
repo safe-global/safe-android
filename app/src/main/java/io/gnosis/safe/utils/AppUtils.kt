@@ -1,9 +1,13 @@
 package io.gnosis.safe.utils
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.view.LayoutInflater
+import androidx.annotation.StringRes
 import io.gnosis.safe.R
+import io.gnosis.safe.databinding.DialogRemoveBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.HttpCodes
@@ -80,3 +84,24 @@ fun Throwable.getErrorResForException(): Int =
         }
         else -> R.string.error_try_again
     }
+
+fun showRemoveDialog(
+    context: Context,
+    @StringRes message: Int,
+    confirmCallback: () -> Unit
+) {
+    val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
+    dialogBinding.message.setText(message)
+    CustomAlertDialogBuilder.build(
+        context = context,
+        confirmCallback = { dialog ->
+            confirmCallback()
+            dialog.dismiss()
+        },
+        contentView = dialogBinding.root,
+        confirmRes = R.string.safe_settings_dialog_remove,
+        cancelRes = R.string.safe_settings_dialog_cancel,
+        confirmColor = R.color.tomato,
+        cancelColor = R.color.safe_green
+    ).show()
+}

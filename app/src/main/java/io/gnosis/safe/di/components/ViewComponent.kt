@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
+import io.gnosis.safe.ui.settings.owner.ImportOwnerKeyFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsFragment
@@ -59,6 +60,8 @@ interface ViewComponent {
     fun inject(fragment: SettingsFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
+
+    fun inject(fragment: ImportOwnerKeyFragment)
 
     fun inject(fragment: AppSettingsFragment)
 

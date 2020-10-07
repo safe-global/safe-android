@@ -69,7 +69,8 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesConnectivityManager(@ApplicationContext context: Context): ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    fun providesConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     @Singleton
@@ -180,12 +181,21 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesNotificationRepo(safeRepository: SafeRepository, preferencesManager: PreferencesManager, notificationServiceApi: NotificationServiceApi, notificationManager: NotificationManager): NotificationRepository =
-            NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
+    fun providesNotificationRepo(
+        safeRepository: SafeRepository,
+        preferencesManager: PreferencesManager,
+        notificationServiceApi: NotificationServiceApi,
+        notificationManager: NotificationManager
+    ): NotificationRepository =
+        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
-    fun providesNotificationManager(@ApplicationContext context: Context, preferencesManager: PreferencesManager, balanceFormatter: BalanceFormatter): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter)
+    fun providesNotificationManager(
+        @ApplicationContext context: Context,
+        preferencesManager: PreferencesManager,
+        balanceFormatter: BalanceFormatter
+    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter)
 
     @Provides
     @Singleton
@@ -200,12 +210,14 @@ class ApplicationModule(private val application: Application) {
     fun providesParamSerializer(moshi: Moshi): ParamSerializer = ParamSerializer(moshi)
 
     @Provides
+    @Singleton
     fun providesBip39(wordListProvider: WordListProvider): Bip39 = Bip39Generator(wordListProvider)
 
     @Provides
     fun providesWordListProvider(@ApplicationContext context: Context): WordListProvider = AndroidWordListProvider(context)
 
     @Provides
+    @Singleton
     fun providesMnemonicKeyAndAddressDerivator(bip39: Bip39): MnemonicKeyAndAddressDerivator = MnemonicKeyAndAddressDerivator(bip39)
 
     @Provides
