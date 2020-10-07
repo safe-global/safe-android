@@ -187,6 +187,9 @@
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
 
+    <string name="signing_owner_dialog_remove">Remove</string>
+    <string name="signing_owner_dialog_cancel">Cancel</string>
+    <string name="signing_owner_dialog_description">Removing the owner key only removes it from this app. It doesn’t delete any Safes from this app or from blockchain. For Safes controlled by this owner key, you will no longer be able to sign transactions in this app.</string>
     <string name="signing_owner_selection_title">Import owner key</string>
     <string name="signing_owner_selection_import">Import</string>
     <string name="signing_owner_selection_select_key">Select key</string>
