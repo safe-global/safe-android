@@ -103,7 +103,7 @@ class ShareSafeViewModelTest {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "Safe name")
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ensRepository.reverseResolve(any()) } throws throwable
-        coEvery { qrCodeGenerator.generateQrCodeSync(any(), any(), any(), any()) } throws throwable
+        coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } throws throwable
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<ShareSafeState>()
         viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
@@ -123,7 +123,7 @@ class ShareSafeViewModelTest {
             safeRepository.getActiveSafe()
             ensRepository.reverseResolve(safe.address)
             Timber.e(throwable)
-            qrCodeGenerator.generateQrCodeSync(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
+            qrCodeGenerator.generateQrCode(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
             Timber.e(throwable)
         }
     }
@@ -135,7 +135,7 @@ class ShareSafeViewModelTest {
         val bitmap = mockk<Bitmap>()
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ensRepository.reverseResolve(any()) } returns ensName
-        coEvery { qrCodeGenerator.generateQrCodeSync(any(), any(), any(), any()) } returns bitmap
+        coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns bitmap
         val testObserver = TestLiveDataObserver<ShareSafeState>()
         viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
 
@@ -153,7 +153,7 @@ class ShareSafeViewModelTest {
         coVerifySequence {
             safeRepository.getActiveSafe()
             ensRepository.reverseResolve(safe.address)
-            qrCodeGenerator.generateQrCodeSync(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
+            qrCodeGenerator.generateQrCode(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
         }
     }
 }
