@@ -44,7 +44,7 @@ ext {
             play_services_auth              : '17.0.0',
             retrofit                        : '2.6.2',
             status_keycard                  : '3.0.1',
-            svalinn                         : '46ca7b4f9f4ef76a9a913d938913cd6b75c274c2',
+            svalinn                         : '1b315342d877cec3fcfc726f3176d937f6f7fee0',
             timber                          : '4.7.1',
             zxing                           : '3.3.1',
 
