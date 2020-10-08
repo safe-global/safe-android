@@ -11,7 +11,6 @@ import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import java.lang.ref.WeakReference
 
 class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.ViewHolder>(COMPARATOR) {
@@ -84,13 +83,10 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(address: Solidity.Address, position: Int) {
-            Timber.i("---> Position: $position")
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    Timber.i("---> setOnClickListener clicked")
-
                     listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
                 }
                 ownerNumber.text = "#$position"
