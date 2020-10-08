@@ -19,7 +19,6 @@ import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
 import javax.inject.Singleton
 
@@ -62,8 +61,6 @@ interface ApplicationComponent {
     //TODO: remove
     fun safeRepository(): SafeRepository
 
-    fun mnemonicKeyAndAddressDerivator(): MnemonicKeyAndAddressDerivator
-
     // Base injects
     fun inject(activity: BaseActivity)
 
@@ -71,6 +68,5 @@ interface ApplicationComponent {
 
     fun inject(fragment: BaseDialogFragment)
 
-//    fun inject(service: BridgeService)
     fun inject(service: HeimdallFirebaseService)
 }
