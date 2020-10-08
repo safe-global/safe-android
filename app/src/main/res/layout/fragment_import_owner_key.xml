@@ -113,7 +113,8 @@
                     android:layout_height="match_parent"
                     android:imeOptions="actionDone"
                     android:inputType="text|textMultiLine"
-                    android:maxLines="4"
+                    android:gravity="top"
+                    android:lines="3"
                     android:scrollHorizontally="false"
                     android:textColor="@color/default_text"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
