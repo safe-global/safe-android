@@ -62,7 +62,9 @@ class OwnerKeyHandler(
         }
         val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
         val iv = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")!!.hexToByteArray()
-
+        if (encrypted.isEmpty() || iv.isEmpty()) {
+            return BigInteger.ZERO
+        }
         val decrypted = encryptionManager.decrypt(EncryptionManager.CryptoData(encrypted, iv))
 
         return decrypted.asBigInteger()
