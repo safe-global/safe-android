@@ -20,7 +20,7 @@ import io.gnosis.safe.utils.OwnerKeyHandler
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
 import pm.gnosis.svalinn.common.utils.openUrl
-import timber.log.Timber
+import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -71,8 +71,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     private fun setupOwnerKeyView() {
         with(binding) {
-            //TODO: check if app has owner key saved instead of using random
-
             val address = ownerKeyHandler.retrieveOwnerAddress()
             val key = ownerKeyHandler.retrieveKey()
 
@@ -86,20 +84,12 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     ownerAddress.text = address.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            //TODO: remove owner key
-
-                            Timber.i("---> Remove owner key")
                             ownerKeyHandler.storeKey(BigInteger.ZERO)
                             ownerKeyHandler.storeOwnerAddress(null)
-
-                            // TODO: refresh view to show import owner key after deletion
-
-                            // refreshView()
+                            viewStub.visible(false)
+                            setupOwnerKeyView()
                         }
                     }
-//                    root.setOnClickListener {
-//
-//                    }
                 }
             } else {
                 val viewStub = stubImportOwnerKey
@@ -107,7 +97,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    //TODO: navigate to seed phrase import instead
                     importOwnerKey.setOnClickListener {
                         findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
                     }
@@ -117,7 +106,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     }
 
     companion object {
-
         fun newInstance(): AppSettingsFragment {
             return AppSettingsFragment()
         }
