@@ -22,7 +22,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), OwnerListAdapter.OnOwnerItemClickedListener {
@@ -111,8 +110,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         }
                     }
                     is CloseScreen -> {
-
-                        Timber.i("---> Close Screen")
                         findNavController().popBackStack(R.id.settingsFragment, false)
                     }
                     else -> {

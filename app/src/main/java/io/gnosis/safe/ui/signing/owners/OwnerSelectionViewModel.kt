@@ -8,10 +8,7 @@ import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.OwnerKeyHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.toHexString
-import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -58,10 +55,8 @@ class OwnerSelectionViewModel
     fun importOwner() {
         safeLaunch {
             val key = derivator.keyForIndex(ownerIndex)
-            Timber.i("---> Storing private key: ${key.toHexString()}")
             ownerKeyHandler.storeKey(key)
             val addresses = derivator.addressesForPage(ownerIndex, 1)
-            Timber.i("---> Storing address: ${addresses[0].asEthereumAddressChecksumString()}")
             ownerKeyHandler.storeOwnerAddress(addresses[0])
 
             updateState {
