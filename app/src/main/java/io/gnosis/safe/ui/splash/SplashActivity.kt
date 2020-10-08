@@ -40,10 +40,17 @@ class SplashActivity : BaseActivity() {
                         onAgreeClickListener = {
                             viewModel.handleAgreeClicked()
                         }
+                        onDismissClickListener = {
+                            viewModel.handleDismissedClicked()
+                            dismiss()
+                        }
                     }
                     if (!termsBottomSheetDialog.isAdded) {
                         termsBottomSheetDialog.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
                     }
+                }
+                is SplashViewModel.HideTerms -> {
+                    // Do nothing. Terms are already dismissed
                 }
                 is SplashViewModel.ShowButton -> {
                     binding.continueButton.visible(true)

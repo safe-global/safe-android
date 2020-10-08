@@ -18,6 +18,7 @@ import pm.gnosis.svalinn.common.utils.openUrl
 class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAndConditionsBinding>() {
 
     lateinit var onAgreeClickListener: () -> Unit
+    lateinit var onDismissClickListener: () -> Unit
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,7 +38,7 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
             }
 
             bottomSheetTermsAndConditionsReject.setOnClickListener {
-                dismiss()
+                onDismissClickListener()
             }
         }
     }
