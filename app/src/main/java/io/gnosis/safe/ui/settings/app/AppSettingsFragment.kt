@@ -39,7 +39,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppBinding =
-            FragmentSettingsAppBinding.inflate(inflater, container, false)
+        FragmentSettingsAppBinding.inflate(inflater, container, false)
 
     private lateinit var ownerKeyStubBinding: ViewBinding
 

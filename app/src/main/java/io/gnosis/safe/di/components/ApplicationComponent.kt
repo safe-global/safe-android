@@ -25,13 +25,13 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-        modules = [
-            ApplicationModule::class,
-            InterceptorsModule::class,
-            ViewModelFactoryModule::class,
-            DatabaseModule::class,
-            RepositoryModule::class
-        ]
+    modules = [
+        ApplicationModule::class,
+        InterceptorsModule::class,
+        ViewModelFactoryModule::class,
+        DatabaseModule::class,
+        RepositoryModule::class
+    ]
 )
 interface ApplicationComponent {
     fun application(): Application

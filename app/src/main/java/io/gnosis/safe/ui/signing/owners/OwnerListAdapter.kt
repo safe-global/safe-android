@@ -26,18 +26,18 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         AccountItemViewType.HEADER.ordinal -> HeaderViewHolder(
-                ItemOwnerSelectionHeaderBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                )
+            ItemOwnerSelectionHeaderBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
         AccountItemViewType.OWNER.ordinal -> OwnerViewHolder(
-                ItemOwnerSelectionOwnerBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                )
+            ItemOwnerSelectionOwnerBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
         else -> throw UnsupportedViewType(javaClass.name)
     }

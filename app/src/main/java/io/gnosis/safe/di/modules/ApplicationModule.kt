@@ -87,7 +87,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEthereumRpcConnector(retrofitEthereumRpcApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
-            RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
+        RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
 
     @Provides
     @Singleton
@@ -96,84 +96,84 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RetrofitEthereumRpcApi =
-            Retrofit.Builder()
-                    .client(client)
-                    .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                    .create(RetrofitEthereumRpcApi::class.java)
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(RetrofitEthereumRpcApi::class.java)
 
     @Provides
     @Singleton
     fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
-            Retrofit.Builder()
-                    .client(client)
-                    .baseUrl(TransactionServiceApi.BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                    .create(TransactionServiceApi::class.java)
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(TransactionServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(TransactionServiceApi::class.java)
 
     @Provides
     @Singleton
     fun providesGatewayApi(moshi: Moshi, client: OkHttpClient): GatewayApi =
-            Retrofit.Builder()
-                    .client(client)
-                    .baseUrl(GatewayApi.BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                    .create(GatewayApi::class.java)
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(GatewayApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(GatewayApi::class.java)
 
     @Provides
     @Singleton
     fun providesNotificationServiceApi(moshi: Moshi, client: OkHttpClient): NotificationServiceApi =
-            Retrofit.Builder()
-                    .client(client)
-                    .baseUrl(NotificationServiceApi.BASE_URL)
-                    .addConverterFactory(MoshiConverterFactory.create(moshi))
-                    .build()
-                    .create(NotificationServiceApi::class.java)
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(NotificationServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(NotificationServiceApi::class.java)
 
     @Provides
     @Singleton
     @Named(INFURA_REST_CLIENT)
     fun providesInfuraOkHttpClient(
-            okHttpClient: OkHttpClient,
-            @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
+        okHttpClient: OkHttpClient,
+        @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
     ): OkHttpClient =
-            okHttpClient.newBuilder().apply {
-                interceptors.forEach {
-                    addInterceptor(it)
-                }
-            }.build()
+        okHttpClient.newBuilder().apply {
+            interceptors.forEach {
+                addInterceptor(it)
+            }
+        }.build()
 
     @Provides
     @Singleton
     fun providesOkHttpClient(
-            @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
+        @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>
     ): OkHttpClient =
-            OkHttpClient.Builder().apply {
-                addInterceptor(interceptors[1])
-                addInterceptor(interceptors[2])
-                connectTimeout(30, TimeUnit.SECONDS)
-                readTimeout(30, TimeUnit.SECONDS)
-                writeTimeout(30, TimeUnit.SECONDS)
-                pingInterval(5, TimeUnit.SECONDS)
-                certificatePinner(
-                        CertificatePinner.Builder().apply {
-                            BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
-                                BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
-                                    add(pinnedUrl, hash)
-                                }
-                            }
-                        }.build()
-                )
-            }.build()
+        OkHttpClient.Builder().apply {
+            addInterceptor(interceptors[1])
+            addInterceptor(interceptors[2])
+            connectTimeout(30, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
+            writeTimeout(30, TimeUnit.SECONDS)
+            pingInterval(5, TimeUnit.SECONDS)
+            certificatePinner(
+                CertificatePinner.Builder().apply {
+                    BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
+                        BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
+                            add(pinnedUrl, hash)
+                        }
+                    }
+                }.build()
+            )
+        }.build()
 
 
     @Provides
     @Singleton
     fun providesTransactionPagingProvider(transactionRepository: TransactionRepository): TransactionPagingProvider =
-            TransactionPagingProvider(transactionRepository)
+        TransactionPagingProvider(transactionRepository)
 
     @Provides
     @Singleton
@@ -200,7 +200,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesConnectivityInfoProvider(connectivityManager: ConnectivityManager): ConnectivityInfoProvider =
-            ConnectivityInfoProvider(connectivityManager)
+        ConnectivityInfoProvider(connectivityManager)
 
     @Provides
     fun providesBalanceFormatter(): BalanceFormatter = BalanceFormatter()
@@ -223,12 +223,12 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEncryptionManager(
-            application: Application,
-            preferencesManager: PreferencesManager,
-            keyStorage: KeyStorage
+        application: Application,
+        preferencesManager: PreferencesManager,
+        keyStorage: KeyStorage
     ): EncryptionManager =
-            // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
-            AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
 
     @Provides
     @Singleton
@@ -237,8 +237,8 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesOwnerKeyHandler(
-            encryptionManager: EncryptionManager,
-            preferencesManager: PreferencesManager
+        encryptionManager: EncryptionManager,
+        preferencesManager: PreferencesManager
     ): OwnerKeyHandler = OwnerKeyHandler(encryptionManager, preferencesManager)
 
 }

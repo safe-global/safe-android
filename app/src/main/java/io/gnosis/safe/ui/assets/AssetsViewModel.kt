@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class SafeBalancesViewModel @Inject constructor(
-        private val safeRepository: SafeRepository,
-        appDispatchers: AppDispatchers
+    private val safeRepository: SafeRepository,
+    appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeBalancesState>(appDispatchers) {
 
     override fun initialState(): SafeBalancesState = SafeBalancesState.SafeLoading(null)
@@ -28,11 +28,11 @@ class SafeBalancesViewModel @Inject constructor(
 sealed class SafeBalancesState : BaseStateViewModel.State {
 
     data class SafeLoading(
-            override var viewAction: BaseStateViewModel.ViewAction?
+        override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeBalancesState()
 
     data class ActiveSafe(
-            val safe: Safe?,
-            override var viewAction: BaseStateViewModel.ViewAction?
+        val safe: Safe?,
+        override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeBalancesState()
 }
