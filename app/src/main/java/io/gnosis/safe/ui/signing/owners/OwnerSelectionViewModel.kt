@@ -5,6 +5,7 @@ import androidx.paging.insertSeparators
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
+import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -55,9 +56,8 @@ class OwnerSelectionViewModel
     fun importOwner() {
         safeLaunch {
             val key = derivator.keyForIndex(ownerIndex)
-            ownerCredentialsVault.storeKey(key)
             val addresses = derivator.addressesForPage(ownerIndex, 1)
-            ownerCredentialsVault.storeAddress(addresses[0])
+            ownerCredentialsVault.storeCredentials(OwnerCredentials(address = addresses[0], key = key))
 
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)

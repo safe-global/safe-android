@@ -5,25 +5,48 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
+import timber.log.Timber
 import java.math.BigInteger
 
 interface OwnerCredentialsRepository {
-    fun storeKey(key: BigInteger)
-    fun retrieveKey(): BigInteger
-    fun removeKey()
-    fun hasKey(): Boolean
-
-    fun storeAddress(address: Solidity.Address?)
-    fun retrieveAddress(): Solidity.Address?
-    fun removeAddress()
-    fun hasAddress(): Boolean
+    fun storeCredentials(ownerCredentials: OwnerCredentials)
+    fun retrieveCredentials(): OwnerCredentials
+    fun removeCredentials()
+    fun hasCredentials(): Boolean
 }
+
+data class OwnerCredentials(
+    val address: Solidity.Address?,
+    val key: BigInteger
+)
 
 class OwnerCredentialsVault(
     private val encryptionManager: EncryptionManager,
     private val preferencesManager: PreferencesManager
 ) : OwnerCredentialsRepository {
-    override fun storeKey(key: BigInteger) {
+    override fun storeCredentials(ownerCredentials: OwnerCredentials) {
+        storeKey(ownerCredentials.key)
+        storeAddress(ownerCredentials.address)
+    }
+
+    override fun retrieveCredentials(): OwnerCredentials {
+        val key = retrieveKey()
+        val address = retrieveAddress()
+
+        return OwnerCredentials(address, key)
+    }
+
+    override fun removeCredentials() {
+        removeAddress()
+        removeKey()
+    }
+
+    override fun hasCredentials(): Boolean {
+        Timber.i("---> hasAddress: ${hasAddress()}, hasKey: ${hasKey()}")
+        return hasAddress() && hasKey()
+    }
+
+    private fun storeKey(key: BigInteger) {
         initialize()
         val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
         if (!success) {
@@ -55,7 +78,7 @@ class OwnerCredentialsVault(
         }
     }
 
-    override fun retrieveKey(): BigInteger {
+    private fun retrieveKey(): BigInteger {
         initialize()
 
         val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
@@ -72,11 +95,12 @@ class OwnerCredentialsVault(
         return decrypted.asBigInteger()
     }
 
-    override fun removeKey() = storeKey(BigInteger.ZERO)
+    private fun removeKey() = storeKey(BigInteger.ZERO)
 
-    override fun hasKey(): Boolean = retrieveKey() != BigInteger.ZERO
+    private fun hasKey(): Boolean = retrieveKey() != BigInteger.ZERO
 
-    override fun storeAddress(address: Solidity.Address?) {
+    private fun storeAddress(address: Solidity.Address?) {
+        Timber.i("storeAddress: $address")
         if (address == null) {
             preferencesManager.prefs.edit { remove(PREF_KEY_ENCRYPTED_OWNER_ADDRESS) }
         } else {
@@ -84,12 +108,12 @@ class OwnerCredentialsVault(
         }
     }
 
-    override fun retrieveAddress(): Solidity.Address? =
+    private fun retrieveAddress(): Solidity.Address? =
         preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()
 
-    override fun removeAddress() = storeAddress(null)
+    private fun removeAddress() = storeAddress(null)
 
-    override fun hasAddress(): Boolean = retrieveAddress() != null
+    private fun hasAddress(): Boolean = retrieveAddress() != null
 
     companion object {
         const val PREF_KEY_ENCRYPTED_OWNER_ADDRESS = "owner_key_handler.string.owner.address"

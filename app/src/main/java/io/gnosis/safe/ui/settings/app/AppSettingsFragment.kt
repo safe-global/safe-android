@@ -71,19 +71,18 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     private fun setupOwnerKeyView() {
         with(binding) {
 
-            if (ownerCredentialsRepository.hasAddress() && ownerCredentialsRepository.hasKey()) {
-                val address = ownerCredentialsRepository.retrieveAddress()
+            if (ownerCredentialsRepository.hasCredentials()) {
+                val ownerCredentials = ownerCredentialsRepository.retrieveCredentials()
                 val viewStub = stubRemoveOwnerKey
                 if (viewStub.parent != null) {
                     ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-                    blockies.setAddress(address)
-                    ownerAddress.text = address?.shortChecksumString()
+                    blockies.setAddress(ownerCredentials.address)
+                    ownerAddress.text = ownerCredentials.address?.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            ownerCredentialsRepository.removeKey()
-                            ownerCredentialsRepository.removeAddress()
+                            ownerCredentialsRepository.removeCredentials()
                             viewStub.visible(false)
                             setupOwnerKeyView()
                         }

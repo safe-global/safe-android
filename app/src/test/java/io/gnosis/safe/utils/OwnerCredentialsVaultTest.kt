@@ -16,7 +16,6 @@ import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
-import java.math.BigInteger
 
 class OwnerCredentialsVaultTest {
 
@@ -60,12 +59,17 @@ class OwnerCredentialsVaultTest {
     }
 
     @Test
-    fun `storeKey (with specific key) should store encrypted key and iv in preferences`() {
-        assertFalse(ownerCredentialsVault.hasKey())
+    fun `storeCredentials (with specific key and address) should store address, encrypted key and iv in preferences`() {
+        assertFalse(ownerCredentialsVault.hasCredentials())
 
-        ownerCredentialsVault.storeKey("0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger())
+        ownerCredentialsVault.storeCredentials(
+            OwnerCredentials(
+                "0x0000000000000000000000000000000000001234".asEthereumAddress()!!,
+                "0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger()
+            )
+        )
 
-        assertTrue(ownerCredentialsVault.hasKey())
+        assertTrue(ownerCredentialsVault.hasCredentials())
         // Assert value in preferences
         Assert.assertEquals(
             "Wrong result",
@@ -86,7 +90,7 @@ class OwnerCredentialsVaultTest {
     }
 
     @Test
-    fun `storeKey (while not initialized) should store after password setup`() {
+    fun `storeCredentials (while not initialized) should store after password setup`() {
         encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
             every { initialized() } returns false
             every { setupPassword(any(), any()) } returns true
@@ -108,9 +112,14 @@ class OwnerCredentialsVaultTest {
         }
         ownerCredentialsVault = OwnerCredentialsVault(encryptionManager, preferencesManager)
 
-        ownerCredentialsVault.storeKey("0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger())
+        ownerCredentialsVault.storeCredentials(
+            OwnerCredentials(
+                "0x0000000000000000000000000000000000001234".asEthereumAddress()!!,
+                "0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger()
+            )
+        )
 
-        assertTrue(ownerCredentialsVault.hasKey())
+        assertTrue(ownerCredentialsVault.hasCredentials())
         // Assert value in preferences
         Assert.assertEquals(
             "Wrong result",
@@ -130,17 +139,19 @@ class OwnerCredentialsVaultTest {
     }
 
     @Test
-    fun `retrieveKey should return decrypted key`() {
+    fun `retrieveCredentials should return decrypted key and address`() {
         preferences.putString(
             OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
             "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
 
-        val result = ownerCredentialsVault.retrieveKey()
+        val result = ownerCredentialsVault.retrieveCredentials()
 
-        // Assert value in preferences
-        Assert.assertEquals("Wrong result", "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger(), result)
+        // Assert values in preferences
+        Assert.assertEquals("Wrong result", "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger(), result.key)
+        Assert.assertEquals("Wrong address", "0x123456".asEthereumAddress(), result.address)
 
         verify { encryptionManager.initialized() }
         verify { encryptionManager.unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) }
@@ -156,34 +167,65 @@ class OwnerCredentialsVaultTest {
     }
 
     @Test
-    fun `storeAddress should store address in prefs`() {
-        ownerCredentialsVault.storeAddress("0x0000000000000000000000000000000000001234".asEthereumAddress()!!)
-
-        assertTrue(ownerCredentialsVault.hasAddress())
-        Assert.assertEquals(
-            "Wrong address",
-            "0x0000000000000000000000000000000000001234",
-            preferences.getString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "")
+    fun `removeCredentials should remove credentials`() {
+        preferences.putString(
+            OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        assertTrue(ownerCredentialsVault.hasCredentials())
+
+        ownerCredentialsVault.removeCredentials()
+
+        assertFalse(ownerCredentialsVault.hasCredentials())
     }
 
     @Test
-    fun `retrieveAddress should return stored address`() {
+    fun `hasCredentials (key, iv and address) should return true`() {
+        preferences.putString(
+            OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
+        )
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        assertTrue(ownerCredentialsVault.hasCredentials())
+
+        ownerCredentialsVault.removeCredentials()
+
+        assertFalse(ownerCredentialsVault.hasCredentials())
+    }
+
+    @Test
+    fun `hasCredentials (no address) should return false`() {
+        preferences.putString(
+            OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
+        )
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
+
+        ownerCredentialsVault.removeCredentials()
+
+        assertFalse(ownerCredentialsVault.hasCredentials())
+    }
+
+    @Test
+    fun `hasCredentials (no iv) should return false`() {
+        preferences.putString(
+            OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
+        )
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
 
-        val result = ownerCredentialsVault.retrieveAddress()
-
-        Assert.assertEquals("Wrong address", "0x123456".asEthereumAddress(), result)
+        assertFalse(ownerCredentialsVault.hasCredentials())
     }
 
     @Test
-    fun `removeAddress should remove address`() {
-        ownerCredentialsVault.storeAddress("0x0000000000000000000000000000000000001234".asEthereumAddress()!!)
-        assertTrue(ownerCredentialsVault.hasAddress())
+    fun `hasCredentials (key iv) should return false`() {
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
 
-        ownerCredentialsVault.removeAddress()
-
-        assertFalse(ownerCredentialsVault.hasAddress())
+        assertFalse(ownerCredentialsVault.hasCredentials())
     }
 }
 
