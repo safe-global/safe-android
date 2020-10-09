@@ -16,12 +16,11 @@ import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.gnosis.safe.utils.OwnerKeyHandler
+import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
-import java.math.BigInteger
 import javax.inject.Inject
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
@@ -30,7 +29,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     lateinit var safeRepository: SafeRepository
 
     @Inject
-    lateinit var ownerKeyHandler: OwnerKeyHandler
+    lateinit var ownerCredentialsRepository: OwnerCredentialsRepository
 
     override fun screenId() = ScreenId.SETTINGS_APP
 
@@ -71,21 +70,20 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     private fun setupOwnerKeyView() {
         with(binding) {
-            val address = ownerKeyHandler.retrieveOwnerAddress()
-            val key = ownerKeyHandler.retrieveKey()
 
-            if (address != null && key != BigInteger.ZERO) {
+            if (ownerCredentialsRepository.hasAddress() && ownerCredentialsRepository.hasKey()) {
+                val address = ownerCredentialsRepository.retrieveAddress()
                 val viewStub = stubRemoveOwnerKey
                 if (viewStub.parent != null) {
                     ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
                     blockies.setAddress(address)
-                    ownerAddress.text = address.shortChecksumString()
+                    ownerAddress.text = address?.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            ownerKeyHandler.storeKey(BigInteger.ZERO)
-                            ownerKeyHandler.storeOwnerAddress(null)
+                            ownerCredentialsRepository.removeKey()
+                            ownerCredentialsRepository.removeAddress()
                             viewStub.visible(false)
                             setupOwnerKeyView()
                         }

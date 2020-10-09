@@ -7,20 +7,22 @@ import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
-interface PrivateKeyHandler {
+interface OwnerCredentialsRepository {
     fun storeKey(key: BigInteger)
     fun retrieveKey(): BigInteger
+    fun removeKey()
+    fun hasKey(): Boolean
+
+    fun storeAddress(address: Solidity.Address?)
+    fun retrieveAddress(): Solidity.Address?
+    fun removeAddress()
+    fun hasAddress(): Boolean
 }
 
-interface OwnerAddressHandler {
-    fun storeOwnerAddress(address: Solidity.Address?)
-    fun retrieveOwnerAddress(): Solidity.Address?
-}
-
-class OwnerKeyHandler(
+class OwnerCredentialsVault(
     private val encryptionManager: EncryptionManager,
     private val preferencesManager: PreferencesManager
-) : PrivateKeyHandler, OwnerAddressHandler {
+) : OwnerCredentialsRepository {
     override fun storeKey(key: BigInteger) {
         initialize()
         val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
@@ -70,7 +72,11 @@ class OwnerKeyHandler(
         return decrypted.asBigInteger()
     }
 
-    override fun storeOwnerAddress(address: Solidity.Address?) {
+    override fun removeKey() = storeKey(BigInteger.ZERO)
+
+    override fun hasKey(): Boolean = retrieveKey() != BigInteger.ZERO
+
+    override fun storeAddress(address: Solidity.Address?) {
         if (address == null) {
             preferencesManager.prefs.edit { remove(PREF_KEY_ENCRYPTED_OWNER_ADDRESS) }
         } else {
@@ -78,8 +84,12 @@ class OwnerKeyHandler(
         }
     }
 
-    override fun retrieveOwnerAddress(): Solidity.Address? =
+    override fun retrieveAddress(): Solidity.Address? =
         preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()
+
+    override fun removeAddress() = storeAddress(null)
+
+    override fun hasAddress(): Boolean = retrieveAddress() != null
 
     companion object {
         const val PREF_KEY_ENCRYPTED_OWNER_ADDRESS = "owner_key_handler.string.owner.address"

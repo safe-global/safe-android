@@ -21,10 +21,7 @@ import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
-import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
-import io.gnosis.safe.utils.OwnerKeyHandler
-import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.*
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -236,9 +233,9 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesOwnerKeyHandler(
+    fun providesOwnerCredentialsRepository(
         encryptionManager: EncryptionManager,
         preferencesManager: PreferencesManager
-    ): OwnerKeyHandler = OwnerKeyHandler(encryptionManager, preferencesManager)
+    ): OwnerCredentialsRepository = OwnerCredentialsVault(encryptionManager, preferencesManager)
 
 }
