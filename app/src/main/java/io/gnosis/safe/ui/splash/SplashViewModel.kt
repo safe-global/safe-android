@@ -54,6 +54,12 @@ constructor(
         }
     }
 
+    fun handleDismissedClicked() {
+        safeLaunch {
+            updateState { TermsAgreed(HideTerms) }
+        }
+    }
+
     fun skipGetStartedButtonWhenTermsAgreed() {
         safeLaunch {
             if (termsChecker.getTermsAgreed()) {
@@ -67,5 +73,6 @@ constructor(
     data class TermsAgreed(override var viewAction: ViewAction?) : State
 
     object ShowTerms : ViewAction
+    object HideTerms : ViewAction
     object ShowButton : ViewAction
 }
