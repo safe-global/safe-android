@@ -5,7 +5,6 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
-import timber.log.Timber
 import java.math.BigInteger
 
 interface OwnerCredentialsRepository {
@@ -42,7 +41,8 @@ class OwnerCredentialsVault(
     }
 
     override fun hasCredentials(): Boolean {
-        Timber.i("---> hasAddress: ${hasAddress()}, hasKey: ${hasKey()}")
+        val hasAddress = hasAddress()
+        val hasKey = hasKey()
         return hasAddress() && hasKey()
     }
 
@@ -100,23 +100,22 @@ class OwnerCredentialsVault(
     private fun hasKey(): Boolean = retrieveKey() != BigInteger.ZERO
 
     private fun storeAddress(address: Solidity.Address?) {
-        Timber.i("storeAddress: $address")
         if (address == null) {
-            preferencesManager.prefs.edit { remove(PREF_KEY_ENCRYPTED_OWNER_ADDRESS) }
+            preferencesManager.prefs.edit { remove(PREF_KEY_OWNER_ADDRESS) }
         } else {
-            preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, address.asEthereumAddressString()) }
+            preferencesManager.prefs.edit { putString(PREF_KEY_OWNER_ADDRESS, address.asEthereumAddressString()) }
         }
     }
 
     private fun retrieveAddress(): Solidity.Address? =
-        preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()
+        preferencesManager.prefs.getString(PREF_KEY_OWNER_ADDRESS, null)?.asEthereumAddress()
 
     private fun removeAddress() = storeAddress(null)
 
     private fun hasAddress(): Boolean = retrieveAddress() != null
 
     companion object {
-        const val PREF_KEY_ENCRYPTED_OWNER_ADDRESS = "owner_key_handler.string.owner.address"
+        const val PREF_KEY_OWNER_ADDRESS = "owner_key_handler.string.owner.address"
         const val PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE = "encryption_manager.string.encrypted.value"
         const val PREF_KEY_ENCRYPTED_OWNER_KEY_IV = "encryption_manager.string.encrypted.iv"
 

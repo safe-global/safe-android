@@ -34,11 +34,8 @@ class OwnerCredentialsVaultTest {
 
         encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
             every { initialized() } returns true
-
             every { unlocked() } returns true
-
             every { unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) } returns true
-
             every {
                 decrypt(
                     EncryptionManager.CryptoData(
@@ -138,6 +135,58 @@ class OwnerCredentialsVaultTest {
 
     }
 
+
+    @Test
+    fun `storeCredentials (hardcoded password was wrong) should reset password`() {
+        encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
+            every { initialized() } returns false
+            every { setupPassword(any(), any()) } returns true
+            every { unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) } returns false
+            every {
+                encrypt("00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray())
+            } returns EncryptionManager.CryptoData(
+                "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+            )
+            every {
+                decrypt(
+                    EncryptionManager.CryptoData(
+                        "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                        "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+                    )
+                )
+            } returns "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray()
+        }
+        ownerCredentialsVault = OwnerCredentialsVault(encryptionManager, preferencesManager)
+
+        ownerCredentialsVault.storeCredentials(
+            OwnerCredentials(
+                "0x0000000000000000000000000000000000001234".asEthereumAddress()!!,
+                "0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger()
+            )
+        )
+
+        // Assert value in preferences
+        Assert.assertEquals(
+            "Wrong result",
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249",
+            preferences.getString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")
+        )
+        Assert.assertEquals(
+            "Wrong iv",
+            "0d606ea9dba4abfee35e2119babd9d9e",
+            preferences.getString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")
+        )
+        Assert.assertEquals(
+            "Wrong address",
+            "0x0000000000000000000000000000000000001234",
+            preferences.getString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "")
+        )
+
+        // verifyCall
+        verify { encryptionManager.removePassword() }
+    }
+
     @Test
     fun `retrieveCredentials should return decrypted key and address`() {
         preferences.putString(
@@ -145,7 +194,7 @@ class OwnerCredentialsVaultTest {
             "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
-        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "0x123456")
 
         val result = ownerCredentialsVault.retrieveCredentials()
 
@@ -173,7 +222,7 @@ class OwnerCredentialsVaultTest {
             "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
-        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "0x123456")
         assertTrue(ownerCredentialsVault.hasCredentials())
 
         ownerCredentialsVault.removeCredentials()
@@ -188,7 +237,7 @@ class OwnerCredentialsVaultTest {
             "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
-        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "0x123456")
         assertTrue(ownerCredentialsVault.hasCredentials())
 
         ownerCredentialsVault.removeCredentials()
@@ -215,7 +264,7 @@ class OwnerCredentialsVaultTest {
             OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
             "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
         )
-        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "0x123456")
 
         assertFalse(ownerCredentialsVault.hasCredentials())
     }
@@ -223,7 +272,7 @@ class OwnerCredentialsVaultTest {
     @Test
     fun `hasCredentials (key iv) should return false`() {
         preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
-        preferences.putString(OwnerCredentialsVault.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "0x123456")
+        preferences.putString(OwnerCredentialsVault.PREF_KEY_OWNER_ADDRESS, "0x123456")
 
         assertFalse(ownerCredentialsVault.hasCredentials())
     }
