@@ -38,12 +38,20 @@ class OwnerKeyHandlerTest {
             every { unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) } returns true
 
             every {
-                decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()))
+                decrypt(
+                    EncryptionManager.CryptoData(
+                        "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                        "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+                    )
+                )
             } returns "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray()
 
             every {
                 encrypt("00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray())
-            } returns EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray())
+            } returns EncryptionManager.CryptoData(
+                "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+            )
         }
         ownerKeyHandler = OwnerKeyHandler(encryptionManager, preferencesManager)
     }
@@ -54,8 +62,16 @@ class OwnerKeyHandlerTest {
         ownerKeyHandler.storeKey("0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger())
 
         // Assert value in preferences
-        Assert.assertEquals("Wrong result", "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, ""))
-        Assert.assertEquals("Wrong iv", "0d606ea9dba4abfee35e2119babd9d9e", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, ""))
+        Assert.assertEquals(
+            "Wrong result",
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249",
+            preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")
+        )
+        Assert.assertEquals(
+            "Wrong iv",
+            "0d606ea9dba4abfee35e2119babd9d9e",
+            preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")
+        )
 
         // verifyCalls ?
         verify { encryptionManager.initialized() }
@@ -75,15 +91,26 @@ class OwnerKeyHandlerTest {
 
             every {
                 encrypt("00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexToByteArray())
-            } returns EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray())
+            } returns EncryptionManager.CryptoData(
+                "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+            )
         }
         ownerKeyHandler = OwnerKeyHandler(encryptionManager, preferencesManager)
 
         ownerKeyHandler.storeKey("0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger())
 
         // Assert value in preferences
-        Assert.assertEquals("Wrong result", "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, ""))
-        Assert.assertEquals("Wrong iv", "0d606ea9dba4abfee35e2119babd9d9e", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, ""))
+        Assert.assertEquals(
+            "Wrong result",
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249",
+            preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")
+        )
+        Assert.assertEquals(
+            "Wrong iv",
+            "0d606ea9dba4abfee35e2119babd9d9e",
+            preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")
+        )
 
         verify { encryptionManager.initialized() }
         verify { encryptionManager.setupPassword(any(), any()) }
@@ -93,7 +120,10 @@ class OwnerKeyHandlerTest {
 
     @Test
     fun `retrieveKey should return decrypted key`() {
-        preferences.putString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249")
+        preferences.putString(
+            OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE,
+            "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249"
+        )
         preferences.putString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "0d606ea9dba4abfee35e2119babd9d9e")
 
         val result = ownerKeyHandler.retrieveKey()
@@ -103,7 +133,14 @@ class OwnerKeyHandlerTest {
 
         verify { encryptionManager.initialized() }
         verify { encryptionManager.unlockWithPassword(OwnerKeyHandler.HARDCODED_PASSWORD.toByteArray()) }
-        verify { encryptionManager.decrypt(EncryptionManager.CryptoData("be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(), "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray())) }
+        verify {
+            encryptionManager.decrypt(
+                EncryptionManager.CryptoData(
+                    "be5173c1f20949055c5076ff4805c6f74cb1b6849631fce61eeb749ae55a7004b2b266631dc16884a3158d5a3f5fd249".hexToByteArray(),
+                    "0d606ea9dba4abfee35e2119babd9d9e".hexToByteArray()
+                )
+            )
+        }
 
     }
 
@@ -111,7 +148,11 @@ class OwnerKeyHandlerTest {
     fun `storeOwnerAddress should store address in prefs`() {
         ownerKeyHandler.storeOwnerAddress("0x0000000000000000000000000000000000001234".asEthereumAddress()!!)
 
-        Assert.assertEquals("Wrong address", "0x0000000000000000000000000000000000001234", preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, ""))
+        Assert.assertEquals(
+            "Wrong address",
+            "0x0000000000000000000000000000000000001234",
+            preferences.getString(OwnerKeyHandler.PREF_KEY_ENCRYPTED_OWNER_ADDRESS, "")
+        )
     }
 
     @Test

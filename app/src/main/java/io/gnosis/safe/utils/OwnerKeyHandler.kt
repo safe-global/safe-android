@@ -18,8 +18,8 @@ interface OwnerAddressHandler {
 }
 
 class OwnerKeyHandler(
-        private val encryptionManager: EncryptionManager,
-        private val preferencesManager: PreferencesManager
+    private val encryptionManager: EncryptionManager,
+    private val preferencesManager: PreferencesManager
 ) : PrivateKeyHandler, OwnerAddressHandler {
     override fun storeKey(key: BigInteger) {
         initialize()
@@ -78,7 +78,8 @@ class OwnerKeyHandler(
         }
     }
 
-    override fun retrieveOwnerAddress(): Solidity.Address? = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()
+    override fun retrieveOwnerAddress(): Solidity.Address? =
+        preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_ADDRESS, null)?.asEthereumAddress()
 
     companion object {
         const val PREF_KEY_ENCRYPTED_OWNER_ADDRESS = "owner_key_handler.string.owner.address"
