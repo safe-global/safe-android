@@ -19,12 +19,13 @@ import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
-import io.gnosis.safe.ui.settings.owner.ImportOwnerKeyViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
-import io.gnosis.safe.ui.signing.owners.OwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
@@ -102,7 +103,7 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesImportOwnerKeyViewModel(provider: ViewModelProvider) = provider[ImportOwnerKeyViewModel::class.java]
+    fun providesImportOwnerKeyViewModel(provider: ViewModelProvider) = provider[OwnerSeedPhraseViewModel::class.java]
 
     @Provides
     @ForView
@@ -111,6 +112,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesSafeSettingsEditNameViewModel(provider: ViewModelProvider) = provider[SafeSettingsEditNameViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAppSettingsViewModel(provider: ViewModelProvider) = provider[AppSettingsViewModel::class.java]
 
     @Provides
     @ForView

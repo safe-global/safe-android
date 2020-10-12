@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.signing.owners
+package io.gnosis.safe.ui.settings.owner.list
 
 import androidx.paging.PagingSource
 import io.gnosis.safe.utils.MnemonicAddressDerivator

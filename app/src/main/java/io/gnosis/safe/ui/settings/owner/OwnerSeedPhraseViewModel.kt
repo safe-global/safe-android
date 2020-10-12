@@ -6,7 +6,7 @@ import io.gnosis.safe.ui.base.PublishViewModel
 import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 
-class ImportOwnerKeyViewModel
+class OwnerSeedPhraseViewModel
 @Inject constructor(
     private val bip39Generator: Bip39,
     appDispatchers: AppDispatchers

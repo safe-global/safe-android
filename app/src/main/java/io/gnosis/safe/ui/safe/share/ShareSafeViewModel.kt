@@ -29,7 +29,7 @@ class ShareSafeViewModel
                     .onFailure { Timber.e(it) }
                     .getOrNull()
                 val qrCode = runCatching {
-                    qrCodeGenerator.generateQrCodeSync(
+                    qrCodeGenerator.generateQrCode(
                         activeSafe.address.asEthereumAddressChecksumString(),
                         512,
                         512,

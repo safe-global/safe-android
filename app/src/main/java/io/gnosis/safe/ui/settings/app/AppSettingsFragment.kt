@@ -4,29 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.viewbinding.ViewBinding
-import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
-import io.gnosis.safe.databinding.ItemImportOwnerKeyBinding
-import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
-import kotlin.random.Random
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
 
     @Inject
-    lateinit var safeRepository: SafeRepository
+    lateinit var viewModel: AppSettingsViewModel
 
     override fun screenId() = ScreenId.SETTINGS_APP
 
@@ -36,9 +33,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppBinding =
         FragmentSettingsAppBinding.inflate(inflater, container, false)
-
-    private lateinit var ownerKeyStubBinding: ViewBinding
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,41 +57,50 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedAppSettingsFragment())
             }
         }
+
+        viewModel.signingOwner.observe(viewLifecycleOwner, Observer {
+            setupOwnerKeyView(it?.address)
+        })
+
+        viewModel.loadSigningOwner()
+
+        if(ownerImported()) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+        }
     }
 
-    private fun setupOwnerKeyView() {
+    private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
-            //TODO: check if app has owner key saved instead of using random
-            if (Random.nextBoolean()) {
-                val viewStub = stubRemoveOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-                    remove.setOnClickListener { snackbar(requireView(), "Remove key navigation") }
-                    blockies.setAddress("0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress())
-                    root.setOnClickListener {
+            if (address != null) {
+                ownerKey.showNext()
+                with(removeOwnerKey) {
+                    blockies.setAddress(address)
+                    ownerAddress.text = address.shortChecksumString()
+                    remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            //TODO: remove owner key
+                            viewModel.removeSigningOwner()
+                            ownerKey.showNext()
+                            snackbar(requireView(), getString(R.string.signing_owner_key_removed))
                         }
                     }
                 }
             } else {
-                val viewStub = stubImportOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    //TODO: navigate to seed phrase import instead
-                    importOwnerKey.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
+                with(importOwnerKey) {
+                    root.setOnClickListener {
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSeedPhraseFragment())
                     }
                 }
             }
         }
     }
 
+    private fun ownerImported(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
+    }
+
     companion object {
+
+        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
 
         fun newInstance(): AppSettingsFragment {
             return AppSettingsFragment()

@@ -10,21 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentImportOwnerKeyBinding
+import io.gnosis.safe.databinding.FragmentOwnerSeedPhraseBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import timber.log.Timber
 import javax.inject.Inject
 
-class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBinding>() {
+class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseBinding>() {
 
     @Inject
-    lateinit var viewModel: ImportOwnerKeyViewModel
+    lateinit var viewModel: OwnerSeedPhraseViewModel
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentImportOwnerKeyBinding =
-        FragmentImportOwnerKeyBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerSeedPhraseBinding =
+        FragmentOwnerSeedPhraseBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +49,7 @@ class ImportOwnerKeyFragment : BaseViewBindingFragment<FragmentImportOwnerKeyBin
                     }
                 }
                 is ImportOwnerKeyState.ValidSeedPhraseSubmitted -> {
-                    findNavController().navigate(ImportOwnerKeyFragmentDirections.actionImportOwnerKeyFragmentToOwnerSelectionFragment(state.validSeedPhrase))
+                    findNavController().navigate(OwnerSeedPhraseFragmentDirections.actionOwnerSeedPhraseFragmentToOwnerSelectionFragment(state.validSeedPhrase))
                 }
             }
         })

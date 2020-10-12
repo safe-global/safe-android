@@ -87,8 +87,20 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerSeedPhraseFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment"
+        android:label="OwnerSeedPhraseFragment"
+        tools:layout="@layout/fragment_owner_seed_phrase" >
+
+        <action
+            android:id="@+id/action_ownerSeedPhraseFragment_to_ownerSelectionFragment"
+            app:destination="@id/ownerSelectionFragment" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ownerSelectionFragment"
-        android:name="io.gnosis.safe.ui.signing.owners.OwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment"
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
 
@@ -123,9 +135,10 @@
         <action
             android:id="@+id/action_settingsFragment_to_safeSettingsEditNameFragment"
             app:destination="@id/safeSettingsEditNameFragment" />
+
         <action
-            android:id="@+id/action_settingsFragment_to_importOwnerKeyFragment"
-            app:destination="@id/importOwnerKeyFragment" />
+            android:id="@+id/action_settingsFragment_to_ownerSeedPhraseFragment"
+            app:destination="@id/ownerSeedPhraseFragment" />
 
     </fragment>
 
@@ -294,15 +307,5 @@
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_settings_safe_advanced" />
-
-    <fragment
-        android:id="@+id/importOwnerKeyFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.ImportOwnerKeyFragment"
-        android:label="ImportOwnerKeyFragment"
-        tools:layout="@layout/fragment_import_owner_key" >
-        <action
-            android:id="@+id/action_importOwnerKeyFragment_to_ownerSelectionFragment"
-            app:destination="@id/ownerSelectionFragment" />
-    </fragment>
 
 </navigation>

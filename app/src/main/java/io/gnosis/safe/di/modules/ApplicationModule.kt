@@ -21,9 +21,7 @@ import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
-import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
-import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.*
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -37,6 +35,10 @@ import pm.gnosis.mnemonic.wordlists.WordListProvider
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
+import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.KeyStorage
+import pm.gnosis.svalinn.security.impls.AesEncryptionManager
+import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -214,4 +216,26 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesMnemonicKeyAndAddressDerivator(bip39: Bip39): MnemonicKeyAndAddressDerivator = MnemonicKeyAndAddressDerivator(bip39)
+
+    @Provides
+    @Singleton
+    fun providesEncryptionManager(
+        application: Application,
+        preferencesManager: PreferencesManager,
+        keyStorage: KeyStorage
+    ): EncryptionManager =
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
+
+    @Provides
+    @Singleton
+    fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage = AndroidKeyStorage(context)
+
+    @Provides
+    @Singleton
+    fun providesOwnerCredentialsRepository(
+        encryptionManager: EncryptionManager,
+        preferencesManager: PreferencesManager
+    ): OwnerCredentialsRepository = OwnerCredentialsVault(encryptionManager, preferencesManager)
+
 }

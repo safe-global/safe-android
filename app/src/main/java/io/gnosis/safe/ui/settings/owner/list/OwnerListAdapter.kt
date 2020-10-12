@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.signing.owners
+package io.gnosis.safe.ui.settings.owner.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -83,7 +83,6 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(address: Solidity.Address, position: Int) {
-
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
