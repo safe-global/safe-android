@@ -9,13 +9,13 @@ import java.math.BigInteger
 
 interface OwnerCredentialsRepository {
     fun storeCredentials(ownerCredentials: OwnerCredentials)
-    fun retrieveCredentials(): OwnerCredentials
+    fun retrieveCredentials(): OwnerCredentials?
     fun removeCredentials()
     fun hasCredentials(): Boolean
 }
 
 data class OwnerCredentials(
-    val address: Solidity.Address?,
+    val address: Solidity.Address,
     val key: BigInteger
 )
 
@@ -23,15 +23,23 @@ class OwnerCredentialsVault(
     private val encryptionManager: EncryptionManager,
     private val preferencesManager: PreferencesManager
 ) : OwnerCredentialsRepository {
+
+    init {
+        initialize()
+    }
+
     override fun storeCredentials(ownerCredentials: OwnerCredentials) {
         storeKey(ownerCredentials.key)
         storeAddress(ownerCredentials.address)
     }
 
-    override fun retrieveCredentials(): OwnerCredentials {
-        val key = retrieveKey()
-        val address = retrieveAddress()
+    override fun retrieveCredentials(): OwnerCredentials? {
 
+        if (!hasCredentials())
+            return null
+
+        val key = retrieveKey()!!
+        val address = retrieveAddress()!!
         return OwnerCredentials(address, key)
     }
 
@@ -41,31 +49,7 @@ class OwnerCredentialsVault(
     }
 
     override fun hasCredentials(): Boolean {
-        val hasAddress = hasAddress()
-        val hasKey = hasKey()
         return hasAddress() && hasKey()
-    }
-
-    private fun storeKey(key: BigInteger) {
-        initialize()
-        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
-        if (!success) {
-            resetPasswordAndUnlock()
-        }
-        val keyCryptoData = encryptionManager.encrypt(key.toByteArray())
-
-        preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, keyCryptoData.data.toHexString()) }
-        preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, keyCryptoData.iv.toHexString()) }
-    }
-
-    private fun resetPasswordAndUnlock() {
-        encryptionManager.removePassword()
-        val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray())
-        if (!result) {
-            // This should not happen
-            throw RuntimeException("EncryptionManger init failed")
-        }
-        encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
     }
 
     private fun initialize() {
@@ -78,26 +62,15 @@ class OwnerCredentialsVault(
         }
     }
 
-    private fun retrieveKey(): BigInteger {
-        initialize()
-
-        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
-        if (!success) {
-            return BigInteger.ZERO
+    private fun resetPasswordAndUnlock() {
+        encryptionManager.removePassword()
+        val result = encryptionManager.setupPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!result) {
+            // This should not happen
+            throw RuntimeException("EncryptionManger init failed")
         }
-        val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
-        val iv = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")!!.hexToByteArray()
-        if (encrypted.isEmpty() || iv.isEmpty()) {
-            return BigInteger.ZERO
-        }
-        val decrypted = encryptionManager.decrypt(EncryptionManager.CryptoData(encrypted, iv))
-
-        return decrypted.asBigInteger()
+        encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
     }
-
-    private fun removeKey() = storeKey(BigInteger.ZERO)
-
-    private fun hasKey(): Boolean = retrieveKey() != BigInteger.ZERO
 
     private fun storeAddress(address: Solidity.Address?) {
         if (address == null) {
@@ -107,12 +80,42 @@ class OwnerCredentialsVault(
         }
     }
 
+    private fun storeKey(key: BigInteger?) {
+        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!success) {
+            resetPasswordAndUnlock()
+        }
+        val keyCryptoData = key?.let { encryptionManager.encrypt(it.toByteArray()) }
+
+        preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, keyCryptoData?.data?.toHexString() ?: "") }
+        preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, keyCryptoData?.iv?.toHexString() ?: "") }
+    }
+
     private fun retrieveAddress(): Solidity.Address? =
         preferencesManager.prefs.getString(PREF_KEY_OWNER_ADDRESS, null)?.asEthereumAddress()
 
+    private fun retrieveKey(): BigInteger? {
+        val success = encryptionManager.unlockWithPassword(HARDCODED_PASSWORD.toByteArray())
+        if (!success) {
+            return null
+        }
+        val encrypted = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_VALUE, "")!!.hexToByteArray()
+        val iv = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_OWNER_KEY_IV, "")!!.hexToByteArray()
+        if (encrypted.isEmpty() || iv.isEmpty()) {
+            return null
+        }
+        val decrypted = encryptionManager.decrypt(EncryptionManager.CryptoData(encrypted, iv))
+
+        return decrypted.asBigInteger()
+    }
+
     private fun removeAddress() = storeAddress(null)
 
+    private fun removeKey() = storeKey(null)
+
     private fun hasAddress(): Boolean = retrieveAddress() != null
+
+    private fun hasKey(): Boolean = retrieveKey() != null
 
     companion object {
         const val PREF_KEY_OWNER_ADDRESS = "owner_key_handler.string.owner.address"

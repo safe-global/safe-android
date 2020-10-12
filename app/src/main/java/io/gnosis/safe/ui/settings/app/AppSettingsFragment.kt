@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -16,9 +16,9 @@ import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -26,10 +26,7 @@ import javax.inject.Inject
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
 
     @Inject
-    lateinit var safeRepository: SafeRepository
-
-    @Inject
-    lateinit var ownerCredentialsRepository: OwnerCredentialsRepository
+    lateinit var viewModel: AppSettingsViewModel
 
     override fun screenId() = ScreenId.SETTINGS_APP
 
@@ -66,25 +63,32 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedAppSettingsFragment())
             }
         }
+
+        viewModel.signingOwner.observe(viewLifecycleOwner, Observer {
+            setupOwnerKeyView(it?.address)
+        })
     }
 
-    private fun setupOwnerKeyView() {
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadSigningOwner()
+    }
+
+    private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
 
-            if (ownerCredentialsRepository.hasCredentials()) {
-                val ownerCredentials = ownerCredentialsRepository.retrieveCredentials()
+            if (address != null) {
                 val viewStub = stubRemoveOwnerKey
                 if (viewStub.parent != null) {
                     ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
                 }
                 with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
-                    blockies.setAddress(ownerCredentials.address)
-                    ownerAddress.text = ownerCredentials.address?.shortChecksumString()
+                    blockies.setAddress(address)
+                    ownerAddress.text = address.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            ownerCredentialsRepository.removeCredentials()
+                            viewModel.removeSigningOwner()
                             viewStub.visible(false)
-                            setupOwnerKeyView()
                         }
                     }
                 }

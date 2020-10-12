@@ -199,8 +199,8 @@ class OwnerCredentialsVaultTest {
         val result = ownerCredentialsVault.retrieveCredentials()
 
         // Assert values in preferences
-        Assert.assertEquals("Wrong result", "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger(), result.key)
-        Assert.assertEquals("Wrong address", "0x123456".asEthereumAddress(), result.address)
+        Assert.assertEquals("Wrong result", "00da18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger(), result?.key)
+        Assert.assertEquals("Wrong address", "0x123456".asEthereumAddress(), result?.address)
 
         verify { encryptionManager.initialized() }
         verify { encryptionManager.unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) }

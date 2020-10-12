@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
+import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.owner.ImportOwnerKeyViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
@@ -111,6 +112,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesSafeSettingsEditNameViewModel(provider: ViewModelProvider) = provider[SafeSettingsEditNameViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAppSettingsViewModel(provider: ViewModelProvider) = provider[AppSettingsViewModel::class.java]
 
     @Provides
     @ForView
