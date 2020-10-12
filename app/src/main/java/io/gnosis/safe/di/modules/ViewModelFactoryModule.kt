@@ -18,11 +18,11 @@ import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
-import io.gnosis.safe.ui.settings.owner.ImportOwnerKeyViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
-import io.gnosis.safe.ui.signing.owners.OwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
@@ -74,7 +74,7 @@ abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
     @ViewModelKey(OwnerSelectionViewModel::class)
-    abstract fun providesAccountSelectionViewModel(viewModel: OwnerSelectionViewModel): ViewModel
+    abstract fun providesOwnerSelectionViewModel(viewModel: OwnerSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -123,8 +123,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ImportOwnerKeyViewModel::class)
-    abstract fun providersImportOwnerKeyViewModel(viewModel: ImportOwnerKeyViewModel): ViewModel
+    @ViewModelKey(OwnerSeedPhraseViewModel::class)
+    abstract fun providesOwnerSeedPhraseViewModel(viewModel: OwnerSeedPhraseViewModel): ViewModel
 
     @Binds
     @Singleton

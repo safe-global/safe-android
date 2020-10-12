@@ -6,13 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
-import io.gnosis.safe.databinding.ItemImportOwnerKeyBinding
-import io.gnosis.safe.databinding.ItemRemoveOwnerKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
@@ -20,7 +17,7 @@ import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showRemoveDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
@@ -36,9 +33,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppBinding =
         FragmentSettingsAppBinding.inflate(inflater, container, false)
-
-    private lateinit var ownerKeyStubBinding: ViewBinding
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,46 +61,47 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         viewModel.signingOwner.observe(viewLifecycleOwner, Observer {
             setupOwnerKeyView(it?.address)
         })
-    }
 
-    override fun onResume() {
-        super.onResume()
         viewModel.loadSigningOwner()
+
+        if(ownerImported()) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+        }
     }
 
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
-
             if (address != null) {
-                val viewStub = stubRemoveOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemRemoveOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemRemoveOwnerKeyBinding) {
+                ownerKey.showNext()
+                with(removeOwnerKey) {
                     blockies.setAddress(address)
                     ownerAddress.text = address.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
                             viewModel.removeSigningOwner()
-                            viewStub.visible(false)
+                            ownerKey.showNext()
+                            snackbar(requireView(), getString(R.string.signing_owner_key_removed))
                         }
                     }
                 }
             } else {
-                val viewStub = stubImportOwnerKey
-                if (viewStub.parent != null) {
-                    ownerKeyStubBinding = ItemImportOwnerKeyBinding.bind(viewStub.inflate())
-                }
-                with(ownerKeyStubBinding as ItemImportOwnerKeyBinding) {
-                    importOwnerKey.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToImportOwnerKeyFragment())
+                with(importOwnerKey) {
+                    root.setOnClickListener {
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSeedPhraseFragment())
                     }
                 }
             }
         }
     }
 
+    private fun ownerImported(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
+    }
+
     companion object {
+
+        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
+
         fun newInstance(): AppSettingsFragment {
             return AppSettingsFragment()
         }
