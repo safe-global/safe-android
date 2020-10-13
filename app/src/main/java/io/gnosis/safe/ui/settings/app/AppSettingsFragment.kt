@@ -66,6 +66,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         if(ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            resetOwnerImported()
         }
     }
 
@@ -96,7 +97,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         viewModel.removeSigningOwner()
         binding.ownerKey.showNext()
         snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-        resetOwnerImported()
     }
 
     private fun ownerImported(): Boolean {
