@@ -183,6 +183,10 @@
         tools:layout="@layout/fragment_transaction_details">
 
         <action
+            android:id="@+id/action_transactionDetailsFragment_to_transactionDetailsActionMultisendFragment"
+            app:destination="@id/transactionDetailsActionMultisendFragment" />
+
+        <action
             android:id="@+id/action_transactionDetailsFragment_to_transactionDetailsActionFragment"
             app:destination="@id/transactionDetailsActionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
@@ -199,14 +203,52 @@
     </fragment>
 
     <fragment
+        android:id="@+id/transactionDetailsActionMultisendFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsActionMultisendFragment"
+        android:label="TransactionDetailsActionMultisendFragment"
+        tools:layout="@layout/fragment_transaction_details_action_multisend">
+
+        <action
+            android:id="@+id/action_transactionDetailsActionMultisendFragment_to_transactionDetailsActionFragment"
+            app:destination="@id/transactionDetailsActionFragment" />
+
+        <argument
+            android:name="decodedValues"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/transactionDetailsActionFragment"
         android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsActionFragment"
         android:label="TransactionDetailsActionFragment"
         tools:layout="@layout/fragment_transaction_details_action">
 
         <argument
-            android:name="decodedData"
+            android:name="action"
             app:argType="string" />
+
+        <argument
+            android:name="data"
+            app:argType="string" />
+
+        <argument
+            android:name="decodedData"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="address"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="amount"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 

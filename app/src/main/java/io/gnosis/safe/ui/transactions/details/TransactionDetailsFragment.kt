@@ -199,17 +199,29 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                         txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
 
+                        txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                            txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
+                                if (it is ParamDto.BytesParam && it.valueDecoded != null) {
+                                    findNavController().navigate(
+                                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                            paramSerializer.serializeDecodedValues(it.valueDecoded!!)
+                                        )
+                                    )
+                                }
+                            }
+                        }
                     } else {
-                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
-                    }
 
-                    txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                        txDetails.txData?.dataDecoded?.let {
-                            findNavController().navigate(
-                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                    paramSerializer.serializeDecodedData(it)
+                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+
+                        txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                            txDetails.txData?.let {
+                                findNavController().navigate(
+                                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                        it.dataDecoded?.method ?: "", it.hexData ?: "", it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                    )
                                 )
-                            )
+                            }
                         }
 
                     }
