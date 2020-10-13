@@ -66,6 +66,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         if(ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            resetOwnerImported()
         }
     }
 
@@ -78,9 +79,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     ownerAddress.text = address.shortChecksumString()
                     remove.setOnClickListener {
                         showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            viewModel.removeSigningOwner()
-                            ownerKey.showNext()
-                            snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+                            onOwnerRemove()
                         }
                     }
                 }
@@ -94,8 +93,18 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         }
     }
 
+    private fun onOwnerRemove() {
+        viewModel.removeSigningOwner()
+        binding.ownerKey.showNext()
+        snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+    }
+
     private fun ownerImported(): Boolean {
         return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
+    }
+
+    private fun resetOwnerImported() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
     }
 
     companion object {
