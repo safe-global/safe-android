@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white" >
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -44,11 +45,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/empty_error_state"
+    <include
         android:id="@+id/content_no_data"
+        layout="@layout/empty_error_state"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
@@ -151,6 +153,19 @@
                     android:drawablePadding="6dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/tx_details_view_on_etherscan" />
+
+                <TextView
+                    android:id="@+id/tx_confirm_button"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="@dimen/default_margin"
+                    android:layout_marginVertical="@dimen/default_margin"
+                    android:text="@string/confirm"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
+                    tools:visibility="visible" />
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
