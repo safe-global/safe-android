@@ -16,6 +16,7 @@ import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
 
 
@@ -83,9 +84,9 @@ class LabeledArrayItem @JvmOverloads constructor(
             ParamType.ADDRESS -> {
                 val addressItem = AddressItem(context)
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                layoutParams.setMargins(0, dpToPx(8), 0, 0)
+                layoutParams.setMargins(dpToPx(-16), dpToPx(8), dpToPx(-16), 0)
                 addressItem.layoutParams = layoutParams
-                addressItem.address = value as Solidity.Address
+                addressItem.address = (value as String).asEthereumAddress()
                 container.addView(addressItem)
             }
             ParamType.BYTES -> {
