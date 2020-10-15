@@ -218,7 +218,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             txDetails.txData?.let {
                                 findNavController().navigate(
                                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                        it.dataDecoded?.method ?: "", it.hexData ?: "", it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                        it.dataDecoded?.method ?: "",
+                                        it.hexData ?: "",
+                                        it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
                                     )
                                 )
                             }
@@ -240,6 +242,22 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
+
+                if (viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)) {
+                    binding.txConfirmButtonContainer.visible(true)
+                    binding.txConfirmButton.setOnClickListener {
+                        showConfirmDialog(
+                            requireContext(),
+                            message = R.string.confirm_transaction_dialog_message,
+                            confirm = R.string.confirm,
+                            confirmColor = R.color.safe_green
+                        ) {
+                            //TODO implement network callback
+                        }
+                    }
+                } else {
+                    binding.txConfirmButton.visible(false)
+                }
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
                     status = txDetails.txStatus,
@@ -331,6 +349,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun hideCreatedAndConfirmations() {
         binding.txConfirmations.visible(false)
         binding.txConfirmationsDivider.visible(false)
+        binding.txConfirmButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
     }
