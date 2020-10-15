@@ -1,0 +1,69 @@
+{
+  "executedAt": 1601294785000,
+  "txStatus": "SUCCESS",
+  "txInfo": {
+    "type": "SettingsChange",
+    "dataDecoded": {
+      "method": "changeMasterCopy",
+      "parameters": [
+        {
+          "name": "_masterCopy",
+          "type": "address",
+          "value": "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"
+        }
+      ]
+    },
+    "settingsInfo": {
+      "type": "CHANGE_IMPLEMENTATION",
+      "implementation": "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"
+    }
+  },
+  "txData": {
+    "hexData": "0x7de7edef000000000000000000000000b6029ea3b2c51d09a50b53ca8012feeb05bda35a",
+    "dataDecoded": {
+      "method": "changeMasterCopy",
+      "parameters": [
+        {
+          "name": "_masterCopy",
+          "type": "address",
+          "value": "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"
+        }
+      ]
+    },
+    "to": "0x1230B3d59858296A31053C1b8562Ecf89A2f888b",
+    "value": "0",
+    "operation": 0
+  },
+  "detailedExecutionInfo": {
+    "type": "MULTISIG",
+    "submittedAt": 1601294733718,
+    "nonce": 252,
+    "safeTxGas": 30084,
+    "baseGas": 0,
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "safeTxHash": "0x65a2f38ef0f68c30d1d0310521e3853a3b46d4aa4d53b7d1dce3335b7b2b38a0",
+    "executor": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+    "signers": [
+      "0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164",
+      "0xBEA2F9227230976d2813a2f8b922c22bE1DE1B23",
+      "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+      "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
+    ],
+    "confirmationsRequired": 2,
+    "confirmations": [
+      {
+        "signer": "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0",
+        "signature": "0x850250ea45c3b031380e6d47e220ef8755a0f64e5cf6f72ce834d75697a6252157c60f9047e064503cfacc1859d9eda3d728eb239a69fdf480af6484a135e4031b",
+        "submittedAt": 1601294733740
+      },
+      {
+        "signer": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+        "signature": "0x000000000000000000000000f2cea96575d6b10f51d9af3b10e3e4e5738aa6bd000000000000000000000000000000000000000000000000000000000000000001",
+        "submittedAt": 1601294801872
+      }
+    ]
+  },
+  "txHash": "0xc25e2a0e4c64acde4dd23f532acdd46b0c0b76e8b3d1ba7cd6fc326fa58e312e"
+}

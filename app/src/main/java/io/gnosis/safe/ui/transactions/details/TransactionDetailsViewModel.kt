@@ -9,6 +9,7 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.OwnerCredentialsRepository
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 
@@ -42,7 +43,7 @@ class TransactionDetailsViewModel
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = (transaction.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction)?.toHexString()
+            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction)?.toHexString()?.addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.onSuccess {
             return it
