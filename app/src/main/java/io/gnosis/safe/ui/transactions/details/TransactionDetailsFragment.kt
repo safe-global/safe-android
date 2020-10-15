@@ -242,16 +242,21 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
-                binding.txConfirmButton.visible(true)
-                binding.txConfirmButton.setOnClickListener {
-                    showConfirmDialog(
-                        requireContext(),
-                        message = R.string.confirm_transaction_dialog_message,
-                        confirm = R.string.confirm,
-                        confirmColor = R.color.safe_green
-                    ) {
-                        //TODO implement network callback
+
+                if (viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)) {
+                    binding.txConfirmButton.visible(true)
+                    binding.txConfirmButton.setOnClickListener {
+                        showConfirmDialog(
+                            requireContext(),
+                            message = R.string.confirm_transaction_dialog_message,
+                            confirm = R.string.confirm,
+                            confirmColor = R.color.safe_green
+                        ) {
+                            //TODO implement network callback
+                        }
                     }
+                } else {
+                    binding.txConfirmButton.visible(false)
                 }
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
