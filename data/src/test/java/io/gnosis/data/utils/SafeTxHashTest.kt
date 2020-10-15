@@ -34,9 +34,10 @@ class SafeTxHashTest {
         val txCustomDto = txDtoAdapter.fromJson(json)
         coEvery { gatewayApi.loadTransactionDetails(any()) } returns txCustomDto!!
         val txCustom = transactionRepository.getTransactionDetails("id")
+        val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
-        val txCustomSafeTxHash = (txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txCustom)?.toHexString()?.addHexPrefix()
+        val txCustomSafeTxHash = executionInfo.safeTxHash
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txCustom, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -48,9 +49,10 @@ class SafeTxHashTest {
         val txTransferDto = txDtoAdapter.fromJson(json)
         coEvery { gatewayApi.loadTransactionDetails(any()) } returns txTransferDto!!
         val txTransfer = transactionRepository.getTransactionDetails("id")
+        val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
-        val txCustomSafeTxHash = (txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txTransfer)?.toHexString()?.addHexPrefix()
+        val txCustomSafeTxHash = executionInfo.safeTxHash
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txTransfer, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -62,9 +64,10 @@ class SafeTxHashTest {
         val txSettingsChangeDto = txDtoAdapter.fromJson(json)
         coEvery { gatewayApi.loadTransactionDetails(any()) } returns txSettingsChangeDto!!
         val txSettingsChange = transactionRepository.getTransactionDetails("id")
+        val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
-        val txCustomSafeTxHash = (txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txSettingsChange)?.toHexString()?.addHexPrefix()
+        val txCustomSafeTxHash = executionInfo.safeTxHash
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txSettingsChange, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }

@@ -39,11 +39,11 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address) && !executionInfo.confirmations.map { it.signer }.contains(credentials.address)
         }
 
-    suspend fun validateSafeTxHash(transaction: TransactionDetails, executionDetails: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
+    suspend fun validateSafeTxHash(transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
-            val safeTxHash = executionDetails.safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction)?.toHexString()?.addHexPrefix()
+            val safeTxHash = executionInfo.safeTxHash
+            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo)?.toHexString()?.addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.onSuccess {
             return it

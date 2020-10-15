@@ -14,7 +14,7 @@ private const val ERC191_BYTE = "19"
 private const val ERC191_VERSION = "01"
 
 fun calculateSafeTxHash(
-    safeAddress: Solidity.Address, transaction: TransactionDetails
+    safeAddress: Solidity.Address, transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
 ): ByteArray? {
 
     val to = when (val txInfo = transaction.txInfo) {
@@ -45,16 +45,6 @@ fun calculateSafeTxHash(
     val value = transaction.txData?.value.paddedHexString()
     val data = Sha3Utils.keccak(transaction.txData?.hexData?.hexToByteArray() ?: ByteArray(0)).toHex().padStart(64, '0')
     val operationString = (transaction.txData?.operation?.id?.toBigInteger() ?: BigInteger.ZERO).paddedHexString()
-
-    val executionInfo = when (val executionInfo = transaction.detailedExecutionInfo) {
-        is DetailedExecutionInfo.MultisigExecutionDetails -> {
-            executionInfo
-        }
-        else -> {
-            throw UnsupportedTransactionType(transaction::javaClass.name)
-        }
-    }
-
     val gasPriceString = executionInfo.gasPrice.paddedHexString()
     val txGasString = executionInfo.safeTxGas.paddedHexString()
     val dataGasString = executionInfo.baseGas.paddedHexString()
