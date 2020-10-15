@@ -45,11 +45,7 @@ class TransactionDetailsViewModel
             val safeTxHash = executionInfo.safeTxHash
             val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo)?.toHexString()?.addHexPrefix()
             safeTxHash == calculatedSafeTxHash
-        }.onSuccess {
-            return it
-        }.onFailure {
-            return false
-        }.getOrDefault(false)
+       }.getOrDefault(false)
     }
 }
 
