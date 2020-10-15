@@ -68,6 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingBottom="88dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -154,22 +155,27 @@
                     android:gravity="start|center_vertical"
                     android:text="@string/tx_details_view_on_etherscan" />
 
-                <TextView
-                    android:id="@+id/tx_confirm_button"
-                    style="@style/PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_marginHorizontal="@dimen/default_margin"
-                    android:layout_marginVertical="@dimen/default_margin"
-                    android:text="@string/confirm"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_privacy_policy_link"
-                    tools:visibility="visible" />
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <FrameLayout
+        android:id="@+id/tx_confirm_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/tx_confirm_button"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/default_margin"
+            android:layout_marginVertical="@dimen/default_margin"
+            android:text="@string/confirm" />
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

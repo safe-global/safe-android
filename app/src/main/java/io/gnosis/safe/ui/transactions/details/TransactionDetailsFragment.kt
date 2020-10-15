@@ -244,7 +244,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmations.visible(true)
 
                 if (viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)) {
-                    binding.txConfirmButton.visible(true)
+                    binding.txConfirmButtonContainer.visible(true)
                     binding.txConfirmButton.setOnClickListener {
                         showConfirmDialog(
                             requireContext(),
@@ -349,7 +349,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun hideCreatedAndConfirmations() {
         binding.txConfirmations.visible(false)
         binding.txConfirmationsDivider.visible(false)
-        binding.txConfirmButton.visible(false)
+        binding.txConfirmButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
     }
