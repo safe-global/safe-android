@@ -62,7 +62,11 @@ class TransactionRepository(
                 signers = signers,
                 confirmationsRequired = confirmationsRequired,
                 confirmations = confirmations.toConfirmations(),
-                executor = executor
+                executor = executor,
+                safeTxGas = safeTxGas,
+                baseGas = baseGas,
+                gasPrice = gasPrice,
+                gasToken = gasToken
             )
             is DetailedExecutionInfoDto.ModuleExecutionDetailsDto -> DetailedExecutionInfo.ModuleExecutionDetails(
                 address = address
@@ -241,4 +245,3 @@ fun List<ParamDto>?.getIntValueByName(name: String): String? {
 
 fun String.dataSizeBytes(): Long = removeHexPrefix().hexToByteArray().size.toLong()
 fun String?.hexStringNullOrEmpty(): Boolean = this?.dataSizeBytes() ?: 0L == 0L
-
