@@ -37,13 +37,10 @@ fun calculateSafeTxHash(
         is TransactionInfo.SettingsChange -> {
             safeAddress
         }
-        is TransactionInfo.Creation -> {
-            txInfo.factory
-        }
         else -> {
             throw UnsupportedTransactionType(transaction::javaClass.name)
         }
-    }?.value.paddedHexString()
+    }.value.paddedHexString()
 
     val value = transaction.txData?.value.paddedHexString()
     val data = Sha3Utils.keccak(transaction.txData?.hexData?.hexToByteArray() ?: ByteArray(0)).toHex().padStart(64, '0')

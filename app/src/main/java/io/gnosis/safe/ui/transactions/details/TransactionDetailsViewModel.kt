@@ -39,7 +39,7 @@ class TransactionDetailsViewModel
         }
 
     suspend fun validateSafeTxHash(transaction: TransactionDetails): Boolean {
-        kotlin.runCatching {
+        return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = (transaction.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).safeTxHash
             val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction)?.toHexString()
@@ -48,8 +48,7 @@ class TransactionDetailsViewModel
             return it
         }.onFailure {
             return false
-        }
-        return false
+        }.getOrDefault(false)
     }
 }
 
