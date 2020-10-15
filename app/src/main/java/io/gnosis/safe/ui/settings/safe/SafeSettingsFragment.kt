@@ -21,7 +21,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.getErrorResForException
-import io.gnosis.safe.utils.showRemoveDialog
+import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -50,7 +50,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSafeSettingsEditNameFragment())
             }
             remove.setOnClickListener {
-                showRemoveDialog(requireContext(), R.string.safe_settings_dialog_description) {
+                showConfirmDialog(requireContext(), R.string.safe_settings_dialog_description) {
                     viewModel.removeSafe()
                 }
             }

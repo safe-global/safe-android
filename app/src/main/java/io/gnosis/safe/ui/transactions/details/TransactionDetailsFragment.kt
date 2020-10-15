@@ -244,7 +244,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmations.visible(true)
                 binding.txConfirmButton.visible(true)
                 binding.txConfirmButton.setOnClickListener {
-                    showRemoveDialog(
+                    showConfirmDialog(
                         requireContext(),
                         message = R.string.confirm_transaction_dialog_message,
                         confirm = R.string.confirm,

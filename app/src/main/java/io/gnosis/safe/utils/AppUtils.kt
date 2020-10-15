@@ -86,7 +86,7 @@ fun Throwable.getErrorResForException(): Int =
         else -> R.string.error_try_again
     }
 
-fun showRemoveDialog(
+fun showConfirmDialog(
     context: Context,
     @StringRes message: Int,
     @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
