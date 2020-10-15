@@ -19,7 +19,7 @@ class TransactionDetailsViewModel
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
-    
+
     override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
     fun loadDetails(txId: String) {
