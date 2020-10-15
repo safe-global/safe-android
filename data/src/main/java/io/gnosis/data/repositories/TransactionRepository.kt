@@ -37,10 +37,9 @@ class TransactionRepository(
             )
         }
 
-    suspend fun getTransactionDetails(txId: String): TransactionDetails =
-        gatewayApi.loadTransactionDetails(txId).let { transactionDetailsDto ->
-            return transactionDetailsDto.toTransactionDetails()
-        }
+    suspend fun getTransactionDetails(txId: String): TransactionDetails = gatewayApi.loadTransactionDetails(txId).toTransactionDetails()
+
+    suspend fun submitConfirmation(safeTxHash: String): TransactionDetails = gatewayApi.submitConfirmation(safeTxHash).toTransactionDetails()
 
     private fun GateTransactionDetailsDto.toTransactionDetails(): TransactionDetails =
         TransactionDetails(

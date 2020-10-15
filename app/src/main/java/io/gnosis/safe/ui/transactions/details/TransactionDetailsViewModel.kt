@@ -39,13 +39,25 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address) && !executionInfo.confirmations.map { it.signer }.contains(credentials.address)
         }
 
-    suspend fun validateSafeTxHash(transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
+    fun submitConfirmation(transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails) {
+        safeLaunch {
+            validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
+            val txDetails = transactionRepository.submitConfirmation(executionInfo.safeTxHash)
+            updateState { TransactionDetailsViewState(UpdateDetails(txDetails)) }
+        }
+    }
+
+    private suspend fun validateSafeTxHash(
+        transaction: TransactionDetails,
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
+    ): Boolean {
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = executionInfo.safeTxHash
             val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo)?.toHexString()?.addHexPrefix()
             safeTxHash == calculatedSafeTxHash
-       }.getOrDefault(false)
+        }.getOrDefault(false)
     }
 }
 
@@ -56,3 +68,5 @@ data class TransactionDetailsViewState(
 data class UpdateDetails(
     val txDetails: TransactionDetails?
 ) : BaseStateViewModel.ViewAction
+
+object MismatchingSafeTxHash : Throwable()

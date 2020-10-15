@@ -251,9 +251,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             message = R.string.confirm_transaction_dialog_message,
                             confirm = R.string.confirm,
                             confirmColor = R.color.safe_green
-                        ) {
-                            //TODO implement network callback
-                        }
+                        ) { viewModel.submitConfirmation(txDetails, executionInfo) }
                     }
                 } else {
                     binding.txConfirmButton.visible(false)
