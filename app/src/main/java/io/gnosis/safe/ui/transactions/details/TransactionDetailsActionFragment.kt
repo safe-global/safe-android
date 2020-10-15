@@ -91,7 +91,11 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
                         }
                         is ParamDto.ValueParam -> {
-                            content.addView(getLabeledValueItem("${it.name}(${it.type}):", it.value.toString()))
+                            if (it.isBytesValue()) {
+                                content.addView(getDataItem("${it.name}(${it.type}):", it.value as String))
+                            } else {
+                                content.addView(getLabeledValueItem("${it.name}(${it.type}):", it.value.toString()))
+                            }
                         }
                     }
                 }
