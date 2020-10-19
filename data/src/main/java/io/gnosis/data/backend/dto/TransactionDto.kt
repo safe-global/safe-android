@@ -33,10 +33,13 @@ sealed class ParamDto {
         override val value: List<Any>
     ) : ParamDto() {
 
-        fun getItemType(): ParamType = when (type.split("[")[0]) {
-            "address" -> ParamType.ADDRESS
-            "bytes" -> ParamType.BYTES
-            else -> ParamType.VALUE
+        fun getItemType(): ParamType {
+            val baseType = type.split("[")[0]
+            return when  {
+                baseType == "address" -> ParamType.ADDRESS
+                baseType.startsWith("bytes") -> ParamType.BYTES
+                else -> ParamType.VALUE
+            }
         }
     }
 
@@ -51,7 +54,10 @@ sealed class ParamDto {
         override val type: String,
         override val name: String,
         override val value: Any
-    ) : ParamDto()
+    ) : ParamDto() {
+
+        fun isBytesValue(): Boolean = type.startsWith("bytes")
+    }
 
     object UnknownParam : ParamDto() {
         override val type: String
