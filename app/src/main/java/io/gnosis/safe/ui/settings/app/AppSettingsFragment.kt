@@ -14,7 +14,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.utils.shortChecksumString
-import io.gnosis.safe.utils.showRemoveDialog
+import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -78,7 +78,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     blockies.setAddress(address)
                     ownerAddress.text = address.shortChecksumString()
                     remove.setOnClickListener {
-                        showRemoveDialog(requireContext(), R.string.signing_owner_dialog_description) {
+                        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
                             onOwnerRemove()
                         }
                     }

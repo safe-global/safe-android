@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.view.LayoutInflater
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.DialogRemoveBinding
@@ -85,9 +86,11 @@ fun Throwable.getErrorResForException(): Int =
         else -> R.string.error_try_again
     }
 
-fun showRemoveDialog(
+fun showConfirmDialog(
     context: Context,
     @StringRes message: Int,
+    @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
+    @ColorRes confirmColor: Int = R.color.tomato,
     confirmCallback: () -> Unit
 ) {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
@@ -99,9 +102,9 @@ fun showRemoveDialog(
             dialog.dismiss()
         },
         contentView = dialogBinding.root,
-        confirmRes = R.string.safe_settings_dialog_remove,
+        confirmRes = confirm,
         cancelRes = R.string.safe_settings_dialog_cancel,
-        confirmColor = R.color.tomato,
+        confirmColor = confirmColor,
         cancelColor = R.color.safe_green
     ).show()
 }
