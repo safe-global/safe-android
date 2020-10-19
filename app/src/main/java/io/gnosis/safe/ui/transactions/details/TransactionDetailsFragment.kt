@@ -79,11 +79,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         updateUi(it)
                     }
                 }
+                is ConfirmationSubmitted -> {
+                    binding.txConfirmButtonContainer.visible(false)
+                    viewAction.txDetails?.let(::updateUi)
+                }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
                 }
                 is ShowError -> {
                     binding.refresh.isRefreshing = false
+                    binding.txConfirmButton.isEnabled = true
                     when (viewAction.error) {
                         is Offline -> {
                             snackbar(requireView(), R.string.error_no_internet)
@@ -251,7 +256,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             message = R.string.confirm_transaction_dialog_message,
                             confirm = R.string.confirm,
                             confirmColor = R.color.safe_green
-                        ) { viewModel.submitConfirmation(txDetails, executionInfo) }
+                        ) {
+                            binding.txConfirmButton.isEnabled = false
+                            viewModel.submitConfirmation(txDetails, executionInfo)
+                        }
                     }
                 } else {
                     binding.txConfirmButton.visible(false)
@@ -319,6 +327,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
         binding.content.visible(true)
         binding.contentNoData.root.visible(false)
+        showLoading(false)
     }
 
     @ColorRes

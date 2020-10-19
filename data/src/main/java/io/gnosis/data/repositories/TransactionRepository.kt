@@ -4,10 +4,14 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import pm.gnosis.crypto.ECDSASignature
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.*
 
@@ -39,7 +43,21 @@ class TransactionRepository(
 
     suspend fun getTransactionDetails(txId: String): TransactionDetails = gatewayApi.loadTransactionDetails(txId).toTransactionDetails()
 
-    suspend fun submitConfirmation(safeTxHash: String): TransactionDetails = gatewayApi.submitConfirmation(safeTxHash).toTransactionDetails()
+    suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String): TransactionDetails =
+        gatewayApi.submitConfirmation(
+            safeTxHash,
+            TransactionConfirmationRequest(signedSafeTxHash)
+        ).toTransactionDetails()
+
+    fun sign(ownerKey: BigInteger, safeTxHash: String): String =
+        KeyPair.fromPrivate(ownerKey.toByteArray())
+            .sign(safeTxHash.hexToByteArray())
+            .toSignatureString()
+
+    private fun ECDSASignature.toSignatureString() =
+        r.toString(16).padStart(64, '0').substring(0, 64) +
+                s.toString(16).padStart(64, '0').substring(0, 64) +
+                v.toString(16).padStart(2, '0')
 
     private fun GateTransactionDetailsDto.toTransactionDetails(): TransactionDetails =
         TransactionDetails(

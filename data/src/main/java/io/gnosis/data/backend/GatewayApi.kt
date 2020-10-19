@@ -3,11 +3,9 @@ package io.gnosis.data.backend
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
+import io.gnosis.data.backend.dto.TransactionConfirmationRequest
 import io.gnosis.data.models.Page
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Url
+import retrofit2.http.*
 
 interface GatewayApi {
 
@@ -21,7 +19,10 @@ interface GatewayApi {
     suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): GateTransactionDetailsDto
 
     @POST("v1/transactions/{safeTxHash}/confirmations")
-    suspend fun submitConfirmation(@Path("safeTxHash") safeTxHash: String): GateTransactionDetailsDto
+    suspend fun submitConfirmation(
+        @Path("safeTxHash") safeTxHash: String,
+        @Body txConfirmationRequest: TransactionConfirmationRequest
+    ): GateTransactionDetailsDto
 
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL

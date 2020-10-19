@@ -43,8 +43,12 @@ class TransactionDetailsViewModel
         safeLaunch {
             validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            val txDetails = transactionRepository.submitConfirmation(executionInfo.safeTxHash)
-            updateState { TransactionDetailsViewState(UpdateDetails(txDetails)) }
+            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
+            val txDetails = transactionRepository.submitConfirmation(
+                executionInfo.safeTxHash,
+                transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
+            )
+            updateState { TransactionDetailsViewState(ConfirmationSubmitted(txDetails)) }
         }
     }
 
@@ -61,7 +65,7 @@ class TransactionDetailsViewModel
     }
 }
 
-data class TransactionDetailsViewState(
+open class TransactionDetailsViewState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
@@ -69,4 +73,9 @@ data class UpdateDetails(
     val txDetails: TransactionDetails?
 ) : BaseStateViewModel.ViewAction
 
+data class ConfirmationSubmitted(
+    val txDetails: TransactionDetails?
+) : BaseStateViewModel.ViewAction
+
 object MismatchingSafeTxHash : Throwable()
+object MissingOwnerCredential : Throwable()
