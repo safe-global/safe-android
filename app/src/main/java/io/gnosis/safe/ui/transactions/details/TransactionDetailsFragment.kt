@@ -31,6 +31,7 @@ import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -220,7 +221,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                                         it.dataDecoded?.method ?: "",
                                         it.hexData ?: "",
-                                        it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                        it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
+                                        it.to.asEthereumAddressString(),
+                                        it.value?.let { balanceFormatter.formatAmount(it, true) }
                                     )
                                 )
                             }
