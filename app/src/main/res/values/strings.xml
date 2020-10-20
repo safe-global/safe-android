@@ -107,6 +107,7 @@
     <string name="tx_list_creation">Safe created</string>
 
     <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
+    <string name="tx_list_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
     <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
     <string name="tx_list_pending">\u2022 Pending</string>
     <string name="tx_list_cancelled">Cancelled</string>
