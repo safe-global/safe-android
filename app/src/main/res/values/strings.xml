@@ -245,4 +245,5 @@
     <string name="import_owner_key_title">Import Owner Key</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
+    <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
 </resources>

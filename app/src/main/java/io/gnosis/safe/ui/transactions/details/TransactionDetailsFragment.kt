@@ -82,6 +82,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 is ConfirmationSubmitted -> {
                     binding.txConfirmButtonContainer.visible(false)
                     viewAction.txDetails?.let(::updateUi)
+                    snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
