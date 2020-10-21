@@ -1,11 +1,13 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Transaction
 import io.gnosis.data.models.TransactionInfo
 import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -17,6 +19,7 @@ import org.junit.runners.Parameterized
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 @RunWith(Parameterized::class)
@@ -84,6 +87,8 @@ class TransactionRepositoryTransferTest(
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 class TransactionRepositoryTest {
     private val gatewayApi = mockk<GatewayApi>()
+
+    private val moshiAdapter = dataMoshi.adapter(GateTransactionDetailsDto::class.java)
 
     private val transactionRepository = TransactionRepository(gatewayApi)
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
@@ -244,6 +249,43 @@ class TransactionRepositoryTest {
         val params = listOf(ParamDto.ValueParam(name = "foo", type = "uint256", value = "12"))
         val result = params.getIntValueByName("bar")
         assertEquals(null, result)
+    }
+
+    @Test
+    fun `submitConfirmation (API failure) should throw`() = runBlockingTest {
+        val throwable = Throwable()
+        val confirmationRequest = TransactionConfirmationRequest("0x0")
+        coEvery { gatewayApi.submitConfirmation(any(), any()) } throws throwable
+
+        val actual = runCatching { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
+
+        assert(actual.isFailure)
+        assert(actual.exceptionOrNull() == throwable)
+        coVerify { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
+    }
+
+    @Test
+    fun `submitConfirmation (successful) should return TransactionDetails`() = runBlockingTest {
+        val transactionDetailsDto = moshiAdapter.readJsonFrom("tx_details_transfer.json")
+        coEvery { gatewayApi.submitConfirmation(any(), any()) } returns transactionDetailsDto
+        coEvery { gatewayApi.loadTransactionDetails(any()) } returns transactionDetailsDto
+        val expected = transactionRepository.getTransactionDetails("txId")
+
+        val actual = runCatching { transactionRepository.submitConfirmation("0x0", "0x0") }
+
+        assert(actual.isSuccess)
+        assert(actual.getOrNull() == expected)
+        coVerify { gatewayApi.submitConfirmation("0x0", TransactionConfirmationRequest("0x0")) }
+    }
+
+    @Test
+    fun `sign(successful) should return string`() {
+        val ownerKey = "0xda18066dda40499e6ef67a392eda0fd90acf804448a765db9fa9b6e7dd15c322".hexAsBigInteger()
+        val actual = transactionRepository.sign(ownerKey, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67")
+        val expected =
+            "d757e1a0f195a26988290d6f533c3cd5eff0924abe7f92c071ecbe007031a4274dd9aee773cf051a7c0906a332571dfbeda672cf98d2631d12e11764508e4ec81c"
+
+        assertEquals(expected, actual)
     }
 }
 
