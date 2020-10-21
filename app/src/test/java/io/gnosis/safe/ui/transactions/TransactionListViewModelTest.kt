@@ -925,6 +925,10 @@ class TransactionListViewModelTest {
             buildCustom(
                 status = AWAITING_CONFIRMATIONS,
                 missingSigners = listOf(notOwner.address)
+            ),
+            buildCustom(
+                status = AWAITING_EXECUTION,
+                missingSigners = listOf(owner.address)
             )
         )
 
@@ -949,6 +953,9 @@ class TransactionListViewModelTest {
 
         assertTrue(transactionViewData[5] is TransactionView.CustomTransactionQueued)
         assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
+
+        assertTrue(transactionViewData[6] is TransactionView.CustomTransactionQueued)
+        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
     private fun callVerification() {
