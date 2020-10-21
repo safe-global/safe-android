@@ -100,3 +100,8 @@ sealed class TransferInfoDto {
         val value: BigInteger
     ) : TransferInfoDto()
 }
+
+
+data class TransactionConfirmationRequest(
+    val signedSafeTxHash: String
+)

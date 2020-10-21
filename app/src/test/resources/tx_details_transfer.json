@@ -1,0 +1,53 @@
+{
+  "executedAt": 1600335977000,
+  "txStatus": "SUCCESS",
+  "txInfo": {
+    "type": "Transfer",
+    "sender": "0x1230B3d59858296A31053C1b8562Ecf89A2f888b",
+    "recipient": "0x938bae50a210b80EA233112800Cd5Bc2e7644300",
+    "direction": "OUTGOING",
+    "transferInfo": {
+      "type": "ETHER",
+      "value": "100000000000000000"
+    }
+  },
+  "txData": {
+    "hexData": null,
+    "dataDecoded": null,
+    "to": "0x938bae50a210b80EA233112800Cd5Bc2e7644300",
+    "value": "100000000000000000",
+    "operation": 0
+  },
+  "detailedExecutionInfo": {
+    "type": "MULTISIG",
+    "submittedAt": 1600335977000,
+    "nonce": 247,
+    "safeTxGas": 29563,
+    "baseGas": 0,
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "safeTxHash": "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67",
+    "executor": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+    "signers": [
+      "0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164",
+      "0xBEA2F9227230976d2813a2f8b922c22bE1DE1B23",
+      "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+      "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
+    ],
+    "confirmationsRequired": 2,
+    "confirmations": [
+      {
+        "signer": "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0",
+        "signature": "0x3bbec4a46790ca99dded16a60a9a0e1d4f9b62bff945f71271dc48f0a5566984142ab7fd617daba7c6d23bd4e353897e01fd98356153f3bfacb6cc58b554f0c41b",
+        "submittedAt": 1600335994925
+      },
+      {
+        "signer": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+        "signature": "0x000000000000000000000000f2cea96575d6b10f51d9af3b10e3e4e5738aa6bd000000000000000000000000000000000000000000000000000000000000000001",
+        "submittedAt": 1600335994930
+      }
+    ]
+  },
+  "txHash": "0x6c036d1a50ec9f122c26c1b2f8ef689c442f7fe85dc5ce168d65f9b97df340c7"
+}
