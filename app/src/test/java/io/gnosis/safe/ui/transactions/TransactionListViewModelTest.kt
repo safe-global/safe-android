@@ -955,7 +955,7 @@ class TransactionListViewModelTest {
         assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
 
         assertTrue(transactionViewData[6] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_list_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
     private fun callVerification() {
