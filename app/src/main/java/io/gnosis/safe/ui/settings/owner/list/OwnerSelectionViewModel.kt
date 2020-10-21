@@ -1,6 +1,8 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -37,6 +39,7 @@ class OwnerSelectionViewModel
                         }
                     }
                 }
+                .cachedIn(viewModelScope)
                 .collectLatest {
                     updateState {
                         OwnerSelectionState(
