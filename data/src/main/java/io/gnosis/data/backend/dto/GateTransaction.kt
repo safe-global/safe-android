@@ -15,7 +15,8 @@ data class GateTransactionDto(
 data class ExecutionInfoDto(
     val nonce: BigInteger,
     val confirmationsRequired: Int,
-    val confirmationsSubmitted: Int
+    val confirmationsSubmitted: Int,
+    val missingSigners: List<Solidity.Address>?
 )
 
 enum class GateTransactionType {

@@ -26,8 +26,11 @@ import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.OwnerCredentials
+import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.formatBackendDate
 import io.mockk.*
+import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
@@ -49,6 +52,7 @@ class TransactionListViewModelTest {
 
     private val safeRepository = mockk<SafeRepository>()
     private val transactionRepository = mockk<TransactionRepository>()
+    private val ownerRepository = mockk<OwnerCredentialsRepository>()
     private val transactionPagingProvider = mockk<TransactionPagingProvider>()
 
     private val balanceFormatter = BalanceFormatter()
@@ -69,7 +73,7 @@ class TransactionListViewModelTest {
     fun `init - (no active safe change) should emit Loading`() {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -87,7 +91,7 @@ class TransactionListViewModelTest {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } throws throwable
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -111,8 +115,9 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
+        coEvery { ownerRepository.retrieveCredentials() } returns null
         coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } returns flow { emit(PagingData.empty<Transaction>()) }
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -138,9 +143,10 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
+        coEvery { ownerRepository.retrieveCredentials() } returns null
         coEvery { transactionRepository.getTransactions(any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } throws throwable
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -158,7 +164,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapToTransactionView (tx list with no transfer) should map to empty list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createEmptyTransactionList()
         val transactionViews =
@@ -183,7 +189,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapToTransactionView (tx list with queued transfers) should map to queued and ether transfer list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithStatus(
             PENDING,
@@ -214,7 +220,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapTransactionView (tx list with queued and historic transfer) should map to queued and transfer list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithStatus(PENDING, SUCCESS)
         val transactionViews =
@@ -240,7 +246,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapTransactionView (tx list with queued and historic ether transfers) should map to queued and ether transfer list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
             buildTransfer(
@@ -390,7 +396,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic ether transfers) should map to ether transfer list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
             buildTransfer(serviceTokenInfo = ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
@@ -483,7 +489,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic custom txs) should map to custom transactions list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
             buildCustom(status = AWAITING_EXECUTION, confirmations = 2),
@@ -599,7 +605,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapTransactionView (tx list with historic setting changes) should map to settings changes list`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
             // queued
@@ -852,7 +858,7 @@ class TransactionListViewModelTest {
     @Test
     fun `mapToTransactionView (tx list with creation tx) should map to list with creation tx`() {
 
-        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithCreationTx()
         val transactionViews =
@@ -880,6 +886,76 @@ class TransactionListViewModelTest {
         assertEquals(R.color.safe_green, creationTransactionView.statusColorRes)
         assertEquals("<random-id>", creationTransactionView.id)
 
+    }
+
+    @Test
+    fun `mapToTransactionView (tx list with awaiting confirmation transactions) should map to list with items having correct awaiting confirmation string`() {
+
+        transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
+
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
+        val safeInfo = SafeInfo(
+            safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(),
+            Solidity.Address(BigInteger.ONE)
+        )
+        val owner = OwnerCredentials(Solidity.Address(BigInteger.ONE), BigInteger.ONE)
+        val notOwner = OwnerCredentials(Solidity.Address(BigInteger.TEN), BigInteger.TEN)
+
+        val transactions = listOf(
+            buildTransfer(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(owner.address)
+            ),
+            buildTransfer(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(notOwner.address)
+            ),
+            buildSettingsChange(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(owner.address)
+            ),
+            buildSettingsChange(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(notOwner.address)
+            ),
+            buildCustom(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(owner.address)
+            ),
+            buildCustom(
+                status = AWAITING_CONFIRMATIONS,
+                missingSigners = listOf(notOwner.address)
+            ),
+            buildCustom(
+                status = AWAITING_EXECUTION,
+                missingSigners = listOf(owner.address)
+            )
+        )
+
+        val transactionViewData = transactions.map {
+            transactionsViewModel.getTransactionView(it, safeInfo, it.canBeSignedByOwner(owner.address))
+        }
+
+        assertTrue(transactionViewData[0] is TransactionView.TransferQueued)
+        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[0] as TransactionView.TransferQueued).statusText)
+
+        assertTrue(transactionViewData[1] is TransactionView.TransferQueued)
+        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[1] as TransactionView.TransferQueued).statusText)
+
+        assertTrue(transactionViewData[2] is TransactionView.SettingsChangeQueued)
+        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[2] as TransactionView.SettingsChangeQueued).statusText)
+
+        assertTrue(transactionViewData[3] is TransactionView.SettingsChangeQueued)
+        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[3] as TransactionView.SettingsChangeQueued).statusText)
+
+        assertTrue(transactionViewData[4] is TransactionView.CustomTransactionQueued)
+        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[4] as TransactionView.CustomTransactionQueued).statusText)
+
+        assertTrue(transactionViewData[5] is TransactionView.CustomTransactionQueued)
+        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
+
+        assertTrue(transactionViewData[6] is TransactionView.CustomTransactionQueued)
+        assertEquals(R.string.tx_list_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
     private fun callVerification() {
@@ -938,6 +1014,7 @@ class TransactionListViewModelTest {
                 id = "",
                 status = status,
                 confirmations = 2,
+                missingSigners = null,
                 recipient = defaultToAddress,
                 sender = defaultFromAddress,
                 value = BigInteger.ONE,
@@ -953,6 +1030,7 @@ class TransactionListViewModelTest {
     private fun buildTransfer(
         status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
+        missingSigners: List<Solidity.Address>? = null,
         recipient: Solidity.Address = defaultToAddress,
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
@@ -964,6 +1042,7 @@ class TransactionListViewModelTest {
             id = "",
             status = status,
             confirmations = confirmations,
+            missingSigners = missingSigners,
             recipient = recipient,
             sender = sender,
             value = value,
@@ -976,6 +1055,7 @@ class TransactionListViewModelTest {
     private fun buildCustom(
         status: TransactionStatus = SUCCESS,
         confirmations: Int? = 0,
+        missingSigners: List<Solidity.Address>? = null,
         value: BigInteger = BigInteger.ZERO,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
@@ -986,6 +1066,7 @@ class TransactionListViewModelTest {
             id = "",
             status = status,
             confirmations = confirmations,
+            missingSigners = missingSigners,
             value = value,
             date = date,
             nonce = nonce,
@@ -996,6 +1077,7 @@ class TransactionListViewModelTest {
     private fun buildSettingsChange(
         status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
+        missingSigners: List<Solidity.Address>? = null,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
         dataDecoded: DataDecodedDto = buildDataDecodedDto()
@@ -1004,6 +1086,7 @@ class TransactionListViewModelTest {
             id = "",
             status = status,
             confirmations = confirmations,
+            missingSigners = missingSigners,
             date = date,
             nonce = nonce,
             dataDecoded = dataDecoded

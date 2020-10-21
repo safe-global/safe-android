@@ -66,7 +66,8 @@ class DataMoshiTest {
             executionInfo = ExecutionInfoDto(
                 nonce = 8.toBigInteger(),
                 confirmationsRequired = 2,
-                confirmationsSubmitted = 2
+                confirmationsSubmitted = 2,
+                missingSigners = null
             )
         )
         assertEquals(expected, transactionDto)
@@ -99,7 +100,8 @@ class DataMoshiTest {
             executionInfo = ExecutionInfoDto(
                 nonce = 4.toBigInteger(),
                 confirmationsRequired = 1,
-                confirmationsSubmitted = 1
+                confirmationsSubmitted = 1,
+                missingSigners = null
             )
         )
         assertEquals(expected, transactionDto)

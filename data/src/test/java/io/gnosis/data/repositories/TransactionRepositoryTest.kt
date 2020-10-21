@@ -301,7 +301,8 @@ private fun buildGateTransactionDto(
         executionInfo = ExecutionInfoDto(
             nonce = 1.toBigInteger(),
             confirmationsSubmitted = 2,
-            confirmationsRequired = 2
+            confirmationsRequired = 2,
+            missingSigners = null
         ),
         timestamp = 1L
     )

@@ -166,6 +166,7 @@ class TransactionRepository(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
+                missingSigners = executionInfo?.missingSigners,
                 nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 recipient = txInfo.recipient,
@@ -178,6 +179,7 @@ class TransactionRepository(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
+                missingSigners = executionInfo?.missingSigners,
                 nonce = executionInfo?.nonce ?: BigInteger.ZERO,
                 date = timestamp.toDate(),
                 dataDecoded = txInfo.dataDecoded
@@ -186,6 +188,7 @@ class TransactionRepository(
                 id = id,
                 status = txStatus,
                 confirmations = executionInfo?.confirmationsSubmitted,
+                missingSigners = executionInfo?.missingSigners,
                 nonce = executionInfo?.nonce,
                 date = timestamp.toDate(),
                 address = txInfo.to,
@@ -212,6 +215,7 @@ class TransactionRepository(
                 value = BigInteger.ZERO,
                 dataSize = 0,
                 confirmations = null,
+                missingSigners = null,
                 nonce = BigInteger.ZERO,
                 date = null
             )
