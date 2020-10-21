@@ -88,7 +88,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     showLoading(viewAction.isLoading)
                 }
                 is ShowError -> {
-                    binding.refresh.isRefreshing = false
+                    showLoading(false)
                     binding.txConfirmButton.isEnabled = true
                     when (viewAction.error) {
                         is Offline -> {
