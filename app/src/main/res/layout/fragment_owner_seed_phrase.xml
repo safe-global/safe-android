@@ -46,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_weight="0"
+            android:enabled="false"
             android:text="@string/next" />
 
     </LinearLayout>
@@ -80,12 +81,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/enter_your_seed_phrase" />
 
             <TextView
                 android:id="@+id/enter_seed_phrase_description"
-                style="@style/TextMedium"
+                style="@style/TextDark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -109,10 +110,11 @@
 
                 <EditText
                     android:id="@+id/seed_phrase_text"
+                    style="@style/TextDark"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:imeOptions="actionDone"
-                    android:inputType="text|textMultiLine"
+                    android:inputType="textMultiLine"
                     android:gravity="top"
                     android:lines="3"
                     android:scrollHorizontally="false"
