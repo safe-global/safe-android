@@ -122,6 +122,94 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private fun updateUi(txDetails: TransactionDetails) {
 
+        var awaitingYourConfirmation = false
+
+        var nonce: BigInteger? = null
+        when (val executionInfo = txDetails.detailedExecutionInfo) {
+            is DetailedExecutionInfo.MultisigExecutionDetails -> {
+
+                awaitingYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
+
+                binding.txConfirmations.visible(true)
+
+                if (awaitingYourConfirmation) {
+                    binding.txConfirmButtonContainer.visible(true)
+                    binding.txConfirmButton.setOnClickListener {
+                        showConfirmDialog(
+                            requireContext(),
+                            message = R.string.confirm_transaction_dialog_message,
+                            confirm = R.string.confirm,
+                            confirmColor = R.color.safe_green
+                        ) {
+                            binding.txConfirmButton.isEnabled = false
+                            viewModel.submitConfirmation(txDetails, executionInfo)
+                        }
+                    }
+                } else {
+                    binding.txConfirmButton.visible(false)
+                }
+                binding.txConfirmationsDivider.visible(true)
+                binding.txConfirmations.setExecutionData(
+                    status = txDetails.txStatus,
+                    confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
+                    threshold = executionInfo.confirmationsRequired,
+                    executor = executionInfo.executor
+                )
+                nonce = executionInfo.nonce
+
+                binding.created.visible(true)
+                binding.createdDivider.visible(true)
+                binding.created.value = executionInfo.submittedAt.formatBackendDate()
+            }
+            is DetailedExecutionInfo.ModuleExecutionDetails -> {
+                hideCreatedAndConfirmations()
+            }
+            else -> {
+                hideCreatedAndConfirmations()
+            }
+        }
+
+        if (txDetails.detailedExecutionInfo != null) {
+            binding.advanced.visible(true)
+            binding.advancedDivider.visible(true)
+            binding.advanced.setOnClickListener {
+                val operation = txDetails.txData?.operation?.displayName() ?: ""
+                findNavController().navigate(
+                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
+                        nonce = nonce?.toString() ?: "",
+                        operation = operation,
+                        hash = txDetails.txHash
+                    )
+                )
+            }
+        } else {
+            binding.advanced.visible(false)
+            binding.advancedDivider.visible(false)
+        }
+        if (txDetails.executedAt != null) {
+            binding.executed.visible(true)
+            binding.executedDivider.visible(true)
+            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
+        } else {
+            binding.executed.visible(false)
+            binding.executedDivider.visible(false)
+        }
+
+        if (txDetails.txHash != null) {
+            binding.etherscan.visible(true)
+            binding.etherscan.setOnClickListener {
+                requireContext().openUrl(
+                    getString(
+                        R.string.etherscan_transaction_url,
+                        txDetails.txHash
+                    )
+                )
+            }
+        } else {
+            binding.etherscan.visible(false)
+            binding.advancedDivider.visible(false)
+        }
+
         when (val txInfo = txDetails.txInfo) {
             is TransactionInfo.Transfer -> {
                 val viewStub = binding.stubTransfer
@@ -166,7 +254,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsTransferBinding.txStatus.setStatus(
                     txType.titleRes,
                     txType.iconRes,
-                    getStringResForStatus(txDetails.txStatus),
+                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
             }
@@ -181,7 +269,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsSettingsChangeBinding.txStatus.setStatus(
                     TxType.MODIFY_SETTINGS.titleRes,
                     TxType.MODIFY_SETTINGS.iconRes,
-                    getStringResForStatus(txDetails.txStatus),
+                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
             }
@@ -238,92 +326,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxType.CUSTOM.titleRes,
                     TxType.CUSTOM.iconRes,
-                    getStringResForStatus(txDetails.txStatus),
+                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
             }
-        }
-        var nonce: BigInteger? = null
-        when (val executionInfo = txDetails.detailedExecutionInfo) {
-            is DetailedExecutionInfo.MultisigExecutionDetails -> {
-                binding.txConfirmations.visible(true)
-
-                if (viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)) {
-                    binding.txConfirmButtonContainer.visible(true)
-                    binding.txConfirmButton.setOnClickListener {
-                        showConfirmDialog(
-                            requireContext(),
-                            message = R.string.confirm_transaction_dialog_message,
-                            confirm = R.string.confirm,
-                            confirmColor = R.color.safe_green
-                        ) {
-                            binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(txDetails, executionInfo)
-                        }
-                    }
-                } else {
-                    binding.txConfirmButton.visible(false)
-                }
-                binding.txConfirmationsDivider.visible(true)
-                binding.txConfirmations.setExecutionData(
-                    status = txDetails.txStatus,
-                    confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
-                    threshold = executionInfo.confirmationsRequired,
-                    executor = executionInfo.executor
-                )
-                nonce = executionInfo.nonce
-
-                binding.created.visible(true)
-                binding.createdDivider.visible(true)
-                binding.created.value = executionInfo.submittedAt.formatBackendDate()
-            }
-            is DetailedExecutionInfo.ModuleExecutionDetails -> {
-                hideCreatedAndConfirmations()
-            }
-            else -> {
-                hideCreatedAndConfirmations()
-            }
-        }
-        if (txDetails.detailedExecutionInfo != null) {
-            binding.advanced.visible(true)
-            binding.advancedDivider.visible(true)
-            binding.advanced.setOnClickListener {
-                val operation = txDetails.txData?.operation?.displayName() ?: ""
-                findNavController().navigate(
-                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
-                        nonce = nonce?.toString() ?: "",
-                        operation = operation,
-                        hash = txDetails.txHash
-                    )
-                )
-            }
-        } else {
-            binding.advanced.visible(false)
-            binding.advancedDivider.visible(false)
-        }
-        if (txDetails.executedAt != null) {
-            binding.executed.visible(true)
-            binding.executedDivider.visible(true)
-            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
-        } else {
-            binding.executed.visible(false)
-            binding.executedDivider.visible(false)
-        }
-
-        if (txDetails.txHash != null) {
-            binding.etherscan.visible(true)
-            binding.etherscan.setOnClickListener {
-                requireContext().openUrl(
-                    getString(
-                        R.string.etherscan_transaction_url,
-                        txDetails.txHash
-                    )
-                )
-            }
-        } else {
-            binding.etherscan.visible(false)
-            binding.advancedDivider.visible(false)
         }
 
         binding.content.visible(true)
@@ -343,9 +350,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
 
     @StringRes
-    private fun getStringResForStatus(txStatus: TransactionStatus): Int =
+    private fun getStringResForStatus(txStatus: TransactionStatus, awaitingYourConfirmation: Boolean): Int =
         when (txStatus) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> R.string.tx_status_status_awaiting_confirmations
+            TransactionStatus.AWAITING_CONFIRMATIONS -> if (awaitingYourConfirmation) R.string.tx_list_awaiting_your_confirmation else R.string.tx_list_awaiting_confirmations
             TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_status_awaiting_execution
             TransactionStatus.SUCCESS -> R.string.tx_status_status_success
             TransactionStatus.CANCELLED -> R.string.tx_status_status_cancelled
