@@ -3,9 +3,7 @@ package io.gnosis.safe.ui.safe.add
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class AddSafeViewModel
@@ -20,11 +18,13 @@ class AddSafeViewModel
         safeLaunch {
             updateState { AddSafeState(ViewAction.Loading(true)) }
             takeUnless { safeRepository.isSafeAddressUsed(address) } ?: throw UsedSafeAddress
-            takeIf { safeRepository.isValidSafe(address) } ?: throw InvalidSafeAddress
-            updateState { AddSafeState(ShowValidSafe(address)) }
+            if (safeRepository.isValidSafe(address)) {
+                updateState { AddSafeState(ShowValidSafe(address)) }
+            } else {
+                throw InvalidSafeAddress
+            }
         }
     }
-
 }
 
 object InvalidSafeAddress : Throwable()
