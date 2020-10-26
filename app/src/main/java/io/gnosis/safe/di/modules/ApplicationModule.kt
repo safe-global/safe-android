@@ -155,17 +155,19 @@ class ApplicationModule(private val application: Application) {
             readTimeout(30, TimeUnit.SECONDS)
             writeTimeout(30, TimeUnit.SECONDS)
             pingInterval(5, TimeUnit.SECONDS)
-            certificatePinner(
-                CertificatePinner.Builder().apply {
-                    BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
-                        BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
-                            add(pinnedUrl, hash)
-                        }
-                    }
-                }.build()
-            )
+            certificatePinner(buildCertificatePinner())
         }.build()
 
+    private fun buildCertificatePinner(): CertificatePinner {
+        val pins = BuildConfig.SSL_PINS as Map<String, String>
+        return CertificatePinner.Builder().apply {
+            pins.keys.forEach { domainPattern ->
+                pins[domainPattern]?.split(",")?.forEach { hash ->
+                    add(domainPattern, hash)
+                }
+            }
+        }.build()
+    }
 
     @Provides
     @Singleton
