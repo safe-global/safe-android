@@ -7,11 +7,11 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.ethereum.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.TestPreferences
@@ -139,9 +139,11 @@ class SafeRepositoryTest {
         val throwable = Throwable()
         coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
 
-        val actual = safeRepository.isValidSafe(safeAddress)
+        kotlin.runCatching {
+            safeRepository.isValidSafe(safeAddress)
+            Assert.fail()
+        }
 
-        assertEquals(false, actual)
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
