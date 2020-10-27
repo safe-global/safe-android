@@ -22,6 +22,7 @@ import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.decimalAsBigInteger
 import java.math.BigInteger
 
 private val anyAddress = "0x0000000000000000000000000000000000001234".asEthereumAddress()!!
@@ -52,6 +53,19 @@ class TxUtilsKtTest {
         val result = txInfo.formattedAmount(balanceFormatter)
 
         assertEquals("0 ETH", result)
+    }
+
+    @Test
+    fun `formattedAmount (Custom txInfo with amount) should return negative ETH amount`() {
+
+        val txInfo = TransactionInfo.Custom(
+            to = Solidity.Address(BigInteger.ZERO),
+            dataSize = 0,
+            value = "1000000000000000000".decimalAsBigInteger()
+        )
+        val result = txInfo.formattedAmount(balanceFormatter)
+
+        assertEquals("-1 ETH", result)
     }
 
     @Test
