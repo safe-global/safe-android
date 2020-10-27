@@ -17,7 +17,7 @@ const val DEFAULT_ERC721_SYMBOL = "NFT"
 fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
         is TransactionInfo.Custom -> {
-            balanceFormatter.formatAmount(txInfo.value, true, 18, "ETH")
+            balanceFormatter.formatAmount(txInfo.value, false, 18, "ETH")
         }
         is TransactionInfo.Transfer -> {
             val incoming = txInfo.direction == TransactionDirection.INCOMING
