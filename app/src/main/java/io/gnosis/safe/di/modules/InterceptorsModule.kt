@@ -4,11 +4,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
-import okhttp3.Interceptor
-import okhttp3.logging.HttpLoggingInterceptor
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.helpers.ConnectivityInfoProvider
 import io.gnosis.safe.helpers.Offline
+import okhttp3.Interceptor
+import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -35,7 +35,7 @@ class InterceptorsModule {
     fun providesApiKeyInterceptor(): Interceptor {
         return Interceptor {
             val request = it.request()
-            val builder = request.url().newBuilder()
+            val builder = request.url.newBuilder()
             val url = builder.addPathSegment(BuildConfig.INFURA_API_KEY).build()
             it.proceed(request.newBuilder().url(url).build())
         }
