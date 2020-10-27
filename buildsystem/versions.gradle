@@ -37,7 +37,7 @@ ext {
             material_progressbar            : '1.4.2',
             moshi                           : '1.9.3',
             multidex                        : '2.0.1',
-            okhttp                          : '3.14.4',
+            okhttp                          : '4.9.0',
             okio                            : '2.4.1',
             phrase                          : '1.1.0',
             picasso                         : '2.71828',
