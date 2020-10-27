@@ -1,6 +1,5 @@
 package io.gnosis.safe
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -14,6 +13,10 @@ class Tracker private constructor(context: Context) {
 
     fun setNumSafes(numSafes: Int) {
         firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
+    }
+
+    fun setNumKeysImported(numKeysImported: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_IMPORTED, numKeysImported.toString())
     }
 
     fun setPushInfo(enabled: Boolean) {
@@ -54,6 +57,7 @@ class Tracker private constructor(context: Context) {
     object Param {
         val NUM_SAFES = "num_safes"
         val PUSH_INFO = "push_info"
+        val NUM_KEYS_IMPORTED = "num_keys_imported"
     }
 
     object ParamValues {
