@@ -109,7 +109,7 @@
                 <View
                     android:id="@+id/master_copy_separator"
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="@dimen/item_separator_height"
                     android:background="@color/item_separator"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
