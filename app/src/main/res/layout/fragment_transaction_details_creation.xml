@@ -70,7 +70,9 @@
                 android:id="@+id/tx_hash_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:item_label="@string/tx_details_advanced_operation" />
+                app:item_label="@string/tx_details_advanced_operation"
+                android:layout_marginBottom="@dimen/default_margin"
+                />
 
             <View
                 android:id="@+id/tx_hash_separator"
@@ -167,7 +169,9 @@
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/default_margin"
+                />
 
             <View
                 android:id="@+id/created_separator"
