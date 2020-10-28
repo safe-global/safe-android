@@ -13,9 +13,10 @@
         android:layout_marginTop="16dp" />
 
     <View
+        android:id="@+id/action_separator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
+        android:layout_height="@dimen/item_separator_height"
+        android:background="@color/item_separator" />
 
     <io.gnosis.safe.ui.settings.view.NamedAddressItem
         android:id="@+id/contract_address"
@@ -25,8 +26,8 @@
     <View
         android:id="@+id/contract_separator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
+        android:layout_height="@dimen/item_separator_height"
+        android:background="@color/item_separator" />
 
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
@@ -34,8 +35,9 @@
         android:layout_height="wrap_content" />
 
     <View
+        android:id="@+id/status_separator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey" />
+        android:layout_height="@dimen/item_separator_height"
+        android:background="@color/item_separator" />
 
 </LinearLayout>
