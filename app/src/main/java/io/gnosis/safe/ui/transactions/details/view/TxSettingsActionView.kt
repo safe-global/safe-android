@@ -70,6 +70,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         val addressItem = NamedAddressItem(context)
         addressItem.address = address
         addressItem.name = label
+        addressItem.showSeparator = false
         addView(addressItem)
     }
 
