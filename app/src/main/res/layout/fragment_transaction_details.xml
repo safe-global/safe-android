@@ -102,8 +102,8 @@
                 <View
                     android:id="@+id/tx_confirmations_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
+                    android:layout_height="@dimen/item_separator_height"
+                    android:background="@color/item_separator" />
 
                 <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/created"
@@ -115,8 +115,8 @@
                 <View
                     android:id="@+id/created_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
+                    android:layout_height="@dimen/item_separator_height"
+                    android:background="@color/item_separator" />
 
                 <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/executed"
@@ -128,8 +128,8 @@
                 <View
                     android:id="@+id/executed_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
+                    android:layout_height="@dimen/item_separator_height"
+                    android:background="@color/item_separator" />
 
                 <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/advanced"
@@ -141,8 +141,8 @@
                 <View
                     android:id="@+id/advanced_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/light_grey" />
+                    android:layout_height="@dimen/item_separator_height"
+                    android:background="@color/item_separator" />
 
                 <TextView
                     android:id="@+id/etherscan"
