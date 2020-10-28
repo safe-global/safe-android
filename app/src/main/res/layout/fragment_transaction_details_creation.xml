@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content" />
 
             <View
+                android:id="@+id/status_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/light_grey" />
@@ -72,9 +73,10 @@
                 app:item_label="@string/tx_details_advanced_operation" />
 
             <View
+                android:id="@+id/tx_hash_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey" />
+                android:background="@color/very_light_pink_two" />
 
             <TextView
                 android:id="@+id/creator_item_title"
@@ -96,7 +98,7 @@
                 android:id="@+id/creator_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey" />
+                android:background="@color/very_light_pink_two" />
 
             <TextView
                 android:id="@+id/implementation_title"
@@ -127,7 +129,7 @@
                 android:id="@+id/implementation_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey" />
+                android:background="@color/very_light_pink_two" />
 
             <TextView
                 android:id="@+id/factory_title"
@@ -160,7 +162,7 @@
                 android:id="@+id/factory_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey"/>
+                android:background="@color/very_light_pink_two"/>
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
@@ -171,7 +173,7 @@
                 android:id="@+id/created_separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/light_grey" />
+                android:background="@color/very_light_pink_two" />
 
             <TextView
                 android:id="@+id/etherscan_item"
