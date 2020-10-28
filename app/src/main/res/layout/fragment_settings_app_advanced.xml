@@ -77,7 +77,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:background="@color/item_separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/tx_service"
@@ -89,7 +89,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:background="@color/item_separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/client_gateway_service"
@@ -101,7 +101,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_separator_size"
-                android:background="@color/background"/>
+                android:background="@color/item_separator"/>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

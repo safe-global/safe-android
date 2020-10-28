@@ -7,6 +7,7 @@
     <color name="toolbar_action">@color/blue</color>
 
     <color name="background">@color/very_light_pink_two</color>
+    <color name="item_separator">@color/very_light_pink_two</color>
 
     <color name="whitesmoke_two">#f0efee</color>
 

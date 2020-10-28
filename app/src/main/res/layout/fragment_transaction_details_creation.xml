@@ -63,7 +63,7 @@
             <View
                 android:id="@+id/status_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/item_setting_separator_size"
                 android:background="@color/light_grey" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
@@ -77,8 +77,8 @@
             <View
                 android:id="@+id/tx_hash_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/very_light_pink_two" />
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/item_separator" />
 
             <TextView
                 android:id="@+id/creator_item_title"
@@ -99,8 +99,8 @@
             <View
                 android:id="@+id/creator_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/very_light_pink_two" />
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/item_separator" />
 
             <TextView
                 android:id="@+id/implementation_title"
@@ -130,8 +130,8 @@
             <View
                 android:id="@+id/implementation_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/very_light_pink_two" />
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/item_separator" />
 
             <TextView
                 android:id="@+id/factory_title"
@@ -163,8 +163,8 @@
             <View
                 android:id="@+id/factory_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/very_light_pink_two"/>
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/item_separator"/>
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
@@ -176,8 +176,8 @@
             <View
                 android:id="@+id/created_separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/very_light_pink_two" />
+                android:layout_height="@dimen/item_setting_separator_size"
+                android:background="@color/item_separator" />
 
             <TextView
                 android:id="@+id/etherscan_item"

@@ -110,7 +110,7 @@
                     android:id="@+id/master_copy_separator"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/very_light_pink_two"
+                    android:background="@color/item_separator"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
