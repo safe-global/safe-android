@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -97,7 +96,11 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                             binding.dialogEnsInputUrlLayout.error = getString(R.string.error_no_internet)
                         }
                         is EnsResolutionError -> {
-                            binding.dialogEnsInputUrlLayout.error = it.msg ?: getString(R.string.error_resolve_ens)
+                            binding.dialogEnsInputUrlLayout.error = if (it.msgRes == 0) {
+                                it.msg ?: getString(R.string.error_resolve_ens)
+                            } else {
+                                getString(it.msgRes)
+                            }
                         }
                         else -> {
                             binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
