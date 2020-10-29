@@ -128,6 +128,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             } else {
                 binding.dialogEnsInputProgress.visible(false)
                 job?.cancel("Empty ENS name")
+                binding.confirmButton.isEnabled = false
             }
         }
     }
