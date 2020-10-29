@@ -106,14 +106,6 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
 
-    <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
-    <string name="tx_list_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
-    <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
-    <string name="tx_list_pending">\u2022 Pending</string>
-    <string name="tx_list_cancelled">Cancelled</string>
-    <string name="tx_list_failed">Failed</string>
-    <string name="tx_list_success">Success</string>
-
     <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
@@ -154,12 +146,13 @@
     <string name="tx_status_type_custom">Custom transaction</string>
     <string name="tx_status_type_creation">Safe created</string>
 
-    <string name="tx_status_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
-    <string name="tx_status_status_awaiting_execution">\u2022 Awaiting execution</string>
-    <string name="tx_status_status_pending">\u2022 Pending</string>
-    <string name="tx_status_status_cancelled">Cancelled</string>
-    <string name="tx_status_status_failed">Failed</string>
-    <string name="tx_status_status_success">Success</string>
+    <string name="tx_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
+    <string name="tx_status_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
+    <string name="tx_status_awaiting_execution">\u2022 Awaiting execution</string>
+    <string name="tx_status_pending">\u2022 Pending</string>
+    <string name="tx_status_cancelled">Cancelled</string>
+    <string name="tx_status_failed">Failed</string>
+    <string name="tx_status_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
