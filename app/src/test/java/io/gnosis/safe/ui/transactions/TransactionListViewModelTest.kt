@@ -292,7 +292,7 @@ class TransactionListViewModelTest {
             TransactionView.TransferQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_list_awaiting_confirmations,
+                statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -311,7 +311,7 @@ class TransactionListViewModelTest {
             TransactionView.TransferQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_list_awaiting_execution,
+                statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -331,7 +331,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = FAILED,
-                statusText = R.string.tx_list_failed,
+                statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -347,7 +347,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -363,7 +363,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -379,7 +379,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+10 ERC20",
                 amountColor = R.color.safe_green,
@@ -424,7 +424,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 ERC20",
                 amountColor = R.color.safe_green,
@@ -440,7 +440,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+1 NFT",
                 amountColor = R.color.safe_green,
@@ -456,7 +456,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = CANCELLED,
-                statusText = R.string.tx_list_cancelled,
+                statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-1 AQER",
                 amountColor = R.color.gnosis_dark_blue,
@@ -472,7 +472,7 @@ class TransactionListViewModelTest {
             TransactionView.Transfer(
                 id = "",
                 status = FAILED,
-                statusText = R.string.tx_list_failed,
+                statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -518,7 +518,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransactionQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_list_awaiting_execution,
+                statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -537,7 +537,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransactionQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_list_awaiting_confirmations,
+                statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -556,7 +556,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransaction(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 amountText = "+0${DS}0001 ETH",
                 amountColor = R.color.safe_green,
@@ -572,7 +572,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransaction(
                 id = "",
                 status = FAILED,
-                statusText = R.string.tx_list_failed,
+                statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "0 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -588,7 +588,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransaction(
                 id = "",
                 status = CANCELLED,
-                statusText = R.string.tx_list_cancelled,
+                statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-0${DS}0001 ETH",
                 amountColor = R.color.gnosis_dark_blue,
@@ -691,7 +691,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_change_mastercopy,
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_list_awaiting_execution,
+                statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_MASTER_COPY_1_1_1,
@@ -711,7 +711,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_list_awaiting_confirmations,
+                statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
@@ -728,7 +728,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_set_fallback_handler,
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_list_awaiting_confirmations,
+                statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
@@ -749,7 +749,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_disable_module,
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_list_awaiting_confirmations,
+                statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
@@ -770,7 +770,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_enable_module,
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_list_awaiting_execution,
+                statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 2,
@@ -791,7 +791,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_set_fallback_handler,
                 status = CANCELLED,
-                statusText = R.string.tx_list_cancelled,
+                statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
@@ -809,7 +809,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_change_mastercopy,
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_MASTER_COPY_1_0_0,
@@ -827,7 +827,7 @@ class TransactionListViewModelTest {
                 id = "",
                 label = R.string.tx_list_enable_module,
                 status = FAILED,
-                statusText = R.string.tx_list_failed,
+                statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
@@ -844,7 +844,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChange(
                 id = "",
                 status = SUCCESS,
-                statusText = R.string.tx_list_success,
+                statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 method = METHOD_REMOVE_OWNER,
@@ -880,7 +880,7 @@ class TransactionListViewModelTest {
         assertEquals(true, transactionViews[0] is TransactionView.Creation)
         val creationTransactionView = transactionViews[0] as TransactionView.Creation
         assertEquals(SUCCESS, creationTransactionView.status)
-        assertEquals(R.string.tx_list_success, creationTransactionView.statusText)
+        assertEquals(R.string.tx_status_success, creationTransactionView.statusText)
         assertEquals(R.string.tx_list_creation, creationTransactionView.label)
         assertEquals(Date(1).formatBackendDate(), creationTransactionView.dateTimeText)
         assertEquals(R.color.safe_green, creationTransactionView.statusColorRes)
@@ -937,25 +937,25 @@ class TransactionListViewModelTest {
         }
 
         assertTrue(transactionViewData[0] is TransactionView.TransferQueued)
-        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[0] as TransactionView.TransferQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[0] as TransactionView.TransferQueued).statusText)
 
         assertTrue(transactionViewData[1] is TransactionView.TransferQueued)
-        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[1] as TransactionView.TransferQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[1] as TransactionView.TransferQueued).statusText)
 
         assertTrue(transactionViewData[2] is TransactionView.SettingsChangeQueued)
-        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[2] as TransactionView.SettingsChangeQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[2] as TransactionView.SettingsChangeQueued).statusText)
 
         assertTrue(transactionViewData[3] is TransactionView.SettingsChangeQueued)
-        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[3] as TransactionView.SettingsChangeQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[3] as TransactionView.SettingsChangeQueued).statusText)
 
         assertTrue(transactionViewData[4] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_list_awaiting_your_confirmation, (transactionViewData[4] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[4] as TransactionView.CustomTransactionQueued).statusText)
 
         assertTrue(transactionViewData[5] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_list_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
 
         assertTrue(transactionViewData[6] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_list_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
     private fun callVerification() {
