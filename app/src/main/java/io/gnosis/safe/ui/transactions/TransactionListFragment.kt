@@ -13,6 +13,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -39,6 +40,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     private val adapter by lazy { TransactionViewListAdapter(TransactionViewHolderFactory()) }
     private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
+
+    private var reload: Boolean = false
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -72,6 +75,13 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 }
             }
         }
+
+        binding.transactions.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val firstVisibleItem = (binding.transactions.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                reload = firstVisibleItem <= 1
+            }
+        })
 
         with(binding.transactions) {
             adapter = this@TransactionListFragment.adapter.withLoadStateHeaderAndFooter(
@@ -116,8 +126,9 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
     override fun onResume() {
         super.onResume()
-        binding.transactions.scrollToPosition(0)
-        viewModel.load()
+        if (reload) {
+            viewModel.load()
+        }
     }
 
     private fun handleError(error: Throwable) {

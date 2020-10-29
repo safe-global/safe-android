@@ -21,7 +21,6 @@ class TxStatusView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxStatusBinding.inflate(LayoutInflater.from(context), this) }
 
-
     fun setStatus(
         @StringRes titleRes: Int,
         @DrawableRes iconRes: Int,
@@ -32,7 +31,10 @@ class TxStatusView @JvmOverloads constructor(
         binding.type.setText(titleRes)
         binding.typeIcon.setImageResource(iconRes)
 
-        if (statusTextRes == R.string.tx_status_status_awaiting_confirmations || statusTextRes == R.string.tx_status_status_awaiting_execution) {
+        if (statusTextRes == R.string.tx_status_awaiting_confirmations ||
+            statusTextRes == R.string.tx_status_awaiting_your_confirmation ||
+            statusTextRes == R.string.tx_status_awaiting_execution
+        ) {
             binding.statusLong.setText(statusTextRes)
             binding.statusLong.setTextColor(ContextCompat.getColor(context, statusColorRes))
             binding.statusLong.visible(true)
