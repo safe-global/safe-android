@@ -153,10 +153,11 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
     private fun getDivider(): View {
         val item = View(requireContext())
-        val layoutParams = LayoutParams(MATCH_PARENT, dpToPx(1))
+        val height = resources.getDimension(R.dimen.item_separator_height).toInt()
+        val layoutParams = LayoutParams(MATCH_PARENT, height)
         layoutParams.setMargins(0, dpToPx(16), 0, 0)
         item.layoutParams = layoutParams
-        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_grey))
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.item_separator))
         return item
     }
 }

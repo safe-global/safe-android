@@ -14,6 +14,7 @@
     <dimen name="item_tx_l_height">112dp</dimen>
     <dimen name="item_setting_openable_height">64dp</dimen>
     <dimen name="item_setting_non_openable_height">48dp</dimen>
-    <dimen name="item_setting_separator_size">2dp</dimen>
+    <dimen name="item_setting_margin">2dp</dimen>
+    <dimen name="item_separator_height">2dp</dimen>
     <dimen name="header_height">44dp</dimen>
 </resources>

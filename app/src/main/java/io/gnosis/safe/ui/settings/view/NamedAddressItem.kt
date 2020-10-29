@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.view
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,6 +14,7 @@ import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 
 class NamedAddressItem @JvmOverloads constructor(
     context: Context,
@@ -21,6 +23,10 @@ class NamedAddressItem @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val binding by lazy { ViewNamedAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+
+    init {
+        readAttributesAndSetupFields(context, attrs)
+    }
 
     var address: Solidity.Address? = null
         set(value) {
@@ -48,7 +54,7 @@ class NamedAddressItem @JvmOverloads constructor(
 
     var name: String? = null
         set(value) {
-            if(value.isNullOrBlank()) {
+            if (value.isNullOrBlank()) {
                 binding.name.visible(false)
             } else {
                 binding.name.visible(true)
@@ -56,4 +62,28 @@ class NamedAddressItem @JvmOverloads constructor(
             }
             field = value
         }
+
+    private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.NamedAddressItem,
+            0, 0
+        ).also {
+            runCatching {
+                applyAttributes(context, it)
+            }
+                .onFailure { Timber.e(it) }
+            it.recycle()
+        }
+    }
+
+    var showSeparator: Boolean = false
+        set(value) {
+            binding.namedAddressItemSeparator.visible(value)
+            field = value
+        }
+
+    private fun applyAttributes(context: Context, a: TypedArray) {
+        binding.namedAddressItemSeparator.visible(a.getBoolean(R.styleable.NamedAddressItem_show_named_address_separator, false))
+    }
 }
