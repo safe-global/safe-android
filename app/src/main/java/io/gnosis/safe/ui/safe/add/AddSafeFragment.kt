@@ -96,6 +96,11 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     }
 
     private fun updateAddress(address: Solidity.Address) {
+        with(binding) {
+            nextButton.isEnabled = false
+            addSafeAddressInputLayout.address = address
+            addSafeAddressInputLayout.error = null
+        }
         viewModel.validate(address)
     }
 
