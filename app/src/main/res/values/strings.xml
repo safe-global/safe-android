@@ -53,7 +53,6 @@
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
-    <string name="splash_text">The most trusted platform to manage digital assets on Ethereum</string>
 
     <string name="collectibles_empty">Collectibles will appear here</string>
     <string name="collectibles_unknown">Unknown</string>
