@@ -49,8 +49,8 @@
     <View
         android:id="@+id/address_divider"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/background"
+        android:layout_height="@dimen/item_separator_height"
+        android:background="@color/item_separator"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone" />
 </merge>

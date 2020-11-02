@@ -53,7 +53,7 @@
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
-    <string name="splash_text">The most trusted platform to store digital assets on Ethereum</string>
+    <string name="splash_text">The most trusted platform to manage digital assets on Ethereum</string>
 
     <string name="collectibles_empty">Collectibles will appear here</string>
     <string name="collectibles_unknown">Unknown</string>
@@ -106,14 +106,6 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
 
-    <string name="tx_list_awaiting_confirmations">\u2022 Awaiting confirmations</string>
-    <string name="tx_list_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
-    <string name="tx_list_awaiting_execution">\u2022 Awaiting execution</string>
-    <string name="tx_list_pending">\u2022 Pending</string>
-    <string name="tx_list_cancelled">Cancelled</string>
-    <string name="tx_list_failed">Failed</string>
-    <string name="tx_list_success">Success</string>
-
     <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
     <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
@@ -154,12 +146,13 @@
     <string name="tx_status_type_custom">Custom transaction</string>
     <string name="tx_status_type_creation">Safe created</string>
 
-    <string name="tx_status_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
-    <string name="tx_status_status_awaiting_execution">\u2022 Awaiting execution</string>
-    <string name="tx_status_status_pending">\u2022 Pending</string>
-    <string name="tx_status_status_cancelled">Cancelled</string>
-    <string name="tx_status_status_failed">Failed</string>
-    <string name="tx_status_status_success">Success</string>
+    <string name="tx_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
+    <string name="tx_status_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
+    <string name="tx_status_awaiting_execution">\u2022 Awaiting execution</string>
+    <string name="tx_status_pending">\u2022 Pending</string>
+    <string name="tx_status_cancelled">Cancelled</string>
+    <string name="tx_status_failed">Failed</string>
+    <string name="tx_status_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Contract version</string>
@@ -247,4 +240,5 @@
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
+    <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 </resources>

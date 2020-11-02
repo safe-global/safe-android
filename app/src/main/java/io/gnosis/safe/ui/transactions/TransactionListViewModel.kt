@@ -341,12 +341,12 @@ class TransactionListViewModel
     @StringRes
     private fun displayString(status: TransactionStatus, awaitingYourConfirmation: Boolean = false): Int =
         when (status) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> if (awaitingYourConfirmation) R.string.tx_list_awaiting_your_confirmation else R.string.tx_list_awaiting_confirmations
-            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_list_awaiting_execution
-            TransactionStatus.CANCELLED -> R.string.tx_list_cancelled
-            TransactionStatus.FAILED -> R.string.tx_list_failed
-            TransactionStatus.SUCCESS -> R.string.tx_list_success
-            TransactionStatus.PENDING -> R.string.tx_list_pending
+            TransactionStatus.AWAITING_CONFIRMATIONS -> if (awaitingYourConfirmation) R.string.tx_status_awaiting_your_confirmation else R.string.tx_status_awaiting_confirmations
+            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_awaiting_execution
+            TransactionStatus.CANCELLED -> R.string.tx_status_cancelled
+            TransactionStatus.FAILED -> R.string.tx_status_failed
+            TransactionStatus.SUCCESS -> R.string.tx_status_success
+            TransactionStatus.PENDING -> R.string.tx_status_pending
         }
 
     private fun historicSetFallbackHandler(transaction: SettingsChange): TransactionView.SettingsChangeVariant {

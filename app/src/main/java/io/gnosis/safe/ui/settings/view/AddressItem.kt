@@ -86,6 +86,6 @@ class AddressItem @JvmOverloads constructor(
     }
 
     private fun applyAttributes(context: Context, a: TypedArray) {
-        binding.addressDivider.visible(a.getBoolean(R.styleable.AddressItem_show_separator, false))
+        binding.addressDivider.visible(a.getBoolean(R.styleable.AddressItem_show_address_separator, false))
     }
 }

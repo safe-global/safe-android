@@ -6,6 +6,7 @@ ext {
             BOOLEAN: "boolean",
             STRING : "String",
             INT    : "int",
-            LONG   : "long"
+            LONG   : "long",
+            MAP    : "java.util.HashMap<String, String>"
     ]
 }

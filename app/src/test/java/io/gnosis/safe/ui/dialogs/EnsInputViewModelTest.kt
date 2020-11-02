@@ -1,9 +1,11 @@
 package io.gnosis.safe.ui.dialogs
 
 import io.gnosis.data.repositories.EnsRepository
+import io.gnosis.safe.R
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -53,5 +55,19 @@ class EnsInputViewModelTest {
             assert(getOrNull() == address)
         }
         coVerify(exactly = 1) { ensRepository.resolve("safe.eth") }
+    }
+
+    @Test
+    fun `processEnsInput (invalid characters in input) should throw`() = runBlockingTest {
+        coEvery { ensRepository.resolve(any()) } throws IllegalArgumentException()
+
+        val actual = runCatching { viewModel.processEnsInput("") }
+
+        with(actual) {
+            assert(isFailure)
+            assert(exceptionOrNull() is EnsResolutionError)
+            assertEquals(EnsResolutionError(msgRes = R.string.ens_name_contains_illegal_character), exceptionOrNull())
+        }
+        coVerify(exactly = 1) { ensRepository.resolve("") }
     }
 }

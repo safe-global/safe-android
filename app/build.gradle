@@ -34,13 +34,14 @@ android {
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Rinkeby"))
         buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "4")
         // Certificates
-        buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm,*.gnosis.io"))
-        buildConfigField javaTypes.STRING, "PINNED_ROOT_CERTIFICATE_HASHES", asString(getKey("ROOT_CERTIFICATE_HASH",
-                "sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=," +
-                        "sha256/f0KW/FtqTjs108NpYj42SrGvOB2PpxIVM8nWxjPqJGE=," +
-                        "sha256/NqvDJlas/GRcYbcWE8S/IceH9cq77kg0jVhZeAPXq8k=," +
-                        "sha256/9+ze1cZgR9KO1kZrVDxA4HQ6voHRCSVNz4RdTCx4U8U=," +
-                        "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="))
+        buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
+                "new ${javaTypes.MAP}()" +
+                        "{{" +
+                        "put(\"*.staging.gnosisdev.com\", \"sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=,sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
+                        "put(\"*.rinkeby.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
+                        "put(\"*.mainnet.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
+                        "put(\"*.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
+                        "}}")
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

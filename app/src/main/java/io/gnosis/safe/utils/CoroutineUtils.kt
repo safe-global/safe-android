@@ -45,7 +45,7 @@ fun <T> debounce(
     waitMs: Long = 300L,
     coroutineScope: CoroutineScope,
     destinationFunction: (T) -> Unit
-): (T) -> Unit {
+): (T) -> Job? {
     var debounceJob: Job? = null
     return { param: T ->
         debounceJob?.cancel()
@@ -53,6 +53,7 @@ fun <T> debounce(
             delay(waitMs)
             destinationFunction(param)
         }
+        debounceJob
     }
 }
 

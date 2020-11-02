@@ -15,13 +15,14 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -92,12 +93,16 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.confirmButton.isEnabled = false
                     binding.successViews.visible(false)
 
-                    when(it) {
+                    when (it) {
                         is Offline -> {
                             binding.dialogEnsInputUrlLayout.error = getString(R.string.error_no_internet)
                         }
                         is EnsResolutionError -> {
-                            binding.dialogEnsInputUrlLayout.error = it.msg ?: getString(R.string.error_resolve_ens)
+                            binding.dialogEnsInputUrlLayout.error = if (it.msgRes == 0) {
+                                it.msg ?: getString(R.string.error_resolve_ens)
+                            } else {
+                                getString(it.msgRes)
+                            }
                         }
                         else -> {
                             binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
@@ -110,14 +115,21 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
         }
     }
 
-    val onUrlChanged: (String) -> Unit = debounce(1000, lifecycleScope, this::onUrlAvailable)
+    val onUrlChanged: (String) -> Job? = debounce(1000, lifecycleScope, this::onUrlAvailable)
 
     private fun processInput() {
+        var job: Job? = null
         binding.dialogEnsInputUrl.doOnTextChanged { text, _, _, _ ->
             binding.successViews.visible(false)
             binding.dialogEnsInputUrlLayout.isErrorEnabled = false
-            binding.dialogEnsInputProgress.visible(true)
-            onUrlChanged(text.toString())
+            if (text.toString().isNotEmpty()) {
+                binding.dialogEnsInputProgress.visible(true)
+                job = onUrlChanged(text.toString())
+            } else {
+                binding.dialogEnsInputProgress.visible(false)
+                job?.cancel("Empty ENS name")
+                binding.confirmButton.isEnabled = false
+            }
         }
     }
 
