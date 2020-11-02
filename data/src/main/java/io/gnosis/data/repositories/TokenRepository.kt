@@ -1,5 +1,6 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.backend.dto.tokenAsErc20Token
@@ -65,7 +66,7 @@ class TokenRepository(
 
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
-        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
+        val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", BuildConfig.NATIVE_CURRENCY_SYMBOL, 18, "local::ethereum")
+        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL, "Ether", "local::ethereum")
     }
 }

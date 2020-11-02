@@ -15,6 +15,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import org.junit.Assert.assertEquals
@@ -39,7 +40,7 @@ class TxUtilsKtTest {
         val txInfo = TransactionInfo.Unknown
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -52,7 +53,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -65,7 +66,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("-1 ETH", result)
+        assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -79,7 +80,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("-1 ETH", result)
+        assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -93,7 +94,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test

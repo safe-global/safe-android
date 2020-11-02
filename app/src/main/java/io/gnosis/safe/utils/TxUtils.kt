@@ -6,6 +6,7 @@ import io.gnosis.data.models.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.getVersionForAddress
@@ -17,7 +18,7 @@ const val DEFAULT_ERC721_SYMBOL = "NFT"
 fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
         is TransactionInfo.Custom -> {
-            balanceFormatter.formatAmount(txInfo.value, false, 18, "ETH")
+            balanceFormatter.formatAmount(txInfo.value, false, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL)
         }
         is TransactionInfo.Transfer -> {
             val incoming = txInfo.direction == TransactionDirection.INCOMING
@@ -36,7 +37,7 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
                     transferInfo.tokenSymbol ?: DEFAULT_ERC721_SYMBOL
                 }
                 else -> {
-                    "ETH"
+                    BuildConfig.NATIVE_CURRENCY_SYMBOL
                 }
             }
             val value = when (val transferInfo = txInfo.transferInfo) {
@@ -54,9 +55,9 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
             }
             balanceFormatter.formatAmount(value, incoming, decimals, symbol)
         }
-        is TransactionInfo.SettingsChange -> "0 ETH"
-        is TransactionInfo.Creation -> "0 ETH"
-        TransactionInfo.Unknown -> "0 ETH"
+        is TransactionInfo.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfo.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        TransactionInfo.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
     }
 
 fun TransactionInfo.logoUri(): String? =

@@ -43,6 +43,8 @@ android {
                         "put(\"*.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
                         "}}")
 
+        buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "ETH"))
+
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
@@ -109,8 +111,8 @@ android {
             signingConfig signingConfigs.debug
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "xDai"))
             buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "100")
-//            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://xdai.infura.io/v3/"))
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rpc.xdaichain.com/"))
+            buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "XDAI"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")

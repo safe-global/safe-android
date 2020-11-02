@@ -14,7 +14,9 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "ETH"))
     }
+
     buildTypes {
 
         debug {
@@ -38,6 +40,7 @@ android {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.xdai.gnosis.io/api/"))
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.xdai.gnosis.io/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.xdai.gnosis.io/"))
+            buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "XDAI"))
         }
         release {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.gnosis.io/api/"))
