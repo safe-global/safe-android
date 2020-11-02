@@ -125,8 +125,8 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address.formatForTxList()
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
-            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
             nonce.text = viewTransfer.nonce
 
@@ -277,9 +277,9 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
 
             dateTime.text = viewTransfer.dateTimeText
 
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
-            confirmationsIcon.visibility = View.VISIBLE
 
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
