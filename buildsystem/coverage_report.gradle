@@ -13,6 +13,9 @@ jacoco {
     version = versions.jacoco
 }
 
+// You can find the html result after executing task createDebugTestCoverage:
+// app/build/reports/jacoco/createDebugTestCoverage/html/index.html
+// data/build/reports/jacoco/createDebugTestCoverage/html/index.html
 def variants = null
 if (android.hasProperty('libraryVariants')) {
     variants = android.libraryVariants
@@ -41,10 +44,13 @@ if (variants != null) {
                 '**/Dagger*Component*$Builder.class', // covers component builders
                 '**/*_*Factory*.class',
                 '**/*_*Impl*.class',
+//                '**/*Fragment.class',
+//                '**/*View.class',
         ]
         def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/${variant.name}", excludes: fileFilter)
         def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
         def mainSrc = "${project.projectDir}/src/main/java"
+
         task("create${variantName}TestCoverage", type: JacocoReport, dependsOn: ["test${variantName}UnitTest", "connected${variantName}AndroidTest"]) {
             group = "Reporting"
             description = "Generate Jacoco coverage reports after running UI and Unit tests."
