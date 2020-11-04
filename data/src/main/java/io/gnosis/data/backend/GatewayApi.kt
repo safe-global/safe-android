@@ -1,6 +1,7 @@
 package io.gnosis.data.backend
 
 import io.gnosis.data.BuildConfig
+import io.gnosis.data.backend.dto.CoinBalancesDto
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
 import io.gnosis.data.backend.dto.GateTransactionDto
 import io.gnosis.data.backend.dto.TransactionConfirmationRequest
@@ -8,6 +9,9 @@ import io.gnosis.data.models.Page
 import retrofit2.http.*
 
 interface GatewayApi {
+
+    @GET("/v1/safes/{address}/balances/{fiat}")
+    suspend fun loadBalances(@Path("address") address: String, @Path("fiat") fiat: String = "usd"): CoinBalancesDto
 
     @GET("v1/safes/{address}/transactions")
     suspend fun loadTransactions(@Path("address") address: String): Page<GateTransactionDto>
