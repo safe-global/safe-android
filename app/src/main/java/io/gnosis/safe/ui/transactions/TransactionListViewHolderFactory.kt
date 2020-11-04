@@ -249,7 +249,6 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
-            confirmationsIcon.visibility = View.VISIBLE
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             version.visibility = viewTransfer.visibilityVersion
