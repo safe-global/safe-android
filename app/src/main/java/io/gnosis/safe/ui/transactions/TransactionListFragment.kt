@@ -60,19 +60,16 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
-                val refresh = loadState.refresh
-                if (refresh is LoadState.Error) {
-                    handleError(refresh.error)
+                loadState.refresh.let {
+                    if (it is LoadState.Error) handleError(it.error)
                 }
-                val append = loadState.append
-                if (append is LoadState.Error) {
-                    handleError(append.error)
+                loadState.append.let {
+                    if (it is LoadState.Error) handleError(it.error)
                 }
-                val prepend = loadState.prepend
-                if (prepend is LoadState.Error) {
-                    handleError(prepend.error)
+                loadState.prepend.let {
+                    if (it is LoadState.Error) handleError(it.error)
                 }
-
+                
                 if (viewModel.state.value?.viewAction is LoadTransactions && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     showEmptyState()
                 } else {
