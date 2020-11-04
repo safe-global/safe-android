@@ -28,6 +28,6 @@ adb shell settings put global animator_duration_scale 0
 adb shell am start -n io.gnosis.safe.debug/io.gnosis.safe.ui.splash.SplashActivity
 
 echo "Execute UI tests"
-./gradlew createDebugTestCoverage --stacktrace
+./gradlew jacocoTestCoverageVerification --stacktrace
 
 bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'

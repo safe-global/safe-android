@@ -13,27 +13,33 @@ jacoco {
     version = versions.jacoco
 }
 
-private static boolean isAndroidModule(Project project) {
-    boolean isAndroidLibrary = project.plugins.hasPlugin('com.android.library')
-    boolean isAndroidApp = project.plugins.hasPlugin('com.android.application')
-    return isAndroidLibrary || isAndroidApp
+afterEvaluate { project ->
+    def ignoreList = jacocoIgnoreList
+    def projectName = project.name
+    if (ignoreList.contains(projectName)) {
+        println "Jacoco: ignoring project ${projectName}"
+        return false
+    }
+    def threshold = project.hasProperty('jacocoCoverageThreshold')
+            ? project.jacocoCoverageThreshold
+            : project.jacocoCoverageThresholdDefault
+    setupTestExistenceValidationTask()
+    if (isAndroidModule(project)) {
+        setupAndroidReporting()
+        setupAndroidCoverageVerification(threshold)
+    } else {
+        setupKotlinReporting()
+        setupKotlinCoverageVerification(threshold)
+    }
 }
-
-
-//afterEvaluate { project ->
-//    if (isAndroidModule(project)) {
-//        setupAndroidReporting()
-//    } else {
-//        setupKotlinReporting()
-//    }
-//}
 
 def setupKotlinReporting() {
     jacocoTestReport {
         dependsOn test
+        dependsOn createDebugCoverageReport
         reports {
-            csv.enabled false // change if needed
-            xml.enabled true // change if needed
+            csv.enabled false
+            xml.enabled true
             html {
                 enabled true
                 destination file("${buildDir}/coverage-report")
@@ -48,7 +54,13 @@ def setupAndroidReporting() {
         jacoco.includeNoLocationClasses true
     }
 
-    task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+    task jacocoTestReport(
+            type: JacocoReport,
+            dependsOn: [
+                    'testDebugUnitTest',
+                    'createDebugCoverageReport'
+            ]
+    ) {
         reports {
             csv.enabled false
             xml.enabled true
@@ -77,8 +89,6 @@ def setupAndroidReporting() {
                 '**/Dagger*Component*$Builder.class', // covers component builders
                 '**/*_*Factory*.class',
                 '**/*_*Impl*.class',
-//                '**/*Fragment.class',
-//                '**/*View.class',
         ]
         def debugTree = fileTree(
                 dir: "$buildDir/tmp/kotlin-classes/debug",
@@ -98,7 +108,13 @@ def setupAndroidReporting() {
 }
 
 def setupAndroidCoverageVerification(threshold) {
-    task jacocoTestCoverageVerification(type: JacocoCoverageVerification, dependsOn: [ 'testDebugUnitTest' ]) {
+    task jacocoTestCoverageVerification(
+            type: JacocoCoverageVerification,
+            dependsOn: [
+                    'testDebugUnitTest',
+                    'testExistenceValidation'
+            ]
+    ) {
         violationRules {
             rule {
                 limit {
@@ -122,9 +138,12 @@ def setupAndroidCoverageVerification(threshold) {
         )
     }
 }
+
 def setupKotlinCoverageVerification(threshold) {
     jacocoTestCoverageVerification {
         dependsOn test
+        dependsOn testExistenceValidation
+
         violationRules {
             rule {
                 limit {
@@ -135,32 +154,14 @@ def setupKotlinCoverageVerification(threshold) {
     }
 }
 
-afterEvaluate { project ->
-    def ignoreList = jacocoIgnoreList
-    def projectName = project.name
-    if (ignoreList.contains(projectName)) {
-        println "Jacoco: ignoring project ${projectName}"
-        return false
-    }
-    def threshold = project.hasProperty('jacocoCoverageThreshold')
-            ? project.jacocoCoverageThreshold
-            : project.jacocoCoverageThresholdDefault
-    if (isAndroidModule(project)) {
-        setupAndroidReporting()
-        setupAndroidCoverageVerification(threshold)
-    } else {
-        setupKotlinReporting()
-        setupKotlinCoverageVerification(threshold)
-    }
+def setupTestExistenceValidationTask() {
+    task testExistenceValidation(type: TestExistenceValidation)
 }
 
 project.ext {
     jacocoCoverageThresholdDefault = 0.60
 
-    jacocoIgnoreList = [
-            "module-name-1",
-            "module-name-2"
-    ]
+    jacocoIgnoreList = [] // add module names to ignore
     // Exclude file by names, packages or types. Such files will be ignored during test coverage
     // calculation
     jacocoFileFilter = [
@@ -176,13 +177,27 @@ project.ext {
     ]
 }
 
+private static boolean isAndroidModule(Project project) {
+    def isAndroidLibrary = project.plugins.hasPlugin('com.android.library')
+    def isAndroidApp = project.plugins.hasPlugin('com.android.application')
+    return isAndroidLibrary || isAndroidApp
+}
+
+// Modules without any unit tests should also fail validation
 class TestExistenceValidation extends DefaultTask {
+
     static final SRC_DIR = 'src'
     static final JAVA_DIR = 'java'
     static final TEST_DIRS = ['test', 'androidTest']
+
+    static final IGNORED_NAME_PATTERNS = [
+            ~/^sample-.++$/
+    ]
+
     @TaskAction
     void execute() {
-        if (shouldSkip(project)) return // implement `shouldSkip` as required for your project or just remove this line
+        if (shouldSkip(project)) return
+
         File srcDir = new File(project.projectDir, SRC_DIR)
         FileFilter filter = { it.isDirectory() }
         File[] subDirs = srcDir.listFiles(filter) ?: []
@@ -195,6 +210,16 @@ class TestExistenceValidation extends DefaultTask {
                 return
             }
         }
-        throw new GradleException("${project.name} has no unit tests.")
+
+        throw new GradleException(
+                "${project.name} has no unit tests. "
+        )
+    }
+
+    private static boolean shouldSkip(Project project) {
+        def name = project.name
+        return IGNORED_NAME_PATTERNS
+                .collect { name =~ it } // convert Pattern to Matcher
+                .any { it.find() }
     }
 }
