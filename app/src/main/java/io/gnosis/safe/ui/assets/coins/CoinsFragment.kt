@@ -61,7 +61,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                             }
                             is UpdateBalances -> {
                                 binding.contentNoData.root.visibility = View.GONE
-                                adapter.setItems(action.newBalances)
+                                adapter.setItems(action.newBalances, action.newTotal)
                             }
                             is ShowError -> {
                                 hideLoading()

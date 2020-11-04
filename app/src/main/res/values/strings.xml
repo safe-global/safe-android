@@ -50,6 +50,7 @@
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
     <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
 
+    <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>

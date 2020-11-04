@@ -6,6 +6,7 @@ import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class CoinsViewModel
@@ -28,8 +29,8 @@ class CoinsViewModel
             val safe = safeRepository.getActiveSafe()
             if (safe != null) {
                 updateState { CoinsState(loading = !refreshing, refreshing = refreshing, viewAction = if(refreshing) null else ViewAction.UpdateActiveSafe(safe)) }
-                val balances = tokenRepository.loadBalanceOf(safe.address)
-                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
+                val balanceInfo = tokenRepository.loadBalanceOf(safe.address)
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balanceInfo.items, balanceInfo.fiatTotal)) }
             }
         }
     }
@@ -42,5 +43,6 @@ data class CoinsState(
 ) : BaseStateViewModel.State
 
 data class UpdateBalances(
-    val newBalances: List<Balance>
+    val newBalances: List<Balance>,
+    val newTotal: BigDecimal
 ) : BaseStateViewModel.ViewAction
