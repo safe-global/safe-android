@@ -247,6 +247,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             label.setText(viewTransfer.label)
             nonce.text = viewTransfer.nonce
 
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
