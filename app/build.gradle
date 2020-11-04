@@ -274,3 +274,7 @@ task printVersion {
         println android.defaultConfig.versionName
     }
 }
+
+ext {
+    jacocoCoverageThreshold = 0.3 // 30%
+}

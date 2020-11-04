@@ -13,18 +13,51 @@ jacoco {
     version = versions.jacoco
 }
 
-// You can find the html result after executing task createDebugTestCoverage:
-// app/build/reports/jacoco/createDebugTestCoverage/html/index.html
-// data/build/reports/jacoco/createDebugTestCoverage/html/index.html
-def variants = null
-if (android.hasProperty('libraryVariants')) {
-    variants = android.libraryVariants
-} else if (android.hasProperty('applicationVariants')) {
-    variants = android.applicationVariants
+private static boolean isAndroidModule(Project project) {
+    boolean isAndroidLibrary = project.plugins.hasPlugin('com.android.library')
+    boolean isAndroidApp = project.plugins.hasPlugin('com.android.application')
+    return isAndroidLibrary || isAndroidApp
 }
-if (variants != null) {
-    variants.all { variant ->
-        def variantName = variant.name.capitalize()
+
+
+//afterEvaluate { project ->
+//    if (isAndroidModule(project)) {
+//        setupAndroidReporting()
+//    } else {
+//        setupKotlinReporting()
+//    }
+//}
+
+def setupKotlinReporting() {
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            csv.enabled false // change if needed
+            xml.enabled true // change if needed
+            html {
+                enabled true
+                destination file("${buildDir}/coverage-report")
+            }
+        }
+    }
+}
+
+def setupAndroidReporting() {
+    tasks.withType(Test) {
+        // Whether or not classes without source location should be instrumented
+        jacoco.includeNoLocationClasses true
+    }
+
+    task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+        reports {
+            csv.enabled false
+            xml.enabled true
+            html {
+                enabled true
+                destination file("${buildDir}/coverage-report")
+            }
+        }
+        // Change as needed
         def fileFilter = [
                 '**/*Test*.*',
                 '**/AutoValue_*.*',
@@ -47,25 +80,121 @@ if (variants != null) {
 //                '**/*Fragment.class',
 //                '**/*View.class',
         ]
-        def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/${variant.name}", excludes: fileFilter)
-        def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
-        def mainSrc = "${project.projectDir}/src/main/java"
+        def debugTree = fileTree(
+                dir: "$buildDir/tmp/kotlin-classes/debug",
+                excludes: fileFilter
+        )
+        def mainSrc = "$projectDir/src/main/java"
+        sourceDirectories.from = files([mainSrc])
+        classDirectories.from = files([debugTree])
+        executionData.from = fileTree(
+                dir: project.buildDir,
+                includes: [
+                        'jacoco/testDebugUnitTest.exec',
+                        'outputs/code-coverage/connected/*coverage.ec'
+                ]
+        )
+    }
+}
 
-        task("create${variantName}TestCoverage", type: JacocoReport, dependsOn: ["test${variantName}UnitTest", "connected${variantName}AndroidTest"]) {
-            group = "Reporting"
-            description = "Generate Jacoco coverage reports after running UI and Unit tests."
-            reports {
-                csv.enabled = false
-                xml.enabled = true
-                html.enabled = true
+def setupAndroidCoverageVerification(threshold) {
+    task jacocoTestCoverageVerification(type: JacocoCoverageVerification, dependsOn: [ 'testDebugUnitTest' ]) {
+        violationRules {
+            rule {
+                limit {
+                    minimum = threshold
+                }
             }
-
-            sourceDirectories.from = files([mainSrc])
-            classDirectories.from = files([debugTree], [kotlinTree])
-            executionData.from = fileTree(dir: "$buildDir", includes: [
-                    "jacoco/test${variantName}UnitTest.exec",
-                    "outputs/code-coverage/connected/*coverage.ec"
-            ])
         }
+        final def coverageSourceDirs = [
+                "$projectDir/src/main/java",
+                "$projectDir/src/main/kotlin"
+        ]
+        final def debugTree = fileTree(
+                dir: "$buildDir/tmp/kotlin-classes/debug",
+                excludes: jacocoFileFilter
+        )
+        sourceDirectories.from = files(coverageSourceDirs)
+        classDirectories.from = files([debugTree])
+        executionData.from = fileTree(
+                dir: project.buildDir,
+                includes: ['jacoco/testDebugUnitTest.exec']
+        )
+    }
+}
+def setupKotlinCoverageVerification(threshold) {
+    jacocoTestCoverageVerification {
+        dependsOn test
+        violationRules {
+            rule {
+                limit {
+                    minimum = threshold
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate { project ->
+    def ignoreList = jacocoIgnoreList
+    def projectName = project.name
+    if (ignoreList.contains(projectName)) {
+        println "Jacoco: ignoring project ${projectName}"
+        return false
+    }
+    def threshold = project.hasProperty('jacocoCoverageThreshold')
+            ? project.jacocoCoverageThreshold
+            : project.jacocoCoverageThresholdDefault
+    if (isAndroidModule(project)) {
+        setupAndroidReporting()
+        setupAndroidCoverageVerification(threshold)
+    } else {
+        setupKotlinReporting()
+        setupKotlinCoverageVerification(threshold)
+    }
+}
+
+project.ext {
+    jacocoCoverageThresholdDefault = 0.60
+
+    jacocoIgnoreList = [
+            "module-name-1",
+            "module-name-2"
+    ]
+    // Exclude file by names, packages or types. Such files will be ignored during test coverage
+    // calculation
+    jacocoFileFilter = [
+            '**/*App.*',
+            '**/*Application.*',
+            '**/*Activity.*',
+            '**/*Fragment.*',
+            '**/*View.*',
+            '**/*ViewGroup.*',
+            '**/*JsonAdapter.*',
+            '**/di/**',
+            '**/*Dagger.*'
+    ]
+}
+
+class TestExistenceValidation extends DefaultTask {
+    static final SRC_DIR = 'src'
+    static final JAVA_DIR = 'java'
+    static final TEST_DIRS = ['test', 'androidTest']
+    @TaskAction
+    void execute() {
+        if (shouldSkip(project)) return // implement `shouldSkip` as required for your project or just remove this line
+        File srcDir = new File(project.projectDir, SRC_DIR)
+        FileFilter filter = { it.isDirectory() }
+        File[] subDirs = srcDir.listFiles(filter) ?: []
+        File testsDir = subDirs.find { TEST_DIRS.contains(it.name) }
+        if (testsDir) {
+            File javaTestsDir = testsDir
+                    .listFiles(filter)
+                    .find { it.name == JAVA_DIR }
+            if (javaTestsDir && javaTestsDir.list().length > 0) {
+                return
+            }
+        }
+        throw new GradleException("${project.name} has no unit tests.")
     }
 }
