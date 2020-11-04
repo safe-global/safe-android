@@ -1,7 +1,6 @@
 package io.gnosis.data.models
 
 import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
@@ -45,7 +44,7 @@ sealed class Transaction {
         val sender: Solidity.Address,
         val value: BigInteger,
         val date: Date?,
-        val tokenInfo: ServiceTokenInfo?,
+        val tokenInfo: TokenInfo?,
         val nonce: BigInteger?,
         val incoming: Boolean
     ) : Transaction()
