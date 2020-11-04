@@ -1,8 +1,6 @@
 package io.gnosis.safe.ui.assets.coins
 
-import io.gnosis.data.models.Balance
-import io.gnosis.data.models.Erc20Token
-import io.gnosis.data.models.Safe
+import io.gnosis.data.models.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
@@ -101,13 +99,13 @@ class CoinsViewModelTest {
         val balances = listOf(buildBalance(0), buildBalance(1), buildBalance(2))
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { tokenRepository.loadBalanceOf(any()) } returns balances
+        coEvery { tokenRepository.loadBalanceOf(any()) } returns CoinBalances(BigDecimal.ZERO, balances)
 
         viewModel.load()
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances))
+            CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances, BigDecimal.ZERO))
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
@@ -116,19 +114,20 @@ class CoinsViewModelTest {
         }
     }
 
-    private fun buildErc20Token(index: Long) =
-        Erc20Token(
-            Solidity.Address(BigInteger.valueOf(index)),
-            "name$index",
-            "symbol$index",
-            15,
-            "logo.url.$index"
-        )
-
     private fun buildBalance(index: Long) =
         Balance(
-            buildErc20Token(index),
+            buildTokenInfo(index),
             BigInteger.valueOf(index),
             BigDecimal.valueOf(index)
+        )
+
+    private fun buildTokenInfo(index: Long) =
+        TokenInfo(
+            TokenType.ERC20,
+            Solidity.Address(BigInteger.valueOf(index)),
+            15,
+            "symbol$index",
+            "name$index",
+            "logo.uri.$index"
         )
 }
