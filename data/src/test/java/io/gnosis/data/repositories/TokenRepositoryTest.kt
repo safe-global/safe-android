@@ -4,13 +4,19 @@ import com.squareup.moshi.Types
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.*
+import io.gnosis.data.backend.dto.BalanceDto
+import io.gnosis.data.backend.dto.CoinBalancesDto
+import io.gnosis.data.backend.dto.CollectibleDto
+import io.gnosis.data.backend.dto.TokenInfoDto
 import io.gnosis.data.models.Balance
 import io.gnosis.data.models.CoinBalances
 import io.gnosis.data.models.TokenInfo
 import io.gnosis.data.models.TokenType
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -67,8 +73,35 @@ class TokenRepositoryTest {
         with(actual) {
             assert(isSuccess)
             assertEquals(
-                getOrNull(),
-                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected))
+                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
+                getOrNull()
+            )
+        }
+        coVerifySequence {
+            gatewayApi.loadBalances(address.asEthereumAddressChecksumString())
+        }
+    }
+
+    @Test
+    fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
+        val address = Solidity.Address(BigInteger.ONE)
+        val balanceDto = buildBalanceDto(1)
+        val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = ETH_TOKEN_INFO) }
+        coEvery { gatewayApi.loadBalances(any()) } returns
+                CoinBalancesDto(
+                    BigDecimal.ZERO,
+                    listOf(
+                        balanceDto.copy(balanceDto.tokenInfo.copy(address = Solidity.Address(BigInteger.ZERO)))
+                    )
+                )
+
+        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
+
+        with(actual) {
+            assert(isSuccess)
+            assertEquals(
+                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
+                getOrNull()
             )
         }
         coVerifySequence {
@@ -88,8 +121,8 @@ class TokenRepositoryTest {
         with(actual) {
             assert(isSuccess)
             assertEquals(
-                getOrNull(),
-                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected))
+                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
+                getOrNull()
             )
         }
         coVerifySequence {
