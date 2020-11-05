@@ -78,15 +78,11 @@ android {
         }
 
         unsafe {
+            initWith debug
             applicationIdSuffix ".unsafe"
             versionNameSuffix "-unsafe"
-            debuggable true
-            minifyEnabled false
-            signingConfig signingConfigs.debug
             buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
             buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
-            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
             // Certificates
             buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                     "new ${javaTypes.MAP}()" +
