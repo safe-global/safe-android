@@ -6,7 +6,7 @@ steps:
 
   - label: 'Upload App Distribution Unsafe'
     if: build.branch == "release"
-    key: 'upload-firebase-unsafe'
+    key: 'upload-firebase-internal'
     command: 'ci/upload_app_distribution.sh internal-beta unsafe'
 
   - label: 'Upload App Distribution Rinkeby'
