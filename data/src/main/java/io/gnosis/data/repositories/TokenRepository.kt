@@ -1,28 +1,43 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.tokenAsErc20Token
-import io.gnosis.data.db.daos.Erc20TokenDao
-import io.gnosis.data.models.Balance
-import io.gnosis.data.models.Collectible
-import io.gnosis.data.models.Erc20Token
+import io.gnosis.data.models.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class TokenRepository(
-    private val erc20TokenDao: Erc20TokenDao,
-    private val transactionServiceApi: TransactionServiceApi
+    private val transactionServiceApi: TransactionServiceApi,
+    private val gatewayApi: GatewayApi
 ) {
 
-    suspend fun loadBalanceOf(safe: Solidity.Address): List<Balance> =
-        transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString())
-            .map {
-                val token = it.tokenAsErc20Token()
-                erc20TokenDao.insertToken(token)
-                Balance(token, it.balance, it.balanceUsd)
-            }
+    suspend fun loadBalanceOf(safe: Solidity.Address): CoinBalances {
+        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
+        return CoinBalances(response.fiatTotal, response.items.map {
+
+            if (it.tokenInfo.address == null || it.tokenInfo.address == ZERO_ADDRESS)
+                Balance(
+                    ETH_TOKEN_INFO,
+                    it.balance,
+                    it.fiatBalance
+                )
+            else
+                Balance(
+                    TokenInfo(
+                        TokenType.valueOf(it.tokenInfo.tokenType),
+                        it.tokenInfo.address,
+                        it.tokenInfo.decimals,
+                        it.tokenInfo.symbol,
+                        it.tokenInfo.name,
+                        it.tokenInfo.logoUri
+                            ?: "https://gnosis-safe-token-logos.s3.amazonaws.com/${it.tokenInfo.address.asEthereumAddressChecksumString()}.png"
+                    ),
+                    it.balance,
+                    it.fiatBalance
+                )
+        })
+    }
 
     //FIXME: use client gateway (grouping and sorting will be done on the backend side)
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
@@ -65,7 +80,13 @@ class TokenRepository(
 
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", "ETH", 18, "local::ethereum")
-        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, "ETH", "Ether", "local::ethereum")
+        val ETH_TOKEN_INFO = TokenInfo(
+            TokenType.ETHER,
+            ZERO_ADDRESS,
+            18,
+            "ETH",
+            "Ether",
+            "local::ethereum"
+        )
     }
 }

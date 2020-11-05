@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import io.gnosis.safe.di.ViewModelFactory
 import io.gnosis.safe.di.ViewModelKey
-import io.gnosis.safe.ui.assets.SafeBalancesViewModel
+import io.gnosis.safe.ui.assets.AssetsViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
@@ -63,8 +63,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SafeBalancesViewModel::class)
-    abstract fun providesSafeBalancesViewModel(viewModel: SafeBalancesViewModel): ViewModel
+    @ViewModelKey(AssetsViewModel::class)
+    abstract fun providesSafeBalancesViewModel(viewModel: AssetsViewModel): ViewModel
 
     @Binds
     @IntoMap

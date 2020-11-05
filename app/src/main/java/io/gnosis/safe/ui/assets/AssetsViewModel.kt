@@ -7,7 +7,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-class SafeBalancesViewModel @Inject constructor(
+class AssetsViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeBalancesState>(appDispatchers) {
