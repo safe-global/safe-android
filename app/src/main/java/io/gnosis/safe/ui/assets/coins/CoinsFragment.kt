@@ -14,6 +14,8 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
+import io.gnosis.safe.ui.base.adapter.Adapter
+import io.gnosis.safe.ui.base.adapter.MultiViewHolderAdapter
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.getErrorResForException
@@ -29,7 +31,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
     @Inject
     lateinit var viewModel: CoinsViewModel
 
-    private lateinit var adapter: CoinBalanceAdapter
+    private val adapter by lazy { MultiViewHolderAdapter(CoinsViewHolderFactory()) }
 
     override fun screenId() = ScreenId.ASSETS_COINS
 
@@ -42,7 +44,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = CoinBalanceAdapter(balanceFormatter)
         with(binding) {
             coins.adapter = adapter
             coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
@@ -57,11 +58,11 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                     state.viewAction?.let { action ->
                         when (action) {
                             is UpdateActiveSafe -> {
-                                adapter.setItems(listOf())
+                                adapter.updateData(Adapter.Data(null, listOf()))
                             }
                             is UpdateBalances -> {
                                 binding.contentNoData.root.visibility = View.GONE
-                                adapter.setItems(action.newBalances, action.newTotal)
+                                adapter.updateData(action.newBalances)
                             }
                             is ShowError -> {
                                 hideLoading()
