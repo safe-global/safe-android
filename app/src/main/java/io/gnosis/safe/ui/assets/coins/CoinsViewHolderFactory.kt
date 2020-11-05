@@ -45,7 +45,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
             logoImage.loadTokenLogo(coinBalance.logoUri)
             symbol.text = coinBalance.symbol
             balance.text = coinBalance.balance
-            balanceUsd.text = coinBalance.balanceFiat
+            balanceUsd.text = root.context.getString(coinBalance.balanceFiatStringRes, coinBalance.balanceFiat)
         }
     }
 }
@@ -54,7 +54,7 @@ class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : Ba
 
     override fun bind(total: CoinsViewData.TotalBalance, payloads: List<Any>) {
         with(viewBinding) {
-            totalBalance.text = total.totalFiat
+            totalBalance.text = root.context.getString(total.balanceFiatStringRes, total.totalFiat)
         }
     }
 }

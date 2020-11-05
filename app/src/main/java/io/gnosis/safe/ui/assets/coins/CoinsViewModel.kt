@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.assets.coins
 import io.gnosis.data.models.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
@@ -52,7 +53,8 @@ class CoinsViewModel
         val result = mutableListOf<CoinsViewData>()
 
         val totalBalance = CoinsViewData.TotalBalance(
-            "$ ${balanceFormatter.shortAmount(coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP))}"
+            balanceFormatter.shortAmount(coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP)),
+            R.string.usd_balance
         )
         result.add(totalBalance)
 
@@ -61,7 +63,8 @@ class CoinsViewModel
                 it.tokenInfo.symbol,
                 it.tokenInfo.logoUri,
                 balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
-                "$ ${balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP))}"
+                balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
+                R.string.usd_balance
 
             ))
         }
