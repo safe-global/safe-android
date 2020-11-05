@@ -9,7 +9,7 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
-import io.gnosis.safe.ui.assets.SafeBalancesViewModel
+import io.gnosis.safe.ui.assets.AssetsViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
@@ -87,7 +87,7 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesSafeBalancesViewModel(provider: ViewModelProvider) = provider[SafeBalancesViewModel::class.java]
+    fun providesSafeBalancesViewModel(provider: ViewModelProvider) = provider[AssetsViewModel::class.java]
 
     @Provides
     @ForView

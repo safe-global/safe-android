@@ -24,7 +24,7 @@ import javax.inject.Inject
 class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
     @Inject
-    lateinit var viewModel: SafeBalancesViewModel
+    lateinit var viewModel: AssetsViewModel
 
     private lateinit var pager: BalancesPagerAdapter
 

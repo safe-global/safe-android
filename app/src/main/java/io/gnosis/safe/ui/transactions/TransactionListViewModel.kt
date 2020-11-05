@@ -4,7 +4,6 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -17,7 +16,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -458,7 +457,7 @@ class TransactionListViewModel
             dateTimeText = custom.date?.formatBackendDate() ?: "",
             address = custom.address,
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(custom),
             nonce = custom.nonce?.toString() ?: ""
@@ -485,7 +484,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = custom.nonce?.toString() ?: "",
             dataSizeText = if (custom.dataSize >= 0) "${custom.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_SERVICE_TOKEN_INFO.decimals, ETH_SERVICE_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(custom.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
             amountColor = if (custom.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
@@ -516,7 +515,7 @@ class TransactionListViewModel
     private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
         val symbol = viewTransfer.tokenInfo?.symbol.let { symbol ->
             if (symbol.isNullOrEmpty()) {
-                getDefaultSymbol(viewTransfer.tokenInfo?.type)
+                getDefaultSymbol(viewTransfer.tokenInfo?.tokenType)
             } else {
                 symbol
             }
@@ -524,9 +523,9 @@ class TransactionListViewModel
         return balanceFormatter.formatAmount(viewTransfer.value, incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
     }
 
-    private fun getDefaultSymbol(type: ServiceTokenInfo.TokenType?): String = when (type) {
-        ServiceTokenInfo.TokenType.ERC721 -> DEFAULT_ERC721_SYMBOL
-        ServiceTokenInfo.TokenType.ERC20 -> DEFAULT_ERC20_SYMBOL
+    private fun getDefaultSymbol(type: TokenType?): String = when (type) {
+        TokenType.ERC721 -> DEFAULT_ERC721_SYMBOL
+        TokenType.ERC20 -> DEFAULT_ERC20_SYMBOL
         else -> ""
     }
 
