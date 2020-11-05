@@ -67,6 +67,7 @@ android {
     }
 
     buildTypes {
+
         debug {
             testCoverageEnabled true
             applicationIdSuffix ".debug"
@@ -74,6 +75,27 @@ android {
             minifyEnabled false
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
+        }
+
+        unsafe {
+            applicationIdSuffix ".unsafe"
+            versionNameSuffix "-unsafe"
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
+            buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
+            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
+            // Certificates
+            buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
+                    "new ${javaTypes.MAP}()" +
+                            "{{" +
+                            "}}")
+            firebaseAppDistribution {
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
+            }
         }
 
         internal {
