@@ -16,7 +16,7 @@ class TokenRepository(
         val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
         return CoinBalances(response.fiatTotal, response.items.map {
 
-            if (it.tokenInfo.address == null)
+            if (it.tokenInfo.address == null || it.tokenInfo.address == ZERO_ADDRESS)
                 Balance(
                     ETH_TOKEN_INFO,
                     it.balance,
