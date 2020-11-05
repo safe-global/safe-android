@@ -35,7 +35,7 @@ afterEvaluate { project ->
 
 def setupKotlinReporting() {
     jacocoTestReport {
-        dependsOn test
+        dependsOn testDebugUnitTest
         dependsOn createDebugCoverageReport
         reports {
             csv.enabled false
@@ -70,7 +70,7 @@ def setupAndroidReporting() {
             }
         }
         // Change as needed
-        def fileFilter = [
+        def testCoverageFileFilter = [
                 '**/*Test*.*',
                 '**/AutoValue_*.*',
                 '**/*JavascriptBridge.class',
@@ -92,7 +92,7 @@ def setupAndroidReporting() {
         ]
         def debugTree = fileTree(
                 dir: "$buildDir/tmp/kotlin-classes/debug",
-                excludes: fileFilter
+                excludes: testCoverageFileFilter
         )
         def mainSrc = "$projectDir/src/main/java"
         sourceDirectories.from = files([mainSrc])
@@ -128,7 +128,7 @@ def setupAndroidCoverageVerification(threshold) {
         ]
         final def debugTree = fileTree(
                 dir: "$buildDir/tmp/kotlin-classes/debug",
-                excludes: jacocoFileFilter
+                excludes: jacocoThresholdFileFilter
         )
         sourceDirectories.from = files(coverageSourceDirs)
         classDirectories.from = files([debugTree])
@@ -141,7 +141,7 @@ def setupAndroidCoverageVerification(threshold) {
 
 def setupKotlinCoverageVerification(threshold) {
     jacocoTestCoverageVerification {
-        dependsOn test
+        dependsOn testDebugUnitTest
         dependsOn testExistenceValidation
 
         violationRules {
@@ -164,7 +164,7 @@ project.ext {
     jacocoIgnoreList = [] // add module names to ignore
     // Exclude file by names, packages or types. Such files will be ignored during test coverage
     // calculation
-    jacocoFileFilter = [
+    jacocoThresholdFileFilter = [
             '**/*App.*',
             '**/*Application.*',
             '**/*Activity.*',
@@ -173,7 +173,8 @@ project.ext {
             '**/*ViewGroup.*',
             '**/*JsonAdapter.*',
             '**/di/**',
-            '**/*Dagger.*'
+            '**/*Dagger.*',
+            '**/*Binding*.*'
     ]
 }
 
