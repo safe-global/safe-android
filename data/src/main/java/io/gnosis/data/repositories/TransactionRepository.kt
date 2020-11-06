@@ -3,15 +3,13 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.*
 
@@ -229,24 +227,24 @@ class TransactionRepository(
             is TransferInfoDto.EtherTransfer -> value
         }
 
-    private fun TransferInfoDto.tokenInfo(): ServiceTokenInfo? =
+    private fun TransferInfoDto.tokenInfo(): TokenInfo? =
         when (this) {
-            is TransferInfoDto.Erc20Transfer -> ServiceTokenInfo(
+            is TransferInfoDto.Erc20Transfer -> TokenInfo(
                 address = tokenAddress,
                 decimals = decimals ?: 0,
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
-                type = ServiceTokenInfo.TokenType.ERC20
+                tokenType = TokenType.ERC20
             )
-            is TransferInfoDto.Erc721Transfer -> ServiceTokenInfo(
+            is TransferInfoDto.Erc721Transfer -> TokenInfo(
                 address = tokenAddress,
                 symbol = tokenSymbol.orEmpty(),
                 name = tokenName.orEmpty(),
                 logoUri = logoUri,
-                type = ServiceTokenInfo.TokenType.ERC721
+                tokenType = TokenType.ERC721
             )
-            is TransferInfoDto.EtherTransfer -> ETH_SERVICE_TOKEN_INFO
+            is TransferInfoDto.EtherTransfer -> ETH_TOKEN_INFO
         }
 
     private fun Long.toDate(): Date = Date(this)

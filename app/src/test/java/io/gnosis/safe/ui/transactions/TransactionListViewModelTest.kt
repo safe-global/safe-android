@@ -4,7 +4,6 @@ import android.view.View
 import androidx.paging.PagingData
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
 import io.gnosis.data.models.*
 import io.gnosis.data.models.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
@@ -17,8 +16,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
-import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -30,10 +28,10 @@ import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.formatBackendDate
 import io.mockk.*
-import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -252,22 +250,22 @@ class TransactionListViewModelTest {
             buildTransfer(
                 status = AWAITING_CONFIRMATIONS,
                 confirmations = 0,
-                serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+                serviceTokenInfo = ETH_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultToAddress // outgoing
             ),
             buildTransfer(
                 status = AWAITING_EXECUTION,
                 confirmations = 2,
-                serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+                serviceTokenInfo = ETH_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultSafeAddress // incoming
             ),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
             buildTransfer(
-                serviceTokenInfo = ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL,
+                serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL,
                 value = BigInteger.TEN,
                 recipient = defaultSafeAddress
             )
@@ -399,10 +397,10 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildTransfer(serviceTokenInfo = ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = ERC721_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = CANCELLED),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
+            buildTransfer(serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ERC721_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = createErc20TokenInfo(), status = CANCELLED),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
         val transactionViews =
             transactions.map {
@@ -1019,7 +1017,7 @@ class TransactionListViewModelTest {
                 sender = defaultFromAddress,
                 value = BigInteger.ONE,
                 date = Date(0),
-                tokenInfo = ETH_SERVICE_TOKEN_INFO,
+                tokenInfo = ETH_TOKEN_INFO,
                 nonce = defaultNonce,
                 incoming = false
             )
@@ -1035,7 +1033,7 @@ class TransactionListViewModelTest {
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
         date: Date = Date(0),
-        serviceTokenInfo: ServiceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+        serviceTokenInfo: TokenInfo = ETH_TOKEN_INFO,
         nonce: BigInteger = defaultNonce
     ): Transaction =
         Transaction.Transfer(
@@ -1103,19 +1101,32 @@ class TransactionListViewModelTest {
         )
     }
 
-    private fun createErc20ServiceToken() = ServiceTokenInfo(
-        type = ServiceTokenInfo.TokenType.ERC20,
+    private fun createErc20TokenInfo() = TokenInfo(
+        tokenType = TokenType.ERC20,
         address = "0x63704B63Ac04f3a173Dfe677C7e3D330c347CD88".asEthereumAddress()!!,
+        decimals = 0,
         name = "TEST AQER",
         symbol = "AQER",
-        decimals = 0,
         logoUri = "local::ethereum"
     )
 
     companion object {
-        private val ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL =
-            ServiceTokenInfo(TokenRepository.ZERO_ADDRESS, 0, "", "ERC20", "local::ethereum", ServiceTokenInfo.TokenType.ERC20)
-        private val ERC721_SERVICE_TOKEN_INFO_NO_SYMBOL =
-            ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "", "", "local::ethereum", ServiceTokenInfo.TokenType.ERC721)
+
+        private val ERC20_TOKEN_INFO_NO_SYMBOL = TokenInfo(
+            TokenType.ERC20,
+            Solidity.Address(BigInteger.ZERO),
+            0,
+            "",
+            "ERC20",
+            "local::ethereum"
+        )
+        private val ERC721_TOKEN_INFO_NO_SYMBOL = TokenInfo(
+            TokenType.ERC721,
+            Solidity.Address (BigInteger.ZERO),
+            0,
+            "",
+            "",
+            "local::ethereum"
+        )
     }
 }

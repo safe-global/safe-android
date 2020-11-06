@@ -3,10 +3,7 @@ package io.gnosis.data.repositories
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Transaction
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.*
 import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -56,7 +53,7 @@ class TransactionRepositoryTransferTest(
                 assertEquals(pagedResult[i].executionInfo?.nonce, this.nonce)
                 when ((pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo) {
                     is TransferInfoDto.Erc20Transfer -> {
-                        assertEquals(ServiceTokenInfo.TokenType.ERC20, this.tokenInfo?.type)
+                        assertEquals(TokenType.ERC20, this.tokenInfo?.tokenType)
                         val erc20Transfer = (pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo as TransferInfoDto.Erc20Transfer
                         assertEquals(erc20Transfer.value, value)
                         assertEquals(erc20Transfer.tokenAddress, tokenInfo?.address)
@@ -66,7 +63,7 @@ class TransactionRepositoryTransferTest(
                         assertEquals(erc20Transfer.logoUri, tokenInfo?.logoUri)
                     }
                     is TransferInfoDto.Erc721Transfer -> {
-                        assertEquals(ServiceTokenInfo.TokenType.ERC721, this.tokenInfo?.type)
+                        assertEquals(TokenType.ERC721, this.tokenInfo?.tokenType)
                         assertEquals(1.toBigInteger(), value)
                         val erc721Transfer = (pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo as TransferInfoDto.Erc721Transfer
                         assertEquals(erc721Transfer.tokenAddress, tokenInfo?.address)
@@ -74,7 +71,7 @@ class TransactionRepositoryTransferTest(
                         assertEquals(erc721Transfer.tokenName, tokenInfo?.name)
                     }
                     is TransferInfoDto.EtherTransfer -> {
-                        assertEquals(null, this.tokenInfo?.type)
+                        assertEquals(TokenType.ETHER, this.tokenInfo?.tokenType)
                         val etherTransfer = (pagedResult[i].txInfo as TransactionInfoDto.Transfer).transferInfo as TransferInfoDto.EtherTransfer
                         assertEquals(etherTransfer.value, value)
                     }

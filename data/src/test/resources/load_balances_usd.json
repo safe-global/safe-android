@@ -1,30 +1,44 @@
-[
-  {
-    "tokenAddress": null,
-    "token": null,
-    "balance": "1331553306076676",
-    "balanceUsd": "0.3248"
-  },
-  {
-    "tokenAddress": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-    "token": {
-      "name": "Dai Stablecoin",
-      "symbol": "DAI",
-      "decimals": 18,
-      "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x6B175474E89094C44Da98b954EedeAC495271d0F.png"
+{
+  "fiatTotal": "4467.6637",
+  "items": [
+    {
+      "tokenInfo": {
+        "type": "ETHER",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 0,
+        "symbol": "ETH",
+        "name": "Ether",
+        "logoUri": null
+      },
+      "balance": "9083012300000128000",
+      "fiatBalance": "3650.9168",
+      "fiatConversion": "401.95"
     },
-    "balance": "234500000000000000",
-    "balanceUsd": "0.2371"
-  },
-  {
-    "tokenAddress": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
-    "token": {
-      "name": "Dai Stablecoin v1.0",
-      "symbol": "DAI",
-      "decimals": 18,
-      "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359.png"
+    {
+      "tokenInfo": {
+        "type": "ERC20",
+        "address": "0xbF7A7169562078c96f0eC1A8aFD6aE50f12e5A99",
+        "decimals": 18,
+        "symbol": "BAT",
+        "name": "Basic Attention Token",
+        "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0xbF7A7169562078c96f0eC1A8aFD6aE50f12e5A99.png"
+      },
+      "balance": "9000000000000000001",
+      "fiatBalance": "37.2906",
+      "fiatConversion": "4.1434"
     },
-    "balance": "100000000000000000",
-    "balanceUsd": "0.1346"
-  }
-]
+    {
+      "tokenInfo": {
+        "type": "ERC20",
+        "address": "0x6D7F0754FFeb405d23C51CE938289d4835bE3b14",
+        "decimals": 8,
+        "symbol": "cDAI",
+        "name": "Compound Dai 📈",
+        "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x6D7F0754FFeb405d23C51CE938289d4835bE3b14.png"
+      },
+      "balance": "474804615",
+      "fiatBalance": "4.021",
+      "fiatConversion": "0.8469"
+    }
+  ]
+}
