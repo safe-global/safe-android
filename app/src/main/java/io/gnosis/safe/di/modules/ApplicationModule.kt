@@ -237,7 +237,7 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage =
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
-            val localeCopy = Locale.getDefault();
+            val localeCopy = Locale.getDefault()
             setLocale(context, Locale.ENGLISH)
             val androidKeyStorage = AndroidKeyStorage(context)
             setLocale(context, localeCopy)
