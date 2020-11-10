@@ -32,9 +32,8 @@ import java.util.stream.Collectors
 
 class TokenRepositoryTest {
 
-    private val transactionServiceApi = mockk<TransactionServiceApi>()
     private val gatewayApi = mockk<GatewayApi>()
-    private val tokenRepository = TokenRepository(transactionServiceApi, gatewayApi)
+    private val tokenRepository = TokenRepository(gatewayApi)
 
     private val moshi = dataMoshi
     private val balancesAdapter = moshi.adapter(CoinBalancesDto::class.java)
@@ -155,7 +154,7 @@ class TokenRepositoryTest {
         val jsonString: String = readResource("load_collectibles.json")
         val collectibleDtos = collectiblesAdapter.fromJson(jsonString)!!
 
-        coEvery { transactionServiceApi.loadCollectibles(any()) } returns collectibleDtos
+        coEvery { gatewayApi.loadCollectibles(any()) } returns collectibleDtos
 
         val collectibles = tokenRepository.loadCollectiblesOf(address)
 
@@ -190,7 +189,7 @@ class TokenRepositoryTest {
         assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[6].address)
 
         coVerify {
-            transactionServiceApi.loadCollectibles(address.asEthereumAddressChecksumString())
+            gatewayApi.loadCollectibles(address.asEthereumAddressChecksumString())
         }
     }
 

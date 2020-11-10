@@ -8,7 +8,6 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class TokenRepository(
-    private val transactionServiceApi: TransactionServiceApi,
     private val gatewayApi: GatewayApi
 ) {
 
@@ -39,9 +38,8 @@ class TokenRepository(
         })
     }
 
-    //FIXME: use client gateway (grouping and sorting will be done on the backend side)
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
-        transactionServiceApi.loadCollectibles(safe.asEthereumAddressChecksumString())
+        gatewayApi.loadCollectibles(safe.asEthereumAddressChecksumString())
             .asSequence()
             .groupBy {
                 it.address
@@ -77,6 +75,7 @@ class TokenRepository(
             .map {
                 it.toCollectible()
             }
+            .toList()
 
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
