@@ -236,6 +236,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage =
+        // FIXME This is a workaround for a problem in Android Marshmallow See: https://issuetracker.google.com/issues/37095309
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             val localeCopy = Locale.getDefault()
             setLocale(context, Locale.ENGLISH)
