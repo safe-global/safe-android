@@ -4,6 +4,7 @@ import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
+import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
 import io.mockk.coVerify

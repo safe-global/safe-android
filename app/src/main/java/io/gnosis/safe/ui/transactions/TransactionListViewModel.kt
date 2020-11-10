@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import io.gnosis.data.models.*
 import io.gnosis.data.models.Transaction.*
+import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING

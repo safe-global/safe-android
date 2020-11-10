@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.assets.coins
 
-import io.gnosis.data.models.CoinBalances
+import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
