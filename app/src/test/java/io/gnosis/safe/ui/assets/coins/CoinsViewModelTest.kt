@@ -1,6 +1,10 @@
 package io.gnosis.safe.ui.assets.coins
 
 import io.gnosis.data.models.*
+import io.gnosis.data.models.assets.Balance
+import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule

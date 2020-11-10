@@ -3,15 +3,10 @@ package io.gnosis.data.repositories
 import com.squareup.moshi.Types
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.backend.dto.BalanceDto
 import io.gnosis.data.backend.dto.CoinBalancesDto
-import io.gnosis.data.backend.dto.CollectibleDto
 import io.gnosis.data.backend.dto.TokenInfoDto
-import io.gnosis.data.models.Balance
-import io.gnosis.data.models.CoinBalances
-import io.gnosis.data.models.TokenInfo
-import io.gnosis.data.models.TokenType
+import io.gnosis.data.models.assets.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -37,7 +32,7 @@ class TokenRepositoryTest {
 
     private val moshi = dataMoshi
     private val balancesAdapter = moshi.adapter(CoinBalancesDto::class.java)
-    private val collectiblesAdapter = moshi.adapter<List<CollectibleDto>>(Types.newParameterizedType(List::class.java, CollectibleDto::class.java))
+    private val collectiblesAdapter = moshi.adapter<List<Collectible>>(Types.newParameterizedType(List::class.java, Collectible::class.java))
 
     @Test
     fun `loadBalancesOf (transactionApi failure) should throw`() = runBlocking {

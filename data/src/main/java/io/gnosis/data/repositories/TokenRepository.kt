@@ -1,8 +1,7 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.models.*
+import io.gnosis.data.models.assets.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -72,9 +71,6 @@ class TokenRepository(
                 }
             })
             .flatten()
-            .map {
-                it.toCollectible()
-            }
             .toList()
 
     companion object {

@@ -2,6 +2,7 @@ package io.gnosis.data.backend
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.dto.*
+import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.Page
 import retrofit2.http.*
 
@@ -26,7 +27,7 @@ interface GatewayApi {
     ): GateTransactionDetailsDto
 
     @GET("v1/safes/{safeAddress}/collectibles")
-    suspend fun loadCollectibles(@Path("safeAddress") safeAddress: String): List<CollectibleDto>
+    suspend fun loadCollectibles(@Path("safeAddress") safeAddress: String): List<Collectible>
 
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL

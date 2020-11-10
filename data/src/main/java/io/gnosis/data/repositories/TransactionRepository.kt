@@ -3,6 +3,8 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.KeyPair
