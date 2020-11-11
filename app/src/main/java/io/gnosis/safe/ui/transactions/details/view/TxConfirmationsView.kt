@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxConfirmationsExecutionStepBinding
 import io.gnosis.safe.ui.settings.view.AddressItem

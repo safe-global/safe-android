@@ -1,8 +1,8 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransactionInfo
+import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
