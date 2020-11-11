@@ -84,3 +84,7 @@ dependencies {
 
     testImplementation "androidx.room:room-testing:$versions.androidx_room"
 }
+
+ext {
+    jacocoCoverageThreshold = 0.7 // 70%
+}

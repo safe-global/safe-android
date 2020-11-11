@@ -1,6 +1,7 @@
 package io.gnosis.data.models
 
 import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.models.assets.TokenInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
@@ -60,7 +61,7 @@ sealed class Transaction {
     ) : Transaction()
 }
 
-enum class TransactionStatus() {
+enum class TransactionStatus {
     AWAITING_CONFIRMATIONS,
     AWAITING_EXECUTION,
     CANCELLED,

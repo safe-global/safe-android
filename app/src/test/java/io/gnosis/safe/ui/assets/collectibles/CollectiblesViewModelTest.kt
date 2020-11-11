@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.assets.collectibles
 
-import io.gnosis.data.models.Collectible
+import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository

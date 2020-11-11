@@ -1,10 +1,8 @@
 package io.gnosis.data.backend
 
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.backend.dto.CoinBalancesDto
-import io.gnosis.data.backend.dto.GateTransactionDetailsDto
-import io.gnosis.data.backend.dto.GateTransactionDto
-import io.gnosis.data.backend.dto.TransactionConfirmationRequest
+import io.gnosis.data.backend.dto.*
+import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.Page
 import retrofit2.http.*
 
@@ -27,6 +25,9 @@ interface GatewayApi {
         @Path("safeTxHash") safeTxHash: String,
         @Body txConfirmationRequest: TransactionConfirmationRequest
     ): GateTransactionDetailsDto
+
+    @GET("v1/safes/{safeAddress}/collectibles")
+    suspend fun loadCollectibles(@Path("safeAddress") safeAddress: String): List<Collectible>
 
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL

@@ -1,4 +1,4 @@
-package io.gnosis.data.models
+package io.gnosis.data.models.assets
 
 import pm.gnosis.model.Solidity
 

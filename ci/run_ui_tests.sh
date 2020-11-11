@@ -27,7 +27,11 @@ adb shell settings put global animator_duration_scale 0
 # Start app (this is required on some emulators to get the app in a valid state -> Signature failure)
 adb shell am start -n io.gnosis.safe.debug/io.gnosis.safe.ui.splash.SplashActivity
 
-echo "Execute UI tests"
-./gradlew createDebugTestCoverage --stacktrace
+echo "Execute Coverage verification"
+./gradlew jacocoTestCoverageVerification --stacktrace
 
-bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
+echo "Execute UI tests"
+./gradlew jacocoTestReport --stacktrace
+
+echo Generating report form coverage result
+bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'
