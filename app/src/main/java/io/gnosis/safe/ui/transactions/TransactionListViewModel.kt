@@ -74,7 +74,7 @@ class TransactionListViewModel
             .map { pagingData ->
                 pagingData
                     .map { transaction ->
-                        transaction.getTransactionView(safe, transaction.canBeSignedByOwner(owner))
+                        getTransactionView(transaction, safe, transaction.canBeSignedByOwner(owner))
                     }
                     .filter { it !is TransactionView.Unknown }
             }
@@ -113,16 +113,19 @@ class TransactionListViewModel
         return safeTxItems
     }
 
-    private fun Transaction.getTransactionView(
+    fun getTransactionView(
+        transaction: Transaction,
         activeSafe: Solidity.Address,
         awaitingYourConfirmation: Boolean = false
     ): TransactionView {
-        return when (val txInfo = txInfo) {
-            is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation)
-            is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
-            is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
-            is TransactionInfo.Creation -> toHistoryCreation(txInfo)
-            TransactionInfo.Unknown -> TransactionView.Unknown
+        with(transaction) {
+            return when (val txInfo = txInfo) {
+                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
+                is TransactionInfo.Creation -> toHistoryCreation(txInfo)
+                TransactionInfo.Unknown -> TransactionView.Unknown
+            }
         }
     }
 
