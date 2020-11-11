@@ -1,5 +1,7 @@
 package io.gnosis.data.models.transaction
 
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.repositories.TokenRepository
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -37,4 +39,18 @@ fun TransferInfo.value(): BigInteger =
         is TransferInfo.EtherTransfer -> value
         is TransferInfo.Erc20Transfer -> value
         is TransferInfo.Erc721Transfer -> BigInteger.ONE
+    }
+
+fun TransferInfo.symbol(): String? =
+    when (this) {
+        is TransferInfo.EtherTransfer -> TokenRepository.ETH_TOKEN_INFO.symbol
+        is TransferInfo.Erc20Transfer -> tokenSymbol
+        is TransferInfo.Erc721Transfer -> tokenSymbol
+    }
+
+fun TransferInfo.decimals(): Int? =
+    when (this) {
+        is TransferInfo.Erc20Transfer -> decimals
+        is TransferInfo.Erc721Transfer -> 0
+        is TransferInfo.EtherTransfer -> TokenRepository.ETH_TOKEN_INFO.decimals
     }

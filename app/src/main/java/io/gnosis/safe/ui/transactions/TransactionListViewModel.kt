@@ -5,8 +5,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import io.gnosis.data.models.*
-import io.gnosis.data.models.Transaction.*
-import io.gnosis.data.models.assets.TokenType
+import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
@@ -18,7 +17,6 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
-import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -73,7 +71,7 @@ class TransactionListViewModel
 
     private fun getTransactions(safe: Solidity.Address, safeInfo: SafeInfo, owner: Solidity.Address?): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, safeInfo)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
             .map { pagingData ->
                 pagingData
                     .map { transaction ->
@@ -116,43 +114,40 @@ class TransactionListViewModel
         return safeTxItems
     }
 
+    fun getTransactionView(transaction: Transaction, awaitingYourConfirmation: Boolean = false): TransactionView {
+        return when (val txInfo = transaction.txInfo) {
+            is TransactionInfo.Transfer -> transaction.toTransferView(txInfo, awaitingYourConfirmation)
+            is TransactionInfo.Custom -> TODO()
+            is TransactionInfo.SettingsChange -> TODO()
+            is TransactionInfo.Creation -> transaction.toHistoryCreation(txInfo)
+            TransactionInfo.Unknown -> TransactionView.Unknown
+        }
+    }
+
     fun getTransactionView(transaction: Transaction, safeInfo: SafeInfo, awaitingYourConfirmation: Boolean = false): TransactionView {
         return when {
-            transaction is Transfer && isHistoricTransfer(transaction) -> historicTransfer(transaction)
-            transaction is Transfer && isQueuedTransfer(transaction) -> queuedTransfer(transaction, safeInfo, awaitingYourConfirmation)
-            transaction is SettingsChange && isQueuedMastercopyChange(transaction) -> queuedMastercopyChange(
-                transaction,
-                safeInfo.threshold,
-                awaitingYourConfirmation
-            )
-            transaction is SettingsChange && isHistoricMastercopyChange(transaction) -> historicMastercopyChange(transaction)
-            transaction is SettingsChange && isQueuedSetFallbackHandler(transaction) -> queuedSetFallbackHandler(
-                transaction,
-                safeInfo.threshold,
-                awaitingYourConfirmation
-            )
-            transaction is SettingsChange && isHistoricSetFallbackHandler(transaction) -> historicSetFallbackHandler(transaction)
-            transaction is SettingsChange && isQueuedModuleChange(transaction) -> queuedModuleChange(
-                transaction,
-                safeInfo.threshold,
-                awaitingYourConfirmation
-            )
-            transaction is SettingsChange && isHistoricModuleChange(transaction) -> historicModuleChange(transaction)
-            transaction is SettingsChange && isQueuedSettingsChange(transaction) -> queuedSettingsChange(
-                transaction,
-                safeInfo.threshold,
-                awaitingYourConfirmation
-            )
-            transaction is SettingsChange && isHistoricSettingsChange(transaction) -> historicSettingsChange(transaction)
-            transaction is Custom && isQueuedCustomTransaction(transaction) -> queuedCustomTransaction(
-                transaction,
-                safeInfo,
-                awaitingYourConfirmation
-            )
-            transaction is Custom && isHistoricCustomTransaction(transaction) -> historicCustomTransaction(transaction, safeInfo)
-            transaction is Creation -> historicCreation(transaction)
+            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedMastercopyChange(transaction) ->
+                queuedMastercopyChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
+            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricMastercopyChange(transaction) ->
+                historicMastercopyChange(transaction)
+            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedSetFallbackHandler(transaction) ->
+                queuedSetFallbackHandler(transaction, safeInfo.threshold, awaitingYourConfirmation)
+            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricSetFallbackHandler(transaction) ->
+                historicSetFallbackHandler(transaction)
+            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedModuleChange(transaction) ->
+                queuedModuleChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
+            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricModuleChange(transaction) ->
+                historicModuleChange(transaction)
+            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedSettingsChange(transaction) ->
+                queuedSettingsChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
+            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricSettingsChange(transaction) ->
+                historicSettingsChange(transaction)
+            transaction.txInfo is TransactionInfo.Custom && isQueuedCustomTransaction(transaction) ->
+                queuedCustomTransaction(transaction, safeInfo, awaitingYourConfirmation)
+            transaction.txInfo is TransactionInfo.Custom && isHistoricCustomTransaction(transaction) ->
+                historicCustomTransaction(transaction, safeInfo)
             else -> TransactionView.Unknown
-        } as TransactionView
+        }
     }
 
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
@@ -199,14 +194,6 @@ class TransactionListViewModel
         return METHOD_CHANGE_MASTER_COPY != settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
 
-    private fun isHistoricTransfer(transfer: Transfer): Boolean {
-        return isCompleted(transfer.status)
-    }
-
-    private fun isQueuedTransfer(transfer: Transfer): Boolean {
-        return !isCompleted(transfer.status)
-    }
-
     private fun isCompleted(status: TransactionStatus): Boolean =
         when (status) {
             TransactionStatus.AWAITING_CONFIRMATIONS,
@@ -217,43 +204,42 @@ class TransactionListViewModel
             TransactionStatus.CANCELLED -> true
         }
 
-    private fun historicTransfer(
-        transfer: Transfer
-    ): TransactionView.Transfer {
-
-        return TransactionView.Transfer(
-            id = transfer.id,
-            status = transfer.status,
-            statusText = displayString(transfer.status),
-            statusColorRes = statusTextColor(transfer.status),
-            amountText = formatTransferAmount(transfer, transfer.incoming),
-            dateTimeText = transfer.date?.formatBackendDate() ?: "",
-            txTypeIcon = if (transfer.incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (transfer.incoming) transfer.sender else transfer.recipient,
-            amountColor = if (transfer.value > BigInteger.ZERO && transfer.incoming) R.color.safe_green else R.color.gnosis_dark_blue,
-            alpha = alpha(transfer),
-            nonce = transfer.nonce?.toString() ?: ""
+    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer): TransactionView.Transfer =
+        TransactionView.Transfer(
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            amountText = formatTransferAmount(txInfo.transferInfo, txInfo.incoming()),
+            dateTimeText = timestamp.formatBackendDate(),
+            txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
+            address = if (txInfo.incoming()) txInfo.sender else txInfo.recipient,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.safe_green else R.color.gnosis_dark_blue,
+            alpha = alpha(this),
+            nonce = executionInfo?.nonce?.toString() ?: ""
         )
-    }
 
-    private fun queuedTransfer(transfer: Transfer, safeInfo: SafeInfo, awaitingYourConfirmation: Boolean): TransactionView? {
-        val thresholdMet = checkThreshold(safeInfo.threshold, transfer.confirmations)
+    private fun Transaction.queuedTransfer(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView? {
+        //TODO work around this bang operator
+        val threshold = executionInfo!!.confirmationsRequired
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+        val incoming = txInfo.incoming()
 
         return TransactionView.TransferQueued(
-            id = transfer.id,
-            status = transfer.status,
-            statusText = displayString(transfer.status, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(transfer.status),
-            amountText = formatTransferAmount(transfer, transfer.incoming),
-            dateTimeText = transfer.date?.formatBackendDate() ?: "",
-            txTypeIcon = if (transfer.incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (transfer.incoming) transfer.sender else transfer.recipient,
-            amountColor = if (transfer.value > BigInteger.ZERO && transfer.incoming) R.color.safe_green else R.color.gnosis_dark_blue,
-            confirmations = transfer.confirmations ?: 0,
-            threshold = safeInfo.threshold,
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, awaitingYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            amountText = formatTransferAmount(txInfo.transferInfo, incoming),
+            dateTimeText = timestamp.formatBackendDate() ?: "",
+            txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
+            address = if (incoming) txInfo.sender else txInfo.recipient,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = transfer.nonce?.toString() ?: ""
+            nonce = executionInfo?.nonce?.toString() ?: ""
         )
     }
 
@@ -490,43 +476,48 @@ class TransactionListViewModel
         )
     }
 
-    private fun historicCreation(transaction: Creation): TransactionView.Creation {
+    private fun Transaction.toTransferView(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView =
+//        transaction.txInfo is TransactionInfo.Transfer && isHistoricTransfer(transaction) ->
+//        historicTransfer(transaction)
+//        transaction.txInfo is TransactionInfo.Transfer && isQueuedTransfer(transaction) ->
+//        queuedTransfer(transaction, safeInfo, awaitingYourConfirmation)
+        if (isCompleted(txStatus)) historicTransfer(txInfo) else queuedTransfer()
 
-        val txInfo = transaction.txInfo as TransactionInfo.Creation
 
-        return TransactionView.Creation(
-            id = transaction.id,
-            status = transaction.status,
-            statusText = displayString(transaction.status),
-            statusColorRes = statusTextColor(transaction.status),
-            dateTimeText = transaction.timestamp.formatBackendDate(),
+    private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation): TransactionView.Creation =
+        TransactionView.Creation(
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendDate(),
             label = R.string.tx_list_creation,
             creationDetails = TransactionView.CreationDetails(
-                statusText = displayString(transaction.status),
-                statusColorRes = statusTextColor(transaction.status),
-                dateTimeText = transaction.timestamp.formatBackendDate(),
+                statusText = displayString(txStatus),
+                statusColorRes = statusTextColor(txStatus),
+                dateTimeText = timestamp.formatBackendDate(),
                 creator = txInfo.creator.asEthereumAddressString(),
                 factory = txInfo.factory?.asEthereumAddressString(),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
                 transactionHash = txInfo.transactionHash
             )
         )
-    }
 
-    private fun formatTransferAmount(viewTransfer: Transfer, incoming: Boolean): String {
-        val symbol = viewTransfer.tokenInfo?.symbol.let { symbol ->
+
+    private fun formatTransferAmount(transferInfo: TransferInfo, incoming: Boolean): String {
+        val symbol = transferInfo.symbol().let { symbol ->
             if (symbol.isNullOrEmpty()) {
-                getDefaultSymbol(viewTransfer.tokenInfo?.tokenType)
+                getDefaultSymbol(transferInfo.type)
             } else {
                 symbol
             }
         }
-        return balanceFormatter.formatAmount(viewTransfer.value, incoming, viewTransfer.tokenInfo?.decimals ?: 0, symbol)
+        return balanceFormatter.formatAmount(transferInfo.value(), incoming, transferInfo.decimals() ?: 0, symbol)
     }
 
-    private fun getDefaultSymbol(type: TokenType?): String = when (type) {
-        TokenType.ERC721 -> DEFAULT_ERC721_SYMBOL
-        TokenType.ERC20 -> DEFAULT_ERC20_SYMBOL
+    private fun getDefaultSymbol(type: TransferType?): String = when (type) {
+        TransferType.ERC721 -> DEFAULT_ERC721_SYMBOL
+        TransferType.ERC20 -> DEFAULT_ERC20_SYMBOL
         else -> ""
     }
 
@@ -542,7 +533,7 @@ class TransactionListViewModel
     }
 
     private fun alpha(transaction: Transaction): Float =
-        when (transaction.status) {
+        when (transaction.txStatus) {
             TransactionStatus.FAILED, TransactionStatus.CANCELLED -> OPACITY_HALF
             else -> OPACITY_FULL
         }
@@ -591,5 +582,8 @@ fun TransactionView.isHistory() = when (status) {
 fun Solidity.Address.getVersionForAddress(): String = masterCopyVersion(this) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
 fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
-    return missingSigners?.contains(ownerAddress) == true
+    return executionInfo?.missingSigners?.contains(ownerAddress) == true
 }
+
+//TODO add unit tests
+fun TransactionInfo.Transfer.incoming(): Boolean = direction != TransactionDirection.OUTGOING

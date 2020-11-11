@@ -125,8 +125,6 @@ class TransactionRepositoryTest {
                     is TransactionInfo.Transfer -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
                         assertEquals(pagedResult[i].txStatus, txStatus)
-                        //TODO move to :appp that incoming is default for any direction other than OUTGOING
-//                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Transfer).direction != TransactionDirection.OUTGOING, incoming)
                     }
                     is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
@@ -170,8 +168,6 @@ class TransactionRepositoryTest {
                     is TransactionInfo.Transfer -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
                         assertEquals(pagedResult[i].txStatus, txStatus)
-                        //FIXME: same as above, incoming default behaviour belongs to :app module
-//                        assertEquals((pagedResult[i].txInfo as TransactionInfoDto.Transfer).direction == TransactionDirection.INCOMING, incoming)
                     }
                     is TransactionInfo.Custom -> {
                         assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
