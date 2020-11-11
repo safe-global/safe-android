@@ -41,6 +41,12 @@ android {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.gnosis.io/"))
         }
 
+        mainnet_staging {
+            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client-mainnet.staging.gnosisdev.com/"))
+        }
+
         release {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.gnosis.io/api/"))
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.gnosis.io/api/"))
