@@ -13,7 +13,8 @@ sealed class TransactionInfo(val type: TransactionType) {
     ) : TransactionInfo(TransactionType.Custom)
 
     data class SettingsChange(
-        val dataDecoded: DataDecodedDto
+        val dataDecoded: DataDecodedDto,
+        val settingsInfo: SettingsInfo?
     ) : TransactionInfo(TransactionType.SettingsChange)
 
     data class Transfer(

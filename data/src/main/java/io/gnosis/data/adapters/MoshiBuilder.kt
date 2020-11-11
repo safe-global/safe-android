@@ -27,6 +27,17 @@ internal val transactionExecutionDetailsAdapter =
         .withSubtype(DetailedExecutionInfo.MultisigExecutionDetails::class.java, DetailedExecutionInfoType.MULTISIG.name)
         .withSubtype(DetailedExecutionInfo.ModuleExecutionDetails::class.java, DetailedExecutionInfoType.MODULE.name)
 
+internal val settingsInfoAdapter =
+    PolymorphicJsonAdapterFactory.of(SettingsInfo::class.java, SettingsInfo::type::name.get())
+        .withSubtype(SettingsInfo.SetFallbackHandler::class.java, SettingsInfoType.SET_FALLBACK_HANDLER.name)
+        .withSubtype(SettingsInfo.AddOwner::class.java, SettingsInfoType.ADD_OWNER.name)
+        .withSubtype(SettingsInfo.RemoveOwner::class.java, SettingsInfoType.REMOVE_OWNER.name)
+        .withSubtype(SettingsInfo.SwapOwner::class.java, SettingsInfoType.SWAP_OWNER.name)
+        .withSubtype(SettingsInfo.ChangeThreshold::class.java, SettingsInfoType.CHANGE_THRESHOLD.name)
+        .withSubtype(SettingsInfo.ChangeImplementation::class.java, SettingsInfoType.CHANGE_IMPLEMENTATION.name)
+        .withSubtype(SettingsInfo.EnableModule::class.java, SettingsInfoType.ENABLE_MODULE.name)
+        .withSubtype(SettingsInfo.DisableModule::class.java, SettingsInfoType.DISABLE_MODULE.name)
+
 val dataMoshi =
     Moshi.Builder()
         .add(DateAdapter())
@@ -37,6 +48,7 @@ val dataMoshi =
         .add(DefaultNumberAdapter())
         .add(SolidityAddressAdapter())
         .add(OperationEnumAdapter())
+        .add(settingsInfoAdapter)
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
         .add(transactionExecutionDetailsAdapter)

@@ -74,7 +74,7 @@ class TransactionListViewModel
             .map { pagingData ->
                 pagingData
                     .map { transaction ->
-                        getTransactionView(transaction, safe, transaction.canBeSignedByOwner(owner))
+                        transaction.getTransactionView(safe, transaction.canBeSignedByOwner(owner))
                     }
                     .filter { it !is TransactionView.Unknown }
             }
@@ -113,41 +113,32 @@ class TransactionListViewModel
         return safeTxItems
     }
 
-    private fun getTransactionView(
-        transaction: Transaction,
+    private fun Transaction.getTransactionView(
         activeSafe: Solidity.Address,
         awaitingYourConfirmation: Boolean = false
     ): TransactionView {
-        return when (val txInfo = transaction.txInfo) {
-            is TransactionInfo.Transfer -> transaction.toTransferView(txInfo, awaitingYourConfirmation)
-            is TransactionInfo.SettingsChange -> TODO()
-            is TransactionInfo.Custom -> transaction.toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
-            is TransactionInfo.Creation -> transaction.toHistoryCreation(txInfo)
+        return when (val txInfo = txInfo) {
+            is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation)
+            is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
+            is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
+            is TransactionInfo.Creation -> toHistoryCreation(txInfo)
             TransactionInfo.Unknown -> TransactionView.Unknown
         }
     }
 
-    fun getTransactionView(transaction: Transaction, safeInfo: SafeInfo, awaitingYourConfirmation: Boolean = false): TransactionView {
-        return when {
-            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedMastercopyChange(transaction) ->
-                queuedMastercopyChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
-            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricMastercopyChange(transaction) ->
-                historicMastercopyChange(transaction)
-            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedSetFallbackHandler(transaction) ->
-                queuedSetFallbackHandler(transaction, safeInfo.threshold, awaitingYourConfirmation)
-            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricSetFallbackHandler(transaction) ->
-                historicSetFallbackHandler(transaction)
-            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedModuleChange(transaction) ->
-                queuedModuleChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
-            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricModuleChange(transaction) ->
-                historicModuleChange(transaction)
-            transaction.txInfo is TransactionInfo.SettingsChange && isQueuedSettingsChange(transaction) ->
-                queuedSettingsChange(transaction, safeInfo.threshold, awaitingYourConfirmation)
-            transaction.txInfo is TransactionInfo.SettingsChange && isHistoricSettingsChange(transaction) ->
-                historicSettingsChange(transaction)
+    private fun Transaction.toSettingsChangeView(txInfo: TransactionInfo.SettingsChange, awaitingYourConfirmation: Boolean): TransactionView =
+        when {
+            isQueuedMastercopyChange(this) -> queuedMastercopyChange(this, safeInfo.threshold, awaitingYourConfirmation)
+            isHistoricMastercopyChange(this) -> historicMastercopyChange(this)
+            isQueuedSetFallbackHandler(this) -> queuedSetFallbackHandler(this, safeInfo.threshold, awaitingYourConfirmation)
+            isHistoricSetFallbackHandler(this) -> historicSetFallbackHandler(this)
+            isQueuedModuleChange(this) -> queuedModuleChange(this, safeInfo.threshold, awaitingYourConfirmation)
+            isHistoricModuleChange(this) -> historicModuleChange(this)
+            isQueuedSettingsChange(this) -> queuedSettingsChange(this, safeInfo.threshold, awaitingYourConfirmation)
+            isHistoricSettingsChange(this) -> historicSettingsChange(this)
             else -> TransactionView.Unknown
         }
-    }
+
 
     private fun isHistoricSetFallbackHandler(settingsChange: SettingsChange): Boolean {
         return METHOD_SET_FALLBACK_HANDLER == settingsChange.dataDecoded.method && isCompleted(settingsChange.status)
@@ -184,16 +175,6 @@ class TransactionListViewModel
     private fun isQueuedSettingsChange(settingsChange: SettingsChange): Boolean {
         return METHOD_CHANGE_MASTER_COPY != settingsChange.dataDecoded.method && !isCompleted(settingsChange.status)
     }
-
-    private fun isCompleted(status: TransactionStatus): Boolean =
-        when (status) {
-            TransactionStatus.AWAITING_CONFIRMATIONS,
-            TransactionStatus.AWAITING_EXECUTION,
-            TransactionStatus.PENDING -> false
-            TransactionStatus.SUCCESS,
-            TransactionStatus.FAILED,
-            TransactionStatus.CANCELLED -> true
-        }
 
     private fun Transaction.toTransferView(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView =
         if (isCompleted(txStatus)) historicTransfer(txInfo)
@@ -492,6 +473,16 @@ class TransactionListViewModel
                 transactionHash = txInfo.transactionHash
             )
         )
+
+    private fun isCompleted(status: TransactionStatus): Boolean =
+        when (status) {
+            TransactionStatus.AWAITING_CONFIRMATIONS,
+            TransactionStatus.AWAITING_EXECUTION,
+            TransactionStatus.PENDING -> false
+            TransactionStatus.SUCCESS,
+            TransactionStatus.FAILED,
+            TransactionStatus.CANCELLED -> true
+        }
 
     @StringRes
     private fun displayString(status: TransactionStatus, awaitingYourConfirmation: Boolean = false): Int =

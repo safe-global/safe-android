@@ -325,7 +325,8 @@ private fun buildSettingsChangeTxInfo(
     dataDecoded: DataDecodedDto = DataDecodedDto("defaultMethod", listOf())
 ): TransactionInfo.SettingsChange =
     TransactionInfo.SettingsChange(
-        dataDecoded = dataDecoded
+        dataDecoded = dataDecoded,
+        settingsInfo = null
     )
 
 private fun buildTransferTxInfo(

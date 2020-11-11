@@ -88,7 +88,6 @@ class DataMoshiTest {
             timestamp = Date(1591137785000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.SettingsChange(
-//                type = TransactionType.SettingsChange,
                 dataDecoded = DataDecodedDto(
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
@@ -99,6 +98,10 @@ class DataMoshiTest {
                         ),
                         ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
                     )
+                ),
+                settingsInfo = SettingsInfo.AddOwner(
+                    owner = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
+                    threshold = 1
                 )
             ),
             executionInfo = ExecutionInfo(
