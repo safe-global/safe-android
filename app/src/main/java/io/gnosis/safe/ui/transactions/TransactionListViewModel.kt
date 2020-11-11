@@ -157,7 +157,7 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             address = if (incoming) txInfo.sender else txInfo.recipient,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.safe_green else R.color.gnosis_dark_blue,
@@ -165,7 +165,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
@@ -219,7 +219,7 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendDate(),
             method = txInfo.dataDecoded.method,
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce.toString()
+            nonce = executionInfo?.nonce?.toString().orEmpty()
         )
 
     private fun Transaction.queuedSettingsChange(
@@ -241,7 +241,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce.toString()
+            nonce = executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
@@ -254,7 +254,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
             version = version,
             address = address,
@@ -287,7 +287,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce.toString()
+            nonce = executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
@@ -302,7 +302,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
             version = version,
             address = address,
@@ -335,7 +335,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce.toString(),
+            nonce = executionInfo?.nonce?.toString().orEmpty(),
             visibilityVersion = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE
@@ -353,7 +353,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
             address = address,
             label = label,
@@ -361,7 +361,7 @@ class TransactionListViewModel
             visibilityVersion = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE,
-            nonce = executionInfo?.nonce.toString()
+            nonce = executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
@@ -379,12 +379,12 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce.toString(),
+            nonce = executionInfo?.nonce?.toString().orEmpty(),
             version = version,
             address = address,
             label = R.string.tx_list_change_mastercopy
@@ -409,7 +409,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             address = txInfo.to,
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
             amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
@@ -434,7 +434,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate() ?: "",
+            dateTimeText = timestamp.formatBackendDate(),
             address = txInfo.to,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
