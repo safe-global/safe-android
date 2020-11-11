@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.transactions.details
 
-import io.gnosis.data.models.DetailedExecutionInfo
-import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository

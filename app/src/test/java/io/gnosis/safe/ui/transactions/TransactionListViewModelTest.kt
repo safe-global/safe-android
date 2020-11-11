@@ -8,6 +8,8 @@ import io.gnosis.data.models.*
 import io.gnosis.data.models.TransactionStatus.*
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
+import io.gnosis.data.models.transaction.Confirmations
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING

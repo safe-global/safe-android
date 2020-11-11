@@ -3,15 +3,14 @@ package io.gnosis.safe.ui.transactions.details
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.dto.GateTransactionDetailsDto
-import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.TransactionDetails
+import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.readJsonFrom
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.OwnerCredentials

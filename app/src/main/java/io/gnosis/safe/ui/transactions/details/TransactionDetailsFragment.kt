@@ -14,7 +14,8 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.backend.dto.Operation
 import io.gnosis.data.backend.dto.ParamDto
 import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.*
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding

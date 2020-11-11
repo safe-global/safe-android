@@ -4,32 +4,32 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.gnosis.data.backend.dto.*
+import io.gnosis.data.models.transaction.*
 import pm.gnosis.common.adapters.moshi.*
 import java.util.*
 
 internal val transferInfoAdapter =
-    PolymorphicJsonAdapterFactory.of(TransferInfoDto::class.java, TransferInfoDto::type::name.get())
-        .withSubtype(TransferInfoDto.Erc20Transfer::class.java, GateTransferType.ERC20.name)
-        .withSubtype(TransferInfoDto.Erc721Transfer::class.java, GateTransferType.ERC721.name)
-        .withSubtype(TransferInfoDto.EtherTransfer::class.java, GateTransferType.ETHER.name)
+    PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())
+        .withSubtype(TransferInfo.Erc20Transfer::class.java, TransferType.ERC20.name)
+        .withSubtype(TransferInfo.Erc721Transfer::class.java, TransferType.ERC721.name)
+        .withSubtype(TransferInfo.EtherTransfer::class.java, TransferType.ETHER.name)
 
 internal val transactionInfoAdapter =
-    PolymorphicJsonAdapterFactory.of(TransactionInfoDto::class.java, TransactionInfoDto::type::name.get())
-        .withSubtype(TransactionInfoDto.Transfer::class.java, GateTransactionType.Transfer.name)
-        .withSubtype(TransactionInfoDto.SettingsChange::class.java, GateTransactionType.SettingsChange.name)
-        .withSubtype(TransactionInfoDto.Custom::class.java, GateTransactionType.Custom.name)
-        .withSubtype(TransactionInfoDto.Creation::class.java, GateTransactionType.Creation.name)
-        .withDefaultValue(TransactionInfoDto.Unknown())
+    PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, TransactionInfo::type::name.get())
+        .withSubtype(TransactionInfo.Transfer::class.java, TransactionType.Transfer.name)
+        .withSubtype(TransactionInfo.SettingsChange::class.java, TransactionType.SettingsChange.name)
+        .withSubtype(TransactionInfo.Custom::class.java, TransactionType.Custom.name)
+        .withSubtype(TransactionInfo.Creation::class.java, TransactionType.Creation.name)
+        .withDefaultValue(TransactionInfo.Unknown)
 
 internal val transactionExecutionDetailsAdapter =
-    PolymorphicJsonAdapterFactory.of(DetailedExecutionInfoDto::class.java, DetailedExecutionInfoDto::type::name.get())
-        .withSubtype(DetailedExecutionInfoDto.MultisigExecutionDetailsDto::class.java, DetailedExecutionInfoType.MULTISIG.name)
-        .withSubtype(DetailedExecutionInfoDto.ModuleExecutionDetailsDto::class.java, DetailedExecutionInfoType.MODULE.name)
+    PolymorphicJsonAdapterFactory.of(DetailedExecutionInfo::class.java, DetailedExecutionInfo::type::name.get())
+        .withSubtype(DetailedExecutionInfo.MultisigExecutionDetails::class.java, DetailedExecutionInfoType.MULTISIG.name)
+        .withSubtype(DetailedExecutionInfo.ModuleExecutionDetails::class.java, DetailedExecutionInfoType.MODULE.name)
 
 val dataMoshi =
     Moshi.Builder()
-        .add(Date::class.java, Rfc3339DateJsonAdapter())
+        .add(DateAdapter())
         .add(WeiAdapter())
         .add(DecimalNumberAdapter())
         .add(BigDecimalNumberAdapter())
