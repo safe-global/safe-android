@@ -30,7 +30,7 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         } else {
-            Timber.plant(CrashReportingTree())
+            Timber.plant(ExceptionReportingTree())
         }
 
         component.appInitManager().init()
@@ -50,18 +50,19 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
     }
 }
 
-private class CrashReportingTree : Timber.Tree() {
+private class ExceptionReportingTree : Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
 
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
-        
+
         t?.let {
             if (priority == Log.ERROR) {
                 with(FirebaseCrashlytics.getInstance()) {
-                    setCustomKey(CRASHLYTICS_KEY_LOCALE, Locale.getDefault().language)
+                    val locale = Locale.getDefault()
+                    setCustomKey(CRASHLYTICS_KEY_LOCALE, "${locale.isO3Language}_${locale.isO3Country}")
                     recordException(it)
                 }
             }
