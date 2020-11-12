@@ -192,13 +192,13 @@ class TransactionListViewModel
         (settingsInfo is SettingsInfo.SetFallbackHandler || METHOD_SET_FALLBACK_HANDLER == dataDecoded.method) && !isCompleted(txStatus)
 
     private fun TransactionInfo.SettingsChange.isHistoricModuleChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method)
+        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
+                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
                 && isCompleted(txStatus)
 
     private fun TransactionInfo.SettingsChange.isQueuedModuleChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method)
+        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
+                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
                 && !isCompleted(txStatus)
 
     private fun TransactionInfo.SettingsChange.isHistoricImplementationChange(txStatus: TransactionStatus): Boolean =
@@ -208,10 +208,10 @@ class TransactionListViewModel
         (settingsInfo is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY == dataDecoded.method) && !isCompleted(txStatus)
 
     private fun TransactionInfo.SettingsChange.isHistoricSettingsChange(txStatus: TransactionStatus): Boolean =
-        settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method && isCompleted(txStatus)
+        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && isCompleted(txStatus)
 
     private fun TransactionInfo.SettingsChange.isQueuedSettingsChange(txStatus: TransactionStatus): Boolean =
-        settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method && !isCompleted(txStatus)
+        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && !isCompleted(txStatus)
 
     private fun Transaction.historicSettingsChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
@@ -231,7 +231,7 @@ class TransactionListViewModel
     ): TransactionView.SettingsChangeQueued {
         //TODO work around the bang operator
         val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsRequired)
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
         return TransactionView.SettingsChangeQueued(
             id = id,

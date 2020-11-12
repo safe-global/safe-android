@@ -521,7 +521,6 @@ class TransactionListViewModelTest {
 
     @Test
     fun `mapTransactionView (tx list with historic setting changes) should map to settings changes list`() {
-
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
@@ -543,7 +542,7 @@ class TransactionListViewModelTest {
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf()),
-                settingsInfo = SettingsInfo.SetFallbackHandler(defaultSafeAddress)
+                settingsInfo = SettingsInfo.SetFallbackHandler("0x0".asEthereumAddress()!!)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
@@ -649,7 +648,7 @@ class TransactionListViewModelTest {
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 version = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
-                address = null,
+                address = "0x0".asEthereumAddress()!!,
                 visibilityVersion = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityEllipsizedAddress = View.VISIBLE
