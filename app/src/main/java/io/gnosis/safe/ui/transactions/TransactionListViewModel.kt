@@ -573,5 +573,4 @@ fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
     return executionInfo?.missingSigners?.contains(ownerAddress) == true
 }
 
-//TODO add unit tests
 fun TransactionInfo.Transfer.incoming(): Boolean = direction != TransactionDirection.OUTGOING

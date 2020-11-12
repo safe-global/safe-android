@@ -851,10 +851,46 @@ class TransactionListViewModelTest {
         assertEquals(R.string.tx_status_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
-    private fun callVerification() {
-        coVerify { safeRepository.getActiveSafe() }
-        coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
-        coVerify { transactionRepository.getTransactions(defaultSafeAddress) }
+    @Test
+    fun `incoming (Transfer_TransactionDirection_INCOMING) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.INCOMING
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(true, actual)
+    }
+
+    @Test
+    fun `incoming (Transfer_TransactionDirection_UNKNOWN) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.UNKNOWN
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(true, actual)
+    }
+
+    @Test
+    fun `incoming (Transfer_TransactionDirection_OUTGOING) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.OUTGOING
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(false, actual)
     }
 
     private fun createEmptyTransactionList(): Page<Transaction> {
