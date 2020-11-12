@@ -149,8 +149,8 @@ class TransactionListViewModel
         )
 
     private fun Transaction.queuedTransfer(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView.TransferQueued {
-        //TODO work around this bang operator
-        val threshold = executionInfo!!.confirmationsRequired
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
         val incoming = txInfo.incoming()
 
@@ -229,8 +229,8 @@ class TransactionListViewModel
         txInfo: TransactionInfo.SettingsChange,
         awaitingYourConfirmation: Boolean
     ): TransactionView.SettingsChangeQueued {
-        //TODO work around the bang operator
-        val threshold = executionInfo!!.confirmationsRequired
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
         return TransactionView.SettingsChangeQueued(
@@ -406,6 +406,7 @@ class TransactionListViewModel
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address
     ): TransactionView.CustomTransaction {
+        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == safeAddress
         return TransactionView.CustomTransaction(
             id = id,
@@ -427,9 +428,10 @@ class TransactionListViewModel
         safeAddress: Solidity.Address,
         awaitingYourConfirmation: Boolean
     ): TransactionView.CustomTransactionQueued {
+        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == safeAddress
-        //TODO work around this bang operator
-        val threshold = executionInfo!!.confirmationsRequired
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
         return TransactionView.CustomTransactionQueued(

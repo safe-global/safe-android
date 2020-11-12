@@ -14,7 +14,6 @@ import java.io.InputStreamReader
 import java.util.*
 import java.util.stream.Collectors
 
-//TODO fix type assert
 class DataMoshiTest {
 
     private val moshi = dataMoshi
@@ -32,12 +31,10 @@ class DataMoshiTest {
             timestamp = Date(1591357055000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Transfer(
-//                type = TransactionType.Transfer,
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 transferInfo = TransferInfo.Erc20Transfer(
-//                    type = TransferType.ERC20,
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
                     tokenAddress = "0xc778417E063141139Fce010982780140Aa0cD5Ab".asEthereumAddress()!!,
@@ -62,7 +59,6 @@ class DataMoshiTest {
             timestamp = Date(1591356920000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Custom(
-//                type = TransactionType.Custom,
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 value = "3140000000000000000".toBigInteger()
@@ -125,7 +121,6 @@ class DataMoshiTest {
             timestamp = Date(1543431151000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Creation(
-//                type = TransactionType.Creation,
                 creator = "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!,
                 factory = null,
                 implementation = null,
