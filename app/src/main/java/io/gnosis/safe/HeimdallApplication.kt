@@ -1,7 +1,9 @@
 package io.gnosis.safe
 
 import android.content.Context
+import android.util.Log
 import androidx.multidex.MultiDexApplication
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
@@ -11,6 +13,7 @@ import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import java.security.Security
+import java.util.*
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
@@ -23,9 +26,13 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     override fun onCreate() {
         super.onCreate()
+
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
+        } else {
+            Timber.plant(ExceptionReportingTree())
         }
+
         component.appInitManager().init()
 
         try {
@@ -40,5 +47,29 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         operator fun get(context: Context): ApplicationComponent {
             return (context.applicationContext as ComponentProvider).get()
         }
+    }
+}
+
+private class ExceptionReportingTree : Timber.Tree() {
+
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+
+        if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+            return
+        }
+
+        t?.let {
+            if (priority == Log.ERROR) {
+                with(FirebaseCrashlytics.getInstance()) {
+                    val locale = Locale.getDefault()
+                    setCustomKey(CRASHLYTICS_KEY_LOCALE, "${locale.isO3Language}_${locale.isO3Country}")
+                    recordException(it)
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val CRASHLYTICS_KEY_LOCALE = "locale"
     }
 }
