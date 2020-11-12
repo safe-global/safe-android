@@ -272,7 +272,7 @@ class TransactionListViewModel
     ): TransactionView.SettingsChangeVariantQueued {
         val threshold = executionInfo!!.confirmationsRequired
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val address = (txInfo.settingsInfo as SettingsInfo.SetFallbackHandler).handler
+        val address = (txInfo.settingsInfo as? SettingsInfo.SetFallbackHandler)?.handler
         val version =
             if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
             else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING

@@ -542,7 +542,7 @@ class TransactionListViewModelTest {
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf()),
-                settingsInfo = SettingsInfo.SetFallbackHandler("0x0".asEthereumAddress()!!)
+                settingsInfo = null
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
@@ -648,7 +648,7 @@ class TransactionListViewModelTest {
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 version = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
-                address = "0x0".asEthereumAddress()!!,
+                address = null,
                 visibilityVersion = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityEllipsizedAddress = View.VISIBLE
