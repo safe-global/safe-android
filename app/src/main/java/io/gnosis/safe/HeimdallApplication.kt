@@ -13,6 +13,7 @@ import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import java.security.Security
+import java.util.*
 
 class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
@@ -56,11 +57,18 @@ private class CrashReportingTree : Timber.Tree() {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
-
+        
         t?.let {
             if (priority == Log.ERROR) {
-                FirebaseCrashlytics.getInstance().recordException(it)
+                with(FirebaseCrashlytics.getInstance()) {
+                    setCustomKey(CRASHLYTICS_KEY_LOCALE, Locale.getDefault().language)
+                    recordException(it)
+                }
             }
         }
+    }
+
+    companion object {
+        private const val CRASHLYTICS_KEY_LOCALE = "locale"
     }
 }
