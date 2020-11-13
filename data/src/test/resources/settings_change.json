@@ -18,6 +18,11 @@
           "value": "1"
         }
       ]
+    },
+    "settingsInfo": {
+      "type": "ADD_OWNER",
+      "owner": "0x5c9E7b93900536D9cc5559b881375Bae93c933D0",
+      "threshold": 1
     }
   },
   "executionInfo": {

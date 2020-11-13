@@ -4,7 +4,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.transaction.TransactionStatus
 import pm.gnosis.model.Solidity
 
 sealed class TransactionView(

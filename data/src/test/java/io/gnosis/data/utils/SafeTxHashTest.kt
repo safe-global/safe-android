@@ -2,8 +2,8 @@ package io.gnosis.data.utils
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.GateTransactionDetailsDto
-import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.readJsonFrom
 import io.gnosis.data.repositories.TransactionRepository
 import io.mockk.coEvery
@@ -20,7 +20,7 @@ class SafeTxHashTest {
     private val gatewayApi = mockk<GatewayApi>()
     private val transactionRepository = TransactionRepository(gatewayApi)
 
-    private val txDtoAdapter = dataMoshi.adapter(GateTransactionDetailsDto::class.java)
+    private val txDtoAdapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     private val safeAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
 
