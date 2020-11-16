@@ -93,7 +93,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
     when (settingsChange.dataDecoded.method) {
         SafeRepository.METHOD_CHANGE_MASTER_COPY -> {
             val mainCopy = params.getAddressValueByName("_masterCopy")
-            val label = mainCopy?.let { it.getVersionForAddress() } ?: io.gnosis.data.R.string.unknown_implementation_version
+            val label = mainCopy?.let { it.getVersionForAddress() } ?: io.gnosis.data.R.string.empty_string
 
             result.add(
                 ActionInfoItem.AddressWithLabel(
