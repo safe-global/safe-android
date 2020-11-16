@@ -52,13 +52,13 @@ class NamedAddressItem @JvmOverloads constructor(
             field = value
         }
 
-    var name: String? = null
+    var name: Int? = null
         set(value) {
-            if (value.isNullOrBlank()) {
+            if (value == null) {
                 binding.name.visible(false)
             } else {
                 binding.name.visible(true)
-                binding.name.text = value
+                binding.name.text = resources.getString(value)
             }
             field = value
         }

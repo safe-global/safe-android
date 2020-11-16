@@ -55,11 +55,11 @@ class MasterCopyItem @JvmOverloads constructor(
 
     private fun setVersionName(address: Solidity.Address?, showUpdateAvailable: Boolean) {
         with(binding) {
-            if (SafeRepository.masterCopyVersion(address).isNullOrBlank()) {
-                versionName.text = context.getString(R.string.safe_settings_unknown)
+            if (SafeRepository.implementationVersion(address) == null) {
+                implementationVersionName.text = context.getString(io.gnosis.data.R.string.unknown_implementation_version)
                 versionInfo.visible(false, View.INVISIBLE)
             } else {
-                versionName.text = SafeRepository.masterCopyVersion(address)
+                implementationVersionName.text = context.getString(SafeRepository.implementationVersion(address) ?: io.gnosis.data.R.string.unknown_implementation_version)
                 if (showUpdateAvailable) {
                     versionInfo.apply {
                         visible(true)

@@ -2,15 +2,12 @@ package io.gnosis.safe.ui.transactions
 
 import android.view.View
 import androidx.paging.PagingData
-import io.gnosis.data.models.transaction.DataDecoded
-import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
@@ -19,8 +16,8 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODUL
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_0_0
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
@@ -110,10 +107,6 @@ class TransactionListViewModelTest {
     @Test
     fun `load - (active safe with transactions) should emit LoadTransaction`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(
-            safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(),
-            Solidity.Address(BigInteger.ONE)
-        )
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -138,8 +131,6 @@ class TransactionListViewModelTest {
     @Test
     fun `load - (transactionRepository failure) should emit ShowError`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo =
-            SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
@@ -530,9 +521,9 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_1_1)
+                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
@@ -575,9 +566,9 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_0_0))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_0_0)
+                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_0_0)
             ),
             buildSettingsChange(
                 status = FAILED,
@@ -605,8 +596,8 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
-                address = SAFE_MASTER_COPY_1_1_1,
-                version = "1.1.1",
+                address = SAFE_IMPLEMENTATION_1_1_1,
+                fallbackHandlerDisplayString = io.gnosis.data.R.string.implementation_version_1_1_1,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
@@ -647,7 +638,7 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.medium_grey,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                version = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
+                fallbackHandlerDisplayString = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
                 address = null,
                 visibilityVersion = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
@@ -672,7 +663,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
                 address = defaultModuleAddress,
-                version = ""
+                fallbackHandlerDisplayString = io.gnosis.data.R.string.unknown_fallback_handler
             ),
             transactionViews[3]
         )
@@ -693,7 +684,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
                 address = defaultModuleAddress,
-                version = ""
+                fallbackHandlerDisplayString = io.gnosis.data.R.string.unknown_implementation_version
             ),
             transactionViews[4]
         )
@@ -710,7 +701,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
                 address = defaultFallbackHandler,
-                version = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
+                implementationVersion = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
                 nonce = "1"
             ),
             transactionViews[5]
@@ -723,8 +714,8 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
-                address = SAFE_MASTER_COPY_1_0_0,
-                version = "1.0.0",
+                address = SAFE_IMPLEMENTATION_1_0_0,
+                implementationVersion = io.gnosis.data.R.string.implementation_version_1_0_0,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
@@ -742,7 +733,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
-                version = "",
+                implementationVersion = io.gnosis.data.R.string.unknown_implementation_version, // TODO  Should this be empty_string?
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,

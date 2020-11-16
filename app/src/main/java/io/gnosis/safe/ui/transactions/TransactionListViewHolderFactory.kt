@@ -201,7 +201,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            version.text = viewTransfer.version
+            version.text = resources.getString(viewTransfer.implementationVersion)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
@@ -241,7 +241,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
             dateTime.text = viewTransfer.dateTimeText
 
-            version.text = viewTransfer.version
+            version.text = resources.getString(viewTransfer.fallbackHandlerDisplayString)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
