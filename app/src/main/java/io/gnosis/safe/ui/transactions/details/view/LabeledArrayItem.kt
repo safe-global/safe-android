@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import io.gnosis.data.backend.dto.ParamType
+import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewLabeledArrayArrayItemBinding
 import io.gnosis.safe.databinding.ViewLabeledArrayItemBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.dpToPx
-import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress

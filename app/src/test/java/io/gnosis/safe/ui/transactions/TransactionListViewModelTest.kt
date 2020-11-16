@@ -2,8 +2,8 @@ package io.gnosis.safe.ui.transactions
 
 import android.view.View
 import androidx.paging.PagingData
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ParamDto
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -530,7 +530,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
                 ),
                 settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_1_1)
             ),
@@ -548,7 +548,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_DISABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.DisableModule(defaultModuleAddress)
             ),
@@ -557,7 +557,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),
@@ -566,7 +566,7 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_SET_FALLBACK_HANDLER,
-                    listOf(ParamDto.AddressParam("address", "handler", defaultFallbackHandler))
+                    listOf(Param.Address("address", "handler", defaultFallbackHandler))
                 ),
                 settingsInfo = SettingsInfo.SetFallbackHandler(defaultFallbackHandler)
             ),
@@ -575,7 +575,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
                 ),
                 settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_0_0)
             ),
@@ -583,7 +583,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),
@@ -1018,7 +1018,7 @@ class TransactionListViewModelTest {
         missingSigners: List<Solidity.Address>? = null,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
-        dataDecoded: DataDecodedDto = buildDataDecodedDto(),
+        dataDecoded: DataDecoded = buildDataDecodedDto(),
         settingsInfo: SettingsInfo? = null
     ): Transaction =
         Transaction(
@@ -1036,9 +1036,9 @@ class TransactionListViewModelTest {
 
     private fun buildDataDecodedDto(
         method: String = METHOD_REMOVE_OWNER,
-        parameters: List<ParamDto> = listOf()
-    ): DataDecodedDto {
-        return DataDecodedDto(
+        parameters: List<Param> = listOf()
+    ): DataDecoded {
+        return DataDecoded(
             method = method,
             parameters = parameters
         )
