@@ -288,13 +288,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 } else {
                     if (decodedData.method.toLowerCase() == "multisend") {
 
-                        val valueDecoded = (decodedData.parameters?.get(0) as Param.BytesParam).valueDecoded
+                        val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 
                         txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
 
                         txDetailsCustomBinding.txDataDecoded.setOnClickListener {
                             txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
-                                if (it is Param.BytesParam && it.valueDecoded != null) {
+                                if (it is Param.Bytes && it.valueDecoded != null) {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
                                             paramSerializer.serializeDecodedValues(it.valueDecoded!!)

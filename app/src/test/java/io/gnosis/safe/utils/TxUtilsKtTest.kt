@@ -175,8 +175,8 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_ADD_OWNER_WITH_THRESHOLD,
                     parameters = listOf(
-                        Param.ValueParam("uint256", "_threshold", "1"),
-                        Param.AddressParam("address", "owner", anyAddress)
+                        Param.Value("uint256", "_threshold", "1"),
+                        Param.Address("address", "owner", anyAddress)
                     )
                 ),
                 settingsInfo = null
@@ -202,7 +202,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_ENABLE_MODULE,
                     parameters = listOf(
-                        Param.AddressParam("address", "module", anyAddress)
+                        Param.Address("address", "module", anyAddress)
                     )
                 ),
                 settingsInfo = null
@@ -223,7 +223,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_DISABLE_MODULE,
                     parameters = listOf(
-                        Param.AddressParam("address", "module", anyAddress)
+                        Param.Address("address", "module", anyAddress)
                     )
                 ), settingsInfo = null
             )
@@ -243,7 +243,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_CHANGE_MASTER_COPY,
                     parameters = listOf(
-                        Param.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1)
+                        Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1)
                     )
                 ), settingsInfo = null
             )
@@ -264,8 +264,8 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_SWAP_OWNER,
                     parameters = listOf(
-                        Param.AddressParam("address", "oldOwner", anyAddress),
-                        Param.AddressParam("address", "newOwner", anotherAddress)
+                        Param.Address("address", "oldOwner", anyAddress),
+                        Param.Address("address", "newOwner", anotherAddress)
                     )
                 ), settingsInfo = null
             )
@@ -290,8 +290,8 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_REMOVE_OWNER,
                     parameters = listOf(
-                        Param.AddressParam("address", "owner", anyAddress),
-                        Param.ValueParam("uint256", "_threshold", "2")
+                        Param.Address("address", "owner", anyAddress),
+                        Param.Value("uint256", "_threshold", "2")
                     )
                 ), settingsInfo = null
             )
@@ -315,7 +315,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_SET_FALLBACK_HANDLER,
                     parameters = listOf(
-                        Param.AddressParam("address", "handler", anyAddress)
+                        Param.Address("address", "handler", anyAddress)
                     )
                 ), settingsInfo = null
             )
@@ -337,7 +337,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_SET_FALLBACK_HANDLER,
                     parameters = listOf(
-                        Param.AddressParam(
+                        Param.Address(
                             "address",
                             "handler",
                             SafeRepository.DEFAULT_FALLBACK_HANDLER
@@ -363,7 +363,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_CHANGE_THRESHOLD,
                     parameters = listOf(
-                        Param.ValueParam("uint256", "_threshold", "4")
+                        Param.Value("uint256", "_threshold", "4")
                     )
                 ), settingsInfo = null
             )

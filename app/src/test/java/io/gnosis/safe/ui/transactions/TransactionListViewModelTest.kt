@@ -530,7 +530,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(Param.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
                 ),
                 settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_1_1)
             ),
@@ -548,7 +548,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_DISABLE_MODULE,
-                    listOf(Param.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.DisableModule(defaultModuleAddress)
             ),
@@ -557,7 +557,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(Param.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),
@@ -566,7 +566,7 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_SET_FALLBACK_HANDLER,
-                    listOf(Param.AddressParam("address", "handler", defaultFallbackHandler))
+                    listOf(Param.Address("address", "handler", defaultFallbackHandler))
                 ),
                 settingsInfo = SettingsInfo.SetFallbackHandler(defaultFallbackHandler)
             ),
@@ -575,7 +575,7 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(Param.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
+                    listOf(Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
                 ),
                 settingsInfo = SettingsInfo.ChangeImplementation(SAFE_MASTER_COPY_1_0_0)
             ),
@@ -583,7 +583,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(Param.AddressParam("address", "module", defaultModuleAddress))
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
                 settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),

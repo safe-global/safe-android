@@ -22,10 +22,10 @@ class ParamAdapter {
 
         writer.name("value")
         when (param) {
-            is Param.AddressParam -> {
+            is Param.Address -> {
                 writer.value(param.value.asEthereumAddressString())
             }
-            is Param.ArrayParam -> {
+            is Param.Array -> {
                 writer.beginArray()
                 param.value.forEach {
                     if(it is List<*>) {
@@ -36,14 +36,14 @@ class ParamAdapter {
                 }
                 writer.endArray()
             }
-            is Param.BytesParam -> {
+            is Param.Bytes -> {
                 writer.value(param.value)
                 if (param.valueDecoded != null) {
                     writer.name("valueDecoded")
                     valueDecodedAdapter.toJson(writer, param.valueDecoded)
                 }
             }
-            is Param.ValueParam -> {
+            is Param.Value -> {
                 writer.value(param.value as String)
             }
         }
@@ -80,7 +80,7 @@ class ParamAdapter {
                                 type == "address" -> {
                                     val value = reader.nextString().asEthereumAddress()!!
                                     reader.endObject()
-                                    return Param.AddressParam(type, name, value)
+                                    return Param.Address(type, name, value)
                                 }
                                 type == "bytes" -> {
                                     val value = reader.nextString()
@@ -90,26 +90,26 @@ class ParamAdapter {
                                                 valueDecodedAdapter.fromJson(reader)
                                             }.onSuccess {
                                                 reader.endObject()
-                                                return Param.BytesParam(type, name, value, it)
+                                                return Param.Bytes(type, name, value, it)
                                             }.onFailure {
                                                 reader.endArray()
                                                 reader.endObject()
-                                                return Param.BytesParam(type, name, value, null)
+                                                return Param.Bytes(type, name, value, null)
                                             }
                                         } else {
                                             reader.skipValue()
                                             reader.endObject()
-                                            return Param.BytesParam(type, name, value, null)
+                                            return Param.Bytes(type, name, value, null)
                                         }
                                     } else {
                                         reader.endObject()
-                                        return Param.BytesParam(type, name, value, null)
+                                        return Param.Bytes(type, name, value, null)
                                     }
                                 }
                                 !type.contains("[") -> {
                                     val value = reader.nextString()
                                     reader.endObject()
-                                    return Param.ValueParam(type, name, value)
+                                    return Param.Value(type, name, value)
                                 }
                                 else -> {
                                     val value = mutableListOf<Any>()
@@ -122,7 +122,7 @@ class ParamAdapter {
                                         }
                                         reader.endArray()
                                         reader.endObject()
-                                        return Param.ArrayParam(type, name, value)
+                                        return Param.Array(type, name, value)
                                     } else {
                                         reader.skipValue()
                                     }
@@ -137,9 +137,9 @@ class ParamAdapter {
             }
             reader.endObject()
         } catch (e: Exception) {
-            return Param.UnknownParam
+            return Param.Unknown
         }
-        return Param.UnknownParam
+        return Param.Unknown
     }
 
     private fun getType(reader: JsonReader): String {

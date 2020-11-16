@@ -21,13 +21,13 @@ sealed class Param {
     abstract val name: String
     abstract val value: Any?
 
-    data class AddressParam(
+    data class Address(
         override val type: String,
         override val name: String,
         override val value: Solidity.Address
     ) : Param()
 
-    data class ArrayParam(
+    data class Array(
         override val type: String,
         override val name: String,
         override val value: List<Any>
@@ -43,14 +43,14 @@ sealed class Param {
         }
     }
 
-    data class BytesParam(
+    data class Bytes(
         override val type: String,
         override val name: String,
         override val value: String,
         val valueDecoded: List<ValueDecoded>?
     ) : Param()
 
-    data class ValueParam(
+    data class Value(
         override val type: String,
         override val name: String,
         override val value: Any
@@ -59,7 +59,7 @@ sealed class Param {
         fun isBytesValue(): Boolean = type.startsWith("bytes")
     }
 
-    object UnknownParam : Param() {
+    object Unknown : Param() {
         override val type: String
             get() = "unknown"
         override val name: String

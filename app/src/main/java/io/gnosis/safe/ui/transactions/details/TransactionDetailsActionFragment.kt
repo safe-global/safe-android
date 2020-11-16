@@ -81,16 +81,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
                 it.parameters?.forEach {
                     when (it) {
-                        is Param.AddressParam -> {
+                        is Param.Address -> {
                             content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value))
                         }
-                        is Param.ArrayParam -> {
+                        is Param.Array -> {
                             content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType()))
                         }
-                        is Param.BytesParam -> {
+                        is Param.Bytes -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
                         }
-                        is Param.ValueParam -> {
+                        is Param.Value -> {
                             if (it.isBytesValue()) {
                                 content.addView(getDataItem("${it.name}(${it.type}):", it.value as String))
                             } else {
