@@ -56,12 +56,10 @@ class NamedAddressItem @JvmOverloads constructor(
    @StringRes
    var name: Int? = null
         set(value) {
-            if (value == null) {
-                binding.name.visible(false)
-            } else {
+            value?.let{
                 binding.name.visible(true)
-                binding.name.setText(value)
-            }
+                binding.name.setText(it)
+            } ?: binding.name.visible(false)
             field = value
         }
 
