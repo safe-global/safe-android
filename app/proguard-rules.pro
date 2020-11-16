@@ -73,8 +73,8 @@
 -keep @interface pm.gnosis.heimdall.data.adapters.DecimalNumber
 -keep @interface pm.gnosis.heimdall.data.adapters.BigDecimalNumber
 
--keep interface io.gnosis.data.backend.dto.** { *; }
--keep class io.gnosis.data.backend.dto.** { *; }
+-keep interface io.gnosis.data.models.** { *; }
+-keep class io.gnosis.data.models.** { *; }
 
 ####################################################################################################
 # Retrofit
