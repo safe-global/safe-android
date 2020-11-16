@@ -1,10 +1,6 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.data.models.transaction.DataDecoded
-import io.gnosis.data.models.transaction.Param
-import io.gnosis.data.models.transaction.TransactionDirection
-import io.gnosis.data.models.transaction.TransactionInfo
-import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
@@ -326,8 +322,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
-        assertEquals(null, addressOwner.addressLabel)
-        assertEquals(R.string.tx_list_default_fallback_handler_unknown, addressOwner.addressLabelRes)
+        assertEquals(R.string.tx_list_default_fallback_handler_unknown, addressOwner.addressLabel)
     }
 
     @Test
@@ -352,8 +347,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(SafeRepository.DEFAULT_FALLBACK_HANDLER, addressOwner.address)
-        assertEquals(null, addressOwner.addressLabel)
-        assertEquals(R.string.tx_list_default_fallback_handler, addressOwner.addressLabelRes)
+        assertEquals(R.string.tx_list_default_fallback_handler, addressOwner.addressLabel)
     }
 
     @Test

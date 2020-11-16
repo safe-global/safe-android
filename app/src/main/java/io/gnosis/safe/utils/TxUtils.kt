@@ -137,7 +137,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
                 ActionInfoItem.AddressWithLabel(
                     itemLabel = settingsMethodTitle[SafeRepository.METHOD_SET_FALLBACK_HANDLER],
                     address = fallbackHandler,
-                    addressLabelRes = label
+                    addressLabel = label
                 )
             )
         }

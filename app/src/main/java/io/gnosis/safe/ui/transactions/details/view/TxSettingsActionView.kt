@@ -38,11 +38,7 @@ class TxSettingsActionView @JvmOverloads constructor(
                     addAddressItem(actionInfoItem.address)
                 }
                 is ActionInfoItem.AddressWithLabel -> {
-                    val addressLabel =
-                        actionInfoItem.addressLabel?.let {
-                            actionInfoItem.addressLabel
-                        } ?: io.gnosis.data.R.string.empty_string
-                    addNamedAddressItem(actionInfoItem.address, addressLabel)
+                    addNamedAddressItem(actionInfoItem.address, actionInfoItem.addressLabel)
                 }
             }
         }
@@ -95,7 +91,6 @@ sealed class ActionInfoItem {
     data class AddressWithLabel(
         @StringRes override val itemLabel: Int?,
         val address: Solidity.Address?,
-        @StringRes val addressLabel: Int? = null,
-        @StringRes val addressLabelRes: Int = 0
+        @StringRes val addressLabel: Int = 0
     ) : ActionInfoItem()
 }

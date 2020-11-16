@@ -2,7 +2,7 @@
 <resources>
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
     <string name="unknown_fallback_handler">Unknown</string>
-    <string name="empty_string"></string>
+    <string name="empty_string">[empty String]</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="implementation_version_0_0_2">0.0.2</string>
     <string name="implementation_version_0_1_0">0.1.0</string>

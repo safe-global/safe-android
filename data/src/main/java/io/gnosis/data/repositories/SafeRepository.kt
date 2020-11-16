@@ -86,10 +86,10 @@ class SafeRepository(
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
 
-        val SAFE_IMPLEMENTATION_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_0_0_2 = BuildConfig.SAFE_IMPLEMENTATION_0_0_2.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_0_1_0 = BuildConfig.SAFE_IMPLEMENTATION_0_1_0.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_IMPLEMENTATION_1_0_0.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_IMPLEMENTATION_1_1_1.asEthereumAddress()!!
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
         val DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING = R.string.default_fallback_handler

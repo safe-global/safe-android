@@ -597,7 +597,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_IMPLEMENTATION_1_1_1,
-                fallbackHandlerDisplayString = io.gnosis.data.R.string.implementation_version_1_1_1,
+                addressLabel = io.gnosis.data.R.string.implementation_version_1_1_1,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
@@ -638,7 +638,7 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.medium_grey,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                fallbackHandlerDisplayString = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
+                addressLabel = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
                 address = null,
                 visibilityVersion = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
@@ -663,7 +663,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
                 address = defaultModuleAddress,
-                fallbackHandlerDisplayString = io.gnosis.data.R.string.unknown_fallback_handler
+                addressLabel = io.gnosis.data.R.string.unknown_fallback_handler
             ),
             transactionViews[3]
         )
@@ -684,7 +684,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
                 address = defaultModuleAddress,
-                fallbackHandlerDisplayString = io.gnosis.data.R.string.unknown_implementation_version
+                addressLabel = io.gnosis.data.R.string.unknown_implementation_version
             ),
             transactionViews[4]
         )
@@ -701,7 +701,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
                 address = defaultFallbackHandler,
-                implementationVersion = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
+                addressLabel = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
                 nonce = "1"
             ),
             transactionViews[5]
@@ -715,7 +715,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_IMPLEMENTATION_1_0_0,
-                implementationVersion = io.gnosis.data.R.string.implementation_version_1_0_0,
+                addressLabel = io.gnosis.data.R.string.implementation_version_1_0_0,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityVersion = View.VISIBLE,
@@ -733,7 +733,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
-                implementationVersion = io.gnosis.data.R.string.unknown_implementation_version, // TODO  Should this be empty_string?
+                addressLabel = io.gnosis.data.R.string.unknown_implementation_version, // TODO  Should this be empty_string?
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityVersion = View.INVISIBLE,
