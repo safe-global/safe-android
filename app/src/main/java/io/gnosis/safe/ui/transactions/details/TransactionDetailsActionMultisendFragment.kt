@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.backend.dto.ValueDecodedDto
+import io.gnosis.data.models.transaction.ValueDecoded
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionMultisendBinding
@@ -51,7 +51,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         updateUi(decodedValues)
     }
 
-    private fun updateUi(decodedValues: List<ValueDecodedDto>?) {
+    private fun updateUi(decodedValues: List<ValueDecoded>?) {
 
         with(binding) {
 

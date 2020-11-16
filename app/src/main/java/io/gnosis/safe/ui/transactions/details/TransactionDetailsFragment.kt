@@ -11,8 +11,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.backend.dto.Operation
-import io.gnosis.data.backend.dto.ParamDto
+import io.gnosis.data.models.transaction.Operation
+import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -288,13 +288,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 } else {
                     if (decodedData.method.toLowerCase() == "multisend") {
 
-                        val valueDecoded = (decodedData.parameters?.get(0) as ParamDto.BytesParam).valueDecoded
+                        val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 
                         txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
 
                         txDetailsCustomBinding.txDataDecoded.setOnClickListener {
                             txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
-                                if (it is ParamDto.BytesParam && it.valueDecoded != null) {
+                                if (it is Param.Bytes && it.valueDecoded != null) {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
                                             paramSerializer.serializeDecodedValues(it.valueDecoded!!)

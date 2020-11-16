@@ -1,7 +1,5 @@
 package io.gnosis.data.models.transaction
 
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.Operation
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
@@ -17,7 +15,7 @@ data class TransactionDetails(
 
 data class TxData(
     val hexData: String?,
-    val dataDecoded: DataDecodedDto?,
+    val dataDecoded: DataDecoded?,
     val to: Solidity.Address,
     val value: BigInteger?,
     val operation: Operation

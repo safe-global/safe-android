@@ -1,8 +1,8 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ParamDto
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
@@ -18,7 +18,7 @@ class DataMoshiTest {
 
     private val moshi = dataMoshi
     private val txAdapter = moshi.adapter(Transaction::class.java)
-    private val paramAdapter = moshi.adapter<List<ParamDto>>(Types.newParameterizedType(List::class.java, ParamDto::class.java))
+    private val paramAdapter = moshi.adapter<List<Param>>(Types.newParameterizedType(List::class.java, Param::class.java))
 
     @Test
     fun `fromJson (ERC20 Transfer) should return Transfer`() {
@@ -84,15 +84,15 @@ class DataMoshiTest {
             timestamp = Date(1591137785000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.SettingsChange(
-                dataDecoded = DataDecodedDto(
+                dataDecoded = DataDecoded(
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
-                        ParamDto.AddressParam(
+                        Param.Address(
                             name = "owner",
                             value = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
                             type = "address"
                         ),
-                        ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
+                        Param.Value(name = "_threshold", value = "1", type = "uint256")
                     )
                 ),
                 settingsInfo = SettingsInfo.AddOwner(
@@ -139,32 +139,32 @@ class DataMoshiTest {
 
         assertEquals(8, params?.size)
 
-        assertTrue(params[0] is ParamDto.AddressParam)
+        assertTrue(params[0] is Param.Address)
         assertEquals("from", params[0].name)
         assertEquals("address", params[0].type)
         assertEquals("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress(), params[0].value)
 
-        assertTrue(params[1] is ParamDto.AddressParam)
+        assertTrue(params[1] is Param.Address)
         assertEquals("to", params[1].name)
         assertEquals("address", params[1].type)
         assertEquals("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress(), params[1].value)
 
-        assertTrue(params[2] is ParamDto.ArrayParam)
+        assertTrue(params[2] is Param.Array)
         assertEquals("ids", params[2].name)
         assertEquals("uint256[]", params[2].type)
         assertEquals(listOf("1000"), params[2].value)
 
-        assertTrue(params[3] is ParamDto.ArrayParam)
+        assertTrue(params[3] is Param.Array)
         assertEquals("values", params[3].name)
         assertEquals("uint256[][]", params[3].type)
         assertEquals(listOf(listOf("100"), listOf("100000", "2000")), params[3].value)
 
-        assertTrue(params[4] is ParamDto.BytesParam)
+        assertTrue(params[4] is Param.Bytes)
         assertEquals("data", params[4].name)
         assertEquals("bytes", params[4].type)
         assertEquals("0x00", params[4].value)
 
-        assertTrue(params[5] is ParamDto.BytesParam)
+        assertTrue(params[5] is Param.Bytes)
         assertEquals("transactions", params[5].name)
         assertEquals("bytes", params[5].type)
         assertEquals(
@@ -172,12 +172,12 @@ class DataMoshiTest {
             params[5].value
         )
 
-        assertTrue(params[6] is ParamDto.BytesParam)
+        assertTrue(params[6] is Param.Bytes)
         assertEquals("data", params[6].name)
         assertEquals("bytes", params[6].type)
         assertEquals("0x00", params[6].value)
 
-        assertTrue(params[7] is ParamDto.BytesParam)
+        assertTrue(params[7] is Param.Bytes)
         assertEquals("data", params[7].name)
         assertEquals("bytes", params[7].type)
         assertEquals("0x00", params[7].value)
