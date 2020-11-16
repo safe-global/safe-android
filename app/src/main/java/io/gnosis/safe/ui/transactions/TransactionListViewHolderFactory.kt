@@ -201,7 +201,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            version.setText(viewTransfer.addressLabel)
+            addressLabel.setText(viewTransfer.addressLabel)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
@@ -211,14 +211,14 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
-            version.alpha = viewTransfer.alpha
+            addressLabel.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
             label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
             moduleAddress.alpha = viewTransfer.alpha
 
-            version.visibility = viewTransfer.visibilityVersion
+            addressLabel.visibility = viewTransfer.visibilityAddressLabel
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
 
@@ -241,7 +241,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
             dateTime.text = viewTransfer.dateTimeText
 
-            version.setText(viewTransfer.addressLabel) //TODO fallbackHandlerDisplayString?
+            addressLabel.setText(viewTransfer.addressLabel)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
@@ -252,7 +252,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
-            version.visibility = viewTransfer.visibilityVersion
+            addressLabel.visibility = viewTransfer.visibilityAddressLabel
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
 

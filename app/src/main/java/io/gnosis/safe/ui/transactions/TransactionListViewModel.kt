@@ -333,13 +333,13 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendDate(),
             label = label,
             address = address,
-            addressLabel = io.gnosis.data.R.string.unknown_fallback_handler,
+            addressLabel = io.gnosis.data.R.string.empty_string,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
-            visibilityVersion = View.INVISIBLE,
+            visibilityAddressLabel = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE
         )
@@ -360,8 +360,8 @@ class TransactionListViewModel
             alpha = alpha(txStatus),
             label = label,
             address = address,
-            addressLabel = io.gnosis.data.R.string.unknown_implementation_version,
-            visibilityVersion = View.INVISIBLE,
+            addressLabel = io.gnosis.data.R.string.empty_string,
+            visibilityAddressLabel = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE,
             nonce = executionInfo?.nonce?.toString().orEmpty()
@@ -388,9 +388,9 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
-            addressLabel = version,
+            label = R.string.tx_list_change_mastercopy,
             address = address,
-            label = R.string.tx_list_change_mastercopy
+            addressLabel = version
         )
     }
 

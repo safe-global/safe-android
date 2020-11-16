@@ -50,7 +50,7 @@
         android:textColor="@color/medium_grey"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toBottomOf="@+id/version"
+        app:layout_constraintTop_toBottomOf="@+id/address_label"
         tools:text="0x5c...33D0" />
 
     <TextView
@@ -80,7 +80,7 @@
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
     <TextView
-        android:id="@+id/version"
+        android:id="@+id/address_label"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
