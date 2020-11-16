@@ -92,7 +92,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
     when (settingsChange.dataDecoded.method) {
         SafeRepository.METHOD_CHANGE_MASTER_COPY -> {
             val mainCopy = params.getAddressValueByName("_masterCopy")
-            val label = mainCopy?.let { it.implementationVersion() } ?: R.string.empty_string
+            val label = mainCopy?.implementationVersion()
 
             result.add(
                 ActionInfoItem.AddressWithLabel(
