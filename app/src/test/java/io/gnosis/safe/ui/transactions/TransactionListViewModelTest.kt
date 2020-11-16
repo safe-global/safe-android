@@ -9,8 +9,6 @@ import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
@@ -638,7 +636,7 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.medium_grey,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                addressLabel = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
+                addressLabel = R.string.unknown_fallback_handler,
                 address = null,
                 visibilityAddressLabel = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
@@ -701,7 +699,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.GONE,
                 visibilityAddressLabel = View.VISIBLE,
                 address = defaultFallbackHandler,
-                addressLabel = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
+                addressLabel = R.string.default_fallback_handler,
                 nonce = "1"
             ),
             transactionViews[5]

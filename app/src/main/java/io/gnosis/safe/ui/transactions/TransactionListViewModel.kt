@@ -7,15 +7,10 @@ import androidx.paging.*
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_UNKNOWN_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.implementationVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -250,7 +245,7 @@ class TransactionListViewModel
 
     private fun Transaction.historicImplementationChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
         val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = implementationVersion(address) ?: SAFE_IMPLEMENTATION_UNKNOWN_DISPLAY_STRING
+        val version = address.implementationVersion()
 
         return TransactionView.SettingsChangeVariant(
             id = id,
@@ -273,9 +268,7 @@ class TransactionListViewModel
         val threshold = executionInfo!!.confirmationsRequired
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
         val address = (txInfo.settingsInfo as? SettingsInfo.SetFallbackHandler)?.handler
-        val fallbackHandlerDisplayString =
-            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-            else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
+        val fallbackHandlerDisplayString = address.fallBackHandlerLabel()
 
         return TransactionView.SettingsChangeVariantQueued(
             id = id,
@@ -296,9 +289,7 @@ class TransactionListViewModel
 
     private fun Transaction.historicSetFallbackHandler(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
         val address = (txInfo.settingsInfo as SettingsInfo.SetFallbackHandler).handler
-        val fallbackHandlerDisplayString =
-            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-            else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
+        val fallBackHandlerLabel = address.fallBackHandlerLabel()
 
         return TransactionView.SettingsChangeVariant(
             id = id,
@@ -309,7 +300,7 @@ class TransactionListViewModel
             alpha = alpha(txStatus),
             label = R.string.tx_list_set_fallback_handler,
             address = address,
-            addressLabel = fallbackHandlerDisplayString,
+            addressLabel = fallBackHandlerLabel,
             nonce = executionInfo?.nonce.toString()
         )
     }
@@ -375,7 +366,7 @@ class TransactionListViewModel
         val threshold = executionInfo!!.confirmationsRequired
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
         val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = implementationVersion(address) ?: SAFE_IMPLEMENTATION_UNKNOWN_DISPLAY_STRING
+        val version = address.implementationVersion()
 
         return TransactionView.SettingsChangeVariantQueued(
             id = id,
@@ -566,8 +557,6 @@ fun TransactionView.isHistory() = when (status) {
     TransactionStatus.SUCCESS -> true
     else -> false
 }
-
-fun Solidity.Address.getVersionForAddress(): Int = implementationVersion(this) ?: SAFE_IMPLEMENTATION_UNKNOWN_DISPLAY_STRING
 
 fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
     return executionInfo?.missingSigners?.contains(ownerAddress) == true

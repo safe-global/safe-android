@@ -8,7 +8,6 @@ import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
-import io.gnosis.safe.ui.transactions.getVersionForAddress
 import java.math.BigInteger
 
 const val DEFAULT_ERC20_SYMBOL = "ERC20"
@@ -93,7 +92,7 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
     when (settingsChange.dataDecoded.method) {
         SafeRepository.METHOD_CHANGE_MASTER_COPY -> {
             val mainCopy = params.getAddressValueByName("_masterCopy")
-            val label = mainCopy?.let { it.getVersionForAddress() } ?: R.string.empty_string
+            val label = mainCopy?.let { it.implementationVersion() } ?: R.string.empty_string
 
             result.add(
                 ActionInfoItem.AddressWithLabel(
