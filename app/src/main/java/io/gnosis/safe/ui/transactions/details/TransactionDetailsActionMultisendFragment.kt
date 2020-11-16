@@ -68,7 +68,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
                                 value.data,
                                 value.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
                                 value.to.asEthereumAddressString(),
-                                balanceFormatter.formatAmount(value.value, true)
+                                balanceFormatter.formatAmount(value.value, false)
                             )
                         )
                     }

@@ -80,8 +80,10 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         binding.transactions.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val firstVisibleItem = (binding.transactions.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                reload = firstVisibleItem <= 1
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    val firstVisibleItem = (binding.transactions.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    reload = firstVisibleItem <= 1
+                }
             }
         })
 
