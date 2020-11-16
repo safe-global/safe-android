@@ -79,7 +79,6 @@
     <string name="endpoints">ENDPOINTS</string>
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
-    <string name="relay_service">Relay service</string>
     <string name="client_gateway_service">Client Gateway service</string>
 
     <string name="get_in_touch_title">Get in touch</string>
