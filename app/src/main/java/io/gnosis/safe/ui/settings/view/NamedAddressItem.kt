@@ -58,7 +58,7 @@ class NamedAddressItem @JvmOverloads constructor(
                 binding.name.visible(false)
             } else {
                 binding.name.visible(true)
-                binding.name.text = resources.getString(value)
+                binding.name.setText(value)
             }
             field = value
         }

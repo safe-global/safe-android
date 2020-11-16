@@ -95,7 +95,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             else -> labeledAddress(fallbackHandler, R.string.safe_settings_unknown)
         }
 
-    private fun labeledAddress(address: Solidity.Address, @StringRes label: Int = io.gnosis.data.R.string.empty_string): NamedAddressItem {
+    private fun labeledAddress(address: Solidity.Address, @StringRes label: Int? = null): NamedAddressItem {
         return NamedAddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
