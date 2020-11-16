@@ -91,8 +91,8 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                 openable = false
                 name = getString(R.string.safe_settings_not_set)
             }
-            viewModel.isDefaultFallbackHandler(fallbackHandler) -> labeledAddress(fallbackHandler, R.string.safe_settings_default_fallback_handler)
-            else -> labeledAddress(fallbackHandler, R.string.safe_settings_unknown)
+            viewModel.isDefaultFallbackHandler(fallbackHandler) -> labeledAddress(fallbackHandler, io.gnosis.data.R.string.default_fallback_handler)
+            else -> labeledAddress(fallbackHandler, io.gnosis.data.R.string.unknown_fallback_handler)
         }
 
     private fun labeledAddress(address: Solidity.Address, @StringRes label: Int? = null): NamedAddressItem {
