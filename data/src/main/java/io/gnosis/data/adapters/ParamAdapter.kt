@@ -4,29 +4,30 @@ import com.squareup.moshi.*
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ValueDecoded
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 
 class ParamAdapter {
 
     @ToJson
-    fun toJson(writer: JsonWriter, paramDto: Param, valueDecodedAdapter: JsonAdapter<List<ValueDecoded>>) {
+    fun toJson(writer: JsonWriter, param: Param, valueDecodedAdapter: JsonAdapter<List<ValueDecoded>>) {
 
         writer.beginObject()
 
         writer.name("name")
-        writer.value(paramDto.name)
+        writer.value(param.name)
 
         writer.name("type")
-        writer.value(paramDto.type)
+        writer.value(param.type)
 
         writer.name("value")
-        when (paramDto) {
+        when (param) {
             is Param.AddressParam -> {
-                writer.value(paramDto.value.asEthereumAddressString())
+                writer.value(param.value.asEthereumAddressString())
             }
             is Param.ArrayParam -> {
                 writer.beginArray()
-                paramDto.value.forEach {
+                param.value.forEach {
                     if(it is List<*>) {
                         writeArray(writer, it as List<Any>)
                     } else {
@@ -36,14 +37,14 @@ class ParamAdapter {
                 writer.endArray()
             }
             is Param.BytesParam -> {
-                writer.value(paramDto.value)
-                if (paramDto.valueDecoded != null) {
+                writer.value(param.value)
+                if (param.valueDecoded != null) {
                     writer.name("valueDecoded")
-                    valueDecodedAdapter.toJson(writer, paramDto.valueDecoded)
+                    valueDecodedAdapter.toJson(writer, param.valueDecoded)
                 }
             }
             is Param.ValueParam -> {
-                writer.value(paramDto.value as String)
+                writer.value(param.value as String)
             }
         }
 
