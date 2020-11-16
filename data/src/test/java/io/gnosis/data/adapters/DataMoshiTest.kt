@@ -1,20 +1,23 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
-import io.gnosis.data.backend.dto.*
-import io.gnosis.data.models.TransactionStatus.SUCCESS
+import io.gnosis.data.backend.dto.DataDecodedDto
+import io.gnosis.data.backend.dto.ParamDto
+import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.*
 import java.util.stream.Collectors
 
 class DataMoshiTest {
 
     private val moshi = dataMoshi
-    private val txAdapter = moshi.adapter(GateTransactionDto::class.java)
+    private val txAdapter = moshi.adapter(Transaction::class.java)
     private val paramAdapter = moshi.adapter<List<ParamDto>>(Types.newParameterizedType(List::class.java, ParamDto::class.java))
 
     @Test
@@ -23,17 +26,15 @@ class DataMoshiTest {
 
         val transactionDto = txAdapter.fromJson(jsonString)
 
-        val expected = GateTransactionDto(
+        val expected = Transaction(
             id = "ethereum_0x1C8b9B78e3085866521FE206fa4c1a67F49f153A_6613439_0xa215ac5bc96fb65e",
-            timestamp = 1591357055000,
+            timestamp = Date(1591357055000),
             txStatus = SUCCESS,
-            txInfo = TransactionInfoDto.Transfer(
-                type = GateTransactionType.Transfer,
+            txInfo = TransactionInfo.Transfer(
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                transferInfo = TransferInfoDto.Erc20Transfer(
-                    type = GateTransferType.ERC20,
+                transferInfo = TransferInfo.Erc20Transfer(
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
                     tokenAddress = "0xc778417E063141139Fce010982780140Aa0cD5Ab".asEthereumAddress()!!,
@@ -53,17 +54,16 @@ class DataMoshiTest {
 
         val transactionDto = txAdapter.fromJson(jsonString)
 
-        val expected = GateTransactionDto(
+        val expected = Transaction(
             id = "multisig_0xa9b819d0123858cb3b37a849a2ed3d5c4341bd5ecb55bc7c2983301dc8d3cb5c",
-            timestamp = 1591356920000,
+            timestamp = Date(1591356920000),
             txStatus = SUCCESS,
-            txInfo = TransactionInfoDto.Custom(
-                type = GateTransactionType.Custom,
+            txInfo = TransactionInfo.Custom(
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 value = "3140000000000000000".toBigInteger()
             ),
-            executionInfo = ExecutionInfoDto(
+            executionInfo = ExecutionInfo(
                 nonce = 8.toBigInteger(),
                 confirmationsRequired = 2,
                 confirmationsSubmitted = 2,
@@ -79,12 +79,11 @@ class DataMoshiTest {
 
         val transactionDto = txAdapter.fromJson(jsonString)
 
-        val expected = GateTransactionDto(
+        val expected = Transaction(
             id = "multisig_0x238f1fe1beac3cfd4ec98acb4e006f7ebbbd615ddac9d6b065fdb3ce01065a9a",
-            timestamp = 1591137785000,
+            timestamp = Date(1591137785000),
             txStatus = SUCCESS,
-            txInfo = TransactionInfoDto.SettingsChange(
-                type = GateTransactionType.SettingsChange,
+            txInfo = TransactionInfo.SettingsChange(
                 dataDecoded = DataDecodedDto(
                     method = "addOwnerWithThreshold",
                     parameters = listOf(
@@ -95,9 +94,13 @@ class DataMoshiTest {
                         ),
                         ParamDto.ValueParam(name = "_threshold", value = "1", type = "uint256")
                     )
+                ),
+                settingsInfo = SettingsInfo.AddOwner(
+                    owner = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
+                    threshold = 1
                 )
             ),
-            executionInfo = ExecutionInfoDto(
+            executionInfo = ExecutionInfo(
                 nonce = 4.toBigInteger(),
                 confirmationsRequired = 1,
                 confirmationsSubmitted = 1,
@@ -113,12 +116,11 @@ class DataMoshiTest {
 
         val transactionDto = txAdapter.fromJson(jsonString)
 
-        val expected = GateTransactionDto(
+        val expected = Transaction(
             id = "creation_0xFd0f138c1ca4741Ad6D4DecCb352Eb5c1E29D351",
-            timestamp = 1543431151000,
+            timestamp = Date(1543431151000),
             txStatus = SUCCESS,
-            txInfo = TransactionInfoDto.Creation(
-                type = GateTransactionType.Creation,
+            txInfo = TransactionInfo.Creation(
                 creator = "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!,
                 factory = null,
                 implementation = null,

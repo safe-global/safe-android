@@ -121,6 +121,21 @@ android {
             }
         }
 
+        mainnet_staging {
+            initWith debug
+            applicationIdSuffix ".mainnet_staging"
+            versionNameSuffix "-mainnet_staging"
+            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Mainnet"))
+            buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
+            firebaseAppDistribution {
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
+            }
+        }
+
         release {
             minifyEnabled true
             multiDexEnabled true
@@ -291,4 +306,8 @@ task printVersion {
     doLast {
         println android.defaultConfig.versionName
     }
+}
+
+ext {
+    jacocoCoverageThreshold = 0.3 // 30%
 }

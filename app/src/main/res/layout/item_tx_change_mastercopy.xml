@@ -61,10 +61,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
+        android:gravity="end"
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
         android:text="@string/tx_list_change_mastercopy"
-        android:textAlignment="viewEnd"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,8 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:singleLine="true"
         app:layout_constraintEnd_toStartOf="@+id/label"
         app:layout_constraintStart_toEndOf="@+id/blockies"
         app:layout_constraintTop_toTopOf="@+id/blockies"
@@ -122,9 +122,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:text="TextView"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/blockies"
         app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="@+id/blockies" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

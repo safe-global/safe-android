@@ -2,9 +2,9 @@ package io.gnosis.safe.utils
 
 import io.gnosis.data.backend.dto.DataDecodedDto
 import io.gnosis.data.backend.dto.ParamDto
-import io.gnosis.data.backend.dto.TransactionDirection
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransactionInfo
+import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
@@ -169,13 +169,14 @@ class TxUtilsKtTest {
 
 
     @Test
-    fun `txActionInfoItems (SettingsChange addOwnerWithThreÍhold) should return Addres & Value `() {
+    fun `txActionInfoItems (SettingsChange addOwnerWithThreÍhold) should return Address and Value `() {
         val settingsChange: TransactionInfo.SettingsChange =
             TransactionInfo.SettingsChange(
                 dataDecoded = DataDecodedDto(
                     method = METHOD_ADD_OWNER_WITH_THRESHOLD,
                     parameters = listOf(ParamDto.ValueParam("uint256", "_threshold", "1"), ParamDto.AddressParam("address", "owner", anyAddress))
-                )
+                ),
+                settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -200,7 +201,8 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.AddressParam("address", "module", anyAddress)
                     )
-                )
+                ),
+                settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -220,7 +222,7 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.AddressParam("address", "module", anyAddress)
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -240,7 +242,7 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1)
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -262,7 +264,7 @@ class TxUtilsKtTest {
                         ParamDto.AddressParam("address", "oldOwner", anyAddress),
                         ParamDto.AddressParam("address", "newOwner", anotherAddress)
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -288,7 +290,7 @@ class TxUtilsKtTest {
                         ParamDto.AddressParam("address", "owner", anyAddress),
                         ParamDto.ValueParam("uint256", "_threshold", "2")
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -312,7 +314,7 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.AddressParam("address", "handler", anyAddress)
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -334,7 +336,7 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.AddressParam("address", "handler", SafeRepository.DEFAULT_FALLBACK_HANDLER)
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -356,7 +358,7 @@ class TxUtilsKtTest {
                     parameters = listOf(
                         ParamDto.ValueParam("uint256", "_threshold", "4")
                     )
-                )
+                ), settingsInfo = null
             )
 
         val result = settingsChange.txActionInfoItems()
@@ -368,6 +370,7 @@ class TxUtilsKtTest {
     }
 
     private fun buildTransferInfo(value: BigInteger): TransferInfo = TransferInfo.EtherTransfer(value)
+
     private fun buildErc20TransferInfo(value: BigInteger, tokenSymbol: String? = "WETH"): TransferInfo =
         TransferInfo.Erc20Transfer(
             tokenAddress = Solidity.Address(BigInteger.ONE),

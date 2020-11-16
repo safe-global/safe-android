@@ -48,7 +48,7 @@
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
-    <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
+    <string name="error_ssl_handshake">Could not establish a secure connection to the Safe services.</string>
 
     <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>

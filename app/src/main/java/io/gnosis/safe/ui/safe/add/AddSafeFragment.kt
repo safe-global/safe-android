@@ -65,6 +65,11 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         })
     }
 
+    override fun onStop() {
+        super.onStop()
+        addressInputHelper.hideDialog()
+    }
+
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
         with(binding) {

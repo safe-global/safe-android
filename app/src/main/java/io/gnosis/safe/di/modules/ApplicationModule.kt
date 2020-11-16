@@ -2,7 +2,10 @@ package io.gnosis.safe.di.modules
 
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.ConnectivityManager
+import android.os.Build
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -41,6 +44,7 @@ import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -231,7 +235,25 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage = AndroidKeyStorage(context)
+    fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage =
+        // FIXME This is a workaround for a problem in Android Marshmallow See: https://issuetracker.google.com/issues/37095309
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            val localeCopy = Locale.getDefault()
+            setLocale(context, Locale.ENGLISH)
+            val androidKeyStorage = AndroidKeyStorage(context)
+            setLocale(context, localeCopy)
+            androidKeyStorage
+        } else {
+            AndroidKeyStorage(context)
+        }
+
+    private fun setLocale(context: Context, locale: Locale) {
+        Locale.setDefault(locale)
+        val resources: Resources = context.getResources()
+        val config: Configuration = resources.getConfiguration()
+        config.locale = locale
+        resources.updateConfiguration(config, resources.getDisplayMetrics())
+    }
 
     @Provides
     @Singleton

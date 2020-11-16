@@ -57,9 +57,9 @@
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:textAlignment="textEnd"
+        android:layout_marginEnd="8dp"
+        android:gravity="end"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintStart_toEndOf="@+id/ellipsized_address"
@@ -106,9 +106,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:textColor="@color/safe_pending_orange"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
-        android:textColor="@color/safe_pending_orange"
         tools:text="\u2022 Awaiting your confirmation" />
 
     <TextView
@@ -145,8 +145,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        tools:text="96 bytes"
         app:layout_constraintEnd_toEndOf="@+id/amount"
-        app:layout_constraintTop_toBottomOf="@+id/amount" />
+        app:layout_constraintTop_toBottomOf="@+id/amount"
+        tools:text="96 bytes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,11 +2,10 @@ package io.gnosis.safe.ui.transactions.details
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.GateTransactionDetailsDto
-import io.gnosis.data.models.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.TransactionDetails
-import io.gnosis.data.models.TransactionStatus
+import io.gnosis.data.models.transaction.TransactionDetails
+import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.TestLifecycleRule
@@ -35,7 +34,7 @@ class TransactionDetailsViewModelTest {
 
     private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, ownerCredentialsRepository, appDispatchers)
 
-    private val adapter = dataMoshi.adapter(GateTransactionDetailsDto::class.java)
+    private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     @Test
     fun `loadDetails (transactionRepository failure) should emit error`() = runBlockingTest {
@@ -257,7 +256,7 @@ class TransactionDetailsViewModelTest {
     }
 
 
-    private suspend fun toTransactionDetails(transactionDetailsDto: GateTransactionDetailsDto): TransactionDetails {
+    private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
         val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(any()) } returns transactionDetailsDto }
         return TransactionRepository(mockGatewayApi).getTransactionDetails("txId")
     }

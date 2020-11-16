@@ -38,14 +38,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/blockies"
         tools:text="10" />
+
     <TextView
         android:id="@+id/amount"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_small_margin"
         android:layout_marginStart="@dimen/default_small_margin"
-        android:textAlignment="textEnd"
+        android:layout_marginEnd="@dimen/default_small_margin"
+        android:gravity="end"
         android:textColor="@color/safe_green"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
@@ -105,7 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        tools:text="96 bytes"
         app:layout_constraintEnd_toEndOf="@+id/amount"
-        app:layout_constraintTop_toBottomOf="@+id/amount" />
+        app:layout_constraintTop_toBottomOf="@+id/amount"
+        tools:text="96 bytes" />
 </androidx.constraintlayout.widget.ConstraintLayout>
