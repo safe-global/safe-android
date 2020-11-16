@@ -105,9 +105,6 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
 
-    <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_multisend_action">Action #%1$d</string>

@@ -129,9 +129,9 @@ fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
             val fallbackHandler = params.getAddressValueByName("handler")
             val label =
                 if (SafeRepository.DEFAULT_FALLBACK_HANDLER == fallbackHandler) {
-                    R.string.tx_list_default_fallback_handler
+                    io.gnosis.data.R.string.default_fallback_handler
                 } else {
-                    R.string.tx_list_default_fallback_handler_unknown
+                    io.gnosis.data.R.string.unknown_fallback_handler
                 }
             result.add(
                 ActionInfoItem.AddressWithLabel(
