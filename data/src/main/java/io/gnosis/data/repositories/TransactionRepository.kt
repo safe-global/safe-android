@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
 import io.gnosis.data.models.transaction.*
 import pm.gnosis.crypto.ECDSASignature
@@ -11,7 +10,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
-import java.util.*
 
 class TransactionRepository(
     private val gatewayApi: GatewayApi
@@ -41,15 +39,15 @@ class TransactionRepository(
 
 }
 
-fun List<ParamDto>?.getAddressValueByName(name: String): Solidity.Address? {
+fun List<Param>?.getAddressValueByName(name: String): Solidity.Address? {
     return this?.find {
-        it is ParamDto.AddressParam && it.name == name
+        it is Param.AddressParam && it.name == name
     }?.value as Solidity.Address?
 }
 
-fun List<ParamDto>?.getIntValueByName(name: String): String? {
+fun List<Param>?.getIntValueByName(name: String): String? {
     return this?.find {
-        it is ParamDto.ValueParam && it.name == name
+        it is Param.ValueParam && it.name == name
     }?.value as String?
 }
 

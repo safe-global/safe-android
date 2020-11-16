@@ -10,9 +10,9 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ParamDto
-import io.gnosis.data.backend.dto.ParamType
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.Param
+import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
@@ -59,7 +59,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         updateUi(decodedData, address, amount)
     }
 
-    private fun updateUi(decodedDto: DataDecodedDto?, address: Solidity.Address? = null, amount: String? = null) {
+    private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null) {
 
         binding.content.removeAllViews()
 
@@ -81,16 +81,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
                 it.parameters?.forEach {
                     when (it) {
-                        is ParamDto.AddressParam -> {
+                        is Param.AddressParam -> {
                             content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value))
                         }
-                        is ParamDto.ArrayParam -> {
+                        is Param.ArrayParam -> {
                             content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType()))
                         }
-                        is ParamDto.BytesParam -> {
+                        is Param.BytesParam -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
                         }
-                        is ParamDto.ValueParam -> {
+                        is Param.ValueParam -> {
                             if (it.isBytesValue()) {
                                 content.addView(getDataItem("${it.name}(${it.type}):", it.value as String))
                             } else {

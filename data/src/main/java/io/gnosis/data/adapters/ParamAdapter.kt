@@ -1,16 +1,15 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.*
-import io.gnosis.data.backend.dto.ParamDto
-import io.gnosis.data.backend.dto.ValueDecodedDto
+import io.gnosis.data.models.transaction.Param
+import io.gnosis.data.models.transaction.ValueDecoded
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 
 
 class ParamAdapter {
 
     @ToJson
-    fun toJson(writer: JsonWriter, paramDto: ParamDto, valueDecodedAdapter: JsonAdapter<List<ValueDecodedDto>>) {
+    fun toJson(writer: JsonWriter, paramDto: Param, valueDecodedAdapter: JsonAdapter<List<ValueDecoded>>) {
 
         writer.beginObject()
 
@@ -22,10 +21,10 @@ class ParamAdapter {
 
         writer.name("value")
         when (paramDto) {
-            is ParamDto.AddressParam -> {
+            is Param.AddressParam -> {
                 writer.value(paramDto.value.asEthereumAddressString())
             }
-            is ParamDto.ArrayParam -> {
+            is Param.ArrayParam -> {
                 writer.beginArray()
                 paramDto.value.forEach {
                     if(it is List<*>) {
@@ -36,14 +35,14 @@ class ParamAdapter {
                 }
                 writer.endArray()
             }
-            is ParamDto.BytesParam -> {
+            is Param.BytesParam -> {
                 writer.value(paramDto.value)
                 if (paramDto.valueDecoded != null) {
                     writer.name("valueDecoded")
                     valueDecodedAdapter.toJson(writer, paramDto.valueDecoded)
                 }
             }
-            is ParamDto.ValueParam -> {
+            is Param.ValueParam -> {
                 writer.value(paramDto.value as String)
             }
         }
@@ -64,7 +63,7 @@ class ParamAdapter {
     }
 
     @FromJson
-    fun fromJson(reader: JsonReader, valueDecodedAdapter: JsonAdapter<List<ValueDecodedDto>>): ParamDto {
+    fun fromJson(reader: JsonReader, valueDecodedAdapter: JsonAdapter<List<ValueDecoded>>): Param {
         try {
             var name = ""
             var type = getType(reader)
@@ -80,7 +79,7 @@ class ParamAdapter {
                                 type == "address" -> {
                                     val value = reader.nextString().asEthereumAddress()!!
                                     reader.endObject()
-                                    return ParamDto.AddressParam(type, name, value)
+                                    return Param.AddressParam(type, name, value)
                                 }
                                 type == "bytes" -> {
                                     val value = reader.nextString()
@@ -90,26 +89,26 @@ class ParamAdapter {
                                                 valueDecodedAdapter.fromJson(reader)
                                             }.onSuccess {
                                                 reader.endObject()
-                                                return ParamDto.BytesParam(type, name, value, it)
+                                                return Param.BytesParam(type, name, value, it)
                                             }.onFailure {
                                                 reader.endArray()
                                                 reader.endObject()
-                                                return ParamDto.BytesParam(type, name, value, null)
+                                                return Param.BytesParam(type, name, value, null)
                                             }
                                         } else {
                                             reader.skipValue()
                                             reader.endObject()
-                                            return ParamDto.BytesParam(type, name, value, null)
+                                            return Param.BytesParam(type, name, value, null)
                                         }
                                     } else {
                                         reader.endObject()
-                                        return ParamDto.BytesParam(type, name, value, null)
+                                        return Param.BytesParam(type, name, value, null)
                                     }
                                 }
                                 !type.contains("[") -> {
                                     val value = reader.nextString()
                                     reader.endObject()
-                                    return ParamDto.ValueParam(type, name, value)
+                                    return Param.ValueParam(type, name, value)
                                 }
                                 else -> {
                                     val value = mutableListOf<Any>()
@@ -122,7 +121,7 @@ class ParamAdapter {
                                         }
                                         reader.endArray()
                                         reader.endObject()
-                                        return ParamDto.ArrayParam(type, name, value)
+                                        return Param.ArrayParam(type, name, value)
                                     } else {
                                         reader.skipValue()
                                     }
@@ -137,9 +136,9 @@ class ParamAdapter {
             }
             reader.endObject()
         } catch (e: Exception) {
-            return ParamDto.UnknownParam
+            return Param.UnknownParam
         }
-        return ParamDto.UnknownParam
+        return Param.UnknownParam
     }
 
     private fun getType(reader: JsonReader): String {

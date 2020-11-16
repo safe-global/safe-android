@@ -2,9 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.*
 import io.gnosis.data.models.*
-import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
@@ -216,7 +214,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getValueByName (single param) should return right value`() {
-        val params = listOf(ParamDto.ValueParam(name = "foo", type = "uint256", value = "12"))
+        val params = listOf(Param.ValueParam(name = "foo", type = "uint256", value = "12"))
         val result = params.getIntValueByName("foo")
         assertEquals("12", result)
     }
@@ -224,9 +222,9 @@ class TransactionRepositoryTest {
     @Test
     fun `getValueByName (several params) should return right value`() {
         val params = listOf(
-            ParamDto.ValueParam(name = "foo", type = "uint256", value = "1"),
-            ParamDto.ValueParam(name = "bar", type = "uint256", value = "2"),
-            ParamDto.ValueParam(name = "baz", type = "uint256", value = "3")
+            Param.ValueParam(name = "foo", type = "uint256", value = "1"),
+            Param.ValueParam(name = "bar", type = "uint256", value = "2"),
+            Param.ValueParam(name = "baz", type = "uint256", value = "3")
         )
 
         val result = params.getIntValueByName("bar")
@@ -236,7 +234,7 @@ class TransactionRepositoryTest {
 
     @Test
     fun `getValueByName (unavailable name) should return null`() {
-        val params = listOf(ParamDto.ValueParam(name = "foo", type = "uint256", value = "12"))
+        val params = listOf(Param.ValueParam(name = "foo", type = "uint256", value = "12"))
         val result = params.getIntValueByName("bar")
         assertEquals(null, result)
     }
@@ -322,7 +320,10 @@ private fun buildCreationTxInfo(
     )
 
 private fun buildSettingsChangeTxInfo(
-    dataDecoded: DataDecodedDto = DataDecodedDto("defaultMethod", listOf())
+    dataDecoded: DataDecoded = DataDecoded(
+        "defaultMethod",
+        listOf()
+    )
 ): TransactionInfo.SettingsChange =
     TransactionInfo.SettingsChange(
         dataDecoded = dataDecoded,

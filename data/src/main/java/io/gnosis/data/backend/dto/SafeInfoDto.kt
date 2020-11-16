@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
+@Deprecated("use client gw")
 @JsonClass(generateAdapter = true)
 data class SafeInfoDto(
     @Json(name = "address") val address: Solidity.Address,
