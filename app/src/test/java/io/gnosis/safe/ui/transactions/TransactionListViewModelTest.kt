@@ -597,7 +597,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_IMPLEMENTATION_1_1_1,
-                addressLabel = io.gnosis.data.R.string.implementation_version_1_1_1,
+                addressLabel = R.string.implementation_version_1_1_1,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityAddressLabel = View.VISIBLE,
@@ -663,7 +663,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityAddressLabel = View.INVISIBLE,
                 address = defaultModuleAddress,
-                addressLabel = io.gnosis.data.R.string.empty_string
+                addressLabel = R.string.empty_string
             ),
             transactionViews[3]
         )
@@ -684,7 +684,7 @@ class TransactionListViewModelTest {
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityAddressLabel = View.INVISIBLE,
                 address = defaultModuleAddress,
-                addressLabel = io.gnosis.data.R.string.empty_string
+                addressLabel = R.string.empty_string
             ),
             transactionViews[4]
         )
@@ -715,7 +715,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_IMPLEMENTATION_1_0_0,
-                addressLabel = io.gnosis.data.R.string.implementation_version_1_0_0,
+                addressLabel = R.string.implementation_version_1_0_0,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityAddressLabel = View.VISIBLE,
@@ -733,7 +733,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
-                addressLabel = io.gnosis.data.R.string.empty_string,
+                addressLabel = R.string.empty_string,
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
                 visibilityAddressLabel = View.INVISIBLE,

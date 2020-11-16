@@ -249,7 +249,7 @@ class TxUtilsKtTest {
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals(io.gnosis.data.R.string.implementation_version_1_1_1, address.addressLabel)
+        assertEquals(R.string.implementation_version_1_1_1, address.addressLabel)
         assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
@@ -322,7 +322,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
-        assertEquals(io.gnosis.data.R.string.unknown_fallback_handler, addressOwner.addressLabel)
+        assertEquals(R.string.unknown_fallback_handler, addressOwner.addressLabel)
     }
 
     @Test
@@ -347,7 +347,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(SafeRepository.DEFAULT_FALLBACK_HANDLER, addressOwner.address)
-        assertEquals(io.gnosis.data.R.string.default_fallback_handler, addressOwner.addressLabel)
+        assertEquals(R.string.default_fallback_handler, addressOwner.addressLabel)
     }
 
     @Test
