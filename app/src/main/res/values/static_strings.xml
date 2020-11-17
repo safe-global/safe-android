@@ -12,4 +12,9 @@
     <string name="email_feedback" translatable="false">safe@gnosis.io</string>
     <string name="etherscan_address_url" translatable="false">https://rinkeby.etherscan.io/address/%s</string>
     <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>
+    <string name="empty_string" translatable="false" />
+    <string name="implementation_version_0_0_2" translatable="false">0.0.2</string>
+    <string name="implementation_version_0_1_0" translatable="false">0.1.0</string>
+    <string name="implementation_version_1_0_0" translatable="false">1.0.0</string>
+    <string name="implementation_version_1_1_1" translatable="false">1.1.1</string>
 </resources>
