@@ -12,6 +12,7 @@ import io.gnosis.safe.databinding.ViewSafeInputBinding
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 
 class SafeInputView @JvmOverloads constructor(
     context: Context,
@@ -22,45 +23,47 @@ class SafeInputView @JvmOverloads constructor(
     private val binding = ViewSafeInputBinding.inflate(LayoutInflater.from(context), this)
 
     var address: Solidity.Address? = null
-        set(value) {
-            setErrorState(false)
-            if (value != null) setNewAddress(value)
-            else setHint()
-            field = value
-        }
+        private set
 
-    var error: String? = null
-        set(value) {
-            setErrorState(value != null, value)
-            field = value
-        }
+    fun setNewAddress(newAddress: Solidity.Address) {
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        binding.mainContainer.setOnClickListener(l)
-    }
+        address = newAddress
 
-    private fun setErrorState(toggle: Boolean, errorMessage: String? = null) {
         with(binding) {
-            this.errorMessage.visible(toggle, View.INVISIBLE)
-            this.errorMessage.text = errorMessage
-            val colorId = if (toggle) R.color.tomato else R.color.white_smoke
-            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, colorId, context.theme))
-        }
-    }
-
-    private fun setNewAddress(newAddress: Solidity.Address) {
-        with(binding) {
+            this.errorMessage.visible(false, View.INVISIBLE)
             blockies.setAddress(newAddress)
             blockies.visible(true)
             address.text = newAddress.formatEthAddress(context, addMiddleLinebreak = false)
+            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.white_smoke, context.theme))
         }
     }
 
-    private fun setHint() {
+    fun setError(errorMessage: String?, input: String?) {
+
+        address = null
+
         with(binding) {
-            blockies.setAddress(null)
-            blockies.visible(false)
-            address.setText(R.string.enter_safe_address)
+
+            this.errorMessage.visible(true)
+            this.errorMessage.text = errorMessage
+
+            input?.asEthereumAddress()?.let {
+                blockies.visible(true)
+                blockies.setAddress(it)
+                address.text = it.formatEthAddress(context, addMiddleLinebreak = false)
+            } ?: run {
+                if (input != null) {
+                    blockies.setAddress(null)
+                    blockies.visible(false)
+                    address.text = if (input.isBlank()) context.getString(R.string.enter_safe_address) else input
+                }
+            }
+
+            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.tomato, context.theme))
         }
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        binding.mainContainer.setOnClickListener(l)
     }
 }

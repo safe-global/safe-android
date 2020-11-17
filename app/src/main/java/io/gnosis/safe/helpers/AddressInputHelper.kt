@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
@@ -20,7 +21,7 @@ class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: ((Throwable) -> Unit)
+    private val errorCallback: (Throwable, String?) -> Unit
 ) {
 
     private val dialog =
@@ -43,9 +44,10 @@ class AddressInputHelper(
                     hide()
                 }
                 bottomSheetAddressInputPasteTouch.setOnClickListener {
-                    (clipboard.primaryClip?.getItemAt(0)?.text?.trim()?.let { parseEthereumAddress(it.toString()) }
+                    val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim()
+                    (input?.let { parseEthereumAddress(it.toString()) }
                         ?: run {
-                            handleError(InvalidAddressException("No Ethereum address found"))
+                            handleError(InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)), input.toString())
                             null
                         })?.let { addressCallback(it) }
                     hide()
@@ -61,7 +63,7 @@ class AddressInputHelper(
         @Suppress("MoveLambdaOutsideParentheses")
         if (!handleQrCodeActivityResult(requestCode, resultCode, data, {
                 addressCallback(parseEthereumAddress(it) ?: run {
-                    handleError(InvalidAddressException(it))
+                    handleError(InvalidAddressException(it), it)
                     return@handleQrCodeActivityResult
                 })
             })) {
@@ -72,7 +74,7 @@ class AddressInputHelper(
         }
     }
 
-    private fun handleError(t: Throwable) {
-        errorCallback.invoke(t)
+    private fun handleError(error: Throwable, input: String) {
+        errorCallback.invoke(error, input)
     }
 }

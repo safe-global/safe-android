@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
@@ -18,7 +17,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import timber.log.Timber
@@ -70,26 +68,27 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         addressInputHelper.hideDialog()
     }
 
-    private fun handleError(throwable: Throwable) {
+    private fun handleError(throwable: Throwable, input: String? = null) {
         Timber.e(throwable)
         with(binding) {
             progress.visible(false)
             nextButton.isEnabled = false
-            when(throwable) {
+
+            when (throwable) {
                 is InvalidAddressException -> {
-                    addSafeAddressInputLayout.address = null
-                    snackbar(requireView(), R.string.invalid_ethereum_address, Snackbar.LENGTH_LONG)
+                    addSafeAddressInputLayout.setError(getString(R.string.invalid_ethereum_address), input)
                 }
                 is Offline -> {
-                    addSafeAddressInputLayout.address = null
-                    snackbar(requireView(), R.string.error_no_internet)
+                    addSafeAddressInputLayout.setError(getString(R.string.error_no_internet), input)
                 }
                 else -> {
-                    addSafeAddressInputLayout.error =
+                    addSafeAddressInputLayout.setError(
                         when (throwable) {
                             is UsedSafeAddress -> getString(R.string.error_used_address)
                             else -> getString(R.string.error_invalid_safe)
-                        }
+                        },
+                        input
+                    )
                 }
             }
         }
@@ -103,8 +102,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     private fun updateAddress(address: Solidity.Address) {
         with(binding) {
             nextButton.isEnabled = false
-            addSafeAddressInputLayout.address = address
-            addSafeAddressInputLayout.error = null
+            addSafeAddressInputLayout.setNewAddress(address)
         }
         viewModel.validate(address)
     }
@@ -118,8 +116,6 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
                 )
             }
             nextButton.isEnabled = true
-            addSafeAddressInputLayout.address = address
-            addSafeAddressInputLayout.error = null
             bottomLabels.visible(false)
         }
     }
