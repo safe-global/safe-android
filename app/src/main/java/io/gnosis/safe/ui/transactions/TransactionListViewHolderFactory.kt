@@ -17,8 +17,8 @@ import io.gnosis.safe.utils.formatForTxList
 enum class TransactionViewType {
     TRANSFER,
     TRANSFER_QUEUED,
-    CHANGE_MASTERCOPY,
-    CHANGE_MASTERCOPY_QUEUED,
+    CHANGE_IMPLEMENTATION,
+    CHANGE_IMPLEMENTATION_QUEUED,
     SETTINGS_CHANGE,
     SETTINGS_CHANGE_QUEUED,
     CUSTOM_TRANSACTION,
@@ -32,8 +32,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
     @Suppress("UNCHECKED_CAST")
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<TransactionView> =
         when (viewType) {
-            TransactionViewType.CHANGE_MASTERCOPY.ordinal -> ChangeMastercopyViewHolder(viewBinding as ItemTxChangeMastercopyBinding)
-            TransactionViewType.CHANGE_MASTERCOPY_QUEUED.ordinal -> ChangeMastercopyQueuedViewHolder(viewBinding as ItemTxQueuedChangeMastercopyBinding)
+            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ChangeImplementationViewHolder(viewBinding as ItemTxChangeImplementationBinding)
+            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ChangeImplementationQueuedViewHolder(viewBinding as ItemTxQueuedChangeImplementationBinding)
             TransactionViewType.SETTINGS_CHANGE.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
@@ -47,8 +47,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding =
         when (viewType) {
-            TransactionViewType.CHANGE_MASTERCOPY.ordinal -> ItemTxChangeMastercopyBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.CHANGE_MASTERCOPY_QUEUED.ordinal -> ItemTxQueuedChangeMastercopyBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ItemTxChangeImplementationBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ItemTxQueuedChangeImplementationBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TRANSFER.ordinal,
@@ -66,8 +66,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             is TransactionView.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
-            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_MASTERCOPY
-            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_MASTERCOPY_QUEUED
+            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_IMPLEMENTATION
+            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED
             is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
             is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
@@ -190,7 +190,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
     }
 }
 
-class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopyBinding) :
+class ChangeImplementationViewHolder(private val viewBinding: ItemTxChangeImplementationBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeVariant>(viewBinding) {
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeVariant, payloads: List<Any>) {
@@ -201,7 +201,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            version.text = viewTransfer.version
+            addressLabel.setText(viewTransfer.addressLabel)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
@@ -211,14 +211,14 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
-            version.alpha = viewTransfer.alpha
+            addressLabel.alpha = viewTransfer.alpha
             blockies.alpha = viewTransfer.alpha
             ellipsizedAddress.alpha = viewTransfer.alpha
             label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
             moduleAddress.alpha = viewTransfer.alpha
 
-            version.visibility = viewTransfer.visibilityVersion
+            addressLabel.visibility = viewTransfer.visibilityAddressLabel
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
 
@@ -229,7 +229,7 @@ class ChangeMastercopyViewHolder(private val viewBinding: ItemTxChangeMastercopy
     }
 }
 
-class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeMastercopyBinding) :
+class ChangeImplementationQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeImplementationBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeVariantQueued>(viewBinding) {
 
     override fun bind(viewTransfer: TransactionView.SettingsChangeVariantQueued, payloads: List<Any>) {
@@ -241,7 +241,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
 
             dateTime.text = viewTransfer.dateTimeText
 
-            version.text = viewTransfer.version
+            addressLabel.setText(viewTransfer.addressLabel)
             blockies.setAddress(viewTransfer.address)
             ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
@@ -252,7 +252,7 @@ class ChangeMastercopyQueuedViewHolder(private val viewBinding: ItemTxQueuedChan
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
             moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
-            version.visibility = viewTransfer.visibilityVersion
+            addressLabel.visibility = viewTransfer.visibilityAddressLabel
             ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
             moduleAddress.visibility = viewTransfer.visibilityModuleAddress
 

@@ -1,10 +1,6 @@
 package io.gnosis.safe.utils
 
-import io.gnosis.data.models.transaction.DataDecoded
-import io.gnosis.data.models.transaction.Param
-import io.gnosis.data.models.transaction.TransactionDirection
-import io.gnosis.data.models.transaction.TransactionInfo
-import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
@@ -14,7 +10,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import org.junit.Assert.assertEquals
@@ -169,7 +165,7 @@ class TxUtilsKtTest {
 
 
     @Test
-    fun `txActionInfoItems (SettingsChange addOwnerWithThreÍhold) should return Address and Value `() {
+    fun `txActionInfoItems (SettingsChange addOwnerWithThreshold) should return Address and Value `() {
         val settingsChange: TransactionInfo.SettingsChange =
             TransactionInfo.SettingsChange(
                 dataDecoded = DataDecoded(
@@ -243,7 +239,7 @@ class TxUtilsKtTest {
                 dataDecoded = DataDecoded(
                     method = METHOD_CHANGE_MASTER_COPY,
                     parameters = listOf(
-                        Param.Address("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1)
+                        Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1)
                     )
                 ), settingsInfo = null
             )
@@ -253,8 +249,8 @@ class TxUtilsKtTest {
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals("1.1.1", address.addressLabel)
-        assertEquals(SAFE_MASTER_COPY_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
+        assertEquals(R.string.implementation_version_1_1_1, address.addressLabel)
+        assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
     @Test
@@ -326,8 +322,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
-        assertEquals(null, addressOwner.addressLabel)
-        assertEquals(R.string.tx_list_default_fallback_handler_unknown, addressOwner.addressLabelRes)
+        assertEquals(R.string.unknown_fallback_handler, addressOwner.addressLabel)
     }
 
     @Test
@@ -352,8 +347,7 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(SafeRepository.DEFAULT_FALLBACK_HANDLER, addressOwner.address)
-        assertEquals(null, addressOwner.addressLabel)
-        assertEquals(R.string.tx_list_default_fallback_handler, addressOwner.addressLabelRes)
+        assertEquals(R.string.default_fallback_handler, addressOwner.addressLabel)
     }
 
     @Test

@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="@id/address"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@string/safe_settings_default_fallback_handler" />
+        tools:text="@string/default_fallback_handler" />
 
     <TextView
         android:id="@+id/address"

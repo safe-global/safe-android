@@ -85,27 +85,14 @@ class SafeRepository(
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
 
-        val SAFE_MASTER_COPY_0_0_2 = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
-        val SAFE_MASTER_COPY_0_1_0 = BuildConfig.SAFE_MASTER_COPY_0_1_0.asEthereumAddress()!!
-        val SAFE_MASTER_COPY_1_0_0 = BuildConfig.SAFE_MASTER_COPY_1_0_0.asEthereumAddress()!!
-        val SAFE_MASTER_COPY_1_1_1 = BuildConfig.SAFE_MASTER_COPY_1_1_1.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_0_0_2 = BuildConfig.SAFE_IMPLEMENTATION_0_0_2.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_0_1_0 = BuildConfig.SAFE_IMPLEMENTATION_0_1_0.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_IMPLEMENTATION_1_0_0.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_IMPLEMENTATION_1_1_1.asEthereumAddress()!!
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
-        const val DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING = "DefaultFallbackHandler"
-        const val DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING = "Unknown"
 
-        const val SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING = "Unknown"
-
-        fun masterCopyVersion(masterCopy: Solidity.Address?): String? = supportedContracts[masterCopy]
-
-        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_MASTER_COPY_1_1_1
-
-        private val supportedContracts = mapOf(
-            SAFE_MASTER_COPY_0_0_2 to "0.0.2",
-            SAFE_MASTER_COPY_0_1_0 to "0.1.0",
-            SAFE_MASTER_COPY_1_0_0 to "1.0.0",
-            SAFE_MASTER_COPY_1_1_1 to "1.1.1"
-        )
+        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_IMPLEMENTATION_1_1_1
 
         const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
         const val METHOD_ADD_OWNER_WITH_THRESHOLD = "addOwnerWithThreshold"

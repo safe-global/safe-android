@@ -4,18 +4,13 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import io.gnosis.data.models.*
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.masterCopyVersion
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -250,7 +245,7 @@ class TransactionListViewModel
 
     private fun Transaction.historicImplementationChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
         val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
+        val version = address.implementationVersion()
 
         return TransactionView.SettingsChangeVariant(
             id = id,
@@ -259,7 +254,7 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
-            version = version,
+            addressLabel = version,
             address = address,
             label = R.string.tx_list_change_mastercopy,
             nonce = executionInfo?.nonce.toString()
@@ -273,9 +268,7 @@ class TransactionListViewModel
         val threshold = executionInfo!!.confirmationsRequired
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
         val address = (txInfo.settingsInfo as? SettingsInfo.SetFallbackHandler)?.handler
-        val version =
-            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-            else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
+        val fallbackHandlerDisplayString = address.fallBackHandlerLabel()
 
         return TransactionView.SettingsChangeVariantQueued(
             id = id,
@@ -283,9 +276,9 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendDate(),
-            version = version,
-            address = address,
             label = R.string.tx_list_set_fallback_handler,
+            address = address,
+            addressLabel = fallbackHandlerDisplayString,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
@@ -296,9 +289,7 @@ class TransactionListViewModel
 
     private fun Transaction.historicSetFallbackHandler(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
         val address = (txInfo.settingsInfo as SettingsInfo.SetFallbackHandler).handler
-        val version =
-            if (address == DEFAULT_FALLBACK_HANDLER) DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-            else DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
+        val fallBackHandlerLabel = address.fallBackHandlerLabel()
 
         return TransactionView.SettingsChangeVariant(
             id = id,
@@ -307,9 +298,9 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
-            version = version,
-            address = address,
             label = R.string.tx_list_set_fallback_handler,
+            address = address,
+            addressLabel = fallBackHandlerLabel,
             nonce = executionInfo?.nonce.toString()
         )
     }
@@ -331,15 +322,15 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendDate(),
-            version = "",
-            address = address,
             label = label,
+            address = address,
+            addressLabel = R.string.empty_string,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
-            visibilityVersion = View.INVISIBLE,
+            visibilityAddressLabel = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE
         )
@@ -358,10 +349,10 @@ class TransactionListViewModel
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendDate(),
             alpha = alpha(txStatus),
-            address = address,
             label = label,
-            version = "",
-            visibilityVersion = View.INVISIBLE,
+            address = address,
+            addressLabel = R.string.empty_string,
+            visibilityAddressLabel = View.INVISIBLE,
             visibilityEllipsizedAddress = View.INVISIBLE,
             visibilityModuleAddress = View.VISIBLE,
             nonce = executionInfo?.nonce?.toString().orEmpty()
@@ -375,7 +366,7 @@ class TransactionListViewModel
         val threshold = executionInfo!!.confirmationsRequired
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
         val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = masterCopyVersion(address) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
+        val version = address.implementationVersion()
 
         return TransactionView.SettingsChangeVariantQueued(
             id = id,
@@ -388,9 +379,9 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
-            version = version,
+            label = R.string.tx_list_change_mastercopy,
             address = address,
-            label = R.string.tx_list_change_mastercopy
+            addressLabel = version
         )
     }
 
@@ -566,8 +557,6 @@ fun TransactionView.isHistory() = when (status) {
     TransactionStatus.SUCCESS -> true
     else -> false
 }
-
-fun Solidity.Address.getVersionForAddress(): String = masterCopyVersion(this) ?: SAFE_MASTER_COPY_UNKNOWN_DISPLAY_STRING
 
 fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
     return executionInfo?.missingSigners?.contains(ownerAddress) == true
