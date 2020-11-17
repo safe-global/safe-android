@@ -23,7 +23,7 @@ class TokenRepository(
             else
                 Balance(
                     TokenInfo(
-                        TokenType.valueOf(it.tokenInfo.tokenType),
+                        TokenType.valueOf(it.tokenInfo.tokenType.name),
                         it.tokenInfo.address,
                         it.tokenInfo.decimals,
                         it.tokenInfo.symbol,
@@ -36,7 +36,6 @@ class TokenRepository(
                 )
         })
     }
-
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
         gatewayApi.loadCollectibles(safe.asEthereumAddressChecksumString())
             .asSequence()

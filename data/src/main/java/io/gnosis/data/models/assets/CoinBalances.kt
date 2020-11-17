@@ -8,8 +8,9 @@ import pm.gnosis.model.Solidity
 import java.math.BigDecimal
 import java.math.BigInteger
 
+@JsonClass(generateAdapter = true)
 data class CoinBalances(
-    val fiatTotal: BigDecimal,
+    @field:BigDecimalNumber val fiatTotal: BigDecimal,
     val items: List<Balance>
 )
 
@@ -23,7 +24,7 @@ data class Balance(
 @JsonClass(generateAdapter = true)
 data class TokenInfo(
     @Json(name = "type") val tokenType: TokenType,
-    @Json(name = "address") val address: Solidity.Address,
+    @Json(name = "address") val address: Solidity.Address?,
     @Json(name = "decimals") val decimals: Int = 0,
     @Json(name = "symbol") val symbol: String = "",
     @Json(name = "name") val name: String = "",

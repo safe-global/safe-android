@@ -2,11 +2,9 @@ package io.gnosis.data.adapters
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.models.transaction.*
 import pm.gnosis.common.adapters.moshi.*
-import java.util.*
 
 internal val transferInfoAdapter =
     PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())

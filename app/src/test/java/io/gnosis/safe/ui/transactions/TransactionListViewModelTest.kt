@@ -2,15 +2,13 @@ package io.gnosis.safe.ui.transactions
 
 import android.view.View
 import androidx.paging.PagingData
-import io.gnosis.data.models.transaction.DataDecoded
-import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
@@ -971,7 +969,7 @@ class TransactionListViewModelTest {
     private fun transferInfoFromToken(tokenInfo: TokenInfo, value: BigInteger): TransferInfo {
         return when (tokenInfo.tokenType) {
             TokenType.ERC20 -> TransferInfo.Erc20Transfer(
-                tokenAddress = tokenInfo.address,
+                tokenAddress = tokenInfo.address!!,
                 tokenName = tokenInfo.name,
                 tokenSymbol = tokenInfo.symbol,
                 logoUri = tokenInfo.logoUri,
@@ -979,7 +977,7 @@ class TransactionListViewModelTest {
                 value = value
             )
             TokenType.ERC721 -> TransferInfo.Erc721Transfer(
-                tokenAddress = tokenInfo.address,
+                tokenAddress = tokenInfo.address!!,
                 tokenName = tokenInfo.name,
                 tokenSymbol = tokenInfo.symbol,
                 logoUri = tokenInfo.logoUri,
