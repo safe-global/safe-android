@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
@@ -52,14 +53,13 @@ class NamedAddressItem @JvmOverloads constructor(
             field = value
         }
 
-    var name: String? = null
+   @StringRes
+   var name: Int? = null
         set(value) {
-            if (value.isNullOrBlank()) {
-                binding.name.visible(false)
-            } else {
+            value?.let{
                 binding.name.visible(true)
-                binding.name.text = value
-            }
+                binding.name.setText(it)
+            } ?: binding.name.visible(false)
             field = value
         }
 

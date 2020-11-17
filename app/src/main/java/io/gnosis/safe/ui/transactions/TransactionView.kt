@@ -74,10 +74,10 @@ sealed class TransactionView(
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val address: Solidity.Address?,
-        val version: String,
+        @StringRes val addressLabel: Int,
         val alpha: Float,
         @StringRes val label: Int,
-        val visibilityVersion: Int = View.VISIBLE,
+        val visibilityAddressLabel: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
         val visibilityModuleAddress: Int = View.GONE,
         val nonce: String
@@ -96,9 +96,9 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val address: Solidity.Address?,
-        val version: String,
+        @StringRes val addressLabel: Int,
         @StringRes val label: Int,
-        val visibilityVersion: Int = View.VISIBLE,
+        val visibilityAddressLabel: Int = View.VISIBLE,
         val visibilityEllipsizedAddress: Int = View.VISIBLE,
         val visibilityModuleAddress: Int = View.GONE
     ) : TransactionView(status, id)

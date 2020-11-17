@@ -11,8 +11,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.transaction.Operation
-import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -237,7 +235,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
-                        txDetailsTransferBinding.contractAddress.name = getString(R.string.tx_details_asset_contract)
+                        txDetailsTransferBinding.contractAddress.name = R.string.tx_details_asset_contract
                     }
                     else -> {
                         txDetailsTransferBinding.txAction.setActionInfo(

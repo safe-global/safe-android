@@ -38,11 +38,7 @@ class TxSettingsActionView @JvmOverloads constructor(
                     addAddressItem(actionInfoItem.address)
                 }
                 is ActionInfoItem.AddressWithLabel -> {
-                    val addressLabel =
-                        actionInfoItem.addressLabel?.let {
-                            actionInfoItem.addressLabel
-                        } ?: context.getString(actionInfoItem.addressLabelRes)
-                    addNamedAddressItem(actionInfoItem.address, addressLabel)
+                    addNamedAddressItem(actionInfoItem.address, actionInfoItem.addressLabel)
                 }
             }
         }
@@ -66,7 +62,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(address: Solidity.Address?, label: String) {
+    private fun addNamedAddressItem(address: Solidity.Address?, @StringRes label: Int?) {
         val addressItem = NamedAddressItem(context)
         addressItem.address = address
         addressItem.name = label
@@ -95,7 +91,6 @@ sealed class ActionInfoItem {
     data class AddressWithLabel(
         @StringRes override val itemLabel: Int?,
         val address: Solidity.Address?,
-        val addressLabel: String? = null,
-        @StringRes val addressLabelRes: Int = 0
+        @StringRes val addressLabel: Int? = null
     ) : ActionInfoItem()
 }

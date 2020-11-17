@@ -13,6 +13,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewMastercopyItemBinding
 import io.gnosis.safe.utils.abbreviateEthAddress
+import io.gnosis.safe.utils.implementationVersion
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -55,11 +56,11 @@ class MasterCopyItem @JvmOverloads constructor(
 
     private fun setVersionName(address: Solidity.Address?, showUpdateAvailable: Boolean) {
         with(binding) {
-            if (SafeRepository.masterCopyVersion(address).isNullOrBlank()) {
-                versionName.text = context.getString(R.string.safe_settings_unknown)
+            if (address?.implementationVersion() == null) {
+                implementationVersionName.text = context.getString(R.string.unknown_implementation_version)
                 versionInfo.visible(false, View.INVISIBLE)
             } else {
-                versionName.text = SafeRepository.masterCopyVersion(address)
+                implementationVersionName.text = context.getString(address.implementationVersion() ?: R.string.unknown_implementation_version)
                 if (showUpdateAvailable) {
                     versionInfo.apply {
                         visible(true)

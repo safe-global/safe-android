@@ -2,13 +2,11 @@ package io.gnosis.safe.ui.assets.collectibles.details
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
@@ -19,10 +17,8 @@ import io.gnosis.safe.databinding.FragmentCollectiblesDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.dpToPx
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import java.lang.Exception
 
 class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectiblesDetailsBinding>() {
 
@@ -57,7 +53,7 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
             } else {
                 collectibleDescription.visible(false)
             }
-            collectibleContract.name = getString(R.string.collectibles_asset_contract)
+            collectibleContract.name = R.string.collectibles_asset_contract
             collectibleContract.address = contract.asEthereumAddress()
 
             collectibleUri.visible(false)

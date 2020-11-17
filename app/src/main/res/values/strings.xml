@@ -105,9 +105,6 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
 
-    <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_multisend_action">Action #%1$d</string>
@@ -164,11 +161,9 @@
     <string name="safe_settings_not_set">Not set</string>
     <string name="safe_settings_not_set_reverse_record">Reverse record not set</string>
     <string name="safe_settings_confirmations_required">%d out of %d</string>
-    <string name="safe_settings_unknown">Unknown</string>
     <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
     <string name="safe_settings_master_copy_up_to_date">Up to date</string>
     <string name="safe_settings_fallback_handler">Fallback handler</string>
-    <string name="safe_settings_default_fallback_handler">DefaultCallbackHandler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
 
@@ -240,4 +235,8 @@
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
+
+    <string name="default_fallback_handler">DefaultFallbackHandler</string>
+    <string name="unknown_fallback_handler">Unknown</string>
+    <string name="unknown_implementation_version">Unknown</string>
 </resources>
