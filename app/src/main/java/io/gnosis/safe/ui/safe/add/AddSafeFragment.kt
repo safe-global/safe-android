@@ -76,7 +76,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
             when (throwable) {
                 is InvalidAddressException -> {
-                    addSafeAddressInputLayout.setError(getString(R.string.invalid_ethereum_address), input)
+                    addSafeAddressInputLayout.setError(getString(R.string.error_malformed_address), input)
                 }
                 is Offline -> {
                     addSafeAddressInputLayout.setError(getString(R.string.error_no_internet), input)

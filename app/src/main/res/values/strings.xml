@@ -19,6 +19,7 @@
     <string name="address_input_clipboard">Paste from clipboard</string>
     <string name="address_input_address_book">Address book</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
+    <string name="error_malformed_address">The address is malformed. Please provide an Ethereum address</string>
     <string name="ens_input_title">Input ENS Name</string>
     <string name="error_resolve_ens">Could not load address</string>
     <string name="error_used_address">There is already a Safe with this address in the app. Please use another address.</string>
