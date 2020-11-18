@@ -3,10 +3,12 @@ package io.gnosis.safe.notifications
 import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.notifications.models.PushNotification
+import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.utils.OwnerCredentialsRepository
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -84,7 +86,7 @@ class NotificationRepository(
                         bundle = BuildConfig.APPLICATION_ID,
                         deviceType = "ANDROID",
                         version = appVersion,
-                        buildNumber =  BuildConfig.VERSION_CODE.toString(),
+                        buildNumber = BuildConfig.VERSION_CODE.toString(),
                         timestamp = System.currentTimeMillis().toString()
                     )
                 )
@@ -105,25 +107,37 @@ class NotificationRepository(
 
 
     suspend fun registerSafe(safeAddress: Solidity.Address) {
+
         kotlin.runCatching {
-            val token = getCloudMessagingToken()
-            token?.let {
-                notificationService.register(
-                    Registration(
-                        uuid = deviceUuid,
-                        safes = listOf(safeAddress.asEthereumAddressChecksumString()),
-                        cloudMessagingToken = token,
-                        bundle = BuildConfig.APPLICATION_ID,
-                        deviceType = "ANDROID",
-                        version = appVersion,
-                        buildNumber = BuildConfig.VERSION_CODE.toString(),
-                        timestamp = System.currentTimeMillis().toString()
-                    )
-                )
+
+            val token = getCloudMessagingToken()!!
+
+            val registration = Registration(
+                uuid = deviceUuid,
+                safes = listOf(safeAddress.asEthereumAddressChecksumString()),
+                cloudMessagingToken = token,
+                bundle = BuildConfig.APPLICATION_ID,
+                deviceType = "ANDROID",
+                version = appVersion,
+                buildNumber = BuildConfig.VERSION_CODE.toString(),
+                timestamp = System.currentTimeMillis().toString()
+            )
+
+            if (ownerCredentialsRepository.hasCredentials()) {
+
+                val signature =
+                    KeyPair
+                        .fromPrivate(ownerCredentialsRepository.retrieveCredentials()!!.key)
+                        .sign(registration.hash().toByteArray())
+                        .toSignatureString()
+
+                registration.addSignature(signature)
             }
+
+            notificationService.register(registration)
         }
             .onSuccess {
-                deviceUuid = it?.uuid
+                deviceUuid = it.uuid
                 safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
             }
     }

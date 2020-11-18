@@ -5,7 +5,7 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 
 data class Registration(
-    val uuid: String? = null,
+    val uuid: String,
     val safes: List<String>,
     val cloudMessagingToken: String,
     val bundle: String,
@@ -13,7 +13,7 @@ data class Registration(
     val deviceType: String = "ANDROID",
     val buildNumber: String,
     val timestamp: String? = null,
-    val signatures: List<String>? = null
+    val signatures: MutableList<String> = mutableListOf()
 ) {
 
     fun hash(): String {
@@ -33,6 +33,10 @@ data class Registration(
         }.toString()
 
         return Sha3Utils.keccak(stringToHash.toByteArray()).toHexString().addHexPrefix()
+    }
+
+    fun addSignature(signature: String) {
+        signatures.add(signature)
     }
 
     companion object {
