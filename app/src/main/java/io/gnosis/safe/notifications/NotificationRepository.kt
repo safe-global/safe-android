@@ -15,6 +15,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
+import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -76,20 +77,32 @@ class NotificationRepository(
             it.address.asEthereumAddressChecksumString()
         }
 
+        val registration = Registration(
+            uuid = deviceUuid ?: generateUUID(),
+            safes = safes,
+            cloudMessagingToken = token,
+            bundle = BuildConfig.APPLICATION_ID,
+            deviceType = "ANDROID",
+            version = appVersion,
+            buildNumber = BuildConfig.VERSION_CODE.toString(),
+            timestamp = System.currentTimeMillis().toString()
+        )
+
+        if (ownerCredentialsRepository.hasCredentials()) {
+
+            val signature =
+                KeyPair
+                    .fromPrivate(ownerCredentialsRepository.retrieveCredentials()!!.key)
+                    .sign(registration.hash().toByteArray())
+                    .toSignatureString()
+
+            registration.addSignature(signature)
+        }
+
+
         if (safes.isNotEmpty()) {
             kotlin.runCatching {
-                notificationService.register(
-                    Registration(
-                        uuid = deviceUuid,
-                        safes = safes,
-                        cloudMessagingToken = token,
-                        bundle = BuildConfig.APPLICATION_ID,
-                        deviceType = "ANDROID",
-                        version = appVersion,
-                        buildNumber = BuildConfig.VERSION_CODE.toString(),
-                        timestamp = System.currentTimeMillis().toString()
-                    )
-                )
+                notificationService.register(registration)
             }
                 .onSuccess {
                     Timber.d("notification service registration success")
@@ -113,7 +126,7 @@ class NotificationRepository(
             val token = getCloudMessagingToken()!!
 
             val registration = Registration(
-                uuid = deviceUuid,
+                uuid = deviceUuid ?: generateUUID(),
                 safes = listOf(safeAddress.asEthereumAddressChecksumString()),
                 cloudMessagingToken = token,
                 bundle = BuildConfig.APPLICATION_ID,
@@ -172,6 +185,10 @@ class NotificationRepository(
                     cont.resume(token)
                 }
             }
+    }
+
+    private fun generateUUID(): String {
+        return UUID.randomUUID().toString().toLowerCase()
     }
 
     companion object {
