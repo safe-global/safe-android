@@ -14,7 +14,17 @@ class TokenRepository(
 ) {
 
     suspend fun loadBalanceOf(safe: Solidity.Address): CoinBalances {
-        return gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
+        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
+        return CoinBalances(response.fiatTotal, response.items.map {
+            it.copy(
+                tokenInfo = it.tokenInfo.copy(
+                    logoUri =
+                    if (it.tokenInfo.address == ZERO_ADDRESS)
+                        "local::ethereum"
+                    else "https://gnosis-safe-token-logos.s3.amazonaws.com/${it.tokenInfo.address.asEthereumAddressChecksumString()}.png"
+                )
+            )
+        })
     }
 
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =

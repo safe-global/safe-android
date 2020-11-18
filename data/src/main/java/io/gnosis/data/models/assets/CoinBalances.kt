@@ -2,6 +2,7 @@ package io.gnosis.data.models.assets
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.repositories.TokenRepository.Companion.ZERO_ADDRESS
 import pm.gnosis.common.adapters.moshi.BigDecimalNumber
 import pm.gnosis.common.adapters.moshi.DecimalNumber
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -29,7 +30,7 @@ data class TokenInfo(
     @Json(name = "decimals") val decimals: Int = 0,
     @Json(name = "symbol") val symbol: String = "",
     @Json(name = "name") val name: String = "",
-    @Json(name = "logoUri") val logoUri: String? = "https://gnosis-safe-token-logos.s3.amazonaws.com/${address.asEthereumAddressChecksumString()}.png"
+    @Json(name = "logoUri") val logoUri: String?
 )
 
 enum class TokenType { ETHER, ERC20, ERC721 }
