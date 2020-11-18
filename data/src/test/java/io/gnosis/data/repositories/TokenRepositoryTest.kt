@@ -47,33 +47,6 @@ class TokenRepositoryTest {
     }
 
     @Test
-    fun `loadBalancesOf (null token address) should use ETH_TOKEN_INFO`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
-        val balance = buildBalance(1)
-        val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = ETH_TOKEN_INFO) }
-        coEvery { gatewayApi.loadBalances(any()) } returns
-                CoinBalances(
-                    BigDecimal.ZERO,
-                    listOf(
-                        balance.copy(balance.tokenInfo.copy(address = null))
-                    )
-                )
-
-        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
-
-        with(actual) {
-            assert(isSuccess)
-            assertEquals(
-                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
-                getOrNull()
-            )
-        }
-        coVerifySequence {
-            gatewayApi.loadBalances(address.asEthereumAddressChecksumString())
-        }
-    }
-
-    @Test
     fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
         val address = Solidity.Address(BigInteger.ONE)
         val balance = buildBalance(1)
@@ -82,7 +55,17 @@ class TokenRepositoryTest {
                 CoinBalances(
                     BigDecimal.ZERO,
                     listOf(
-                        balance.copy(balance.tokenInfo.copy(address = Solidity.Address(BigInteger.ZERO)))
+                        balance.copy(
+                            balance.tokenInfo.copy(
+                                tokenType = TokenType.ETHER,
+                                address = Solidity.Address(BigInteger.ZERO),
+                                decimals = 18,
+                                logoUri = "local::ethereum",
+                                name = "Ether",
+                                symbol = "ETH"
+                            )
+                        )
+
                     )
                 )
 
