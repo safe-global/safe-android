@@ -2,10 +2,8 @@ package io.gnosis.data.models.assets
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.repositories.TokenRepository.Companion.ZERO_ADDRESS
 import pm.gnosis.common.adapters.moshi.BigDecimalNumber
 import pm.gnosis.common.adapters.moshi.DecimalNumber
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigDecimal
 import java.math.BigInteger
