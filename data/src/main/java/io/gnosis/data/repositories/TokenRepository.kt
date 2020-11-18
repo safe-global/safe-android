@@ -1,7 +1,10 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.models.assets.*
+import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.models.assets.Collectible
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.models.assets.TokenType
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -11,31 +14,9 @@ class TokenRepository(
 ) {
 
     suspend fun loadBalanceOf(safe: Solidity.Address): CoinBalances {
-        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
-        return CoinBalances(response.fiatTotal, response.items.map {
-
-            if (it.tokenInfo.address == null || it.tokenInfo.address == ZERO_ADDRESS)
-                Balance(
-                    ETH_TOKEN_INFO,
-                    it.balance,
-                    it.fiatBalance
-                )
-            else
-                Balance(
-                    TokenInfo(
-                        TokenType.valueOf(it.tokenInfo.tokenType.name),
-                        it.tokenInfo.address,
-                        it.tokenInfo.decimals,
-                        it.tokenInfo.symbol,
-                        it.tokenInfo.name,
-                        it.tokenInfo.logoUri
-                            ?: "https://gnosis-safe-token-logos.s3.amazonaws.com/${it.tokenInfo.address.asEthereumAddressChecksumString()}.png"
-                    ),
-                    it.balance,
-                    it.fiatBalance
-                )
-        })
+        return gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
     }
+
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
         gatewayApi.loadCollectibles(safe.asEthereumAddressChecksumString())
             .asSequence()

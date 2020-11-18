@@ -46,6 +46,7 @@ val dataMoshi =
         .add(DefaultNumberAdapter())
         .add(SolidityAddressAdapter())
         .add(OperationEnumAdapter())
+        .add(TokenTypeAdapter())
         .add(settingsInfoAdapter)
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)

@@ -4,6 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import pm.gnosis.common.adapters.moshi.BigDecimalNumber
 import pm.gnosis.common.adapters.moshi.DecimalNumber
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -24,11 +25,11 @@ data class Balance(
 @JsonClass(generateAdapter = true)
 data class TokenInfo(
     @Json(name = "type") val tokenType: TokenType,
-    @Json(name = "address") val address: Solidity.Address?,
+    @Json(name = "address") val address: Solidity.Address,
     @Json(name = "decimals") val decimals: Int = 0,
     @Json(name = "symbol") val symbol: String = "",
     @Json(name = "name") val name: String = "",
-    @Json(name = "logoUri") val logoUri: String?
+    @Json(name = "logoUri") val logoUri: String? = "https://gnosis-safe-token-logos.s3.amazonaws.com/${address.asEthereumAddressChecksumString()}.png"
 )
 
 enum class TokenType { ETHER, ERC20, ERC721 }
