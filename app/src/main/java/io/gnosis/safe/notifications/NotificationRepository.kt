@@ -4,7 +4,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
-import io.gnosis.safe.notifications.models.FirebaseDevice
+import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.notifications.models.PushNotification
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -75,7 +75,7 @@ class NotificationRepository(
         if (safes.isNotEmpty()) {
             kotlin.runCatching {
                 notificationService.register(
-                    FirebaseDevice(
+                    Registration(
                         uuid = deviceUuid,
                         safes = safes,
                         cloudMessagingToken = token,
@@ -107,7 +107,7 @@ class NotificationRepository(
             val token = getCloudMessagingToken()
             token?.let {
                 notificationService.register(
-                    FirebaseDevice(
+                    Registration(
                         uuid = deviceUuid,
                         safes = listOf(safeAddress.asEthereumAddressChecksumString()),
                         cloudMessagingToken = token,
