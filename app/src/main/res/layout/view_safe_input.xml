@@ -40,7 +40,7 @@
             android:layout_height="24dp"
             android:layout_marginHorizontal="16dp"
             android:src="@drawable/ic_more_horiz_black_24dp"
-            android:tint="@color/medium_grey"
+            app:tint="@color/medium_grey"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +60,7 @@
             app:layout_goneMarginBottom="28dp"
             app:layout_goneMarginStart="16dp"
             app:layout_goneMarginTop="28dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -73,4 +74,5 @@
         android:visibility="invisible"
         tools:text="Error message"
         tools:visibility="visible" />
+
 </merge>
