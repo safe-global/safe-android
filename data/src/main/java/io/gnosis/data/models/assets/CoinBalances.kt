@@ -8,8 +8,9 @@ import pm.gnosis.model.Solidity
 import java.math.BigDecimal
 import java.math.BigInteger
 
+@JsonClass(generateAdapter = true)
 data class CoinBalances(
-    val fiatTotal: BigDecimal,
+    @field:BigDecimalNumber val fiatTotal: BigDecimal,
     val items: List<Balance>
 )
 

@@ -3,9 +3,6 @@ package io.gnosis.data.repositories
 import com.squareup.moshi.Types
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.dto.BalanceDto
-import io.gnosis.data.backend.dto.CoinBalancesDto
-import io.gnosis.data.backend.dto.TokenInfoDto
 import io.gnosis.data.models.assets.*
 import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.mockk.coEvery
@@ -31,7 +28,7 @@ class TokenRepositoryTest {
     private val tokenRepository = TokenRepository(gatewayApi)
 
     private val moshi = dataMoshi
-    private val balancesAdapter = moshi.adapter(CoinBalancesDto::class.java)
+    private val balancesAdapter = moshi.adapter(CoinBalances::class.java)
     private val collectiblesAdapter = moshi.adapter<List<Collectible>>(Types.newParameterizedType(List::class.java, Collectible::class.java))
 
     @Test
@@ -50,42 +47,25 @@ class TokenRepositoryTest {
     }
 
     @Test
-    fun `loadBalancesOf (null token address) should use ETH_TOKEN_INFO`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
-        val balanceDto = buildBalanceDto(1)
-        val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = ETH_TOKEN_INFO) }
-        coEvery { gatewayApi.loadBalances(any()) } returns
-                CoinBalancesDto(
-                    BigDecimal.ZERO,
-                    listOf(
-                        balanceDto.copy(balanceDto.tokenInfo.copy(address = null))
-                    )
-                )
-
-        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
-
-        with(actual) {
-            assert(isSuccess)
-            assertEquals(
-                CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
-                getOrNull()
-            )
-        }
-        coVerifySequence {
-            gatewayApi.loadBalances(address.asEthereumAddressChecksumString())
-        }
-    }
-
-    @Test
     fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
         val address = Solidity.Address(BigInteger.ONE)
-        val balanceDto = buildBalanceDto(1)
+        val balance = buildBalance(1)
         val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = ETH_TOKEN_INFO) }
         coEvery { gatewayApi.loadBalances(any()) } returns
-                CoinBalancesDto(
+                CoinBalances(
                     BigDecimal.ZERO,
                     listOf(
-                        balanceDto.copy(balanceDto.tokenInfo.copy(address = Solidity.Address(BigInteger.ZERO)))
+                        balance.copy(
+                            balance.tokenInfo.copy(
+                                tokenType = TokenType.ETHER,
+                                address = Solidity.Address(BigInteger.ZERO),
+                                decimals = 18,
+                                logoUri = "local::ethereum",
+                                name = "Ether",
+                                symbol = "ETH"
+                            )
+                        )
+
                     )
                 )
 
@@ -106,9 +86,9 @@ class TokenRepositoryTest {
     @Test
     fun `loadBalancesOf (address) should succeed`() = runBlocking {
         val address = Solidity.Address(BigInteger.ONE)
-        val balanceDto = buildBalanceDto(1)
+        val balance = buildBalance(1)
         val balanceExpected = buildBalance(1)
-        coEvery { gatewayApi.loadBalances(any()) } returns CoinBalancesDto(BigDecimal.ZERO, listOf(balanceDto))
+        coEvery { gatewayApi.loadBalances(any()) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
 
         val actual = runCatching { tokenRepository.loadBalanceOf(address) }
 
@@ -187,23 +167,6 @@ class TokenRepositoryTest {
             gatewayApi.loadCollectibles(address.asEthereumAddressChecksumString())
         }
     }
-
-    private fun buildBalanceDto(index: Long) =
-        BalanceDto(
-            buildTokenInfoDto(index),
-            BigInteger.valueOf(index),
-            BigDecimal.valueOf(index)
-        )
-
-    private fun buildTokenInfoDto(index: Long) =
-        TokenInfoDto(
-            "ERC20",
-            Solidity.Address(BigInteger.valueOf(index)),
-            15,
-            "symbol$index",
-            "name$index",
-            "logo.uri.$index"
-        )
 
     private fun buildBalance(index: Long) =
         Balance(
