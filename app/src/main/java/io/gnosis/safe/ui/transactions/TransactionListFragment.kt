@@ -47,6 +47,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionListBinding =
         FragmentTransactionListBinding.inflate(inflater, container, false)
 
