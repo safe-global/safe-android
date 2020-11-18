@@ -6,6 +6,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.notifications.models.PushNotification
+import io.gnosis.safe.utils.OwnerCredentialsRepository
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -18,6 +19,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class NotificationRepository(
     private val safeRepository: SafeRepository,
+    private val ownerCredentialsRepository: OwnerCredentialsRepository,
     private val preferencesManager: PreferencesManager,
     private val notificationService: NotificationServiceApi,
     private val notificationManager: NotificationManager
