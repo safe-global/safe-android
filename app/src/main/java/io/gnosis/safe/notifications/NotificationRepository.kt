@@ -1,6 +1,5 @@
 package io.gnosis.safe.notifications
 
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
@@ -77,13 +76,14 @@ class NotificationRepository(
             kotlin.runCatching {
                 notificationService.register(
                     FirebaseDevice(
-                        safes,
-                        token,
-                        BuildConfig.VERSION_CODE,
-                        BuildConfig.APPLICATION_ID,
-                        appVersion,
-                        "ANDROID",
-                        deviceUuid
+                        uuid = deviceUuid,
+                        safes = safes,
+                        cloudMessagingToken = token,
+                        bundle = BuildConfig.APPLICATION_ID,
+                        deviceType = "ANDROID",
+                        version = appVersion,
+                        buildNumber =  BuildConfig.VERSION_CODE.toString(),
+                        timestamp = System.currentTimeMillis().toString()
                     )
                 )
             }
@@ -108,13 +108,14 @@ class NotificationRepository(
             token?.let {
                 notificationService.register(
                     FirebaseDevice(
-                        listOf(safeAddress.asEthereumAddressChecksumString()),
-                        token,
-                        BuildConfig.VERSION_CODE,
-                        BuildConfig.APPLICATION_ID,
-                        appVersion,
-                        "ANDROID",
-                        deviceUuid
+                        uuid = deviceUuid,
+                        safes = listOf(safeAddress.asEthereumAddressChecksumString()),
+                        cloudMessagingToken = token,
+                        bundle = BuildConfig.APPLICATION_ID,
+                        deviceType = "ANDROID",
+                        version = appVersion,
+                        buildNumber = BuildConfig.VERSION_CODE.toString(),
+                        timestamp = System.currentTimeMillis().toString()
                     )
                 )
             }
