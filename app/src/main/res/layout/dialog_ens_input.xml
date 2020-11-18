@@ -46,9 +46,9 @@
             style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
             android:layout_weight="0"
             android:enabled="false"
-            android:layout_marginEnd="24dp"
             android:text="@string/confirm" />
     </LinearLayout>
 
@@ -120,13 +120,14 @@
     <TextView
         android:id="@+id/dialog_ens_input_address"
         style="@style/TextLight"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="44dp"
         android:ellipsize="end"
+        android:gravity="center"
         android:maxLines="2"
-        android:paddingHorizontal="46dp"
-        android:textAlignment="center"
         android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
