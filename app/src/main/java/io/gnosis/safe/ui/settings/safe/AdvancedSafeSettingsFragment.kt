@@ -17,11 +17,13 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.getErrorResForException
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -45,10 +47,25 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
-                is BaseStateViewModel.ViewAction.ShowError -> handleError(viewAction.error)
+                is BaseStateViewModel.ViewAction.ShowError -> {
+                    with(binding) {
+                        refresh.isRefreshing = false
+                        mainContainer.visible(false)
+                        progress.visible(false)
+                    }
+                    when (viewAction.error) {
+                        is Offline -> {
+                            snackbar(requireView(), R.string.error_no_internet)
+                        }
+                        else -> {
+                            snackbar(requireView(), viewAction.error.getErrorResForException())
+                            Timber.e(viewAction.error)
+                        }
+                    }
+                }
                 else -> setUi(state.isLoading)
             }
         })
@@ -103,16 +120,6 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             this.name = label
             showSeparator = true
         }
-    }
-
-    private fun handleError(throwable: Throwable) {
-        with(binding) {
-            refresh.isRefreshing = false
-            mainContainer.visible(false)
-            progress.visible(false)
-        }
-        snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
-        Timber.e(throwable)
     }
 
     private fun updateLoading(showLoading: Boolean) {
