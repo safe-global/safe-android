@@ -13,6 +13,7 @@ git checkout main -b release
 git push -u origin release
 ```
 - [ ] APP_VERSION_NAME is updated (x.y.z)
+- [ ] Create PR `release` -> `master` (add `do-not-merge` label)
 
 - [ ] Notify QA
 - [ ] QA approved release candidate build
