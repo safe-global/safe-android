@@ -18,7 +18,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
@@ -50,22 +50,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
-                is BaseStateViewModel.ViewAction.ShowError -> {
-                    with(binding) {
-                        refresh.isRefreshing = false
-                        mainContainer.visible(false)
-                        progress.visible(false)
-                    }
-                    when (viewAction.error) {
-                        is Offline -> {
-                            snackbar(requireView(), R.string.error_no_internet)
-                        }
-                        else -> {
-                            snackbar(requireView(), viewAction.error.getErrorResForException())
-                        }
-                    }
-                    Timber.e(viewAction.error)
-                }
+                is ShowError -> handleError(viewAction)
                 else -> setUi(state.isLoading)
             }
         })
@@ -78,6 +63,23 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             }
         }
         viewModel.load()
+    }
+
+    private fun handleError(viewAction: ShowError) {
+        with(binding) {
+            refresh.isRefreshing = false
+            mainContainer.visible(false)
+            progress.visible(false)
+        }
+        when (viewAction.error) {
+            is Offline -> {
+                snackbar(requireView(), R.string.error_no_internet)
+            }
+            else -> {
+                snackbar(requireView(), viewAction.error.getErrorResForException())
+            }
+        }
+        Timber.e(viewAction.error)
     }
 
     private fun setUi(isLoading: Boolean, safeInfo: SafeInfo? = null) {
