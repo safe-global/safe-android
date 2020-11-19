@@ -62,9 +62,9 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                         }
                         else -> {
                             snackbar(requireView(), viewAction.error.getErrorResForException())
-                            Timber.e(viewAction.error)
                         }
                     }
+                    Timber.e(viewAction.error)
                 }
                 else -> setUi(state.isLoading)
             }
