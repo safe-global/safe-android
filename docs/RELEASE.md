@@ -4,7 +4,7 @@
 1. Create a release task in GitHub using the "New Release" template
 1. Create and push the `release` branch
 1. Update APP_VERSION_NAME (x.y.z)
-1. Create PR release -> master (don't forget to add `do-not-merge` label)
+1. Create PR `release` -> `master` (don't forget to add `do-not-merge` label)
 1. Build pipeline will produce and upload builds with `rc` prefix (x.y.z-buildNumber`rc`-buildVariant)
 1. Notify QA about release candidate
 1. Create pull-request for release branch in case additional work/fixes are required for release candidate and go to step 4.
