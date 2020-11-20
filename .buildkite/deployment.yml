@@ -4,10 +4,25 @@ steps:
     key: 'upload-firebase-internal'
     command: 'ci/upload_app_distribution.sh internal-beta internal'
 
+  - label: 'Upload App Distribution Unsafe'
+    if: build.branch == "release"
+    key: 'upload-firebase-unsafe'
+    command: 'ci/upload_app_distribution.sh internal-beta unsafe'
+
+  - label: 'Upload App Distribution xDai'
+    if: build.branch == "master" || build.branch == "release" || build.branch =~ /^v[0-9]+.*/
+    key: 'upload-firebase-xdai'
+    command: 'ci/upload_app_distribution.sh internal-beta xdai'
+
   - label: 'Upload App Distribution Rinkeby'
     if: build.branch == "master" || build.branch == "release" || build.branch =~ /^v[0-9]+.*/
     key: 'upload-firebase-rinkeby'
     command: 'ci/upload_app_distribution.sh rinkeby-release-internal rinkeby'
+
+  - label: 'Upload App Distribution Mainnet Staging'
+    if: build.branch == "master" || build.branch == "release" || build.branch =~ /^v[0-9]+.*/
+    key: 'upload-firebase-mainnet-staging'
+    command: 'ci/upload_app_distribution.sh internal-beta mainnet_staging'
 
   - label: 'Upload App Distribution Mainnet'
     if: build.branch == "master" || build.branch == "release" || build.branch =~ /^v[0-9]+.*/

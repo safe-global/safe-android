@@ -43,9 +43,9 @@
             style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
             android:layout_weight="0"
             android:enabled="false"
-            android:layout_marginEnd="24dp"
             android:text="@string/next" />
     </LinearLayout>
 
@@ -71,7 +71,7 @@
         android:id="@+id/valid_check_mark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="32dp"
+        android:layout_marginStart="32dp"
         android:src="@drawable/ic_baseline_check_circle_outline_24"
         app:layout_constraintBottom_toBottomOf="@id/new_address_hex"
         app:layout_constraintEnd_toStartOf="@id/new_address_hex"
@@ -85,9 +85,9 @@
         style="@style/TextMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="54dp"
-        android:textAlignment="center"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="56dp"
+        android:gravity="center"
         android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@id/add_safe_name_description"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,8 +100,8 @@
         style="@style/TextDark.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        android:padding="16dp"
         android:text="@string/enter_safe_name_description"
         app:layout_constraintBottom_toTopOf="@id/add_safe_name_layout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,7 +113,10 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/enter_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,14 +135,5 @@
             tools:text="Local name" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

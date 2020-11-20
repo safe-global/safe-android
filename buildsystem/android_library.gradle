@@ -17,7 +17,11 @@ android {
 
 
     buildTypes {
+
         debug {
+        }
+
+        unsafe {
         }
 
         internal {
@@ -27,6 +31,9 @@ android {
         }
 
         xdai {
+        }
+
+        mainnet_staging {
         }
 
         release {

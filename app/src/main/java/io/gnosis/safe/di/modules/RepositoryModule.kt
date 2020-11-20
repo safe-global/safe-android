@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.db.daos.Erc20TokenDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
 import pm.gnosis.ethereum.EthereumRepository
@@ -45,11 +44,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providesTokenRepository(
-        erc20TokenDao: Erc20TokenDao,
-        transactionServiceApi: TransactionServiceApi
-    ): TokenRepository =
-        TokenRepository(erc20TokenDao, transactionServiceApi)
+    fun providesTokenRepository(gatewayApi: GatewayApi): TokenRepository = TokenRepository(gatewayApi)
 
     @Provides
     @Singleton

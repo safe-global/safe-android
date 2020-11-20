@@ -84,7 +84,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
-    OWNER_ENTER_SEED("owner_enter_seed"),
+    OWNER_ENTER_SEED("screen_owner_enter_seed"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
@@ -93,8 +93,8 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
     TRANSACTIONS("screen_transactions"),
     TRANSACTIONS_DETAILS("screen_transactions_details"),
-    TRANSACTIONS_DETAILS_ACTION("transaction_details_action"),
-    TRANSACTIONS_DETAILS_ACTION_LIST("transaction_details_action_list"),
+    TRANSACTIONS_DETAILS_ACTION("screen_transaction_details_action"),
+    TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
@@ -105,5 +105,5 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_EDIT_NAME("screen_settings_safe_edit_name"),
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
-    OWNER_SELECT_ACCOUNT("owner_select_account")
+    OWNER_SELECT_ACCOUNT("screen_owner_select_account")
 }

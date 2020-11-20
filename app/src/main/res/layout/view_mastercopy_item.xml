@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/version_name"
+        android:id="@+id/implementation_version_name"
         style="@style/TextDark.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/address"
         app:layout_constraintEnd_toStartOf="@id/link"
-        app:layout_constraintStart_toEndOf="@id/version_name"
+        app:layout_constraintStart_toEndOf="@id/implementation_version_name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed"
@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toBottomOf="@id/version_name"
+        app:layout_constraintTop_toBottomOf="@id/implementation_version_name"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_goneMarginLeft="16dp"
         tools:text="0x12..1235" />

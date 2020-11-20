@@ -2,23 +2,21 @@ package io.gnosis.safe.ui.transactions
 
 import android.view.View
 import androidx.paging.PagingData
-import io.gnosis.data.backend.dto.DataDecodedDto
-import io.gnosis.data.backend.dto.ParamDto
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.models.*
-import io.gnosis.data.models.TransactionStatus.*
+import io.gnosis.data.models.Page
+import io.gnosis.data.models.Safe
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.models.assets.TokenType
+import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.TransactionStatus.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING
-import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_0_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_MASTER_COPY_1_1_1
-import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_SERVICE_TOKEN_INFO
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_0_0
+import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
+import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -30,10 +28,10 @@ import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.formatBackendDate
 import io.mockk.*
-import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -107,16 +105,11 @@ class TransactionListViewModelTest {
     @Test
     fun `load - (active safe with transactions) should emit LoadTransaction`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(
-            safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(),
-            Solidity.Address(BigInteger.ONE)
-        )
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { ownerRepository.retrieveCredentials() } returns null
-        coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } returns flow { emit(PagingData.empty<Transaction>()) }
+        coEvery { transactionPagingProvider.getTransactionsStream(any()) } returns flow { emit(PagingData.empty()) }
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
@@ -128,24 +121,21 @@ class TransactionListViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address)
-            transactionPagingProvider.getTransactionsStream(safe.address, safeInfo)
+            safeRepository.getSafeInfo(safe.address) wasNot Called
+            transactionPagingProvider.getTransactionsStream(safe.address)
         }
     }
 
     @Test
     fun `load - (transactionRepository failure) should emit ShowError`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo =
-            SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), Solidity.Address(BigInteger.ONE))
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { ownerRepository.retrieveCredentials() } returns null
         coEvery { transactionRepository.getTransactions(any()) } throws throwable
-        coEvery { transactionPagingProvider.getTransactionsStream(any(), any()) } throws throwable
+        coEvery { transactionPagingProvider.getTransactionsStream(any()) } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
@@ -157,7 +147,7 @@ class TransactionListViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address)
+            safeRepository.getSafeInfo(safe.address) wasNot Called
         }
     }
 
@@ -167,21 +157,7 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createEmptyTransactionList()
-        val transactionViews =
-            transactions.results.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.results.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(0, transactionViews.size)
     }
@@ -196,21 +172,7 @@ class TransactionListViewModelTest {
             AWAITING_EXECUTION,
             AWAITING_CONFIRMATIONS
         )
-        val transactionViews =
-            transactions.results.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.results.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(true, transactionViews[0] is TransactionView.TransferQueued)
         assertEquals(true, transactionViews[1] is TransactionView.TransferQueued)
@@ -223,21 +185,7 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithStatus(PENDING, SUCCESS)
-        val transactionViews =
-            transactions.results.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.results.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(true, transactionViews[0] is TransactionView.TransferQueued)
         assertEquals(true, transactionViews[1] is TransactionView.Transfer)
@@ -252,41 +200,27 @@ class TransactionListViewModelTest {
             buildTransfer(
                 status = AWAITING_CONFIRMATIONS,
                 confirmations = 0,
-                serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+                serviceTokenInfo = ETH_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultToAddress // outgoing
             ),
             buildTransfer(
                 status = AWAITING_EXECUTION,
                 confirmations = 2,
-                serviceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+                serviceTokenInfo = ETH_TOKEN_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultSafeAddress // incoming
             ),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
             buildTransfer(
-                serviceTokenInfo = ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL,
+                serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL,
                 value = BigInteger.TEN,
                 recipient = defaultSafeAddress
             )
         )
-        val transactionViews =
-            transactions.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(
             TransactionView.TransferQueued(
@@ -399,26 +333,12 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildTransfer(serviceTokenInfo = ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = ERC721_SERVICE_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
-            buildTransfer(serviceTokenInfo = createErc20ServiceToken(), status = CANCELLED),
-            buildTransfer(serviceTokenInfo = ETH_SERVICE_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
+            buildTransfer(serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = ERC721_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = createErc20TokenInfo(), status = CANCELLED),
+            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
-        val transactionViews =
-            transactions.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(
             TransactionView.Transfer(
@@ -493,26 +413,12 @@ class TransactionListViewModelTest {
 
         val transactions = listOf(
             buildCustom(status = AWAITING_EXECUTION, confirmations = 2),
-            buildCustom(status = AWAITING_CONFIRMATIONS, confirmations = null),
+            buildCustom(status = AWAITING_CONFIRMATIONS),
             buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress),
             buildCustom(status = FAILED),
             buildCustom(status = CANCELLED, value = BigInteger("100000000000000"))
         )
-        val transactionViews =
-            transactions.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(
             TransactionView.CustomTransactionQueued(
@@ -604,7 +510,6 @@ class TransactionListViewModelTest {
 
     @Test
     fun `mapTransactionView (tx list with historic setting changes) should map to settings changes list`() {
-
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
@@ -614,77 +519,72 @@ class TransactionListViewModelTest {
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_1_1))
-                )
+                    listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1))
+                ),
+                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
-                dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf())
+                dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf()),
+                settingsInfo = SettingsInfo.RemoveOwner(defaultSafeAddress, 1)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
-                dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf())
+                dataDecoded = buildDataDecodedDto(METHOD_SET_FALLBACK_HANDLER, listOf()),
+                settingsInfo = null
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_DISABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
-                )
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
+                ),
+                settingsInfo = SettingsInfo.DisableModule(defaultModuleAddress)
             ),
             buildSettingsChange(
                 status = AWAITING_EXECUTION,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
-                )
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
+                ),
+                settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),
             // history
             buildSettingsChange(
                 status = CANCELLED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_SET_FALLBACK_HANDLER,
-                    listOf(ParamDto.AddressParam("address", "handler", defaultFallbackHandler))
-                )
+                    listOf(Param.Address("address", "handler", defaultFallbackHandler))
+                ),
+                settingsInfo = SettingsInfo.SetFallbackHandler(defaultFallbackHandler)
             ),
             buildSettingsChange(
                 status = SUCCESS,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_CHANGE_MASTER_COPY,
-                    listOf(ParamDto.AddressParam("address", "_masterCopy", SAFE_MASTER_COPY_1_0_0))
-                )
+                    listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_0_0))
+                ),
+                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_0_0)
             ),
             buildSettingsChange(
                 status = FAILED,
                 dataDecoded = buildDataDecodedDto(
                     METHOD_ENABLE_MODULE,
-                    listOf(ParamDto.AddressParam("address", "module", defaultModuleAddress))
-                )
+                    listOf(Param.Address("address", "module", defaultModuleAddress))
+                ),
+                settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
             ),
             buildSettingsChange(
                 status = SUCCESS,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList()),
-                nonce = 10.toBigInteger()
+                nonce = 10.toBigInteger(),
+                settingsInfo = SettingsInfo.RemoveOwner(defaultSafeAddress, 1)
             )
         )
-        val transactionViews =
-            transactions.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
@@ -694,11 +594,11 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 dateTimeText = Date(0).formatBackendDate(),
-                address = SAFE_MASTER_COPY_1_1_1,
-                version = "1.1.1",
+                address = SAFE_IMPLEMENTATION_1_1_1,
+                addressLabel = R.string.implementation_version_1_1_1,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
-                visibilityVersion = View.VISIBLE,
+                visibilityAddressLabel = View.VISIBLE,
                 nonce = "1",
                 confirmations = 2,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
@@ -736,9 +636,9 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.medium_grey,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                version = DEFAULT_FALLBACK_HANDLER_UNKNOWN_DISPLAY_STRING,
+                addressLabel = R.string.unknown_fallback_handler,
                 address = null,
-                visibilityVersion = View.VISIBLE,
+                visibilityAddressLabel = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
                 visibilityEllipsizedAddress = View.VISIBLE
             ),
@@ -759,9 +659,9 @@ class TransactionListViewModelTest {
                 nonce = "1",
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
-                visibilityVersion = View.INVISIBLE,
+                visibilityAddressLabel = View.INVISIBLE,
                 address = defaultModuleAddress,
-                version = ""
+                addressLabel = R.string.empty_string
             ),
             transactionViews[3]
         )
@@ -780,9 +680,9 @@ class TransactionListViewModelTest {
                 nonce = "1",
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
-                visibilityVersion = View.INVISIBLE,
+                visibilityAddressLabel = View.INVISIBLE,
                 address = defaultModuleAddress,
-                version = ""
+                addressLabel = R.string.empty_string
             ),
             transactionViews[4]
         )
@@ -797,9 +697,9 @@ class TransactionListViewModelTest {
                 alpha = OPACITY_HALF,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
-                visibilityVersion = View.VISIBLE,
+                visibilityAddressLabel = View.VISIBLE,
                 address = defaultFallbackHandler,
-                version = DEFAULT_FALLBACK_HANDLER_DISPLAY_STRING,
+                addressLabel = R.string.default_fallback_handler,
                 nonce = "1"
             ),
             transactionViews[5]
@@ -812,11 +712,11 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
-                address = SAFE_MASTER_COPY_1_0_0,
-                version = "1.0.0",
+                address = SAFE_IMPLEMENTATION_1_0_0,
+                addressLabel = R.string.implementation_version_1_0_0,
                 visibilityEllipsizedAddress = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
-                visibilityVersion = View.VISIBLE,
+                visibilityAddressLabel = View.VISIBLE,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -831,10 +731,10 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.safe_failed_red,
                 dateTimeText = Date(0).formatBackendDate(),
                 alpha = OPACITY_HALF,
-                version = "",
+                addressLabel = R.string.empty_string,
                 visibilityEllipsizedAddress = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
-                visibilityVersion = View.INVISIBLE,
+                visibilityAddressLabel = View.INVISIBLE,
                 address = defaultModuleAddress,
                 nonce = "1"
             ),
@@ -861,21 +761,7 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithCreationTx()
-        val transactionViews =
-            transactions.results.map {
-                transactionsViewModel.getTransactionView(
-                    it,
-                    SafeInfo(
-                        defaultSafeAddress,
-                        defaultNonce,
-                        defaultThreshold,
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE),
-                        emptyList(),
-                        Solidity.Address(BigInteger.ONE)
-                    )
-                )
-            }
+        val transactionViews = transactions.results.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(true, transactionViews[0] is TransactionView.Creation)
         val creationTransactionView = transactionViews[0] as TransactionView.Creation
@@ -894,10 +780,6 @@ class TransactionListViewModelTest {
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val safeInfo = SafeInfo(
-            safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(),
-            Solidity.Address(BigInteger.ONE)
-        )
         val owner = OwnerCredentials(Solidity.Address(BigInteger.ONE), BigInteger.ONE)
         val notOwner = OwnerCredentials(Solidity.Address(BigInteger.TEN), BigInteger.TEN)
 
@@ -933,7 +815,7 @@ class TransactionListViewModelTest {
         )
 
         val transactionViewData = transactions.map {
-            transactionsViewModel.getTransactionView(it, safeInfo, it.canBeSignedByOwner(owner.address))
+            transactionsViewModel.getTransactionView(it, safe.address, it.canBeSignedByOwner(owner.address))
         }
 
         assertTrue(transactionViewData[0] is TransactionView.TransferQueued)
@@ -958,12 +840,46 @@ class TransactionListViewModelTest {
         assertEquals(R.string.tx_status_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
-    private fun callVerification() {
-        coVerify { safeRepository.getActiveSafe() }
-        coVerify { safeRepository.getSafeInfo(defaultSafeAddress) }
-        coVerify {
-            transactionRepository.getTransactions(defaultSafeAddress)
-        }
+    @Test
+    fun `incoming (Transfer_TransactionDirection_INCOMING) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.INCOMING
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(true, actual)
+    }
+
+    @Test
+    fun `incoming (Transfer_TransactionDirection_UNKNOWN) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.UNKNOWN
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(true, actual)
+    }
+
+    @Test
+    fun `incoming (Transfer_TransactionDirection_OUTGOING) is true`() {
+        val transfer = TransactionInfo.Transfer(
+            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            direction = TransactionDirection.OUTGOING
+        )
+
+        val actual = transfer.incoming()
+
+        assertEquals(false, actual)
     }
 
     private fun createEmptyTransactionList(): Page<Transaction> {
@@ -972,10 +888,9 @@ class TransactionListViewModelTest {
 
     private fun createTransactionListWithCreationTx(): Page<Transaction> {
         val transfers = listOf(
-            Transaction.Creation(
+            Transaction(
                 id = "<random-id>",
-                status = SUCCESS,
-                confirmations = 2,
+                txStatus = SUCCESS,
                 txInfo = TransactionInfo.Creation(
                     creator = defaultFromAddress,
                     factory = defaultToAddress,
@@ -983,24 +898,11 @@ class TransactionListViewModelTest {
                     transactionHash = "0x00"
                 ),
                 timestamp = Date(1),
-                executionInfo = DetailedExecutionInfo.MultisigExecutionDetails(
+                executionInfo = ExecutionInfo(
                     nonce = BigInteger.ZERO,
-                    confirmations = listOf(
-                        Confirmations(
-                            signer = defaultFromAddress,
-                            submittedAt = Date(2),
-                            signature = ""
-                        )
-                    ),
+                    confirmationsSubmitted = 1,
                     confirmationsRequired = 1,
-                    executor = defaultFromAddress,
-                    safeTxHash = "0x00",
-                    signers = listOf(defaultFromAddress),
-                    submittedAt = Date(3),
-                    safeTxGas = BigInteger.ZERO,
-                    baseGas = BigInteger.ZERO,
-                    gasPrice = BigInteger.ZERO,
-                    gasToken = Solidity.Address(BigInteger.ZERO)
+                    missingSigners = emptyList()
                 )
             )
         )
@@ -1010,18 +912,17 @@ class TransactionListViewModelTest {
 
     private fun createTransactionListWithStatus(vararg transactionStatus: TransactionStatus): Page<Transaction> {
         val transfers = transactionStatus.map { status ->
-            Transaction.Transfer(
+            Transaction(
                 id = "",
-                status = status,
-                confirmations = 2,
-                missingSigners = null,
-                recipient = defaultToAddress,
-                sender = defaultFromAddress,
-                value = BigInteger.ONE,
-                date = Date(0),
-                tokenInfo = ETH_SERVICE_TOKEN_INFO,
-                nonce = defaultNonce,
-                incoming = false
+                txStatus = status,
+                executionInfo = ExecutionInfo(nonce = defaultNonce, confirmationsRequired = 3, confirmationsSubmitted = 2, missingSigners = null),
+                txInfo = TransactionInfo.Transfer(
+                    recipient = defaultToAddress,
+                    sender = defaultFromAddress,
+                    direction = TransactionDirection.OUTGOING,
+                    transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE)
+                ),
+                timestamp = Date(0)
             )
         }
         return Page(1, "", "", transfers)
@@ -1035,26 +936,51 @@ class TransactionListViewModelTest {
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
         date: Date = Date(0),
-        serviceTokenInfo: ServiceTokenInfo = ETH_SERVICE_TOKEN_INFO,
+        serviceTokenInfo: TokenInfo = ETH_TOKEN_INFO,
         nonce: BigInteger = defaultNonce
     ): Transaction =
-        Transaction.Transfer(
+        Transaction(
             id = "",
-            status = status,
-            confirmations = confirmations,
-            missingSigners = missingSigners,
-            recipient = recipient,
-            sender = sender,
-            value = value,
-            date = date,
-            tokenInfo = serviceTokenInfo,
-            nonce = nonce,
-            incoming = defaultSafeAddress == recipient
+            txStatus = status,
+            txInfo = TransactionInfo.Transfer(
+                recipient = recipient,
+                sender = sender,
+                direction = if (defaultSafeAddress == recipient) TransactionDirection.INCOMING else TransactionDirection.OUTGOING,
+                transferInfo = transferInfoFromToken(tokenInfo = serviceTokenInfo, value = value)
+            ),
+            executionInfo = ExecutionInfo(
+                nonce = nonce,
+                confirmationsRequired = defaultThreshold,
+                confirmationsSubmitted = confirmations,
+                missingSigners = missingSigners
+            ),
+            timestamp = date
         )
+
+    private fun transferInfoFromToken(tokenInfo: TokenInfo, value: BigInteger): TransferInfo {
+        return when (tokenInfo.tokenType) {
+            TokenType.ERC20 -> TransferInfo.Erc20Transfer(
+                tokenAddress = tokenInfo.address,
+                tokenName = tokenInfo.name,
+                tokenSymbol = tokenInfo.symbol,
+                logoUri = tokenInfo.logoUri,
+                decimals = tokenInfo.decimals,
+                value = value
+            )
+            TokenType.ERC721 -> TransferInfo.Erc721Transfer(
+                tokenAddress = tokenInfo.address,
+                tokenName = tokenInfo.name,
+                tokenSymbol = tokenInfo.symbol,
+                logoUri = tokenInfo.logoUri,
+                tokenId = "tokenId"
+            )
+            else -> TransferInfo.EtherTransfer(value)
+        }
+    }
 
     private fun buildCustom(
         status: TransactionStatus = SUCCESS,
-        confirmations: Int? = 0,
+        confirmations: Int = 0,
         missingSigners: List<Solidity.Address>? = null,
         value: BigInteger = BigInteger.ZERO,
         date: Date = Date(0),
@@ -1062,16 +988,17 @@ class TransactionListViewModelTest {
         address: Solidity.Address = defaultToAddress,
         dataSize: Int = 0
     ): Transaction =
-        Transaction.Custom(
+        Transaction(
             id = "",
-            status = status,
-            confirmations = confirmations,
-            missingSigners = missingSigners,
-            value = value,
-            date = date,
-            nonce = nonce,
-            address = address,
-            dataSize = dataSize
+            txStatus = status,
+            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value),
+            executionInfo = ExecutionInfo(
+                nonce = nonce,
+                confirmationsRequired = defaultThreshold,
+                confirmationsSubmitted = confirmations,
+                missingSigners = missingSigners
+            ),
+            timestamp = date
         )
 
     private fun buildSettingsChange(
@@ -1080,42 +1007,58 @@ class TransactionListViewModelTest {
         missingSigners: List<Solidity.Address>? = null,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
-        dataDecoded: DataDecodedDto = buildDataDecodedDto()
+        dataDecoded: DataDecoded = buildDataDecodedDto(),
+        settingsInfo: SettingsInfo? = null
     ): Transaction =
-        Transaction.SettingsChange(
+        Transaction(
             id = "",
-            status = status,
-            confirmations = confirmations,
-            missingSigners = missingSigners,
-            date = date,
-            nonce = nonce,
-            dataDecoded = dataDecoded
-
+            txStatus = status,
+            txInfo = TransactionInfo.SettingsChange(dataDecoded = dataDecoded, settingsInfo = settingsInfo),
+            executionInfo = ExecutionInfo(
+                nonce = nonce,
+                confirmationsRequired = defaultThreshold,
+                confirmationsSubmitted = confirmations,
+                missingSigners = missingSigners
+            ),
+            timestamp = date
         )
 
     private fun buildDataDecodedDto(
         method: String = METHOD_REMOVE_OWNER,
-        parameters: List<ParamDto> = listOf()
-    ): DataDecodedDto {
-        return DataDecodedDto(
+        parameters: List<Param> = listOf()
+    ): DataDecoded {
+        return DataDecoded(
             method = method,
             parameters = parameters
         )
     }
 
-    private fun createErc20ServiceToken() = ServiceTokenInfo(
-        type = ServiceTokenInfo.TokenType.ERC20,
+    private fun createErc20TokenInfo() = TokenInfo(
+        tokenType = TokenType.ERC20,
         address = "0x63704B63Ac04f3a173Dfe677C7e3D330c347CD88".asEthereumAddress()!!,
+        decimals = 0,
         name = "TEST AQER",
         symbol = "AQER",
-        decimals = 0,
         logoUri = "local::ethereum"
     )
 
     companion object {
-        private val ERC20_SERVICE_TOKEN_INFO_NO_SYMBOL =
-            ServiceTokenInfo(TokenRepository.ZERO_ADDRESS, 0, "", "ERC20", "local::ethereum", ServiceTokenInfo.TokenType.ERC20)
-        private val ERC721_SERVICE_TOKEN_INFO_NO_SYMBOL =
-            ServiceTokenInfo(Solidity.Address(BigInteger.ZERO), 0, "", "", "local::ethereum", ServiceTokenInfo.TokenType.ERC721)
+
+        private val ERC20_TOKEN_INFO_NO_SYMBOL = TokenInfo(
+            TokenType.ERC20,
+            Solidity.Address(BigInteger.ZERO),
+            0,
+            "",
+            "ERC20",
+            "local::ethereum"
+        )
+        private val ERC721_TOKEN_INFO_NO_SYMBOL = TokenInfo(
+            TokenType.ERC721,
+            Solidity.Address(BigInteger.ZERO),
+            0,
+            "",
+            "",
+            "local::ethereum"
+        )
     }
 }

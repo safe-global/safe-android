@@ -1,9 +1,9 @@
 package io.gnosis.data.utils
 
-import io.gnosis.data.models.DetailedExecutionInfo
-import io.gnosis.data.models.TransactionDetails
-import io.gnosis.data.models.TransactionInfo
-import io.gnosis.data.models.TransferInfo
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TransactionDetails
+import io.gnosis.data.models.transaction.TransactionInfo
+import io.gnosis.data.models.transaction.TransferInfo
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray

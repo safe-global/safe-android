@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.google.android.material.snackbar.Snackbar
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogShareSafeBinding
@@ -111,7 +110,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             safeFields.visible(false)
         }
         Timber.e(error)
-        snackbar(requireView(), Snackbar.LENGTH_LONG, R.string.error_invalid_safe)
+        snackbar(requireView(), getString(R.string.error_invalid_safe))
     }
 
     private fun resetUI() {

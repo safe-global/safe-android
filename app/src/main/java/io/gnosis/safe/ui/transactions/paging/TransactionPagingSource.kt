@@ -1,8 +1,7 @@
 package io.gnosis.safe.ui.transactions.paging
 
 import androidx.paging.PagingSource
-import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.Transaction
+import io.gnosis.data.models.transaction.Transaction
 import io.gnosis.data.repositories.TransactionRepository
 import pm.gnosis.model.Solidity
 import timber.log.Timber
@@ -10,7 +9,6 @@ import timber.log.Timber
 
 class TransactionPagingSource(
     private val safe: Solidity.Address,
-    private val safeInfo: SafeInfo,
     private val txRepo: TransactionRepository
 ) : PagingSource<String, Transaction>() {
 

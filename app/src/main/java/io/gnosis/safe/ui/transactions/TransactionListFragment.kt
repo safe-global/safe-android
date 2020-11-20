@@ -47,6 +47,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionListBinding =
         FragmentTransactionListBinding.inflate(inflater, container, false)
 
@@ -59,15 +61,17 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
-                val append = loadState.append
-                if (append is LoadState.Error) {
-                    handleError(append.error)
-                }
-                val prepend = loadState.prepend
-                if (prepend is LoadState.Error) {
-                    handleError(prepend.error)
-                }
 
+                loadState.refresh.let {
+                    if (it is LoadState.Error) handleError(it.error)
+                }
+                loadState.append.let {
+                    if (it is LoadState.Error) handleError(it.error)
+                }
+                loadState.prepend.let {
+                    if (it is LoadState.Error) handleError(it.error)
+                }
+                
                 if (viewModel.state.value?.viewAction is LoadTransactions && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     showEmptyState()
                 } else {
@@ -78,8 +82,10 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
 
         binding.transactions.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val firstVisibleItem = (binding.transactions.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                reload = firstVisibleItem <= 1
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    val firstVisibleItem = (binding.transactions.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    reload = firstVisibleItem <= 1
+                }
             }
         })
 

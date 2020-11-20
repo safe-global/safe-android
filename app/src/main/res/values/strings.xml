@@ -19,6 +19,7 @@
     <string name="address_input_clipboard">Paste from clipboard</string>
     <string name="address_input_address_book">Address book</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
+    <string name="error_malformed_address">The address is malformed. Please provide an Ethereum address</string>
     <string name="ens_input_title">Input ENS Name</string>
     <string name="error_resolve_ens">Could not load address</string>
     <string name="error_used_address">There is already a Safe with this address in the app. Please use another address.</string>
@@ -48,12 +49,12 @@
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
-    <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
+    <string name="error_ssl_handshake">Could not establish a secure connection to the Safe services.</string>
 
+    <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
     <string name="get_started">Get started</string>
-    <string name="splash_text">The most trusted platform to manage digital assets on Ethereum</string>
 
     <string name="collectibles_empty">Collectibles will appear here</string>
     <string name="collectibles_unknown">Unknown</string>
@@ -79,7 +80,6 @@
     <string name="endpoints">ENDPOINTS</string>
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
-    <string name="relay_service">Relay service</string>
     <string name="client_gateway_service">Client Gateway service</string>
 
     <string name="get_in_touch_title">Get in touch</string>
@@ -106,9 +106,6 @@
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
 
-    <string name="tx_list_safe_implementation_version_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler_unknown">Unknown</string>
-    <string name="tx_list_default_fallback_handler">DefaultFallbackHandler</string>
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_multisend_action">Action #%1$d</string>
@@ -165,11 +162,9 @@
     <string name="safe_settings_not_set">Not set</string>
     <string name="safe_settings_not_set_reverse_record">Reverse record not set</string>
     <string name="safe_settings_confirmations_required">%d out of %d</string>
-    <string name="safe_settings_unknown">Unknown</string>
     <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
     <string name="safe_settings_master_copy_up_to_date">Up to date</string>
     <string name="safe_settings_fallback_handler">Fallback handler</string>
-    <string name="safe_settings_default_fallback_handler">DefaultCallbackHandler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
 
@@ -241,4 +236,8 @@
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
+
+    <string name="default_fallback_handler">DefaultFallbackHandler</string>
+    <string name="unknown_fallback_handler">Unknown</string>
+    <string name="unknown_implementation_version">Unknown</string>
 </resources>

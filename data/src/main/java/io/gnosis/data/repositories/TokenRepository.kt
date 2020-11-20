@@ -1,33 +1,31 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.ServiceTokenInfo
-import io.gnosis.data.backend.dto.tokenAsErc20Token
-import io.gnosis.data.db.daos.Erc20TokenDao
-import io.gnosis.data.models.Balance
-import io.gnosis.data.models.Collectible
-import io.gnosis.data.models.Erc20Token
+import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.models.assets.Collectible
+import io.gnosis.data.models.assets.TokenInfo
+import io.gnosis.data.models.assets.TokenType
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class TokenRepository(
-    private val erc20TokenDao: Erc20TokenDao,
-    private val transactionServiceApi: TransactionServiceApi
+    private val gatewayApi: GatewayApi
 ) {
 
-    suspend fun loadBalanceOf(safe: Solidity.Address): List<Balance> =
-        transactionServiceApi.loadBalances(safe.asEthereumAddressChecksumString())
-            .map {
-                val token = it.tokenAsErc20Token()
-                erc20TokenDao.insertToken(token)
-                Balance(token, it.balance, it.balanceUsd)
-            }
+    suspend fun loadBalanceOf(safe: Solidity.Address): CoinBalances {
+        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
+        return CoinBalances(response.fiatTotal, response.items.map {
+            if (it.tokenInfo.address == ZERO_ADDRESS)
+                it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::ethereum"))
+            else
+                it
+        })
+    }
 
-    //FIXME: use client gateway (grouping and sorting will be done on the backend side)
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
-        transactionServiceApi.loadCollectibles(safe.asEthereumAddressChecksumString())
+        gatewayApi.loadCollectibles(safe.asEthereumAddressChecksumString())
             .asSequence()
             .groupBy {
                 it.address
@@ -60,13 +58,17 @@ class TokenRepository(
                 }
             })
             .flatten()
-            .map {
-                it.toCollectible()
-            }
+            .toList()
 
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = Erc20Token(ZERO_ADDRESS, "Ether", BuildConfig.NATIVE_CURRENCY_SYMBOL, 18, "local::ethereum")
-        val ETH_SERVICE_TOKEN_INFO = ServiceTokenInfo(ZERO_ADDRESS, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL, "Ether", "local::ethereum")
+        val ETH_TOKEN_INFO = TokenInfo(
+            TokenType.ETHER,
+            ZERO_ADDRESS,
+            18,
+            BuildConfig.NATIVE_CURRENCY_SYMBOL,
+            "Ether",
+            "local::ethereum"
+        )
     }
 }

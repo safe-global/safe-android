@@ -73,7 +73,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
             if (address != null) {
-                ownerKey.showNext()
+                if (ownerKey.currentView.id == R.id.import_owner_key) {
+                    ownerKey.showNext()
+                }
                 with(removeOwnerKey) {
                     blockies.setAddress(address)
                     ownerAddress.text = address.shortChecksumString()

@@ -1,37 +1,37 @@
-package io.gnosis.data.backend.dto
+package io.gnosis.data.models.transaction
 
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
-data class DataDecodedDto(
+data class DataDecoded(
     val method: String,
-    val parameters: List<ParamDto>?
+    val parameters: List<Param>?
 )
 
-data class ValueDecodedDto(
+data class ValueDecoded(
     val operation: Operation,
     val to: Solidity.Address,
     val value: BigInteger,
     val data: String,
-    val dataDecoded: DataDecodedDto?
+    val dataDecoded: DataDecoded?
 )
 
-sealed class ParamDto {
+sealed class Param {
     abstract val type: String
     abstract val name: String
     abstract val value: Any?
 
-    data class AddressParam(
+    data class Address(
         override val type: String,
         override val name: String,
         override val value: Solidity.Address
-    ) : ParamDto()
+    ) : Param()
 
-    data class ArrayParam(
+    data class Array(
         override val type: String,
         override val name: String,
         override val value: List<Any>
-    ) : ParamDto() {
+    ) : Param() {
 
         fun getItemType(): ParamType {
             val baseType = type.split("[")[0]
@@ -43,23 +43,23 @@ sealed class ParamDto {
         }
     }
 
-    data class BytesParam(
+    data class Bytes(
         override val type: String,
         override val name: String,
         override val value: String,
-        val valueDecoded: List<ValueDecodedDto>?
-    ) : ParamDto()
+        val valueDecoded: List<ValueDecoded>?
+    ) : Param()
 
-    data class ValueParam(
+    data class Value(
         override val type: String,
         override val name: String,
         override val value: Any
-    ) : ParamDto() {
+    ) : Param() {
 
         fun isBytesValue(): Boolean = type.startsWith("bytes")
     }
 
-    object UnknownParam : ParamDto() {
+    object Unknown : Param() {
         override val type: String
             get() = "unknown"
         override val name: String

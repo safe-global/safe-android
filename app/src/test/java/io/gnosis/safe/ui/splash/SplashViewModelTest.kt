@@ -10,6 +10,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
+import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -24,6 +25,7 @@ class SplashViewModelTest {
     private val tracker: Tracker = mockk()
     private val notificationRepository = mockk<NotificationRepository>()
     private val safeRepository = mockk<SafeRepository>()
+    private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var termsChecker: TermsChecker
@@ -46,7 +48,8 @@ class SplashViewModelTest {
     @Test
     fun `onStartClicked (terms already agreed) should emit StartActivity`() {
         coEvery { termsChecker.getTermsAgreed() } returns true
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onStartClicked()
 
@@ -60,7 +63,8 @@ class SplashViewModelTest {
     @Test
     fun `onStartClicked (terms not agreed previously) should emit ShowTerms`() {
         coEvery { termsChecker.getTermsAgreed() } returns false
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onStartClicked()
 
@@ -72,7 +76,8 @@ class SplashViewModelTest {
 
     @Test
     fun `handleAgreeClicked (user clicks agree) should emit StartActivity`() {
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.handleAgreeClicked()
 
@@ -86,7 +91,8 @@ class SplashViewModelTest {
     @Test
     fun `skipSplashScreen (terms not agreed previously) should make get started button visible`() {
         coEvery { termsChecker.getTermsAgreed() } returns false
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.skipGetStartedButtonWhenTermsAgreed()
 
@@ -100,7 +106,8 @@ class SplashViewModelTest {
     @Test
     fun `skipSplashScreen (terms agreed previously) should emit StartActivity`() {
         coEvery { termsChecker.getTermsAgreed() } returns true
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.skipGetStartedButtonWhenTermsAgreed()
 
@@ -119,9 +126,12 @@ class SplashViewModelTest {
         coEvery { notificationRepository.checkPermissions() } returns true
         coEvery { tracker.setPushInfo(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
+        coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
+        coEvery { ownerCredentialsRepository.hasCredentials() } returns true
 
-        val viewModel = SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, appDispatchers, context)
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onAppStart()
 
@@ -131,6 +141,36 @@ class SplashViewModelTest {
             notificationRepository.checkPermissions()
             tracker.setPushInfo(true)
             tracker.setNumSafes(0)
+            ownerCredentialsRepository.hasCredentials()
+            tracker.setNumKeysImported(1)
+        }
+    }
+
+    @Test
+    fun `onAppStart (no credentials in repository) should track 0 num_keys_imported`() = runBlockingTest {
+
+        coEvery { notificationRepository.register() } just Runs
+        coEvery { notificationRepository.clearNotifications() } just Runs
+        coEvery { notificationRepository.checkPermissions() } returns true
+        coEvery { tracker.setPushInfo(any()) } just Runs
+        coEvery { tracker.setNumSafes(any()) } just Runs
+        coEvery { tracker.setNumKeysImported(any()) } just Runs
+        coEvery { safeRepository.getSafeCount() } returns 0
+        coEvery { ownerCredentialsRepository.hasCredentials() } returns false
+
+        val viewModel =
+            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+
+        viewModel.onAppStart()
+
+        coVerifySequence {
+            notificationRepository.register()
+            notificationRepository.clearNotifications()
+            notificationRepository.checkPermissions()
+            tracker.setPushInfo(true)
+            tracker.setNumSafes(0)
+            ownerCredentialsRepository.hasCredentials()
+            tracker.setNumKeysImported(0)
         }
     }
 }
