@@ -75,6 +75,13 @@ android {
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
         }
 
+        //Only this profile will have LeakCanary enabled (see dependencies)
+        profile {
+            initWith debug
+            applicationIdSuffix ".profile"
+            versionNameSuffix "-profile"
+        }
+
         unsafe {
             initWith debug
             applicationIdSuffix ".unsafe"
@@ -290,7 +297,7 @@ dependencies {
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar_jdk_libs"
 
-    //debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
+    profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
 }
 
 

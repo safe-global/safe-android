@@ -21,6 +21,9 @@ android {
         debug {
         }
 
+        profile {
+        }
+
         unsafe {
         }
 
