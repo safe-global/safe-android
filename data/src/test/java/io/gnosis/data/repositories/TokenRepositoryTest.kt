@@ -58,7 +58,7 @@ class TokenRepositoryTest {
                     listOf(
                         balance.copy(
                             balance.tokenInfo.copy(
-                                tokenType = TokenType.ETHER,
+                                tokenType = TokenType.NATIVE_CURRENCY,
                                 address = Solidity.Address(BigInteger.ZERO),
                                 decimals = 18,
                                 logoUri = "local::native_currency",

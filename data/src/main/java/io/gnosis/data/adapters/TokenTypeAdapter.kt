@@ -13,7 +13,7 @@ class TokenTypeAdapter {
     @FromJson
     fun fromJson(tokenType: String): TokenType =
         when (tokenType) {
-            "ETHER" -> TokenType.ETHER
+            "ETHER" -> TokenType.NATIVE_CURRENCY
             "ERC20" -> TokenType.ERC20
             "ERC721" -> TokenType.ERC721
             else -> throw JsonDataException("Unsupported operation value: \"$tokenType\"")

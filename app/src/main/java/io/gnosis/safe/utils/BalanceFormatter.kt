@@ -1,7 +1,7 @@
 package io.gnosis.safe.utils
 
 import androidx.annotation.VisibleForTesting
-import io.gnosis.safe.BuildConfig
+import io.gnosis.data.BuildConfig
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

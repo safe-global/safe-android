@@ -1,12 +1,12 @@
 package io.gnosis.safe.utils
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import java.math.BigInteger

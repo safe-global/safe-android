@@ -63,11 +63,11 @@ class TokenRepository(
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
         val NATIVE_CURRENCY_INFO = TokenInfo(
-            TokenType.ETHER,
+            TokenType.NATIVE_CURRENCY,
             ZERO_ADDRESS,
             18,
             BuildConfig.NATIVE_CURRENCY_SYMBOL,
-            "Ether",
+            BuildConfig.NATIVE_CURRENCY_NAME,
             "local::native_currency"
         )
     }
