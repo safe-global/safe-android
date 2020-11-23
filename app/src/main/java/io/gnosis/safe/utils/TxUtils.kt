@@ -69,10 +69,10 @@ fun TransactionInfo.logoUri(): String? =
                 transferInfo.logoUri
             }
             else -> {
-                "local::ethereum"
+                "local::native_currency"
             }
         }
-        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::ethereum"
+        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::native_currency"
     }
 
 fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {

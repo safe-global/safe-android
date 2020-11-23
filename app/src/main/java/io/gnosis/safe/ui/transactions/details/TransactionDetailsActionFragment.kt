@@ -108,7 +108,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
         item.layoutParams = layoutParams
-        item.setActionInfo(true, amount, "local::ethereum", address)
+        item.setActionInfo(true, amount, "local::native_currency", address)
         return item
     }
 

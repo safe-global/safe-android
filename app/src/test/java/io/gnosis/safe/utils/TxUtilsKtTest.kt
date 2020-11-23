@@ -146,7 +146,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.logoUri()
 
-        assertEquals("local::ethereum", result)
+        assertEquals("local::native_currency", result)
     }
 
 

@@ -34,6 +34,7 @@ android {
                         "}}")
 
         buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "ETH"))
+        buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_NAME", asString(getKey("NATIVE_CURRENCY_NAME", "Ether"))
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -126,6 +127,7 @@ android {
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "xDai"))
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rpc.xdaichain.com/"))
             buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "XDAI"))
+            buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_NAME", asString(getKey("NATIVE_CURRENCY_NAME", "xDai"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")

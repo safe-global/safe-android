@@ -10,7 +10,7 @@ steps:
     command: 'ci/upload_app_distribution.sh internal-beta unsafe'
 
   - label: 'Upload App Distribution xDai'
-    if: build.branch == "master" || build.branch == "release" || build.branch =~ /^v[0-9]+.*/
+    if: build.branch == "release" || build.branch =~ /^v[0-9]+.*/
     key: 'upload-firebase-xdai'
     command: 'ci/upload_app_distribution.sh internal-beta xdai'
 

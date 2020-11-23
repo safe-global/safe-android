@@ -5,7 +5,7 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.assets.*
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
@@ -51,7 +51,7 @@ class TokenRepositoryTest {
     fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
         val address = Solidity.Address(BigInteger.ONE)
         val balance = buildBalance(1)
-        val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = ETH_TOKEN_INFO) }
+        val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = NATIVE_CURRENCY_INFO) }
         coEvery { gatewayApi.loadBalances(any()) } returns
                 CoinBalances(
                     BigDecimal.ZERO,
@@ -61,7 +61,7 @@ class TokenRepositoryTest {
                                 tokenType = TokenType.ETHER,
                                 address = Solidity.Address(BigInteger.ZERO),
                                 decimals = 18,
-                                logoUri = "local::ethereum",
+                                logoUri = "local::native_currency",
                                 name = "Ether",
                                 symbol = BuildConfig.NATIVE_CURRENCY_SYMBOL
                             )
