@@ -2,13 +2,17 @@ package io.gnosis.safe.ui.settings.app
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.utils.OwnerCredentialsRepository
+import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class AppSettingsViewModel @Inject constructor(
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val notificationRepository: NotificationRepository,
     private val tracker: Tracker
 ) : ViewModel() {
 
@@ -24,9 +28,12 @@ class AppSettingsViewModel @Inject constructor(
     }
 
     fun removeSigningOwner() {
-        ownerCredentialsRepository.removeCredentials()
-        tracker.setNumKeysImported(0)
-        signingOwner.postValue(null)
+        viewModelScope.launch {
+            ownerCredentialsRepository.removeCredentials()
+            notificationRepository.unregisterOwner()
+            tracker.setNumKeysImported(0)
+            signingOwner.postValue(null)
+        }
     }
 }
 

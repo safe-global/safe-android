@@ -15,6 +15,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -152,6 +153,65 @@ class NotificationRepository(
             .onSuccess {
                 deviceUuid = it.uuid
                 safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
+            }
+    }
+
+    suspend fun registerOwner(ownerKey: BigInteger) {
+
+        kotlin.runCatching {
+
+            val token = getCloudMessagingToken()!!
+
+            val registration = Registration(
+                uuid = deviceUuid ?: generateUUID(),
+                // safes are always added and never removed on the registration request
+                safes = listOf(),
+                cloudMessagingToken = token,
+                bundle = BuildConfig.APPLICATION_ID,
+                deviceType = "ANDROID",
+                version = appVersion,
+                buildNumber = BuildConfig.VERSION_CODE.toString(),
+                timestamp = System.currentTimeMillis().toString()
+            )
+
+            val signature =
+                KeyPair
+                    .fromPrivate(ownerKey)
+                    .sign(registration.hash().toByteArray())
+                    .toSignatureString()
+
+            registration.addSignature(signature)
+
+            notificationService.register(registration)
+        }
+            .onSuccess {
+                deviceUuid = it.uuid
+            }
+    }
+
+    suspend fun unregisterOwner() {
+
+        kotlin.runCatching {
+
+            val token = getCloudMessagingToken()!!
+
+            val registration = Registration(
+                uuid = deviceUuid ?: generateUUID(),
+                // safes are always added and never removed on the registration request
+                safes = listOf(),
+                cloudMessagingToken = token,
+                bundle = BuildConfig.APPLICATION_ID,
+                deviceType = "ANDROID",
+                version = appVersion,
+                buildNumber = BuildConfig.VERSION_CODE.toString(),
+                timestamp = System.currentTimeMillis().toString()
+            )
+
+            // registration without signatures
+            notificationService.register(registration)
+        }
+            .onSuccess {
+                deviceUuid = it.uuid
             }
     }
 

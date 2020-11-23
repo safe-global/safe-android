@@ -43,6 +43,7 @@ class PushNotificationTest {
             PushNotification.ConfirmationRequest::class to
                     TestData(
                         mapOf(
+                            "type" to "CONFIRMATION_REQUEST",
                             "address" to TEST_SAFE,
                             "safeTxHash" to TEST_SAFE_TX_HASH
                         ),
