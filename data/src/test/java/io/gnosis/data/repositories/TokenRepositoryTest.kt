@@ -62,7 +62,7 @@ class TokenRepositoryTest {
                                 address = Solidity.Address(BigInteger.ZERO),
                                 decimals = 18,
                                 logoUri = "local::native_currency",
-                                name = "Ether",
+                                name = BuildConfig.NATIVE_CURRENCY_NAME,
                                 symbol = BuildConfig.NATIVE_CURRENCY_SYMBOL
                             )
                         )
