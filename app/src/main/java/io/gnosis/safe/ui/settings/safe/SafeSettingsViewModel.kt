@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.safe
 
+import androidx.lifecycle.viewModelScope
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.EnsRepository
@@ -9,6 +10,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,10 +25,12 @@ class SafeSettingsViewModel @Inject constructor(
     override fun initialState() = SafeSettingsState(null, null, null, ViewAction.Loading(true))
 
     init {
-        safeLaunch {
+        viewModelScope.launch {
             safeRepository.activeSafeFlow().collect { safe ->
-                updateState { SafeSettingsState(null, null, null, ViewAction.Loading(true)) }
-                load(safe)
+                safeLaunch {
+                    updateState { SafeSettingsState(null, null, null, ViewAction.UpdateActiveSafe(safe)) }
+                    load(safe)
+                }
             }
         }
     }
@@ -39,6 +43,9 @@ class SafeSettingsViewModel @Inject constructor(
     }
 
     private suspend fun load(safe: Safe?) {
+
+        updateState { SafeSettingsState(null, null, null, ViewAction.Loading(true)) }
+
         val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
 
         val safeEnsName = runCatching { safe?.let { ensRepository.reverseResolve(it.address) } }

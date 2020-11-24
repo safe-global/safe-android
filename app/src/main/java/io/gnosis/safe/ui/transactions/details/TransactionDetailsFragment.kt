@@ -87,18 +87,17 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 is ShowError -> {
                     showLoading(false)
                     binding.txConfirmButton.isEnabled = true
+                    // only show empty state if we don't have anything to show
+                    if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
+                        binding.content.visibility = View.GONE
+                        binding.contentNoData.root.visible(true)
+                    }
                     when (viewAction.error) {
                         is Offline -> {
                             snackbar(requireView(), R.string.error_no_internet)
                         }
                         else -> {
                             snackbar(requireView(), viewAction.error.getErrorResForException())
-
-                            // only show empty state if we don't have anything to show
-                            if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
-                                binding.content.visibility = View.GONE
-                                binding.contentNoData.root.visible(true)
-                            }
                         }
                     }
                 }
