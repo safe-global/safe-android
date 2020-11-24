@@ -15,6 +15,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -45,6 +46,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
             localName.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSafeSettingsEditNameFragment())
@@ -59,17 +61,26 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             }
             refresh.setOnRefreshListener { viewModel.reload() }
         }
+
         viewModel.state.observe(viewLifecycleOwner, Observer {
+            binding.contentNoData.root.visible(false)
             when (val viewAction = it.viewAction) {
                 is Loading -> {
                     didLoadOnce = if (didLoadOnce) didLoadOnce else !viewAction.isLoading
-                    updateUi(viewAction.isLoading, it.safe, it.safeInfo, it.ensName)
+                    binding.progress.visible(!didLoadOnce && viewAction.isLoading)
+                    binding.refresh.isRefreshing = didLoadOnce && viewAction.isLoading
+                    if (!viewAction.isLoading)
+                        showSafeInfo(it.safe, it.safeInfo, it.ensName)
+                }
+                is UpdateActiveSafe -> {
+                    hideContent()
+                    didLoadOnce = false
                 }
                 is ShowError -> {
+                    hideLoading()
                     if (!didLoadOnce) {
                         showContentNoData()
                     }
-                    hideLoading()
                     when (viewAction.error) {
                         is Offline -> {
                             snackbar(requireView(), R.string.error_no_internet)
@@ -85,24 +96,13 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
     private fun showContentNoData() {
         binding.contentNoData.root.visible(true)
-        binding.mainContainer.visibility = View.GONE
     }
 
-    private fun updateUi(isLoading: Boolean, safe: Safe?, safeInfo: SafeInfo?, ensNameValue: String?) {
-        with(binding) {
-            refresh.isRefreshing = false
-            if (isLoading) {
-                progress.visible(true)
-                mainContainer.visible(false)
-            } else {
-                progress.visible(false)
-                mainContainer.visible(true)
-                loadSafeInfo(safe, safeInfo, ensNameValue)
-            }
-        }
+    private fun hideContent() {
+        binding.mainContainer.visible(false)
     }
 
-    private fun loadSafeInfo(
+    private fun showSafeInfo(
         safe: Safe?,
         safeInfo: SafeInfo?,
         ensNameValue: String?
@@ -114,6 +114,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
             masterCopy.setAddress(safeInfo?.masterCopy)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
+            mainContainer.visible(true)
         }
     }
 
