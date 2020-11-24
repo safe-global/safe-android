@@ -63,7 +63,12 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
                 loadState.refresh.let {
-                    if (it is LoadState.Error) handleError(it.error)
+                    if (it is LoadState.Error) {
+                        if (adapter.itemCount == 0) {
+                            binding.contentNoData.root.visible(true)
+                        }
+                        handleError(it.error)
+                    }
                 }
                 loadState.append.let {
                     if (it is LoadState.Error) handleError(it.error)
@@ -71,7 +76,7 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 loadState.prepend.let {
                     if (it is LoadState.Error) handleError(it.error)
                 }
-                
+
                 if (viewModel.state.value?.viewAction is LoadTransactions && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     showEmptyState()
                 } else {
@@ -120,7 +125,6 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                         if (adapter.itemCount == 0) {
                             binding.contentNoData.root.visible(true)
                         }
-
                         handleError(viewAction.error)
                     }
                     else -> {
