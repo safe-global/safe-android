@@ -13,6 +13,7 @@ class TokenTypeAdapter {
     @FromJson
     fun fromJson(tokenType: String): TokenType =
         when (tokenType) {
+            // FIXME When there is progress on https://github.com/gnosis/safe-client-gateway/issues/179 about this
             "ETHER" -> TokenType.NATIVE_CURRENCY
             "ERC20" -> TokenType.ERC20
             "ERC721" -> TokenType.ERC721
