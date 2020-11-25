@@ -63,6 +63,7 @@ class OwnerSelectionViewModel
             val key = derivator.keyForIndex(ownerIndex)
             val addresses = derivator.addressesForPage(ownerIndex, 1)
             ownerCredentialsVault.storeCredentials(OwnerCredentials(address = addresses[0], key = key))
+            tracker.logKeyImported()
             tracker.setNumKeysImported(1)
 
             updateState {
