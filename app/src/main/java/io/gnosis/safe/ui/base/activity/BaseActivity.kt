@@ -28,6 +28,7 @@ abstract class BaseActivity : AppCompatActivity() {
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
         if (!BuildConfig.DEBUG) {
+            // TODO check preferences
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
         screenId()?.let {
