@@ -27,6 +27,14 @@ class Tracker private constructor(context: Context) {
         logEvent(screenId.value, null)
     }
 
+    fun logKeyImported() {
+        logEvent(Event.KEY_IMPORTED, null)
+    }
+
+    fun logTransactionConfirmed() {
+        logEvent(Event.TRANSACTION_CONFIRMED, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -51,7 +59,8 @@ class Tracker private constructor(context: Context) {
     }
 
     object Event {
-        // Put event names here
+        val KEY_IMPORTED = "user_key_imported"
+        val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
     }
 
     object Param {
