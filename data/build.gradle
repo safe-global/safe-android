@@ -25,6 +25,11 @@ android {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.staging.gnosisdev.com/"))
         }
 
+        profile {
+            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.staging.gnosisdev.com/"))
+        }
+
         unsafe {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.staging.gnosisdev.com/"))

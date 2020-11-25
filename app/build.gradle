@@ -65,6 +65,13 @@ android {
             minifyEnabled false
         }
 
+        //Only this profile will have LeakCanary enabled (see dependencies)
+        profile {
+            initWith debug
+            applicationIdSuffix ".profile"
+            versionNameSuffix "-profile"
+        }
+
         unsafe {
             initWith debug
             applicationIdSuffix ".unsafe"
@@ -285,7 +292,7 @@ dependencies {
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar_jdk_libs"
 
-    //debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
+    profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
 }
 
 
