@@ -1,5 +1,6 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
@@ -17,7 +18,7 @@ class TokenRepository(
         val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
         return CoinBalances(response.fiatTotal, response.items.map {
             if (it.tokenInfo.address == ZERO_ADDRESS)
-                it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::ethereum"))
+                it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::native_currency"))
             else
                 it
         })
@@ -61,13 +62,13 @@ class TokenRepository(
 
     companion object {
         val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val ETH_TOKEN_INFO = TokenInfo(
-            TokenType.ETHER,
+        val NATIVE_CURRENCY_INFO = TokenInfo(
+            TokenType.NATIVE_CURRENCY,
             ZERO_ADDRESS,
             18,
-            "ETH",
-            "Ether",
-            "local::ethereum"
+            BuildConfig.NATIVE_CURRENCY_SYMBOL,
+            BuildConfig.NATIVE_CURRENCY_NAME,
+            "local::native_currency"
         )
     }
 }

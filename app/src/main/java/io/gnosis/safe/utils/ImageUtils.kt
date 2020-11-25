@@ -13,8 +13,8 @@ fun ImageView.loadTokenLogo(icon: String?, placeHolderResource: Int = R.drawable
     setImageDrawable(null)
     colorFilter = null
     when {
-        icon == "local::ethereum" -> {
-            setImageResource(R.drawable.ic_ethereum_logo)
+        icon == "local::native_currency" -> {
+            setImageResource(R.drawable.ic_native_logo)
         }
         icon?.startsWith("local::") == true -> setImageResource(placeHolderResource)
 

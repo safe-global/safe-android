@@ -33,6 +33,9 @@ android {
         rinkeby {
         }
 
+        xdai {
+        }
+
         mainnet_staging {
         }
 

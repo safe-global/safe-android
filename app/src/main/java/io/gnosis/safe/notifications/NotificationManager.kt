@@ -95,7 +95,7 @@ class NotificationManager(
             }
             is PushNotification.IncomingEther -> {
                 title = context.getString(R.string.push_title_received_eth)
-                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(TokenRepository.ETH_TOKEN_INFO.decimals))
+                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(TokenRepository.NATIVE_CURRENCY_INFO.decimals))
                 text = context.getString(R.string.push_text_received_eth, safeName, value)
                 intent = txListIntent(safe)
             }
