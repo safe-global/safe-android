@@ -13,7 +13,9 @@ import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import javax.inject.Inject
 
 class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppAdvancedBinding>() {
 
@@ -22,6 +24,9 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
+
+    @Inject
+    lateinit var screenshotAuthorizer: ScreenshotAuthorizer
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppAdvancedBinding =
         FragmentSettingsAppAdvancedBinding.inflate(inflater, container, false)
@@ -58,6 +63,11 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             }
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
+            }
+            screenshotPermission.settingSwitch.isChecked = screenshotAuthorizer.getAllowScreenshots()
+            screenshotPermission.settingSwitch.setOnClickListener {
+                screenshotAuthorizer.setAllowScreenshots(screenshotPermission.settingSwitch.isChecked)
+                (activity as BaseActivity).allowScreenShots(screenshotPermission.settingSwitch.isChecked)
             }
         }
     }

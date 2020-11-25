@@ -72,4 +72,6 @@ class SettingItem @JvmOverloads constructor(
             binding.image.visible(false)
         }
     }
+
+    val settingSwitch = binding.settingSwitch
 }
