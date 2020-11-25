@@ -8,10 +8,7 @@ import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.readJsonFrom
-import io.gnosis.safe.test
+import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
@@ -31,8 +28,9 @@ class TransactionDetailsViewModelTest {
     private val transactionRepository = mockk<TransactionRepository>()
     private val safeRepository = mockk<SafeRepository>()
     private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
+    private val tracker = mockk<Tracker>()
 
-    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, ownerCredentialsRepository, appDispatchers)
+    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, ownerCredentialsRepository, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
@@ -240,6 +238,7 @@ class TransactionDetailsViewModelTest {
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
+        coEvery { tracker.logTransactionConfirmed() } just Runs
 
         viewModel.submitConfirmation(
             transactionDetails,
@@ -253,6 +252,7 @@ class TransactionDetailsViewModelTest {
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
         coVerify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 1) { tracker.logTransactionConfirmed() }
     }
 
 
