@@ -15,11 +15,7 @@ class ScreenshotAuthorizer @Inject constructor(
         }
     }
 
-    fun getAllowScreenshots(): Boolean {
-
-        val result = preferencesManager.prefs.getBoolean(ALLOW_SCREENSHOTS, false)
-        return result
-    }
+    fun getAllowScreenshots(): Boolean = preferencesManager.prefs.getBoolean(ALLOW_SCREENSHOTS, false)
 
     companion object {
         const val ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
