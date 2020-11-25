@@ -8,6 +8,7 @@ import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.*
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -16,7 +17,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -200,20 +201,20 @@ class TransactionListViewModelTest {
             buildTransfer(
                 status = AWAITING_CONFIRMATIONS,
                 confirmations = 0,
-                serviceTokenInfo = ETH_TOKEN_INFO,
+                serviceTokenInfo = NATIVE_CURRENCY_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultToAddress // outgoing
             ),
             buildTransfer(
                 status = AWAITING_EXECUTION,
                 confirmations = 2,
-                serviceTokenInfo = ETH_TOKEN_INFO,
+                serviceTokenInfo = NATIVE_CURRENCY_INFO,
                 value = BigInteger.ZERO,
                 recipient = defaultSafeAddress // incoming
             ),
-            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED),
-            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
-            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
+            buildTransfer(serviceTokenInfo = NATIVE_CURRENCY_INFO, value = BigInteger("100000000000000"), status = FAILED),
+            buildTransfer(serviceTokenInfo = NATIVE_CURRENCY_INFO, value = BigInteger.ZERO, recipient = defaultToAddress),
+            buildTransfer(serviceTokenInfo = NATIVE_CURRENCY_INFO, value = BigInteger.ZERO, recipient = defaultSafeAddress),
             buildTransfer(
                 serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL,
                 value = BigInteger.TEN,
@@ -228,7 +229,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -247,7 +248,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
@@ -267,7 +268,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
-                amountText = "-0${DS}0001 ETH",
+                amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -283,7 +284,7 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -299,7 +300,7 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
@@ -336,7 +337,7 @@ class TransactionListViewModelTest {
             buildTransfer(serviceTokenInfo = ERC20_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
             buildTransfer(serviceTokenInfo = ERC721_TOKEN_INFO_NO_SYMBOL, sender = defaultFromAddress, recipient = defaultSafeAddress),
             buildTransfer(serviceTokenInfo = createErc20TokenInfo(), status = CANCELLED),
-            buildTransfer(serviceTokenInfo = ETH_TOKEN_INFO, value = BigInteger("100000000000000"), status = FAILED)
+            buildTransfer(serviceTokenInfo = NATIVE_CURRENCY_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
         val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
@@ -394,7 +395,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
-                amountText = "-0${DS}0001 ETH",
+                amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
@@ -426,7 +427,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
@@ -445,7 +446,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
@@ -464,7 +465,7 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.safe_green,
-                amountText = "+0${DS}0001 ETH",
+                amountText = "+0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.safe_green,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
@@ -480,7 +481,7 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
-                amountText = "0 ETH",
+                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
@@ -496,7 +497,7 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
-                amountText = "-0${DS}0001 ETH",
+                amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.gnosis_dark_blue,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
@@ -936,7 +937,7 @@ class TransactionListViewModelTest {
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
         date: Date = Date(0),
-        serviceTokenInfo: TokenInfo = ETH_TOKEN_INFO,
+        serviceTokenInfo: TokenInfo = NATIVE_CURRENCY_INFO,
         nonce: BigInteger = defaultNonce
     ): Transaction =
         Transaction(
@@ -1039,7 +1040,7 @@ class TransactionListViewModelTest {
         decimals = 0,
         name = "TEST AQER",
         symbol = "AQER",
-        logoUri = "local::ethereum"
+        logoUri = "local::native_currency"
     )
 
     companion object {
@@ -1050,7 +1051,7 @@ class TransactionListViewModelTest {
             0,
             "",
             "ERC20",
-            "local::ethereum"
+            "local::native_currency"
         )
         private val ERC721_TOKEN_INFO_NO_SYMBOL = TokenInfo(
             TokenType.ERC721,
@@ -1058,7 +1059,7 @@ class TransactionListViewModelTest {
             0,
             "",
             "",
-            "local::ethereum"
+            "local::native_currency"
         )
     }
 }

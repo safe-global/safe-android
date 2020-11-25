@@ -1,5 +1,6 @@
 package io.gnosis.safe.utils
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
@@ -35,7 +36,7 @@ class TxUtilsKtTest {
         val txInfo = TransactionInfo.Unknown
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -48,7 +49,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -61,7 +62,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("-1 ETH", result)
+        assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -75,7 +76,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("-1 ETH", result)
+        assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -89,7 +90,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
-        assertEquals("0 ETH", result)
+        assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
 
     @Test
@@ -145,7 +146,7 @@ class TxUtilsKtTest {
         )
         val result = txInfo.logoUri()
 
-        assertEquals("local::ethereum", result)
+        assertEquals("local::native_currency", result)
     }
 
 

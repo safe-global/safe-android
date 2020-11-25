@@ -11,7 +11,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
+import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -407,7 +407,7 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendDate(),
             address = txInfo.to,
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
             amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: ""
@@ -438,7 +438,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString() ?: "",
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
+            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
             amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
         )
     }
