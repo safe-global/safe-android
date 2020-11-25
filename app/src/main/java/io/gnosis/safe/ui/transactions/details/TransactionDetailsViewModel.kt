@@ -6,6 +6,7 @@ import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.calculateSafeTxHash
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.OwnerCredentialsRepository
@@ -18,6 +19,7 @@ class TransactionDetailsViewModel
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
 
@@ -48,6 +50,7 @@ class TransactionDetailsViewModel
                 executionInfo.safeTxHash,
                 transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
             )
+            tracker.logTransactionConfirmed()
             updateState { TransactionDetailsViewState(ConfirmationSubmitted(txDetails)) }
         }
     }
