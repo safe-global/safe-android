@@ -16,10 +16,10 @@ class EnsRepository(
     private val ethereumRepository: EthereumRepository
 ) {
 
-    suspend fun resolve(url: String): Solidity.Address? {
+    suspend fun resolve(url: String): Solidity.Address {
         val node = ensNormalizer.normalize(url).nameHash()
 
-        val resolverAddress = ethereumRepository.request(
+        val resolverAddressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
                 transaction = Transaction(
@@ -27,13 +27,20 @@ class EnsRepository(
                     data = GET_RESOLVER + node.toHexString()
                 )
             )
-        ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
+        )
+
+        val resolverAddress = resolverAddressRequest.response.let {
+            when (it) {
+                is EthRequest.Response.Success -> it.data
+                else -> throw EnsReverseRecordNotSetError()
+            }
+        }.asEthereumAddress()!!
 
         if (resolverAddress == Solidity.Address(BigInteger.ZERO)) {
-            throw RequestFailedException("No resolver set for the record")
+            throw EnsReverseRecordNotSetError()
         }
 
-        return ethereumRepository.request(
+        val addressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
                 transaction = Transaction(
@@ -41,7 +48,14 @@ class EnsRepository(
                     data = GET_ADDRESS + node.toHexString()
                 )
             )
-        ).checkedResult("ENS address request failure").asEthereumAddress()
+        )
+
+        return addressRequest.response.let {
+            when (it) {
+                is EthRequest.Response.Success -> it.data
+                else -> throw EnsResolutionError()
+            }
+        }.asEthereumAddress()!!
     }
 
     suspend fun reverseResolve(address: Solidity.Address): String? {
@@ -112,3 +126,7 @@ class IDNEnsNormalizer : EnsNormalizer {
 
     override fun normalize(name: String) = IDN.toASCII(name, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.getDefault())
 }
+
+class EnsResolutionError : Throwable()
+class EnsReverseRecordNotSetError : Throwable()
+class EnsInvalidError : Throwable()

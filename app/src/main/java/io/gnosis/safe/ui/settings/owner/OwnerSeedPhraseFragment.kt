@@ -13,6 +13,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSeedPhraseBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -57,9 +58,10 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
             when (state) {
                 is ImportOwnerKeyState.Error -> {
                     Timber.e(state.throwable)
+                    val error = state.throwable.toError()
                     with(binding) {
+                        seedPhraseLayout.error = error.message(requireContext(), R.string.error_description_seed_phrase)
                         seedPhraseLayout.isErrorEnabled = true
-                        seedPhraseLayout.error = getString(R.string.enter_seed_phrase_error)
                         nextButton.isEnabled = false
                     }
                 }
