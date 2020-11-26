@@ -4,7 +4,8 @@ import android.app.Application
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
-import junit.framework.Assert
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -15,7 +16,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.TestPreferences
 
 
-class ScreenshotAuthorizerTest {
+class PrivacySettingsHandlerTest {
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
 
@@ -31,33 +32,33 @@ class ScreenshotAuthorizerTest {
 
     @Test
     fun `setAllowScreenshots (true) should save true under ALLOW_SCREENSHOTS`() {
-        val screenshotAuthorizer = ScreenshotAuthorizer(preferencesManager)
+        val screenshotAuthorizer = PrivacySettingsHandler(preferencesManager)
         runBlocking {
-            screenshotAuthorizer.setAllowScreenshots(true)
+            screenshotAuthorizer.screenshotsAllowed = true
 
-            Assert.assertTrue(preferences.getBoolean(ScreenshotAuthorizer.ALLOW_SCREENSHOTS, false))
+            assertTrue(preferences.getBoolean(PrivacySettingsHandler.KEY_ALLOW_SCREENSHOTS, false))
         }
     }
 
     @Test
     fun `getAllowScreenshots (initially) should return false`() {
-        val screenshotAuthorizer = ScreenshotAuthorizer(preferencesManager)
+        val screenshotAuthorizer = PrivacySettingsHandler(preferencesManager)
 
         runBlocking {
-            val result = screenshotAuthorizer.getAllowScreenshots()
+            val result = screenshotAuthorizer.screenshotsAllowed
 
-            Assert.assertFalse(result)
+            assertFalse(result)
         }
     }
 
     @Test
     fun `getAllowScreenshots (screenshots have been authorized previously) should return true`() {
-        preferences.edit().putBoolean(ScreenshotAuthorizer.ALLOW_SCREENSHOTS, true)
-        val screenshotAuthorizer = ScreenshotAuthorizer(preferencesManager)
+        preferences.edit().putBoolean(PrivacySettingsHandler.KEY_ALLOW_SCREENSHOTS, true)
+        val screenshotAuthorizer = PrivacySettingsHandler(preferencesManager)
         runBlocking {
-            val result = screenshotAuthorizer.getAllowScreenshots()
+            val result = screenshotAuthorizer.screenshotsAllowed
 
-            Assert.assertTrue(result)
+            assertTrue(result)
         }
     }
 }

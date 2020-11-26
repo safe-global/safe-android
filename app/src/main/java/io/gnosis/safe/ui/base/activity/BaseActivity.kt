@@ -10,7 +10,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.di.modules.ViewModule
-import io.gnosis.safe.ui.settings.app.ScreenshotAuthorizer
+import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -19,7 +19,7 @@ abstract class BaseActivity : AppCompatActivity() {
     lateinit var tracker: Tracker
 
     @Inject
-    lateinit var screenshotAuthorizer: ScreenshotAuthorizer
+    lateinit var privacySettingsHandler: PrivacySettingsHandler
 
     abstract fun screenId(): ScreenId?
 
@@ -30,7 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
-        if (!screenshotAuthorizer.getAllowScreenshots()) {
+        if (!privacySettingsHandler.screenshotsAllowed) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
         screenId()?.let {

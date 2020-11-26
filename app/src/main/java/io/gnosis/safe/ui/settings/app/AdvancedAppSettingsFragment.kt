@@ -26,7 +26,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
     }
 
     @Inject
-    lateinit var screenshotAuthorizer: ScreenshotAuthorizer
+    lateinit var privacySettingsHandler: PrivacySettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppAdvancedBinding =
         FragmentSettingsAppAdvancedBinding.inflate(inflater, container, false)
@@ -64,9 +64,9 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            screenshotPermission.settingSwitch.isChecked = screenshotAuthorizer.getAllowScreenshots()
+            screenshotPermission.settingSwitch.isChecked = privacySettingsHandler.screenshotsAllowed
             screenshotPermission.settingSwitch.setOnClickListener {
-                screenshotAuthorizer.setAllowScreenshots(screenshotPermission.settingSwitch.isChecked)
+                privacySettingsHandler.screenshotsAllowed = screenshotPermission.settingSwitch.isChecked
                 (activity as BaseActivity).allowScreenShots(screenshotPermission.settingSwitch.isChecked)
             }
         }
