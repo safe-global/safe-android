@@ -124,6 +124,9 @@
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
     <string name="client_gateway_service">Client Gateway service</string>
+    <string name="screenshots">SCREENSHOTS</string>
+    <string name="enable_screenshots">Enable screenshots</string>
+    <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
 
     <string name="get_in_touch_title">Get in touch</string>
     <string name="get_in_touch_email">E-mail</string>

@@ -91,6 +91,7 @@
     <style name="TextLight" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
+        <item name="android:background">@color/background</item>
         <item name="android:textColor">@color/dark_grey</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
@@ -120,6 +121,17 @@
         <item name="android:textColor">@color/medium_grey</item>
         <item name="android:letterSpacing">0.15</item>
         <item name="android:lineSpacingExtra">2sp</item>
+    </style>
+
+    <style name="Helptext">
+        <item name="android:background">@color/background</item>
+        <item name="android:paddingTop">@dimen/default_small_margin</item>
+        <item name="android:paddingBottom">@dimen/default_small_margin</item>
+        <item name="android:paddingStart">@dimen/default_margin</item>
+        <item name="android:paddingEnd">@dimen/default_margin</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/medium_grey</item>
     </style>
 
     <style name="SafeOverviewToolbar">
