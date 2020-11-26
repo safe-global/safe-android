@@ -171,6 +171,7 @@
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
+    <string name="tx_details_advanced_safe_tx_hash">safeTxHash:</string>
     <string name="tx_details_add_owner">Add owner:</string>
     <string name="tx_details_new_mastercopy">New mastercopy:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
