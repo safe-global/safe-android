@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">#029F7F</color>
+    <color name="primary_dark">#007661</color>
+    <color name="accent">#FFFFFF</color>
+    <color name="window_background">@color/background</color>
+    <color name="toolbar_action">#FFFFFF</color>
+
+    <color name="background">#121212</color>
+    <color name="item_separator">#121212</color>
+
+</resources>

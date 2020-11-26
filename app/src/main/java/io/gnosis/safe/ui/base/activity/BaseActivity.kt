@@ -22,9 +22,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //FIXME: remove when dark mode is implemented
-        if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
-            delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-        }
+//        if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
+//            delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
+//        }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
         if (!BuildConfig.DEBUG) {

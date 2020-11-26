@@ -2,9 +2,9 @@
 <resources>
     <color name="primary">@color/safe_green</color>
     <color name="primary_dark">@color/safe_green_dark</color>
-    <color name="accent">@color/blue</color>
+    <color name="accent">#001428</color>
     <color name="window_background">@color/background</color>
-    <color name="toolbar_action">@color/blue</color>
+    <color name="toolbar_action">#001428</color>
 
     <color name="background">@color/very_light_pink_two</color>
     <color name="item_separator">@color/very_light_pink_two</color>
