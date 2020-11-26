@@ -8,6 +8,7 @@ import io.gnosis.data.repositories.EnsReverseRecordNotSetError
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.safe.add.InvalidName
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
+import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -72,12 +73,12 @@ fun Throwable.toError(): Error =
         // Common client errors
         this is UsedSafeAddress -> Error.ERROR_1101
         this is InvalidAddressException -> Error.ERROR_1102
+        this is InvalidSeedPhrase -> Error.ERROR_1103
+        this is MismatchingSafeTxHash -> Error.ERROR_1104
         this is EnsResolutionError -> Error.ERROR_1106
         this is EnsReverseRecordNotSetError -> Error.ERROR_1107
         this is EnsInvalidError -> Error.ERROR_1108
         this is InvalidName -> Error.ERROR_1109
-
-        this is MismatchingSafeTxHash -> Error.ERROR_1104
 
         // Network-related errors
         this is HttpException -> {
@@ -91,10 +92,10 @@ fun Throwable.toError(): Error =
                 }
             }
         }
+        this is Offline -> Error.ERROR_101
         this is SSLHandshakeException || this.cause is SSLHandshakeException -> Error.ERROR_102
         this is SocketTimeoutException -> Error.ERROR_103
         this is UnknownHostException || this is ConnectException -> Error.ERROR_104
-        this is Offline -> Error.ERROR_101
         else -> Error.ERROR_UNKNOWN
     }
 
