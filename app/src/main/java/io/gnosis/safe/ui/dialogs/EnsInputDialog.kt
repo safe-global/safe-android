@@ -12,7 +12,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogEnsInputBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressHelper
-import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
 import kotlinx.coroutines.Job
@@ -93,21 +93,9 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.confirmButton.isEnabled = false
                     binding.successViews.visible(false)
 
-                    when (it) {
-                        is Offline -> {
-                            binding.dialogEnsInputUrlLayout.error = getString(R.string.error_no_internet)
-                        }
-                        is EnsResolutionError -> {
-                            binding.dialogEnsInputUrlLayout.error = if (it.msgRes == 0) {
-                                it.msg ?: getString(R.string.error_resolve_ens)
-                            } else {
-                                getString(it.msgRes)
-                            }
-                        }
-                        else -> {
-                            binding.dialogEnsInputUrlLayout.error = getString(R.string.error_resolve_ens)
-                        }
-                    }
+                    val error = it.toError()
+                    binding.dialogEnsInputUrlLayout.error = error.message(requireContext(), R.string.error_description_ens_name)
+
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = true
 
                     onNewAddress.offer(null)

@@ -12,7 +12,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
@@ -57,18 +58,19 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                 is AddSafeNameState -> {
                     state.viewAction?.let { action ->
                         when (action) {
-                            is BaseStateViewModel.ViewAction.CloseScreen -> {
+                            is CloseScreen -> {
                                 requireActivity().hideSoftKeyboard()
                                 findNavController().popBackStack(R.id.addSafeFragment, true)
                             }
-                            is BaseStateViewModel.ViewAction.Loading -> {}
-                            is BaseStateViewModel.ViewAction.ShowError -> {
+                            is Loading -> {}
+                            is ShowError -> {
+                                val error = action.error.toError()
+                                binding.addSafeNameLayout.error = error.message(requireContext(), R.string.error_description_safe_add)
                                 binding.addSafeNameLayout.isErrorEnabled = true
-                                binding.addSafeNameLayout.error = getString(R.string.error_invalid_name)
                                 binding.nextButton.isEnabled = false
                                 Timber.e(action.error)
                             }
-                            else -> Timber.i("Unsupported action by view: $action")
+                            else -> Timber.e("Unsupported action by view: $action")
                         }
                     }
                 }
