@@ -46,12 +46,17 @@ class TransactionDetailsViewModel
             validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
             val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
-            val txDetails = transactionRepository.submitConfirmation(
-                executionInfo.safeTxHash,
-                transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
-            )
-            tracker.logTransactionConfirmed()
-            updateState { TransactionDetailsViewState(ConfirmationSubmitted(txDetails)) }
+            kotlin.runCatching {
+                transactionRepository.submitConfirmation(
+                    executionInfo.safeTxHash,
+                    transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
+                )
+            }.onSuccess {
+                tracker.logTransactionConfirmed()
+                updateState { TransactionDetailsViewState(ConfirmationSubmitted(it)) }
+            }.onFailure {
+                throw TxConfirmationFailed
+            }
         }
     }
 
@@ -81,4 +86,5 @@ data class ConfirmationSubmitted(
 ) : BaseStateViewModel.ViewAction
 
 object MismatchingSafeTxHash : Throwable()
+object TxConfirmationFailed: Throwable()
 object MissingOwnerCredential : Throwable()

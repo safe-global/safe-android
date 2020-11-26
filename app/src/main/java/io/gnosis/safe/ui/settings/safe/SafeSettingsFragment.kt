@@ -14,14 +14,11 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
-import io.gnosis.safe.utils.getErrorResForException
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -81,14 +78,8 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     if (!didLoadOnce) {
                         showContentNoData()
                     }
-                    when (viewAction.error) {
-                        is Offline -> {
-                            snackbar(requireView(), R.string.error_no_internet)
-                        }
-                        else -> {
-                            snackbar(requireView(), viewAction.error.getErrorResForException())
-                        }
-                    }
+                    val error = viewAction.error.toError()
+                    snackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings))
                 }
             }
         })
