@@ -8,6 +8,7 @@ import io.gnosis.data.repositories.EnsReverseRecordNotSetError
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.safe.add.InvalidName
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
+import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import retrofit2.HttpException
@@ -68,7 +69,6 @@ enum class Error(
 
 fun Throwable.toError(): Error =
     when {
-
         // Common client errors
         this is UsedSafeAddress -> Error.ERROR_1101
         this is InvalidAddressException -> Error.ERROR_1102
@@ -76,6 +76,8 @@ fun Throwable.toError(): Error =
         this is EnsReverseRecordNotSetError -> Error.ERROR_1107
         this is EnsInvalidError -> Error.ERROR_1108
         this is InvalidName -> Error.ERROR_1109
+
+        this is MismatchingSafeTxHash -> Error.ERROR_1104
 
         // Network-related errors
         this is HttpException -> {

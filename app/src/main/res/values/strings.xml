@@ -57,8 +57,14 @@
     <string name="error_description_safe_add">Can\'t add safe</string>
     <string name="error_description_safe_address">Can\'t use this address</string>
     <string name="error_description_safe_name">Can\'t use this name</string>
+    <string name="error_description_safe_settings">Failed to load safe settings</string>
     <string name="error_description_ens_name">Can\'t use this name</string>
     <string name="error_description_qr">Can\'t use this QR code</string>
+    <string name="error_description_assets_coins">Failed to load balances</string>
+    <string name="error_description_assets_collectibles">Failed to load collectibles</string>
+    <string name="error_description_tx_list">Failed to load transactions</string>
+    <string name="error_description_tx_details">Failed to load transaction details</string>
+    <string name="error_description_tx_confirmation">Failed to submit confirmation</string>
 
     <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
     <string name="error_network_no_internet_fix">Please try again when Internet is available</string>
