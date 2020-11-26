@@ -119,8 +119,7 @@
                 android:background="@color/white"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
-                app:setting_name="@string/enable_screenshots"
-                />
+                app:setting_name="@string/enable_screenshots" />
 
             <View
                 android:layout_width="match_parent"
@@ -131,7 +130,6 @@
                 style="@style/Helptext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:text="@string/enable_screenshots_description" />
         </LinearLayout>
 
