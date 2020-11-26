@@ -98,9 +98,3 @@ fun Throwable.toError(): Error =
         this is UnknownHostException || this is ConnectException -> Error.ERROR_104
         else -> Error.ERROR_UNKNOWN
     }
-
-interface ErrorHandler {
-    fun handleError(error: Error)
-}
-
-
