@@ -13,7 +13,6 @@ import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import javax.inject.Inject
 
@@ -67,7 +66,9 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             screenshotPermission.settingSwitch.isChecked = privacySettingsHandler.screenshotsAllowed
             screenshotPermission.settingSwitch.setOnClickListener {
                 privacySettingsHandler.screenshotsAllowed = screenshotPermission.settingSwitch.isChecked
-                (activity as BaseActivity).allowScreenShots(screenshotPermission.settingSwitch.isChecked)
+                activity?.window?.let { window ->
+                    privacySettingsHandler.allowScreenShots(window, screenshotPermission.settingSwitch.isChecked)
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.settings.app
 
+import android.view.Window
+import android.view.WindowManager
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
@@ -16,6 +18,15 @@ class PrivacySettingsHandler @Inject constructor(
                 putBoolean(KEY_ALLOW_SCREENSHOTS, value)
             }
         }
+
+
+    fun allowScreenShots(window: Window, allow: Boolean) {
+        if (allow) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        }
+    }
 
     companion object {
        internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"

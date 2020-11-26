@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.base.activity
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import io.gnosis.safe.HeimdallApplication
@@ -30,19 +29,9 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
-        if (!privacySettingsHandler.screenshotsAllowed) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        }
+        privacySettingsHandler.allowScreenShots(window, privacySettingsHandler.screenshotsAllowed)
         screenId()?.let {
             tracker.logScreen(it)
-        }
-    }
-
-    fun allowScreenShots(allow: Boolean) {
-        if (allow) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        } else {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
 
