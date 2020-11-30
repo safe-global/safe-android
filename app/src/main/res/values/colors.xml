@@ -2,16 +2,21 @@
 <resources>
     <color name="primary">@color/safe_green</color>
     <color name="primary_dark">@color/safe_green_dark</color>
-    <color name="accent">#001428</color>
+    <color name="secondary">#E8663D</color>
+    <color name="error">@color/tomato_new</color>
+    <color name="accent">@color/gnosis_dark_blue</color>
     <color name="window_background">@color/background</color>
-    <color name="toolbar_action">#001428</color>
+    <color name="toolbar_action">@color/gnosis_dark_blue</color>
 
     <color name="background">@color/very_light_pink_two</color>
+    <color name="surface_01">@color/white_two</color>
+    <color name="surface_08">@color/white_two</color>
+    <color name="surface_04">@color/white_two</color>
     <color name="item_separator">@color/very_light_pink_two</color>
 
     <color name="whitesmoke_two">#f0efee</color>
 
-    <color name="white">#ffffff</color>
+    <color name="white_two">#ffffff</color>
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
@@ -46,6 +51,10 @@
     <color name="battleship_grey_light">#64707f</color>
     <color name="white_smoke">#e8e7e6</color>
     <color name="tomato">#ff3b30</color>
+    <color name="tomato_new">#f02525</color>
+    <color name="coral">#ff453a</color>
+    <color name="orangish">#ff8042</color>
+    <color name="pale_red">#e8663d</color>
     <color name="green">#79b722</color>
     <color name="pale_grey_three">#f4f5f9</color>
     <color name="tomato_15">#f0d6d6</color>
@@ -53,6 +62,13 @@
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
     <color name="very_light_pink_two">#f7f5f5</color>
+    <color name="very_dark_grey">#1e1e1e</color>
+    <color name="teal">#008c73</color>
+    <color name="teal_new">#029f7f</color>
+    <color name="navy">#001428</color>
+    <color name="slate_grey">#626269</color>
+    <color name="blue_grey">#8d8d93</color>
+    <color name="black_five">#121212</color>
 
     <color name="word_recovery_phrase">@color/safe_green</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
@@ -63,7 +79,7 @@
 
     <color name="link">@color/safe_green</color>
 
-    <color name="safe_green">#008c73</color>
+    <color name="safe_green">@color/teal</color>
     <color name="safe_green_dark">#005546</color>
     <color name="safe_green_light">#80005546</color>
 
@@ -74,6 +90,10 @@
     <color name="blue">#001e3b</color>
     <color name="blue_15">#27001e3b</color>
 
-    <color name="safe_pending_orange">#e8663d</color>
-    <color name="safe_failed_red">#f02525</color>
+    <color name="safe_pending_orange">@color/pale_red</color>
+    <color name="safe_failed_red">@color/error</color>
+
+    <color name="text_emphasis_high">@color/navy</color>
+    <color name="text_emphasis_medium">@color/dark_grey</color>
+    <color name="text_emphasis_low">@color/medium_grey</color>
 </resources>

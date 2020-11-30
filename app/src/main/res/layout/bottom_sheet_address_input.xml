@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/background"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -34,7 +34,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="14dp"
-        android:tint="@color/dark_grey"
+        app:tint="@color/dark_grey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_title"
         app:srcCompat="@drawable/ic_content_paste_white_24dp" />

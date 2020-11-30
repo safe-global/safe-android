@@ -4,7 +4,7 @@
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
     </style>
 </resources>

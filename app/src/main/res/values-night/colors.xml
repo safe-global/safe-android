@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">#029F7F</color>
+    <color name="primary">@color/teal_new</color>
     <color name="primary_dark">#007661</color>
+    <color name="secondary">#FF8042</color>
+    <color name="error">@color/coral</color>
     <color name="accent">#FFFFFF</color>
     <color name="window_background">@color/background</color>
     <color name="toolbar_action">#FFFFFF</color>
 
-    <color name="background">#121212</color>
-    <color name="item_separator">#121212</color>
+    <color name="background">@color/black_five</color>
+    <color name="surface_01">@color/very_dark_grey</color>
+    <color name="surface_04">#272727</color>
+    <color name="surface_08">#2d2d2d</color>
+    <color name="item_separator">@color/black_five</color>
+    <color name="divider">@color/black_five</color>
+
+    <color name="safe_pending_orange">@color/orangish</color>
+    <color name="safe_failed_red">@color/coral</color>
+
+    <color name="gnosis_dark_blue">#ffffff</color>
+    <color name="dark_grey">#8d8d93</color>
+    <color name="medium_grey">#8d8d93</color>
+
+    <color name="text_emphasis_high">@color/white_two</color>
+    <color name="text_emphasis_medium">@color/blue_grey</color>
+    <color name="text_emphasis_low">@color/slate_grey</color>
 
 </resources>

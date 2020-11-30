@@ -3,8 +3,8 @@
 
     <style name="WhiteTheme" parent="WhiteThemeBase">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>
