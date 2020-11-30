@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -46,12 +47,14 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <TextView
                 style="@style/Header"
@@ -102,6 +105,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
                 android:background="@color/item_separator"/>
+
+            <TextView
+                style="@style/Header"
+                android:text="@string/screenshots" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/screenshot_permission"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingTop="@dimen/default_margin"
+                android:paddingBottom="@dimen/default_margin"
+                android:background="@color/surface_01"
+                app:setting_openable="false"
+                app:setting_has_switch="true"
+                app:setting_name="@string/enable_screenshots" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/item_separator"/>
+
+            <TextView
+                style="@style/Helptext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/enable_screenshots_description" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

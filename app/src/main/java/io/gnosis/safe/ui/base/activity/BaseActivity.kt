@@ -1,22 +1,24 @@
 package io.gnosis.safe.ui.base.activity
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
 
     @Inject
     lateinit var tracker: Tracker
+
+    @Inject
+    lateinit var privacySettingsHandler: PrivacySettingsHandler
 
     abstract fun screenId(): ScreenId?
 
@@ -27,9 +29,7 @@ abstract class BaseActivity : AppCompatActivity() {
 //        }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
-        }
+        privacySettingsHandler.allowScreenShots(window, privacySettingsHandler.screenshotsAllowed)
         screenId()?.let {
             tracker.logScreen(it)
         }

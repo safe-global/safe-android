@@ -19,7 +19,7 @@ import io.gnosis.safe.databinding.TxDetailsCustomBinding
 import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -92,14 +92,17 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         binding.content.visibility = View.GONE
                         binding.contentNoData.root.visible(true)
                     }
-                    when (viewAction.error) {
-                        is Offline -> {
-                            snackbar(requireView(), R.string.error_no_internet)
-                        }
-                        else -> {
-                            snackbar(requireView(), viewAction.error.getErrorResForException())
-                        }
-                    }
+                    val error = viewAction.error.toError()
+                    snackbar(
+                        requireView(),
+                        error.message(
+                            requireContext(),
+                            if (viewAction.error is TxConfirmationFailed)
+                                R.string.error_description_tx_confirmation
+                            else
+                                R.string.error_description_tx_details
+                        )
+                    )
                 }
             }
         })
@@ -174,7 +177,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
                         nonce = nonce?.toString() ?: "",
                         operation = operation,
-                        hash = txDetails.txHash
+                        hash = txDetails.txHash,
+                        safeTxHash = (txDetails.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails)?.safeTxHash
                     )
                 )
             }

@@ -19,13 +19,12 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
-import io.gnosis.safe.utils.getErrorResForException
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -142,14 +141,8 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
     }
 
     private fun handleError(error: Throwable) {
-        when (error) {
-            is Offline -> {
-                snackbar(requireView(), R.string.error_no_internet)
-            }
-            else -> {
-                snackbar(requireView(), error.getErrorResForException())
-            }
-        }
+        val error = error.toError()
+        snackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
     }
 
     private fun loadNoSafeFragment() {

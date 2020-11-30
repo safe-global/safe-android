@@ -92,6 +92,18 @@
                 android:layout_height="@dimen/item_separator_height"
                 android:background="@color/item_separator"/>
 
+            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
+                android:id="@+id/safe_tx_hash_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/default_margin"
+                app:item_label="@string/tx_details_advanced_safe_tx_hash" />
+
+            <View
+                android:id="@+id/safe_tx_hash_separator"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/item_separator"/>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
