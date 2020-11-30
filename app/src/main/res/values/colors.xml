@@ -75,7 +75,7 @@
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
 
-    <color name="address_boundaries">@color/black</color>
+    <color name="address_boundaries">@color/text_emphasis_high</color>
 
     <color name="link">@color/safe_green</color>
 
