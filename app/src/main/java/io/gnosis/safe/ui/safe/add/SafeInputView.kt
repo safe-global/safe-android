@@ -60,7 +60,7 @@ class SafeInputView @JvmOverloads constructor(
                         address.text = context.getString(R.string.enter_safe_address)
 
                     } else {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.gnosis_dark_blue, context.theme))
+                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.text_emphasis_high, context.theme))
                         address.text = input
                     }
                 }

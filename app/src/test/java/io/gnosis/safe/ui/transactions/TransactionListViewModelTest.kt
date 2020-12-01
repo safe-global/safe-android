@@ -2,13 +2,13 @@ package io.gnosis.safe.ui.transactions
 
 import android.view.View
 import androidx.paging.PagingData
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.*
-import io.gnosis.data.BuildConfig
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
@@ -230,7 +230,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
@@ -249,12 +249,12 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
                 threshold = 2,
-                confirmationsTextColor = R.color.safe_green,
+                confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
                 confirmations = 2
@@ -269,7 +269,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
@@ -283,9 +283,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
@@ -299,9 +299,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
@@ -315,9 +315,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "+10 ERC20",
-                amountColor = R.color.safe_green,
+                amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
@@ -346,9 +346,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "+1 ERC20",
-                amountColor = R.color.safe_green,
+                amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
@@ -362,9 +362,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "+1 NFT",
-                amountColor = R.color.safe_green,
+                amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 address = defaultFromAddress,
@@ -380,7 +380,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-1 AQER",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
@@ -396,7 +396,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 address = defaultToAddress,
@@ -428,13 +428,13 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 dataSizeText = "0 bytes",
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
-                confirmationsTextColor = R.color.safe_green,
+                confirmationsTextColor = R.color.primary,
                 threshold = 2,
                 confirmations = 2
             ),
@@ -447,7 +447,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.safe_pending_orange,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 dataSizeText = "0 bytes",
@@ -464,9 +464,9 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 amountText = "+0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.safe_green,
+                amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultSafeAddress,
                 alpha = OPACITY_FULL,
@@ -482,7 +482,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.safe_failed_red,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
@@ -498,7 +498,7 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.dark_grey,
                 amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.gnosis_dark_blue,
+                amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = defaultToAddress,
                 alpha = OPACITY_HALF,
@@ -603,7 +603,7 @@ class TransactionListViewModelTest {
                 nonce = "1",
                 confirmations = 2,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
-                confirmationsTextColor = R.color.safe_green,
+                confirmationsTextColor = R.color.primary,
                 threshold = 2
             ),
             transactionViews[0]
@@ -676,7 +676,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 2,
                 threshold = 2,
-                confirmationsTextColor = R.color.safe_green,
+                confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
                 visibilityEllipsizedAddress = View.INVISIBLE,
@@ -711,7 +711,7 @@ class TransactionListViewModelTest {
                 label = R.string.tx_list_change_mastercopy,
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 address = SAFE_IMPLEMENTATION_1_0_0,
                 addressLabel = R.string.implementation_version_1_0_0,
@@ -746,7 +746,7 @@ class TransactionListViewModelTest {
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
-                statusColorRes = R.color.safe_green,
+                statusColorRes = R.color.primary,
                 dateTimeText = Date(0).formatBackendDate(),
                 method = METHOD_REMOVE_OWNER,
                 alpha = OPACITY_FULL,
@@ -770,7 +770,7 @@ class TransactionListViewModelTest {
         assertEquals(R.string.tx_status_success, creationTransactionView.statusText)
         assertEquals(R.string.tx_list_creation, creationTransactionView.label)
         assertEquals(Date(1).formatBackendDate(), creationTransactionView.dateTimeText)
-        assertEquals(R.color.safe_green, creationTransactionView.statusColorRes)
+        assertEquals(R.color.primary, creationTransactionView.statusColorRes)
         assertEquals("<random-id>", creationTransactionView.id)
 
     }

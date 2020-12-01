@@ -24,10 +24,10 @@ class Erc721View @JvmOverloads constructor(
 
             if (outgoing) {
                 tokenAmount.text = amount
-                tokenAmount.setTextColor(context.getColorCompat(R.color.gnosis_dark_blue))
+                tokenAmount.setTextColor(context.getColorCompat(R.color.text_emphasis_high))
             } else {
                 tokenAmount.text = amount
-                tokenAmount.setTextColor(context.getColorCompat(R.color.safe_green))
+                tokenAmount.setTextColor(context.getColorCompat(R.color.primary))
             }
         }
     }

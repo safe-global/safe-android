@@ -42,7 +42,7 @@
         android:layout_height="24dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="16dp"
-        android:tint="@color/safe_green"
+        app:tint="@color/primary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -47,7 +47,7 @@
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_small_margin"
         android:gravity="end"
-        android:textColor="@color/safe_green"
+        android:textColor="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintStart_toEndOf="@+id/ellipsized_address"

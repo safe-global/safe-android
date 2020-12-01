@@ -84,7 +84,7 @@ class MasterCopyItem @JvmOverloads constructor(
     private fun buildVersionInfoView(address: Solidity.Address?): VersionInfoView =
         if (SafeRepository.isLatestVersion(address)) VersionInfoView(
             R.drawable.ic_check,
-            R.color.safe_green,
+            R.color.primary,
             R.string.safe_settings_master_copy_up_to_date
         )
         else VersionInfoView(

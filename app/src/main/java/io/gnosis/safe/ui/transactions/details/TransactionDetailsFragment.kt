@@ -138,7 +138,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             requireContext(),
                             message = R.string.confirm_transaction_dialog_message,
                             confirm = R.string.confirm,
-                            confirmColor = R.color.safe_green
+                            confirmColor = R.color.primary
                         ) {
                             binding.txConfirmButton.isEnabled = false
                             viewModel.submitConfirmation(txDetails, executionInfo)
@@ -343,7 +343,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         when (txStatus) {
             TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.safe_pending_orange
             TransactionStatus.AWAITING_EXECUTION -> R.color.safe_pending_orange
-            TransactionStatus.SUCCESS -> R.color.safe_green
+            TransactionStatus.SUCCESS -> R.color.primary
             TransactionStatus.CANCELLED -> R.color.dark_grey
             TransactionStatus.FAILED -> R.color.tomato
             TransactionStatus.PENDING -> R.color.dark_grey

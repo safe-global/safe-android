@@ -96,7 +96,7 @@
         android:gravity="center"
         android:paddingTop="16dp"
         android:text="@string/add_safe_label_bottom"
-        android:textColor="@color/gnosis_dark_blue"
+        android:textColor="@color/text_emphasis_high"
         app:layout_constraintBottom_toTopOf="@id/add_safe_label_bottom_line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

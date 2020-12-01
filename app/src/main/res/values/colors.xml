@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/safe_green</color>
+    <color name="primary">@color/teal_two</color>
+    <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/safe_green_dark</color>
     <color name="secondary">#E8663D</color>
     <color name="error">@color/tomato_new</color>
@@ -36,7 +37,7 @@
     <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
     <color name="default_text">@color/gnosis_dark_blue</color>
 
-    <color name="enabled_input">@color/safe_green</color>
+    <color name="enabled_input">@color/primary</color>
 
     <color name="text_grey_background">#f4f4f9</color>
     <color name="divider">#e3e5ec</color>
@@ -63,23 +64,23 @@
     <color name="shamrock">#00a95f</color>
     <color name="very_light_pink_two">#f7f5f5</color>
     <color name="very_dark_grey">#1e1e1e</color>
-    <color name="teal">#008c73</color>
-    <color name="teal_new">#029f7f</color>
+    <color name="teal_two">#008c73</color>
+    <color name="teal">#029f7f</color>
     <color name="navy">#001428</color>
     <color name="slate_grey">#626269</color>
     <color name="blue_grey">#8d8d93</color>
     <color name="black_five">#121212</color>
 
-    <color name="word_recovery_phrase">@color/safe_green</color>
+    <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
 
     <color name="address_boundaries">@color/text_emphasis_high</color>
 
-    <color name="link">@color/safe_green</color>
+    <color name="link">@color/primary</color>
 
-    <color name="safe_green">@color/teal</color>
+<!--    <color name="safe_green">@color/primary</color>-->
     <color name="safe_green_dark">#005546</color>
     <color name="safe_green_light">#80005546</color>
 

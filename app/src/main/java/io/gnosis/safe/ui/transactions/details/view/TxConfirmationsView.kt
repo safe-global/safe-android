@@ -155,17 +155,17 @@ class TxConfirmationsView @JvmOverloads constructor(
                     Type.CREATED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_start_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_created)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
                     }
                     Type.CONFIRMED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_confirmed)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
                     }
                     Type.CANCELLED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_cancelled)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.gnosis_dark_blue))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_high))
                     }
                     Type.FAILED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_failed_16dp)
@@ -180,12 +180,12 @@ class TxConfirmationsView @JvmOverloads constructor(
                     Type.EXECUTE_READY -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_ready_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
                     }
                     Type.EXECUTE_DONE -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_executed)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.safe_green))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
                     }
                 }
             }

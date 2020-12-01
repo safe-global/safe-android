@@ -37,7 +37,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:drawableStart="@drawable/ic_check"
         tools:text="Upgrade available"
-        tools:textColor="@color/safe_green" />
+        tools:textColor="@color/primary" />
 
     <TextView
         android:id="@+id/address"

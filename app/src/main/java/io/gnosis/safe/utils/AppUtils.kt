@@ -76,6 +76,6 @@ fun showConfirmDialog(
         confirmRes = confirm,
         cancelRes = R.string.safe_settings_dialog_cancel,
         confirmColor = confirmColor,
-        cancelColor = R.color.safe_green
+        cancelColor = R.color.primary
     ).show()
 }
