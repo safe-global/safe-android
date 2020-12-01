@@ -70,7 +70,7 @@ class TxTransferActionView @JvmOverloads constructor(
 
     private fun addAmountItem(amount: String, logoUri: String, outgoing: Boolean) {
         val amountView = AmountView(context)
-        val color = if (outgoing) R.color.gnosis_dark_blue else R.color.primary
+        val color = if (outgoing) R.color.text_emphasis_high else R.color.primary
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(DEFAULT_MARGIN), 0, 0, 0)
         amountView.layoutParams = layoutParams

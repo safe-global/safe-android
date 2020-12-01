@@ -80,7 +80,7 @@
             android:layout_height="match_parent"
             android:imeOptions="actionDone"
             android:inputType="textUri"
-            android:textColor="@color/default_text"
+            android:textColor="@color/text_emphasis_high"
             android:textCursorDrawable="@drawable/cursor_drawable" />
 
     </com.google.android.material.textfield.TextInputLayout>

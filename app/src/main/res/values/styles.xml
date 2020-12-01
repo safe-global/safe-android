@@ -203,7 +203,7 @@
     </style>
 
     <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textColorHint">@color/light_text</item>
         <item name="android:background">@drawable/background_input</item>
         <item name="android:paddingLeft">4dp</item>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_two">
+    android:background="@color/background">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -118,7 +118,7 @@
                     android:gravity="top"
                     android:lines="3"
                     android:scrollHorizontally="false"
-                    android:textColor="@color/default_text"
+                    android:textColor="@color/text_emphasis_high"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
             </com.google.android.material.textfield.TextInputLayout>

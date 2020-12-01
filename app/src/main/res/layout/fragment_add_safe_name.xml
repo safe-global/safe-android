@@ -130,7 +130,7 @@
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="@color/blue"
+            android:textColor="@color/text_emphasis_high"
             android:textSize="16sp"
             tools:text="Local name" />
 

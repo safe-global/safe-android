@@ -6,7 +6,8 @@
     android:id="@+id/dialog_change_password_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@color/background">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -81,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textUri"
-            android:textColor="@color/default_text"
+            android:textColor="@color/text_emphasis_high"
             android:textCursorDrawable="@drawable/cursor_drawable" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -120,6 +121,7 @@
     <TextView
         android:id="@+id/dialog_ens_input_address"
         style="@style/TextLight"
+        android:background="@color/background"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"

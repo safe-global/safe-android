@@ -45,7 +45,7 @@ class TxSettingsActionView @JvmOverloads constructor(
     }
 
 
-    private fun addStringItem(text: String, color: Int = R.color.gnosis_dark_blue, marginBottom: Int = 0) {
+    private fun addStringItem(text: String, color: Int = R.color.text_emphasis_high, marginBottom: Int = 0) {
         val actionLabel = ActionLabelView(context)
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, dpToPx(marginBottom))

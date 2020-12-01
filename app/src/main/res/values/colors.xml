@@ -5,9 +5,9 @@
     <color name="primary_dark">@color/safe_green_dark</color>
     <color name="secondary">#E8663D</color>
     <color name="error">@color/tomato_new</color>
-    <color name="accent">@color/gnosis_dark_blue</color>
+    <color name="accent">@color/text_emphasis_high</color>
     <color name="window_background">@color/background</color>
-    <color name="toolbar_action">@color/gnosis_dark_blue</color>
+    <color name="toolbar_action">@color/text_emphasis_high</color>
 
     <color name="background">@color/very_light_pink_two</color>
     <color name="surface_01">@color/white_two</color>
@@ -25,7 +25,6 @@
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
-    <color name="gnosis_dark_blue">#001428</color>
     <color name="gnosis_dark_blue_alpha_50">#7f001428</color>
     <color name="gnosis_dark_blue_alpha_70">#b2001428</color>
 
@@ -35,7 +34,6 @@
     <color name="secondary_button_text">@color/blue</color>
 
     <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
-    <color name="default_text">@color/gnosis_dark_blue</color>
 
     <color name="enabled_input">@color/primary</color>
 
@@ -63,12 +61,14 @@
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
     <color name="very_light_pink_two">#f7f5f5</color>
-    <color name="very_dark_grey">#1e1e1e</color>
     <color name="teal_two">#008c73</color>
     <color name="teal">#029f7f</color>
     <color name="navy">#001428</color>
     <color name="slate_grey">#626269</color>
     <color name="blue_grey">#8d8d93</color>
+    <color name="black_two">#2d2d2d</color>
+    <color name="black_three">#272727</color>
+    <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121212</color>
 
     <color name="word_recovery_phrase">@color/primary</color>
@@ -80,7 +80,6 @@
 
     <color name="link">@color/primary</color>
 
-<!--    <color name="safe_green">@color/primary</color>-->
     <color name="safe_green_dark">#005546</color>
     <color name="safe_green_light">#80005546</color>
 
