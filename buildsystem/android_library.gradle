@@ -21,6 +21,9 @@ android {
         debug {
         }
 
+        profile {
+        }
+
         unsafe {
         }
 
@@ -28,6 +31,9 @@ android {
         }
 
         rinkeby {
+        }
+
+        xdai {
         }
 
         mainnet_staging {

@@ -1,5 +1,6 @@
 package io.gnosis.safe.utils
 
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.models.transaction.TransferInfo
@@ -16,7 +17,7 @@ const val DEFAULT_ERC721_SYMBOL = "NFT"
 fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
         is TransactionInfo.Custom -> {
-            balanceFormatter.formatAmount(txInfo.value, false, 18, "ETH")
+            balanceFormatter.formatAmount(txInfo.value, false, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL)
         }
         is TransactionInfo.Transfer -> {
             val incoming = txInfo.direction == TransactionDirection.INCOMING
@@ -35,7 +36,7 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
                     transferInfo.tokenSymbol ?: DEFAULT_ERC721_SYMBOL
                 }
                 else -> {
-                    "ETH"
+                    BuildConfig.NATIVE_CURRENCY_SYMBOL
                 }
             }
             val value = when (val transferInfo = txInfo.transferInfo) {
@@ -53,9 +54,9 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
             }
             balanceFormatter.formatAmount(value, incoming, decimals, symbol)
         }
-        is TransactionInfo.SettingsChange -> "0 ETH"
-        is TransactionInfo.Creation -> "0 ETH"
-        TransactionInfo.Unknown -> "0 ETH"
+        is TransactionInfo.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfo.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        TransactionInfo.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
     }
 
 fun TransactionInfo.logoUri(): String? =
@@ -68,10 +69,10 @@ fun TransactionInfo.logoUri(): String? =
                 transferInfo.logoUri
             }
             else -> {
-                "local::ethereum"
+                "local::native_currency"
             }
         }
-        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::ethereum"
+        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::native_currency"
     }
 
 fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {

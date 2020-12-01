@@ -1,10 +1,8 @@
 package io.gnosis.safe.ui.dialogs
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
+import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsRepository
-import io.gnosis.safe.R
-import io.gnosis.safe.helpers.Offline
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -18,23 +16,18 @@ class EnsInputViewModel
             ensRepository.resolve(input.toString())
         }
             .onSuccess {
-                it ?: throw EnsResolutionError()
+                it
             }
             .onFailure {
                 when (it) {
-                    is Offline -> {
-                        throw it
-                    }
                     is IllegalArgumentException -> {
-                        throw EnsResolutionError(msgRes = R.string.ens_name_contains_illegal_character)
+                        throw EnsInvalidError()
                     }
                     else -> {
-                        throw EnsResolutionError(msg = it.cause?.localizedMessage ?: it.localizedMessage)
+                        throw it
                     }
                 }
             }
             .getOrNull()!!
     }
 }
-
-data class EnsResolutionError(val msg: String? = null, @StringRes val msgRes: Int = 0) : Throwable()

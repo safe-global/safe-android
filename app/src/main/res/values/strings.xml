@@ -21,8 +21,6 @@
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="error_malformed_address">The address is malformed. Please provide an Ethereum address</string>
     <string name="ens_input_title">Input ENS Name</string>
-    <string name="error_resolve_ens">Could not load address</string>
-    <string name="error_used_address">There is already a Safe with this address in the app. Please use another address.</string>
     <string name="error_invalid_safe">Invalid safe address</string>
     <string name="error_invalid_name">Invalid name</string>
     <string name="ok">OK</string>
@@ -41,15 +39,60 @@
     <string name="settigns">Settings</string>
     <string name="remove_safe">Remove safe</string>
 
-    <string name="error_loading_balances">Unable to load balances</string>
-    <string name="error_no_internet">No Internet connection</string>
-    <string name="error_timeout">Connection timeout</string>
-    <string name="error_cannot_load_tx_details">Cannot load transaction details</string>
     <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
-    <string name="error_try_again">An error occurred. Please try again!</string>
-    <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
-    <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
-    <string name="error_ssl_handshake">Could not establish a secure connection to the Safe services.</string>
+
+    <string name="error_id">Error %1$d</string>
+
+    <string name="error_description_safe_add">Can\'t add safe</string>
+    <string name="error_description_safe_address">Can\'t use this address</string>
+    <string name="error_description_safe_name">Can\'t use this name</string>
+    <string name="error_description_safe_settings">Failed to load safe settings</string>
+    <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
+    <string name="error_description_ens_name">Can\'t use this name</string>
+    <string name="error_description_qr">Can\'t use this QR code</string>
+    <string name="error_description_assets_coins">Failed to load balances</string>
+    <string name="error_description_assets_collectibles">Failed to load collectibles</string>
+    <string name="error_description_tx_list">Failed to load transactions</string>
+    <string name="error_description_tx_details">Failed to load transaction details</string>
+    <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
+    <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+
+    <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
+    <string name="error_network_no_internet_fix">Please try again when Internet is available</string>
+    <string name="error_network_ssl_reason">SSL connection failed</string>
+    <string name="error_network_ssl_fix">Please try again later</string>
+    <string name="error_network_timeout_reason">request timed out after %1$ds</string>
+    <string name="error_network_timeout_fix">Please refresh the screen</string>
+    <string name="error_network_unknown_host_reason">server not reachable</string>
+    <string name="error_network_unknown_host_fix">Please try again when Internet is available</string>
+    <string name="error_network_request_reason">request error</string>
+    <string name="error_network_request_fix">Please try again later or contact Safe support if the issue persists.</string>
+    <string name="error_network_server_side_reason">server-side error</string>
+    <string name="error_network_server_side_fix">Please try again later or contact Safe support if the issue persists.</string>
+    <string name="error_network_not_authorized_reason">you are not authorized to perform this action</string>
+    <string name="error_network_not_authorized_fix">Please contact Safe support if the issue persists</string>
+
+    <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
+    <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
+    <string name="error_client_address_invalid_reason">this value is not a valid address</string>
+    <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
+    <string name="error_client_name_invalid_reason">this value is not a valid name</string>
+    <string name="error_client_name_invalid_fix">Name should not be empty</string>
+    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase for an Ethereum account</string>
+    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase</string>
+    <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
+    <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
+    <string name="error_client_unsupported_implementation_copy_reason">the implementation copy of your Safe is not supported by this app</string>
+    <string name="error_client_unsupported_implementation_copy_fix">Please change the implementation copy before adding it or use another Safe</string>
+    <string name="error_client_ens_resolution_reason">address not found</string>
+    <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
+    <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
+    <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
+    <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
+    <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
+
+    <string name="error_unknown_reason">An error occurred</string>
+    <string name="error_unknown_fix">please try again later</string>
 
     <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>
@@ -81,6 +124,9 @@
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
     <string name="client_gateway_service">Client Gateway service</string>
+    <string name="screenshots">SCREENSHOTS</string>
+    <string name="enable_screenshots">Enable screenshots</string>
+    <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
 
     <string name="get_in_touch_title">Get in touch</string>
     <string name="get_in_touch_email">E-mail</string>
@@ -128,6 +174,7 @@
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
+    <string name="tx_details_advanced_safe_tx_hash">safeTxHash:</string>
     <string name="tx_details_add_owner">Add owner:</string>
     <string name="tx_details_new_mastercopy">New mastercopy:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
