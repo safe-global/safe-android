@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,6 +46,9 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             coins.adapter = adapter
+            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
+            coins.addItemDecoration(dividerItemDecoration)
             coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             coins.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             refresh.setOnRefreshListener { viewModel.load(true) }

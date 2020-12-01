@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -99,7 +100,9 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 footer = TransactionLoadStateAdapter { this@TransactionListFragment.adapter.retry() }
             )
             layoutManager = LinearLayoutManager(requireContext())
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
+            addItemDecoration(dividerItemDecoration)
         }
         binding.refresh.setOnRefreshListener { viewModel.load() }
 
