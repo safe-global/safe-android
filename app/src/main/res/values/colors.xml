@@ -37,7 +37,6 @@
     <color name="enabled_input">@color/primary</color>
 
     <color name="text_grey_background">#f4f4f9</color>
-    <color name="divider">#e3e5ec</color>
 
     <!-- New Design colors -->
     <color name="white">#f7f5f5</color>

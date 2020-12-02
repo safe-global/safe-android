@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/surface_01">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -68,7 +68,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="88dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -150,7 +149,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/item_setting_openable_height"
                     android:layout_marginStart="16dp"
-                    android:drawableEnd="@drawable/ic_link_green_24dp"
+                    app:drawableEndCompat="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/tx_details_view_on_etherscan" />
@@ -166,7 +165,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/background"
+        android:background="@color/surface_01"
         android:visibility="gone"
         tools:visibility="visible">
 

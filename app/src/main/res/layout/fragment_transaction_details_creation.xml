@@ -53,7 +53,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/surface_01" >
 
             <io.gnosis.safe.ui.transactions.details.view.TxStatusView
                 android:id="@+id/status_item"
@@ -71,8 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:item_label="@string/tx_details_advanced_operation"
-                android:layout_marginBottom="@dimen/default_margin"
-                />
+                android:layout_marginBottom="@dimen/default_margin" />
 
             <View
                 android:id="@+id/tx_hash_separator"
@@ -164,14 +164,13 @@
                 android:id="@+id/factory_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
+                android:background="@color/separator" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_margin"
-                />
+                android:layout_marginBottom="@dimen/default_margin" />
 
             <View
                 android:id="@+id/created_separator"
