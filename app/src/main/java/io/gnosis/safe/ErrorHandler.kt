@@ -7,6 +7,7 @@ import io.gnosis.data.repositories.EnsResolutionError
 import io.gnosis.data.repositories.EnsReverseRecordNotSetError
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.safe.add.InvalidName
+import io.gnosis.safe.ui.safe.add.SafeNotFound
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
@@ -50,7 +51,8 @@ enum class Error(
     ERROR_1106(1106, R.string.error_client_ens_resolution_reason, R.string.error_client_ens_resolution_fix),
     ERROR_1107(1107, R.string.error_client_ens_reverse_record_reason, R.string.error_client_ens_reverse_record_fix),
     ERROR_1108(1108, R.string.error_client_ens_invalid_reason, R.string.error_client_ens_invalid_fix),
-    ERROR_1109(1109, R.string.error_client_name_invalid_reason, R.string.error_client_name_invalid_fix),
+    ERROR_1109(1109, R.string.error_client_safe_not_found_reason, R.string.error_client_safe_not_found_fix),
+    ERROR_1110(1110, R.string.error_client_safe_name_invalid_reason, R.string.error_client_safe_name_invalid_fix),
 
 
     ERROR_UNKNOWN(-1, R.string.error_unknown_reason, R.string.error_unknown_fix) {
@@ -78,7 +80,8 @@ fun Throwable.toError(): Error =
         this is EnsResolutionError -> Error.ERROR_1106
         this is EnsReverseRecordNotSetError -> Error.ERROR_1107
         this is EnsInvalidError -> Error.ERROR_1108
-        this is InvalidName -> Error.ERROR_1109
+        this is SafeNotFound -> Error.ERROR_1109
+        this is InvalidName -> Error.ERROR_1110
 
         // Network-related errors
         this is HttpException -> {

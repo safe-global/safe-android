@@ -73,10 +73,12 @@
 
     <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
     <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
+    <string name="error_client_safe_name_invalid_reason">this value is not a valid name</string>
+    <string name="error_client_safe_name_invalid_fix">Name should not be empty</string>
+    <string name="error_client_safe_not_found_reason">Safe not found</string>
+    <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
     <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
-    <string name="error_client_name_invalid_reason">this value is not a valid name</string>
-    <string name="error_client_name_invalid_fix">Name should not be empty</string>
     <string name="error_client_seed_phrase_reason">this is not a valid seed phrase for an Ethereum account</string>
     <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
@@ -90,8 +92,8 @@
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
     <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
 
-    <string name="error_unknown_reason">An error occurred</string>
-    <string name="error_unknown_fix">please try again later</string>
+    <string name="error_unknown_reason">an error occurred</string>
+    <string name="error_unknown_fix">Please try again later</string>
 
     <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>

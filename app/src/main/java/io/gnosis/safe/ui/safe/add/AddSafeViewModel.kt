@@ -4,6 +4,8 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.HttpCodes
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class AddSafeViewModel
@@ -18,15 +20,24 @@ class AddSafeViewModel
         safeLaunch {
             updateState { AddSafeState(ViewAction.Loading(true)) }
             takeUnless { safeRepository.isSafeAddressUsed(address) } ?: throw UsedSafeAddress
-            if (safeRepository.isValidSafe(address)) {
-                updateState { AddSafeState(ShowValidSafe(address)) }
-            } else {
-                throw InvalidSafeAddress
+            kotlin.runCatching {
+                if (safeRepository.isValidSafe(address)) {
+                    updateState { AddSafeState(ShowValidSafe(address)) }
+                } else {
+                    throw InvalidSafeAddress
+                }
+            }.onFailure {
+                if (it is HttpException && it.code() == HttpCodes.NOT_FOUND) {
+                    throw SafeNotFound
+                } else {
+                    throw it
+                }
             }
         }
     }
 }
 
+object SafeNotFound : Throwable()
 object InvalidSafeAddress : Throwable()
 object UsedSafeAddress : Throwable()
 
