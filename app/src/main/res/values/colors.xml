@@ -81,9 +81,6 @@
     <color name="safe_green_dark">#005546</color>
     <color name="blue">#001e3b</color>
 
-    <color name="safe_pending_orange">@color/pale_red</color>
-    <color name="safe_failed_red">@color/error</color>
-
     <color name="text_emphasis_high">@color/navy</color>
     <color name="text_emphasis_medium">@color/dark_grey</color>
     <color name="text_emphasis_low">@color/medium_grey</color>

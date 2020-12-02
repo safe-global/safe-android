@@ -506,8 +506,8 @@ class TransactionListViewModel
             TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,
-            TransactionStatus.PENDING -> R.color.safe_pending_orange
-            else -> R.color.safe_failed_red
+            TransactionStatus.PENDING -> R.color.secondary
+            else -> R.color.error
         }
     }
 

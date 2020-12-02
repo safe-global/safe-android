@@ -106,7 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textColor="@color/safe_pending_orange"
+        android:textColor="@color/secondary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"
@@ -119,7 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:textColor="@color/safe_pending_orange"
+        android:textColor="@color/secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
         tools:text="\u2022 Awaiting execution" />
