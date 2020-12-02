@@ -341,12 +341,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     @ColorRes
     private fun getColorForStatus(txStatus: TransactionStatus): Int =
         when (txStatus) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.safe_pending_orange
-            TransactionStatus.AWAITING_EXECUTION -> R.color.safe_pending_orange
+            TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.secondary
+            TransactionStatus.AWAITING_EXECUTION -> R.color.secondary
             TransactionStatus.SUCCESS -> R.color.primary
-            TransactionStatus.CANCELLED -> R.color.dark_grey
-            TransactionStatus.FAILED -> R.color.tomato
-            TransactionStatus.PENDING -> R.color.dark_grey
+            TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
+            TransactionStatus.FAILED -> R.color.error
+            TransactionStatus.PENDING -> R.color.text_emphasis_medium
         }
 
     @StringRes

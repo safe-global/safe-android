@@ -157,7 +157,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         val layoutParams = LayoutParams(MATCH_PARENT, height)
         layoutParams.setMargins(0, dpToPx(16), 0, 0)
         item.layoutParams = layoutParams
-        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.item_separator))
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.separator))
         return item
     }
 }

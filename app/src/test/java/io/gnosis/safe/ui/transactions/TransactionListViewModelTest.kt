@@ -237,7 +237,7 @@ class TransactionListViewModelTest {
                 confirmations = 0,
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
-                confirmationsTextColor = R.color.medium_grey,
+                confirmationsTextColor = R.color.text_emphasis_low,
                 threshold = 2
             ),
             transactionViews[0]
@@ -452,7 +452,7 @@ class TransactionListViewModelTest {
                 address = defaultToAddress,
                 dataSizeText = "0 bytes",
                 threshold = 2,
-                confirmationsTextColor = R.color.medium_grey,
+                confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 confirmations = 0
@@ -617,7 +617,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.medium_grey,
+                confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 settingNameText = "removeOwner"
@@ -634,7 +634,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.medium_grey,
+                confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 addressLabel = R.string.unknown_fallback_handler,
@@ -655,7 +655,7 @@ class TransactionListViewModelTest {
                 dateTimeText = Date(0).formatBackendDate(),
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.medium_grey,
+                confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 visibilityEllipsizedAddress = View.INVISIBLE,

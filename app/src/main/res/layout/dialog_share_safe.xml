@@ -68,7 +68,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:lines="2"
-                android:textColor="@color/medium_grey"
+                android:textColor="@color/text_emphasis_low"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@id/safe_ens_name"
                 app:layout_constraintEnd_toStartOf="@id/link"

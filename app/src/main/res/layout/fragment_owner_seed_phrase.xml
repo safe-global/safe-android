@@ -102,11 +102,11 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="22dp"
                 android:hint="@string/enter_seed_phrase_hint"
-                android:textColorHint="@color/medium_grey"
                 app:boxStrokeColor="@color/outline_box"
                 app:errorIconDrawable="@null"
-                app:errorTextColor="@color/tomato"
-                app:hintTextColor="@color/medium_grey">
+                app:errorTextColor="@color/error"
+                android:textColorHint="@color/text_emphasis_low"
+                app:hintTextColor="@color/text_emphasis_low">
 
                 <EditText
                     android:id="@+id/seed_phrase_text"

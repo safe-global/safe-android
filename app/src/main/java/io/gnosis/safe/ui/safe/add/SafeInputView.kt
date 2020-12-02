@@ -34,7 +34,7 @@ class SafeInputView @JvmOverloads constructor(
             blockies.setAddress(newAddress)
             blockies.visible(true)
             address.text = newAddress.formatEthAddress(context, addMiddleLinebreak = false)
-            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.white_smoke, context.theme))
+            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.outline, context.theme))
         }
     }
 
@@ -56,7 +56,7 @@ class SafeInputView @JvmOverloads constructor(
                     blockies.setAddress(null)
                     blockies.visible(false)
                     if (input.isBlank()) {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.medium_grey, context.theme))
+                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.text_emphasis_low, context.theme))
                         address.text = context.getString(R.string.enter_safe_address)
 
                     } else {
@@ -66,7 +66,7 @@ class SafeInputView @JvmOverloads constructor(
                 }
             }
 
-            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.tomato, context.theme))
+            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.error, context.theme))
         }
     }
 

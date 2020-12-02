@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="18dp"
-                android:background="@color/whitesmoke_two" />
+                android:background="@color/separator" />
 
             <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/collectible_contract"

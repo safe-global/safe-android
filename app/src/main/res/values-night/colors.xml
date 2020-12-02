@@ -4,7 +4,7 @@
     <color name="primary">@color/teal</color>
     <color name="on_primary">@color/black</color>
     <color name="primary_dark">#007661</color>
-    <color name="secondary">#FF8042</color>
+    <color name="secondary">@color/pale_red</color>
     <color name="error">@color/coral</color>
     <color name="accent">@color/white_two</color>
     <color name="window_background">@color/background</color>
@@ -14,7 +14,7 @@
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
     <color name="surface_08">#2d2d2d</color>
-    <color name="item_separator">@color/black_five</color>
+    <color name="separator">@color/black_five</color>
     <color name="divider">@color/black_five</color>
 
     <color name="safe_pending_orange">@color/orangish</color>
@@ -26,5 +26,8 @@
     <color name="text_emphasis_high">@color/white_two</color>
     <color name="text_emphasis_medium">@color/blue_grey</color>
     <color name="text_emphasis_low">@color/slate_grey</color>
+
+    <color name="outline">@color/charcoal_grey</color>
+    <color name="illustration_background">@color/dark_grey_two</color>
 
 </resources>

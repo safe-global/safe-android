@@ -16,7 +16,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
     <io.gnosis.safe.ui.settings.view.SettingItem
         android:id="@+id/tx_data_decoded"
@@ -28,7 +28,7 @@
         android:id="@+id/tx_data_decoded_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
     <io.gnosis.safe.ui.transactions.details.view.TxDataView
         android:id="@+id/tx_data"
@@ -40,7 +40,7 @@
         android:id="@+id/tx_data_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
@@ -51,5 +51,5 @@
         android:id="@+id/tx_status_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 </LinearLayout>

@@ -165,17 +165,17 @@ class TxConfirmationsView @JvmOverloads constructor(
                     Type.CANCELLED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_cancelled)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_high))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
                     }
                     Type.FAILED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_failed_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_failed)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.tomato))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.error))
                     }
                     Type.EXECUTE_WAITING -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_waiting_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_waiting, missingConfirmations)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.medium_grey))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
                     }
                     Type.EXECUTE_READY -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_ready_16dp)
@@ -197,7 +197,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         private const val ADDRESS_ITEM_MARGIN_LEFT = 24
         private const val MARGIN_VERTICAL = 16
         private const val LINE_WIDTH = 2
-        private const val LINE_COLOR = R.color.medium_grey
+        private const val LINE_COLOR = R.color.text_emphasis_low
     }
 }
 

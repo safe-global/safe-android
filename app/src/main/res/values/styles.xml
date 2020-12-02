@@ -120,7 +120,7 @@
         <item name="android:textSize">10sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:letterSpacing">0.15</item>
         <item name="android:lineSpacingExtra">2sp</item>
     </style>
@@ -133,7 +133,7 @@
         <item name="android:paddingEnd">@dimen/default_margin</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
     </style>
 
     <style name="SafeOverviewToolbar">
@@ -160,7 +160,7 @@
     <style name="ToolbarSubtitle">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
-        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>

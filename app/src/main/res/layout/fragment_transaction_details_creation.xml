@@ -64,7 +64,7 @@
                 android:id="@+id/status_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator" />
+                android:background="@color/separator" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/tx_hash_item"
@@ -78,7 +78,7 @@
                 android:id="@+id/tx_hash_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator" />
+                android:background="@color/separator" />
 
             <TextView
                 android:id="@+id/creator_item_title"
@@ -100,7 +100,7 @@
                 android:id="@+id/creator_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator" />
+                android:background="@color/separator" />
 
             <TextView
                 android:id="@+id/implementation_title"
@@ -131,7 +131,7 @@
                 android:id="@+id/implementation_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator" />
+                android:background="@color/separator" />
 
             <TextView
                 android:id="@+id/factory_title"
@@ -164,7 +164,7 @@
                 android:id="@+id/factory_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/created_item"
@@ -177,7 +177,7 @@
                 android:id="@+id/created_separator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator" />
+                android:background="@color/separator" />
 
             <TextView
                 android:id="@+id/etherscan_item"

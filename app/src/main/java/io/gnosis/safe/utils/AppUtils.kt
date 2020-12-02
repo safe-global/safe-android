@@ -61,7 +61,7 @@ fun showConfirmDialog(
     context: Context,
     @StringRes message: Int,
     @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
-    @ColorRes confirmColor: Int = R.color.tomato,
+    @ColorRes confirmColor: Int = R.color.error,
     confirmCallback: () -> Unit
 ) {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)

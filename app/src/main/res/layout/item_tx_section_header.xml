@@ -17,7 +17,7 @@
         android:fontFamily="sans-serif"
         android:letterSpacing="0.15"
         android:lineSpacingExtra="2sp"
-        android:textColor="@color/medium_grey"
+        android:textColor="@color/text_emphasis_low"
         android:textSize="10sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

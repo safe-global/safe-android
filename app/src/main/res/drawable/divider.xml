@@ -4,5 +4,5 @@
     <size
         android:width="100dp"
         android:height="1dp" />
-    <solid android:color="@color/background" />
+    <solid android:color="@color/separator" />
 </shape>

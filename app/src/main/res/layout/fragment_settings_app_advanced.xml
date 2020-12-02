@@ -80,7 +80,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/tx_service"
@@ -92,7 +92,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/client_gateway_service"
@@ -104,7 +104,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <TextView
                 style="@style/Header"
@@ -124,7 +124,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <TextView
                 style="@style/Helptext"

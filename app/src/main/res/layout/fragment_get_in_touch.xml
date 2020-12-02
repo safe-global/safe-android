@@ -65,7 +65,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/discord"
@@ -79,7 +79,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/twitter"
@@ -93,7 +93,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/help_center"
@@ -107,7 +107,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/feature_suggestion"
@@ -121,7 +121,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
         </LinearLayout>
 

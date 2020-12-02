@@ -89,7 +89,7 @@ class MasterCopyItem @JvmOverloads constructor(
         )
         else VersionInfoView(
             R.drawable.ic_error,
-            R.color.tomato,
+            R.color.error,
             R.string.safe_settings_master_copy_upgrade_available
         )
 

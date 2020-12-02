@@ -67,11 +67,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="28dp"
-        android:textColorHint="@color/medium_grey"
+        android:textColorHint="@color/text_emphasis_low"
         app:boxStrokeColor="@color/outline_box"
         app:errorIconDrawable="@null"
-        app:errorTextColor="@color/tomato"
-        app:hintTextColor="@color/medium_grey"
+        app:errorTextColor="@color/error"
+        app:hintTextColor="@color/text_emphasis_low"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
         <EditText

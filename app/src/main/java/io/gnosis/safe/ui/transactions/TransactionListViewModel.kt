@@ -161,7 +161,7 @@ class TransactionListViewModel
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty()
         )
@@ -237,7 +237,7 @@ class TransactionListViewModel
             settingNameText = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty()
         )
@@ -281,7 +281,7 @@ class TransactionListViewModel
             addressLabel = fallbackHandlerDisplayString,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty()
         )
@@ -327,7 +327,7 @@ class TransactionListViewModel
             addressLabel = R.string.empty_string,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
             visibilityAddressLabel = View.INVISIBLE,
@@ -376,7 +376,7 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendDate(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty(),
             label = R.string.tx_list_change_mastercopy,
@@ -434,7 +434,7 @@ class TransactionListViewModel
             address = txInfo.to,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString() ?: "",
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",

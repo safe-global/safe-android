@@ -3,19 +3,18 @@
     <color name="primary">@color/teal_two</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/safe_green_dark</color>
-    <color name="secondary">#E8663D</color>
-    <color name="error">@color/tomato_new</color>
+    <color name="secondary">@color/orangish</color>
+    <color name="error">@color/tomato</color>
     <color name="accent">@color/text_emphasis_high</color>
     <color name="window_background">@color/background</color>
     <color name="toolbar_action">@color/text_emphasis_high</color>
 
-    <color name="background">@color/very_light_pink_two</color>
+    <color name="background">@color/white</color>
     <color name="surface_01">@color/white_two</color>
     <color name="surface_08">@color/white_two</color>
     <color name="surface_04">@color/white_two</color>
-    <color name="item_separator">@color/very_light_pink_two</color>
+    <color name="separator">@color/white</color>
 
-    <color name="whitesmoke_two">#f0efee</color>
 
     <color name="white_two">#ffffff</color>
     <color name="black">#000000</color>
@@ -41,6 +40,8 @@
     <color name="divider">#e3e5ec</color>
 
     <!-- New Design colors -->
+    <color name="white">#f7f5f5</color>
+    <color name="whitesmoke_two">#f0efee</color>
     <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
@@ -49,8 +50,7 @@
     <color name="pale_grey_two">#f4f4f9</color>
     <color name="battleship_grey_light">#64707f</color>
     <color name="white_smoke">#e8e7e6</color>
-    <color name="tomato">#ff3b30</color>
-    <color name="tomato_new">#f02525</color>
+    <color name="tomato">#f02525</color>
     <color name="coral">#ff453a</color>
     <color name="orangish">#ff8042</color>
     <color name="pale_red">#e8663d</color>
@@ -60,7 +60,6 @@
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
-    <color name="very_light_pink_two">#f7f5f5</color>
     <color name="teal_two">#008c73</color>
     <color name="teal">#029f7f</color>
     <color name="navy">#001428</color>
@@ -70,6 +69,8 @@
     <color name="black_three">#272727</color>
     <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121212</color>
+    <color name="charcoal_grey">#3a3a3c</color>
+    <color name="dark_grey_two">#2c2c2e</color>
 
     <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
@@ -96,4 +97,8 @@
     <color name="text_emphasis_high">@color/navy</color>
     <color name="text_emphasis_medium">@color/dark_grey</color>
     <color name="text_emphasis_low">@color/medium_grey</color>
+
+    <color name="outline">@color/white_smoke</color>
+    <color name="illustration_background">@color/whitesmoke_two</color>
+
 </resources>
