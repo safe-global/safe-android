@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.base.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
@@ -23,10 +22,6 @@ abstract class BaseActivity : AppCompatActivity() {
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //FIXME: remove when dark mode is implemented
-//        if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
-//            delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-//        }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
         privacySettingsHandler.allowScreenShots(window, privacySettingsHandler.screenshotsAllowed)
