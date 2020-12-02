@@ -112,7 +112,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
-                tools:src="@color/dark_grey" />
+                tools:src="@color/text_emphasis_medium" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/safe_fields"

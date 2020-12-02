@@ -32,7 +32,7 @@ class TxSettingsActionView @JvmOverloads constructor(
 
             when (actionInfoItem) {
                 is ActionInfoItem.Value -> {
-                    addStringItem(actionInfoItem.value, R.color.dark_grey, DEFAULT_MARGIN)
+                    addStringItem(actionInfoItem.value, R.color.text_emphasis_medium, DEFAULT_MARGIN)
                 }
                 is ActionInfoItem.Address -> {
                     addAddressItem(actionInfoItem.address)

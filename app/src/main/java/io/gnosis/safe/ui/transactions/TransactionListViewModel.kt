@@ -503,7 +503,7 @@ class TransactionListViewModel
     private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
             TransactionStatus.SUCCESS -> R.color.primary
-            TransactionStatus.CANCELLED -> R.color.dark_grey
+            TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,
             TransactionStatus.PENDING -> R.color.safe_pending_orange
