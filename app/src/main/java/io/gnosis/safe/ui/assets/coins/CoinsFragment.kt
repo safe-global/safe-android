@@ -49,7 +49,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             coins.addItemDecoration(dividerItemDecoration)
-            coins.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
             coins.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             refresh.setOnRefreshListener { viewModel.load(true) }
         }
