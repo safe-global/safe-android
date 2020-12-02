@@ -15,7 +15,7 @@ class OwnerSeedPhraseViewModel
     fun validate(seedPhrase: String) {
         val cleanedUpSeedPhrase = cleanupSeedPhrase(seedPhrase)
         runCatching { bip39Generator.validateMnemonic(cleanedUpSeedPhrase) }
-            .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(it) } } }
+            .onFailure { safeLaunch { updateState { ImportOwnerKeyState.Error(InvalidSeedPhrase) } } }
             .onSuccess { mnemonic ->
                 safeLaunch {
                     updateState {
