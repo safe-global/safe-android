@@ -13,7 +13,7 @@
     <color name="background">@color/black_five</color>
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
-    <color name="surface_08">#2d2d2d</color>
+    <color name="surface_08">@color/black_two</color>
     <color name="separator">@color/black_five</color>
 
     <color name="safe_pending_orange">@color/orangish</color>

@@ -9,6 +9,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.ButtonBarLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.LayoutAlertDialogTitleBinding
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -25,6 +26,7 @@ object CustomAlertDialogBuilder {
         cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
         @ColorRes confirmColor: Int = R.color.primary,
         @ColorRes cancelColor: Int = R.color.primary,
+        @ColorRes background: Int = R.color.surface_08,
         dismissCallback: DialogInterface.OnDismissListener? = null
     ): AlertDialog {
         val binding = LayoutAlertDialogTitleBinding.inflate(LayoutInflater.from(context))
@@ -64,6 +66,7 @@ object CustomAlertDialogBuilder {
                             visible(false)
                         }
                     }
+                    (getButton(Dialog.BUTTON_POSITIVE).parent as ButtonBarLayout).setBackgroundColor(context.getColorCompat(background))
                 }
             }
     }
