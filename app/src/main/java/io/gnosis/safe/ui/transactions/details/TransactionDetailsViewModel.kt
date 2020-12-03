@@ -55,7 +55,7 @@ class TransactionDetailsViewModel
                 tracker.logTransactionConfirmed()
                 updateState { TransactionDetailsViewState(ConfirmationSubmitted(it)) }
             }.onFailure {
-                throw TxConfirmationFailed
+                throw TxConfirmationFailed(it)
             }
         }
     }
@@ -85,6 +85,6 @@ data class ConfirmationSubmitted(
     val txDetails: TransactionDetails?
 ) : BaseStateViewModel.ViewAction
 
+class TxConfirmationFailed(override val cause: Throwable): Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
-object TxConfirmationFailed: Throwable()
 object MissingOwnerCredential : Throwable()

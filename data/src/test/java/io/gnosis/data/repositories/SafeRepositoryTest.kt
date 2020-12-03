@@ -120,16 +120,16 @@ class SafeRepositoryTest {
             BigInteger.TEN,
             1,
             listOf(Solidity.Address(BigInteger.ONE)),
-            Solidity.Address(BigInteger.ONE),
+            SafeRepository.SAFE_IMPLEMENTATION_1_0_0,
             listOf(Solidity.Address(BigInteger.ONE)),
             Solidity.Address(BigInteger.ONE),
             "v1"
         )
         coEvery { transactionServiceApi.getSafeInfo(any()) } returns safeInfoDto
 
-        val actual = safeRepository.isValidSafe(safeAddress)
+        val actual = safeRepository.getSafeStatus(safeAddress)
 
-        assertEquals(true, actual)
+        assertEquals(SafeStatus.VALID, actual)
         coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
@@ -140,7 +140,7 @@ class SafeRepositoryTest {
         coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
 
         kotlin.runCatching {
-            safeRepository.isValidSafe(safeAddress)
+            safeRepository.getSafeStatus(safeAddress)
             Assert.fail()
         }
 
