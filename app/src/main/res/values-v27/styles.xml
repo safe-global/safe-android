@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="WhiteTheme" parent="WhiteThemeBase">
-        <item name="android:windowLightStatusBar">true</item>
+    <style name="BaseDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>

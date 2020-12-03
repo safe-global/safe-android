@@ -87,5 +87,6 @@
 
     <color name="outline">@color/white_smoke</color>
     <color name="illustration_background">@color/whitesmoke_two</color>
+    <color name="logo_background">@android:color/transparent</color>
 
 </resources>
