@@ -8,6 +8,7 @@ import io.gnosis.data.repositories.EnsReverseRecordNotSetError
 import io.gnosis.safe.helpers.Offline
 import io.gnosis.safe.ui.safe.add.InvalidName
 import io.gnosis.safe.ui.safe.add.SafeNotFound
+import io.gnosis.safe.ui.safe.add.SafeNotSupported
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
@@ -77,6 +78,7 @@ fun Throwable.toError(): Error =
         this is InvalidAddressException -> Error.ERROR_1102
         this is InvalidSeedPhrase -> Error.ERROR_1103
         this is MismatchingSafeTxHash -> Error.ERROR_1104
+        this is SafeNotSupported -> Error.ERROR_1105
         this is EnsResolutionError -> Error.ERROR_1106
         this is EnsReverseRecordNotSetError -> Error.ERROR_1107
         this is EnsInvalidError -> Error.ERROR_1108

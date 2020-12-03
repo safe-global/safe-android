@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.model.Solidity
@@ -21,10 +22,10 @@ class AddSafeViewModel
             updateState { AddSafeState(ViewAction.Loading(true)) }
             takeUnless { safeRepository.isSafeAddressUsed(address) } ?: throw UsedSafeAddress
             kotlin.runCatching {
-                if (safeRepository.isValidSafe(address)) {
-                    updateState { AddSafeState(ShowValidSafe(address)) }
-                } else {
-                    throw InvalidSafeAddress
+                when (safeRepository.getSafeStatus(address)) {
+                    SafeStatus.VALID -> updateState { AddSafeState(ShowValidSafe(address)) }
+                    SafeStatus.NOT_SUPPORTED -> throw SafeNotSupported
+                    SafeStatus.INVALID -> throw InvalidSafeAddress
                 }
             }.onFailure {
                 if (it is HttpException && it.code() == HttpCodes.NOT_FOUND) {
@@ -37,6 +38,7 @@ class AddSafeViewModel
     }
 }
 
+object SafeNotSupported : Throwable()
 object SafeNotFound : Throwable()
 object InvalidSafeAddress : Throwable()
 object UsedSafeAddress : Throwable()
