@@ -8,7 +8,8 @@
         <item name="colorAccent">@color/primary</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:statusBarColor">@color/surface_04</item>
-        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:colorBackgroundFloating">@color/surface_04</item>
+<!--        <item name="android:navigationBarColor">@color/surface_04</item>-->
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
@@ -216,27 +217,32 @@
         <item name="android:background">@drawable/background_bottom_sheet_rounded</item>
     </style>
 
+    <!-- Share Safe Dialog -->
     <style name="BaseDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
     </style>
+    <style name="DayNightDialog" parent="BaseDialog"/>
 
-    <style name="FullScreenDialog" parent="Theme.MaterialComponents.DayNight">
+    <!-- EnsInputDialog -->
+    <style name="BaseFullScreenDialog" parent="Theme.MaterialComponents.DayNight">
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
     </style>
+    <style name="DayNightFullscreenDialog" parent="BaseFullScreenDialog"/>
 
+    <!-- AddressInputHelper BottomSheetDialog -->
     <style name="BaseBottomSheetDialog" parent="@style/Theme.MaterialComponents.DayNight.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsFloating">true</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
     </style>
 
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+    <style name="DayNightBottomSheetDialogTheme" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
     </style>

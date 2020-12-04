@@ -25,7 +25,7 @@ class AddressInputHelper(
 ) {
 
     private val dialog =
-        BottomSheetDialog(fragment.requireContext(), R.style.BottomSheetDialogTheme).apply {
+        BottomSheetDialog(fragment.requireContext(), R.style.DayNightBottomSheetDialogTheme).apply {
             val clipboard = fragment.activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val binding = BottomSheetAddressInputBinding.inflate(layoutInflater)
             with(binding) {

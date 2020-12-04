@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Share Safe Dialog -->
+    <style name="DayNightDialog" parent="BaseDialog">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- AddressInputHelper BottomSheetDialog -->
+    <style name="DayNightBottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- EnsInputDialog -->
+    <style name="DayNightFullScreenDialog" parent="BaseFullScreenDialog">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

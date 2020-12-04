@@ -13,9 +13,20 @@
     <color name="surface_01">@color/white_two</color>
     <color name="surface_08">@color/white_two</color>
     <color name="surface_04">@color/white_two</color>
+<!--    <color name="surface_04_dimmed">@color/white_two_dimmed</color>-->
     <color name="separator">@color/white</color>
-    
+
+    <color name="text_emphasis_high">@color/navy</color>
+    <color name="text_emphasis_medium">@color/dark_grey</color>
+    <color name="text_emphasis_low">@color/medium_grey</color>
+
+    <color name="outline">@color/white_smoke</color>
+    <color name="illustration_background">@color/whitesmoke_two</color>
+    <color name="logo_background">@android:color/transparent</color>
+
+    <!-- color names -->
     <color name="white_two">#ffffff</color>
+<!--    <color name="white_two_dimmed">#606060</color>-->
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
@@ -64,6 +75,7 @@
     <color name="blue_grey">#8d8d93</color>
     <color name="black_two">#2d2d2d</color>
     <color name="black_three">#272727</color>
+    <color name="black_three_dimmed">#272727</color>
     <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121212</color>
     <color name="charcoal_grey">#3a3a3c</color>
@@ -80,13 +92,4 @@
 
     <color name="safe_green_dark">#005546</color>
     <color name="blue">#001e3b</color>
-
-    <color name="text_emphasis_high">@color/navy</color>
-    <color name="text_emphasis_medium">@color/dark_grey</color>
-    <color name="text_emphasis_low">@color/medium_grey</color>
-
-    <color name="outline">@color/white_smoke</color>
-    <color name="illustration_background">@color/whitesmoke_two</color>
-    <color name="logo_background">@android:color/transparent</color>
-
 </resources>
