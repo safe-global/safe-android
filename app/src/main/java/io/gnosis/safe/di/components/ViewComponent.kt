@@ -16,7 +16,7 @@ import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment
-import io.gnosis.safe.ui.settings.app.DarkNightAppSettingsFragment
+import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
@@ -83,7 +83,7 @@ interface ViewComponent {
 
     fun inject(fragment: AdvancedSafeSettingsFragment)
 
-    fun inject(fragment: DarkNightAppSettingsFragment)
+    fun inject(fragment: NightModeAppSettingsFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)

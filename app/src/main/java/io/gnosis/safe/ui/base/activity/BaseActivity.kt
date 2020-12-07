@@ -8,6 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.di.modules.ViewModule
+import io.gnosis.safe.ui.settings.app.AppearanceSettingsHandler
 import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
 import javax.inject.Inject
 
@@ -19,6 +20,9 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var privacySettingsHandler: PrivacySettingsHandler
 
+    @Inject
+    lateinit var appearanceSettingsHandler: AppearanceSettingsHandler
+
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +32,7 @@ abstract class BaseActivity : AppCompatActivity() {
         screenId()?.let {
             tracker.logScreen(it)
         }
+        appearanceSettingsHandler.applyNightMode(appearanceSettingsHandler.nightMode)
     }
 
     protected fun viewComponent(): ViewComponent =

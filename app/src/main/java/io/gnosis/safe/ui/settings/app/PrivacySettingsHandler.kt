@@ -19,7 +19,6 @@ class PrivacySettingsHandler @Inject constructor(
             }
         }
 
-
     fun allowScreenShots(window: Window, allow: Boolean) {
         if (allow) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -29,6 +28,6 @@ class PrivacySettingsHandler @Inject constructor(
     }
 
     companion object {
-       internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
+        internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
     }
 }

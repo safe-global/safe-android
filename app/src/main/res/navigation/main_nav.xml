@@ -167,9 +167,9 @@
 
     <fragment
         android:id="@+id/darkNightAppSettingsFragment"
-        android:name="io.gnosis.safe.ui.settings.app.DarkNightAppSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment"
         android:label="Appearance"
-        tools:layout="@layout/fragment_settings_app_dark_night" />
+        tools:layout="@layout/fragment_settings_app_night_mode" />
 
     <fragment
         android:id="@+id/transactionListFragment"
