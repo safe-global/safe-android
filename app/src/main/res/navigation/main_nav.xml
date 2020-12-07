@@ -129,8 +129,8 @@
             app:popUpTo="@id/settingsFragment" />
 
         <action
-            android:id="@+id/action_settingsFragment_to_darkNightSettingsFragment"
-            app:destination="@id/darkNightAppSettingsFragment"
+            android:id="@+id/action_settingsFragment_to_nightModeSettingsFragment"
+            app:destination="@id/nightModeAppSettingsFragment"
             app:popUpTo="@id/settingsFragment" />
 
         <action
@@ -166,7 +166,7 @@
         tools:layout="@layout/fragment_settings_app_advanced" />
 
     <fragment
-        android:id="@+id/darkNightAppSettingsFragment"
+        android:id="@+id/nightModeAppSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment"
         android:label="Appearance"
         tools:layout="@layout/fragment_settings_app_night_mode" />
