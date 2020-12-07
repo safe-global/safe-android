@@ -16,12 +16,13 @@ import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment
+import io.gnosis.safe.ui.settings.app.DarkNightAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
+import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment
 import io.gnosis.safe.ui.settings.safe.SafeSettingsFragment
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
 import io.gnosis.safe.ui.splash.SplashActivity
 import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.transactions.TransactionListFragment
@@ -81,6 +82,8 @@ interface ViewComponent {
     fun inject(fragment: CollectiblesDetailsFragment)
 
     fun inject(fragment: AdvancedSafeSettingsFragment)
+
+    fun inject(fragment: DarkNightAppSettingsFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)
