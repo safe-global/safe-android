@@ -3,7 +3,7 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.*
 import io.gnosis.data.models.transaction.*
-import pm.gnosis.crypto.ECDSASignature
+import io.gnosis.data.utils.toSignatureString
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -31,12 +31,6 @@ class TransactionRepository(
         KeyPair.fromPrivate(ownerKey.toByteArray())
             .sign(safeTxHash.hexToByteArray())
             .toSignatureString()
-
-    private fun ECDSASignature.toSignatureString() =
-        r.toString(16).padStart(64, '0').substring(0, 64) +
-                s.toString(16).padStart(64, '0').substring(0, 64) +
-                v.toString(16).padStart(2, '0')
-
 }
 
 fun List<Param>?.getAddressValueByName(name: String): Solidity.Address? {

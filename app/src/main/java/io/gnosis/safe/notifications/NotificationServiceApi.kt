@@ -1,7 +1,7 @@
 package io.gnosis.safe.notifications
 
 import io.gnosis.data.BuildConfig
-import io.gnosis.safe.notifications.models.FirebaseDevice
+import io.gnosis.safe.notifications.models.Registration
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST
@@ -10,7 +10,7 @@ import retrofit2.http.Path
 interface NotificationServiceApi {
 
     @POST("/api/v1/notifications/devices/")
-    suspend fun register(@Body data: FirebaseDevice): FirebaseDevice
+    suspend fun register(@Body data: Registration): Registration
 
     @DELETE("/api/v1/notifications/devices/{uuid}")
     suspend fun unregister(@Path("uuid") deviceUuid: String)
