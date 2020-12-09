@@ -17,6 +17,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -71,7 +72,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             progress.visible(false)
         }
         val error = viewAction.error.toError()
-        snackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings_advanced))
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings_advanced))
         Timber.e(viewAction.error)
     }
 

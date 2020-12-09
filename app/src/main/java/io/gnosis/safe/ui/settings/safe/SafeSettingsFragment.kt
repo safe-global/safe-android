@@ -14,6 +14,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -79,7 +80,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         showContentNoData()
                     }
                     val error = viewAction.error.toError()
-                    snackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings))
+                    errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings))
                 }
             }
         })

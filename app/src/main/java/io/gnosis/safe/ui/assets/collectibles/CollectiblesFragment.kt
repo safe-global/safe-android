@@ -10,12 +10,12 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.MultiViewHolderAdapter
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -67,7 +67,7 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
                             binding.contentNoData.root.visible(true)
                         }
                         val error = action.error.toError()
-                        snackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_collectibles))
+                        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_collectibles))
                     }
                     else -> {
 
