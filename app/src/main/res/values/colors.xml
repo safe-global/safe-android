@@ -13,7 +13,6 @@
     <color name="surface_01">@color/white_two</color>
     <color name="surface_08">@color/white_two</color>
     <color name="surface_04">@color/white_two</color>
-<!--    <color name="surface_04_dimmed">@color/white_two_dimmed</color>-->
     <color name="separator">@color/white</color>
 
     <color name="text_emphasis_high">@color/navy</color>
@@ -26,7 +25,6 @@
 
     <!-- color names -->
     <color name="white_two">#ffffff</color>
-<!--    <color name="white_two_dimmed">#606060</color>-->
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
