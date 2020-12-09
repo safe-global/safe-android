@@ -45,6 +45,14 @@ class NotificationRepository(
             }
         }
 
+    private var registrationUpdateFailed: Boolean
+        get() = preferencesManager.prefs.getBoolean(REGISTRATION_UPDATE_FAILED, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(REGISTRATION_UPDATE_FAILED, value)
+            }
+        }
+
     suspend fun handlePushNotification(pushNotification: PushNotification) {
         val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
         if (safe == null) {
@@ -62,7 +70,7 @@ class NotificationRepository(
     }
 
     suspend fun register() {
-        if (deviceUuid == null) {
+        if (deviceUuid == null || registrationUpdateFailed) {
             kotlin.runCatching {
                 getCloudMessagingToken()
             }
@@ -105,10 +113,12 @@ class NotificationRepository(
                     it.safes.forEach { safeAddressString ->
                         safeRepository.saveSafeMeta(SafeMetaData(safeAddressString.asEthereumAddress()!!, true))
                     }
+                    registrationUpdateFailed = false
                 }
                 .onFailure {
                     Timber.d("notification service registration failure")
                     deviceUuid = null
+                    registrationUpdateFailed = true
                 }
         }
     }
@@ -139,6 +149,10 @@ class NotificationRepository(
             .onSuccess {
                 deviceUuid = it.uuid
                 safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
+                registrationUpdateFailed = false
+            }
+            .onFailure {
+                registrationUpdateFailed = true
             }
     }
 
@@ -170,6 +184,10 @@ class NotificationRepository(
         }
             .onSuccess {
                 deviceUuid = it.uuid
+                registrationUpdateFailed = false
+            }
+            .onFailure {
+                registrationUpdateFailed = true
             }
     }
 
@@ -200,6 +218,10 @@ class NotificationRepository(
         }
             .onSuccess {
                 deviceUuid = it.uuid
+                registrationUpdateFailed = false
+            }
+            .onFailure {
+                registrationUpdateFailed = true
             }
     }
 
@@ -241,6 +263,7 @@ class NotificationRepository(
 
     companion object {
         private const val DEVICE_UUID = "prefs.string.device_uuid"
+        private const val REGISTRATION_UPDATE_FAILED = "prefs.boolean.registration_update_failed"
     }
 }
 
