@@ -38,18 +38,18 @@ class NotificationRepository(
         }
 
     private var deviceUuid: String?
-        get() = preferencesManager.prefs.getString(DEVICE_UUID, null)
+        get() = preferencesManager.prefs.getString(KEY_DEVICE_UUID, null)
         set(value) {
             preferencesManager.prefs.edit {
-                putString(DEVICE_UUID, value)
+                putString(KEY_DEVICE_UUID, value)
             }
         }
 
     private var registrationUpdateFailed: Boolean
-        get() = preferencesManager.prefs.getBoolean(REGISTRATION_UPDATE_FAILED, false)
+        get() = preferencesManager.prefs.getBoolean(KEY_REGISTRATION_UPDATE_FAILED, false)
         set(value) {
             preferencesManager.prefs.edit {
-                putBoolean(REGISTRATION_UPDATE_FAILED, value)
+                putBoolean(KEY_REGISTRATION_UPDATE_FAILED, value)
             }
         }
 
@@ -262,8 +262,8 @@ class NotificationRepository(
     }
 
     companion object {
-        private const val DEVICE_UUID = "prefs.string.device_uuid"
-        private const val REGISTRATION_UPDATE_FAILED = "prefs.boolean.registration_update_failed"
+        private const val KEY_DEVICE_UUID = "prefs.string.device_uuid"
+        private const val KEY_REGISTRATION_UPDATE_FAILED = "prefs.boolean.registration_update_failed"
     }
 }
 
