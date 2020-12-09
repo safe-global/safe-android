@@ -78,7 +78,7 @@ class ImportOwnerKeyViewModelTest {
         viewModel.validate(seedPhrase)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.Error(invalidChecksum)
+            ImportOwnerKeyState.Error(InvalidSeedPhrase)
         )
         verify(exactly = 1) { bip39Generator.validateMnemonic(seedPhrase) }
     }

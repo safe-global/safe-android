@@ -92,17 +92,28 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         binding.content.visibility = View.GONE
                         binding.contentNoData.root.visible(true)
                     }
-                    val error = viewAction.error.toError()
-                    snackbar(
-                        requireView(),
-                        error.message(
-                            requireContext(),
-                            if (viewAction.error is TxConfirmationFailed)
-                                R.string.error_description_tx_confirmation
-                            else
-                                R.string.error_description_tx_details
-                        )
-                    )
+
+                    viewAction.error.let {
+                        if (it is TxConfirmationFailed) {
+                            val error = it.cause.toError()
+                            snackbar(
+                                requireView(),
+                                error.message(
+                                    requireContext(),
+                                    R.string.error_description_tx_confirmation
+                                )
+                            )
+                        } else {
+                            val error = it.toError()
+                            snackbar(
+                                requireView(),
+                                error.message(
+                                    requireContext(),
+                                    R.string.error_description_tx_details
+                                )
+                            )
+                        }
+                    }
                 }
             }
         })

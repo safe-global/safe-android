@@ -45,10 +45,6 @@ class SafeRepository(
 
     suspend fun removeSafe(safe: Safe) = safeDao.delete(safe)
 
-    suspend fun isValidSafe(safeAddress: Solidity.Address): Boolean {
-        return transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) != null
-    }
-
     suspend fun clearActiveSafe() {
         preferencesManager.prefs.edit {
             remove(ACTIVE_SAFE)
@@ -68,11 +64,6 @@ class SafeRepository(
                 getSafeBy(address)
             }
 
-    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
-        transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
-            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy, it.modules, it.fallbackHandler)
-        }
-
     suspend fun getSafeBy(address: Solidity.Address): Safe? = safeDao.loadByAddress(address)
 
     suspend fun getSafeMetas(): List<SafeMetaData> = safeDao.getMetas()
@@ -80,6 +71,27 @@ class SafeRepository(
     suspend fun getSafeMeta(address: Solidity.Address): SafeMetaData? = safeDao.getMeta(address)
 
     suspend fun saveSafeMeta(safeMeta: SafeMetaData) = safeDao.saveMeta(safeMeta)
+
+    suspend fun getSafeStatus(safeAddress: Solidity.Address): SafeStatus {
+
+        val safeInfo = transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
+
+        val supportedContracts = setOf(
+            SAFE_IMPLEMENTATION_1_0_0,
+            SAFE_IMPLEMENTATION_1_1_1
+        )
+
+        return when {
+            safeInfo != null && safeInfo.masterCopy in supportedContracts -> SafeStatus.VALID
+            safeInfo != null -> SafeStatus.NOT_SUPPORTED
+            else -> SafeStatus.INVALID
+        }
+    }
+
+    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
+        transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
+            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy, it.modules, it.fallbackHandler)
+        }
 
     companion object {
 
@@ -104,4 +116,10 @@ class SafeRepository(
         const val METHOD_DISABLE_MODULE = "disableModule"
 
     }
+}
+
+enum class SafeStatus {
+    VALID,
+    INVALID,
+    NOT_SUPPORTED
 }

@@ -192,7 +192,8 @@ class TransactionDetailsViewModelTest {
         )
 
         with(viewModel.state.test().values()) {
-            assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(TxConfirmationFailed))
+            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
+            assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
         }
         coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
@@ -219,7 +220,8 @@ class TransactionDetailsViewModelTest {
         )
 
         with(viewModel.state.test().values()) {
-            assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(TxConfirmationFailed))
+            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
+            assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
