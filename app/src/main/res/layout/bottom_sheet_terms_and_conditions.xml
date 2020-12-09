@@ -14,6 +14,7 @@
         android:layout_height="6dp"
         android:layout_marginTop="6dp"
         android:src="@drawable/circle"
+        android:background="@color/primary"
         app:tint="@color/primary"
         app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_title"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
@@ -24,6 +25,7 @@
         android:layout_height="6dp"
         android:layout_marginTop="6dp"
         android:src="@drawable/circle"
+        android:background="@color/primary"
         app:tint="@color/primary"
         app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
