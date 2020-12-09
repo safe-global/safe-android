@@ -13,7 +13,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import javax.inject.Inject
 
 class NightModeAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppNightModeBinding>() {
-    override fun screenId() = ScreenId.SETTINGS_APP_ADVANCED
+    override fun screenId() = ScreenId.SETTINGS_APP_APPEARANCE
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
