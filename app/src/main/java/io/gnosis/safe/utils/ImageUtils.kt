@@ -12,10 +12,12 @@ import io.gnosis.safe.R
 fun ImageView.loadTokenLogo(
     icon: String?,
     @DrawableRes placeHolderResource: Int = R.drawable.ic_coin_placeholder,
-    @DrawableRes backgroundDrawable: Int = R.drawable.circle
+    @DrawableRes backgroundDrawable: Int? = R.drawable.circle
 ) {
     setPadding(0)
-    background = ContextCompat.getDrawable(context, backgroundDrawable)
+    background = backgroundDrawable?.let {
+        ContextCompat.getDrawable(context, backgroundDrawable)
+    }
     setImageDrawable(null)
     colorFilter = null
     when {
