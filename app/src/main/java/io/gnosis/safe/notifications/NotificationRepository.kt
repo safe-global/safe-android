@@ -13,7 +13,9 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
 import java.math.BigInteger
 import java.util.*
@@ -74,7 +76,7 @@ class NotificationRepository(
 
     suspend fun register(token: String) {
 
-        val safes = safeRepository.getSafes().map {
+        val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
             it.address.asEthereumAddressChecksumString()
         }
 
@@ -86,20 +88,12 @@ class NotificationRepository(
             deviceType = "ANDROID",
             version = appVersion,
             buildNumber = BuildConfig.VERSION_CODE.toString(),
-            timestamp = System.currentTimeMillis().toString()
+            timestamp = (System.currentTimeMillis() / 1000).toString()
         )
 
         if (ownerCredentialsRepository.hasCredentials()) {
-
-            val signature =
-                KeyPair
-                    .fromPrivate(ownerCredentialsRepository.retrieveCredentials()!!.key)
-                    .sign(registration.hash().toByteArray())
-                    .toSignatureString()
-
-            registration.addSignature(signature)
+            registration.buildAndAddSignature(ownerCredentialsRepository.retrieveCredentials()!!.key.toByteArray())
         }
-
 
         if (safes.isNotEmpty()) {
             kotlin.runCatching {
@@ -119,7 +113,6 @@ class NotificationRepository(
         }
     }
 
-
     suspend fun registerSafe(safeAddress: Solidity.Address) {
 
         kotlin.runCatching {
@@ -134,18 +127,11 @@ class NotificationRepository(
                 deviceType = "ANDROID",
                 version = appVersion,
                 buildNumber = BuildConfig.VERSION_CODE.toString(),
-                timestamp = System.currentTimeMillis().toString()
+                timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
             if (ownerCredentialsRepository.hasCredentials()) {
-
-                val signature =
-                    KeyPair
-                        .fromPrivate(ownerCredentialsRepository.retrieveCredentials()!!.key)
-                        .sign(registration.hash().toByteArray())
-                        .toSignatureString()
-
-                registration.addSignature(signature)
+                registration.buildAndAddSignature(ownerCredentialsRepository.retrieveCredentials()!!.key.toByteArray())
             }
 
             notificationService.register(registration)
@@ -162,25 +148,23 @@ class NotificationRepository(
 
             val token = getCloudMessagingToken()!!
 
+            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
+                it.address.asEthereumAddressChecksumString()
+            }
+
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
                 // safes are always added and never removed on the registration request
-                safes = listOf(),
+                safes = safes,
                 cloudMessagingToken = token,
                 bundle = BuildConfig.APPLICATION_ID,
                 deviceType = "ANDROID",
                 version = appVersion,
                 buildNumber = BuildConfig.VERSION_CODE.toString(),
-                timestamp = System.currentTimeMillis().toString()
+                timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
-            val signature =
-                KeyPair
-                    .fromPrivate(ownerKey)
-                    .sign(registration.hash().toByteArray())
-                    .toSignatureString()
-
-            registration.addSignature(signature)
+            registration.buildAndAddSignature(ownerKey.toByteArray())
 
             notificationService.register(registration)
         }
@@ -195,16 +179,20 @@ class NotificationRepository(
 
             val token = getCloudMessagingToken()!!
 
+            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
+                it.address.asEthereumAddressChecksumString()
+            }
+
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
                 // safes are always added and never removed on the registration request
-                safes = listOf(),
+                safes = safes,
                 cloudMessagingToken = token,
                 bundle = BuildConfig.APPLICATION_ID,
                 deviceType = "ANDROID",
                 version = appVersion,
                 buildNumber = BuildConfig.VERSION_CODE.toString(),
-                timestamp = System.currentTimeMillis().toString()
+                timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
             // registration without signatures
@@ -254,4 +242,14 @@ class NotificationRepository(
     companion object {
         private const val DEVICE_UUID = "prefs.string.device_uuid"
     }
+}
+
+fun Registration.buildAndAddSignature(key: ByteArray) {
+    val signature =
+        KeyPair
+            .fromPrivate(key)
+            .sign(hash().hexToByteArray())
+            .toSignatureString()
+            .addHexPrefix()
+    addSignature(signature)
 }

@@ -20,16 +20,12 @@ data class Registration(
 
         val stringToHash = StringBuilder().apply {
             append(PREFIX)
+            append(timestamp)
             append(uuid)
+            append(cloudMessagingToken)
             safes.forEach {
                 append(it)
             }
-            append(cloudMessagingToken)
-            append(bundle)
-            append(version)
-            append(deviceType)
-            append(buildNumber)
-            append(timestamp)
         }.toString()
 
         return Sha3Utils.keccak(stringToHash.toByteArray()).toHexString().addHexPrefix()

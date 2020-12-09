@@ -1,10 +1,17 @@
 package io.gnosis.safe.notifications
 
 import io.gnosis.safe.notifications.models.Registration
+import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.mnemonic.Bip39Generator
+import pm.gnosis.mnemonic.wordlists.WordListProvider
 
 class RegistrationTest {
+
+    private val wordListProvider: WordListProvider = mockk()
 
     @Test
     fun testHash() {
@@ -20,9 +27,40 @@ class RegistrationTest {
             timestamp = TIMESTAMP
         )
 
-        assertEquals("0x32938555b77412e2583786eb3ae139b93ca23f1c5f20e75df830e7406b9c6f14", registration.hash())
+        assertEquals("0xc1faf614797d0ab4bb011163bf5166c3694f19042b260427b69ba9c69a4076e5", registration.hash())
     }
 
+    @Test
+    fun testSignature() {
+
+        val derivator = MnemonicKeyAndAddressDerivator(Bip39Generator(wordListProvider))
+        derivator.initialize("display bless asset brother fish sauce lyrics grit friend online tumble useless")
+
+        val key = derivator.keyForIndex(0)
+        val address = derivator.addressesForPage(0, 1)[0]
+
+        assertEquals("0x8Cd8D40103B500fc80bb2D1709bB8b23C8BdaF87", address.asEthereumAddressChecksumString())
+
+        val registration = Registration(
+            uuid = UUID,
+            safes = listOf(SAFE_1, SAFE_2),
+            cloudMessagingToken = CLOUD_MESSAGING_TOKEN,
+            bundle = BUNDLE,
+            version = VERSION,
+            deviceType = DEVICE_TYPE,
+            buildNumber = BUILD_NUMBER,
+            timestamp = TIMESTAMP
+        )
+
+        assertEquals("0xc1faf614797d0ab4bb011163bf5166c3694f19042b260427b69ba9c69a4076e5", registration.hash())
+
+        registration.buildAndAddSignature(key.toByteArray())
+
+        assertEquals(
+            "0x77a687a3e0021202c4d542a6aeccdb0a22bdcb722892d3a5082334d2c72468771a1e7aa303925a0115a09789c36a2a1e7bb5feb212bbd4db7c9f0c1ab01739291b",
+            registration.signatures[0]
+        )
+    }
 
     companion object {
         const val UUID = "33971c4e-fb98-4e18-a08d-13c881ae292a"
@@ -34,6 +72,6 @@ class RegistrationTest {
         const val VERSION = "2.7.0"
         const val DEVICE_TYPE = "IOS"
         const val BUILD_NUMBER = "199"
-        const val TIMESTAMP = "1605186645155"
+        const val TIMESTAMP = "1607013002"
     }
 }
