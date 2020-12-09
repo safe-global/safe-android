@@ -16,7 +16,7 @@ class NightModeAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsApp
     override fun screenId() = ScreenId.SETTINGS_APP_ADVANCED
 
     @Inject
-    lateinit var appearanceSettingsHandler: AppearanceSettingsHandler
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -32,7 +32,7 @@ class NightModeAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsApp
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
-            when (appearanceSettingsHandler.nightMode) {
+            when (settingsHandler.nightMode) {
                 MODE_NIGHT_YES -> {
                     darkChecked()
                 }
@@ -45,18 +45,18 @@ class NightModeAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsApp
             }
             auto.setOnClickListener {
                 autoChecked()
-                appearanceSettingsHandler.nightMode = MODE_NIGHT_FOLLOW_SYSTEM
-                appearanceSettingsHandler.applyNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+                settingsHandler.nightMode = MODE_NIGHT_FOLLOW_SYSTEM
+                settingsHandler.applyNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
             }
             light.setOnClickListener {
                 lightChecked()
-                appearanceSettingsHandler.nightMode = MODE_NIGHT_NO
-                appearanceSettingsHandler.applyNightMode(MODE_NIGHT_NO)
+                settingsHandler.nightMode = MODE_NIGHT_NO
+                settingsHandler.applyNightMode(MODE_NIGHT_NO)
             }
             dark.setOnClickListener {
                 darkChecked()
-                appearanceSettingsHandler.nightMode = MODE_NIGHT_YES
-                appearanceSettingsHandler.applyNightMode(MODE_NIGHT_YES)
+                settingsHandler.nightMode = MODE_NIGHT_YES
+                settingsHandler.applyNightMode(MODE_NIGHT_YES)
             }
         }
     }

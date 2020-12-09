@@ -8,8 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.di.modules.ViewModule
-import io.gnosis.safe.ui.settings.app.AppearanceSettingsHandler
-import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -18,21 +17,18 @@ abstract class BaseActivity : AppCompatActivity() {
     lateinit var tracker: Tracker
 
     @Inject
-    lateinit var privacySettingsHandler: PrivacySettingsHandler
-
-    @Inject
-    lateinit var appearanceSettingsHandler: AppearanceSettingsHandler
+    lateinit var settingsHandler: SettingsHandler
 
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
-        privacySettingsHandler.allowScreenShots(window, privacySettingsHandler.screenshotsAllowed)
+        settingsHandler.allowScreenShots(window, settingsHandler.screenshotsAllowed)
         screenId()?.let {
             tracker.logScreen(it)
         }
-        appearanceSettingsHandler.applyNightMode(appearanceSettingsHandler.nightMode)
+        settingsHandler.applyNightMode(settingsHandler.nightMode)
     }
 
     protected fun viewComponent(): ViewComponent =
