@@ -129,6 +129,11 @@
             app:popUpTo="@id/settingsFragment" />
 
         <action
+            android:id="@+id/action_settingsFragment_to_nightModeSettingsFragment"
+            app:destination="@id/nightModeAppSettingsFragment"
+            app:popUpTo="@id/settingsFragment" />
+
+        <action
             android:id="@+id/action_settingsFragment_to_advancedSafeSettingsFragment"
             app:destination="@id/advancedSafeSettingsFragment" />
 
@@ -159,6 +164,12 @@
         android:name="io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment"
         android:label="AdvancedAppSettingsFragment"
         tools:layout="@layout/fragment_settings_app_advanced" />
+
+    <fragment
+        android:id="@+id/nightModeAppSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment"
+        android:label="Appearance"
+        tools:layout="@layout/fragment_settings_app_night_mode" />
 
     <fragment
         android:id="@+id/transactionListFragment"

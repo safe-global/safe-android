@@ -13,7 +13,6 @@
     <color name="background">@color/black_five</color>
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
-<!--    <color name="surface_04_dimmed">@color/black_three_dimmed</color>-->
     <color name="surface_08">@color/black_two</color>
     <color name="separator">@color/black_five</color>
 
@@ -23,5 +22,5 @@
 
     <color name="outline">@color/charcoal_grey</color>
     <color name="illustration_background">@color/dark_grey_two</color>
-    <color name="logo_background">@color/orangish</color>
+    <color name="logo_background">@color/white_two</color>
 </resources>

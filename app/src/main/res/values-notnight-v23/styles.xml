@@ -4,6 +4,7 @@
     <!-- App -->
     <style name="DayNightThemeBase" parent="AppTheme">
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorBackgroundFloating">@color/surface_04</item>
     </style>
 
     <!-- Share Safe Dialog -->
