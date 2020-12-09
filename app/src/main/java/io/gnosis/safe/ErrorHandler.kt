@@ -1,7 +1,9 @@
 package io.gnosis.safe
 
 import android.content.Context
+import android.view.View
 import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
 import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsResolutionError
 import io.gnosis.data.repositories.EnsReverseRecordNotSetError
@@ -102,4 +104,10 @@ fun Throwable.toError(): Error =
         this is SocketTimeoutException -> Error.ERROR_103
         this is UnknownHostException || this is ConnectException -> Error.ERROR_104
         else -> Error.ERROR_UNKNOWN
+    }
+
+fun errorSnackbar(view: View, text: CharSequence, duration: Int = 6000, action: Pair<String, (View) -> Unit>? = null) =
+    Snackbar.make(view, text, duration).apply {
+        action?.let { setAction(it.first, it.second) }
+        show()
     }
