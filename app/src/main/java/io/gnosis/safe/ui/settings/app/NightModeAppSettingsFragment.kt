@@ -61,21 +61,27 @@ class NightModeAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsApp
         }
     }
 
-    private fun FragmentSettingsAppNightModeBinding.darkChecked() {
-        auto.checked = false
-        light.checked = false
-        dark.checked = true
+    private fun darkChecked() {
+        with(binding) {
+            auto.checked = false
+            light.checked = false
+            dark.checked = true
+        }
     }
 
-    private fun FragmentSettingsAppNightModeBinding.lightChecked() {
-        auto.checked = false
-        light.checked = true
-        dark.checked = false
+    private fun lightChecked() {
+        with(binding) {
+            auto.checked = false
+            light.checked = true
+            dark.checked = false
+        }
     }
 
-    private fun FragmentSettingsAppNightModeBinding.autoChecked() {
-        auto.checked = true
-        light.checked = false
-        dark.checked = false
+    private fun autoChecked() {
+        with(binding) {
+            auto.checked = true
+            light.checked = false
+            dark.checked = false
+        }
     }
 }
