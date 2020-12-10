@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogSafeSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
+import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
 import javax.inject.Inject
 
 class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBinding>() {
@@ -53,7 +55,9 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
 
         with(binding) {
             list.layoutManager = LinearLayoutManager(context)
-            list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            dividerItemDecoration.setDrawable(getDrawable(requireContext(), R.drawable.divider)!!)
+            list.addItemDecoration(dividerItemDecoration)
             list.adapter = adapter
         }
 

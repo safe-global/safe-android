@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/surface_01">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_container"
@@ -17,7 +17,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="12dp"
         android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/surface_04"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,8 @@
                 android:id="@+id/logo"
                 android:layout_width="144dp"
                 android:layout_height="144dp"
-                android:background="@color/whitesmoke_two"
+                android:background="@color/surface_04"
+                tools:src="@drawable/ic_collectible_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -45,6 +46,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                tools:text="Unknown"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/logo"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -60,6 +62,7 @@
                 android:layout_marginBottom="28dp"
                 android:ellipsize="end"
                 android:maxLines="2"
+                tools:text="Description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/logo"
                 app:layout_constraintTop_toBottomOf="@id/name" />

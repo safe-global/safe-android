@@ -17,7 +17,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.base.fragment.BaseDialogFragment
 import io.gnosis.safe.ui.base.fragment.BaseFragment
-import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
@@ -53,7 +53,7 @@ interface ApplicationComponent {
 
     fun termsChecker(): TermsChecker
 
-    fun screenshotAuthorizer(): PrivacySettingsHandler
+    fun settingsHandler(): SettingsHandler
 
     fun tracker(): Tracker
 

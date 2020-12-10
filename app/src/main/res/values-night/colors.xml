@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">@color/teal</color>
+    <color name="on_primary">@color/black</color>
+    <color name="primary_dark">@color/safe_green_dark</color>
+    <color name="secondary">@color/pale_red</color>
+    <color name="error">@color/coral</color>
+    <color name="accent">@color/white_two</color>
+    <color name="window_background">@color/background</color>
+    <color name="toolbar_action">@color/white_two</color>
+
+    <color name="background">@color/black_five</color>
+    <color name="surface_01">@color/black_four</color>
+    <color name="surface_04">@color/black_three</color>
+    <color name="surface_08">@color/black_two</color>
+    <color name="separator">@color/black_five</color>
+
+    <color name="text_emphasis_high">@color/white_two</color>
+    <color name="text_emphasis_medium">@color/blue_grey</color>
+    <color name="text_emphasis_low">@color/slate_grey</color>
+
+    <color name="outline">@color/charcoal_grey</color>
+    <color name="illustration_background">@color/dark_grey_two</color>
+    <color name="logo_background">@color/white_two</color>
+</resources>

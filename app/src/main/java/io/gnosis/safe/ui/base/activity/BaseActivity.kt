@@ -2,14 +2,13 @@ package io.gnosis.safe.ui.base.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.components.DaggerViewComponent
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.di.modules.ViewModule
-import io.gnosis.safe.ui.settings.app.PrivacySettingsHandler
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -18,21 +17,18 @@ abstract class BaseActivity : AppCompatActivity() {
     lateinit var tracker: Tracker
 
     @Inject
-    lateinit var privacySettingsHandler: PrivacySettingsHandler
+    lateinit var settingsHandler: SettingsHandler
 
     abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //FIXME: remove when dark mode is implemented
-        if (delegate.localNightMode != AppCompatDelegate.MODE_NIGHT_NO) {
-            delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-        }
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
-        privacySettingsHandler.allowScreenShots(window, privacySettingsHandler.screenshotsAllowed)
+        settingsHandler.allowScreenShots(window, settingsHandler.screenshotsAllowed)
         screenId()?.let {
             tracker.logScreen(it)
         }
+        settingsHandler.applyNightMode(settingsHandler.nightMode)
     }
 
     protected fun viewComponent(): ViewComponent =

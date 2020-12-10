@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/surface_04">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -80,7 +80,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/tx_service"
@@ -92,7 +92,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/client_gateway_service"
@@ -104,7 +104,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <TextView
                 style="@style/Header"
@@ -116,7 +116,7 @@
                 android:layout_height="60dp"
                 android:paddingTop="@dimen/default_margin"
                 android:paddingBottom="@dimen/default_margin"
-                android:background="@color/white"
+                android:background="@color/surface_01"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
                 app:setting_name="@string/enable_screenshots" />
@@ -124,7 +124,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/item_separator"/>
+                android:background="@color/separator"/>
 
             <TextView
                 style="@style/Helptext"

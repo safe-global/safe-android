@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
         android:lineSpacingExtra="3sp"
-        android:textColor="@color/white"
+        android:textColor="@color/white_two"
         android:textSize="13sp"
         tools:text="0xf12a3d9f938e13cd947ec05abc7fe734df8d3910" />
 

@@ -38,7 +38,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setStyle(STYLE_NO_FRAME, R.style.FullScreenDialog)
+        setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
     }
 

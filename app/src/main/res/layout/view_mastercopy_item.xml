@@ -27,7 +27,7 @@
         android:drawablePadding="6dp"
         android:fontFamily="sans-serif-medium"
         android:paddingHorizontal="6dp"
-        android:textColor="@color/tomato"
+        android:textColor="@color/error"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/address"
         app:layout_constraintEnd_toStartOf="@id/link"
@@ -37,7 +37,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:drawableStart="@drawable/ic_check"
         tools:text="Upgrade available"
-        tools:textColor="@color/safe_green" />
+        tools:textColor="@color/primary" />
 
     <TextView
         android:id="@+id/address"
@@ -46,7 +46,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
-        android:textColor="@color/medium_grey"
+        android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/link"

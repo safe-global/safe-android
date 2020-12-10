@@ -77,7 +77,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator"
+        android:background="@color/separator"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </merge>
