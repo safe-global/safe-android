@@ -64,13 +64,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
-                    }
-                    if (txId == null) {
-                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
-                    } else {
-                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
-                            putString("txId", txId)
-                        })
+                        if (txId == null) {
+                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
+                        } else {
+                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
+                                putString("txId", txId)
+                            })
+                        }
                     }
                 }
             }
