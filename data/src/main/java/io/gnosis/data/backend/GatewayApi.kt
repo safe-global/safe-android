@@ -15,9 +15,11 @@ interface GatewayApi {
     @GET("/v1/safes/{address}/balances/{fiat}")
     suspend fun loadBalances(@Path("address") address: String, @Path("fiat") fiat: String = "usd"): CoinBalances
 
+    @Deprecated("Use loadTransactionsHistory() or loadTransactionsQueue()")
     @GET("v1/safes/{address}/transactions")
     suspend fun loadTransactions(@Path("address") address: String): Page<Transaction>
 
+    @Deprecated("Use loadUnifiedTransactionsPage()")
     @GET
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<Transaction>
 
