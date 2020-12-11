@@ -3,7 +3,10 @@ package io.gnosis.safe.ui.transactions
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -68,41 +71,49 @@ class TransactionListViewModel
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
             .map { pagingData ->
                 pagingData
-                    .map { transaction ->
-                        getTransactionView(transaction, safe, transaction.canBeSignedByOwner(owner))
+                    .map { unifiedEntry ->
+
+                        when(unifiedEntry) {
+                            is UnifiedEntry.Transaction -> getTransactionView(unifiedEntry.transaction, safe, unifiedEntry.transaction.canBeSignedByOwner(owner))
+                            is UnifiedEntry.DateLabel -> TransactionView.Unknown
+                            is UnifiedEntry.Label -> TransactionView.Unknown
+                            is UnifiedEntry.ConflictHeader -> TransactionView.Unknown
+                            UnifiedEntry.Unknown -> TransactionView.Unknown
+                        }
+
                     }
                     .filter { it !is TransactionView.Unknown }
             }
-            .map {
-                // insert headers
-                it.insertSeparators { before, after ->
-
-                    if (after == null) {
-                        // we're at the end of the list
-                        return@insertSeparators null  // no separator
-                    }
-
-                    if (before == null) {
-                        // we're at the beginning of the list
-
-                        return@insertSeparators if (after.isQueued()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
-                        } else if (after.isHistory()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_history)
-                        } else {
-                            null // no separator
-                        }
-                    }
-
-                    // we're in the middle of the list
-                    if (before.isQueued() && after.isHistory()) {
-                        // insert history separator after queued transaction
-                        TransactionView.SectionHeader(title = R.string.tx_list_history)
-                    } else {
-                        null // no separator
-                    }
-                }
-            }
+//            .map {
+//                // insert headers
+//                it.insertSeparators { before, after ->
+//
+//                    if (after == null) {
+//                        // we're at the end of the list
+//                        return@insertSeparators null  // no separator
+//                    }
+//
+//                    if (before == null) {
+//                        // we're at the beginning of the list
+//
+//                        return@insertSeparators if (after.isQueued()) {
+//                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
+//                        } else if (after.isHistory()) {
+//                            TransactionView.SectionHeader(title = R.string.tx_list_history)
+//                        } else {
+//                            null // no separator
+//                        }
+//                    }
+//
+//                    // we're in the middle of the list
+//                    if (before.isQueued() && after.isHistory()) {
+//                        // insert history separator after queued transaction
+//                        TransactionView.SectionHeader(title = R.string.tx_list_history)
+//                    } else {
+//                        null // no separator
+//                    }
+//                }
+//            }
             .cachedIn(viewModelScope)
 
         return safeTxItems
