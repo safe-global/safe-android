@@ -19,7 +19,7 @@ interface GatewayApi {
     suspend fun loadTransactions(@Path("address") address: String): Page<Transaction>
 
     @GET
-    suspend fun loadTransactionsPage(@Url pageLink: String): Page<UnifiedEntry>
+    suspend fun loadTransactionsPage(@Url pageLink: String): Page<Transaction>
 
     @GET("v1/transactions/{transactionId}")
     suspend fun loadTransactionDetails(@Path("transactionId") transactionId: String): TransactionDetails
@@ -38,7 +38,6 @@ interface GatewayApi {
     suspend fun loadTransactionsHistory(@Path("address") address: String): Page<UnifiedEntry>
 
     @GET("v1/safes/{address}/transactions/queued")
-//    suspend fun loadTransactionsQueue(@Path("address") address: String, @Query("trusted") trusted: Boolean): Page<UnifiedEntry>
     suspend fun loadTransactionsQueue(@Path("address") address: String): Page<UnifiedEntry>
 
     @GET

@@ -75,45 +75,14 @@ class TransactionListViewModel
 
                         when(unifiedEntry) {
                             is UnifiedEntry.Transaction -> getTransactionView(unifiedEntry.transaction, safe, unifiedEntry.transaction.canBeSignedByOwner(owner))
-                            is UnifiedEntry.DateLabel -> TransactionView.Unknown
-                            is UnifiedEntry.Label -> TransactionView.Unknown
-                            is UnifiedEntry.ConflictHeader -> TransactionView.Unknown
+                            is UnifiedEntry.DateLabel -> TransactionView.SectionHeader(unifiedEntry.timestamp.toString())
+                            is UnifiedEntry.Label -> TransactionView.SectionHeader(unifiedEntry.label.toString())
+                            is UnifiedEntry.ConflictHeader -> TransactionView.SectionHeader(unifiedEntry.nonce.toString())
                             UnifiedEntry.Unknown -> TransactionView.Unknown
                         }
-
                     }
                     .filter { it !is TransactionView.Unknown }
             }
-//            .map {
-//                // insert headers
-//                it.insertSeparators { before, after ->
-//
-//                    if (after == null) {
-//                        // we're at the end of the list
-//                        return@insertSeparators null  // no separator
-//                    }
-//
-//                    if (before == null) {
-//                        // we're at the beginning of the list
-//
-//                        return@insertSeparators if (after.isQueued()) {
-//                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
-//                        } else if (after.isHistory()) {
-//                            TransactionView.SectionHeader(title = R.string.tx_list_history)
-//                        } else {
-//                            null // no separator
-//                        }
-//                    }
-//
-//                    // we're in the middle of the list
-//                    if (before.isQueued() && after.isHistory()) {
-//                        // insert history separator after queued transaction
-//                        TransactionView.SectionHeader(title = R.string.tx_list_history)
-//                    } else {
-//                        null // no separator
-//                    }
-//                }
-//            }
             .cachedIn(viewModelScope)
 
         return safeTxItems

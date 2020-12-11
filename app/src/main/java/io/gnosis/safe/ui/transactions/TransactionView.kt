@@ -154,7 +154,7 @@ sealed class TransactionView(
         val transactionHash: String
     )
 
-    data class SectionHeader(@StringRes val title: Int, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
+    data class SectionHeader(val title: String, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
 
     object Unknown : TransactionView(null, "<unused>")
 }
