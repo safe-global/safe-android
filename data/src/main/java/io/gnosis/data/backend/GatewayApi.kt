@@ -9,6 +9,7 @@ import io.gnosis.data.models.transaction.TransactionConfirmationRequest
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.UnifiedEntry
 import retrofit2.http.*
+import java.util.*
 
 interface GatewayApi {
 
@@ -37,10 +38,10 @@ interface GatewayApi {
 
     // Unified endpoints
     @GET("v1/safes/{address}/transactions/history")
-    suspend fun loadTransactionsHistory(@Path("address") address: String): Page<UnifiedEntry>
+    suspend fun loadTransactionsHistory(@Path("address") address: String, @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)): Page<UnifiedEntry>
 
     @GET("v1/safes/{address}/transactions/queued")
-    suspend fun loadTransactionsQueue(@Path("address") address: String): Page<UnifiedEntry>
+    suspend fun loadTransactionsQueue(@Path("address") address: String, @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)): Page<UnifiedEntry>
 
     @GET
     suspend fun loadUnifiedTransactionsPage(@Url pageLink: String): Page<UnifiedEntry>
