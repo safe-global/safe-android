@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import java.util.*
 import io.gnosis.data.models.transaction.Transaction as TransactionSummary
 
-enum class UnifiedEntryType {
+enum class TxListEntryType {
     @Json(name = "TRANSACTION")  TRANSACTION,
     @Json(name = "DATE_LABEL")  DATE_LABEL,
     @Json(name = "LABEL") LABEL,
@@ -23,24 +23,24 @@ enum class LabelType {
     @Json(name = "Queued") Queued
 }
 
-sealed class UnifiedEntry(@Json(name = "type") val type: UnifiedEntryType) {
+sealed class TxListEntry(@Json(name = "type") val type: TxListEntryType) {
 
     data class Transaction(
         @Json(name = "transaction") val transaction: TransactionSummary,
         @Json(name = "conflictType") val conflictType: ConflictType
-    ) : UnifiedEntry(UnifiedEntryType.TRANSACTION)
+    ) : TxListEntry(TxListEntryType.TRANSACTION)
 
     data class DateLabel(
         @Json(name = "timestamp")  val timestamp: Date
-    ) : UnifiedEntry(UnifiedEntryType.DATE_LABEL)
+    ) : TxListEntry(TxListEntryType.DATE_LABEL)
 
     data class Label(
         @Json(name = "label") val label: LabelType
-    ) : UnifiedEntry(UnifiedEntryType.LABEL)
+    ) : TxListEntry(TxListEntryType.LABEL)
 
     data class ConflictHeader(
         @Json(name = "nonce") val nonce: Long
-    ) : UnifiedEntry(UnifiedEntryType.CONFLICT_HEADER)
+    ) : TxListEntry(TxListEntryType.CONFLICT_HEADER)
 
-    object Unknown : UnifiedEntry(UnifiedEntryType.UNKNOWN)
+    object Unknown : TxListEntry(TxListEntryType.UNKNOWN)
 }

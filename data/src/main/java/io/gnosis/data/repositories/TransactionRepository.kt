@@ -5,7 +5,7 @@ import io.gnosis.data.models.Page
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.TransactionConfirmationRequest
 import io.gnosis.data.models.transaction.TransactionDetails
-import io.gnosis.data.models.transaction.UnifiedEntry
+import io.gnosis.data.models.transaction.TxListEntry
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -18,15 +18,15 @@ class TransactionRepository(
     private val gatewayApi: GatewayApi
 ) {
 
-    suspend fun getTransactions(safeAddress: Solidity.Address): Page<UnifiedEntry> {
+    suspend fun getTransactions(safeAddress: Solidity.Address): Page<TxListEntry> {
         val queued = gatewayApi.loadTransactionsQueue(safeAddress.asEthereumAddressChecksumString())
         val history = gatewayApi.loadTransactionsHistory(safeAddress.asEthereumAddressChecksumString())
 
         return Page((queued.count ?: 0) + (history.count ?: 0), history.next, history.previous, queued.results + history.results)
     }
 
-    suspend fun loadTransactionsPage(pageLink: String): Page<UnifiedEntry> =
-        gatewayApi.loadUnifiedTransactionsPage(pageLink)
+    suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
+        gatewayApi.loadTransactionsPage(pageLink)
 
     suspend fun getTransactionDetails(txId: String): TransactionDetails =
         gatewayApi.loadTransactionDetails(txId)

@@ -51,12 +51,12 @@ class TransactionRepositoryTransferTest(
 
         assertEquals(3, actual.results.size)
         (0..2).forEach { i ->
-            val actualTransaction = actual.results[i] as UnifiedEntry.Transaction
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
             assertEquals(
-                (pagedResult[i] as UnifiedEntry.Transaction).transaction.executionInfo?.nonce,
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
                 actualTransaction.transaction.executionInfo?.nonce
             )
-            val txInfo = ((pagedResult[i] as UnifiedEntry.Transaction).transaction.txInfo as TransactionInfo.Transfer)
+            val txInfo = ((pagedResult[i] as TxListEntry.Transaction).transaction.txInfo as TransactionInfo.Transfer)
             when (val transferInfo = txInfo.transferInfo) {
                 is TransferInfo.Erc20Transfer -> {
                     val erc20Transfer = txInfo.transferInfo as TransferInfo.Erc20Transfer
@@ -123,12 +123,12 @@ class TransactionRepositoryTest {
 
         assertEquals(4, actual.results.size)
         (0..3).forEach { i ->
-            val actualTransaction = actual.results[i] as UnifiedEntry.Transaction
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
             assertEquals(
-                (pagedResult[i] as UnifiedEntry.Transaction).transaction.executionInfo?.nonce,
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
                 actualTransaction.transaction.executionInfo?.nonce
             )
-            val transaction = (pagedResult[i] as UnifiedEntry.Transaction).transaction
+            val transaction = (pagedResult[i] as TxListEntry.Transaction).transaction
             when (val txInfo = transaction.txInfo) {
                 is TransactionInfo.Transfer -> {
                     assertEquals(transaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
@@ -164,19 +164,19 @@ class TransactionRepositoryTest {
             buildGateTransaction(txInfo = buildCustomTxInfo()),
             buildGateTransaction(txInfo = buildSettingsChangeTxInfo())
         )
-        coEvery { gatewayApi.loadUnifiedTransactionsPage(any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsPage(any()) } returns Page(1, null, null, pagedResult)
 
         val actual = transactionRepository.loadTransactionsPage("url")
 
         assertEquals(3, actual.results.size)
 
         (0..2).forEach { i ->
-            val actualTransaction = actual.results[i] as UnifiedEntry.Transaction
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
             assertEquals(
-                (pagedResult[i] as UnifiedEntry.Transaction).transaction.executionInfo?.nonce,
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
                 actualTransaction.transaction.executionInfo?.nonce
             )
-            val pagedTransaction = (pagedResult[i] as UnifiedEntry.Transaction).transaction
+            val pagedTransaction = (pagedResult[i] as TxListEntry.Transaction).transaction
             when (val txInfo = pagedTransaction.txInfo) {
                 is TransactionInfo.Transfer -> {
                     assertEquals(pagedTransaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
@@ -295,7 +295,7 @@ private fun buildGateTransaction(
     id: String = "1234",
     status: TransactionStatus = TransactionStatus.SUCCESS,
     txInfo: TransactionInfo = buildTransferTxInfo()
-): UnifiedEntry = UnifiedEntry.Transaction(
+): TxListEntry = TxListEntry.Transaction(
     transaction = Transaction(
         id = id,
         txStatus = status,

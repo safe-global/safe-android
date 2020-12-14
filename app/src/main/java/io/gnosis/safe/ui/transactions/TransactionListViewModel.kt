@@ -71,14 +71,14 @@ class TransactionListViewModel
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
             .map { pagingData ->
                 pagingData
-                    .map { unifiedEntry ->
+                    .map { txListEntry ->
 
-                        when(unifiedEntry) {
-                            is UnifiedEntry.Transaction -> getTransactionView(unifiedEntry.transaction, safe, unifiedEntry.transaction.canBeSignedByOwner(owner))
-                            is UnifiedEntry.DateLabel -> TransactionView.SectionHeader(unifiedEntry.timestamp.toString())
-                            is UnifiedEntry.Label -> TransactionView.SectionHeader(unifiedEntry.label.toString())
-                            is UnifiedEntry.ConflictHeader -> TransactionView.SectionHeader(unifiedEntry.nonce.toString())
-                            UnifiedEntry.Unknown -> TransactionView.Unknown
+                        when(txListEntry) {
+                            is TxListEntry.Transaction -> getTransactionView(txListEntry.transaction, safe, txListEntry.transaction.canBeSignedByOwner(owner))
+                            is TxListEntry.DateLabel -> TransactionView.SectionHeader(txListEntry.timestamp.toString())
+                            is TxListEntry.Label -> TransactionView.SectionHeader(txListEntry.label.toString())
+                            is TxListEntry.ConflictHeader -> TransactionView.SectionHeader(txListEntry.nonce.toString())
+                            TxListEntry.Unknown -> TransactionView.Unknown
                         }
                     }
                     .filter { it !is TransactionView.Unknown }
