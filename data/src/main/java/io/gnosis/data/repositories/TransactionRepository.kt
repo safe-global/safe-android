@@ -18,12 +18,11 @@ class TransactionRepository(
     private val gatewayApi: GatewayApi
 ) {
 
-    suspend fun getTransactions(safeAddress: Solidity.Address): Page<TxListEntry> {
-        val queued = gatewayApi.loadTransactionsQueue(safeAddress.asEthereumAddressChecksumString())
-        val history = gatewayApi.loadTransactionsHistory(safeAddress.asEthereumAddressChecksumString())
+    suspend fun getQueuedTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
+        gatewayApi.loadTransactionsQueue(safeAddress.asEthereumAddressChecksumString())
 
-        return Page((queued.count ?: 0) + (history.count ?: 0), history.next, history.previous, queued.results + history.results)
-    }
+    suspend fun getHistoryTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
+        gatewayApi.loadTransactionsHistory(safeAddress.asEthereumAddressChecksumString())
 
     suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
         gatewayApi.loadTransactionsPage(pageLink)

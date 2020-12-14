@@ -135,7 +135,7 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ownerRepository.retrieveCredentials() } returns null
-        coEvery { transactionRepository.getTransactions(any()) } throws throwable
+        coEvery { transactionRepository.getHistoryTransactions(any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any()) } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 

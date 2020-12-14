@@ -17,7 +17,7 @@ class TransactionPagingSource(
         val pageLink = params.key
 
         kotlin.runCatching {
-            pageLink?.let { txRepo.loadTransactionsPage(pageLink) } ?: txRepo.getTransactions(safe)
+            pageLink?.let { txRepo.loadTransactionsPage(pageLink) } ?: txRepo.getHistoryTransactions(safe)
 
         }.onSuccess {
             return LoadResult.Page(

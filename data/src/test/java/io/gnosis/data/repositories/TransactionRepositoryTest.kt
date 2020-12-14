@@ -47,7 +47,7 @@ class TransactionRepositoryTransferTest(
         coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
         coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
         assertEquals(3, actual.results.size)
         (0..2).forEach { i ->
@@ -96,15 +96,15 @@ class TransactionRepositoryTest {
     @Test
     fun `getTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
-        coEvery { gatewayApi.loadTransactionsQueue(any()) } throws throwable
+        coEvery { gatewayApi.loadTransactionsHistory(any()) } throws throwable
 
-        val actual = runCatching { transactionRepository.getTransactions(defaultSafeAddress) }
+        val actual = runCatching { transactionRepository.getHistoryTransactions(defaultSafeAddress) }
 
         with(actual) {
             assert(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.loadTransactionsQueue(defaultSafeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.loadTransactionsHistory(defaultSafeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
@@ -119,7 +119,7 @@ class TransactionRepositoryTest {
         coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
         coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
         assertEquals(4, actual.results.size)
         (0..3).forEach { i ->
