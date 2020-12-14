@@ -6,7 +6,6 @@ import io.gnosis.data.repositories.TransactionRepository
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
-
 class TransactionPagingSource(
     private val safe: Solidity.Address,
     private val txRepo: TransactionRepository
