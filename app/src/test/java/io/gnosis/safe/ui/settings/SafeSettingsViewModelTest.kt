@@ -238,12 +238,12 @@ class SafeSettingsViewModelTest {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)
-            notificationRepository.unregisterSafe(SAFE_1.address)
             safeRepository.getSafes()
             safeRepository.clearActiveSafe()
             safeRepository.getSafeCount()
             // verify SAFE_REMOVE event was tracked
             tracker.setNumSafes(0)
+            notificationRepository.unregisterSafe(SAFE_1.address)
         }
     }
 
@@ -290,12 +290,12 @@ class SafeSettingsViewModelTest {
             safeRepository.getSafeInfo(SAFE_2.address)
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)
-            notificationRepository.unregisterSafe(SAFE_1.address)
             safeRepository.getSafes()
             safeRepository.setActiveSafe(SAFE_2)
             safeRepository.getSafeCount()
             // verify SAFE_REMOVE event was tracked
             tracker.setNumSafes(1)
+            notificationRepository.unregisterSafe(SAFE_1.address)
         }
     }
 
