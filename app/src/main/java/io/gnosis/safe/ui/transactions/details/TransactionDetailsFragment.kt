@@ -169,7 +169,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 binding.created.visible(true)
                 binding.createdDivider.visible(true)
-                binding.created.value = executionInfo.submittedAt.formatBackendDate()
+                binding.created.value = executionInfo.submittedAt.formatBackendDateTime()
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> {
                 hideCreatedAndConfirmations()
@@ -200,7 +200,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         if (txDetails.executedAt != null) {
             binding.executed.visible(true)
             binding.executedDivider.visible(true)
-            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
+            binding.executed.value = txDetails.executedAt!!.formatBackendDateTime()
         } else {
             binding.executed.visible(false)
             binding.executedDivider.visible(false)
