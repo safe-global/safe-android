@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:background="@color/surface_01">
 
     <io.gnosis.safe.ui.transactions.details.view.TxTransferActionView
         android:id="@+id/tx_action"
@@ -18,20 +19,19 @@
         android:id="@+id/action_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
     <io.gnosis.safe.ui.settings.view.NamedAddressItem
         android:id="@+id/contract_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:show_named_address_separator="false"
-        />
+        app:show_named_address_separator="false" />
 
     <View
         android:id="@+id/contract_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
     <io.gnosis.safe.ui.transactions.details.view.TxStatusView
         android:id="@+id/tx_status"
@@ -42,6 +42,6 @@
         android:id="@+id/status_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator" />
+        android:background="@color/separator" />
 
 </LinearLayout>

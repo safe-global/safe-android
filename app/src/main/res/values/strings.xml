@@ -110,6 +110,9 @@
     <string name="settings_tab_app">APP SETTINGS</string>
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
+    <string name="settings_app_auto">Auto</string>
+    <string name="settings_app_dark">Dark</string>
+    <string name="settings_app_light">Light</string>
     <string name="settings_app_import_owner_key">Import owner key</string>
     <string name="settings_app_imported_owner_key">Imported owner key</string>
     <string name="settings_app_terms_of_use">Terms of use</string>
@@ -143,6 +146,9 @@
 
     <string name="url_copied">URL copied</string>
     <string name="url_copied_success">URL copied to clipboard</string>
+
+    <string name="tx_tab_queue">QUEUE</string>
+    <string name="tx_tab_history">HISTORY</string>
 
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>

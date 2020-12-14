@@ -8,7 +8,7 @@
         android:title="@string/assets"
         app:showAsAction="always" />
     <item
-        android:id="@+id/transactionListFragment"
+        android:id="@+id/transactionsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_transactions_24dp"
         android:title="@string/transactions"

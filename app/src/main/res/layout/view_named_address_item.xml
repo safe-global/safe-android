@@ -27,7 +27,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
-        android:textColor="@color/medium_grey"
+        android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/link"
@@ -64,6 +64,6 @@
         android:id="@+id/named_address_item_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
-        android:background="@color/item_separator"
+        android:background="@color/separator"
         app:layout_constraintBottom_toBottomOf="parent" />
 </merge>

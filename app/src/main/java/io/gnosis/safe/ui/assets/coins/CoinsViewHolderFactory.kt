@@ -42,7 +42,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
 
     override fun bind(coinBalance: CoinsViewData.CoinBalance, payloads: List<Any>) {
         with(viewBinding) {
-            logoImage.loadTokenLogo(coinBalance.logoUri)
+            logoImage.loadTokenLogo(icon = coinBalance.logoUri)
             symbol.text = coinBalance.symbol
             balance.text = coinBalance.balance
             balanceUsd.text = root.context.getString(coinBalance.balanceFiatStringRes, coinBalance.balanceFiat)

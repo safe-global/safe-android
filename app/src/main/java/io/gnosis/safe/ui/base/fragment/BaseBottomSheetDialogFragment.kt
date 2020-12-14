@@ -58,7 +58,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
     }
 
     override fun getTheme(): Int {
-        return R.style.BottomSheetDialogTheme
+        return R.style.DayNightBottomSheetDialogTheme
     }
 
     private fun buildViewComponent(context: Context) =

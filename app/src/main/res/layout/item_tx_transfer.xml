@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/surface_01"
     android:minHeight="@dimen/item_tx_m_height">
 
     <ImageView
@@ -47,7 +47,7 @@
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_small_margin"
         android:gravity="end"
-        android:textColor="@color/safe_green"
+        android:textColor="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintStart_toEndOf="@+id/ellipsized_address"
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_small_margin"
-        android:textColor="@color/safe_failed_red"
+        android:textColor="@color/error"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"

@@ -64,13 +64,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
-                        if (txId == null) {
-                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionListFragment)
-                        } else {
-                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
-                                putString("txId", txId)
-                            })
-                        }
+                        setSafeData(it)
+                    }
+                    //TODO: figure out which tab (QUEUE vs HISTORY) to open
+                    if (txId == null) {
+                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment)
+                    } else {
+                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
+                            putString("txId", txId)
+                        })
                     }
                 }
             }
@@ -93,7 +95,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun isFullscreen(id: Int?): Boolean =
         id != R.id.assetsFragment &&
-                id != R.id.transactionListFragment &&
+                id != R.id.transactionsFragment &&
                 id != R.id.settingsFragment &&
                 id != R.id.safeSelectionDialog &&
                 id != R.id.shareSafeDialog

@@ -25,7 +25,7 @@ class AddressInputHelper(
 ) {
 
     private val dialog =
-        BottomSheetDialog(fragment.requireContext()).apply {
+        BottomSheetDialog(fragment.requireContext(), R.style.DayNightBottomSheetDialogTheme).apply {
             val clipboard = fragment.activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val binding = BottomSheetAddressInputBinding.inflate(layoutInflater)
             with(binding) {
@@ -36,12 +36,12 @@ class AddressInputHelper(
                         callback = addressCallback
                         show(fragment.childFragmentManager, null)
                     }
-                    hide()
+                    dismiss()
                 }
                 bottomSheetAddressInputQrTouch.setOnClickListener {
                     QRCodeScanActivity.startForResult(fragment)
                     tracker.logScreen(ScreenId.SCANNER)
-                    hide()
+                    dismiss()
                 }
                 bottomSheetAddressInputPasteTouch.setOnClickListener {
                     val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim()
@@ -50,7 +50,7 @@ class AddressInputHelper(
                             handleError(InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)), input.toString())
                             null
                         })?.let { addressCallback(it) }
-                    hide()
+                    dismiss()
                 }
             }
         }

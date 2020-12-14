@@ -36,7 +36,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setStyle(STYLE_NO_TITLE, R.style.BaseDialog)
+        setStyle(STYLE_NO_TITLE, R.style.DayNightDialog)
         super.onCreate(savedInstanceState)
     }
 

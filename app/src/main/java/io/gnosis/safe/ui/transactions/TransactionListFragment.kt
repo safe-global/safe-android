@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -14,7 +15,6 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
@@ -22,17 +22,23 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.withArgs
 import javax.inject.Inject
 
-class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionListBinding>() {
+class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListBinding>() {
 
-    override fun screenId() = ScreenId.TRANSACTIONS
+    private val type by lazy { requireArguments()[ARGS_TYPE] as Type  }
+
+    override fun screenId() = when(type) {
+        Type.QUEUE -> ScreenId.TRANSACTIONS_QUEUE
+        Type.HISTORY -> ScreenId.TRANSACTIONS_HISTORY
+    }
 
     @Inject
     lateinit var viewModel: TransactionListViewModel
@@ -99,7 +105,9 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                 footer = TransactionLoadStateAdapter { this@TransactionListFragment.adapter.retry() }
             )
             layoutManager = LinearLayoutManager(requireContext())
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
+            addItemDecoration(dividerItemDecoration)
         }
         binding.refresh.setOnRefreshListener { viewModel.load() }
 
@@ -112,7 +120,6 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
-                        handleActiveSafe(viewAction.activeSafe)
                         lifecycleScope.launch {
                             // if safe changes we need to reset data for recycler
                             adapter.submitData(PagingData.empty())
@@ -177,10 +184,25 @@ class TransactionListFragment : SafeOverviewBaseFragment<FragmentTransactionList
         }
     }
 
-    override fun handleActiveSafe(safe: Safe?) {
-        navHandler?.setSafeData(safe)
-        if (safe != null) {
-            childFragmentManager.beginTransaction().remove(noSafeFragment).commitNow()
+    enum class Type {
+        QUEUE,
+        HISTORY
+    }
+
+    companion object {
+
+        private const val ARGS_TYPE = "args.serializable.type"
+
+        fun newQueueInstance(): TransactionListFragment {
+            return TransactionListFragment().withArgs(Bundle().apply {
+                putSerializable(ARGS_TYPE, Type.QUEUE)
+            }) as TransactionListFragment
+        }
+
+        fun newHistoryInstance(): TransactionListFragment {
+            return TransactionListFragment().withArgs(Bundle().apply {
+                putSerializable(ARGS_TYPE, Type.HISTORY)
+            }) as TransactionListFragment
         }
     }
 }
