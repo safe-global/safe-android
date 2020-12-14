@@ -64,6 +64,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
+                        setSafeData(it)
                     }
                     //TODO: figure out which tab (QUEUE vs HISTORY) to open
                     if (txId == null) {
