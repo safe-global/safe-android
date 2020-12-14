@@ -38,7 +38,7 @@ class TransactionRepositoryTransferTest(
     }
 
     @Test
-    fun `getTransactions (all transfer types) should return Transfers`() = runBlockingTest {
+    fun `getHistoryTransactions (all transfer types) should return Transfers`() = runBlockingTest {
         val pagedResult = listOf(
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC20())),
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoEther())),
@@ -94,7 +94,7 @@ class TransactionRepositoryTest {
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
 
     @Test
-    fun `getTransactions (api failure) should throw`() = runBlockingTest {
+    fun `getHistoryTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
         coEvery { gatewayApi.loadTransactionsHistory(any()) } throws throwable
 
@@ -108,7 +108,7 @@ class TransactionRepositoryTest {
     }
 
     @Test
-    fun `getTransactions (all tx types) should return respective tx type`() = runBlockingTest {
+    fun `getHistoryTransactions (all tx types) should return respective tx type`() = runBlockingTest {
         val pagedResult = listOf(
             buildGateTransaction(txInfo = buildTransferTxInfo()),
             buildGateTransaction(txInfo = buildCustomTxInfo()),
