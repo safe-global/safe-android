@@ -36,6 +36,14 @@ internal val settingsInfoAdapter =
         .withSubtype(SettingsInfo.EnableModule::class.java, SettingsInfoType.ENABLE_MODULE.name)
         .withSubtype(SettingsInfo.DisableModule::class.java, SettingsInfoType.DISABLE_MODULE.name)
 
+internal val txListEntryAdapter =
+    PolymorphicJsonAdapterFactory.of(TxListEntry::class.java, "type")
+        .withSubtype(TxListEntry.Transaction::class.java, TxListEntryType.TRANSACTION.name)
+        .withSubtype(TxListEntry.DateLabel::class.java, TxListEntryType.DATE_LABEL.name)
+        .withSubtype(TxListEntry.Label::class.java, TxListEntryType.LABEL.name)
+        .withSubtype(TxListEntry.ConflictHeader::class.java, TxListEntryType.CONFLICT_HEADER.name)
+        .withDefaultValue(TxListEntry.Unknown)
+
 val dataMoshi =
     Moshi.Builder()
         .add(DateAdapter())
@@ -51,6 +59,7 @@ val dataMoshi =
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
         .add(transactionExecutionDetailsAdapter)
+        .add(txListEntryAdapter)
         .add(ParamAdapter())
         .add(KotlinJsonAdapterFactory())
         .build()

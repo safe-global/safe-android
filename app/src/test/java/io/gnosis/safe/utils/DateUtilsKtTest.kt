@@ -7,23 +7,44 @@ import java.util.*
 
 class DateUtilsKtTest {
     @Test
-    fun `formatBackendDate (german locale and europe timezone) should return german date string`() {
-        val result = Date(0).formatBackendDate(ZoneId.of("CET"), Locale.GERMAN)
+    fun `formatBackendDateTime (german locale and europe timezone) should return german date string`() {
+        val result = Date(0).formatBackendDateTime(ZoneId.of("CET"), Locale.GERMAN)
 
         assertEquals("01.01.1970 01:00:00", result)
     }
 
     @Test
-    fun `formatBackendDate (german locale and europe timezone) should return english date string`() {
-        val result = Date(0).formatBackendDate(ZoneId.of("CET"), Locale.ENGLISH)
+    fun `formatBackendDateTime (english locale and europe timezone) should return english date string`() {
+        val result = Date(0).formatBackendDateTime(ZoneId.of("CET"), Locale.ENGLISH)
 
         assertEquals("Jan 1, 1970 1:00:00 AM", result)
     }
 
     @Test
-    fun `formatBackendDate (english locale and UTC timezone) should return english date string`() {
-        val result = Date(0).formatBackendDate(ZoneId.of("Z"), Locale.ENGLISH)
+    fun `formatBackendDateTime (english locale and UTC timezone) should return english date string`() {
+        val result = Date(0).formatBackendDateTime(ZoneId.of("Z"), Locale.ENGLISH)
 
         assertEquals("Jan 1, 1970 12:00:00 AM", result)
+    }
+
+    @Test
+    fun `formatBackendDate (german locale and europe timezone) should return german date string`() {
+        val result = Date(0).formatBackendDate(ZoneId.of("CET"), Locale.GERMAN)
+
+        assertEquals("01.01.1970", result)
+    }
+
+    @Test
+    fun `formatBackendDate (english locale and european timezone (01-01-1970 23-59-59)) should return 1st of Jan`() {
+        val result = Date(23 * 60 * 60 * 1000 - 1).formatBackendDate(ZoneId.of("CET"), Locale.ENGLISH)
+
+        assertEquals("Jan 1, 1970", result)
+    }
+
+    @Test
+    fun `formatBackendDate (english locale and UTC timezone plus one full day) should return 2nd of Jan`() {
+        val result = Date(86400000).formatBackendDate(ZoneId.of("Z"), Locale.ENGLISH)
+
+        assertEquals("Jan 2, 1970", result)
     }
 }

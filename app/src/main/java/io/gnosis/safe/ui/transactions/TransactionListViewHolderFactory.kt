@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.utils.formatBackendDate
 import io.gnosis.safe.utils.formatForTxList
 
 enum class TransactionViewType {
@@ -23,7 +25,9 @@ enum class TransactionViewType {
     SETTINGS_CHANGE_QUEUED,
     CUSTOM_TRANSACTION,
     CUSTOM_TRANSACTION_QUEUED,
-    SECTION_HEADER,
+    SECTION_DATE_HEADER,
+    SECTION_CONFLICT_HEADER,
+    SECTION_LABEL_HEADER,
     CREATION
 }
 
@@ -40,7 +44,9 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.TRANSFER_QUEUED.ordinal -> TransferQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
             TransactionViewType.CUSTOM_TRANSACTION.ordinal -> CustomTransactionViewHolder(viewBinding as ItemTxTransferBinding)
             TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> CustomTransactionQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
-            TransactionViewType.SECTION_HEADER.ordinal -> SectionHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
+            TransactionViewType.SECTION_DATE_HEADER.ordinal -> SectionDateHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
+            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> SectionConflictHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
+            TransactionViewType.SECTION_LABEL_HEADER.ordinal -> SectionLabelHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             TransactionViewType.CREATION.ordinal -> CreationTransactionViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
@@ -55,7 +61,9 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.CUSTOM_TRANSACTION.ordinal -> ItemTxTransferBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TRANSFER_QUEUED.ordinal,
             TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> ItemTxQueuedTransferBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.SECTION_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SECTION_DATE_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SECTION_LABEL_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.CREATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
@@ -68,7 +76,9 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
             is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_IMPLEMENTATION
             is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED
-            is TransactionView.SectionHeader -> TransactionViewType.SECTION_HEADER
+            is TransactionView.SectionDateHeader -> TransactionViewType.SECTION_DATE_HEADER
+            is TransactionView.SectionLabelHeader -> TransactionViewType.SECTION_LABEL_HEADER
+            is TransactionView.SectionConflictHeader -> TransactionViewType.SECTION_CONFLICT_HEADER
             is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
             is TransactionView.Creation -> TransactionViewType.CREATION
@@ -372,12 +382,40 @@ private fun navigateToTxDetails(view: View, id: String) {
     Navigation.findNavController(view).navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(id))
 }
 
-class SectionHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
-    BaseTransactionViewHolder<TransactionView.SectionHeader>(viewBinding) {
+class SectionDateHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
+    BaseTransactionViewHolder<TransactionView.SectionDateHeader>(viewBinding) {
 
-    override fun bind(sectionHeader: TransactionView.SectionHeader, payloads: List<Any>) {
+    override fun bind(sectionDateHeader: TransactionView.SectionDateHeader, payloads: List<Any>) {
         with(viewBinding) {
-            sectionTitle.setText(sectionHeader.title)
+            sectionTitle.text = sectionDateHeader.date.formatBackendDate()
         }
     }
 }
+
+class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
+    BaseTransactionViewHolder<TransactionView.SectionConflictHeader>(viewBinding) {
+
+    override fun bind(sectionDateHeader: TransactionView.SectionConflictHeader, payloads: List<Any>) {
+        with(viewBinding) {
+            sectionTitle.text = sectionDateHeader.nonce.toString()
+        }
+    }
+}
+
+class SectionLabelHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
+    BaseTransactionViewHolder<TransactionView.SectionLabelHeader>(viewBinding) {
+
+    override fun bind(sectionDateHeader: TransactionView.SectionLabelHeader, payloads: List<Any>) {
+        with(viewBinding) {
+            sectionTitle.setText(getLabelResourceId(sectionDateHeader.label))
+        }
+    }
+
+    private fun getLabelResourceId(label: LabelType): Int {
+        return when (label) {
+            LabelType.Next -> R.string.label_type_next
+            LabelType.Queued -> R.string.label_type_queued
+        }
+    }
+}
+

@@ -3,7 +3,10 @@ package io.gnosis.safe.ui.transactions
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -68,40 +71,20 @@ class TransactionListViewModel
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
             .map { pagingData ->
                 pagingData
-                    .map { transaction ->
-                        getTransactionView(transaction, safe, transaction.canBeSignedByOwner(owner))
-                    }
-                    .filter { it !is TransactionView.Unknown }
-            }
-            .map {
-                // insert headers
-                it.insertSeparators { before, after ->
-
-                    if (after == null) {
-                        // we're at the end of the list
-                        return@insertSeparators null  // no separator
-                    }
-
-                    if (before == null) {
-                        // we're at the beginning of the list
-
-                        return@insertSeparators if (after.isQueued()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
-                        } else if (after.isHistory()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_history)
-                        } else {
-                            null // no separator
+                    .map { txListEntry ->
+                        when (txListEntry) {
+                            is TxListEntry.Transaction -> getTransactionView(
+                                txListEntry.transaction,
+                                safe,
+                                txListEntry.transaction.canBeSignedByOwner(owner)
+                            )
+                            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
+                            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
+                            is TxListEntry.ConflictHeader -> TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
+                            TxListEntry.Unknown -> TransactionView.Unknown
                         }
                     }
-
-                    // we're in the middle of the list
-                    if (before.isQueued() && after.isHistory()) {
-                        // insert history separator after queued transaction
-                        TransactionView.SectionHeader(title = R.string.tx_list_history)
-                    } else {
-                        null // no separator
-                    }
-                }
+                    .filter { it !is TransactionView.Unknown }
             }
             .cachedIn(viewModelScope)
 
@@ -135,7 +118,7 @@ class TransactionListViewModel
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, txInfo.incoming()),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             address = if (txInfo.incoming()) txInfo.sender else txInfo.recipient,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.text_emphasis_high,
@@ -155,7 +138,7 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             address = if (incoming) txInfo.sender else txInfo.recipient,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
@@ -214,7 +197,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             method = txInfo.dataDecoded.method,
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString().orEmpty()
@@ -233,7 +216,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             settingNameText = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
@@ -252,7 +235,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             alpha = alpha(txStatus),
             addressLabel = version,
             address = address,
@@ -275,7 +258,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             label = R.string.tx_list_set_fallback_handler,
             address = address,
             addressLabel = fallbackHandlerDisplayString,
@@ -296,7 +279,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             alpha = alpha(txStatus),
             label = R.string.tx_list_set_fallback_handler,
             address = address,
@@ -321,7 +304,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             label = label,
             address = address,
             addressLabel = R.string.empty_string,
@@ -347,7 +330,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             alpha = alpha(txStatus),
             label = label,
             address = address,
@@ -373,7 +356,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
@@ -404,7 +387,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             address = txInfo.to,
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
             amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
@@ -430,7 +413,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             address = txInfo.to,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
@@ -449,12 +432,12 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             label = R.string.tx_list_creation,
             creationDetails = TransactionView.CreationDetails(
                 statusText = displayString(txStatus),
                 statusColorRes = statusTextColor(txStatus),
-                dateTimeText = timestamp.formatBackendDate(),
+                dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
                 factory = txInfo.factory?.asEthereumAddressString(),
                 implementation = txInfo.implementation?.asEthereumAddressString(),

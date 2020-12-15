@@ -2,7 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.models.*
+import io.gnosis.data.models.Page
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.readJsonFrom
 import io.mockk.coEvery
@@ -38,42 +38,46 @@ class TransactionRepositoryTransferTest(
     }
 
     @Test
-    fun `getTransactions (all transfer types) should return Transfers`() = runBlockingTest {
+    fun `getHistoryTransactions (all transfer types) should return Transfers`() = runBlockingTest {
         val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC20())),
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoEther())),
-            buildGateTransactionDto(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC721()))
+            buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC20())),
+            buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoEther())),
+            buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC721()))
         )
-        coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
+        coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
         assertEquals(3, actual.results.size)
         (0..2).forEach { i ->
-            with(actual.results[i]) {
-                assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                when (val transferInfo = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo) {
-                    is TransferInfo.Erc20Transfer -> {
-                        val erc20Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.Erc20Transfer
-                        assertEquals(erc20Transfer.value, transferInfo.value())
-                        assertEquals(erc20Transfer.tokenAddress, transferInfo.tokenAddress)
-                        assertEquals(erc20Transfer.tokenSymbol, transferInfo.tokenSymbol)
-                        assertEquals(erc20Transfer.tokenName, transferInfo.tokenName)
-                        assertEquals(erc20Transfer.decimals, transferInfo.decimals)
-                        assertEquals(erc20Transfer.logoUri, transferInfo.logoUri)
-                    }
-                    is TransferInfo.Erc721Transfer -> {
-                        assertEquals(1.toBigInteger(), transferInfo.value())
-                        val erc721Transfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.Erc721Transfer
-                        assertEquals(erc721Transfer.tokenAddress, transferInfo.tokenAddress)
-                        assertEquals(erc721Transfer.tokenSymbol, transferInfo.tokenSymbol)
-                        assertEquals(erc721Transfer.tokenName, transferInfo.tokenName)
-                        assertEquals(erc721Transfer.tokenId, transferInfo.tokenId)
-                    }
-                    is TransferInfo.EtherTransfer -> {
-                        val etherTransfer = (pagedResult[i].txInfo as TransactionInfo.Transfer).transferInfo as TransferInfo.EtherTransfer
-                        assertEquals(etherTransfer.value, transferInfo.value())
-                    }
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
+            assertEquals(
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
+                actualTransaction.transaction.executionInfo?.nonce
+            )
+            val txInfo = ((pagedResult[i] as TxListEntry.Transaction).transaction.txInfo as TransactionInfo.Transfer)
+            when (val transferInfo = txInfo.transferInfo) {
+                is TransferInfo.Erc20Transfer -> {
+                    val erc20Transfer = txInfo.transferInfo as TransferInfo.Erc20Transfer
+                    assertEquals(erc20Transfer.value, transferInfo.value())
+                    assertEquals(erc20Transfer.tokenAddress, transferInfo.tokenAddress)
+                    assertEquals(erc20Transfer.tokenSymbol, transferInfo.tokenSymbol)
+                    assertEquals(erc20Transfer.tokenName, transferInfo.tokenName)
+                    assertEquals(erc20Transfer.decimals, transferInfo.decimals)
+                    assertEquals(erc20Transfer.logoUri, transferInfo.logoUri)
+                }
+                is TransferInfo.Erc721Transfer -> {
+                    assertEquals(1.toBigInteger(), transferInfo.value())
+                    val erc721Transfer = txInfo.transferInfo as TransferInfo.Erc721Transfer
+                    assertEquals(erc721Transfer.tokenAddress, transferInfo.tokenAddress)
+                    assertEquals(erc721Transfer.tokenSymbol, transferInfo.tokenSymbol)
+                    assertEquals(erc721Transfer.tokenName, transferInfo.tokenName)
+                    assertEquals(erc721Transfer.tokenId, transferInfo.tokenId)
+                }
+                is TransferInfo.EtherTransfer -> {
+                    val etherTransfer = txInfo.transferInfo as TransferInfo.EtherTransfer
+                    assertEquals(etherTransfer.value, transferInfo.value())
                 }
             }
         }
@@ -90,69 +94,75 @@ class TransactionRepositoryTest {
     private val defaultSafeAddress = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
 
     @Test
-    fun `getTransactions (api failure) should throw`() = runBlockingTest {
+    fun `getHistoryTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
-        coEvery { gatewayApi.loadTransactions(any()) } throws throwable
+        coEvery { gatewayApi.loadTransactionsHistory(any()) } throws throwable
 
-        val actual = runCatching { transactionRepository.getTransactions(defaultSafeAddress) }
+        val actual = runCatching { transactionRepository.getHistoryTransactions(defaultSafeAddress) }
 
         with(actual) {
             assert(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.loadTransactions(defaultSafeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.loadTransactionsHistory(defaultSafeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
-    fun `getTransactions (all tx types) should return respective tx type`() = runBlockingTest {
+    fun `getHistoryTransactions (all tx types) should return respective tx type`() = runBlockingTest {
         val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo()),
-            buildGateTransactionDto(txInfo = buildCustomTxInfo()),
-            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo()),
-            buildGateTransactionDto(txInfo = buildCreationTxInfo())
+            buildGateTransaction(txInfo = buildTransferTxInfo()),
+            buildGateTransaction(txInfo = buildCustomTxInfo()),
+            buildGateTransaction(txInfo = buildSettingsChangeTxInfo()),
+            buildGateTransaction(txInfo = buildCreationTxInfo())
 
         )
-        coEvery { gatewayApi.loadTransactions(any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
 
-        val actual = transactionRepository.getTransactions(defaultSafeAddress)
+        val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
         assertEquals(4, actual.results.size)
         (0..3).forEach { i ->
-            with(actual.results[i]) {
-                when (val txInfo = pagedResult[i].txInfo) {
-                    is TransactionInfo.Transfer -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                    }
-                    is TransactionInfo.Custom -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, txInfo.dataSize)
-                    }
-                    is TransactionInfo.SettingsChange -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.SettingsChange).dataDecoded, txInfo.dataDecoded)
-                    }
-                    is TransactionInfo.Creation -> {
-                        assertEquals(pagedResult[i].timestamp, timestamp)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Creation).creator, txInfo.creator)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Creation).factory, txInfo.factory)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Creation).implementation, txInfo.implementation)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Creation).transactionHash, txInfo.transactionHash)
-                    }
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
+            assertEquals(
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
+                actualTransaction.transaction.executionInfo?.nonce
+            )
+            val transaction = (pagedResult[i] as TxListEntry.Transaction).transaction
+            when (val txInfo = transaction.txInfo) {
+                is TransactionInfo.Transfer -> {
+                    assertEquals(transaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(transaction.txStatus, actualTransaction.transaction.txStatus)
+                }
+                is TransactionInfo.Custom -> {
+                    assertEquals(transaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(transaction.txStatus, actualTransaction.transaction.txStatus)
+                    assertEquals((transaction.txInfo as TransactionInfo.Custom).dataSize, txInfo.dataSize)
+                }
+                is TransactionInfo.SettingsChange -> {
+                    assertEquals(transaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(transaction.txStatus, actualTransaction.transaction.txStatus)
+                    assertEquals((transaction.txInfo as TransactionInfo.SettingsChange).dataDecoded, txInfo.dataDecoded)
+                }
+                is TransactionInfo.Creation -> {
+                    assertEquals(transaction.timestamp, actualTransaction.transaction.timestamp)
+                    assertEquals(transaction.txStatus, actualTransaction.transaction.txStatus)
+                    assertEquals((transaction.txInfo as TransactionInfo.Creation).creator, txInfo.creator)
+                    assertEquals((transaction.txInfo as TransactionInfo.Creation).factory, txInfo.factory)
+                    assertEquals((transaction.txInfo as TransactionInfo.Creation).implementation, txInfo.implementation)
+                    assertEquals((transaction.txInfo as TransactionInfo.Creation).transactionHash, txInfo.transactionHash)
                 }
             }
         }
     }
 
+
     @Test
     fun `loadTransactionsPage (all tx type) should return respective tx type`() = runBlockingTest {
         val pagedResult = listOf(
-            buildGateTransactionDto(txInfo = buildTransferTxInfo()),
-            buildGateTransactionDto(txInfo = buildCustomTxInfo()),
-            buildGateTransactionDto(txInfo = buildSettingsChangeTxInfo())
+            buildGateTransaction(txInfo = buildTransferTxInfo()),
+            buildGateTransaction(txInfo = buildCustomTxInfo()),
+            buildGateTransaction(txInfo = buildSettingsChangeTxInfo())
         )
         coEvery { gatewayApi.loadTransactionsPage(any()) } returns Page(1, null, null, pagedResult)
 
@@ -161,22 +171,26 @@ class TransactionRepositoryTest {
         assertEquals(3, actual.results.size)
 
         (0..2).forEach { i ->
-            with(actual.results[i]) {
-                when (val txInfo = pagedResult[i].txInfo) {
-                    is TransactionInfo.Transfer -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                    }
-                    is TransactionInfo.Custom -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.Custom).dataSize, txInfo.dataSize)
-                    }
-                    is TransactionInfo.SettingsChange -> {
-                        assertEquals(pagedResult[i].executionInfo?.nonce, executionInfo?.nonce)
-                        assertEquals(pagedResult[i].txStatus, txStatus)
-                        assertEquals((pagedResult[i].txInfo as TransactionInfo.SettingsChange).dataDecoded, txInfo.dataDecoded)
-                    }
+            val actualTransaction = actual.results[i] as TxListEntry.Transaction
+            assertEquals(
+                (pagedResult[i] as TxListEntry.Transaction).transaction.executionInfo?.nonce,
+                actualTransaction.transaction.executionInfo?.nonce
+            )
+            val pagedTransaction = (pagedResult[i] as TxListEntry.Transaction).transaction
+            when (val txInfo = pagedTransaction.txInfo) {
+                is TransactionInfo.Transfer -> {
+                    assertEquals(pagedTransaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(pagedTransaction.txStatus, actualTransaction.transaction.txStatus)
+                }
+                is TransactionInfo.Custom -> {
+                    assertEquals(pagedTransaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(pagedTransaction.txStatus, actualTransaction.transaction.txStatus)
+                    assertEquals((pagedTransaction.txInfo as TransactionInfo.Custom).dataSize, txInfo.dataSize)
+                }
+                is TransactionInfo.SettingsChange -> {
+                    assertEquals(pagedTransaction.executionInfo?.nonce, actualTransaction.transaction.executionInfo?.nonce)
+                    assertEquals(pagedTransaction.txStatus, actualTransaction.transaction.txStatus)
+                    assertEquals((pagedTransaction.txInfo as TransactionInfo.SettingsChange).dataDecoded, txInfo.dataDecoded)
                 }
             }
         }
@@ -277,12 +291,12 @@ class TransactionRepositoryTest {
     }
 }
 
-private fun buildGateTransactionDto(
+private fun buildGateTransaction(
     id: String = "1234",
     status: TransactionStatus = TransactionStatus.SUCCESS,
     txInfo: TransactionInfo = buildTransferTxInfo()
-): Transaction =
-    Transaction(
+): TxListEntry = TxListEntry.Transaction(
+    transaction = Transaction(
         id = id,
         txStatus = status,
         txInfo = txInfo,
@@ -293,7 +307,8 @@ private fun buildGateTransactionDto(
             missingSigners = null
         ),
         timestamp = Date()
-    )
+    ), conflictType = ConflictType.None
+)
 
 private fun buildCustomTxInfo(
     value: BigInteger = BigInteger.ONE,
