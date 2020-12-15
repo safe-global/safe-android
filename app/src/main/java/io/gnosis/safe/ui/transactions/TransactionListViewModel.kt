@@ -38,13 +38,17 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    init {
+    fun loadHistory() {
         safeLaunch {
-            //TODO: type must not be hardcoded. It needs to be parametrized. Via viewModelFactory? Depending on the TransactionListFragment.Type
-            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
+            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.HISTORY, safeChange = true) }
         }
     }
 
+    fun loadQueue() {
+        safeLaunch {
+            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
+        }
+    }
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
     fun load(type: TransactionListFragment.Type, safeChange: Boolean = false) {
@@ -506,6 +510,8 @@ class TransactionListViewModel
             it >= safeThreshold
         } ?: false
     }
+
+
 
     companion object {
         const val OPACITY_FULL = 1.0F

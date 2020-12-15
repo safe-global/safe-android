@@ -162,7 +162,7 @@
     <string name="tx_list_send">Send</string>
     <string name="tx_list_label_type_next">Next</string>
     <string name="tx_list_label_type_queued">Queued</string>
-    
+
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
     <string name="tx_multisend_action">Action #%1$d</string>

@@ -33,9 +33,9 @@ import javax.inject.Inject
 
 class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListBinding>() {
 
-    private val type by lazy { requireArguments()[ARGS_TYPE] as Type  }
+    private val type by lazy { requireArguments()[ARGS_TYPE] as Type }
 
-    override fun screenId() = when(type) {
+    override fun screenId() = when (type) {
         Type.QUEUE -> ScreenId.TRANSACTIONS_QUEUE
         Type.HISTORY -> ScreenId.TRANSACTIONS_HISTORY
     }
@@ -61,6 +61,11 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (type == Type.HISTORY) {
+            viewModel.loadHistory()
+        } else {
+            viewModel.loadQueue()
+        }
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
