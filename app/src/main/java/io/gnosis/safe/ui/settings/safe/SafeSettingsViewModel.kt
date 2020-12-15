@@ -60,22 +60,22 @@ class SafeSettingsViewModel @Inject constructor(
     fun removeSafe() {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
-            runCatching {
-                safe?.let {
+            safe?.let {
+                runCatching {
                     safeRepository.removeSafe(safe)
-                    notificationRepository.unregisterSafe(safe.address)
                     val safes = safeRepository.getSafes()
                     if (safes.isEmpty()) {
                         safeRepository.clearActiveSafe()
                     } else {
                         safeRepository.setActiveSafe(safes.first())
                     }
+                }.onFailure {
+                    updateState { SafeSettingsState(safe, null, null, ViewAction.ShowError(it)) }
+                }.onSuccess {
+                    updateState { SafeSettingsState(safe, null, null, SafeRemoved) }
+                    tracker.setNumSafes(safeRepository.getSafeCount())
+                    notificationRepository.unregisterSafe(safe.address)
                 }
-            }.onFailure {
-                updateState { SafeSettingsState(safe, null, null, ViewAction.ShowError(it)) }
-            }.onSuccess {
-                updateState { SafeSettingsState(safe, null, null, SafeRemoved) }
-                tracker.setNumSafes(safeRepository.getSafeCount())
             }
         }
     }

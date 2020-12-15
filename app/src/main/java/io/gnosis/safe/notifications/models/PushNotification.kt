@@ -10,6 +10,20 @@ sealed class PushNotification(
 
     abstract val safe: Solidity.Address
 
+    data class ConfirmationRequest(
+        override val safe: Solidity.Address,
+        val safeTxHash: String
+    ) : PushNotification(TYPE) {
+        companion object {
+            const val TYPE = "CONFIRMATION_REQUEST"
+            fun fromMap(params: Map<String, String>) =
+                ConfirmationRequest(
+                    params.getOrThrow("address").asEthereumAddress()!!,
+                    params.getOrThrow("safeTxHash")
+                )
+        }
+    }
+
     data class ExecutedTransaction(
         override val safe: Solidity.Address,
         val safeTxHash: String,
@@ -65,9 +79,10 @@ sealed class PushNotification(
     companion object {
         fun fromMap(params: Map<String, String>) =
             when (params["type"]) {
-                "EXECUTED_MULTISIG_TRANSACTION" -> ExecutedTransaction.fromMap(params)
-                "INCOMING_TOKEN" -> IncomingToken.fromMap(params)
-                "INCOMING_ETHER" -> IncomingEther.fromMap(params)
+                ConfirmationRequest.TYPE -> ConfirmationRequest.fromMap(params)
+                ExecutedTransaction.TYPE -> ExecutedTransaction.fromMap(params)
+                IncomingToken.TYPE -> IncomingToken.fromMap(params)
+                IncomingEther.TYPE -> IncomingEther.fromMap(params)
                 else -> throw IllegalArgumentException("Unknown push type")
             }
     }

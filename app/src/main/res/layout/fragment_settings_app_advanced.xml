@@ -53,8 +53,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <TextView
                 style="@style/Header"
@@ -131,6 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/enable_screenshots_description" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

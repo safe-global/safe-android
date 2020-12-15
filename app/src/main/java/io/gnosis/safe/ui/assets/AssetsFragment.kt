@@ -26,7 +26,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
     @Inject
     lateinit var viewModel: AssetsViewModel
 
-    private lateinit var pager: BalancesPagerAdapter
+    private lateinit var pager: AssetsPagerAdapter
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -38,15 +38,15 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            pager = BalancesPagerAdapter(this@AssetsFragment)
+            pager = AssetsPagerAdapter(this@AssetsFragment)
             balancesContent.adapter = pager
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
-                when (BalancesPagerAdapter.Tabs.values()[position]) {
-                    BalancesPagerAdapter.Tabs.COINS -> {
+                when (AssetsPagerAdapter.Tabs.values()[position]) {
+                    AssetsPagerAdapter.Tabs.COINS -> {
                         tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
                         tab.text = getString(R.string.tab_title_coins)
                     }
-                    BalancesPagerAdapter.Tabs.COLLECTIBLES -> {
+                    AssetsPagerAdapter.Tabs.COLLECTIBLES -> {
                         tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_collectibles_24dp)
                         tab.text = getString(R.string.tab_title_collectibles)
                     }
@@ -74,7 +74,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
 }
 
-class BalancesPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class AssetsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     enum class Tabs { COINS, COLLECTIBLES }
 

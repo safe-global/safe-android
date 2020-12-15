@@ -366,7 +366,7 @@ class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChang
 private fun navigateToCreationDetails(view: View, details: TransactionView.CreationDetails) {
     Navigation.findNavController(view)
         .navigate(
-            TransactionListFragmentDirections.actionTransactionListFragmentToTransactionCreationDetailsFragment(
+            TransactionsFragmentDirections.actionTransactionsFragmentToTransactionCreationDetailsFragment(
                 statusColorRes = details.statusColorRes,
                 statusTextRes = details.statusText,
                 dateTimeText = details.dateTimeText,
@@ -379,7 +379,7 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
 }
 
 private fun navigateToTxDetails(view: View, id: String) {
-    Navigation.findNavController(view).navigate(TransactionListFragmentDirections.actionTransactionListFragmentToTransactionDetailsFragment(id))
+    Navigation.findNavController(view).navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(id))
 }
 
 class SectionDateHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
