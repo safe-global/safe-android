@@ -19,6 +19,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -26,7 +27,6 @@ import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import javax.inject.Inject
@@ -149,7 +149,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
 
     private fun handleError(error: Throwable) {
         val error = error.toError()
-        snackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
     }
 
     private fun loadNoSafeFragment() {

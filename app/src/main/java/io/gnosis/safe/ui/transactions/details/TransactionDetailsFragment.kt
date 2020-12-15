@@ -19,6 +19,7 @@ import io.gnosis.safe.databinding.TxDetailsCustomBinding
 import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
@@ -96,7 +97,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     viewAction.error.let {
                         if (it is TxConfirmationFailed) {
                             val error = it.cause.toError()
-                            snackbar(
+                            errorSnackbar(
                                 requireView(),
                                 error.message(
                                     requireContext(),
@@ -105,7 +106,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             )
                         } else {
                             val error = it.toError()
-                            snackbar(
+                            errorSnackbar(
                                 requireView(),
                                 error.message(
                                     requireContext(),

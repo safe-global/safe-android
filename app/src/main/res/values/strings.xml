@@ -245,8 +245,8 @@
 
     <string name="push_safe_name">Safe %1$s</string>
 
-    <string name="push_title_new_confirmation">Transaction confirmed</string>
-    <string name="push_text_new_confirmation">%1$s: %2$s confirmed transaction</string>
+    <string name="push_title_confirmation_required">Confirmation required</string>
+    <string name="push_text_confirmation_required">%1$s: A transaction requires your confirmation!</string>
 
     <string name="push_title_executed">Transaction successful</string>
     <string name="push_text_executed">%1$s: Transaction succeeded</string>

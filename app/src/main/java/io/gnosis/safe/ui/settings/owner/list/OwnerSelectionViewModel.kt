@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
@@ -20,6 +21,7 @@ class OwnerSelectionViewModel
 @Inject constructor(
     private val derivator: MnemonicKeyAndAddressDerivator,
     private val ownerCredentialsVault: OwnerCredentialsRepository,
+    private val notificationRepository: NotificationRepository,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
@@ -62,10 +64,12 @@ class OwnerSelectionViewModel
         safeLaunch {
             val key = derivator.keyForIndex(ownerIndex)
             val addresses = derivator.addressesForPage(ownerIndex, 1)
-            ownerCredentialsVault.storeCredentials(OwnerCredentials(address = addresses[0], key = key))
+            OwnerCredentials(address = addresses[0], key = key).let {
+                ownerCredentialsVault.storeCredentials(it)
+                notificationRepository.registerOwner(it.key)
+            }
             tracker.logKeyImported()
             tracker.setNumKeysImported(1)
-
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
             }

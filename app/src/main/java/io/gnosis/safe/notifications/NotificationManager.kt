@@ -73,6 +73,11 @@ class NotificationManager(
                 safe.localName
 
         when (pushNotification) {
+            is PushNotification.ConfirmationRequest -> {
+                title = context.getString(R.string.push_title_confirmation_required)
+                text = context.getString(R.string.push_text_confirmation_required, safeName)
+                intent = txDetailsIntent(safe, pushNotification.safeTxHash)
+            }
             is PushNotification.ExecutedTransaction -> {
                 if (pushNotification.failed) {
                     title = context.getString(R.string.push_title_failed)

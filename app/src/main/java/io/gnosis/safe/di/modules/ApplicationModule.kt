@@ -186,11 +186,12 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesNotificationRepo(
         safeRepository: SafeRepository,
+        ownerCredentialsRepository: OwnerCredentialsRepository,
         preferencesManager: PreferencesManager,
         notificationServiceApi: NotificationServiceApi,
         notificationManager: NotificationManager
     ): NotificationRepository =
-        NotificationRepository(safeRepository, preferencesManager, notificationServiceApi, notificationManager)
+        NotificationRepository(safeRepository, ownerCredentialsRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
