@@ -40,19 +40,20 @@ class TransactionListViewModel
 
     init {
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(true) }
+            //TODO: type must be hardcoded. It needs to be parametrized. Via viewModelFactory? Depending on the TransactionListFragment.Type
+            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
         }
     }
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load(safeChange: Boolean = false) {
+    fun load(type: TransactionListFragment.Type, safeChange: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner).collectLatest {
+                getTransactions(safe.address, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -66,9 +67,9 @@ class TransactionListViewModel
         }
     }
 
-    private fun getTransactions(safe: Solidity.Address, owner: Solidity.Address?): Flow<PagingData<TransactionView>> {
+    private fun getTransactions(safe: Solidity.Address, owner: Solidity.Address?, type: TransactionListFragment.Type): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
