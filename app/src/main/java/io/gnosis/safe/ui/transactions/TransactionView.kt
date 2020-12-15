@@ -21,7 +21,7 @@ sealed class TransactionView(
         val amountText: String,
         val dateTimeText: String,
         @DrawableRes val txTypeIcon: Int,
-        val address: Solidity.Address,
+        @StringRes val direction: Int,
         @ColorRes val amountColor: Int,
         val alpha: Float,
         val nonce: String
@@ -35,7 +35,7 @@ sealed class TransactionView(
         val amountText: String,
         val dateTimeText: String,
         @DrawableRes val txTypeIcon: Int,
-        val address: Solidity.Address,
+        @StringRes val direction: Int,
         @ColorRes val amountColor: Int,
         val confirmations: Int,
         val threshold: Int,

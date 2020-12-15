@@ -17,6 +17,6 @@
         android:id="@+id/settingsFragment"
         android:enabled="true"
         android:icon="@drawable/ic_settings_24dp"
-        android:title="@string/settigns"
+        android:title="@string/settings"
         app:showAsAction="always" />
 </menu>

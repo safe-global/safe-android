@@ -121,7 +121,7 @@ class TransactionListViewModel
             amountText = formatTransferAmount(txInfo.transferInfo, txInfo.incoming()),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (txInfo.incoming()) txInfo.sender else txInfo.recipient,
+            direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.text_emphasis_high,
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: ""
@@ -141,7 +141,7 @@ class TransactionListViewModel
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (incoming) txInfo.sender else txInfo.recipient,
+            direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,

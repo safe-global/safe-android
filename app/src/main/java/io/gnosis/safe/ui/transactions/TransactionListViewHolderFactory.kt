@@ -99,8 +99,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            action.setText(viewTransfer.direction)
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
             nonce.text = viewTransfer.nonce
@@ -108,8 +107,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
-            blockies.alpha = viewTransfer.alpha
-            ellipsizedAddress.alpha = viewTransfer.alpha
+            action.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
@@ -132,8 +130,7 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
             amount.text = viewTransfer.amountText
             dateTime.text = viewTransfer.dateTimeText
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            action.setText(viewTransfer.direction)
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
@@ -211,26 +208,18 @@ class ChangeImplementationViewHolder(private val viewBinding: ItemTxChangeImplem
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            addressLabel.setText(viewTransfer.addressLabel)
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            action.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
             nonce.text = viewTransfer.nonce
-            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
-            addressLabel.alpha = viewTransfer.alpha
-            blockies.alpha = viewTransfer.alpha
-            ellipsizedAddress.alpha = viewTransfer.alpha
+            action.alpha = viewTransfer.alpha
             label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
-            moduleAddress.alpha = viewTransfer.alpha
 
-            addressLabel.visibility = viewTransfer.visibilityAddressLabel
-            ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
-            moduleAddress.visibility = viewTransfer.visibilityModuleAddress
+            action.visibility = viewTransfer.visibilityEllipsizedAddress
 
             root.setOnClickListener {
                 navigateToTxDetails(it, viewTransfer.id)
@@ -251,9 +240,7 @@ class ChangeImplementationQueuedViewHolder(private val viewBinding: ItemTxQueued
 
             dateTime.text = viewTransfer.dateTimeText
 
-            addressLabel.setText(viewTransfer.addressLabel)
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address?.formatForTxList() ?: ""
+            action.text = viewTransfer.address?.formatForTxList() ?: ""
             label.setText(viewTransfer.label)
             nonce.text = viewTransfer.nonce
 
@@ -261,10 +248,7 @@ class ChangeImplementationQueuedViewHolder(private val viewBinding: ItemTxQueued
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            moduleAddress.text = viewTransfer.address?.formatForTxList() ?: ""
-            addressLabel.visibility = viewTransfer.visibilityAddressLabel
-            ellipsizedAddress.visibility = viewTransfer.visibilityEllipsizedAddress
-            moduleAddress.visibility = viewTransfer.visibilityModuleAddress
+            action.visibility = viewTransfer.visibilityEllipsizedAddress
 
             root.setOnClickListener {
                 navigateToTxDetails(it, viewTransfer.id)
@@ -295,8 +279,7 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
 
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            action.text = viewTransfer.address.formatForTxList()
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -318,8 +301,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            blockies.setAddress(viewTransfer.address)
-            ellipsizedAddress.text = viewTransfer.address.formatForTxList()
+            action.text = "Contract interaction "
             dataSize.text = viewTransfer.dataSizeText
             amount.text = viewTransfer.amountText
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
@@ -328,8 +310,7 @@ class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
-            blockies.alpha = viewTransfer.alpha
-            ellipsizedAddress.alpha = viewTransfer.alpha
+            action.alpha = viewTransfer.alpha
             dataSize.alpha = viewTransfer.alpha
             amount.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
@@ -413,8 +394,8 @@ class SectionLabelHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderB
 
     private fun getLabelResourceId(label: LabelType): Int {
         return when (label) {
-            LabelType.Next -> R.string.label_type_next
-            LabelType.Queued -> R.string.label_type_queued
+            LabelType.Next -> R.string.tx_list_label_type_next
+            LabelType.Queued -> R.string.tx_list_label_type_queued
         }
     }
 }

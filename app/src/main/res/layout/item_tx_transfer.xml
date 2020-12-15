@@ -6,16 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/surface_01"
-    android:minHeight="@dimen/item_tx_m_height">
+    android:minHeight="@dimen/item_tx_s_height">
 
     <ImageView
         android:id="@+id/tx_type_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_red_10dp" />
 
     <ImageView
@@ -36,7 +36,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blockies"
+        app:layout_constraintTop_toBottomOf="@+id/tx_type_icon"
         tools:text="10" />
 
     <TextView
@@ -48,10 +48,10 @@
         android:layout_marginEnd="@dimen/default_small_margin"
         android:gravity="end"
         android:textColor="@color/primary"
-        app:layout_constraintBottom_toBottomOf="@+id/ellipsized_address"
+        app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintStart_toEndOf="@+id/ellipsized_address"
-        app:layout_constraintTop_toTopOf="@+id/ellipsized_address"
+        app:layout_constraintStart_toEndOf="@+id/action"
+        app:layout_constraintTop_toTopOf="@+id/action"
         tools:text="-0.00021 ETH" />
 
     <TextView
@@ -67,17 +67,17 @@
 
 
     <TextView
-        android:id="@+id/ellipsized_address"
+        android:id="@+id/action"
         style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:ellipsize="middle"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
-        tools:text="0x5c...33D0" />
+        app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
+        tools:text="Receive" />
 
     <TextView
         android:id="@+id/final_status"
@@ -90,15 +90,6 @@
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Failed" />
-
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/blockies"
-        android:layout_width="@dimen/safe_blockie_size"
-        android:layout_height="@dimen/safe_blockie_size"
-        android:layout_marginStart="@dimen/default_small_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/data_size"
