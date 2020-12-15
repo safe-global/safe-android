@@ -40,7 +40,7 @@ class TransactionListViewModel
 
     init {
         safeLaunch {
-            //TODO: type must be hardcoded. It needs to be parametrized. Via viewModelFactory? Depending on the TransactionListFragment.Type
+            //TODO: type must not be hardcoded. It needs to be parametrized. Via viewModelFactory? Depending on the TransactionListFragment.Type
             safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
         }
     }
