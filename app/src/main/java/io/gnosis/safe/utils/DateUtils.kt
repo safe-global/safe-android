@@ -15,3 +15,8 @@ fun Date.formatBackendDate(zoneId: ZoneId = ZoneId.systemDefault(), locale: Loca
     val customFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(zoneId).withLocale(locale)
     return customFormatter.format(Instant.ofEpochMilli(time))
 }
+
+fun Date.formatBackendTimeOfDay(zoneId: ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String {
+    val customFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withZone(zoneId).withLocale(locale)
+    return customFormatter.format(Instant.ofEpochMilli(time))
+}
