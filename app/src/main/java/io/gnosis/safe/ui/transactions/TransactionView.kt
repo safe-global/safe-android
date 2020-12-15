@@ -4,8 +4,10 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.data.models.transaction.TransactionStatus
 import pm.gnosis.model.Solidity
+import java.util.*
 
 sealed class TransactionView(
     open val status: TransactionStatus?,
@@ -154,7 +156,8 @@ sealed class TransactionView(
         val transactionHash: String
     )
 
-    data class SectionHeader(val title: String, override val id: String = "<unused>") : TransactionView(TransactionStatus.PENDING, id)
-
+    data class SectionDateHeader(val date: Date, override val id: String = "<unused>") : TransactionView(null, id)
+    data class SectionLabelHeader(val label: LabelType, override val id: String = "<unused>") : TransactionView(null, id)
+    data class SectionConflictHeader(val nonce: Long, override val id: String = "<unused>") : TransactionView(null, id)
     object Unknown : TransactionView(null, "<unused>")
 }

@@ -72,12 +72,15 @@ class TransactionListViewModel
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
-
-                        when(txListEntry) {
-                            is TxListEntry.Transaction -> getTransactionView(txListEntry.transaction, safe, txListEntry.transaction.canBeSignedByOwner(owner))
-                            is TxListEntry.DateLabel -> TransactionView.SectionHeader(txListEntry.timestamp.formatBackendDate())
-                            is TxListEntry.Label -> TransactionView.SectionHeader(txListEntry.label.toString())
-                            is TxListEntry.ConflictHeader -> TransactionView.SectionHeader(txListEntry.nonce.toString())
+                        when (txListEntry) {
+                            is TxListEntry.Transaction -> getTransactionView(
+                                txListEntry.transaction,
+                                safe,
+                                txListEntry.transaction.canBeSignedByOwner(owner)
+                            )
+                            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
+                            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
+                            is TxListEntry.ConflictHeader -> TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
                             TxListEntry.Unknown -> TransactionView.Unknown
                         }
                     }
