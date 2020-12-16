@@ -46,7 +46,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     private val adapter by lazy { TransactionViewListAdapter(TransactionViewHolderFactory()) }
     private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
 
-    private var reload: Boolean = false
+    private var reload: Boolean = true
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -61,11 +61,14 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (type == Type.HISTORY) {
-            viewModel.loadHistory()
-        } else {
-            viewModel.loadQueue()
+        if (reload) {
+            if (type == Type.HISTORY) {
+                viewModel.loadHistoryAndSubscribeToSafeChanges()
+            } else {
+                viewModel.loadQueueAndSubscribeToSafeChanges()
+            }
         }
+
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
@@ -114,7 +117,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             addItemDecoration(dividerItemDecoration)
         }
-        binding.refresh.setOnRefreshListener { viewModel.load(type = type) }
+        binding.refresh.setOnRefreshListener { viewModel.load(type) }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
 
@@ -148,7 +151,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun onResume() {
         super.onResume()
         if (reload) {
-            viewModel.load(type = type)
+            viewModel.load(type)
         }
     }
 

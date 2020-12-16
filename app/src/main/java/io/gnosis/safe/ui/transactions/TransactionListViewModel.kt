@@ -38,17 +38,18 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    fun loadHistory() {
+    fun loadHistoryAndSubscribeToSafeChanges() {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.HISTORY, safeChange = true) }
         }
     }
 
-    fun loadQueue() {
+    fun loadQueueAndSubscribeToSafeChanges() {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
         }
     }
+
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
     fun load(type: TransactionListFragment.Type, safeChange: Boolean = false) {
@@ -71,7 +72,11 @@ class TransactionListViewModel
         }
     }
 
-    private fun getTransactions(safe: Solidity.Address, owner: Solidity.Address?, type: TransactionListFragment.Type): Flow<PagingData<TransactionView>> {
+    private fun getTransactions(
+        safe: Solidity.Address,
+        owner: Solidity.Address?,
+        type: TransactionListFragment.Type
+    ): Flow<PagingData<TransactionView>> {
 
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
@@ -510,7 +515,6 @@ class TransactionListViewModel
             it >= safeThreshold
         } ?: false
     }
-
 
 
     companion object {

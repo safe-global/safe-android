@@ -110,7 +110,7 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ownerRepository.retrieveCredentials() } returns null
-        coEvery { transactionPagingProvider.getTransactionsStream(any()) } returns flow { emit(PagingData.empty()) }
+        coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionListFragment.Type.HISTORY) } returns flow { emit(PagingData.empty()) }
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
@@ -123,7 +123,7 @@ class TransactionListViewModelTest {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
             safeRepository.getSafeInfo(safe.address) wasNot Called
-            transactionPagingProvider.getTransactionsStream(safe.address)
+            transactionPagingProvider.getTransactionsStream(safe.address, TransactionListFragment.Type.HISTORY)
         }
     }
 
@@ -136,7 +136,7 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ownerRepository.retrieveCredentials() } returns null
         coEvery { transactionRepository.getHistoryTransactions(any()) } throws throwable
-        coEvery { transactionPagingProvider.getTransactionsStream(any()) } throws throwable
+        coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionListFragment.Type.HISTORY) } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         transactionsViewModel.state.observeForever(testObserver)
@@ -233,7 +233,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
-                direction = defaultToAddress,
+                direction = R.string.tx_list_send,
                 confirmations = 0,
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
@@ -252,7 +252,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = defaultFromAddress,
+                direction = R.string.tx_list_send,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
@@ -272,7 +272,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
-                direction = defaultToAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
                 nonce = "1"
             ),
@@ -288,7 +288,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
-                direction = defaultToAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -304,7 +304,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = defaultFromAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -320,7 +320,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = defaultFromAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -351,7 +351,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = defaultFromAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -367,7 +367,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.primary,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = defaultFromAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -383,7 +383,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
-                direction = defaultToAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
                 nonce = "1"
             ),
@@ -399,7 +399,7 @@ class TransactionListViewModelTest {
                 amountColor = R.color.text_emphasis_high,
                 dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
-                direction = defaultToAddress,
+                direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
                 nonce = "1"
             ),
