@@ -117,7 +117,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             addItemDecoration(dividerItemDecoration)
         }
-        binding.refresh.setOnRefreshListener { viewModel.load(type) }
+        binding.refresh.setOnRefreshListener { viewModel.load() }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
 
@@ -151,7 +151,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun onResume() {
         super.onResume()
         if (reload) {
-            viewModel.load(type)
+            viewModel.load()
         }
     }
 

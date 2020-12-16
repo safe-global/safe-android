@@ -32,27 +32,31 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
+    private lateinit var listType: TransactionListFragment.Type
+
     fun loadHistoryAndSubscribeToSafeChanges() {
+        listType = TransactionListFragment.Type.HISTORY
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.HISTORY, safeChange = true) }
+            safeRepository.activeSafeFlow().collect { load(safeChange = true) }
         }
     }
 
     fun loadQueueAndSubscribeToSafeChanges() {
+        listType = TransactionListFragment.Type.QUEUE
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(type = TransactionListFragment.Type.QUEUE, safeChange = true) }
+            safeRepository.activeSafeFlow().collect { load(safeChange = true) }
         }
     }
 
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load(type: TransactionListFragment.Type, safeChange: Boolean = false) {
+    fun load(safeChange: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner, type).collectLatest {
+                getTransactions(safe.address, owner, listType).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
