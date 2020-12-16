@@ -241,6 +241,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             action.alpha = viewTransfer.alpha
+            label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
