@@ -9,7 +9,6 @@ import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -221,10 +220,6 @@ class TransactionListViewModel
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
-            address = txInfo.to,
-            dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
-            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.primary else R.color.text_emphasis_high,
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName
@@ -248,15 +243,11 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
-            address = txInfo.to,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString() ?: "",
-            dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
-            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.primary else R.color.text_emphasis_high,
             methodName = txInfo.methodName
         )
     }

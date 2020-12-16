@@ -5,7 +5,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.data.models.transaction.TransactionStatus
-import pm.gnosis.model.Solidity
 import java.util.*
 
 sealed class TransactionView(
@@ -74,10 +73,6 @@ sealed class TransactionView(
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
-        val address: Solidity.Address,
-        val dataSizeText: String,
-        val amountText: String,
-        @ColorRes val amountColor: Int,
         val alpha: Float,
         val nonce: String,
         val methodName: String?
@@ -89,14 +84,10 @@ sealed class TransactionView(
         @StringRes val statusText: Int,
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
-        val address: Solidity.Address,
         val confirmations: Int,
         val threshold: Int,
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
-        val dataSizeText: String,
-        val amountText: String,
-        @ColorRes val amountColor: Int,
         val nonce: String,
         val methodName: String?
     ) : TransactionView(status, id)

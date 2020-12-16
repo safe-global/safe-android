@@ -18,8 +18,6 @@ import io.gnosis.safe.utils.formatBackendDate
 enum class TransactionViewType {
     TRANSFER,
     TRANSFER_QUEUED,
-    CHANGE_IMPLEMENTATION,
-    CHANGE_IMPLEMENTATION_QUEUED,
     SETTINGS_CHANGE,
     SETTINGS_CHANGE_QUEUED,
     CONTRACT_INTERACTION,
@@ -36,8 +34,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<TransactionView> =
         when (viewType) {
             //TODO: Remove CHANGE_IMPLEMENTATION and CHANGE_IMPLEMENTATION_QUEUED
-            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
-            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
+
             TransactionViewType.SETTINGS_CHANGE.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
@@ -53,8 +50,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding =
         when (viewType) {
-            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.TRANSFER.ordinal -> ItemTxTransferBinding.inflate(layoutInflater, parent, false)
@@ -74,8 +69,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             is TransactionView.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
-//            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_IMPLEMENTATION
-//            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED
             is TransactionView.SectionDateHeader -> TransactionViewType.SECTION_DATE_HEADER
             is TransactionView.SectionLabelHeader -> TransactionViewType.SECTION_LABEL_HEADER
             is TransactionView.SectionConflictHeader -> TransactionViewType.SECTION_CONFLICT_HEADER

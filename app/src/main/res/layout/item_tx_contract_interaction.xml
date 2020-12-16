@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings_change_14dp" />
@@ -33,8 +33,10 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tx_type_icon"
         tools:text="10" />
@@ -49,7 +51,7 @@
         android:gravity="end"
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
-        android:text="@string/tx_list_change_mastercopy"
+        android:text="@string/tx_list_contract_interaction"
         app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintTop_toTopOf="@+id/action" />
@@ -78,7 +80,7 @@
         app:layout_constraintEnd_toStartOf="@+id/label"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
-        tools:text="@string/tx_list_change_mastercopy" />
+        tools:text="@string/tx_list_contract_interaction" />
 
     <TextView
         android:id="@+id/final_status"
