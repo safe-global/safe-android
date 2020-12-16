@@ -45,7 +45,8 @@ class TxUtilsKtTest {
         val txInfo = TransactionInfo.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
-            value = BigInteger.ZERO
+            value = BigInteger.ZERO,
+            methodName = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -58,7 +59,8 @@ class TxUtilsKtTest {
         val txInfo = TransactionInfo.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
-            value = "1000000000000000000".decimalAsBigInteger()
+            value = "1000000000000000000".decimalAsBigInteger(),
+            methodName = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 

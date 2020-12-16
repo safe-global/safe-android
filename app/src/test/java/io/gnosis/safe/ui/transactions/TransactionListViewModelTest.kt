@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.transactions
 
-import android.view.View
 import androidx.paging.PagingData
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Page
@@ -27,7 +26,7 @@ import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
-import io.gnosis.safe.utils.formatBackendDateTime
+import io.gnosis.safe.utils.formatBackendTimeOfDay
 import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -73,6 +72,7 @@ class TransactionListViewModelTest {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel.loadHistoryAndSubscribeToSafeChanges()
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -86,14 +86,15 @@ class TransactionListViewModelTest {
     }
 
     @Test
-    fun `init - (safeRepository failure) should emit ShowError`() {
+    fun `loadHistoryAndSubscribeToSafeChanges - (safeRepository failure) should emit ShowError`() {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
-        transactionsViewModel.state.observeForever(testObserver)
+        transactionsViewModel.loadHistoryAndSubscribeToSafeChanges()
 
+        transactionsViewModel.state.observeForever(testObserver)
         testObserver.assertValueCount(1)
         with(testObserver.values()[0]) {
             assertEquals(true, viewAction is BaseStateViewModel.ViewAction.ShowError)
@@ -110,8 +111,15 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ownerRepository.retrieveCredentials() } returns null
-        coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionListFragment.Type.HISTORY) } returns flow { emit(PagingData.empty()) }
+        coEvery {
+            transactionPagingProvider.getTransactionsStream(
+                any(),
+                TransactionListFragment.Type.HISTORY
+            )
+        } returns flow { emit(PagingData.empty()) }
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel.loadHistoryAndSubscribeToSafeChanges()
+
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -138,6 +146,7 @@ class TransactionListViewModelTest {
         coEvery { transactionRepository.getHistoryTransactions(any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionListFragment.Type.HISTORY) } throws throwable
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
+        transactionsViewModel.loadHistoryAndSubscribeToSafeChanges()
 
         transactionsViewModel.state.observeForever(testObserver)
 
@@ -193,7 +202,7 @@ class TransactionListViewModelTest {
     }
 
     @Test
-    fun `mapTransactionView (tx list with queued and historic ether transfers) should map to queued and ether transfer list`() {
+    fun `mapTransactionView (tx list with queued and historic ETH transfers) should map to queued and ETH transfer list`() {
 
         transactionsViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
@@ -231,7 +240,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 confirmations = 0,
@@ -250,9 +259,9 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = R.string.tx_list_send,
+                direction = R.string.tx_list_receive,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
@@ -270,7 +279,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.error,
                 amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
@@ -286,7 +295,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.primary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 alpha = OPACITY_FULL,
@@ -302,9 +311,9 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.primary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = R.string.tx_list_send,
+                direction = R.string.tx_list_receive,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -318,9 +327,9 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.primary,
                 amountText = "+10 ERC20",
                 amountColor = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = R.string.tx_list_send,
+                direction = R.string.tx_list_receive,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -349,9 +358,9 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.primary,
                 amountText = "+1 ERC20",
                 amountColor = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = R.string.tx_list_send,
+                direction = R.string.tx_list_receive,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -365,9 +374,9 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.primary,
                 amountText = "+1 NFT",
                 amountColor = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
-                direction = R.string.tx_list_send,
+                direction = R.string.tx_list_receive,
                 alpha = OPACITY_FULL,
                 nonce = "1"
             ),
@@ -381,7 +390,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.text_emphasis_medium,
                 amountText = "-1 AQER",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
@@ -397,7 +406,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.error,
                 amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 alpha = OPACITY_HALF,
@@ -427,11 +436,8 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                address = defaultToAddress,
-                dataSizeText = "0 bytes",
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                methodName = "multiSend",
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 confirmationsTextColor = R.color.primary,
@@ -446,11 +452,8 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                address = defaultToAddress,
-                dataSizeText = "0 bytes",
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                methodName = "multiSend",
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
@@ -465,12 +468,9 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.primary,
-                amountText = "+0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                address = defaultSafeAddress,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                methodName = "multiSend",
                 alpha = OPACITY_FULL,
-                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[2]
@@ -481,12 +481,9 @@ class TransactionListViewModelTest {
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.error,
-                amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                address = defaultToAddress,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                methodName = "multiSend",
                 alpha = OPACITY_HALF,
-                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[3]
@@ -497,12 +494,9 @@ class TransactionListViewModelTest {
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.text_emphasis_medium,
-                amountText = "-0${DS}0001 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
-                amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                address = defaultToAddress,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                methodName = "multiSend",
                 alpha = OPACITY_HALF,
-                dataSizeText = "0 bytes",
                 nonce = "1"
             ),
             transactionViews[4]
@@ -588,21 +582,18 @@ class TransactionListViewModelTest {
         val transactionViews = transactions.map { transactionsViewModel.getTransactionView(it, defaultSafeAddress) }
 
         assertEquals(
-            TransactionView.SettingsChangeVariantQueued(
+            TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 confirmations = 2,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
-                methodName = SAFE_IMPLEMENTATION_1_1_1,
-                label = R.string.tx_list_change_mastercopy,
-                visibilityMethodName = View.VISIBLE,
-                visibilityModuleAddress = View.GONE
+                method = "changeMasterCopy"
             ),
             transactionViews[0]
         )
@@ -612,7 +603,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 method = "removeOwner",
                 confirmations = 0,
                 threshold = 2,
@@ -623,106 +614,88 @@ class TransactionListViewModelTest {
             transactionViews[1]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariantQueued(
+            TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                methodName = null,
-                label = R.string.tx_list_set_fallback_handler,
-                visibilityMethodName = View.VISIBLE,
-                visibilityModuleAddress = View.GONE
+                method = "setFallbackHandler"
             ),
             transactionViews[2]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariantQueued(
+            TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                methodName = defaultModuleAddress,
-                label = R.string.tx_list_disable_module,
-                visibilityMethodName = View.INVISIBLE,
-                visibilityModuleAddress = View.VISIBLE
+                method = "disableModule"
             ),
             transactionViews[3]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariantQueued(
+            TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 confirmations = 2,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
-                methodName = defaultModuleAddress,
-                label = R.string.tx_list_enable_module,
-                visibilityMethodName = View.INVISIBLE,
-                visibilityModuleAddress = View.VISIBLE
+                method = "enableModule"
             ),
             transactionViews[4]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariant(
+            TransactionView.SettingsChange(
                 id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.text_emphasis_medium,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                methodName = defaultFallbackHandler,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                method = "setFallbackHandler",
                 alpha = OPACITY_HALF,
-                label = R.string.tx_list_set_fallback_handler,
-                visibilityMethodName = View.VISIBLE,
-                visibilityModuleAddress = View.GONE,
                 nonce = "1"
             ),
             transactionViews[5]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariant(
+            TransactionView.SettingsChange(
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                methodName = SAFE_IMPLEMENTATION_1_0_0,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                method = "changeMasterCopy",
                 alpha = OPACITY_FULL,
-                label = R.string.tx_list_change_mastercopy,
-                visibilityMethodName = View.VISIBLE,
-                visibilityModuleAddress = View.GONE,
                 nonce = "1"
             ),
             transactionViews[6]
         )
         assertEquals(
-            TransactionView.SettingsChangeVariant(
+            TransactionView.SettingsChange(
                 id = "",
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.error,
-                dateTimeText = Date(0).formatBackendDateTime(),
-                methodName = defaultModuleAddress,
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                method = "enableModule",
                 alpha = OPACITY_HALF,
-                label = R.string.tx_list_enable_module,
-                visibilityMethodName = View.INVISIBLE,
-                visibilityModuleAddress = View.VISIBLE,
                 nonce = "1"
             ),
             transactionViews[7]
@@ -733,7 +706,7 @@ class TransactionListViewModelTest {
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.primary,
-                dateTimeText = Date(0).formatBackendDateTime(),
+                dateTimeText = Date(0).formatBackendTimeOfDay(),
                 method = METHOD_REMOVE_OWNER,
                 alpha = OPACITY_FULL,
                 nonce = "10"
@@ -755,7 +728,7 @@ class TransactionListViewModelTest {
         assertEquals(SUCCESS, creationTransactionView.status)
         assertEquals(R.string.tx_status_success, creationTransactionView.statusText)
         assertEquals(R.string.tx_list_creation, creationTransactionView.label)
-        assertEquals(Date(1).formatBackendDateTime(), creationTransactionView.dateTimeText)
+        assertEquals(Date(1).formatBackendTimeOfDay(), creationTransactionView.dateTimeText)
         assertEquals(R.color.primary, creationTransactionView.statusColorRes)
         assertEquals("<random-id>", creationTransactionView.id)
 
@@ -978,7 +951,7 @@ class TransactionListViewModelTest {
         Transaction(
             id = "",
             txStatus = status,
-            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value),
+            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend"),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
                 confirmationsRequired = defaultThreshold,
