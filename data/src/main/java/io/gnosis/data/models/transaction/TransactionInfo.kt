@@ -8,7 +8,8 @@ sealed class TransactionInfo(val type: TransactionType) {
     data class Custom(
         val to: Solidity.Address,
         val dataSize: Int,
-        val value: BigInteger
+        val value: BigInteger,
+        val methodName: String?
     ) : TransactionInfo(TransactionType.Custom)
 
     data class SettingsChange(

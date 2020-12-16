@@ -590,21 +590,19 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 id = "",
-                label = R.string.tx_list_change_mastercopy,
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
                 dateTimeText = Date(0).formatBackendDateTime(),
-                address = SAFE_IMPLEMENTATION_1_1_1,
-                addressLabel = R.string.implementation_version_1_1_1,
-                visibilityEllipsizedAddress = View.VISIBLE,
-                visibilityModuleAddress = View.GONE,
-                visibilityAddressLabel = View.VISIBLE,
-                nonce = "1",
                 confirmations = 2,
-                confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
+                threshold = 2,
                 confirmationsTextColor = R.color.primary,
-                threshold = 2
+                confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
+                nonce = "1",
+                methodName = SAFE_IMPLEMENTATION_1_1_1,
+                label = R.string.tx_list_change_mastercopy,
+                visibilityMethodName = View.VISIBLE,
+                visibilityModuleAddress = View.GONE
             ),
             transactionViews[0]
         )
@@ -615,19 +613,18 @@ class TransactionListViewModelTest {
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
                 dateTimeText = Date(0).formatBackendDateTime(),
+                method = "removeOwner",
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
-                nonce = "1",
-                settingNameText = "removeOwner"
+                nonce = "1"
             ),
             transactionViews[1]
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 id = "",
-                label = R.string.tx_list_set_fallback_handler,
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
@@ -637,18 +634,16 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                addressLabel = R.string.unknown_fallback_handler,
-                address = null,
-                visibilityAddressLabel = View.VISIBLE,
-                visibilityModuleAddress = View.GONE,
-                visibilityEllipsizedAddress = View.VISIBLE
+                methodName = null,
+                label = R.string.tx_list_set_fallback_handler,
+                visibilityMethodName = View.VISIBLE,
+                visibilityModuleAddress = View.GONE
             ),
             transactionViews[2]
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 id = "",
-                label = R.string.tx_list_disable_module,
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
@@ -658,18 +653,16 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.text_emphasis_low,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
-                visibilityEllipsizedAddress = View.INVISIBLE,
-                visibilityModuleAddress = View.VISIBLE,
-                visibilityAddressLabel = View.INVISIBLE,
-                address = defaultModuleAddress,
-                addressLabel = R.string.empty_string
+                methodName = defaultModuleAddress,
+                label = R.string.tx_list_disable_module,
+                visibilityMethodName = View.INVISIBLE,
+                visibilityModuleAddress = View.VISIBLE
             ),
             transactionViews[3]
         )
         assertEquals(
             TransactionView.SettingsChangeVariantQueued(
                 id = "",
-                label = R.string.tx_list_enable_module,
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
@@ -679,28 +672,25 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.primary,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
-                visibilityEllipsizedAddress = View.INVISIBLE,
-                visibilityModuleAddress = View.VISIBLE,
-                visibilityAddressLabel = View.INVISIBLE,
-                address = defaultModuleAddress,
-                addressLabel = R.string.empty_string
+                methodName = defaultModuleAddress,
+                label = R.string.tx_list_enable_module,
+                visibilityMethodName = View.INVISIBLE,
+                visibilityModuleAddress = View.VISIBLE
             ),
             transactionViews[4]
         )
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 id = "",
-                label = R.string.tx_list_set_fallback_handler,
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
                 statusColorRes = R.color.text_emphasis_medium,
                 dateTimeText = Date(0).formatBackendDateTime(),
+                methodName = defaultFallbackHandler,
                 alpha = OPACITY_HALF,
-                visibilityEllipsizedAddress = View.VISIBLE,
+                label = R.string.tx_list_set_fallback_handler,
+                visibilityMethodName = View.VISIBLE,
                 visibilityModuleAddress = View.GONE,
-                visibilityAddressLabel = View.VISIBLE,
-                address = defaultFallbackHandler,
-                addressLabel = R.string.default_fallback_handler,
                 nonce = "1"
             ),
             transactionViews[5]
@@ -708,17 +698,15 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 id = "",
-                label = R.string.tx_list_change_mastercopy,
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
                 statusColorRes = R.color.primary,
                 dateTimeText = Date(0).formatBackendDateTime(),
-                address = SAFE_IMPLEMENTATION_1_0_0,
-                addressLabel = R.string.implementation_version_1_0_0,
-                visibilityEllipsizedAddress = View.VISIBLE,
-                visibilityModuleAddress = View.GONE,
-                visibilityAddressLabel = View.VISIBLE,
+                methodName = SAFE_IMPLEMENTATION_1_0_0,
                 alpha = OPACITY_FULL,
+                label = R.string.tx_list_change_mastercopy,
+                visibilityMethodName = View.VISIBLE,
+                visibilityModuleAddress = View.GONE,
                 nonce = "1"
             ),
             transactionViews[6]
@@ -726,17 +714,15 @@ class TransactionListViewModelTest {
         assertEquals(
             TransactionView.SettingsChangeVariant(
                 id = "",
-                label = R.string.tx_list_enable_module,
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
                 statusColorRes = R.color.error,
                 dateTimeText = Date(0).formatBackendDateTime(),
+                methodName = defaultModuleAddress,
                 alpha = OPACITY_HALF,
-                addressLabel = R.string.empty_string,
-                visibilityEllipsizedAddress = View.INVISIBLE,
+                label = R.string.tx_list_enable_module,
+                visibilityMethodName = View.INVISIBLE,
                 visibilityModuleAddress = View.VISIBLE,
-                visibilityAddressLabel = View.INVISIBLE,
-                address = defaultModuleAddress,
                 nonce = "1"
             ),
             transactionViews[7]

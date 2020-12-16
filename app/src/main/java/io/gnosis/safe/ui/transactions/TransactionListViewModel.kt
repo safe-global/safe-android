@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.transactions
 
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -10,10 +9,6 @@ import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -162,44 +157,14 @@ class TransactionListViewModel
 
     private fun Transaction.toSettingsChangeView(txInfo: TransactionInfo.SettingsChange, awaitingYourConfirmation: Boolean): TransactionView =
         when {
-            txInfo.isQueuedImplementationChange(txStatus) -> queuedImplementationChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricImplementationChange(txStatus) -> historicImplementationChange(txInfo)
-            txInfo.isQueuedSetFallbackHandler(txStatus) -> queuedSetFallbackHandler(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricSetFallbackHandler(txStatus) -> historicSetFallbackHandler(txInfo)
-            txInfo.isQueuedModuleChange(txStatus) -> queuedModuleChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricModuleChange(txStatus) -> historicModuleChange(txInfo)
-            txInfo.isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation)
+            isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
             else -> TransactionView.Unknown
         }
 
-    private fun TransactionInfo.SettingsChange.isHistoricSetFallbackHandler(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.SetFallbackHandler || METHOD_SET_FALLBACK_HANDLER == dataDecoded.method) && isCompleted(txStatus)
+    private fun isHistoricSettingsChange(txStatus: TransactionStatus): Boolean = isCompleted(txStatus)
 
-    private fun TransactionInfo.SettingsChange.isQueuedSetFallbackHandler(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.SetFallbackHandler || METHOD_SET_FALLBACK_HANDLER == dataDecoded.method) && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricModuleChange(txStatus: TransactionStatus): Boolean =
-        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
-                && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedModuleChange(txStatus: TransactionStatus): Boolean =
-        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
-                && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricImplementationChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY == dataDecoded.method) && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedImplementationChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY == dataDecoded.method) && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricSettingsChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedSettingsChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && !isCompleted(txStatus)
+    private fun isQueuedSettingsChange(txStatus: TransactionStatus): Boolean = !isCompleted(txStatus)
 
     private fun Transaction.historicSettingsChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
@@ -227,154 +192,12 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
-            settingNameText = txInfo.dataDecoded.method,
+            method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.historicImplementationChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = address.implementationVersion()
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            alpha = alpha(txStatus),
-            addressLabel = version,
-            address = address,
-            label = R.string.tx_list_change_mastercopy,
-            nonce = executionInfo?.nonce.toString()
-        )
-    }
-
-    private fun Transaction.queuedSetFallbackHandler(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val address = (txInfo.settingsInfo as? SettingsInfo.SetFallbackHandler)?.handler
-        val fallbackHandlerDisplayString = address.fallBackHandlerLabel()
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            label = R.string.tx_list_set_fallback_handler,
-            address = address,
-            addressLabel = fallbackHandlerDisplayString,
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.historicSetFallbackHandler(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val address = (txInfo.settingsInfo as SettingsInfo.SetFallbackHandler).handler
-        val fallBackHandlerLabel = address.fallBackHandlerLabel()
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            alpha = alpha(txStatus),
-            label = R.string.tx_list_set_fallback_handler,
-            address = address,
-            addressLabel = fallBackHandlerLabel,
-            nonce = executionInfo?.nonce.toString()
-        )
-    }
-
-    private fun Transaction.queuedModuleChange(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val settingsInfo = txInfo.settingsInfo
-        val (address, label) =
-            if (settingsInfo is SettingsInfo.EnableModule) settingsInfo.module to R.string.tx_list_enable_module
-            else (settingsInfo as SettingsInfo.DisableModule).module to R.string.tx_list_disable_module
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            label = label,
-            address = address,
-            addressLabel = R.string.empty_string,
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty(),
-            visibilityAddressLabel = View.INVISIBLE,
-            visibilityEllipsizedAddress = View.INVISIBLE,
-            visibilityModuleAddress = View.VISIBLE
-        )
-    }
-
-    private fun Transaction.historicModuleChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val settingsInfo = txInfo.settingsInfo
-        val (address, label) =
-            if (settingsInfo is SettingsInfo.EnableModule) settingsInfo.module to R.string.tx_list_enable_module
-            else (settingsInfo as SettingsInfo.DisableModule).module to R.string.tx_list_disable_module
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            alpha = alpha(txStatus),
-            label = label,
-            address = address,
-            addressLabel = R.string.empty_string,
-            visibilityAddressLabel = View.INVISIBLE,
-            visibilityEllipsizedAddress = View.INVISIBLE,
-            visibilityModuleAddress = View.VISIBLE,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.queuedImplementationChange(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = address.implementationVersion()
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty(),
-            label = R.string.tx_list_change_mastercopy,
-            address = address,
-            addressLabel = version
         )
     }
 
@@ -403,7 +226,8 @@ class TransactionListViewModel
             amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
             amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.primary else R.color.text_emphasis_high,
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            methodName = txInfo.methodName
         )
     }
 
@@ -432,7 +256,8 @@ class TransactionListViewModel
             nonce = executionInfo?.nonce?.toString() ?: "",
             dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
             amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, NATIVE_CURRENCY_INFO.decimals, NATIVE_CURRENCY_INFO.symbol),
-            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.primary else R.color.text_emphasis_high
+            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.primary else R.color.text_emphasis_high,
+            methodName = txInfo.methodName
         )
     }
 

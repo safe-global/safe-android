@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/surface_01"
-    android:minHeight="@dimen/item_tx_m_height">
+    android:minHeight="@dimen/item_tx_s_height">
 
     <ImageView
         android:id="@+id/tx_type_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings_change_14dp" />
@@ -42,7 +42,7 @@
     <TextView
         android:id="@+id/label"
         style="@style/TextDark"
-        android:layout_width="88dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:ellipsize="end"
@@ -50,9 +50,9 @@
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
         android:text="@string/tx_list_change_mastercopy"
-        app:layout_constraintBottom_toBottomOf="@+id/address_label"
+        app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintTop_toTopOf="@+id/address_label" />
+        app:layout_constraintTop_toTopOf="@+id/action" />
 
     <TextView
         android:id="@+id/date_time"

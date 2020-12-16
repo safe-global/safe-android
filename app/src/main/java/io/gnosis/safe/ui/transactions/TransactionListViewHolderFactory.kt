@@ -14,7 +14,6 @@ import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatBackendDate
-import io.gnosis.safe.utils.formatForTxList
 
 enum class TransactionViewType {
     TRANSFER,
@@ -23,8 +22,8 @@ enum class TransactionViewType {
     CHANGE_IMPLEMENTATION_QUEUED,
     SETTINGS_CHANGE,
     SETTINGS_CHANGE_QUEUED,
-    CUSTOM_TRANSACTION,
-    CUSTOM_TRANSACTION_QUEUED,
+    CONTRACT_INTERACTION,
+    CONTRACT_INTERACTION_QUEUED,
     SECTION_DATE_HEADER,
     SECTION_CONFLICT_HEADER,
     SECTION_LABEL_HEADER,
@@ -36,14 +35,15 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
     @Suppress("UNCHECKED_CAST")
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<TransactionView> =
         when (viewType) {
-            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ChangeImplementationViewHolder(viewBinding as ItemTxChangeImplementationBinding)
-            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ChangeImplementationQueuedViewHolder(viewBinding as ItemTxQueuedChangeImplementationBinding)
+            //TODO: Remove CHANGE_IMPLEMENTATION and CHANGE_IMPLEMENTATION_QUEUED
+            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
+            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.SETTINGS_CHANGE.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
             TransactionViewType.TRANSFER_QUEUED.ordinal -> TransferQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
-            TransactionViewType.CUSTOM_TRANSACTION.ordinal -> CustomTransactionViewHolder(viewBinding as ItemTxTransferBinding)
-            TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> CustomTransactionQueuedViewHolder(viewBinding as ItemTxQueuedTransferBinding)
+            TransactionViewType.CONTRACT_INTERACTION.ordinal -> ContractInteractionViewHolder(viewBinding as ItemTxContractInteractionBinding)
+            TransactionViewType.CONTRACT_INTERACTION_QUEUED.ordinal -> ContractInteractionQueuedViewHolder(viewBinding as ItemTxQueuedContractInteractionBinding)
             TransactionViewType.SECTION_DATE_HEADER.ordinal -> SectionDateHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> SectionConflictHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> SectionLabelHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
@@ -53,14 +53,14 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
 
     override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding =
         when (viewType) {
-            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ItemTxChangeImplementationBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ItemTxQueuedChangeImplementationBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CHANGE_IMPLEMENTATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> ItemTxQueuedSettingsChangeBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.TRANSFER.ordinal,
-            TransactionViewType.CUSTOM_TRANSACTION.ordinal -> ItemTxTransferBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.TRANSFER_QUEUED.ordinal,
-            TransactionViewType.CUSTOM_TRANSACTION_QUEUED.ordinal -> ItemTxQueuedTransferBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.TRANSFER.ordinal -> ItemTxTransferBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.TRANSFER_QUEUED.ordinal -> ItemTxQueuedTransferBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CONTRACT_INTERACTION.ordinal -> ItemTxContractInteractionBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CONTRACT_INTERACTION_QUEUED.ordinal -> ItemTxQueuedContractInteractionBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_DATE_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
@@ -74,13 +74,13 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.TransferQueued -> TransactionViewType.TRANSFER_QUEUED
             is TransactionView.SettingsChange -> TransactionViewType.SETTINGS_CHANGE
             is TransactionView.SettingsChangeQueued -> TransactionViewType.SETTINGS_CHANGE_QUEUED
-            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_IMPLEMENTATION
-            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED
+//            is TransactionView.SettingsChangeVariant -> TransactionViewType.CHANGE_IMPLEMENTATION
+//            is TransactionView.SettingsChangeVariantQueued -> TransactionViewType.CHANGE_IMPLEMENTATION_QUEUED
             is TransactionView.SectionDateHeader -> TransactionViewType.SECTION_DATE_HEADER
             is TransactionView.SectionLabelHeader -> TransactionViewType.SECTION_LABEL_HEADER
             is TransactionView.SectionConflictHeader -> TransactionViewType.SECTION_CONFLICT_HEADER
-            is TransactionView.CustomTransaction -> TransactionViewType.CUSTOM_TRANSACTION
-            is TransactionView.CustomTransactionQueued -> TransactionViewType.CUSTOM_TRANSACTION_QUEUED
+            is TransactionView.CustomTransaction -> TransactionViewType.CONTRACT_INTERACTION
+            is TransactionView.CustomTransactionQueued -> TransactionViewType.CONTRACT_INTERACTION_QUEUED
             is TransactionView.Creation -> TransactionViewType.CREATION
             is TransactionView.Unknown -> throw UnsupportedViewType(javaClass.name)
         }.ordinal
@@ -183,7 +183,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
             dateTime.text = viewTransfer.dateTimeText
-            settingName.text = viewTransfer.settingNameText
+            settingName.text = viewTransfer.method
 
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
@@ -197,72 +197,13 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
     }
 }
 
-class ChangeImplementationViewHolder(private val viewBinding: ItemTxChangeImplementationBinding) :
-    BaseTransactionViewHolder<TransactionView.SettingsChangeVariant>(viewBinding) {
-
-    override fun bind(viewTransfer: TransactionView.SettingsChangeVariant, payloads: List<Any>) {
-        val resources = viewBinding.root.context.resources
-        val theme = viewBinding.root.context.theme
-        with(viewBinding) {
-
-            finalStatus.setText(viewTransfer.statusText)
-            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
-            dateTime.text = viewTransfer.dateTimeText
-            action.text = viewTransfer.address?.formatForTxList() ?: ""
-            label.setText(viewTransfer.label)
-            nonce.text = viewTransfer.nonce
-
-            finalStatus.alpha = OPACITY_FULL
-            txTypeIcon.alpha = viewTransfer.alpha
-            dateTime.alpha = viewTransfer.alpha
-            action.alpha = viewTransfer.alpha
-            label.alpha = viewTransfer.alpha
-            nonce.alpha = viewTransfer.alpha
-
-            action.visibility = viewTransfer.visibilityEllipsizedAddress
-
-            root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
-            }
-        }
-    }
-}
-
-class ChangeImplementationQueuedViewHolder(private val viewBinding: ItemTxQueuedChangeImplementationBinding) :
-    BaseTransactionViewHolder<TransactionView.SettingsChangeVariantQueued>(viewBinding) {
-
-    override fun bind(viewTransfer: TransactionView.SettingsChangeVariantQueued, payloads: List<Any>) {
-        val resources = viewBinding.root.context.resources
-        val theme = viewBinding.root.context.theme
-        with(viewBinding) {
-            status.setText(viewTransfer.statusText)
-            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
-
-            dateTime.text = viewTransfer.dateTimeText
-
-            action.text = viewTransfer.address?.formatForTxList() ?: ""
-            label.setText(viewTransfer.label)
-            nonce.text = viewTransfer.nonce
-
-            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
-            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
-            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
-
-            action.visibility = viewTransfer.visibilityEllipsizedAddress
-
-            root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
-            }
-        }
-    }
-}
-
-class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
+class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedContractInteractionBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
 
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
+
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
 
@@ -275,11 +216,8 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            dataSize.text = viewTransfer.dataSizeText
-            amount.text = viewTransfer.amountText
-            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
-
-            action.text = viewTransfer.address.formatForTxList()
+            action.setText(R.string.tx_list_contract_interaction)
+            label.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -289,30 +227,27 @@ class CustomTransactionQueuedViewHolder(private val viewBinding: ItemTxQueuedTra
     }
 }
 
-class CustomTransactionViewHolder(private val viewBinding: ItemTxTransferBinding) :
+class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInteractionBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransaction>(viewBinding) {
 
     override fun bind(viewTransfer: TransactionView.CustomTransaction, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
+
         with(viewBinding) {
             txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            action.text = "Contract interaction "
-            dataSize.text = viewTransfer.dataSizeText
-            amount.text = viewTransfer.amountText
-            amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
+            action.setText(R.string.tx_list_contract_interaction)
+            label.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
             finalStatus.alpha = OPACITY_FULL
             txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             action.alpha = viewTransfer.alpha
-            dataSize.alpha = viewTransfer.alpha
-            amount.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
