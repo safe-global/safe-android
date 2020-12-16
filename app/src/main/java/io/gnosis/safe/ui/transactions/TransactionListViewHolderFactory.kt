@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.*
@@ -25,7 +27,8 @@ enum class TransactionViewType {
     SECTION_DATE_HEADER,
     SECTION_CONFLICT_HEADER,
     SECTION_LABEL_HEADER,
-    CREATION
+    CREATION,
+    CONFLICT
 }
 
 class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<TransactionView>, TransactionView>() {
@@ -42,9 +45,10 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.CONTRACT_INTERACTION.ordinal -> ContractInteractionViewHolder(viewBinding as ItemTxContractInteractionBinding)
             TransactionViewType.CONTRACT_INTERACTION_QUEUED.ordinal -> ContractInteractionQueuedViewHolder(viewBinding as ItemTxQueuedContractInteractionBinding)
             TransactionViewType.SECTION_DATE_HEADER.ordinal -> SectionDateHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
-            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> SectionConflictHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
+            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> SectionConflictHeaderViewHolder(viewBinding as ItemTxConflictSectionHeaderBinding)
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> SectionLabelHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             TransactionViewType.CREATION.ordinal -> CreationTransactionViewHolder(viewBinding as ItemTxSettingsChangeBinding)
+            TransactionViewType.CONFLICT.ordinal -> ConflictViewHolder(viewBinding as ItemTxConflictTxBinding, this)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -57,9 +61,10 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.CONTRACT_INTERACTION.ordinal -> ItemTxContractInteractionBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.CONTRACT_INTERACTION_QUEUED.ordinal -> ItemTxQueuedContractInteractionBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_DATE_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
-            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.SECTION_CONFLICT_HEADER.ordinal -> ItemTxConflictSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.CREATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.CONFLICT.ordinal -> ItemTxConflictTxBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -76,6 +81,7 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.CustomTransactionQueued -> TransactionViewType.CONTRACT_INTERACTION_QUEUED
             is TransactionView.Creation -> TransactionViewType.CREATION
             is TransactionView.Unknown -> throw UnsupportedViewType(javaClass.name)
+            is TransactionView.Conflict -> TransactionViewType.CONFLICT
         }.ordinal
 }
 
@@ -302,12 +308,12 @@ class SectionDateHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBi
     }
 }
 
-class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :
+class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSectionHeaderBinding) :
     BaseTransactionViewHolder<TransactionView.SectionConflictHeader>(viewBinding) {
 
     override fun bind(sectionDateHeader: TransactionView.SectionConflictHeader, payloads: List<Any>) {
         with(viewBinding) {
-            sectionTitle.text = sectionDateHeader.nonce.toString()
+            nonce.text = sectionDateHeader.nonce.toString()
         }
     }
 }
@@ -329,3 +335,17 @@ class SectionLabelHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderB
     }
 }
 
+class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, private val factory: TransactionViewHolderFactory) :
+    BaseTransactionViewHolder<TransactionView.Conflict>(viewBinding) {
+    override fun bind(data: TransactionView.Conflict, payloads: List<Any>) {
+        viewBinding.txContainer.removeAllViews()
+        val viewType = factory.viewTypeFor(data.innerView)
+        val innerBinding = factory.layout(LayoutInflater.from(viewBinding.txContainer.context), viewBinding.txContainer, viewType)
+        val innerViewHolder = factory.newViewHolder(innerBinding, viewType)
+        innerViewHolder.bind(data.innerView, payloads)
+
+        viewBinding.txContainer.addView(innerBinding.root)
+
+        viewBinding.lineBottom.isVisible = data.conflictType != ConflictType.End
+    }
+}
