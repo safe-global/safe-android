@@ -358,20 +358,6 @@ data class ActiveSafeChanged(
 
 object NoSafeSelected : BaseStateViewModel.ViewAction
 
-fun TransactionView.isQueued() = when (status) {
-    TransactionStatus.PENDING,
-    TransactionStatus.AWAITING_CONFIRMATIONS,
-    TransactionStatus.AWAITING_EXECUTION -> true
-    else -> false
-}
-
-fun TransactionView.isHistory() = when (status) {
-    TransactionStatus.CANCELLED,
-    TransactionStatus.FAILED,
-    TransactionStatus.SUCCESS -> true
-    else -> false
-}
-
 fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
     return executionInfo?.missingSigners?.contains(ownerAddress) == true
 }
