@@ -111,7 +111,7 @@ class TransactionListViewModel
         with(transaction) {
             return when (val txInfo = txInfo) {
                 is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
@@ -166,13 +166,17 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
-    private fun Transaction.toSettingsChangeView(txInfo: TransactionInfo.SettingsChange, awaitingYourConfirmation: Boolean): TransactionView =
+    private fun Transaction.toSettingsChangeView(
+        txInfo: TransactionInfo.SettingsChange,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
         when {
-            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation, isConflict)
             isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
             else -> TransactionView.Unknown
         }
@@ -195,7 +199,8 @@ class TransactionListViewModel
 
     private fun Transaction.queuedSettingsChange(
         txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.SettingsChangeQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
@@ -212,7 +217,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
@@ -220,9 +225,9 @@ class TransactionListViewModel
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
         awaitingYourConfirmation: Boolean,
-        conflict: Boolean
+        isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation, isConflict)
         else historicCustomTransaction(txInfo, safeAddress)
 
     private fun Transaction.historicCustomTransaction(
@@ -246,7 +251,8 @@ class TransactionListViewModel
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == safeAddress
@@ -264,7 +270,7 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString() ?: "",
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName
         )
     }
