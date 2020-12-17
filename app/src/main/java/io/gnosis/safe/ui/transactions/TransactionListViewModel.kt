@@ -77,7 +77,12 @@ class TransactionListViewModel
                             is TxListEntry.Transaction -> {
                                 val isConflict = txListEntry.conflictType != ConflictType.None
                                 val txView =
-                                    getTransactionView(txListEntry.transaction, safe, isConflict, txListEntry.transaction.canBeSignedByOwner(owner))
+                                    getTransactionView(
+                                        transaction = txListEntry.transaction,
+                                        activeSafe = safe,
+                                        awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
+                                        isConflict = isConflict
+                                    )
                                 if (isConflict) {
                                     TransactionView.Conflict(txView, txListEntry.conflictType)
                                 } else txView
@@ -151,7 +156,7 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
@@ -204,7 +209,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
@@ -258,7 +263,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
