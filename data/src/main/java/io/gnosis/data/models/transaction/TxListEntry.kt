@@ -7,16 +7,12 @@ import io.gnosis.data.models.transaction.Transaction as TransactionSummary
 enum class TxListEntryType {
     @Json(name = "TRANSACTION")
     TRANSACTION,
-
     @Json(name = "DATE_LABEL")
     DATE_LABEL,
-
     @Json(name = "LABEL")
     LABEL,
-
     @Json(name = "CONFLICT_HEADER")
     CONFLICT_HEADER,
-
     @Json(name = "UNKNOWN")
     UNKNOWN
 }

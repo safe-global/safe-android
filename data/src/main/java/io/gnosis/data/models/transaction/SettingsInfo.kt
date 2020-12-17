@@ -4,14 +4,14 @@ import com.squareup.moshi.Json
 import pm.gnosis.model.Solidity
 
 enum class SettingsInfoType {
-    SET_FALLBACK_HANDLER,
-    ADD_OWNER,
-    REMOVE_OWNER,
-    SWAP_OWNER,
-    CHANGE_THRESHOLD,
-    CHANGE_IMPLEMENTATION,
-    ENABLE_MODULE,
-    DISABLE_MODULE
+    @Json(name = "SET_FALLBACK_HANDLER") SET_FALLBACK_HANDLER,
+    @Json(name = "ADD_OWNER") ADD_OWNER,
+    @Json(name = "REMOVE_OWNER") REMOVE_OWNER,
+    @Json(name = "SWAP_OWNER") SWAP_OWNER,
+    @Json(name = "CHANGE_THRESHOLD") CHANGE_THRESHOLD,
+    @Json(name = "CHANGE_IMPLEMENTATION") CHANGE_IMPLEMENTATION,
+    @Json(name = "ENABLE_MODULE") ENABLE_MODULE,
+    @Json(name = "DISABLE_MODULE") DISABLE_MODULE
 }
 
 sealed class SettingsInfo(

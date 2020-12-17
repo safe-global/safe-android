@@ -6,9 +6,9 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 enum class TransferType {
-    ERC20,
-    ERC721,
-    ETHER
+    @Json(name = "ERC20") ERC20,
+    @Json(name = "ERC721") ERC721,
+    @Json(name = "ETHER") ETHER
 }
 
 sealed class TransferInfo(

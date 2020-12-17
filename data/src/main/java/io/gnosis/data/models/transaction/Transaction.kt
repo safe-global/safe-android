@@ -30,11 +30,11 @@ data class ExecutionInfo(
 )
 
 enum class TransactionType {
-    Transfer,
-    SettingsChange,
-    Custom,
-    Creation,
-    Unknown
+    @Json(name = "Transfer") Transfer,
+    @Json(name = "SettingsChange") SettingsChange,
+    @Json(name = "Custom") Custom,
+    @Json(name = "Creation") Creation,
+    @Json(name = "Unknown") Unknown
 }
 
 enum class TransactionStatus {
