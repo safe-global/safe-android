@@ -13,6 +13,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.utils.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -32,31 +33,23 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
-    private lateinit var listType: TransactionListFragment.Type
-
-    fun loadHistoryAndSubscribeToSafeChanges() {
-        listType = TransactionListFragment.Type.HISTORY
-        safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(safeChange = true) }
-        }
-    }
-
-    fun loadQueueAndSubscribeToSafeChanges() {
-        listType = TransactionListFragment.Type.QUEUE
-        safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(safeChange = true) }
-        }
-    }
-
     override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
 
-    fun load(safeChange: Boolean = false) {
+    init {
+        safeLaunch {
+            safeRepository.activeSafeFlow().collect { safe ->
+                updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+            }
+        }
+    }
+
+    fun load(type: TransactionPagingSource.Type, safeChange: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner, listType).collectLatest {
+                getTransactions(safe.address, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -73,7 +66,7 @@ class TransactionListViewModel
     private fun getTransactions(
         safe: Solidity.Address,
         owner: Solidity.Address?,
-        type: TransactionListFragment.Type
+        type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
