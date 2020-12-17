@@ -1,33 +1,50 @@
 package io.gnosis.data.models.transaction
 
+import com.squareup.moshi.Json
 import io.gnosis.data.repositories.TokenRepository
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 enum class TransferType {
-    ERC20, ERC721, ETHER
+    ERC20,
+    ERC721,
+    ETHER
 }
 
-sealed class TransferInfo(val type: TransferType) {
+sealed class TransferInfo(
+    @Json(name = "type") val type: TransferType
+) {
 
     data class Erc20Transfer(
+        @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
+        @Json(name = "tokenName")
         val tokenName: String?,
+        @Json(name = "tokenSymbol")
         val tokenSymbol: String?,
+        @Json(name = "logoUri")
         val logoUri: String?,
+        @Json(name = "decimals")
         val decimals: Int?,
+        @Json(name = "value")
         val value: BigInteger
     ) : TransferInfo(TransferType.ERC20)
 
     data class Erc721Transfer(
+        @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
+        @Json(name = "tokenId")
         val tokenId: String,
+        @Json(name = "tokenName")
         val tokenName: String?,
+        @Json(name = "tokenSymbol")
         val tokenSymbol: String?,
+        @Json(name = "logoUri")
         val logoUri: String?
     ) : TransferInfo(TransferType.ERC721)
 
     data class EtherTransfer(
+        @Json(name = "value")
         val value: BigInteger
     ) : TransferInfo(TransferType.ETHER)
 }

@@ -1,18 +1,26 @@
 package io.gnosis.data.models.transaction
 
+import com.squareup.moshi.Json
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 data class DataDecoded(
+    @Json(name = "method")
     val method: String,
+    @Json(name = "parameters")
     val parameters: List<Param>?
 )
 
 data class ValueDecoded(
+    @Json(name = "operation")
     val operation: Operation,
+    @Json(name = "to")
     val to: Solidity.Address,
+    @Json(name = "value")
     val value: BigInteger,
+    @Json(name = "data")
     val data: String,
+    @Json(name = "dataDecoded")
     val dataDecoded: DataDecoded?
 )
 
