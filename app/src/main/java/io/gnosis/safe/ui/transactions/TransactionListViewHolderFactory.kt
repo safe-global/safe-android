@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,9 @@ import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
-import io.gnosis.safe.utils.appendLink
+import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.formatBackendDate
+import java.time.temporal.ChronoUnit
 
 enum class TransactionViewType {
     TRANSFER,
@@ -362,3 +364,11 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
     fun hasNext() = conflictView.conflictType != ConflictType.End
 }
+fun ElapsedInterval.format(resources: Resources) = when (unit) {
+    ChronoUnit.SECONDS -> resources.getString(R.string.tx_list_ago_now)
+    ChronoUnit.DAYS -> resources.getQuantityString(R.plurals.tx_list_ago_day, value, value)
+    ChronoUnit.HOURS -> resources.getQuantityString(R.plurals.tx_list_ago_hour, value, value)
+    else -> resources.getString(R.string.tx_list_ago_min, value)
+}
+
+
