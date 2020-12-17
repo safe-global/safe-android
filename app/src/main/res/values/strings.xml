@@ -55,6 +55,7 @@
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
     <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+    <string name="error_description_fiat">Failed to load supported fiat list</string>
 
     <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
     <string name="error_network_no_internet_fix">Please try again when Internet is available</string>

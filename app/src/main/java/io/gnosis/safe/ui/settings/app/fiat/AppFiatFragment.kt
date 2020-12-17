@@ -4,11 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAppFiatBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
@@ -27,13 +37,40 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            backButton.setOnClickListener { findNavController().navigateUp() }
-        }
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
+        viewModel.fetchSupportedFiatCodes()
     }
 
-    companion object {
-        const val DEFAULT_FIAT = "args.string.default_fiat"
-        const val DEFAULT_FIAT_CHANGED = "args.boolean.default_fiat_changed"
+    override fun onResume() {
+        super.onResume()
+        viewModel.state().observe(viewLifecycleOwner, Observer {
+            when (val viewAction = it.viewAction) {
+                is SelectFiat -> (binding.fiatList.adapter as FiatListAdapter).selectedItem = viewAction.fiatCode
+                is FiatList -> {
+                    with(binding) {
+                        progress.visible(false)
+                        fiatList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                        fiatList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+                        fiatList.adapter =
+                            FiatListAdapter(WeakReference { fiatCode: String -> viewModel.selectedFiatCodeChanged(fiatCode) }, viewAction.fiatCodes)
+                        viewModel.fetchDefaultUserFiat()
+                    }
+                }
+                is BaseStateViewModel.ViewAction.ShowError -> {
+                    binding.progress.visible(false)
+                    with(viewAction.error) {
+                        Timber.e(this)
+                        errorSnackbar(
+                            requireView(),
+                            toError().message(
+                                requireContext(),
+                                R.string.error_description_fiat
+                            )
+                        )
+                    }
+                }
+            }
+        })
     }
 }

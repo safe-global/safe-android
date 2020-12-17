@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.settings.app.fiat
 
 import io.gnosis.data.repositories.SettingsRepository
-import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.PublishViewModel
@@ -22,7 +21,19 @@ class AppFiatViewModel
         }
     }
 
-    fun fetchDefaultUserFiat() {}
+    fun fetchDefaultUserFiat() {
+        safeLaunch {
+            val userDefaultFiat = settingsRepository.getUserDefaultFiat()
+            updateState { AppFiatFragmentState(SelectFiat(userDefaultFiat)) }
+        }
+    }
+
+    fun selectedFiatCodeChanged(fiatCode: String) {
+        safeLaunch {
+            settingsRepository.updateUserFiat(fiatCode)
+            updateState { AppFiatFragmentState(SelectFiat(fiatCode)) }
+        }
+    }
 }
 
 data class FiatList(val fiatCodes: List<String>) : BaseStateViewModel.ViewAction
