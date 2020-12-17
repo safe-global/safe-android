@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemFiatBinding
 import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
-
+import java.util.*
 
 typealias OnFiatSelected = WeakReference<(fiatCode: String) -> Unit>
 
@@ -37,7 +38,8 @@ class FiatListAdapter(
 
     override fun onBindViewHolder(holder: FiatViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item, item == selectedItem)
+        val displayName = Currency.getInstance(item).displayName
+        holder.bind(item, displayName, item == selectedItem)
     }
 
     override fun getItemCount(): Int = items.size
@@ -48,10 +50,10 @@ class FiatViewHolder(
     private val clickListener: OnFiatSelected
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(fiatCode: String, isSelected: Boolean) {
+    fun bind(fiatCode: String, displayName: String, isSelected: Boolean) {
         with(binding) {
             root.setOnClickListener { clickListener.get()?.invoke(fiatCode) }
-            fiatCodeText.text = fiatCode
+            fiatCodeText.text = root.context.getString(R.string.separator_hyphen, fiatCode, displayName)
             fiatSelected.visible(isSelected, View.INVISIBLE)
         }
     }

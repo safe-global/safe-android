@@ -65,7 +65,6 @@ class CoinsViewModel
                 balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
                 balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
                 R.string.usd_balance
-
             ))
         }
 
