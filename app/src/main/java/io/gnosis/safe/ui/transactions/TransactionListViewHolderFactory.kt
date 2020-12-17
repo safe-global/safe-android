@@ -33,8 +33,6 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
     @Suppress("UNCHECKED_CAST")
     override fun newViewHolder(viewBinding: ViewBinding, viewType: Int): BaseTransactionViewHolder<TransactionView> =
         when (viewType) {
-            //TODO: Remove CHANGE_IMPLEMENTATION and CHANGE_IMPLEMENTATION_QUEUED
-
             TransactionViewType.SETTINGS_CHANGE.ordinal -> SettingsChangeViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             TransactionViewType.SETTINGS_CHANGE_QUEUED.ordinal -> SettingsChangeQueuedViewHolder(viewBinding as ItemTxQueuedSettingsChangeBinding)
             TransactionViewType.TRANSFER.ordinal -> TransferViewHolder(viewBinding as ItemTxTransferBinding)
