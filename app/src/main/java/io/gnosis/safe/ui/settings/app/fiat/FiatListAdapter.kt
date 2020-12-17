@@ -7,17 +7,18 @@ import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemFiatBinding
 import pm.gnosis.svalinn.common.utils.visible
-import java.lang.ref.WeakReference
 import java.util.*
 
-typealias OnFiatSelected = WeakReference<(fiatCode: String) -> Unit>
+typealias OnFiatSelected = (fiatCode: String) -> Unit
 
-class FiatListAdapter(
-    private val clickListener: OnFiatSelected,
-    private val items: List<String>
-) : RecyclerView.Adapter<FiatViewHolder>() {
+class FiatListAdapter : RecyclerView.Adapter<FiatListAdapter.FiatViewHolder>() {
 
-    init {
+    var clickListener: OnFiatSelected? = null
+    val items = mutableListOf<String>()
+
+    fun setItems(newItems: List<String>) {
+        items.clear()
+        items.addAll(newItems)
         notifyDataSetChanged()
     }
 
@@ -31,10 +32,7 @@ class FiatListAdapter(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FiatViewHolder =
-        FiatViewHolder(
-            ItemFiatBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            clickListener
-        )
+        FiatViewHolder(ItemFiatBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FiatViewHolder, position: Int) {
         val item = items[position]
@@ -43,18 +41,20 @@ class FiatListAdapter(
     }
 
     override fun getItemCount(): Int = items.size
-}
 
-class FiatViewHolder(
-    private val binding: ItemFiatBinding,
-    private val clickListener: OnFiatSelected
-) : RecyclerView.ViewHolder(binding.root) {
+    inner class FiatViewHolder(
+        private val binding: ItemFiatBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(fiatCode: String, displayName: String, isSelected: Boolean) {
-        with(binding) {
-            root.setOnClickListener { clickListener.get()?.invoke(fiatCode) }
-            fiatCodeText.text = root.context.getString(R.string.separator_hyphen, fiatCode, displayName)
-            fiatSelected.visible(isSelected, View.INVISIBLE)
+        init {
+            binding.root.setOnClickListener { clickListener?.invoke(items[absoluteAdapterPosition]) }
+        }
+
+        fun bind(fiatCode: String, displayName: String, isSelected: Boolean) {
+            with(binding) {
+                fiatCodeText.text = root.context.getString(R.string.separator_hyphen, fiatCode, displayName)
+                fiatSelected.visible(isSelected, View.INVISIBLE)
+            }
         }
     }
 }

@@ -26,6 +26,8 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
     @Inject
     lateinit var viewModel: AppFiatViewModel
 
+    private val adapter by lazy { FiatListAdapter() }
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAppFiatBinding =
         FragmentAppFiatBinding.inflate(inflater, container, false)
 
@@ -37,7 +39,14 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        with(binding) {
+            backButton.setOnClickListener { findNavController().navigateUp() }
+
+            adapter.clickListener = { fiatCode: String -> viewModel.selectedFiatCodeChanged(fiatCode) }
+            fiatList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            fiatList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
+            fiatList.adapter = adapter
+        }
 
         viewModel.fetchSupportedFiatCodes()
     }
@@ -48,14 +57,9 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
             when (val viewAction = it.viewAction) {
                 is SelectFiat -> (binding.fiatList.adapter as FiatListAdapter).selectedItem = viewAction.fiatCode
                 is FiatList -> {
-                    with(binding) {
-                        progress.visible(false)
-                        fiatList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                        fiatList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
-                        fiatList.adapter =
-                            FiatListAdapter(WeakReference { fiatCode: String -> viewModel.selectedFiatCodeChanged(fiatCode) }, viewAction.fiatCodes)
-                        viewModel.fetchDefaultUserFiat()
-                    }
+                    binding.progress.visible(false)
+                    adapter.setItems(viewAction.fiatCodes)
+                    viewModel.fetchDefaultUserFiat()
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.progress.visible(false)
