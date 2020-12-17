@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
@@ -74,7 +75,6 @@ class TransactionListViewModelTest {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         transactionListViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
-        transactionListViewModel.loadHistoryAndSubscribeToSafeChanges()
 
         transactionListViewModel.state.observeForever(testObserver)
 
@@ -88,13 +88,11 @@ class TransactionListViewModelTest {
     }
 
     @Test
-    fun `loadHistoryAndSubscribeToSafeChanges - (safeRepository failure) should emit ShowError`() {
+    fun `init - (safeRepository failure) should emit ShowError`() {
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } throws throwable
         transactionListViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
-
-        transactionListViewModel.loadHistoryAndSubscribeToSafeChanges()
 
         transactionListViewModel.state.observeForever(testObserver)
         testObserver.assertValueCount(1)
@@ -107,7 +105,7 @@ class TransactionListViewModelTest {
     }
 
     @Test
-    fun `load - (active safe with transactions) should emit LoadTransaction`() {
+    fun `init - (active safe with transactions) should emit ActiveSafeChanged`() {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
@@ -116,24 +114,20 @@ class TransactionListViewModelTest {
         coEvery {
             transactionPagingProvider.getTransactionsStream(
                 any(),
-                TransactionListFragment.Type.HISTORY
+                TransactionPagingSource.Type.HISTORY
             )
         } returns flow { emit(PagingData.empty()) }
         transactionListViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
-        transactionListViewModel.loadHistoryAndSubscribeToSafeChanges()
-
 
         transactionListViewModel.state.observeForever(testObserver)
 
+        testObserver.assertValueCount(1)
         with(testObserver.values()[0]) {
-            assertEquals(false, isLoading)
-            assertEquals(true, viewAction is LoadTransactions)
+            assertEquals(true, viewAction is ActiveSafeChanged)
+            assertEquals(true, isLoading)
         }
         coVerifySequence {
             safeRepository.activeSafeFlow()
-            safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address) wasNot Called
-            transactionPagingProvider.getTransactionsStream(safe.address, TransactionListFragment.Type.HISTORY)
         }
     }
 
@@ -146,9 +140,9 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { ownerRepository.retrieveCredentials() } returns null
         coEvery { transactionRepository.getHistoryTransactions(any()) } throws throwable
-        coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionListFragment.Type.HISTORY) } throws throwable
+        coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionPagingSource.Type.HISTORY) } throws throwable
         transactionListViewModel = TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
-        transactionListViewModel.loadHistoryAndSubscribeToSafeChanges()
+        transactionListViewModel.load(TransactionPagingSource.Type.HISTORY)
 
         transactionListViewModel.state.observeForever(testObserver)
 

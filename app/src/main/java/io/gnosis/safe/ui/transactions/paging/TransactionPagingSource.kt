@@ -3,14 +3,13 @@ package io.gnosis.safe.ui.transactions.paging
 import androidx.paging.PagingSource
 import io.gnosis.data.models.transaction.TxListEntry
 import io.gnosis.data.repositories.TransactionRepository
-import io.gnosis.safe.ui.transactions.TransactionListFragment
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
 class TransactionPagingSource(
     private val safe: Solidity.Address,
     private val txRepo: TransactionRepository,
-    private val type: TransactionListFragment.Type
+    private val type: Type
 ) : PagingSource<String, TxListEntry>() {
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, TxListEntry> {
@@ -19,7 +18,7 @@ class TransactionPagingSource(
 
         kotlin.runCatching {
             pageLink?.let { txRepo.loadTransactionsPage(pageLink) }
-                ?: if (type == TransactionListFragment.Type.HISTORY) txRepo.getHistoryTransactions(safe) else txRepo.getQueuedTransactions(safe)
+                ?: if (type == Type.HISTORY) txRepo.getHistoryTransactions(safe) else txRepo.getQueuedTransactions(safe)
 
         }.onSuccess {
             return LoadResult.Page(
@@ -34,5 +33,10 @@ class TransactionPagingSource(
             }
 
         throw IllegalStateException(javaClass.name)
+    }
+
+    enum class Type {
+        QUEUE,
+        HISTORY
     }
 }
