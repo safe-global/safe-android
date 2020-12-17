@@ -54,10 +54,8 @@ sealed class TransactionInfo(
 enum class TransactionDirection {
     @Json(name = "INCOMING")
     INCOMING,
-
     @Json(name = "OUTGOING")
     OUTGOING,
-
     @Json(name = "UNKNOWN")
     UNKNOWN
 }
