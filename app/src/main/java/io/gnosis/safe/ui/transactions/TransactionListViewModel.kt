@@ -98,8 +98,8 @@ class TransactionListViewModel
     fun getTransactionView(
         transaction: Transaction,
         activeSafe: Solidity.Address,
-        isConflict: Boolean,
-        awaitingYourConfirmation: Boolean = false
+        awaitingYourConfirmation: Boolean = false,
+        isConflict: Boolean = false
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
@@ -115,7 +115,7 @@ class TransactionListViewModel
     private fun Transaction.toTransferView(
         txInfo: TransactionInfo.Transfer,
         awaitingYourConfirmation: Boolean,
-        isConflict: Boolean
+        isConflict: Boolean = false
     ): TransactionView =
         if (isCompleted(txStatus)) historicTransfer(txInfo, isConflict)
         else queuedTransfer(txInfo, awaitingYourConfirmation, isConflict)
@@ -138,7 +138,7 @@ class TransactionListViewModel
     private fun Transaction.queuedTransfer(
         txInfo: TransactionInfo.Transfer,
         awaitingYourConfirmation: Boolean,
-        isConflict: Boolean
+        isConflict: Boolean = false
     ): TransactionView.TransferQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
@@ -166,7 +166,7 @@ class TransactionListViewModel
     private fun Transaction.toSettingsChangeView(
         txInfo: TransactionInfo.SettingsChange,
         awaitingYourConfirmation: Boolean,
-        isConflict: Boolean
+        isConflict: Boolean = false
     ): TransactionView =
         when {
             isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation, isConflict)
