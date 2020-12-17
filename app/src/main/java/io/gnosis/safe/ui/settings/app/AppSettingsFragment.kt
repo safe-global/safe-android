@@ -13,6 +13,8 @@ import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
+import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragmentDirections
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
@@ -41,6 +43,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             setupOwnerKeyView()
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
+            }
+            fiat.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
             terms.setOnClickListener {
                 requireContext().openUrl(getString(R.string.link_terms_of_use))
