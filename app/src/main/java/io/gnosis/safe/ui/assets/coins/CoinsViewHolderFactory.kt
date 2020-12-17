@@ -23,7 +23,7 @@ class CoinsViewHolderFactory : BaseFactory<BaseCoinsViewHolder<CoinsViewData>, C
         else -> throw UnsupportedViewType(javaClass.name)
     } as BaseCoinsViewHolder<CoinsViewData>
 
-    override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding = when(viewType) {
+    override fun layout(layoutInflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewBinding = when (viewType) {
         BalanceItemViewType.TOTAL.ordinal -> ItemCoinTotalBinding.inflate(layoutInflater, parent, false)
         BalanceItemViewType.COIN.ordinal -> ItemCoinBalanceBinding.inflate(layoutInflater, parent, false)
         else -> throw UnsupportedViewType(javaClass.name)
@@ -45,7 +45,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
             logoImage.loadTokenLogo(icon = coinBalance.logoUri)
             symbol.text = coinBalance.symbol
             balance.text = coinBalance.balance
-            balanceUsd.text = root.context.getString(coinBalance.balanceFiatStringRes, coinBalance.balanceFiat)
+            balanceUsd.text = root.context.getString(coinBalance.balanceFiatStringRes, coinBalance.balanceFiatCurrencySymbol, coinBalance.balanceFiat)
         }
     }
 }
@@ -54,7 +54,7 @@ class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : Ba
 
     override fun bind(total: CoinsViewData.TotalBalance, payloads: List<Any>) {
         with(viewBinding) {
-            totalBalance.text = root.context.getString(total.balanceFiatStringRes, total.totalFiat)
+            totalBalance.text = root.context.getString(total.balanceFiatStringRes, total.totalFiatCurrencySymbol, total.totalFiat)
         }
     }
 }

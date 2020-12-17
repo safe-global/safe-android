@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.assets.coins
 
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.SettingsRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -11,12 +12,14 @@ import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode
+import java.util.*
 import javax.inject.Inject
 
 class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
+    private val settingsRepository: SettingsRepository,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CoinsState>(appDispatchers) {
@@ -48,24 +51,29 @@ class CoinsViewModel
         }
     }
 
-    fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
-
+    suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
+        val userCurrency = Currency.getInstance(settingsRepository.getUserDefaultFiat())
+        val userCurrencySymbol = userCurrency.symbol
         val result = mutableListOf<CoinsViewData>()
 
         val totalBalance = CoinsViewData.TotalBalance(
             balanceFormatter.shortAmount(coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP)),
-            R.string.usd_balance
+            userCurrencySymbol,
+            R.string.separator_whitespace
         )
         result.add(totalBalance)
 
         coinBalanceData.items.forEach {
-            result.add(CoinsViewData.CoinBalance(
-                it.tokenInfo.symbol,
-                it.tokenInfo.logoUri,
-                balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
-                balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
-                R.string.usd_balance
-            ))
+            result.add(
+                CoinsViewData.CoinBalance(
+                    it.tokenInfo.symbol,
+                    it.tokenInfo.logoUri,
+                    balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
+                    balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
+                    userCurrencySymbol,
+                    R.string.separator_whitespace
+                )
+            )
         }
 
         return result
