@@ -34,9 +34,7 @@ data class TxData(
 )
 
 enum class DetailedExecutionInfoType {
-    @Json(name = "MULTISIG")
     MULTISIG,
-    @Json(name = "MODULE")
     MODULE
 }
 
