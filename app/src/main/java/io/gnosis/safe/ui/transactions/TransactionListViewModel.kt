@@ -353,7 +353,6 @@ class TransactionListViewModel
         } ?: false
     }
 
-
     companion object {
         const val OPACITY_FULL = 1.0F
         const val OPACITY_HALF = 0.5F
