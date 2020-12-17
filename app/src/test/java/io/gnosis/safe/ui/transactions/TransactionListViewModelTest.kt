@@ -24,10 +24,7 @@ import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
-import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.OwnerCredentials
-import io.gnosis.safe.utils.OwnerCredentialsRepository
-import io.gnosis.safe.utils.formatBackendTimeOfDay
+import io.gnosis.safe.utils.*
 import io.mockk.*
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -236,7 +233,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_red_10dp,
                 direction = R.string.tx_list_send,
                 confirmations = 0,
@@ -255,7 +252,7 @@ class TransactionListViewModelTest {
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 direction = R.string.tx_list_receive,
                 threshold = 2,
@@ -432,7 +429,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 methodName = "multiSend",
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
@@ -448,7 +445,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 methodName = "multiSend",
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
@@ -583,7 +580,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 confirmations = 2,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
@@ -599,7 +596,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 method = "removeOwner",
                 confirmations = 0,
                 threshold = 2,
@@ -615,7 +612,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
@@ -631,7 +628,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_awaiting_confirmations,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 confirmations = 0,
                 threshold = 2,
                 confirmationsTextColor = R.color.text_emphasis_low,
@@ -647,7 +644,7 @@ class TransactionListViewModelTest {
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_awaiting_execution,
                 statusColorRes = R.color.secondary,
-                dateTimeText = Date(0).formatBackendTimeOfDay(),
+                dateTimeText = Date(0).formatBackendDateTime(),
                 confirmations = 2,
                 threshold = 2,
                 confirmationsTextColor = R.color.primary,
