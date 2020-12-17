@@ -8,7 +8,8 @@ import timber.log.Timber
 
 class TransactionPagingSource(
     private val safe: Solidity.Address,
-    private val txRepo: TransactionRepository
+    private val txRepo: TransactionRepository,
+    private val type: Type
 ) : PagingSource<String, TxListEntry>() {
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, TxListEntry> {
@@ -16,7 +17,8 @@ class TransactionPagingSource(
         val pageLink = params.key
 
         kotlin.runCatching {
-            pageLink?.let { txRepo.loadTransactionsPage(pageLink) } ?: txRepo.getHistoryTransactions(safe)
+            pageLink?.let { txRepo.loadTransactionsPage(pageLink) }
+                ?: if (type == Type.HISTORY) txRepo.getHistoryTransactions(safe) else txRepo.getQueuedTransactions(safe)
 
         }.onSuccess {
             return LoadResult.Page(
@@ -31,5 +33,10 @@ class TransactionPagingSource(
             }
 
         throw IllegalStateException(javaClass.name)
+    }
+
+    enum class Type {
+        QUEUE,
+        HISTORY
     }
 }

@@ -318,7 +318,8 @@ private fun buildCustomTxInfo(
     TransactionInfo.Custom(
         value = value,
         to = to,
-        dataSize = dataSize
+        dataSize = dataSize,
+        methodName = null
     )
 
 private fun buildCreationTxInfo(

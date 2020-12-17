@@ -52,7 +52,6 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
                 }
             }.attach()
         }
-
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 is TransactionsState -> {

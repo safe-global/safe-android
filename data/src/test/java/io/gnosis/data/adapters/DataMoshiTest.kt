@@ -1,8 +1,6 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
-import io.gnosis.data.models.transaction.DataDecoded
-import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
@@ -61,7 +59,8 @@ class DataMoshiTest {
             txInfo = TransactionInfo.Custom(
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                value = "3140000000000000000".toBigInteger()
+                value = "3140000000000000000".toBigInteger(),
+                methodName = null
             ),
             executionInfo = ExecutionInfo(
                 nonce = 8.toBigInteger(),

@@ -25,6 +25,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
+import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
@@ -33,11 +34,11 @@ import javax.inject.Inject
 
 class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListBinding>() {
 
-    private val type by lazy { requireArguments()[ARGS_TYPE] as Type  }
+    private val type by lazy { requireArguments()[ARGS_TYPE] as TransactionPagingSource.Type }
 
-    override fun screenId() = when(type) {
-        Type.QUEUE -> ScreenId.TRANSACTIONS_QUEUE
-        Type.HISTORY -> ScreenId.TRANSACTIONS_HISTORY
+    override fun screenId() = when (type) {
+        TransactionPagingSource.Type.QUEUE -> ScreenId.TRANSACTIONS_QUEUE
+        TransactionPagingSource.Type.HISTORY -> ScreenId.TRANSACTIONS_HISTORY
     }
 
     @Inject
@@ -109,7 +110,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             addItemDecoration(dividerItemDecoration)
         }
-        binding.refresh.setOnRefreshListener { viewModel.load() }
+        binding.refresh.setOnRefreshListener { viewModel.load(type) }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
 
@@ -120,6 +121,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
+                        viewModel.load(type, true)
                         lifecycleScope.launch {
                             // if safe changes we need to reset data for recycler
                             adapter.submitData(PagingData.empty())
@@ -143,7 +145,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun onResume() {
         super.onResume()
         if (reload) {
-            viewModel.load()
+            viewModel.load(type)
         }
     }
 
@@ -184,24 +186,19 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
         }
     }
 
-    enum class Type {
-        QUEUE,
-        HISTORY
-    }
-
     companion object {
 
         private const val ARGS_TYPE = "args.serializable.type"
 
         fun newQueueInstance(): TransactionListFragment {
             return TransactionListFragment().withArgs(Bundle().apply {
-                putSerializable(ARGS_TYPE, Type.QUEUE)
+                putSerializable(ARGS_TYPE, TransactionPagingSource.Type.QUEUE)
             }) as TransactionListFragment
         }
 
         fun newHistoryInstance(): TransactionListFragment {
             return TransactionListFragment().withArgs(Bundle().apply {
-                putSerializable(ARGS_TYPE, Type.HISTORY)
+                putSerializable(ARGS_TYPE, TransactionPagingSource.Type.HISTORY)
             }) as TransactionListFragment
         }
     }
