@@ -335,7 +335,11 @@ class SectionLabelHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderB
 
 class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, private val factory: TransactionViewHolderFactory) :
     BaseTransactionViewHolder<TransactionView.Conflict>(viewBinding) {
+
+    private lateinit var conflictView: TransactionView.Conflict
+
     override fun bind(data: TransactionView.Conflict, payloads: List<Any>) {
+        conflictView = data
         viewBinding.txContainer.removeAllViews()
         val viewType = factory.viewTypeFor(data.innerView)
         val innerBinding = factory.layout(LayoutInflater.from(viewBinding.txContainer.context), viewBinding.txContainer, viewType)
@@ -346,4 +350,6 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
         viewBinding.lineBottom.isVisible = data.conflictType != ConflictType.End
     }
+
+    fun hasNext() = conflictView.conflictType != ConflictType.End
 }

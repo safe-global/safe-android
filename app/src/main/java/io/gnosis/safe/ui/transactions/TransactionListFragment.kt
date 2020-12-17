@@ -1,10 +1,10 @@
 package io.gnosis.safe.ui.transactions
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
@@ -20,6 +19,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.qrscanner.nullOnThrow
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -106,9 +106,17 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                 footer = TransactionLoadStateAdapter { this@TransactionListFragment.adapter.retry() }
             )
             layoutManager = LinearLayoutManager(requireContext())
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
-            addItemDecoration(dividerItemDecoration)
+
+            addItemDecoration(object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                    super.getItemOffsets(outRect, view, parent, state)
+                    when (val viewHolder = nullOnThrow { parent.getChildViewHolder(view) }) {
+                        is ConflictViewHolder -> if (viewHolder.hasNext()) return
+                        is SectionConflictHeaderViewHolder -> return
+                    }
+                    outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
+                }
+            })
         }
         binding.refresh.setOnRefreshListener { viewModel.load(type) }
 
