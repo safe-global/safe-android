@@ -11,11 +11,12 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class TokenRepository(
-    private val gatewayApi: GatewayApi
+    private val gatewayApi: GatewayApi,
+    private val settingsRepository: SettingsRepository
 ) {
 
     suspend fun loadBalanceOf(safe: Solidity.Address): CoinBalances {
-        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString())
+        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString(), settingsRepository.getUserDefaultFiat())
         return CoinBalances(response.fiatTotal, response.items.map {
             if (it.tokenInfo.address == ZERO_ADDRESS)
                 it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::native_currency"))

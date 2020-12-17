@@ -13,8 +13,6 @@ import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
-import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragmentDirections
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
@@ -72,7 +70,13 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         viewModel.loadSigningOwner()
 
-        if(ownerImported()) {
+        viewModel.defaultFiat.observe(viewLifecycleOwner, Observer {
+            binding.fiat.value = it
+        })
+
+        viewModel.loadUserDefaultFiat()
+
+        if (ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
             resetOwnerImported()
         }
