@@ -14,10 +14,17 @@ class AppFiatViewModel
 
     fun fetchSupportedFiatCodes() {
         safeLaunch {
-            val supportedFiatCodes = settingsRepository.loadSupportedFiatCodes()
-            updateState {
-                AppFiatFragmentState(FiatList(fiatCodes = supportedFiatCodes))
-            }
+            runCatching { settingsRepository.loadSupportedFiatCodes() }
+                .onSuccess { supportedFiatCodes ->
+                    updateState {
+                        AppFiatFragmentState(FiatList(fiatCodes = supportedFiatCodes))
+                    }
+                }
+                .onFailure {
+                    updateState {
+                        AppFiatFragmentState(BaseStateViewModel.ViewAction.ShowError(it))
+                    }
+                }
         }
     }
 

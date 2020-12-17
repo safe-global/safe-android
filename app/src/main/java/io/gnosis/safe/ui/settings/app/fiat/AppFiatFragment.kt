@@ -42,6 +42,8 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
         with(binding) {
             backButton.setOnClickListener { findNavController().navigateUp() }
 
+            refresh.setOnRefreshListener { viewModel.fetchSupportedFiatCodes() }
+
             adapter.clickListener = { fiatCode: String -> viewModel.selectedFiatCodeChanged(fiatCode) }
             fiatList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             fiatList.addItemDecoration(DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL))
@@ -58,11 +60,13 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
                 is SelectFiat -> (binding.fiatList.adapter as FiatListAdapter).selectedItem = viewAction.fiatCode
                 is FiatList -> {
                     binding.progress.visible(false)
+                    binding.refresh.isRefreshing = false
                     adapter.setItems(viewAction.fiatCodes)
                     viewModel.fetchDefaultUserFiat()
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.progress.visible(false)
+                    binding.refresh.isRefreshing = false
                     with(viewAction.error) {
                         Timber.e(this)
                         errorSnackbar(
