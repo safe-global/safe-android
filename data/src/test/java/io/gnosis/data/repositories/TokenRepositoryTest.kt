@@ -1,6 +1,7 @@
 package io.gnosis.data.repositories
 
 import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
@@ -28,7 +29,7 @@ class TokenRepositoryTest {
     private val gatewayApi = mockk<GatewayApi>()
     private val tokenRepository = TokenRepository(gatewayApi)
 
-    private val moshi = dataMoshi
+    private val moshi = dataMoshi.newBuilder().add(KotlinJsonAdapterFactory()).build()
     private val balancesAdapter = moshi.adapter(CoinBalances::class.java)
     private val collectiblesAdapter = moshi.adapter<List<Collectible>>(Types.newParameterizedType(List::class.java, Collectible::class.java))
 
