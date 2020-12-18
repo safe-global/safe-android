@@ -1,8 +1,10 @@
 package io.gnosis.data.models.assets
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 
+@JsonClass(generateAdapter = true)
 data class Collectible(
     @Json(name = "id") val id: String,
     @Json(name = "address") val address: Solidity.Address,
