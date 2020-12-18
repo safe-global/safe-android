@@ -1,10 +1,12 @@
 package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
 
+@JsonClass(generateAdapter = true)
 data class TransactionDetails(
     @Json(name = "txHash")
     val txHash: String?,
@@ -20,6 +22,7 @@ data class TransactionDetails(
     val detailedExecutionInfo: DetailedExecutionInfo?
 )
 
+@JsonClass(generateAdapter = true)
 data class TxData(
     @Json(name = "hexData")
     val hexData: String?,
@@ -41,6 +44,7 @@ enum class DetailedExecutionInfoType {
 sealed class DetailedExecutionInfo(
     @Json(name = "type") val type: DetailedExecutionInfoType
 ) {
+    @JsonClass(generateAdapter = true)
     data class MultisigExecutionDetails(
         @Json(name = "submittedAt")
         val submittedAt: Date,
@@ -66,12 +70,14 @@ sealed class DetailedExecutionInfo(
         val gasToken: Solidity.Address
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MULTISIG)
 
+    @JsonClass(generateAdapter = true)
     data class ModuleExecutionDetails(
         @Json(name = "address")
         val address: String
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MODULE)
 }
 
+@JsonClass(generateAdapter = true)
 data class Confirmations(
     @Json(name = "signer")
     val signer: Solidity.Address,

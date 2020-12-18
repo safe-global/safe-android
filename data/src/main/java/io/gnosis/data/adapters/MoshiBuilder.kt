@@ -2,7 +2,6 @@ package io.gnosis.data.adapters
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.models.transaction.*
 import pm.gnosis.common.adapters.moshi.*
 
@@ -61,5 +60,4 @@ val dataMoshi =
         .add(transactionExecutionDetailsAdapter)
         .add(txListEntryAdapter)
         .add(ParamAdapter())
-        .add(KotlinJsonAdapterFactory())
         .build()

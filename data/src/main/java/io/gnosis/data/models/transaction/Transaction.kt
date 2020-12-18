@@ -1,10 +1,12 @@
 package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
 
+@JsonClass(generateAdapter = true)
 data class Transaction(
     @Json(name = "id")
     val id: String,
@@ -18,6 +20,7 @@ data class Transaction(
     val executionInfo: ExecutionInfo?
 )
 
+@JsonClass(generateAdapter = true)
 data class ExecutionInfo(
     @Json(name = "nonce")
     val nonce: BigInteger,
@@ -28,7 +31,6 @@ data class ExecutionInfo(
     @Json(name = "missingSigners")
     val missingSigners: List<Solidity.Address>?
 )
-
 enum class TransactionType {
     @Json(name = "Transfer") Transfer,
     @Json(name = "SettingsChange") SettingsChange,
@@ -36,12 +38,11 @@ enum class TransactionType {
     @Json(name = "Creation") Creation,
     @Json(name = "Unknown") Unknown
 }
-
 enum class TransactionStatus {
-    AWAITING_CONFIRMATIONS,
-    AWAITING_EXECUTION,
-    CANCELLED,
-    FAILED,
-    SUCCESS,
-    PENDING // Not supported yet as these correspond to the ones issued from the device
+    @Json(name = "AWAITING_CONFIRMATIONS") AWAITING_CONFIRMATIONS,
+    @Json(name = "AWAITING_EXECUTION") AWAITING_EXECUTION,
+    @Json(name = "CANCELLED") CANCELLED,
+    @Json(name = "FAILED") FAILED,
+    @Json(name = "SUCCESS") SUCCESS,
+    @Json(name = "PENDING") PENDING // Not supported yet as these correspond to the ones issued from the device
 }
