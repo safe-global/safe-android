@@ -29,7 +29,7 @@ class TokenRepositoryTest {
     private val gatewayApi = mockk<GatewayApi>()
     private val tokenRepository = TokenRepository(gatewayApi)
 
-    private val moshi = dataMoshi.newBuilder().add(KotlinJsonAdapterFactory()).build()
+    private val moshi = dataMoshi
     private val balancesAdapter = moshi.adapter(CoinBalances::class.java)
     private val collectiblesAdapter = moshi.adapter<List<Collectible>>(Types.newParameterizedType(List::class.java, Collectible::class.java))
 
