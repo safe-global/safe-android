@@ -25,7 +25,6 @@ import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.appendText
-import timber.log.Timber
 
 enum class TransactionViewType {
     TRANSFER,
@@ -320,23 +319,19 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
     BaseTransactionViewHolder<TransactionView.SectionConflictHeader>(viewBinding) {
 
     override fun bind(sectionDateHeader: TransactionView.SectionConflictHeader, payloads: List<Any>) {
-        Timber.i("----> bind()")
         val resources = viewBinding.root.context.resources
 
         with(viewBinding) {
             nonce.text = sectionDateHeader.nonce.toString()
             sectionTitle.text = resources.getString(R.string.tx_list_conflict_header_explainer)
             sectionTitle.appendLink(
-                "https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other",
-                "Learn more"
+                resources.getString(R.string.tx_list_conflict_header_link),
+                resources.getString(R.string.tx_list_conflict_header_learn_more)
             )
         }
     }
 
     private fun TextView.appendLink(url: String, urlText: String) {
-
-        Timber.i("----> appendLink()")
-
         val textColor = ForegroundColorSpan(textColors.defaultColor) //TODO get foreground color from TextView
 
         val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_link_green_24dp)!!
