@@ -1,8 +1,16 @@
 package io.gnosis.safe.ui.transactions
 
+import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
+import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
@@ -16,6 +24,8 @@ import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.svalinn.common.utils.appendText
+import timber.log.Timber
 
 enum class TransactionViewType {
     TRANSFER,
@@ -310,9 +320,43 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
     BaseTransactionViewHolder<TransactionView.SectionConflictHeader>(viewBinding) {
 
     override fun bind(sectionDateHeader: TransactionView.SectionConflictHeader, payloads: List<Any>) {
+        Timber.i("----> bind()")
+        val resources = viewBinding.root.context.resources
+
         with(viewBinding) {
             nonce.text = sectionDateHeader.nonce.toString()
+            sectionTitle.text = resources.getString(R.string.tx_list_conflict_header_explainer)
+            sectionTitle.appendLink(
+                "https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other",
+                "Learn more"
+            )
         }
+    }
+
+    private fun TextView.appendLink(url: String, urlText: String) {
+
+        Timber.i("----> appendLink()")
+
+        val textColor = ForegroundColorSpan(textColors.defaultColor) //TODO get foreground color from TextView
+
+        val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_link_green_24dp)!!
+        linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
+        movementMethod = LinkMovementMethod.getInstance()
+        text = SpannableStringBuilder()
+            .appendText(Html.fromHtml(text.toString()), textColor)
+            .append(" ")
+            .appendText(urlText, URLSpan(url))
+            .append(" ")
+            .appendTextWithSpans(" ", listOf(ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE), URLSpan(url)))
+    }
+
+    private fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, what: List<Any>, flags: Int = 0): SpannableStringBuilder {
+        val start = length
+        append(text)
+        what.forEach { span ->
+            setSpan(span, start, length, flags)
+        }
+        return this
     }
 }
 
