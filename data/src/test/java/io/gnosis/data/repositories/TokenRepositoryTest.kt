@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import com.squareup.moshi.Types
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
