@@ -2,12 +2,12 @@ package io.gnosis.safe.ui.assets.coins
 
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SettingsRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
@@ -19,7 +19,7 @@ class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
-    private val settingsRepository: SettingsRepository,
+    private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CoinsState>(appDispatchers) {
@@ -35,6 +35,7 @@ class CoinsViewModel
     fun load(refreshing: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
+            val userDefaultFiat = settingsHandler.userDefaultFiat
             if (safe != null) {
                 updateState {
                     CoinsState(
@@ -43,7 +44,7 @@ class CoinsViewModel
                         viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
                     )
                 }
-                val balanceInfo = tokenRepository.loadBalanceOf(safe.address)
+                val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
                 val balances = getBalanceViewData(balanceInfo)
 
                 updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(Adapter.Data(null, balances))) }
@@ -52,7 +53,7 @@ class CoinsViewModel
     }
 
     suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
-        val userCurrency = Currency.getInstance(settingsRepository.getUserDefaultFiat())
+        val userCurrency = Currency.getInstance(settingsHandler.userDefaultFiat)
         val userCurrencySymbol = userCurrency.symbol
         val result = mutableListOf<CoinsViewData>()
 

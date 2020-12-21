@@ -6,7 +6,6 @@ import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SettingsRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
@@ -14,6 +13,7 @@ import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.mockk.Called
 import io.mockk.coEvery
@@ -39,7 +39,7 @@ class CoinsViewModelTest {
 
     private val tokenRepository = mockk<TokenRepository>()
     private val safeRepository = mockk<SafeRepository>()
-    private val settingsRepository = mockk<SettingsRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
     private val balanceFormatter = BalanceFormatter()
 
     @Test
@@ -51,26 +51,28 @@ class CoinsViewModelTest {
             emit(safe10)
         }
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(safe1, safe10)
+        coEvery { settingsHandler.userDefaultFiat } returns "USD"
 
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsRepository, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsHandler, balanceFormatter, appDispatchers)
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe1.address)
+            tokenRepository.loadBalanceOf(safe1.address, any())
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe10.address)
+            tokenRepository.loadBalanceOf(safe10.address, any())
         }
     }
 
     @Test
     fun `load (tokenRepository failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsRepository, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsHandler, balanceFormatter, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { tokenRepository.loadBalanceOf(any()) } throws throwable
+        coEvery { tokenRepository.loadBalanceOf(any(), any()) } throws throwable
+        coEvery { settingsHandler.userDefaultFiat } returns "USD"
 
         viewModel.load()
 
@@ -81,13 +83,13 @@ class CoinsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe.address)
+            tokenRepository.loadBalanceOf(safe.address, any())
         }
     }
 
     @Test
     fun `load (active safe failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsRepository, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsHandler, balanceFormatter, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         coEvery { safeRepository.getActiveSafe() } throws throwable
@@ -107,13 +109,13 @@ class CoinsViewModelTest {
 
     @Test
     fun `load - should emit balance list`() = runBlocking {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsRepository, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, settingsHandler, balanceFormatter, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val balances = listOf(buildBalance(0), buildBalance(1), buildBalance(2))
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { tokenRepository.loadBalanceOf(any()) } returns CoinBalances(BigDecimal.ZERO, balances)
-        coEvery { settingsRepository.getUserDefaultFiat() } returns "USD"
+        coEvery { tokenRepository.loadBalanceOf(any(), any()) } returns CoinBalances(BigDecimal.ZERO, balances)
+        coEvery { settingsHandler.userDefaultFiat } returns "USD"
 
         val balancesViewData = viewModel.getBalanceViewData(CoinBalances(BigDecimal.ZERO, balances))
 
@@ -126,7 +128,7 @@ class CoinsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe.address)
+            tokenRepository.loadBalanceOf(safe.address, "USD")
         }
     }
 

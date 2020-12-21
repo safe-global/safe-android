@@ -26,8 +26,7 @@ import java.util.stream.Collectors
 class TokenRepositoryTest {
 
     private val gatewayApi = mockk<GatewayApi>()
-    private val settingsRepository = mockk<SettingsRepository>()
-    private val tokenRepository = TokenRepository(gatewayApi, settingsRepository)
+    private val tokenRepository = TokenRepository(gatewayApi)
 
     private val moshi = dataMoshi
     private val balancesAdapter = moshi.adapter(CoinBalances::class.java)
@@ -38,9 +37,8 @@ class TokenRepositoryTest {
         val address = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
         coEvery { gatewayApi.loadBalances(any(), any()) } throws throwable
-        coEvery { settingsRepository.getUserDefaultFiat() } returns "USD"
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
+        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
             assert(isFailure)
@@ -51,8 +49,6 @@ class TokenRepositoryTest {
 
     @Test
     fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
-        coEvery { settingsRepository.getUserDefaultFiat() } returns "USD"
-
         val address = Solidity.Address(BigInteger.ONE)
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = NATIVE_CURRENCY_INFO) }
@@ -74,7 +70,7 @@ class TokenRepositoryTest {
                     )
                 )
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
+        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
             assert(isSuccess)
@@ -94,9 +90,8 @@ class TokenRepositoryTest {
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1)
         coEvery { gatewayApi.loadBalances(any(), any()) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
-        coEvery { settingsRepository.getUserDefaultFiat() } returns "USD"
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address) }
+        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
             assert(isSuccess)
