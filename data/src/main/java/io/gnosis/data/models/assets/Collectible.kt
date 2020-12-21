@@ -1,15 +1,18 @@
 package io.gnosis.data.models.assets
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 
+@JsonClass(generateAdapter = true)
 data class Collectible(
-    val id: String,
-    val address: Solidity.Address,
-    val tokenName: String,
-    val tokenSymbol: String,
-    val uri: String?,
-    val name: String?,
-    val description: String?,
-    val imageUri: String?,
-    val logoUri: String?
+    @Json(name = "id") val id: String,
+    @Json(name = "address") val address: Solidity.Address,
+    @Json(name = "tokenName") val tokenName: String,
+    @Json(name = "tokenSymbol") val tokenSymbol: String,
+    @Json(name = "uri") val uri: String?,
+    @Json(name = "name") val name: String?,
+    @Json(name = "description") val description: String?,
+    @Json(name = "imageUri") val imageUri: String?,
+    @Json(name = "logoUri") val logoUri: String?
 )
