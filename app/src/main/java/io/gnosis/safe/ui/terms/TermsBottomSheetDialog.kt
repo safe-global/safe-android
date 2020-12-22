@@ -1,19 +1,15 @@
 package io.gnosis.safe.ui.terms
 
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.BottomSheetTermsAndConditionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
-import pm.gnosis.svalinn.common.utils.appendText
-import pm.gnosis.svalinn.common.utils.openUrl
+import io.gnosis.safe.utils.appendLink
 
 class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAndConditionsBinding>() {
 
@@ -50,9 +46,4 @@ class TermsBottomSheetDialog : BaseBottomSheetDialogFragment<BottomSheetTermsAnd
     override fun inject(viewComponent: ViewComponent) {
         viewComponent.inject(this)
     }
-}
-
-fun TextView.appendLink(url: String, urlText: String) {
-    text = SpannableStringBuilder().appendText(urlText, UnderlineSpan())
-    setOnClickListener { context.openUrl(url) }
 }

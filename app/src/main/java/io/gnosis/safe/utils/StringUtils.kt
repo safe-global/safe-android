@@ -5,10 +5,13 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.text.method.LinkMovementMethod
+import android.text.style.*
+import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_0_0_2
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_0_1_0
@@ -109,3 +112,33 @@ fun String.abbreviateEthAddress(): String =
     asMiddleEllipsized(6, 4)
 
 fun Solidity.Address.formatForTxList(): String = asEthereumAddressChecksumString().abbreviateEthAddress()
+
+// Append a CharSequence with several spans applied
+fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<Any>, flags: Int = 0): SpannableStringBuilder {
+    val start = length
+    append(text)
+    spans.forEach { span ->
+        setSpan(span, start, length, flags)
+    }
+    return this
+}
+
+fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int? = null, @ColorRes textColor: Int = R.color.primary) {
+    movementMethod = LinkMovementMethod.getInstance()
+
+    append(
+        SpannableStringBuilder()
+            .append(" ")
+            .appendTextWithSpans(urlText, listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor))))
+    )
+
+    linkIcon?.let {
+        val linkDrawable = ContextCompat.getDrawable(context, linkIcon)!!
+        linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
+        append(
+            SpannableStringBuilder()
+                .append(" ")
+                .appendTextWithSpans(" ", listOf(ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE), URLSpan(url)))
+        )
+    }
+}
