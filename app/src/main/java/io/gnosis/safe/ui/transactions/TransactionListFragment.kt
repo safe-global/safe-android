@@ -113,8 +113,8 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                     when (val viewHolder = nullOnThrow { parent.getChildViewHolder(view) }) {
                         is ConflictViewHolder -> if (viewHolder.hasNext()) return
                         is SectionConflictHeaderViewHolder -> return
+                        else -> outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
                     }
-                    outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
                 }
             })
         }
