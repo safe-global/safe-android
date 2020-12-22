@@ -53,14 +53,14 @@ class CoinsViewModel
     }
 
     suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
-        val userCurrency = Currency.getInstance(settingsHandler.userDefaultFiat)
-        val userCurrencySymbol = userCurrency.symbol
+        val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
 
         val totalBalance = CoinsViewData.TotalBalance(
-            balanceFormatter.shortAmount(coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP)),
-            userCurrencySymbol,
-            R.string.separator_whitespace
+            balanceFormatter.fiatBalanceWithCurrency(
+                coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP),
+                userCurrencyCode
+            )
         )
         result.add(totalBalance)
 
@@ -70,9 +70,10 @@ class CoinsViewModel
                     it.tokenInfo.symbol,
                     it.tokenInfo.logoUri,
                     balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
-                    balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
-                    userCurrencySymbol,
-                    R.string.separator_whitespace
+                    balanceFormatter.fiatBalanceWithCurrency(
+                        it.fiatBalance.setScale(2, RoundingMode.HALF_UP),
+                        userCurrencyCode
+                    )
                 )
             )
         }

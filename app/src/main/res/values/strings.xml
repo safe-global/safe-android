@@ -319,5 +319,4 @@
     <string name="label_type_queued">Queued</string>
 
     <string name="separator_hyphen">%1$s - %2$s</string>
-    <string name="separator_whitespace">%1$s %2$s</string>
 </resources>
