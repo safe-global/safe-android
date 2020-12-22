@@ -74,11 +74,19 @@ class TransactionListViewModel
                 pagingData
                     .map { txListEntry ->
                         when (txListEntry) {
-                            is TxListEntry.Transaction -> getTransactionView(
-                                txListEntry.transaction,
-                                safe,
-                                txListEntry.transaction.canBeSignedByOwner(owner)
-                            )
+                            is TxListEntry.Transaction -> {
+                                val isConflict = txListEntry.conflictType != ConflictType.None
+                                val txView =
+                                    getTransactionView(
+                                        transaction = txListEntry.transaction,
+                                        activeSafe = safe,
+                                        awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
+                                        isConflict = isConflict
+                                    )
+                                if (isConflict) {
+                                    TransactionView.Conflict(txView, txListEntry.conflictType)
+                                } else txView
+                            }
                             is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
                             is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
                             is TxListEntry.ConflictHeader -> TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
@@ -95,24 +103,29 @@ class TransactionListViewModel
     fun getTransactionView(
         transaction: Transaction,
         activeSafe: Solidity.Address,
-        awaitingYourConfirmation: Boolean = false
+        awaitingYourConfirmation: Boolean = false,
+        isConflict: Boolean = false
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
-                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation)
-                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
+                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
     }
 
-    private fun Transaction.toTransferView(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView =
-        if (isCompleted(txStatus)) historicTransfer(txInfo)
-        else queuedTransfer(txInfo, awaitingYourConfirmation)
+    private fun Transaction.toTransferView(
+        txInfo: TransactionInfo.Transfer,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView =
+        if (isCompleted(txStatus)) historicTransfer(txInfo, isConflict)
+        else queuedTransfer(txInfo, awaitingYourConfirmation, isConflict)
 
-    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer): TransactionView.Transfer =
+    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer, isConflict: Boolean): TransactionView.Transfer =
         TransactionView.Transfer(
             id = id,
             status = txStatus,
@@ -124,10 +137,14 @@ class TransactionListViewModel
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.text_emphasis_high,
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
 
-    private fun Transaction.queuedTransfer(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView.TransferQueued {
+    private fun Transaction.queuedTransfer(
+        txInfo: TransactionInfo.Transfer,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView.TransferQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
@@ -139,7 +156,7 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
@@ -147,13 +164,17 @@ class TransactionListViewModel
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
-    private fun Transaction.toSettingsChangeView(txInfo: TransactionInfo.SettingsChange, awaitingYourConfirmation: Boolean): TransactionView =
+    private fun Transaction.toSettingsChangeView(
+        txInfo: TransactionInfo.SettingsChange,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView =
         when {
-            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation, isConflict)
             isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
             else -> TransactionView.Unknown
         }
@@ -176,7 +197,8 @@ class TransactionListViewModel
 
     private fun Transaction.queuedSettingsChange(
         txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.SettingsChangeQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
@@ -187,22 +209,23 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation, isConflict)
         else historicCustomTransaction(txInfo, safeAddress)
 
     private fun Transaction.historicCustomTransaction(
@@ -226,7 +249,8 @@ class TransactionListViewModel
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == safeAddress
@@ -239,12 +263,12 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString() ?: "",
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName
         )
     }
@@ -328,7 +352,6 @@ class TransactionListViewModel
             it >= safeThreshold
         } ?: false
     }
-
 
     companion object {
         const val OPACITY_FULL = 1.0F

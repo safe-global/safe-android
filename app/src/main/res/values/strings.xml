@@ -160,8 +160,8 @@
     <string name="tx_list_creation">Safe created</string>
     <string name="tx_list_receive">Receive</string>
     <string name="tx_list_send">Send</string>
-    <string name="tx_list_label_type_next">Next</string>
-    <string name="tx_list_label_type_queued">Queued</string>
+    <string name="tx_list_label_type_next">NEXT TRANSACTION</string>
+    <string name="tx_list_label_type_queued">QUEUE</string>
 
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
@@ -299,4 +299,7 @@
     <string name="unknown_fallback_handler">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
+    <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
+    <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
+    <string name="tx_list_conflict_header_learn_more">Learn more</string>
 </resources>

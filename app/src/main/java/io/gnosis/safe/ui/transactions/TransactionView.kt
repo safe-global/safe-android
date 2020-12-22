@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transactions
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.data.models.transaction.TransactionStatus
 import java.util.*
@@ -11,6 +12,13 @@ sealed class TransactionView(
     open val status: TransactionStatus?,
     open val id: String
 ) {
+    data class Conflict(
+        val innerView: TransactionView,
+        val conflictType: ConflictType,
+        override val id: String = innerView.id,
+        override val status: TransactionStatus? = innerView.status
+    ) : TransactionView(status, id)
+
     data class Transfer(
         override val id: String,
         override val status: TransactionStatus,
