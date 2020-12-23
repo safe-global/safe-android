@@ -54,15 +54,11 @@ class BalanceFormatter {
         }
     }
 
-    fun fiatBalanceWithCurrency(amount: BigDecimal, currencyCode: String): String {
-        val formatter = NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
+    fun fiatBalanceWithCurrency(amount: BigDecimal, currencyCode: String): String =
+        NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
             maximumFractionDigits = 2
             currency = Currency.getInstance(currencyCode)
-            isParseIntegerOnly
-        }
-
-        return formatter.format(amount)
-    }
+        }.format(amount)
 
     fun shortAmount(value: BigDecimal): String = when {
         value <= BigDecimal.ZERO -> {
