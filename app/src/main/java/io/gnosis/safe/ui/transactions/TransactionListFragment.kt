@@ -111,10 +111,20 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                 override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                     super.getItemOffsets(outRect, view, parent, state)
                     when (val viewHolder = nullOnThrow { parent.getChildViewHolder(view) }) {
-                        is ConflictViewHolder -> if (viewHolder.hasNext()) return
+                        is ConflictViewHolder -> {
+                            if (viewHolder.hasNext()) {
+                                return
+                            } else {
+                                addItemSeparator(outRect)
+                            }
+                        }
                         is SectionConflictHeaderViewHolder -> return
-                        else -> outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
+                        else -> addItemSeparator(outRect)
                     }
+                }
+
+                private fun addItemSeparator(outRect: Rect) {
+                    outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
                 }
             })
         }
