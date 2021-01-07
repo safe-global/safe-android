@@ -47,14 +47,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
-        android:text="@string/tx_list_contract_interaction"
         app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintTop_toTopOf="@+id/action" />
+        app:layout_constraintStart_toEndOf="@+id/action"
+        app:layout_constraintTop_toTopOf="@+id/action"
+        tools:text="@string/tx_list_contract_interaction" />
 
     <TextView
         android:id="@+id/date_time"
@@ -72,12 +74,10 @@
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
-        app:layout_constraintEnd_toStartOf="@+id/label"
         app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
         app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
         tools:text="@string/tx_list_contract_interaction" />
