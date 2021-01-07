@@ -1,7 +1,7 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools                    : '4.0.1',
+            android_tools                    : '4.1.1',
             firebase_app_distribution_gradle : '2.0.0',
             firebase_crashlytics_gradle      : '2.3.0',
             google_services                  : '4.3.3',
@@ -56,6 +56,6 @@ ext {
             powermock                       : '2.0.2',
 
             // Build time dependencies
-            desugar_jdk_libs                : '1.0.5'
+            desugar_jdk_libs                : '1.0.9'
     ]
 }

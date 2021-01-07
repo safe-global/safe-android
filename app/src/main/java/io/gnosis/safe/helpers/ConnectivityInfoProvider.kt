@@ -19,19 +19,7 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
 
         override fun onLost(network: Network?) {
             super.onLost(network)
-            offline = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val capabilities =  connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-                capabilities?.let {
-                    when {
-                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> false
-                        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> false
-                        else -> true
-                    }
-                } ?: true
-            } else {
-                val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                activeNetworkInfo == null || !activeNetworkInfo.isConnected
-            }
+            offline = isOffline()
         }
     }
 
@@ -39,12 +27,24 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
         register()
     }
 
+    private fun isOffline(): Boolean =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.run {
+                    !(hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            || hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                            || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+                } ?: true
+            } else {
+                val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                activeNetworkInfo == null || !activeNetworkInfo.isConnected
+            }
+
+
     private fun register() {
         val builder = NetworkRequest.Builder()
-        builder
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
+        connectivityManager.addDefaultNetworkActiveListener { offline = isOffline() }
     }
 
     private fun unregister() {
