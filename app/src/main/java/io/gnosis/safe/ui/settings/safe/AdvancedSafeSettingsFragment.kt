@@ -17,7 +17,9 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
@@ -45,10 +47,10 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
-                is BaseStateViewModel.ViewAction.ShowError -> handleError(viewAction.error)
+                is ShowError -> handleError(viewAction)
                 else -> setUi(state.isLoading)
             }
         })
@@ -61,6 +63,17 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             }
         }
         viewModel.load()
+    }
+
+    private fun handleError(viewAction: ShowError) {
+        with(binding) {
+            refresh.isRefreshing = false
+            mainContainer.visible(false)
+            progress.visible(false)
+        }
+        val error = viewAction.error.toError()
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings_advanced))
+        Timber.e(viewAction.error)
     }
 
     private fun setUi(isLoading: Boolean, safeInfo: SafeInfo? = null) {
@@ -103,16 +116,6 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             this.name = label
             showSeparator = true
         }
-    }
-
-    private fun handleError(throwable: Throwable) {
-        with(binding) {
-            refresh.isRefreshing = false
-            mainContainer.visible(false)
-            progress.visible(false)
-        }
-        snackbar(requireView(), throwable.message ?: getString(R.string.error_invalid_safe))
-        Timber.e(throwable)
     }
 
     private fun updateLoading(showLoading: Boolean) {

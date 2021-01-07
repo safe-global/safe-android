@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/safe_green</color>
+    <color name="primary">@color/teal_two</color>
+    <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/safe_green_dark</color>
-    <color name="accent">@color/blue</color>
+    <color name="secondary">@color/orangish</color>
+    <color name="error">@color/tomato</color>
+    <color name="accent">@color/text_emphasis_high</color>
     <color name="window_background">@color/background</color>
-    <color name="toolbar_action">@color/blue</color>
+    <color name="toolbar_action">@color/text_emphasis_high</color>
 
-    <color name="background">@color/very_light_pink_two</color>
-    <color name="item_separator">@color/very_light_pink_two</color>
+    <color name="background">@color/white</color>
+    <color name="surface_01">@color/white_two</color>
+    <color name="surface_08">@color/white_two</color>
+    <color name="surface_04">@color/white_two</color>
+    <color name="separator">@color/white</color>
 
-    <color name="whitesmoke_two">#f0efee</color>
+    <color name="text_emphasis_high">@color/navy</color>
+    <color name="text_emphasis_medium">@color/dark_grey</color>
+    <color name="text_emphasis_low">@color/medium_grey</color>
 
-    <color name="white">#ffffff</color>
+    <color name="outline">@color/white_smoke</color>
+    <color name="illustration_background">@color/whitesmoke_two</color>
+    <color name="logo_background">@android:color/transparent</color>
+
+    <!-- color names -->
+    <color name="white_two">#ffffff</color>
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
@@ -19,24 +32,22 @@
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
-    <color name="gnosis_dark_blue">#001428</color>
     <color name="gnosis_dark_blue_alpha_50">#7f001428</color>
     <color name="gnosis_dark_blue_alpha_70">#b2001428</color>
 
     <color name="secondary_button">#c8ced4</color>
     <color name="secondary_button_disabled">#e8eaec</color>
     <color name="secondary_button_pressed">#aaadb1</color>
-    <color name="secondary_button_text">@color/blue</color>
 
     <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
-    <color name="default_text">@color/gnosis_dark_blue</color>
 
-    <color name="enabled_input">@color/safe_green</color>
+    <color name="enabled_input">@color/primary</color>
 
     <color name="text_grey_background">#f4f4f9</color>
-    <color name="divider">#e3e5ec</color>
 
     <!-- New Design colors -->
+    <color name="white">#f7f5f5</color>
+    <color name="whitesmoke_two">#f0efee</color>
     <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
@@ -45,35 +56,39 @@
     <color name="pale_grey_two">#f4f4f9</color>
     <color name="battleship_grey_light">#64707f</color>
     <color name="white_smoke">#e8e7e6</color>
-    <color name="tomato">#ff3b30</color>
+    <color name="tomato">#f02525</color>
+    <color name="coral">#ff453a</color>
+    <color name="orangish">#ff8042</color>
+    <color name="pale_red">#e8663d</color>
     <color name="green">#79b722</color>
     <color name="pale_grey_three">#f4f5f9</color>
     <color name="tomato_15">#f0d6d6</color>
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
-    <color name="very_light_pink_two">#f7f5f5</color>
+    <color name="teal_two">#008c73</color>
+    <color name="teal">#029f7f</color>
+    <color name="navy">#001428</color>
+    <color name="slate_grey">#626269</color>
+    <color name="blue_grey">#8d8d93</color>
+    <color name="black_two">#2d2d2d</color>
+    <color name="black_three">#272727</color>
+    <color name="black_three_dimmed">#272727</color>
+    <color name="black_four">#1e1e1e</color>
+    <color name="black_five">#121212</color>
+    <color name="charcoal_grey">#3a3a3c</color>
+    <color name="dark_grey_two">#2c2c2e</color>
 
-    <color name="word_recovery_phrase">@color/safe_green</color>
+    <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
 
-    <color name="address_boundaries">@color/black</color>
+    <color name="address_boundaries">@color/text_emphasis_high</color>
 
-    <color name="link">@color/safe_green</color>
+    <color name="link">@color/primary</color>
 
-    <color name="safe_green">#008c73</color>
     <color name="safe_green_dark">#005546</color>
-    <color name="safe_green_light">#80005546</color>
-
-    <color name="light_green">#a1d2ca</color>
-
-    <color name="ic_launcher_background">@color/light_green</color>
-
     <color name="blue">#001e3b</color>
-    <color name="blue_15">#27001e3b</color>
-
-    <color name="safe_pending_orange">#e8663d</color>
-    <color name="safe_failed_red">#f02525</color>
+    <color name="divider">@color/pale_grey_four</color>
 </resources>

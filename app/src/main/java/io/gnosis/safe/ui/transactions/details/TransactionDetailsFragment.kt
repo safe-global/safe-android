@@ -19,7 +19,8 @@ import io.gnosis.safe.databinding.TxDetailsCustomBinding
 import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
 import io.gnosis.safe.databinding.TxDetailsTransferBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.helpers.Offline
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -87,18 +88,31 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 is ShowError -> {
                     showLoading(false)
                     binding.txConfirmButton.isEnabled = true
-                    when (viewAction.error) {
-                        is Offline -> {
-                            snackbar(requireView(), R.string.error_no_internet)
-                        }
-                        else -> {
-                            snackbar(requireView(), viewAction.error.getErrorResForException())
+                    // only show empty state if we don't have anything to show
+                    if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
+                        binding.content.visibility = View.GONE
+                        binding.contentNoData.root.visible(true)
+                    }
 
-                            // only show empty state if we don't have anything to show
-                            if (binding.executed.value.isNullOrBlank() && binding.created.value.isNullOrBlank()) {
-                                binding.content.visibility = View.GONE
-                                binding.contentNoData.root.visible(true)
-                            }
+                    viewAction.error.let {
+                        if (it is TxConfirmationFailed) {
+                            val error = it.cause.toError()
+                            errorSnackbar(
+                                requireView(),
+                                error.message(
+                                    requireContext(),
+                                    R.string.error_description_tx_confirmation
+                                )
+                            )
+                        } else {
+                            val error = it.toError()
+                            errorSnackbar(
+                                requireView(),
+                                error.message(
+                                    requireContext(),
+                                    R.string.error_description_tx_details
+                                )
+                            )
                         }
                     }
                 }
@@ -136,7 +150,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             requireContext(),
                             message = R.string.confirm_transaction_dialog_message,
                             confirm = R.string.confirm,
-                            confirmColor = R.color.safe_green
+                            confirmColor = R.color.primary
                         ) {
                             binding.txConfirmButton.isEnabled = false
                             viewModel.submitConfirmation(txDetails, executionInfo)
@@ -156,7 +170,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 binding.created.visible(true)
                 binding.createdDivider.visible(true)
-                binding.created.value = executionInfo.submittedAt.formatBackendDate()
+                binding.created.value = executionInfo.submittedAt.formatBackendDateTime()
             }
             is DetailedExecutionInfo.ModuleExecutionDetails -> {
                 hideCreatedAndConfirmations()
@@ -175,7 +189,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
                         nonce = nonce?.toString() ?: "",
                         operation = operation,
-                        hash = txDetails.txHash
+                        hash = txDetails.txHash,
+                        safeTxHash = (txDetails.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails)?.safeTxHash
                     )
                 )
             }
@@ -186,7 +201,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         if (txDetails.executedAt != null) {
             binding.executed.visible(true)
             binding.executedDivider.visible(true)
-            binding.executed.value = txDetails.executedAt!!.formatBackendDate()
+            binding.executed.value = txDetails.executedAt!!.formatBackendDateTime()
         } else {
             binding.executed.visible(false)
             binding.executedDivider.visible(false)
@@ -338,12 +353,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     @ColorRes
     private fun getColorForStatus(txStatus: TransactionStatus): Int =
         when (txStatus) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.safe_pending_orange
-            TransactionStatus.AWAITING_EXECUTION -> R.color.safe_pending_orange
-            TransactionStatus.SUCCESS -> R.color.safe_green
-            TransactionStatus.CANCELLED -> R.color.dark_grey
-            TransactionStatus.FAILED -> R.color.tomato
-            TransactionStatus.PENDING -> R.color.dark_grey
+            TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.secondary
+            TransactionStatus.AWAITING_EXECUTION -> R.color.secondary
+            TransactionStatus.SUCCESS -> R.color.primary
+            TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
+            TransactionStatus.FAILED -> R.color.error
+            TransactionStatus.PENDING -> R.color.text_emphasis_medium
         }
 
     @StringRes

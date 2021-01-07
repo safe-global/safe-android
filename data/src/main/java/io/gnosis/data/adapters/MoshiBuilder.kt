@@ -2,39 +2,46 @@ package io.gnosis.data.adapters
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.gnosis.data.models.transaction.*
 import pm.gnosis.common.adapters.moshi.*
 
 internal val transferInfoAdapter =
-    PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, TransferInfo::type::name.get())
-        .withSubtype(TransferInfo.Erc20Transfer::class.java, TransferType.ERC20.name)
-        .withSubtype(TransferInfo.Erc721Transfer::class.java, TransferType.ERC721.name)
-        .withSubtype(TransferInfo.EtherTransfer::class.java, TransferType.ETHER.name)
+    PolymorphicJsonAdapterFactory.of(TransferInfo::class.java, "type")
+        .withSubtype(TransferInfo.Erc20Transfer::class.java, "ERC20")
+        .withSubtype(TransferInfo.Erc721Transfer::class.java, "ERC721")
+        .withSubtype(TransferInfo.EtherTransfer::class.java, "ETHER")
 
 internal val transactionInfoAdapter =
-    PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, TransactionInfo::type::name.get())
-        .withSubtype(TransactionInfo.Transfer::class.java, TransactionType.Transfer.name)
-        .withSubtype(TransactionInfo.SettingsChange::class.java, TransactionType.SettingsChange.name)
-        .withSubtype(TransactionInfo.Custom::class.java, TransactionType.Custom.name)
-        .withSubtype(TransactionInfo.Creation::class.java, TransactionType.Creation.name)
+    PolymorphicJsonAdapterFactory.of(TransactionInfo::class.java, "type")
+        .withSubtype(TransactionInfo.Transfer::class.java, "Transfer")
+        .withSubtype(TransactionInfo.SettingsChange::class.java, "SettingsChange")
+        .withSubtype(TransactionInfo.Custom::class.java, "Custom")
+        .withSubtype(TransactionInfo.Creation::class.java, "Creation")
         .withDefaultValue(TransactionInfo.Unknown)
 
 internal val transactionExecutionDetailsAdapter =
-    PolymorphicJsonAdapterFactory.of(DetailedExecutionInfo::class.java, DetailedExecutionInfo::type::name.get())
-        .withSubtype(DetailedExecutionInfo.MultisigExecutionDetails::class.java, DetailedExecutionInfoType.MULTISIG.name)
-        .withSubtype(DetailedExecutionInfo.ModuleExecutionDetails::class.java, DetailedExecutionInfoType.MODULE.name)
+    PolymorphicJsonAdapterFactory.of(DetailedExecutionInfo::class.java, "type")
+        .withSubtype(DetailedExecutionInfo.MultisigExecutionDetails::class.java, "MULTISIG")
+        .withSubtype(DetailedExecutionInfo.ModuleExecutionDetails::class.java, "MODULE")
 
 internal val settingsInfoAdapter =
-    PolymorphicJsonAdapterFactory.of(SettingsInfo::class.java, SettingsInfo::type::name.get())
-        .withSubtype(SettingsInfo.SetFallbackHandler::class.java, SettingsInfoType.SET_FALLBACK_HANDLER.name)
-        .withSubtype(SettingsInfo.AddOwner::class.java, SettingsInfoType.ADD_OWNER.name)
-        .withSubtype(SettingsInfo.RemoveOwner::class.java, SettingsInfoType.REMOVE_OWNER.name)
-        .withSubtype(SettingsInfo.SwapOwner::class.java, SettingsInfoType.SWAP_OWNER.name)
-        .withSubtype(SettingsInfo.ChangeThreshold::class.java, SettingsInfoType.CHANGE_THRESHOLD.name)
-        .withSubtype(SettingsInfo.ChangeImplementation::class.java, SettingsInfoType.CHANGE_IMPLEMENTATION.name)
-        .withSubtype(SettingsInfo.EnableModule::class.java, SettingsInfoType.ENABLE_MODULE.name)
-        .withSubtype(SettingsInfo.DisableModule::class.java, SettingsInfoType.DISABLE_MODULE.name)
+    PolymorphicJsonAdapterFactory.of(SettingsInfo::class.java, "type")
+        .withSubtype(SettingsInfo.SetFallbackHandler::class.java, "SET_FALLBACK_HANDLER")
+        .withSubtype(SettingsInfo.AddOwner::class.java, "ADD_OWNER")
+        .withSubtype(SettingsInfo.RemoveOwner::class.java, "REMOVE_OWNER")
+        .withSubtype(SettingsInfo.SwapOwner::class.java, "SWAP_OWNER")
+        .withSubtype(SettingsInfo.ChangeThreshold::class.java, "CHANGE_THRESHOLD")
+        .withSubtype(SettingsInfo.ChangeImplementation::class.java, "CHANGE_IMPLEMENTATION")
+        .withSubtype(SettingsInfo.EnableModule::class.java, "ENABLE_MODULE")
+        .withSubtype(SettingsInfo.DisableModule::class.java, "DISABLE_MODULE")
+
+internal val txListEntryAdapter =
+    PolymorphicJsonAdapterFactory.of(TxListEntry::class.java, "type")
+        .withSubtype(TxListEntry.Transaction::class.java, "TRANSACTION")
+        .withSubtype(TxListEntry.DateLabel::class.java, "DATE_LABEL")
+        .withSubtype(TxListEntry.Label::class.java, "LABEL")
+        .withSubtype(TxListEntry.ConflictHeader::class.java, "CONFLICT_HEADER")
+        .withDefaultValue(TxListEntry.Unknown)
 
 val dataMoshi =
     Moshi.Builder()
@@ -51,6 +58,6 @@ val dataMoshi =
         .add(transferInfoAdapter)
         .add(transactionInfoAdapter)
         .add(transactionExecutionDetailsAdapter)
+        .add(txListEntryAdapter)
         .add(ParamAdapter())
-        .add(KotlinJsonAdapterFactory())
         .build()

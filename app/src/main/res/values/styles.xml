@@ -1,19 +1,20 @@
 <resources>
 
     <!-- Base application theme. -->
-
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/safe_green</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
-    <style name="WhiteThemeBase" parent="AppTheme" />
+    <style name="DayNightThemeBase" parent="AppTheme" />
 
-    <style name="WhiteTheme" parent="WhiteThemeBase" />
+    <style name="DayNightTheme" parent="DayNightThemeBase" />
 
     <style name="PrimaryButton">
         <item name="android:layout_height">@dimen/primary_button_height</item>
@@ -30,7 +31,6 @@
 
     <style name="TextButton">
         <item name="android:textColor">@color/text_button_color</item>
-        <item name="android:drawableTint">@color/primary</item>
         <item name="android:foreground">@drawable/background_selectable</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">sans-serif</item>
@@ -49,14 +49,14 @@
     <style name="TextTitle" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="TextTitleSection" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -64,7 +64,7 @@
     <style name="TextDark" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -76,14 +76,14 @@
 
     <style name="TextLink" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/safe_green</item>
+        <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="TextMedium" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
-        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:textColor">@color/text_emphasis_medium</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -91,7 +91,7 @@
     <style name="TextLight" parent="Text">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
-        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -103,7 +103,7 @@
     <style name="TextAction" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
-        <item name="android:textColor">@color/safe_green</item>
+        <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -111,27 +111,36 @@
     <style name="Header">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/header_height</item>
-        <item name="android:background">@color/background</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:textSize">10sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:letterSpacing">0.15</item>
         <item name="android:lineSpacingExtra">2sp</item>
     </style>
 
+    <style name="Helptext">
+        <item name="android:paddingTop">@dimen/default_small_margin</item>
+        <item name="android:paddingBottom">@dimen/default_small_margin</item>
+        <item name="android:paddingStart">@dimen/default_margin</item>
+        <item name="android:paddingEnd">@dimen/default_margin</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
+    </style>
+
     <style name="SafeOverviewToolbar">
         <item name="theme">?attr/actionBarTheme</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/surface_04</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">72dp</item>
     </style>
 
     <style name="Toolbar">
         <item name="theme">?attr/actionBarTheme</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/surface_04</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
     </style>
@@ -139,21 +148,20 @@
     <style name="ToolbarTitle">
         <item name="fontFamily">sans-serif</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="ToolbarSubtitle">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
-        <item name="android:textColor">@color/medium_grey</item>
+        <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 
     <style name="ToolbarButton">
         <item name="android:textColor">@color/text_button_color</item>
-        <item name="android:drawableTint">@color/primary</item>
         <item name="android:foreground">@drawable/background_selectable</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -164,14 +172,14 @@
 
     <style name="TabLayout" parent="Widget.Design.TabLayout">
         <item name="android:background">@color/background</item>
-        <item name="tabIndicatorColor">@color/safe_green</item>
+        <item name="tabIndicatorColor">@color/primary</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabMode">fixed</item>
         <item name="tabInlineLabel">true</item>
         <item name="tabIconTint">@drawable/tab_item_text</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
-        <item name="tabSelectedTextColor">@color/safe_green</item>
+        <item name="tabSelectedTextColor">@color/primary</item>
         <item name="tabTextAppearance">@style/TabText</item>
     </style>
 
@@ -189,7 +197,7 @@
     </style>
 
     <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textColorHint">@color/light_text</item>
         <item name="android:background">@drawable/background_input</item>
         <item name="android:paddingLeft">4dp</item>
@@ -202,23 +210,33 @@
         <item name="android:background">@drawable/background_bottom_sheet_rounded</item>
     </style>
 
-    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="bottomSheetStyle">@style/BottomSheet</item>
-    </style>
-
-    <style name="BaseDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <!-- Share Safe Dialog -->
+    <style name="BaseDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
     </style>
+    <style name="DayNightDialog" parent="BaseDialog"/>
 
-    <style name="FullScreenDialog" parent="Theme.AppCompat.Light">
-        <item name="android:statusBarColor">@color/white</item>
+    <!-- EnsInputDialog -->
+    <style name="BaseFullScreenDialog" parent="Theme.MaterialComponents.DayNight">
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
     </style>
+    <style name="DayNightFullscreenDialog" parent="BaseFullScreenDialog"/>
 
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+    <!-- AddressInputHelper BottomSheetDialog -->
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
 
+    <style name="DayNightBottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:statusBarColor">@color/surface_04</item>
+        <item name="android:navigationBarColor">@color/surface_04</item>
+    </style>
 </resources>

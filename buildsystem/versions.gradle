@@ -56,6 +56,6 @@ ext {
             powermock                       : '2.0.2',
 
             // Build time dependencies
-            desugar_jdk_libs                : '1.0.5'
+            desugar_jdk_libs                : '1.0.9'
     ]
 }

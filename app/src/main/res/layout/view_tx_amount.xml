@@ -17,12 +17,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_ethereum_logo" />
+        app:srcCompat="@drawable/ic_native_logo" />
 
     <TextView
         android:id="@+id/amount_title"
         style="@style/TextDark"
-        android:textColor="@color/dark_grey"
+        android:textColor="@color/text_emphasis_medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -30,6 +30,4 @@
         app:layout_constraintBottom_toBottomOf="@+id/logo"
         app:layout_constraintStart_toEndOf="@+id/logo"
         app:layout_constraintTop_toTopOf="@+id/logo" />
-
-
 </merge>

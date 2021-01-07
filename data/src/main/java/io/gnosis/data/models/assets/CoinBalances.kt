@@ -31,4 +31,4 @@ data class TokenInfo(
     @Json(name = "logoUri") val logoUri: String?
 )
 
-enum class TokenType { ETHER, ERC20, ERC721 }
+enum class TokenType { NATIVE_CURRENCY, ERC20, ERC721 }

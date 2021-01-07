@@ -28,6 +28,7 @@ import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
+import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import java.lang.ref.WeakReference
 
@@ -87,7 +88,7 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesSafeBalancesViewModel(provider: ViewModelProvider) = provider[AssetsViewModel::class.java]
+    fun providesAssetsViewModel(provider: ViewModelProvider) = provider[AssetsViewModel::class.java]
 
     @Provides
     @ForView
@@ -119,7 +120,11 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesTransactionsViewModel(provider: ViewModelProvider) = provider[TransactionListViewModel::class.java]
+    fun providesTransactionsViewModel(provider: ViewModelProvider) = provider[TransactionsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesTransactionListViewModel(provider: ViewModelProvider) = provider[TransactionListViewModel::class.java]
 
     @Provides
     @ForView

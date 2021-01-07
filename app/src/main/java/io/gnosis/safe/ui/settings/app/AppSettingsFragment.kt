@@ -39,6 +39,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         with(binding) {
             setupOwnerKeyView()
+            appearance.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
+            }
             terms.setOnClickListener {
                 requireContext().openUrl(getString(R.string.link_terms_of_use))
             }

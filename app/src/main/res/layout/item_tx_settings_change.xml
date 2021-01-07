@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/surface_01"
     android:minHeight="@dimen/item_tx_s_height">
 
     <ImageView
@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:textColor="@color/safe_green"
+        android:textColor="@color/primary"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"

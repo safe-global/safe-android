@@ -14,24 +14,15 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "2.5.0")
+        versionName getKey("APP_VERSION_NAME", "2.7.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // Debug Settings
-        buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "false")
-        buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "false")
-
-        // Safe creation params
-        buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
-        buildConfigField javaTypes.STRING, "PROXY_INIT_DATA_HASH", asString(getKey("PROXY_INIT_DATA_HASH", "edf1810f1a9b5415ef81722254f125afaa5165f526077a7d7da91687cdfbc98b"))
-        buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xd9e09beaEb338d81a7c5688358df0071d4988115"))
         // API keys
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
         // Services
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
         // Blockchain settings
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Rinkeby"))
-        buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "4")
         // Certificates
         buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                 "new ${javaTypes.MAP}()" +
@@ -72,15 +63,19 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             minifyEnabled false
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
+        }
+
+        //Only this profile will have LeakCanary enabled (see dependencies)
+        profile {
+            initWith debug
+            applicationIdSuffix ".profile"
+            versionNameSuffix "-profile"
         }
 
         unsafe {
             initWith debug
             applicationIdSuffix ".unsafe"
             versionNameSuffix "-unsafe"
-            buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
-            buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
             // Certificates
             buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                     "new ${javaTypes.MAP}()" +
@@ -98,9 +93,6 @@ android {
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
-            buildConfigField javaTypes.BOOLEAN, "VERBOSE_EXCEPTIONS", getKey("VERBOSE_EXCEPTIONS", "true")
-            buildConfigField javaTypes.BOOLEAN, "ALLOW_RESTRICTED_TX", getKey("ALLOW_RESTRICTED_TX", "true")
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")
@@ -123,9 +115,21 @@ android {
             applicationIdSuffix ".mainnet_staging"
             versionNameSuffix "-mainnet_staging"
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Mainnet"))
-            buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
+            firebaseAppDistribution {
+                releaseNotes = getKey("APP_RELEASE_NOTES")
+                groups = getKey("FIREBASE_GROUP")
+            }
+        }
+
+        xdai {
+            applicationIdSuffix ".xdai"
+            versionNameSuffix "-xdai"
+            debuggable true
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "xDai"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rpc.xdaichain.com/"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")
@@ -137,9 +141,7 @@ android {
             multiDexEnabled true
             signingConfig signingConfigs.release
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Mainnet"))
-            buildConfigField javaTypes.LONG, "BLOCKCHAIN_CHAIN_ID", getKey("BLOCKCHAIN_CHAIN_ID", "1")
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")
@@ -254,7 +256,6 @@ dependencies {
     // Moshi
     implementation "com.squareup.moshi:moshi:$versions.moshi"
     implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
-    implementation "com.squareup.moshi:moshi-kotlin:$versions.moshi"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
     // Retrofit
@@ -290,7 +291,7 @@ dependencies {
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar_jdk_libs"
 
-    //debugImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
+    profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
 }
 
 

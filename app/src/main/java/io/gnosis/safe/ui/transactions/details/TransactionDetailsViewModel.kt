@@ -6,6 +6,7 @@ import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.calculateSafeTxHash
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.utils.OwnerCredentialsRepository
@@ -18,6 +19,7 @@ class TransactionDetailsViewModel
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
 
@@ -44,11 +46,17 @@ class TransactionDetailsViewModel
             validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
             val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
-            val txDetails = transactionRepository.submitConfirmation(
-                executionInfo.safeTxHash,
-                transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
-            )
-            updateState { TransactionDetailsViewState(ConfirmationSubmitted(txDetails)) }
+            kotlin.runCatching {
+                transactionRepository.submitConfirmation(
+                    executionInfo.safeTxHash,
+                    transactionRepository.sign(ownerCredentials.key, executionInfo.safeTxHash)
+                )
+            }.onSuccess {
+                tracker.logTransactionConfirmed()
+                updateState { TransactionDetailsViewState(ConfirmationSubmitted(it)) }
+            }.onFailure {
+                throw TxConfirmationFailed(it)
+            }
         }
     }
 
@@ -77,5 +85,6 @@ data class ConfirmationSubmitted(
     val txDetails: TransactionDetails?
 ) : BaseStateViewModel.ViewAction
 
+class TxConfirmationFailed(override val cause: Throwable): Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()

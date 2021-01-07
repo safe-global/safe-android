@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/surface_01">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/surface_04">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -68,7 +68,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="88dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -103,7 +102,7 @@
                     android:id="@+id/tx_confirmations_divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_separator_height"
-                    android:background="@color/item_separator" />
+                    android:background="@color/separator" />
 
                 <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/created"
@@ -116,7 +115,7 @@
                     android:id="@+id/created_divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_separator_height"
-                    android:background="@color/item_separator" />
+                    android:background="@color/separator" />
 
                 <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                     android:id="@+id/executed"
@@ -129,7 +128,7 @@
                     android:id="@+id/executed_divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_separator_height"
-                    android:background="@color/item_separator" />
+                    android:background="@color/separator" />
 
                 <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/advanced"
@@ -142,7 +141,7 @@
                     android:id="@+id/advanced_divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_separator_height"
-                    android:background="@color/item_separator" />
+                    android:background="@color/separator" />
 
                 <TextView
                     android:id="@+id/etherscan"
@@ -150,7 +149,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/item_setting_openable_height"
                     android:layout_marginStart="16dp"
-                    android:drawableEnd="@drawable/ic_link_green_24dp"
+                    app:drawableEndCompat="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/tx_details_view_on_etherscan" />
@@ -166,7 +165,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="@color/surface_01"
         android:visibility="gone"
         tools:visibility="visible">
 

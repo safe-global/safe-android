@@ -129,6 +129,11 @@
             app:popUpTo="@id/settingsFragment" />
 
         <action
+            android:id="@+id/action_settingsFragment_to_nightModeSettingsFragment"
+            app:destination="@id/nightModeAppSettingsFragment"
+            app:popUpTo="@id/settingsFragment" />
+
+        <action
             android:id="@+id/action_settingsFragment_to_advancedSafeSettingsFragment"
             app:destination="@id/advancedSafeSettingsFragment" />
 
@@ -161,17 +166,23 @@
         tools:layout="@layout/fragment_settings_app_advanced" />
 
     <fragment
-        android:id="@+id/transactionListFragment"
-        android:name="io.gnosis.safe.ui.transactions.TransactionListFragment"
-        android:label="TransactionListFragment"
-        tools:layout="@layout/fragment_transaction_list">
+        android:id="@+id/nightModeAppSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment"
+        android:label="Appearance"
+        tools:layout="@layout/fragment_settings_app_night_mode" />
+
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="io.gnosis.safe.ui.transactions.TransactionsFragment"
+        android:label="TransactionsFragment"
+        tools:layout="@layout/fragment_transactions">
 
         <action
-            android:id="@+id/action_transactionListFragment_to_transactionDetailsFragment"
+            android:id="@+id/action_transactionsFragment_to_transactionDetailsFragment"
             app:destination="@id/transactionDetailsFragment" />
 
         <action
-            android:id="@+id/action_transactionListFragment_to_transactionCreationDetailsFragment"
+            android:id="@+id/action_transactionsFragment_to_transactionCreationDetailsFragment"
             app:destination="@id/creationTransactionDetailsFragment" />
 
     </fragment>
@@ -314,6 +325,12 @@
 
         <argument
             android:name="hash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="safeTxHash"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

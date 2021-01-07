@@ -11,12 +11,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.DialogRemoveBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.utils.HttpCodes
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import javax.net.ssl.SSLHandshakeException
 
 fun handleQrCodeActivityResult(
     requestCode: Int,
@@ -63,34 +57,11 @@ fun dpToPx(dp: Int): Int {
     return (dp * Resources.getSystem().displayMetrics.density).toInt()
 }
 
-fun Throwable.getErrorResForException(): Int =
-    when {
-        this is HttpException -> {
-            this.let {
-                when (this.code()) {
-                    HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> R.string.error_not_authorized_for_action
-                    HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> R.string.error_try_again
-                    else -> R.string.error_try_again
-                }
-            }
-        }
-        this is SSLHandshakeException || this.cause is SSLHandshakeException -> {
-            R.string.error_ssl_handshake
-        }
-        this is SocketTimeoutException -> {
-            R.string.error_timeout
-        }
-        this is UnknownHostException || this is ConnectException -> {
-            R.string.error_no_internet
-        }
-        else -> R.string.error_try_again
-    }
-
 fun showConfirmDialog(
     context: Context,
     @StringRes message: Int,
     @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
-    @ColorRes confirmColor: Int = R.color.tomato,
+    @ColorRes confirmColor: Int = R.color.error,
     confirmCallback: () -> Unit
 ) {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
@@ -105,6 +76,6 @@ fun showConfirmDialog(
         confirmRes = confirm,
         cancelRes = R.string.safe_settings_dialog_cancel,
         confirmColor = confirmColor,
-        cancelColor = R.color.safe_green
+        cancelColor = R.color.primary
     ).show()
 }

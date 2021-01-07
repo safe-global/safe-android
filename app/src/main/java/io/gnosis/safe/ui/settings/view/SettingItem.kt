@@ -28,6 +28,18 @@ class SettingItem @JvmOverloads constructor(
             field = value
         }
 
+    var hasSwitch: Boolean = false
+        set(value) {
+            binding.settingSwitch.visible(value)
+            field = value
+        }
+
+    var checked: Boolean = false
+        set(value) {
+            binding.checkMark.visible(value)
+            field = value
+        }
+
     var name: CharSequence? = null
         set(value) {
             binding.name.text = value
@@ -55,6 +67,8 @@ class SettingItem @JvmOverloads constructor(
     }
 
     private fun applyAttributes(context: Context, a: TypedArray) {
+        checked = a.getBoolean(R.styleable.SettingItem_setting_checked, false)
+        hasSwitch = a.getBoolean(R.styleable.SettingItem_setting_has_switch, false)
         openable = a.getBoolean(R.styleable.SettingItem_setting_openable, true)
         name = a.getString(R.styleable.SettingItem_setting_name)
         value = a.getString(R.styleable.SettingItem_setting_value)
@@ -65,4 +79,6 @@ class SettingItem @JvmOverloads constructor(
             binding.image.visible(false)
         }
     }
+
+    val settingSwitch = binding.settingSwitch
 }

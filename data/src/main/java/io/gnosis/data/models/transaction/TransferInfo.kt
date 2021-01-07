@@ -1,34 +1,53 @@
 package io.gnosis.data.models.transaction
 
-import io.gnosis.data.models.assets.TokenInfo
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.gnosis.data.repositories.TokenRepository
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 enum class TransferType {
-    ERC20, ERC721, ETHER
+    @Json(name = "ERC20") ERC20,
+    @Json(name = "ERC721") ERC721,
+    @Json(name = "ETHER") ETHER
 }
 
-sealed class TransferInfo(val type: TransferType) {
-
+sealed class TransferInfo(
+    @Json(name = "type") val type: TransferType
+) {
+    @JsonClass(generateAdapter = true)
     data class Erc20Transfer(
+        @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
+        @Json(name = "tokenName")
         val tokenName: String?,
+        @Json(name = "tokenSymbol")
         val tokenSymbol: String?,
+        @Json(name = "logoUri")
         val logoUri: String?,
+        @Json(name = "decimals")
         val decimals: Int?,
+        @Json(name = "value")
         val value: BigInteger
     ) : TransferInfo(TransferType.ERC20)
 
+    @JsonClass(generateAdapter = true)
     data class Erc721Transfer(
+        @Json(name = "tokenAddress")
         val tokenAddress: Solidity.Address,
+        @Json(name = "tokenId")
         val tokenId: String,
+        @Json(name = "tokenName")
         val tokenName: String?,
+        @Json(name = "tokenSymbol")
         val tokenSymbol: String?,
+        @Json(name = "logoUri")
         val logoUri: String?
     ) : TransferInfo(TransferType.ERC721)
 
+    @JsonClass(generateAdapter = true)
     data class EtherTransfer(
+        @Json(name = "value")
         val value: BigInteger
     ) : TransferInfo(TransferType.ETHER)
 }
@@ -43,7 +62,7 @@ fun TransferInfo.value(): BigInteger =
 
 fun TransferInfo.symbol(): String? =
     when (this) {
-        is TransferInfo.EtherTransfer -> TokenRepository.ETH_TOKEN_INFO.symbol
+        is TransferInfo.EtherTransfer -> TokenRepository.NATIVE_CURRENCY_INFO.symbol
         is TransferInfo.Erc20Transfer -> tokenSymbol
         is TransferInfo.Erc721Transfer -> tokenSymbol
     }
@@ -52,5 +71,5 @@ fun TransferInfo.decimals(): Int? =
     when (this) {
         is TransferInfo.Erc20Transfer -> decimals
         is TransferInfo.Erc721Transfer -> 0
-        is TransferInfo.EtherTransfer -> TokenRepository.ETH_TOKEN_INFO.decimals
+        is TransferInfo.EtherTransfer -> TokenRepository.NATIVE_CURRENCY_INFO.decimals
     }

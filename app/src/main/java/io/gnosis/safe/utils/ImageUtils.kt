@@ -2,19 +2,27 @@ package io.gnosis.safe.utils
 
 import android.graphics.*
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import io.gnosis.safe.R
 
-fun ImageView.loadTokenLogo(icon: String?, placeHolderResource: Int = R.drawable.ic_coin_placeholder) {
+fun ImageView.loadTokenLogo(
+    icon: String?,
+    @DrawableRes placeHolderResource: Int = R.drawable.ic_coin_placeholder,
+    @DrawableRes backgroundDrawable: Int? = R.drawable.circle
+) {
     setPadding(0)
-    background = null
+    background = backgroundDrawable?.let {
+        ContextCompat.getDrawable(context, backgroundDrawable)
+    }
     setImageDrawable(null)
     colorFilter = null
     when {
-        icon == "local::ethereum" -> {
-            setImageResource(R.drawable.ic_ethereum_logo)
+        icon == "local::native_currency" -> {
+            setImageResource(R.drawable.ic_native_logo)
         }
         icon?.startsWith("local::") == true -> setImageResource(placeHolderResource)
 

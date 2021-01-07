@@ -21,8 +21,6 @@
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="error_malformed_address">The address is malformed. Please provide an Ethereum address</string>
     <string name="ens_input_title">Input ENS Name</string>
-    <string name="error_resolve_ens">Could not load address</string>
-    <string name="error_used_address">There is already a Safe with this address in the app. Please use another address.</string>
     <string name="error_invalid_safe">Invalid safe address</string>
     <string name="error_invalid_name">Invalid name</string>
     <string name="ok">OK</string>
@@ -38,18 +36,64 @@
     <string name="assets">Assets</string>
     <string name="transactions">Transactions</string>
     <string name="transactions_empty">Transactions will appear here</string>
-    <string name="settigns">Settings</string>
+    <string name="settings">Settings</string>
     <string name="remove_safe">Remove safe</string>
 
-    <string name="error_loading_balances">Unable to load balances</string>
-    <string name="error_no_internet">No Internet connection</string>
-    <string name="error_timeout">Connection timeout</string>
-    <string name="error_cannot_load_tx_details">Cannot load transaction details</string>
     <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
-    <string name="error_try_again">An error occurred. Please try again!</string>
-    <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
-    <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
-    <string name="error_ssl_handshake">Could not establish a secure connection to the Safe services.</string>
+
+    <string name="error_id">Error %1$d</string>
+
+    <string name="error_description_safe_add">Can\'t add safe</string>
+    <string name="error_description_safe_address">Can\'t use this address</string>
+    <string name="error_description_safe_name">Can\'t use this name</string>
+    <string name="error_description_safe_settings">Failed to load safe settings</string>
+    <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
+    <string name="error_description_ens_name">Can\'t use this name</string>
+    <string name="error_description_assets_coins">Failed to load balances</string>
+    <string name="error_description_assets_collectibles">Failed to load collectibles</string>
+    <string name="error_description_tx_list">Failed to load transactions</string>
+    <string name="error_description_tx_details">Failed to load transaction details</string>
+    <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
+    <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+
+    <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
+    <string name="error_network_no_internet_fix">Please try again when Internet is available</string>
+    <string name="error_network_ssl_reason">SSL connection failed</string>
+    <string name="error_network_ssl_fix">Please try again later</string>
+    <string name="error_network_timeout_reason">request timed out after %1$ds</string>
+    <string name="error_network_timeout_fix">Please refresh the screen</string>
+    <string name="error_network_unknown_host_reason">server not reachable</string>
+    <string name="error_network_unknown_host_fix">Please try again when Internet is available</string>
+    <string name="error_network_request_reason">request error</string>
+    <string name="error_network_request_fix">Please try again later or contact Safe support if the issue persists.</string>
+    <string name="error_network_server_side_reason">server-side error</string>
+    <string name="error_network_server_side_fix">Please try again later or contact Safe support if the issue persists.</string>
+    <string name="error_network_not_authorized_reason">you are not authorized to perform this action</string>
+    <string name="error_network_not_authorized_fix">Please contact Safe support if the issue persists</string>
+
+    <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
+    <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
+    <string name="error_client_safe_name_invalid_reason">this value is not a valid name</string>
+    <string name="error_client_safe_name_invalid_fix">Name should not be empty</string>
+    <string name="error_client_safe_not_found_reason">Safe not found</string>
+    <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
+    <string name="error_client_address_invalid_reason">this value is not a valid address</string>
+    <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
+    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase for an Ethereum account</string>
+    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase</string>
+    <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
+    <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
+    <string name="error_client_unsupported_implementation_copy_reason">the implementation copy of your Safe is not supported by this app</string>
+    <string name="error_client_unsupported_implementation_copy_fix">Please change the implementation copy before adding it or use another Safe</string>
+    <string name="error_client_ens_resolution_reason">address not found</string>
+    <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
+    <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
+    <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
+    <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
+    <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
+
+    <string name="error_unknown_reason">an error occurred</string>
+    <string name="error_unknown_fix">Please try again later</string>
 
     <string name="coins_total">Total</string>
     <string name="usd_balance">$ %1$s</string>
@@ -66,6 +110,9 @@
     <string name="settings_tab_app">APP SETTINGS</string>
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
+    <string name="settings_app_auto">Auto</string>
+    <string name="settings_app_dark">Dark</string>
+    <string name="settings_app_light">Light</string>
     <string name="settings_app_import_owner_key">Import owner key</string>
     <string name="settings_app_imported_owner_key">Imported owner key</string>
     <string name="settings_app_terms_of_use">Terms of use</string>
@@ -81,6 +128,9 @@
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
     <string name="client_gateway_service">Client Gateway service</string>
+    <string name="screenshots">SCREENSHOTS</string>
+    <string name="enable_screenshots">Enable screenshots</string>
+    <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
 
     <string name="get_in_touch_title">Get in touch</string>
     <string name="get_in_touch_email">E-mail</string>
@@ -97,6 +147,9 @@
     <string name="url_copied">URL copied</string>
     <string name="url_copied_success">URL copied to clipboard</string>
 
+    <string name="tx_tab_queue">QUEUE</string>
+    <string name="tx_tab_history">HISTORY</string>
+
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$d out of %2$d</string>
@@ -105,6 +158,10 @@
     <string name="tx_list_enable_module">Enable module</string>
     <string name="tx_list_disable_module">Disable module</string>
     <string name="tx_list_creation">Safe created</string>
+    <string name="tx_list_receive">Receive</string>
+    <string name="tx_list_send">Send</string>
+    <string name="tx_list_label_type_next">NEXT TRANSACTION</string>
+    <string name="tx_list_label_type_queued">QUEUE</string>
 
     <string name="tx_list_error_loading_data">Could not load more transactions</string>
 
@@ -128,6 +185,7 @@
     <string name="tx_details_advanced_nonce">Nonce:</string>
     <string name="tx_details_advanced_operation">Type of operation:</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
+    <string name="tx_details_advanced_safe_tx_hash">safeTxHash:</string>
     <string name="tx_details_add_owner">Add owner:</string>
     <string name="tx_details_new_mastercopy">New mastercopy:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
@@ -191,8 +249,8 @@
 
     <string name="push_safe_name">Safe %1$s</string>
 
-    <string name="push_title_new_confirmation">Transaction confirmed</string>
-    <string name="push_text_new_confirmation">%1$s: %2$s confirmed transaction</string>
+    <string name="push_title_confirmation_required">Confirmation required</string>
+    <string name="push_text_confirmation_required">%1$s: A transaction requires your confirmation!</string>
 
     <string name="push_title_executed">Transaction successful</string>
     <string name="push_text_executed">%1$s: Transaction succeeded</string>
@@ -240,4 +298,8 @@
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
     <string name="unknown_fallback_handler">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
+    <string name="tx_list_contract_interaction">Contract interaction</string>
+    <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
+    <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
+    <string name="tx_list_conflict_header_learn_more">Learn more</string>
 </resources>

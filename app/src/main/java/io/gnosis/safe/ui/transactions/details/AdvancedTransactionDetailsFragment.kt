@@ -23,6 +23,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     private val nonce by lazy { navArgs.nonce }
     private val operation by lazy { navArgs.operation }
     private val hash by lazy { navArgs.hash }
+    private val safeTxHash by lazy { navArgs.safeTxHash }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsAdvancedBinding =
         FragmentTransactionDetailsAdvancedBinding.inflate(inflater, container, false)
@@ -47,6 +48,17 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 hashItem.value = hash
                 hashItem.setOnClickListener {
                     context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, hashItem.value.toString()) {
+                        snackbar(view = root, textId = R.string.copied_success)
+                    }
+                }
+            }
+            if (safeTxHash.isNullOrBlank()) {
+                safeTxHashItem.visible(false)
+                safeTxHashSeparator.visible(false)
+            } else {
+                safeTxHashItem.value = safeTxHash
+                safeTxHashItem.setOnClickListener {
+                    context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, safeTxHashItem.value.toString()) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }
                 }

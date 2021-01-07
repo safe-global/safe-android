@@ -1,21 +1,19 @@
 package io.gnosis.safe.ui.transactions
 
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.TokenRepository.Companion.ETH_TOKEN_INFO
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
+import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.utils.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -35,21 +33,22 @@ class TransactionListViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
 
+    override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
+
     init {
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { load(true) }
+            safeRepository.activeSafeFlow().collect { safe ->
+                updateState { TransactionsViewState(isLoading = true, viewAction = ActiveSafeChanged(safe)) }
+            }
         }
     }
 
-    override fun initialState(): TransactionsViewState = TransactionsViewState(null, true)
-
-    fun load(safeChange: Boolean = false) {
+    fun load(type: TransactionPagingSource.Type) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
-            updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner).collectLatest {
+                getTransactions(safe.address, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -63,45 +62,37 @@ class TransactionListViewModel
         }
     }
 
-    private fun getTransactions(safe: Solidity.Address, owner: Solidity.Address?): Flow<PagingData<TransactionView>> {
+    private fun getTransactions(
+        safe: Solidity.Address,
+        owner: Solidity.Address?,
+        type: TransactionPagingSource.Type
+    ): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
-                    .map { transaction ->
-                        getTransactionView(transaction, safe, transaction.canBeSignedByOwner(owner))
-                    }
-                    .filter { it !is TransactionView.Unknown }
-            }
-            .map {
-                // insert headers
-                it.insertSeparators { before, after ->
-
-                    if (after == null) {
-                        // we're at the end of the list
-                        return@insertSeparators null  // no separator
-                    }
-
-                    if (before == null) {
-                        // we're at the beginning of the list
-
-                        return@insertSeparators if (after.isQueued()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_queue)
-                        } else if (after.isHistory()) {
-                            TransactionView.SectionHeader(title = R.string.tx_list_history)
-                        } else {
-                            null // no separator
+                    .map { txListEntry ->
+                        when (txListEntry) {
+                            is TxListEntry.Transaction -> {
+                                val isConflict = txListEntry.conflictType != ConflictType.None
+                                val txView =
+                                    getTransactionView(
+                                        transaction = txListEntry.transaction,
+                                        activeSafe = safe,
+                                        awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
+                                        isConflict = isConflict
+                                    )
+                                if (isConflict) {
+                                    TransactionView.Conflict(txView, txListEntry.conflictType)
+                                } else txView
+                            }
+                            is TxListEntry.DateLabel -> TransactionView.SectionDateHeader(date = txListEntry.timestamp)
+                            is TxListEntry.Label -> TransactionView.SectionLabelHeader(label = txListEntry.label)
+                            is TxListEntry.ConflictHeader -> TransactionView.SectionConflictHeader(nonce = txListEntry.nonce)
+                            TxListEntry.Unknown -> TransactionView.Unknown
                         }
                     }
-
-                    // we're in the middle of the list
-                    if (before.isQueued() && after.isHistory()) {
-                        // insert history separator after queued transaction
-                        TransactionView.SectionHeader(title = R.string.tx_list_history)
-                    } else {
-                        null // no separator
-                    }
-                }
+                    .filter { it !is TransactionView.Unknown }
             }
             .cachedIn(viewModelScope)
 
@@ -111,39 +102,48 @@ class TransactionListViewModel
     fun getTransactionView(
         transaction: Transaction,
         activeSafe: Solidity.Address,
-        awaitingYourConfirmation: Boolean = false
+        awaitingYourConfirmation: Boolean = false,
+        isConflict: Boolean = false
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
-                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation)
-                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation)
+                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
     }
 
-    private fun Transaction.toTransferView(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView =
-        if (isCompleted(txStatus)) historicTransfer(txInfo)
-        else queuedTransfer(txInfo, awaitingYourConfirmation)
+    private fun Transaction.toTransferView(
+        txInfo: TransactionInfo.Transfer,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView =
+        if (isCompleted(txStatus)) historicTransfer(txInfo, isConflict)
+        else queuedTransfer(txInfo, awaitingYourConfirmation, isConflict)
 
-    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer): TransactionView.Transfer =
+    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer, isConflict: Boolean): TransactionView.Transfer =
         TransactionView.Transfer(
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, txInfo.incoming()),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (txInfo.incoming()) txInfo.sender else txInfo.recipient,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.safe_green else R.color.gnosis_dark_blue,
+            direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.text_emphasis_high,
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
 
-    private fun Transaction.queuedTransfer(txInfo: TransactionInfo.Transfer, awaitingYourConfirmation: Boolean): TransactionView.TransferQueued {
+    private fun Transaction.queuedTransfer(
+        txInfo: TransactionInfo.Transfer,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView.TransferQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
@@ -155,58 +155,32 @@ class TransactionListViewModel
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
-            address = if (incoming) txInfo.sender else txInfo.recipient,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
-    private fun Transaction.toSettingsChangeView(txInfo: TransactionInfo.SettingsChange, awaitingYourConfirmation: Boolean): TransactionView =
+    private fun Transaction.toSettingsChangeView(
+        txInfo: TransactionInfo.SettingsChange,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean = false
+    ): TransactionView =
         when {
-            txInfo.isQueuedImplementationChange(txStatus) -> queuedImplementationChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricImplementationChange(txStatus) -> historicImplementationChange(txInfo)
-            txInfo.isQueuedSetFallbackHandler(txStatus) -> queuedSetFallbackHandler(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricSetFallbackHandler(txStatus) -> historicSetFallbackHandler(txInfo)
-            txInfo.isQueuedModuleChange(txStatus) -> queuedModuleChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricModuleChange(txStatus) -> historicModuleChange(txInfo)
-            txInfo.isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation)
-            txInfo.isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation, isConflict)
+            isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
             else -> TransactionView.Unknown
         }
 
-    private fun TransactionInfo.SettingsChange.isHistoricSetFallbackHandler(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.SetFallbackHandler || METHOD_SET_FALLBACK_HANDLER == dataDecoded.method) && isCompleted(txStatus)
+    private fun isHistoricSettingsChange(txStatus: TransactionStatus): Boolean = isCompleted(txStatus)
 
-    private fun TransactionInfo.SettingsChange.isQueuedSetFallbackHandler(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.SetFallbackHandler || METHOD_SET_FALLBACK_HANDLER == dataDecoded.method) && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricModuleChange(txStatus: TransactionStatus): Boolean =
-        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
-                && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedModuleChange(txStatus: TransactionStatus): Boolean =
-        ((settingsInfo is SettingsInfo.EnableModule || settingsInfo is SettingsInfo.DisableModule)
-                || (METHOD_ENABLE_MODULE == dataDecoded.method || METHOD_DISABLE_MODULE == dataDecoded.method))
-                && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricImplementationChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY == dataDecoded.method) && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedImplementationChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY == dataDecoded.method) && !isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isHistoricSettingsChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && isCompleted(txStatus)
-
-    private fun TransactionInfo.SettingsChange.isQueuedSettingsChange(txStatus: TransactionStatus): Boolean =
-        (settingsInfo !is SettingsInfo.ChangeImplementation || METHOD_CHANGE_MASTER_COPY != dataDecoded.method) && !isCompleted(txStatus)
+    private fun isQueuedSettingsChange(txStatus: TransactionStatus): Boolean = !isCompleted(txStatus)
 
     private fun Transaction.historicSettingsChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
@@ -214,7 +188,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
             method = txInfo.dataDecoded.method,
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString().orEmpty()
@@ -222,7 +196,8 @@ class TransactionListViewModel
 
     private fun Transaction.queuedSettingsChange(
         txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.SettingsChangeQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
@@ -233,164 +208,23 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            settingNameText = txInfo.dataDecoded.method,
+            dateTimeText = timestamp.formatBackendDateTime(),
+            method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.historicImplementationChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = address.implementationVersion()
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            alpha = alpha(txStatus),
-            addressLabel = version,
-            address = address,
-            label = R.string.tx_list_change_mastercopy,
-            nonce = executionInfo?.nonce.toString()
-        )
-    }
-
-    private fun Transaction.queuedSetFallbackHandler(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val address = (txInfo.settingsInfo as? SettingsInfo.SetFallbackHandler)?.handler
-        val fallbackHandlerDisplayString = address.fallBackHandlerLabel()
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            label = R.string.tx_list_set_fallback_handler,
-            address = address,
-            addressLabel = fallbackHandlerDisplayString,
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.historicSetFallbackHandler(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val address = (txInfo.settingsInfo as SettingsInfo.SetFallbackHandler).handler
-        val fallBackHandlerLabel = address.fallBackHandlerLabel()
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            alpha = alpha(txStatus),
-            label = R.string.tx_list_set_fallback_handler,
-            address = address,
-            addressLabel = fallBackHandlerLabel,
-            nonce = executionInfo?.nonce.toString()
-        )
-    }
-
-    private fun Transaction.queuedModuleChange(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val settingsInfo = txInfo.settingsInfo
-        val (address, label) =
-            if (settingsInfo is SettingsInfo.EnableModule) settingsInfo.module to R.string.tx_list_enable_module
-            else (settingsInfo as SettingsInfo.DisableModule).module to R.string.tx_list_disable_module
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            label = label,
-            address = address,
-            addressLabel = R.string.empty_string,
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty(),
-            visibilityAddressLabel = View.INVISIBLE,
-            visibilityEllipsizedAddress = View.INVISIBLE,
-            visibilityModuleAddress = View.VISIBLE
-        )
-    }
-
-    private fun Transaction.historicModuleChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChangeVariant {
-        val settingsInfo = txInfo.settingsInfo
-        val (address, label) =
-            if (settingsInfo is SettingsInfo.EnableModule) settingsInfo.module to R.string.tx_list_enable_module
-            else (settingsInfo as SettingsInfo.DisableModule).module to R.string.tx_list_disable_module
-
-        return TransactionView.SettingsChangeVariant(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            alpha = alpha(txStatus),
-            label = label,
-            address = address,
-            addressLabel = R.string.empty_string,
-            visibilityAddressLabel = View.INVISIBLE,
-            visibilityEllipsizedAddress = View.INVISIBLE,
-            visibilityModuleAddress = View.VISIBLE,
-            nonce = executionInfo?.nonce?.toString().orEmpty()
-        )
-    }
-
-    private fun Transaction.queuedImplementationChange(
-        txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean
-    ): TransactionView.SettingsChangeVariantQueued {
-        val threshold = executionInfo!!.confirmationsRequired
-        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
-        val address = (txInfo.settingsInfo as SettingsInfo.ChangeImplementation).implementation
-        val version = address.implementationVersion()
-
-        return TransactionView.SettingsChangeVariantQueued(
-            id = id,
-            status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
-            statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
-            threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
-            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString().orEmpty(),
-            label = R.string.tx_list_change_mastercopy,
-            address = address,
-            addressLabel = version
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
     }
 
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation, isConflict)
         else historicCustomTransaction(txInfo, safeAddress)
 
     private fun Transaction.historicCustomTransaction(
@@ -404,20 +238,18 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            address = txInfo.to,
-            dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
-            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue,
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
-            nonce = executionInfo?.nonce?.toString() ?: ""
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            methodName = txInfo.methodName
         )
     }
 
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
         safeAddress: Solidity.Address,
-        awaitingYourConfirmation: Boolean
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == safeAddress
@@ -430,16 +262,13 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
-            address = txInfo.to,
+            dateTimeText = timestamp.formatBackendDateTime(),
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.safe_green else R.color.medium_grey,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
-            nonce = executionInfo?.nonce?.toString() ?: "",
-            dataSizeText = if (txInfo.dataSize >= 0) "${txInfo.dataSize} bytes" else "",
-            amountText = balanceFormatter.formatAmount(txInfo.value, isIncoming, ETH_TOKEN_INFO.decimals, ETH_TOKEN_INFO.symbol),
-            amountColor = if (txInfo.value > BigInteger.ZERO && isIncoming) R.color.safe_green else R.color.gnosis_dark_blue
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
+            methodName = txInfo.methodName
         )
     }
 
@@ -449,12 +278,12 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendDate(),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
             label = R.string.tx_list_creation,
             creationDetails = TransactionView.CreationDetails(
                 statusText = displayString(txStatus),
                 statusColorRes = statusTextColor(txStatus),
-                dateTimeText = timestamp.formatBackendDate(),
+                dateTimeText = timestamp.formatBackendTimeOfDay(),
                 creator = txInfo.creator.asEthereumAddressString(),
                 factory = txInfo.factory?.asEthereumAddressString(),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
@@ -502,12 +331,12 @@ class TransactionListViewModel
 
     private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
-            TransactionStatus.SUCCESS -> R.color.safe_green
-            TransactionStatus.CANCELLED -> R.color.dark_grey
+            TransactionStatus.SUCCESS -> R.color.primary
+            TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,
-            TransactionStatus.PENDING -> R.color.safe_pending_orange
-            else -> R.color.safe_failed_red
+            TransactionStatus.PENDING -> R.color.secondary
+            else -> R.color.error
         }
     }
 
@@ -543,20 +372,6 @@ data class ActiveSafeChanged(
 ) : BaseStateViewModel.ViewAction
 
 object NoSafeSelected : BaseStateViewModel.ViewAction
-
-fun TransactionView.isQueued() = when (status) {
-    TransactionStatus.PENDING,
-    TransactionStatus.AWAITING_CONFIRMATIONS,
-    TransactionStatus.AWAITING_EXECUTION -> true
-    else -> false
-}
-
-fun TransactionView.isHistory() = when (status) {
-    TransactionStatus.CANCELLED,
-    TransactionStatus.FAILED,
-    TransactionStatus.SUCCESS -> true
-    else -> false
-}
 
 fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
     return executionInfo?.missingSigners?.contains(ownerAddress) == true

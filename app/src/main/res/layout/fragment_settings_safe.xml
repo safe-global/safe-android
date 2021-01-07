@@ -110,7 +110,7 @@
                     android:id="@+id/master_copy_separator"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/item_separator_height"
-                    android:background="@color/item_separator"
+                    android:background="@color/separator"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
@@ -144,17 +144,16 @@
 
                 <TextView
                     android:id="@+id/remove"
+                    style="@style/TextDark"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:background="@drawable/background_selectable"
-                    android:drawableStart="@drawable/ic_remove"
+                    app:drawableStartCompat="@drawable/ic_remove"
                     android:drawablePadding="9dp"
-                    android:fontFamily="sans-serif-medium"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/remove_safe"
-                    android:textColor="@color/tomato"
-                    android:textSize="16sp" />
+                    android:textColor="@color/error" />
 
             </LinearLayout>
 

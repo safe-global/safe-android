@@ -4,7 +4,7 @@
         <ripple android:color="@color/pressed_shade">
             <item android:id="@android:id/mask">
                 <shape android:shape="oval">
-                    <solid android:color="@color/white" />
+                    <solid android:color="@color/white_two" />
                 </shape>
             </item>
             <item>

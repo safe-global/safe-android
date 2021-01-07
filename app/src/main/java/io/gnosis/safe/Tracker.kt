@@ -27,6 +27,14 @@ class Tracker private constructor(context: Context) {
         logEvent(screenId.value, null)
     }
 
+    fun logKeyImported() {
+        logEvent(Event.KEY_IMPORTED, null)
+    }
+
+    fun logTransactionConfirmed() {
+        logEvent(Event.TRANSACTION_CONFIRMED, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -51,7 +59,8 @@ class Tracker private constructor(context: Context) {
     }
 
     object Event {
-        // Put event names here
+        val KEY_IMPORTED = "user_key_imported"
+        val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
     }
 
     object Param {
@@ -91,13 +100,15 @@ enum class ScreenId(val value: String) {
     SAFE_ADD_NAME("screen_safe_add_name"),
     SAFE_ADD_ENS("screen_safe_add_ens"),
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
-    TRANSACTIONS("screen_transactions"),
+    TRANSACTIONS_QUEUE("screen_transactions_queue"),
+    TRANSACTIONS_HISTORY("screen_transactions_history"),
     TRANSACTIONS_DETAILS("screen_transactions_details"),
     TRANSACTIONS_DETAILS_ACTION("screen_transaction_details_action"),
     TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
+    SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
     SETTINGS_APP_FIAT("screen_settings_app_edit_fiat"),
     SETTINGS_GET_IN_TOUCH("screen_settings_app_support"),
     SETTINGS_SAFE_NO_SAFE("screen_settings_safe_no_safe"),

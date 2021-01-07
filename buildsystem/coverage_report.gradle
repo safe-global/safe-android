@@ -170,6 +170,8 @@ project.ext {
             '**/*Activity.*',
             '**/*Fragment.*',
             '**/*View.*',
+            '**/*ViewHolderFactory.*',
+            '**/*ViewHolder.*',
             '**/*ViewGroup.*',
             '**/*JsonAdapter.*',
             '**/di/**',

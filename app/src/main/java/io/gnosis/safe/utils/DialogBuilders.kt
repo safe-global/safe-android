@@ -9,6 +9,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.ButtonBarLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.LayoutAlertDialogTitleBinding
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -23,8 +24,9 @@ object CustomAlertDialogBuilder {
         confirmCallback: ((DialogInterface) -> Unit)?,
         @StringRes cancelRes: Int = android.R.string.cancel,
         cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
-        @ColorRes confirmColor: Int = R.color.safe_green,
-        @ColorRes cancelColor: Int = R.color.safe_green,
+        @ColorRes confirmColor: Int = R.color.primary,
+        @ColorRes cancelColor: Int = R.color.primary,
+        @ColorRes background: Int = R.color.surface_08,
         dismissCallback: DialogInterface.OnDismissListener? = null
     ): AlertDialog {
         val binding = LayoutAlertDialogTitleBinding.inflate(LayoutInflater.from(context))
@@ -64,6 +66,7 @@ object CustomAlertDialogBuilder {
                             visible(false)
                         }
                     }
+                    (getButton(Dialog.BUTTON_POSITIVE).parent as ButtonBarLayout).setBackgroundColor(context.getColorCompat(background))
                 }
             }
     }
@@ -74,7 +77,7 @@ object InfoTipDialogBuilder {
         context: Context,
         @LayoutRes contentRes: Int,
         @StringRes confirmRes: Int,
-        @ColorRes confirmColor: Int = R.color.safe_green
+        @ColorRes confirmColor: Int = R.color.primary
     ): AlertDialog {
         val alertContent = LayoutInflater.from(context).inflate(contentRes, null)
         return AlertDialog.Builder(context)

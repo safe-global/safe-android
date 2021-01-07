@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_rounded_rectangle"
-        android:backgroundTint="@color/white_smoke">
+        android:backgroundTint="@color/outline_box">
 
         <TextView
             android:id="@+id/address"
@@ -26,7 +26,7 @@
             android:fontFamily="sans-serif-medium"
             android:maxLines="2"
             android:text="@string/enter_safe_address"
-            android:textColor="@color/medium_grey"
+            android:textColor="@color/text_emphasis_low"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/more"
@@ -40,7 +40,7 @@
             android:layout_height="24dp"
             android:layout_marginHorizontal="16dp"
             android:src="@drawable/ic_more_horiz_black_24dp"
-            app:tint="@color/medium_grey"
+            app:tint="@color/text_emphasis_low"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,8 +69,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
         android:paddingHorizontal="16dp"
-        android:textColor="@color/tomato"
+        android:textColor="@color/error"
         android:visibility="invisible"
         tools:text="Error message"
         tools:visibility="visible" />

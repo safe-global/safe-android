@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -101,6 +101,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginLeft="@dimen/default_margin"
         android:gravity="center"
         android:text="@string/enter_safe_name_description"
         app:layout_constraintBottom_toTopOf="@id/add_safe_name_layout"
@@ -113,10 +115,13 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginTop="22dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        app:boxStrokeColor="@color/outline_box"
+        app:hintTextColor="@color/text_emphasis_low"
+        android:textColor="@color/text_emphasis_high"
         android:hint="@string/enter_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -130,7 +135,7 @@
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="@color/blue"
+            android:textColor="@color/text_emphasis_high"
             android:textSize="16sp"
             tools:text="Local name" />
 

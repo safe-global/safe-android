@@ -5,17 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:minHeight="@dimen/item_tx_m_height">
+    android:background="@color/surface_01"
+    android:minHeight="@dimen/item_tx_s_height">
 
     <ImageView
         android:id="@+id/tx_type_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings_change_14dp" />
 
     <ImageView
@@ -33,40 +33,30 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blockies"
+        app:layout_constraintTop_toBottomOf="@+id/tx_type_icon"
         tools:text="10" />
-
-    <TextView
-        android:id="@+id/ellipsized_address"
-        style="@style/TextDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:ellipsize="middle"
-        android:singleLine="true"
-        android:textColor="@color/medium_grey"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toBottomOf="@+id/address_label"
-        tools:text="0x5c...33D0" />
 
     <TextView
         android:id="@+id/label"
         style="@style/TextDark"
-        android:layout_width="88dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
         android:maxLines="2"
-        android:text="@string/tx_list_change_mastercopy"
+        app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/action"
+        app:layout_constraintTop_toTopOf="@+id/action"
+        tools:text="@string/tx_list_contract_interaction" />
 
     <TextView
         android:id="@+id/date_time"
@@ -80,18 +70,17 @@
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
     <TextView
-        android:id="@+id/address_label"
+        android:id="@+id/action"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:singleLine="true"
-        app:layout_constraintEnd_toStartOf="@+id/label"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies"
-        tools:text="1.1.1" />
+        app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
+        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
+        tools:text="@string/tx_list_contract_interaction" />
 
     <TextView
         android:id="@+id/final_status"
@@ -99,32 +88,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:textColor="@color/safe_green"
+        android:textColor="@color/primary"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Success" />
-
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/blockies"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="@dimen/default_small_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/module_address"
-        style="@style/TextDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:text="TextView"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/blockies"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
-        app:layout_constraintTop_toTopOf="@+id/blockies" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
