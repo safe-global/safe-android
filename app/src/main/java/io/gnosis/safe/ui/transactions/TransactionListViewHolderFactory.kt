@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.ElapsedInterval
+import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.formatBackendDate
 import java.time.temporal.ChronoUnit
 
