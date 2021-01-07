@@ -124,7 +124,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                 }
 
                 private fun addItemSeparator(outRect: Rect) {
-                    outRect[0, 0, 0] = context.resources.getDimension(R.dimen.item_separator_height).toInt()
+                    outRect[0, 0, 0] = resources.getDimension(R.dimen.item_separator_height).toInt()
                 }
             })
         }
