@@ -43,10 +43,9 @@ class TransactionListViewModel
         }
     }
 
-    fun load(type: TransactionPagingSource.Type, safeChange: Boolean = false) {
+    fun load(type: TransactionPagingSource.Type) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
-            updateState { TransactionsViewState(isLoading = true, viewAction = if (safeChange) ActiveSafeChanged(safe) else ViewAction.None) }
             if (safe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
                 getTransactions(safe.address, owner, type).collectLatest {

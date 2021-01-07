@@ -129,7 +129,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
-                        viewModel.load(type, true)
+                        viewModel.load(type)
                         lifecycleScope.launch {
                             // if safe changes we need to reset data for recycler
                             adapter.submitData(PagingData.empty())
