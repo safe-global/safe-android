@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.R
@@ -73,13 +72,13 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         with(binding) {
             progress.visible(false)
             nextButton.isEnabled = false
-            bottomLabels.isVisible = false
+            bottomLabels.visible(false)
 
             val error = throwable.toError()
             addSafeAddressInputLayout.setError(error.message(requireContext(), R.string.error_description_safe_address), input)
         }
     }
-
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         addressInputHelper.handleResult(requestCode, resultCode, data)
