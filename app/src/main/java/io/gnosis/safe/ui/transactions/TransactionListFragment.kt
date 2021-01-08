@@ -148,6 +148,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                     is LoadTransactions -> loadTransactions(viewAction.newTransactions)
                     is NoSafeSelected -> loadNoSafeFragment()
                     is ActiveSafeChanged -> {
+                        stopElapsedIntervalsUpdate()
                         viewModel.load(type)
                         lifecycleScope.launch {
                             // if safe changes we need to reset data for recycler
@@ -184,7 +185,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
 
     private fun startElapsedIntervalsUpdate() {
         if (type == TransactionPagingSource.Type.QUEUE) {
-            handler.removeCallbacksAndMessages(intervalUpdateRunnable)
+            handler.removeCallbacks(intervalUpdateRunnable)
             handler.post(intervalUpdateRunnable)
         }
     }
