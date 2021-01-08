@@ -2,8 +2,11 @@ package io.gnosis.safe.utils
 
 import junit.framework.Assert.assertEquals
 import org.junit.Test
+import java.text.SimpleDateFormat
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.time.ExperimentalTime
 
 class DateUtilsKtTest {
     @Test
@@ -46,5 +49,39 @@ class DateUtilsKtTest {
         val result = Date(86400000).formatBackendDate(ZoneId.of("Z"), Locale.ENGLISH)
 
         assertEquals("Jan 2, 1970", result)
+    }
+
+    @ExperimentalTime
+    @Test
+    fun `elapsedIntervalFrom (time) should return correct unit and value`() {
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        var start: Date
+        var end: Date
+        var elapsedInterval: ElapsedInterval
+
+        start = formatter.parse("2020-12-10T12:30:00")
+        end = formatter.parse("2020-12-10T12:30:01")
+        elapsedInterval = start.elapsedIntervalTo(end)
+        assertEquals(ChronoUnit.SECONDS, elapsedInterval.unit)
+        assertEquals(1, elapsedInterval.value)
+
+        start = formatter.parse("2020-12-10T12:30:00")
+        end = formatter.parse("2020-12-10T12:45:00")
+        elapsedInterval = start.elapsedIntervalTo(end)
+        assertEquals(ChronoUnit.MINUTES, elapsedInterval.unit)
+        assertEquals(15, elapsedInterval.value)
+
+        start = formatter.parse("2020-12-10T12:30:00")
+        end = formatter.parse("2020-12-10T14:45:00")
+        elapsedInterval = start.elapsedIntervalTo(end)
+        assertEquals(ChronoUnit.HOURS, elapsedInterval.unit)
+        assertEquals(2, elapsedInterval.value)
+
+        start = formatter.parse("2020-12-10T12:30:00")
+        end = formatter.parse("2020-12-11T14:45:00")
+        elapsedInterval = start.elapsedIntervalTo(end)
+        assertEquals(ChronoUnit.DAYS, elapsedInterval.unit)
+        assertEquals(1, elapsedInterval.value)
     }
 }

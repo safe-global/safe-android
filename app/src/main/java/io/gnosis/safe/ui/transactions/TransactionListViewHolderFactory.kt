@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,14 @@ import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
+import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.*
+import kotlin.time.ExperimentalTime
 
 enum class TransactionViewType {
     TRANSFER,
@@ -119,6 +126,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
     BaseTransactionViewHolder<TransactionView.TransferQueued>(viewBinding) {
 
+    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -126,7 +134,7 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             amount.text = viewTransfer.amountText
-            dateTime.text = viewTransfer.dateTimeText
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
             txTypeIcon.setImageResource(viewTransfer.txTypeIcon)
             action.setText(viewTransfer.direction)
             amount.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.amountColor, theme))
@@ -173,6 +181,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
 
+    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -180,7 +189,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
-            dateTime.text = viewTransfer.dateTimeText
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
             settingName.text = viewTransfer.method
 
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
@@ -198,6 +207,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedContractInteractionBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
 
+    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -208,7 +218,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
 
-            dateTime.text = viewTransfer.dateTimeText
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
 
             confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
@@ -362,3 +372,11 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
     fun hasNext() = conflictView.conflictType != ConflictType.End
 }
+fun ElapsedInterval.format(resources: Resources) = when (unit) {
+    ChronoUnit.SECONDS -> resources.getString(R.string.tx_list_ago_now)
+    ChronoUnit.DAYS -> resources.getQuantityString(R.plurals.tx_list_ago_day, value, value)
+    ChronoUnit.HOURS -> resources.getQuantityString(R.plurals.tx_list_ago_hour, value, value)
+    else -> resources.getString(R.string.tx_list_ago_min, value)
+}
+
+

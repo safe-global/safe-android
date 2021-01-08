@@ -150,6 +150,17 @@
     <string name="tx_tab_queue">QUEUE</string>
     <string name="tx_tab_history">HISTORY</string>
 
+    <string name="tx_list_ago_now">just now</string>
+    <string name="tx_list_ago_min">%1$d min ago</string>
+    <plurals name="tx_list_ago_hour">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="tx_list_ago_day">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$d out of %2$d</string>
