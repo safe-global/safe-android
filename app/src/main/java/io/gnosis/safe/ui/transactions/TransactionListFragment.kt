@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,14 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
 
     private var reload: Boolean = false
+
+    private val handler = Handler()
+    private val intervalUpdateRunnable = object : Runnable {
+        override fun run() {
+            adapter.notifyDataSetChanged()
+            handler.postDelayed(this, 60 * 1000)
+        }
+    }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -165,6 +174,25 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
         if (reload) {
             viewModel.load(type)
         }
+        startElapsedIntervalsUpdate()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopElapsedIntervalsUpdate()
+    }
+
+    private fun startElapsedIntervalsUpdate() {
+        if (type == TransactionPagingSource.Type.QUEUE) {
+            handler.removeCallbacksAndMessages(intervalUpdateRunnable)
+            handler.post(intervalUpdateRunnable)
+        }
+    }
+
+    private fun stopElapsedIntervalsUpdate() {
+        if (type == TransactionPagingSource.Type.QUEUE) {
+            handler.removeCallbacksAndMessages(intervalUpdateRunnable)
+        }
     }
 
     private fun handleError(error: Throwable) {
@@ -191,6 +219,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     }
 
     private fun showList() {
+        startElapsedIntervalsUpdate()
         with(binding) {
             transactions.visible(true)
             emptyPlaceholder.visible(false)
@@ -198,6 +227,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     }
 
     private fun showEmptyState() {
+        stopElapsedIntervalsUpdate()
         with(binding) {
             transactions.visible(false)
             emptyPlaceholder.visible(true)
