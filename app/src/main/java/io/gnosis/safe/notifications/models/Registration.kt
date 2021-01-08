@@ -1,10 +1,12 @@
 package io.gnosis.safe.notifications.models
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 
+@JsonClass(generateAdapter = true)
 data class Registration(
     @Json(name = "uuid") val uuid: String,
     @Json(name = "safes") val safes: List<String>,
