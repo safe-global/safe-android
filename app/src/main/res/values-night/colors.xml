@@ -24,5 +24,4 @@
     <color name="illustration_background">@color/dark_grey_two</color>
     <color name="logo_background">@color/white_two</color>
 
-    <color name="snackbar_bkg">@color/white_two</color>
 </resources>

@@ -92,5 +92,4 @@
     <color name="blue">#001e3b</color>
     <color name="divider">@color/pale_grey_four</color>
 
-    <color name="snackbar_bkg">@color/black_five</color>
 </resources>

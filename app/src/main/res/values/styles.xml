@@ -18,7 +18,8 @@
     <style name="DayNightTheme" parent="DayNightThemeBase" />
 
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
-        <item name="android:backgroundTint">@color/snackbar_bkg</item>
+        <item name="android:backgroundTint">@color/text_emphasis_high</item>
+        <item name="android:textColor">@color/background</item>
     </style>
 
     <style name="PrimaryButton">
