@@ -210,7 +210,7 @@
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
-    <string name="tx_status_type_custom">Custom transaction</string>
+    <string name="tx_status_type_custom">Contract interaction</string>
     <string name="tx_status_type_creation">Safe created</string>
 
     <string name="tx_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
