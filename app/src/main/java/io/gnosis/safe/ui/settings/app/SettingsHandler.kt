@@ -5,6 +5,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.NightMode
+import io.gnosis.data.backend.GatewayApi
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
@@ -12,6 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SettingsHandler @Inject constructor(
+    private val gatewayApi: GatewayApi,
     private val preferencesManager: PreferencesManager
 ) {
     @NightMode
@@ -43,7 +45,18 @@ class SettingsHandler @Inject constructor(
         }
     }
 
+    var userDefaultFiat: String
+        get() = preferencesManager.prefs.getString(USER_DEFAULT_FIAT, "USD") ?: "USD"
+        set(value) {
+            preferencesManager
+                .prefs
+                .edit { putString(USER_DEFAULT_FIAT, value) }
+        }
+
+    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
+
     companion object {
+        internal const val USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
         internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
     }

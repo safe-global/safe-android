@@ -42,6 +42,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
             }
+            fiat.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
+            }
             terms.setOnClickListener {
                 requireContext().openUrl(getString(R.string.link_terms_of_use))
             }
@@ -67,7 +70,13 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         viewModel.loadSigningOwner()
 
-        if(ownerImported()) {
+        viewModel.defaultFiat.observe(viewLifecycleOwner, Observer {
+            binding.fiat.value = it
+        })
+
+        viewModel.loadUserDefaultFiat()
+
+        if (ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
             resetOwnerImported()
         }
