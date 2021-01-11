@@ -10,11 +10,16 @@
         <item name="android:navigationBarColor">@color/surface_04</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
     </style>
 
     <style name="DayNightThemeBase" parent="AppTheme" />
 
     <style name="DayNightTheme" parent="DayNightThemeBase" />
+
+    <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:backgroundTint">@color/snackbar_bkg</item>
+    </style>
 
     <style name="PrimaryButton">
         <item name="android:layout_height">@dimen/primary_button_height</item>
@@ -216,6 +221,7 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
     </style>
     <style name="DayNightDialog" parent="BaseDialog"/>
 
