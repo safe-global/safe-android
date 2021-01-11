@@ -90,7 +90,8 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             safeInfo.modules.takeUnless { it.isEmpty() }?.let {
                 moduleLabel.visible(true)
                 it.forEach { module ->
-                    modulesContainer.addView(labeledAddress(module))
+                    //TODO: set module name if available
+                    modulesContainer.addView(labeledAddress(module, R.string.unknown_module))
                 }
             } ?: run { moduleLabel.visible(false) }
         }
