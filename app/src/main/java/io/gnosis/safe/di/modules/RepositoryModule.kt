@@ -44,7 +44,8 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providesTokenRepository(gatewayApi: GatewayApi): TokenRepository = TokenRepository(gatewayApi)
+    fun providesTokenRepository(gatewayApi: GatewayApi): TokenRepository =
+        TokenRepository(gatewayApi)
 
     @Provides
     @Singleton

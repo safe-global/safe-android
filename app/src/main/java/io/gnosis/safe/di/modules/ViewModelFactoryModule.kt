@@ -18,6 +18,7 @@ import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
+import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
@@ -131,6 +132,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(OwnerSeedPhraseViewModel::class)
     abstract fun providesOwnerSeedPhraseViewModel(viewModel: OwnerSeedPhraseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AppFiatViewModel::class)
+    abstract fun providesAppFiatViewModel(viewModel: AppFiatViewModel): ViewModel
 
     @Binds
     @Singleton
