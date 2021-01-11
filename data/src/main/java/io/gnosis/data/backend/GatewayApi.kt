@@ -12,6 +12,9 @@ import java.util.*
 
 interface GatewayApi {
 
+    @GET("/v1/balances/supported-fiat-codes")
+    suspend fun loadSupportedCurrencies(): List<String>
+
     @GET("/v1/safes/{address}/balances/{fiat}")
     suspend fun loadBalances(@Path("address") address: String, @Path("fiat") fiat: String = "usd"): CoinBalances
 

@@ -7,16 +7,19 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode
+import java.util.*
 import javax.inject.Inject
 
 class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
+    private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CoinsState>(appDispatchers) {
@@ -32,6 +35,7 @@ class CoinsViewModel
     fun load(refreshing: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
+            val userDefaultFiat = settingsHandler.userDefaultFiat
             if (safe != null) {
                 updateState {
                     CoinsState(
@@ -40,7 +44,7 @@ class CoinsViewModel
                         viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
                     )
                 }
-                val balanceInfo = tokenRepository.loadBalanceOf(safe.address)
+                val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
                 val balances = getBalanceViewData(balanceInfo)
 
                 updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(Adapter.Data(null, balances))) }
@@ -48,25 +52,30 @@ class CoinsViewModel
         }
     }
 
-    fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
-
+    suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
+        val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
 
         val totalBalance = CoinsViewData.TotalBalance(
-            balanceFormatter.shortAmount(coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP)),
-            R.string.usd_balance
+            balanceFormatter.fiatBalanceWithCurrency(
+                coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP),
+                userCurrencyCode
+            )
         )
         result.add(totalBalance)
 
         coinBalanceData.items.forEach {
-            result.add(CoinsViewData.CoinBalance(
-                it.tokenInfo.symbol,
-                it.tokenInfo.logoUri,
-                balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
-                balanceFormatter.shortAmount(it.fiatBalance.setScale(2, RoundingMode.HALF_UP)),
-                R.string.usd_balance
-
-            ))
+            result.add(
+                CoinsViewData.CoinBalance(
+                    it.tokenInfo.symbol,
+                    it.tokenInfo.logoUri,
+                    balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
+                    balanceFormatter.fiatBalanceWithCurrency(
+                        it.fiatBalance.setScale(2, RoundingMode.HALF_UP),
+                        userCurrencyCode
+                    )
+                )
+            )
         }
 
         return result

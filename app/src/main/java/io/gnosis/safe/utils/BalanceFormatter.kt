@@ -7,6 +7,7 @@ import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 import java.util.*
 
 class BalanceFormatter {
@@ -21,6 +22,7 @@ class BalanceFormatter {
 
     @VisibleForTesting
     val decimalSeparator: Char
+
     @VisibleForTesting
     val groupingSeparator: Char
 
@@ -51,6 +53,12 @@ class BalanceFormatter {
             roundingMode = RoundingMode.DOWN
         }
     }
+
+    fun fiatBalanceWithCurrency(amount: BigDecimal, currencyCode: String): String =
+        NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
+            maximumFractionDigits = 2
+            currency = Currency.getInstance(currencyCode)
+        }.format(amount)
 
     fun shortAmount(value: BigDecimal): String = when {
         value <= BigDecimal.ZERO -> {
