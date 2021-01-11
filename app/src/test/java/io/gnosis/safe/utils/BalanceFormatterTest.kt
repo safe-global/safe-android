@@ -3,9 +3,10 @@ package io.gnosis.safe.utils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigDecimal
+import java.util.*
 
 class BalanceFormatterTest {
-    
+
     private val balanceFormatter: BalanceFormatter = BalanceFormatter()
     private val DS = balanceFormatter.decimalSeparator
     private val GS = balanceFormatter.groupingSeparator
@@ -118,5 +119,45 @@ class BalanceFormatterTest {
         val value = BigDecimal.valueOf(0)
         val shortAmount = balanceFormatter.shortAmount(value)
         assertEquals("0", shortAmount)
+    }
+
+    @Test
+    fun `fiatBalanceWithCurrency (USD 0 with US locale) $0 with 2 decimals`() {
+        val input = BigDecimal.valueOf(0)
+        Locale.setDefault(Locale.US)
+        val actual = balanceFormatter.fiatBalanceWithCurrency(input, "USD")
+        val expected = "$0.00"
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `fiatBalanceWithCurrency (USD 1000 with US locale) $1,000 with 2 decimals`() {
+        val input = BigDecimal.valueOf(1000)
+        Locale.setDefault(Locale.US)
+        val actual = balanceFormatter.fiatBalanceWithCurrency(input, "USD")
+        val expected = "$1,000.00"
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `fiatBalanceWithCurrency (EUR 1000 with US locale) €1,000 with 2 decimals`() {
+        val input = BigDecimal.valueOf(1000)
+        Locale.setDefault(Locale.UK)
+        val actual = balanceFormatter.fiatBalanceWithCurrency(input, "EUR")
+        val expected = "€1,000.00"
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `fiatBalanceWithCurrency (EUR 1000 with DE locale) €1,000 with 2 decimals`() {
+        val input = BigDecimal.valueOf(1000)
+        Locale.setDefault(Locale.GERMANY)
+        val actual = balanceFormatter.fiatBalanceWithCurrency(input, "EUR")
+        val expected = "1.000,00 €"
+
+        assertEquals(expected, actual)
     }
 }
