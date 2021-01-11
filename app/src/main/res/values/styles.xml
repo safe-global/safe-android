@@ -239,4 +239,7 @@
         <item name="android:statusBarColor">@color/surface_04</item>
         <item name="android:navigationBarColor">@color/surface_04</item>
     </style>
+    <style name="ShapeAppearanceOverlay.App.CornerSize9Percent" parent="">
+        <item name="cornerSize">9%</item>
+    </style>
 </resources>
