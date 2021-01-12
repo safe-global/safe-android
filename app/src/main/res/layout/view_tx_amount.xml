@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/logo"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -17,7 +17,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_native_logo" />
+        app:srcCompat="@drawable/ic_native_logo"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"/>
 
     <TextView
         android:id="@+id/amount_title"

@@ -20,7 +20,7 @@ class AmountView @JvmOverloads constructor(
 
     fun setAmount(formattedAmount: String, logoUri: String = "local::native_currency", @ColorRes color: Int = R.color.text_emphasis_high) {
         binding.amountTitle.text = formattedAmount
-        binding.logo.loadTokenLogo(logoUri)
+        binding.logo.loadTokenLogo(icon = logoUri, backgroundDrawable = R.drawable.ic_coin_placeholder_background)
         binding.amountTitle.setTextColor(context.getColorCompat(color))
     }
 }
