@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface_01">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -79,7 +80,8 @@
                 <TextView
                     style="@style/Header"
                     android:text="@string/safe_settings_fallback_handler"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:background="@color/background" />
 
                 <FrameLayout
                     android:id="@+id/fallback_handler_container"
@@ -89,7 +91,8 @@
                 <TextView
                     style="@style/Header"
                     android:text="@string/safe_settings_nonce"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:background="@color/background" />
 
                 <io.gnosis.safe.ui.settings.view.SettingItem
                     android:id="@+id/nonce"
@@ -102,7 +105,8 @@
                     android:id="@+id/module_label"
                     style="@style/Header"
                     android:text="@string/safe_settings_modules"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:background="@color/background" />
 
                 <LinearLayout
                     android:id="@+id/modules_container"
