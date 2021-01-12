@@ -67,7 +67,7 @@
                 android:background="@drawable/background_selectable"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:lines="2"
+                android:lines="3"
                 android:textColor="@color/text_emphasis_low"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@id/safe_ens_name"
@@ -100,19 +100,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/safe_address"
                 tools:text="ens.name.eth" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/safe_qr_code"
                 android:layout_width="124dp"
                 android:layout_height="124dp"
                 android:layout_marginTop="20dp"
                 app:layout_goneMarginTop="16dp"
-                android:background="@drawable/background_rounded_rectangle"
                 android:scaleType="centerInside"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
-                tools:src="@color/text_emphasis_medium" />
+                tools:src="@color/text_emphasis_medium"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent" />
+
+            <ImageView
+                android:id="@+id/safe_qr_code_outline"
+                android:layout_width="124dp"
+                android:layout_height="124dp"
+                android:layout_marginTop="20dp"
+                app:layout_goneMarginTop="16dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
+                android:src="@drawable/background_rounded_rectangle" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/safe_fields"
