@@ -18,11 +18,10 @@
             style="@style/Toolbar"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:elevation="4dp"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
                 android:id="@+id/back_button"
