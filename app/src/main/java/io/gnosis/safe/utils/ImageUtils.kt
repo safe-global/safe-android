@@ -15,25 +15,32 @@ fun ImageView.loadTokenLogo(
     @DrawableRes backgroundDrawable: Int? = R.drawable.circle
 ) {
     setPadding(0)
+    setImageDrawable(null)
+    colorFilter = null
     background = backgroundDrawable?.let {
         ContextCompat.getDrawable(context, backgroundDrawable)
     }
-    setImageDrawable(null)
-    colorFilter = null
     when {
         icon == "local::native_currency" -> {
             setImageResource(R.drawable.ic_native_logo)
         }
-        icon?.startsWith("local::") == true -> setImageResource(placeHolderResource)
-
-        !icon.isNullOrBlank() ->
+        icon?.startsWith("local::") == true -> {
+            setImageResource(placeHolderResource)
+        }
+        !icon.isNullOrBlank() -> {
+            //FIXME: workaround, as Picasso uses a final ApplicationContext for its #getDrawable() action, which will not listen to theme's attributes.
+            // this would lead to day/night mode not handled correctly
+            val placeholderDrawable = ContextCompat.getDrawable(context, placeHolderResource)!!
             Picasso.get()
                 .load(icon)
-                .placeholder(placeHolderResource)
-                .error(placeHolderResource)
+                .placeholder(placeholderDrawable)
+                .error(placeholderDrawable)
                 .transform(CircleTransformation)
                 .into(this)
-        else -> setImageResource(placeHolderResource)
+        }
+        else -> {
+            setImageResource(placeHolderResource)
+        }
     }
 }
 
