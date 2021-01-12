@@ -5,20 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
+    android:background="@color/surface_01"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_title"
-        style="@style/TextDark"
+        style="@style/TextMediumRegular"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:text="@string/choose_input_method"
-        android:textSize="17sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -41,14 +41,13 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_paste"
-        style="@style/Text"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="@string/address_input_clipboard"
-        android:textColor="@color/text_emphasis_medium"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_paste_icon"
@@ -73,14 +72,13 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_qr"
-        style="@style/Text"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="@string/address_input_qr_code"
-        android:textColor="@color/text_emphasis_medium"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_qr_icon"
@@ -106,14 +104,13 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_ens"
-        style="@style/Text"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="@string/address_input_ens"
-        android:textColor="@color/text_emphasis_medium"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
