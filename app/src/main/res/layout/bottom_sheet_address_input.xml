@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_title"
-        style="@style/TextMedium"
+        style="@style/TextMediumRegular"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="center_vertical"
@@ -41,7 +41,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_paste"
-        style="@style/TextDark"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
@@ -72,7 +72,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_qr"
-        style="@style/TextDark"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
@@ -104,7 +104,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_ens"
-        style="@style/TextDark"
+        style="@style/TextDarkRegular"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:gravity="center_vertical"
