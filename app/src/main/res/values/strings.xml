@@ -278,6 +278,7 @@
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
+    <string name="enter_unstoppable_domain">Enter Unstoppable domain</string>
 
     <string name="empty">empty</string>
     <string name="array">array</string>
@@ -302,4 +303,5 @@
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
+    <string name="address_input_unstoppabledomains">Unstoppable domain</string>
 </resources>
