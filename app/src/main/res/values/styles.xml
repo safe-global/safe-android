@@ -75,6 +75,10 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="TextDarkRegular" parent="TextDark">
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
     <style name="TextDark.Bold" parent="TextDark">
         <item name="fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
@@ -88,10 +92,14 @@
 
     <style name="TextMedium" parent="Text">
         <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_medium</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextMediumRegular" parent="TextMedium">
+        <item name="fontFamily">sans-serif</item>
     </style>
 
     <style name="TextLight" parent="Text">
