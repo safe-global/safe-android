@@ -10,7 +10,7 @@ import io.gnosis.safe.R
 fun ImageView.loadTokenLogo(
     icon: String?,
     @DrawableRes placeHolderResource: Int = R.drawable.ic_coin_placeholder,
-    @DrawableRes backgroundDrawable: Int? = null
+    @DrawableRes backgroundDrawable: Int? = R.drawable.circle
 ) {
     setPadding(0)
     setImageDrawable(null)
