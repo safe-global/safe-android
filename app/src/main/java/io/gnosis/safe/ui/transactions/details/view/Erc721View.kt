@@ -19,7 +19,7 @@ class Erc721View @JvmOverloads constructor(
 
     fun setToken(logoUri: String, nftId: String?, outgoing: Boolean, amount: String?) {
         with(binding) {
-            logo.loadTokenLogo(logoUri, R.drawable.ic_nft_placeholder, null)
+            logo.loadTokenLogo(logoUri, R.drawable.ic_nft_placeholder, R.drawable.ic_coin_placeholder_background)
             tokenId.text = nftId
 
             if (outgoing) {
