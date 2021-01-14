@@ -75,7 +75,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     private fun onUrlAvailable(string: String) {
         lifecycleScope.launch {
-            runCatching { viewModel.processEnsInput(string) }
+            runCatching { viewModel.processInput(string) }
                     .onSuccess { address ->
                         binding.dialogEnsInputProgress.visible(false)
                         binding.confirmButton.isEnabled = true

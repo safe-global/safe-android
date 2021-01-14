@@ -9,6 +9,7 @@ import io.gnosis.safe.ui.assets.coins.CoinsFragment
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.assets.collectibles.details.CollectiblesDetailsFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
+import io.gnosis.safe.ui.dialogs.UnstoppableInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
@@ -58,8 +59,6 @@ interface ViewComponent {
 
     fun inject(fragment: AdvancedTransactionDetailsFragment)
 
-    fun inject(dialog: EnsInputDialog)
-
     fun inject(fragment: SettingsFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
@@ -89,6 +88,10 @@ interface ViewComponent {
     fun inject(fragment: NightModeAppSettingsFragment)
 
     // Dialogs
+    fun inject(dialog: EnsInputDialog)
+
+    fun inject(dialog: UnstoppableInputDialog)
+
     fun inject(dialog: SafeSelectionDialog)
 
     fun inject(dialog: TermsBottomSheetDialog)

@@ -11,7 +11,7 @@ class UnstoppableInputViewModel
         private val unstoppableRepository: UnstoppableDomainsRepository
 ) : ViewModel() {
 
-    suspend fun processEnsInput(input: CharSequence): Solidity.Address {
+    suspend fun processInput(input: CharSequence): Solidity.Address {
         return kotlin.runCatching {
             unstoppableRepository.resolve(input.toString())
         }

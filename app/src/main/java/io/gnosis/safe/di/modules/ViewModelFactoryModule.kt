@@ -11,6 +11,7 @@ import io.gnosis.safe.ui.assets.AssetsViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
+import io.gnosis.safe.ui.dialogs.UnstoppableInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
@@ -46,6 +47,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(EnsInputViewModel::class)
     abstract fun providesEnsInputViewModel(viewModel: EnsInputViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UnstoppableInputViewModel::class)
+    abstract fun providesUnstoppableInputViewModel(viewModel: UnstoppableInputViewModel): ViewModel
 
     @Binds
     @IntoMap

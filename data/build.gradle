@@ -89,6 +89,8 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
 
+    implementation 'com.unstoppabledomains:resolution:1.9.1'
+
     implementation "com.squareup.moshi:moshi:$versions.moshi"
     implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"

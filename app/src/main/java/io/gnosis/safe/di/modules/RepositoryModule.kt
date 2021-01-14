@@ -44,6 +44,11 @@ class RepositoryModule {
 
     @Provides
     @Singleton
+    fun providesUnstoppableRepository(): UnstoppableDomainsRepository =
+            UnstoppableDomainsRepository()
+
+    @Provides
+    @Singleton
     fun providesTokenRepository(gatewayApi: GatewayApi): TokenRepository = TokenRepository(gatewayApi)
 
     @Provides
