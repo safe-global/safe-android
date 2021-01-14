@@ -66,9 +66,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                         safeRepository.setActiveSafe(it)
                         setSafeData(it)
                     }
-                    //TODO: figure out which tab (QUEUE vs HISTORY) to open
                     if (txId == null) {
-                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment)
+                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
+                            putInt("activeTab", 1) // open history tab
+                        })
                     } else {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
                             putString("txId", txId)
