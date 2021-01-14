@@ -36,7 +36,7 @@ class FiatListAdapter : RecyclerView.Adapter<FiatListAdapter.FiatViewHolder>() {
 
     override fun onBindViewHolder(holder: FiatViewHolder, position: Int) {
         val item = items[position]
-        val displayName = Currency.getInstance(item).displayName
+        val displayName = Currency.getInstance(item).getDisplayName(Locale("en", Locale.getDefault().country))
         holder.bind(item, displayName, item == selectedItem)
     }
 
