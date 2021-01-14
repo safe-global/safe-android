@@ -14,6 +14,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
+import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.abbreviateEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -68,7 +69,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     }
                     if (txId == null) {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
-                            putInt("activeTab", 1) // open history tab
+                            putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                         })
                     } else {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
