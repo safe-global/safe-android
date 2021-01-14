@@ -292,6 +292,9 @@ dependencies {
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$versions.desugar_jdk_libs"
 
     profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
+
+    // Unstoppabledomains
+    implementation 'com.unstoppabledomains:resolution:1.9.1'
 }
 
 
