@@ -47,6 +47,8 @@
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_small_margin"
         android:gravity="end"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/primary"
         app:layout_constraintBottom_toBottomOf="@+id/action"
         app:layout_constraintEnd_toStartOf="@+id/chevron"

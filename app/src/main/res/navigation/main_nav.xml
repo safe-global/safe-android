@@ -194,6 +194,11 @@
             android:id="@+id/action_transactionsFragment_to_transactionCreationDetailsFragment"
             app:destination="@id/creationTransactionDetailsFragment" />
 
+        <argument
+            android:name="activeTab"
+            android:defaultValue="0"
+            app:argType="integer" />
+
     </fragment>
 
     <fragment
