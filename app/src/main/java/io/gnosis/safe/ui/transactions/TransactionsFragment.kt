@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -21,6 +22,9 @@ import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBinding>() {
+
+    private val navArgs by navArgs<TransactionsFragmentArgs>()
+    private val activeTab by lazy { navArgs.activeTab }
 
     @Inject
     lateinit var viewModel: TransactionsViewModel
@@ -51,6 +55,7 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
                     }
                 }
             }.attach()
+            txContent.setCurrentItem(activeTab, false)
         }
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (state) {

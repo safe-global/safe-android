@@ -55,6 +55,7 @@
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
     <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+    <string name="error_description_fiat">Failed to load supported fiat list</string>
 
     <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
     <string name="error_network_no_internet_fix">Please try again when Internet is available</string>
@@ -171,6 +172,17 @@
     <string name="tx_tab_queue">QUEUE</string>
     <string name="tx_tab_history">HISTORY</string>
 
+    <string name="tx_list_ago_now">just now</string>
+    <string name="tx_list_ago_min">%1$d min ago</string>
+    <plurals name="tx_list_ago_hour">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="tx_list_ago_day">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$d out of %2$d</string>
@@ -219,7 +231,7 @@
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
     <string name="tx_status_type_modify_settings">Modify settings</string>
-    <string name="tx_status_type_custom">Custom transaction</string>
+    <string name="tx_status_type_custom">Contract interaction</string>
     <string name="tx_status_type_creation">Safe created</string>
 
     <string name="tx_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
@@ -319,10 +331,15 @@
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
     <string name="unknown_fallback_handler">Unknown</string>
+    <string name="unknown_module">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
     <string name="address_input_unstoppabledomains">Unstoppable domain</string>
+    <string name="label_type_next">Next</string>
+    <string name="label_type_queued">Queued</string>
+
+    <string name="separator_hyphen">%1$s - %2$s</string>
 </resources>

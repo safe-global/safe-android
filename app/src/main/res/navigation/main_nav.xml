@@ -90,7 +90,7 @@
         android:id="@+id/ownerSeedPhraseFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment"
         android:label="OwnerSeedPhraseFragment"
-        tools:layout="@layout/fragment_owner_seed_phrase" >
+        tools:layout="@layout/fragment_owner_seed_phrase">
 
         <action
             android:id="@+id/action_ownerSeedPhraseFragment_to_ownerSelectionFragment"
@@ -144,6 +144,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_ownerSeedPhraseFragment"
             app:destination="@id/ownerSeedPhraseFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_appFiatFragment"
+            app:destination="@id/appFiatFragment" />
 
     </fragment>
 
@@ -172,6 +175,12 @@
         tools:layout="@layout/fragment_settings_app_night_mode" />
 
     <fragment
+        android:id="@+id/appFiatFragment"
+        android:name="io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment"
+        android:label="Fiat"
+        tools:layout="@layout/fragment_app_fiat" />
+
+    <fragment
         android:id="@+id/transactionsFragment"
         android:name="io.gnosis.safe.ui.transactions.TransactionsFragment"
         android:label="TransactionsFragment"
@@ -184,6 +193,11 @@
         <action
             android:id="@+id/action_transactionsFragment_to_transactionCreationDetailsFragment"
             app:destination="@id/creationTransactionDetailsFragment" />
+
+        <argument
+            android:name="activeTab"
+            android:defaultValue="0"
+            app:argType="integer" />
 
     </fragment>
 

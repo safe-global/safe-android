@@ -8,17 +8,20 @@
     android:background="@color/surface_01"
     android:paddingVertical="16dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/logo_image"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginStart="16dp"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/symbol"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_native_logo" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        tools:src="@drawable/ic_native_logo"
+        app:strokeWidth="0.1dp"
+        app:strokeColor="@color/illustration_background" />
 
     <TextView
         android:id="@+id/symbol"
