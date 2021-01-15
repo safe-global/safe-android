@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import com.unstoppabledomains.exceptions.ns.NSExceptionCode
+import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsResolutionError
 import io.gnosis.data.repositories.EnsReverseRecordNotSetError
@@ -57,12 +59,20 @@ enum class Error(
     ERROR_1109(1109, R.string.error_client_safe_not_found_reason, R.string.error_client_safe_not_found_fix),
     ERROR_1110(1110, R.string.error_client_safe_name_invalid_reason, R.string.error_client_safe_name_invalid_fix),
 
+    ERROR_UD_UNSUPPORTED_DOMAIN(6357, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix),
+    ERROR_UD_UNREGISTERED(6358, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix),
+    ERROR_UD_RECORD_NOT_FOUND(6359, R.string.error_client_UD_record_not_found_reason, R.string.error_client_UD_record_not_found_fix),
+    ERROR_UD_UNSPECIFIED_RESOLVER(6360, R.string.error_client_UD_domain_not_configured_reason, R.string.error_client_UD_domain_not_configured_fix),
+    ERROR_UD_BLOCKHAIN_DOWN(6361, R.string.error_client_UD_blockchain_provider_is_not_accessible_reason, R.string.error_client_UD_blockchain_provider_is_not_accessible_fix),
+    ERROR_UD_UNKNOWN_CURRENCY(6357, R.string.error_client_UD_currency_not_found_reason, R.string.error_client_UD_currency_not_found_fix),
+
 
     ERROR_UNKNOWN(-1, R.string.error_unknown_reason, R.string.error_unknown_fix) {
         override fun message(context: Context): String {
             return "${context.getString(reason)}. ${context.getString(howToFix)}"
         }
     };
+
 
     open fun message(context: Context): String {
         return "${context.getString(reason)}. ${context.getString(howToFix)}. (${context.getString(R.string.error_id, id)})"
@@ -103,6 +113,20 @@ fun Throwable.toError(): Error =
         this is SSLHandshakeException || this.cause is SSLHandshakeException -> Error.ERROR_102
         this is SocketTimeoutException -> Error.ERROR_103
         this is UnknownHostException || this is ConnectException -> Error.ERROR_104
+        this is NamingServiceException -> {
+            this.let {
+                when (this.getCode()) {
+                    NSExceptionCode.UnregisteredDomain -> Error.ERROR_UD_UNREGISTERED
+                    NSExceptionCode.UnsupportedDomain -> Error.ERROR_UD_UNSUPPORTED_DOMAIN
+                    NSExceptionCode.RecordNotFound -> Error.ERROR_UD_RECORD_NOT_FOUND
+                    NSExceptionCode.BlockchainIsDown -> Error.ERROR_UD_BLOCKHAIN_DOWN
+                    NSExceptionCode.UnspecifiedResolver -> Error.ERROR_UD_UNSPECIFIED_RESOLVER
+                    NSExceptionCode.UnknownCurrency -> Error.ERROR_UD_UNKNOWN_CURRENCY
+                    else -> Error.ERROR_UNKNOWN
+                }
+            }
+        }
+
         else -> Error.ERROR_UNKNOWN
     }
 

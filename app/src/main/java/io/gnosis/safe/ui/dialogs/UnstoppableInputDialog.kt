@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import com.unstoppabledomains.exceptions.ns.NSExceptionCode
+import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogUnstoppableInputBinding
@@ -93,8 +95,16 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
                         binding.confirmButton.isEnabled = false
                         binding.successViews.visible(false)
 
-                        val error = it.toError()
-                        binding.dialogUnstoppableDomainLayout.error = error.message(requireContext(), R.string.error_description_ens_name)
+                        val error = when(it.cause) {
+                            is NamingServiceException -> it.cause!!.toError()
+                            else -> it.toError();
+                        }
+
+                        binding.dialogUnstoppableDomainLayout.error =
+                                error.message(
+                                        requireContext(),
+                                        R.string.error_description_ens_name
+                                )
 
                         binding.dialogUnstoppableDomainLayout.isErrorEnabled = true
 

@@ -23,15 +23,7 @@ class UnstoppableInputViewModel
                     it
                 }
                 .onFailure {
-                    when (it) {
-
-                        is IllegalArgumentException -> {
-                            throw EnsInvalidError()
-                        }
-                        else -> {
-                            throw it
-                        }
-                    }
+                   throw it
                 }
                 .getOrNull()!!
     }
