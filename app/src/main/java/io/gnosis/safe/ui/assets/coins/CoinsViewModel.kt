@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.assets.coins
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.adapter.Adapter
@@ -12,7 +11,6 @@ import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode
-import java.util.*
 import javax.inject.Inject
 
 class CoinsViewModel
@@ -45,16 +43,21 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
-                val balances = getBalanceViewData(balanceInfo)
+                val showBanner = true //FIXME
+                val balances = getBalanceViewData(balanceInfo, showBanner)
 
                 updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(Adapter.Data(null, balances))) }
             }
         }
     }
 
-    suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
+    suspend fun getBalanceViewData(coinBalanceData: CoinBalances, showBanner: Boolean): List<CoinsViewData> {
         val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
+
+        if (showBanner) {
+            result.add(CoinsViewData.Banner)
+        }
 
         val totalBalance = CoinsViewData.TotalBalance(
             balanceFormatter.fiatBalanceWithCurrency(
