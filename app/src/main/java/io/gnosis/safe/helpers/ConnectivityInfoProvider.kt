@@ -28,16 +28,21 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
     }
 
     private fun isOffline(): Boolean =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.run {
-                    !(hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            var online = false
+            connectivityManager.allNetworks.forEach loop@{
+                online = connectivityManager.getNetworkCapabilities(it).run {
+                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                             || hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                            || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
-                } ?: true
-            } else {
-                val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                activeNetworkInfo == null || !activeNetworkInfo.isConnected
+                            || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                }
+                if (online) return@loop
             }
+            !online
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            activeNetworkInfo == null || !activeNetworkInfo.isConnected
+        }
 
 
     private fun register() {
