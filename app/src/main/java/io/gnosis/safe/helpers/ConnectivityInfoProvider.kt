@@ -30,6 +30,8 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
     private fun isOffline(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var online = false
+            // Active network is null after returning from sleep. Default active network listener is not triggered
+            // Thus we check connectivity of all available networks to see if device is offline
             connectivityManager.allNetworks.forEach loop@{
                 online = connectivityManager.getNetworkCapabilities(it).run {
                     hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
