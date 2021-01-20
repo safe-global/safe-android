@@ -278,7 +278,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            dateTimeText = timestamp.formatBackendDateTime(),
             label = R.string.tx_list_creation,
             creationDetails = TransactionView.CreationDetails(
                 statusText = displayString(txStatus),
