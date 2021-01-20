@@ -76,15 +76,6 @@
             android:paddingBottom="30dp">
 
             <TextView
-                android:id="@+id/enter_seed_phrase_title"
-                style="@style/TextDark.Bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:text="@string/enter_your_seed_phrase" />
-
-            <TextView
                 android:id="@+id/enter_seed_phrase_description"
                 style="@style/TextDark"
                 android:layout_width="wrap_content"
@@ -92,7 +83,7 @@
                 android:layout_marginTop="10dp"
                 android:paddingHorizontal="16dp"
                 android:text="@string/enter_seed_phrase_description"
-                android:textAlignment="center" />
+                android:gravity="center" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/seed_phrase_layout"
