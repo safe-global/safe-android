@@ -45,8 +45,7 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
             val activeNetworkInfo = connectivityManager.activeNetworkInfo
             activeNetworkInfo == null || !activeNetworkInfo.isConnected
         }
-
-
+    
     private fun register() {
         val builder = NetworkRequest.Builder()
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
