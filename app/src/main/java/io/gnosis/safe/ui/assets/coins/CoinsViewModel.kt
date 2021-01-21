@@ -5,9 +5,9 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode
@@ -17,10 +17,12 @@ class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
+    private val ownerCredentialsRepository: OwnerCredentialsRepository,
     private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<CoinsState>(appDispatchers) {
+) : BaseStateViewModel<CoinsState>(appDispatchers),
+    CoinsAdapter.OwnerBannerListener {
 
     override fun initialState(): CoinsState = CoinsState(loading = false, refreshing = false, viewAction = null)
 
@@ -43,10 +45,9 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
-                val showBanner = true //FIXME
+                val showBanner = settingsHandler.showOwnerBanner && !ownerCredentialsRepository.hasCredentials()
                 val balances = getBalanceViewData(balanceInfo, showBanner)
-
-                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(Adapter.Data(null, balances))) }
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
             }
         }
     }
@@ -83,6 +84,20 @@ class CoinsViewModel
 
         return result
     }
+
+    override fun onBannerDismissed() {
+        settingsHandler.showOwnerBanner = false
+        safeLaunch {
+            updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
+        }
+    }
+
+    override fun onBannerActionTriggered() {
+        settingsHandler.showOwnerBanner = false
+        safeLaunch {
+            updateState { CoinsState(loading = false, refreshing = false, viewAction = ImportOwnerKey) }
+        }
+    }
 }
 
 data class CoinsState(
@@ -92,5 +107,10 @@ data class CoinsState(
 ) : BaseStateViewModel.State
 
 data class UpdateBalances(
-    val newBalances: Adapter.Data<CoinsViewData>
+    val newBalances: List<CoinsViewData>
 ) : BaseStateViewModel.ViewAction
+
+object DismissOwnerBanner: BaseStateViewModel.ViewAction
+
+object ImportOwnerKey: BaseStateViewModel.ViewAction
+
