@@ -255,7 +255,7 @@
     <string name="signing_owner_selection_import">Import</string>
     <string name="signing_owner_selection_select_key">Select key</string>
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
-    <string name="signing_owner_selection_more">Show more</string>
+    <string name="signing_owner_selection_more">Show more derived keys</string>
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 

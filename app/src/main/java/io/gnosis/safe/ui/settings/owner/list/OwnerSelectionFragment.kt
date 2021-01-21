@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment.Companion.OWNER_IMPORT_RESULT
 import kotlinx.coroutines.launch
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -31,7 +32,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
 
     private val navArgs by navArgs<OwnerSelectionFragmentArgs>()
-    private val seedPhrase by lazy { navArgs.seedPhrase }
+    private val privateKey: String? by lazy { navArgs.privateKey }
+    private val seedPhrase: String? by lazy { navArgs.seedPhrase }
 
     @Inject
     lateinit var viewModel: OwnerSelectionViewModel
@@ -64,7 +66,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.showMoreOwners.visible(false)
                 } else {
                     binding.progress.visible(false)
-                    binding.nextButton.isEnabled = true
+                    binding.importButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
@@ -74,8 +76,12 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            nextButton.setOnClickListener {
-                viewModel.importOwner()
+            importButton.setOnClickListener {
+                if(usingSeedPhrase()) {
+                    viewModel.importOwner()
+                } else {
+                    viewModel.importOwner(privateKey)
+                }
             }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
@@ -113,19 +119,42 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                             adapter.submitData(viewAction.newOwners)
                         }
                     }
+                    is FirstOwner -> {
+                        lifecycleScope.launch {
+
+                            //TODO: Show screen with one owner
+                            with(binding) {
+                                firstOwnerAddress.text = viewAction.owner.asEthereumAddressChecksumString()
+                                firstOwnerImage.setAddress(viewAction.owner)
+                                firstOwnerNumber.text = "1"
+
+                                progress.visible(false)
+                                importButton.isEnabled = true
+                                showMoreOwners.visible(false)
+
+                            }
+                            //show(viewAction.owner)
+                        }
+                    }
                     is CloseScreen -> {
                         findNavController().popBackStack(R.id.settingsFragment, false)
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
-
+                        //TODO Should this log an error?
                     }
                 }
             }
         })
 
-        viewModel.loadOwners(seedPhrase)
+        if (usingSeedPhrase()) {
+            viewModel.loadOwners(seedPhrase!!)
+        } else {
+            viewModel.loadOwner(privateKey!!)
+        }
     }
+
+    private fun usingSeedPhrase() : Boolean = seedPhrase != null
 
     override fun onOwnerClicked(ownerIndex: Long) {
         viewModel.setOwnerIndex(ownerIndex)

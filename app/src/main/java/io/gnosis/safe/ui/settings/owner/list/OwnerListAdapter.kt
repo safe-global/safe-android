@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.gnosis.safe.databinding.ItemOwnerSelectionHeaderBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.utils.formatEthAddress
@@ -25,13 +24,13 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        AccountItemViewType.HEADER.ordinal -> HeaderViewHolder(
-            ItemOwnerSelectionHeaderBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+//        AccountItemViewType.HEADER.ordinal -> HeaderViewHolder(
+//            ItemOwnerSelectionHeaderBinding.inflate(
+//                LayoutInflater.from(parent.context),
+//                parent,
+//                false
+//            )
+//        )
         AccountItemViewType.OWNER.ordinal -> OwnerViewHolder(
             ItemOwnerSelectionOwnerBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -60,25 +59,20 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
         else 0
     }
 
-    override fun getItemViewType(position: Int): Int = when {
-        position == 0 -> AccountItemViewType.HEADER.ordinal
-        else -> AccountItemViewType.OWNER.ordinal
-    }
+    override fun getItemViewType(position: Int): Int = AccountItemViewType.OWNER.ordinal
 
-    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long {
-        return selectedOwnerPosition.toLong() - 1 //account for header
-    }
+    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long = selectedOwnerPosition.toLong()
 
     interface OnOwnerItemClickedListener {
         fun onOwnerClicked(ownerIndex: Long)
     }
 
     enum class AccountItemViewType {
-        HEADER,
+//        HEADER,
         OWNER
     }
 
-    class HeaderViewHolder(private val binding: ItemOwnerSelectionHeaderBinding) : RecyclerView.ViewHolder(binding.root)
+//    class HeaderViewHolder(private val binding: ItemOwnerSelectionHeaderBinding) : RecyclerView.ViewHolder(binding.root)
 
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
