@@ -42,7 +42,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(seedPhrase)
@@ -58,7 +58,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.Error(InvalidSeedPhrase)
@@ -75,7 +75,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.Error(InvalidSeedPhrase)
@@ -92,7 +92,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
@@ -109,7 +109,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
@@ -126,7 +126,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
@@ -143,7 +143,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
@@ -160,7 +160,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
@@ -177,7 +177,7 @@ class ImportOwnerKeyViewModelTest {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validate(seedPhrase)
+        viewModel.validateSeedPhrase(seedPhrase)
 
         stateObserver.assertValues(
             ImportOwnerKeyState.ValidSeedPhraseSubmitted(expected)
