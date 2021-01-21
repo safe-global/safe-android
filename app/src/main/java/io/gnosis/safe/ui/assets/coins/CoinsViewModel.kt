@@ -89,7 +89,7 @@ class CoinsViewModel
 
     override fun onBannerDismissed() {
         settingsHandler.showOwnerBanner = false
-        tracker.logBannerOwnerSkiped()
+        tracker.logBannerOwnerSkipped()
         safeLaunch {
             updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
         }

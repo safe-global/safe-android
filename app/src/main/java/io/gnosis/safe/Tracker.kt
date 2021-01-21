@@ -35,7 +35,7 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
     }
 
-    fun logBannerOwnerSkiped() {
+    fun logBannerOwnerSkipped() {
         logEvent(Event.BANNER_OWNER_SKIPPED, null)
     }
 
