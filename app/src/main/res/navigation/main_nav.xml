@@ -42,6 +42,10 @@
             android:id="@+id/action_assetsFragment_to_collectiblesDetailsFragment"
             app:destination="@id/collectiblesDetailsFragment" />
 
+        <action
+            android:id="@+id/action_assetsFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
     </fragment>
 
     <fragment
@@ -156,6 +160,7 @@
         <action
             android:id="@+id/action_settingsFragment_to_ownerInfoFragment"
             app:destination="@id/ownerInfoFragment" />
+
         <action
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
             app:destination="@id/appFiatFragment" />

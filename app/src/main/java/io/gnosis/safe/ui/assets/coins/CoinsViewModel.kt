@@ -99,7 +99,7 @@ class CoinsViewModel
         settingsHandler.showOwnerBanner = false
         tracker.logBannerOwnerImport()
         safeLaunch {
-            updateState { CoinsState(loading = false, refreshing = false, viewAction = ImportOwnerKey) }
+            updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
         }
     }
 }
@@ -115,6 +115,3 @@ data class UpdateBalances(
 ) : BaseStateViewModel.ViewAction
 
 object DismissOwnerBanner: BaseStateViewModel.ViewAction
-
-object ImportOwnerKey: BaseStateViewModel.ViewAction
-

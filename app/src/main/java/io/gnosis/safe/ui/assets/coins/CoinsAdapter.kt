@@ -2,11 +2,13 @@ package io.gnosis.safe.ui.assets.coins
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.databinding.ItemBannerImportKeyBinding
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.databinding.ItemCoinTotalBinding
+import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.utils.loadTokenLogo
 import java.lang.ref.WeakReference
 
@@ -122,6 +124,7 @@ class BannerViewHolder(private val viewBinding: ItemBannerImportKeyBinding) : Ba
             }
             bannerAction.setOnClickListener {
                 bannerListener.get()?.onBannerActionTriggered()
+                Navigation.findNavController(it).navigate(AssetsFragmentDirections.actionAssetsFragmentToOwnerInfoFragment())
             }
         }
     }

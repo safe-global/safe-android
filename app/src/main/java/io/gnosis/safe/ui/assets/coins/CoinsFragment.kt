@@ -68,10 +68,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                             is DismissOwnerBanner -> {
                                 adapter.removeBanner()
                             }
-                            is ImportOwnerKey -> {
-                                //TODO: navigate to import owner key screen
-                                //findNavController().navigate(AssetsFragmentDirections.action...)
-                            }
                             is ShowError -> {
                                 hideLoading()
                                 if (adapter.itemCount == 0) {
