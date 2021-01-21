@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.assets.coins
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -20,6 +21,7 @@ class CoinsViewModel
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
     private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
+    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CoinsState>(appDispatchers),
     CoinsAdapter.OwnerBannerListener {
@@ -87,6 +89,7 @@ class CoinsViewModel
 
     override fun onBannerDismissed() {
         settingsHandler.showOwnerBanner = false
+        tracker.logBannerOwnerSkiped()
         safeLaunch {
             updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
         }
@@ -94,6 +97,7 @@ class CoinsViewModel
 
     override fun onBannerActionTriggered() {
         settingsHandler.showOwnerBanner = false
+        tracker.logBannerOwnerImport()
         safeLaunch {
             updateState { CoinsState(loading = false, refreshing = false, viewAction = ImportOwnerKey) }
         }

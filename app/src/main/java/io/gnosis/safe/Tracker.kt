@@ -35,6 +35,14 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
     }
 
+    fun logBannerOwnerSkiped() {
+        logEvent(Event.BANNER_OWNER_SKIPED, null)
+    }
+
+    fun logBannerOwnerImport() {
+        logEvent(Event.BANNER_OWNER_IMPORT, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -61,6 +69,8 @@ class Tracker private constructor(context: Context) {
     object Event {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val BANNER_OWNER_SKIPED = "user_banner_owner_skip"
+        val BANNER_OWNER_IMPORT = "user_banner_owner_import"
     }
 
     object Param {

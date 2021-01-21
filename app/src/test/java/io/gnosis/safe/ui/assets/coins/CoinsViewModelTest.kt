@@ -7,10 +7,7 @@ import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.safe.MainCoroutineScopeRule
-import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.TestLiveDataObserver
-import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
@@ -42,6 +39,7 @@ class CoinsViewModelTest {
     private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
     private val balanceFormatter = BalanceFormatter()
+    private val tracker = mockk<Tracker>()
 
     @Test
     fun `init - should call load on safe change`() {
@@ -54,7 +52,7 @@ class CoinsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(safe1, safe10)
         coEvery { settingsHandler.userDefaultFiat } returns "USD"
 
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
@@ -67,7 +65,7 @@ class CoinsViewModelTest {
 
     @Test
     fun `load (tokenRepository failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
@@ -90,7 +88,7 @@ class CoinsViewModelTest {
 
     @Test
     fun `load (active safe failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         coEvery { safeRepository.getActiveSafe() } throws throwable
@@ -110,7 +108,7 @@ class CoinsViewModelTest {
 
     @Test
     fun `load - should emit balance list`() = runBlocking {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, appDispatchers)
+        viewModel = CoinsViewModel(tokenRepository, safeRepository, ownerCredentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val balances = listOf(buildBalance(0), buildBalance(1), buildBalance(2))
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
