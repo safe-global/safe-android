@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.cardview.widget.CardView
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ViewIntroItemBinding
+import io.gnosis.safe.databinding.ViewInfoItemBinding
 import timber.log.Timber
 
 class InfoItemView  @JvmOverloads constructor(
@@ -15,7 +15,7 @@ class InfoItemView  @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : CardView(context, attrs, defStyleAttr) {
 
-    private val binding = ViewIntroItemBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = ViewInfoItemBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
         readAttributesAndSetupFields(context, attrs)
