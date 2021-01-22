@@ -64,7 +64,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                app:cardBackgroundColor="@color/surface_01"
+                app:cardBackgroundColor="@color/white_two"
                 app:cardCornerRadius="8dp"
                 android:visibility="gone">
 
