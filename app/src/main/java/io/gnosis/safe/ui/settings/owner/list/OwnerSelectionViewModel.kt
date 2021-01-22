@@ -5,6 +5,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
@@ -21,6 +22,7 @@ class OwnerSelectionViewModel
     private val derivator: MnemonicKeyAndAddressDerivator,
     private val ownerCredentialsVault: OwnerCredentialsRepository,
     private val notificationRepository: NotificationRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
@@ -87,6 +89,7 @@ class OwnerSelectionViewModel
                 ownerCredentialsVault.storeCredentials(it)
                 notificationRepository.registerOwner(it.key)
             }
+            settingsHandler.showOwnerBanner = false
             tracker.logKeyImported()
             tracker.setNumKeysImported(1)
             updateState {

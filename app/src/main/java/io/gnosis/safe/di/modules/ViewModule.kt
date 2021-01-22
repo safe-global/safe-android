@@ -10,6 +10,7 @@ import dagger.Provides
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.ViewContext
 import io.gnosis.safe.ui.assets.AssetsViewModel
+import io.gnosis.safe.ui.assets.coins.CoinsAdapter
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
@@ -62,6 +63,11 @@ class ViewModule(
     @ForView
     fun providesSafeSelectionAdapter(safeSelectionViewModel: SafeSelectionViewModel) =
         SafeSelectionAdapter(WeakReference(safeSelectionViewModel))
+
+    @Provides
+    @ForView
+    fun providesCoinsAdapter(coinsViewModel: CoinsViewModel) =
+        CoinsAdapter(WeakReference(coinsViewModel))
 
     @Provides
     @ForView

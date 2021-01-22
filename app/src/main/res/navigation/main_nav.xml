@@ -42,6 +42,10 @@
             android:id="@+id/action_assetsFragment_to_collectiblesDetailsFragment"
             app:destination="@id/collectiblesDetailsFragment" />
 
+        <action
+            android:id="@+id/action_assetsFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
     </fragment>
 
     <fragment
@@ -83,6 +87,18 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment"
+        android:label="OwnerInfoFragment"
+        tools:layout="@layout/fragment_owner_info">
+
+        <action
+            android:id="@+id/action_ownerInfoFragment_to_ownerSeedPhraseFragment"
+            app:destination="@id/ownerSeedPhraseFragment" />
 
     </fragment>
 
@@ -148,8 +164,9 @@
             app:destination="@id/safeSettingsEditNameFragment" />
 
         <action
-            android:id="@+id/action_settingsFragment_to_ownerSeedPhraseFragment"
-            app:destination="@id/ownerSeedPhraseFragment" />
+            android:id="@+id/action_settingsFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
         <action
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
             app:destination="@id/appFiatFragment" />
