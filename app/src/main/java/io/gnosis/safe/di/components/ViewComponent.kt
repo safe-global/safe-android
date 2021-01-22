@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
+import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
@@ -62,6 +63,8 @@ interface ViewComponent {
     fun inject(dialog: EnsInputDialog)
 
     fun inject(fragment: SettingsFragment)
+
+    fun inject(fragment: OwnerInfoFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
 
