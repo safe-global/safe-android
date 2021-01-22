@@ -28,6 +28,8 @@ class TxConfirmationsView @JvmOverloads constructor(
 
     private val linePaint: Paint
 
+    private val dp1 = dpToPx(1)
+
     init {
         orientation = VERTICAL
         gravity = Gravity.LEFT
@@ -104,9 +106,9 @@ class TxConfirmationsView @JvmOverloads constructor(
         )
         item.layoutParams = layoutParams
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            item.setTextAppearance(R.style.TextDark)
+            item.setTextAppearance(R.style.TextDark_Bold)
         } else {
-            item.setTextAppearance(context, R.style.TextDark)
+            item.setTextAppearance(context, R.style.TextDark_Bold)
         }
         item.text = resources.getString(R.string.tx_confirmations_execute_ready_description)
         addView(item)
@@ -126,7 +128,7 @@ class TxConfirmationsView @JvmOverloads constructor(
             val child1 = getChildAt(i)
             if (child1 is TxExecutionStep) {
                 x1 = child1.stepIconBottom.x
-                y1 = child1.stepIconBottom.y
+                y1 = child1.stepIconBottom.y + dp1
             }
 
             val child2 = getChildAt(i + 1)
@@ -135,7 +137,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                     x1,
                     y1,
                     child2.stepIconTop.x,
-                    child2.stepIconTop.y,
+                    child2.stepIconTop.y - dp1,
                     linePaint
                 )
             }
