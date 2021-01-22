@@ -13,4 +13,6 @@ sealed class CoinsViewData {
     data class TotalBalance(
         val totalFiat: String
     ) : CoinsViewData()
+
+    object Banner : CoinsViewData()
 }

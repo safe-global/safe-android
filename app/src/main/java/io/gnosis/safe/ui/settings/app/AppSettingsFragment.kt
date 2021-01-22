@@ -100,7 +100,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             } else {
                 with(importOwnerKey) {
                     root.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSeedPhraseFragment())
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
                     }
                 }
             }
