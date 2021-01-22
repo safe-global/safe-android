@@ -35,6 +35,14 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
     }
 
+    fun logBannerOwnerSkipped() {
+        logEvent(Event.BANNER_OWNER_SKIPPED, null)
+    }
+
+    fun logBannerOwnerImport() {
+        logEvent(Event.BANNER_OWNER_IMPORT, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -61,6 +69,8 @@ class Tracker private constructor(context: Context) {
     object Event {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
+        val BANNER_OWNER_IMPORT = "user_banner_owner_import"
     }
 
     object Param {
@@ -93,6 +103,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
+    OWNER_INFO("screen_owner_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),

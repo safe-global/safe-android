@@ -46,18 +46,27 @@ class SettingsHandler @Inject constructor(
     }
 
     var userDefaultFiat: String
-        get() = preferencesManager.prefs.getString(USER_DEFAULT_FIAT, "USD") ?: "USD"
+        get() = preferencesManager.prefs.getString(KEY_USER_DEFAULT_FIAT, "USD") ?: "USD"
         set(value) {
-            preferencesManager
-                .prefs
-                .edit { putString(USER_DEFAULT_FIAT, value) }
+            preferencesManager.prefs.edit {
+                putString(KEY_USER_DEFAULT_FIAT, value)
+            }
+        }
+
+    var showOwnerBanner: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_SHOW_OWNER_BANNER, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_SHOW_OWNER_BANNER, value)
+            }
         }
 
     suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
 
     companion object {
-        internal const val USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
-        internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
+        internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
+        internal const val KEY_USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
+        internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
     }
 }
