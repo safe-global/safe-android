@@ -245,6 +245,7 @@
     <string name="tx_confirmations_failed">Failed</string>
     <string name="tx_confirmations_cancelled">Cancelled</string>
     <string name="tx_confirmations_execute_ready">Execute</string>
+    <string name="tx_confirmations_execute_ready_description">Execution is currently not possible in this app. Please execute the transaction in the web interface or desktop app.</string>
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
 

@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import io.gnosis.data.models.transaction.TransactionStatus
@@ -26,6 +27,8 @@ class TxConfirmationsView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val linePaint: Paint
+
+    private val dp1 = dpToPx(1)
 
     init {
         orientation = VERTICAL
@@ -53,6 +56,7 @@ class TxConfirmationsView @JvmOverloads constructor(
             }
             TransactionStatus.AWAITING_EXECUTION -> {
                 addExecutionStep(TxExecutionStep.Type.EXECUTE_READY)
+                addExecutionDescriptionItem()
             }
             TransactionStatus.SUCCESS -> {
                 if (executor != null) {
@@ -91,6 +95,25 @@ class TxConfirmationsView @JvmOverloads constructor(
         addView(addressItem)
     }
 
+    private fun addExecutionDescriptionItem() {
+        val item = TextView(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams.setMargins(
+            dpToPx(EXECUTION_DESCRIPTION_ITEM_MARGIN_LEFT),
+            dpToPx(EXECUTION_DESCRIPTION_ITEM_MARGIN_VERTICAL),
+            dpToPx(EXECUTION_DESCRIPTION_ITEM_MARGIN_RIGHT),
+            dpToPx(MARGIN_VERTICAL)
+        )
+        item.layoutParams = layoutParams
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            item.setTextAppearance(R.style.TextDark_Bold)
+        } else {
+            item.setTextAppearance(context, R.style.TextDark_Bold)
+        }
+        item.text = resources.getString(R.string.tx_confirmations_execute_ready_description)
+        addView(item)
+    }
+
     fun clear() {
         removeAllViews()
     }
@@ -105,7 +128,7 @@ class TxConfirmationsView @JvmOverloads constructor(
             val child1 = getChildAt(i)
             if (child1 is TxExecutionStep) {
                 x1 = child1.stepIconBottom.x
-                y1 = child1.stepIconBottom.y
+                y1 = child1.stepIconBottom.y + dp1
             }
 
             val child2 = getChildAt(i + 1)
@@ -114,7 +137,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                     x1,
                     y1,
                     child2.stepIconTop.x,
-                    child2.stepIconTop.y,
+                    child2.stepIconTop.y - dp1,
                     linePaint
                 )
             }
@@ -178,9 +201,9 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
                     }
                     Type.EXECUTE_READY -> {
-                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_ready_16dp)
+                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_execute_ready_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_high))
                     }
                     Type.EXECUTE_DONE -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
@@ -195,6 +218,9 @@ class TxConfirmationsView @JvmOverloads constructor(
     companion object {
         private const val ADDRESS_ITEM_HEIGHT = 44
         private const val ADDRESS_ITEM_MARGIN_LEFT = 24
+        private const val EXECUTION_DESCRIPTION_ITEM_MARGIN_LEFT = 40
+        private const val EXECUTION_DESCRIPTION_ITEM_MARGIN_RIGHT = 16
+        private const val EXECUTION_DESCRIPTION_ITEM_MARGIN_VERTICAL = -10
         private const val MARGIN_VERTICAL = 16
         private const val LINE_WIDTH = 2
         private const val LINE_COLOR = R.color.text_emphasis_low
