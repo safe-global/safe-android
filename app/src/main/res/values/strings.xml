@@ -245,6 +245,7 @@
     <string name="tx_confirmations_failed">Failed</string>
     <string name="tx_confirmations_cancelled">Cancelled</string>
     <string name="tx_confirmations_execute_ready">Execute</string>
+    <string name="tx_confirmations_execute_ready_description">Execution is currently not possible in this app. Please execute the transaction in the web interface or desktop app.</string>
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
 
@@ -258,6 +259,10 @@
     <string name="signing_owner_selection_more">Show more</string>
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
+
+    <string name="banner_owner_title">Import owner key</string>
+    <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
+    <string name="banner_owner_action">Import owner key now</string>
 
     <string name="push_safe_name">Safe %1$s</string>
 
@@ -302,6 +307,12 @@
     <string name="enter_seed_phrase_hint">Enter seed phrase</string>
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
     <string name="import_owner_key_title">Import Owner Key</string>
+    <string name="import_owner_key_intro_seed_phrase_title">How does it work?</string>
+    <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
+    <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
+    <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
+    <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
+    <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>

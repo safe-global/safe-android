@@ -16,8 +16,6 @@ import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
-import io.gnosis.safe.ui.base.adapter.Adapter
-import io.gnosis.safe.ui.base.adapter.MultiViewHolderAdapter
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.BalanceFormatter
 import pm.gnosis.svalinn.common.utils.visible
@@ -31,7 +29,8 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
     @Inject
     lateinit var viewModel: CoinsViewModel
 
-    private val adapter by lazy { MultiViewHolderAdapter(CoinsViewHolderFactory()) }
+    @Inject
+    lateinit var adapter: CoinsAdapter
 
     override fun screenId() = ScreenId.ASSETS_COINS
 
@@ -60,11 +59,14 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                     state.viewAction?.let { action ->
                         when (action) {
                             is UpdateActiveSafe -> {
-                                adapter.updateData(Adapter.Data(null, listOf()))
+                                adapter.updateData(listOf())
                             }
                             is UpdateBalances -> {
                                 binding.contentNoData.root.visibility = View.GONE
                                 adapter.updateData(action.newBalances)
+                            }
+                            is DismissOwnerBanner -> {
+                                adapter.removeBanner()
                             }
                             is ShowError -> {
                                 hideLoading()
