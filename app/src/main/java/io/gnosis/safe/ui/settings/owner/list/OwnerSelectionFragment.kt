@@ -22,6 +22,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment.Companion.OWNER_IMPORT_RESULT
+import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -96,20 +97,33 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     is FirstOwner -> {
                         lifecycleScope.launch {
                             with(binding) {
-                                firstOwnerAddress.text = viewAction.owner.asEthereumAddressChecksumString()
-                                firstOwnerImage.setAddress(viewAction.owner)
-                                if (viewAction.hasMore) {
-                                    firstOwnerNumber.text = "#1"
-                                } else {
-                                    firstOwnerNumber.text = ""
-                                }
-
                                 progress.visible(false)
                                 importButton.isEnabled = true
-                                showMoreOwners.visible(viewAction.hasMore)
-                                showMoreOwners.setOnClickListener {
-                                    viewModel.loadMoreOwners()
+
+                                if (viewAction.hasMore) {
+                                    binding.derivedOwners.visible(true)
+                                    binding.singleOwner.visible(false)
+
+                                    firstOwnerAddress.text = viewAction.owner.asEthereumAddressChecksumString()
+                                    firstOwnerImage.setAddress(viewAction.owner)
+                                    if (viewAction.hasMore) {
+                                        firstOwnerNumber.text = "#1"
+                                    } else {
+                                        firstOwnerNumber.text = ""
+                                    }
+
+                                    showMoreOwners.visible(viewAction.hasMore)
+                                    showMoreOwners.setOnClickListener {
+                                        viewModel.loadMoreOwners()
+                                    }
+                                } else {
+                                    binding.singleOwner.visible(true)
+                                    binding.singleOwnerAddress.text =
+                                        viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
+                                    binding.singleOwnerImage.setAddress(viewAction.owner)
+                                    binding.derivedOwners.visible(false)
                                 }
+
                             }
                         }
                     }
