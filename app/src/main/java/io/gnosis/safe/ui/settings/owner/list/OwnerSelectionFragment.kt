@@ -77,7 +77,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                 Navigation.findNavController(it).navigateUp()
             }
             importButton.setOnClickListener {
-                if(usingSeedPhrase()) {
+                if (usingSeedPhrase()) {
                     viewModel.importOwner()
                 } else {
                     viewModel.importOwner(privateKey)
@@ -88,52 +88,56 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             owners.addItemDecoration(dividerItemDecoration)
-            showMoreOwners.setOnClickListener {
-                adapter.pagesVisible++
-                val visualFeedback = it.animate().alpha(0.0f)
-                visualFeedback.duration = 100
-                visualFeedback.setListener(object : Animator.AnimatorListener {
-
-                    override fun onAnimationRepeat(animation: Animator?) {}
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        adapter.notifyDataSetChanged()
-                        showMoreOwners.alpha = 1.0f
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {}
-
-                    override fun onAnimationStart(animation: Animator?) {}
-                })
-                visualFeedback.start()
-                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is LoadedOwners -> {
-                        lifecycleScope.launch {
-                            adapter.submitData(viewAction.newOwners)
-                        }
-                    }
                     is FirstOwner -> {
                         lifecycleScope.launch {
-
-                            //TODO: Show screen with one owner
                             with(binding) {
                                 firstOwnerAddress.text = viewAction.owner.asEthereumAddressChecksumString()
                                 firstOwnerImage.setAddress(viewAction.owner)
-                                firstOwnerNumber.text = "1"
+                                if (viewAction.hasMore) {
+                                    firstOwnerNumber.text = "#1"
+                                } else {
+                                    firstOwnerNumber.text = ""
+                                }
 
                                 progress.visible(false)
                                 importButton.isEnabled = true
-                                showMoreOwners.visible(false)
-
+                                showMoreOwners.visible(viewAction.hasMore)
+                                showMoreOwners.setOnClickListener {
+                                    viewModel.loadMoreOwners()
+                                }
                             }
-                            //show(viewAction.owner)
+                        }
+                    }
+                    is LoadedOwners -> {
+                        with(binding) {
+                            showMoreOwners.setOnClickListener {
+                                adapter.pagesVisible++
+                                val visualFeedback = it.animate().alpha(0.0f)
+                                visualFeedback.duration = 100
+                                visualFeedback.setListener(object : Animator.AnimatorListener {
+
+                                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                                    override fun onAnimationEnd(animation: Animator?) {
+                                        adapter.notifyDataSetChanged()
+                                        showMoreOwners.alpha = 1.0f
+                                    }
+
+                                    override fun onAnimationCancel(animation: Animator?) {}
+
+                                    override fun onAnimationStart(animation: Animator?) {}
+                                })
+                                visualFeedback.start()
+                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                            }
+                        }
+                        lifecycleScope.launch {
+                            adapter.submitData(viewAction.newOwners)
                         }
                     }
                     is CloseScreen -> {
@@ -141,7 +145,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
-                        //TODO Should this log an error?
                     }
                 }
             }
@@ -154,7 +157,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         }
     }
 
-    private fun usingSeedPhrase() : Boolean = seedPhrase != null
+    private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
     override fun onOwnerClicked(ownerIndex: Long) {
         viewModel.setOwnerIndex(ownerIndex)

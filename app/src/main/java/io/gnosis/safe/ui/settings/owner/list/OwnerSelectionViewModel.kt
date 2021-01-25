@@ -1,6 +1,8 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -9,6 +11,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
+import kotlinx.coroutines.flow.collectLatest
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
@@ -68,6 +71,16 @@ class OwnerSelectionViewModel
 //                    updateState { OwnerSelectionState(LoadedOwners(it)) }
 //                }
 //        }
+    }
+
+    fun loadMoreOwners() {
+        safeLaunch {
+            OwnerPagingProvider(derivator).getOwnersStream()
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    updateState { OwnerSelectionState(LoadedOwners(it)) }
+                }
+        }
     }
 
     fun setOwnerIndex(index: Long) {
