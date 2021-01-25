@@ -12,7 +12,6 @@ import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
-import io.gnosis.safe.ui.safe.add.AddSafeOwnerViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
@@ -53,11 +52,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddSafeNameViewModel::class)
     abstract fun providesAddSafeNameViewModel(viewModel: AddSafeNameViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AddSafeOwnerViewModel::class)
-    abstract fun providesAddSafeOwnerViewModel(viewModel: AddSafeOwnerViewModel): ViewModel
 
     @Binds
     @IntoMap

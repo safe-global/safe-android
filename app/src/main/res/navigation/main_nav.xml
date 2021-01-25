@@ -406,6 +406,10 @@
             android:name="safeName"
             app:argType="string" />
 
+        <argument
+            android:name="safeAddress"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

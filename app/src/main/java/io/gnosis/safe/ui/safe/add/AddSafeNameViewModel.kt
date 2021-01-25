@@ -36,16 +36,12 @@ class AddSafeNameViewModel
             }.onFailure {
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
-
-                //TODO: check when to add safe - now or before import
+                tracker.setNumSafes(safeRepository.getSafeCount())
                 if(settingsHandler.showOwnerBanner && !ownerCredentialsRepository.hasCredentials()) {
                     updateState { AddSafeNameState(ImportOwner) }
                 } else {
-
+                    updateState { AddSafeNameState(ViewAction.CloseScreen) }
                 }
-
-                updateState { AddSafeNameState(ViewAction.CloseScreen) }
-                tracker.setNumSafes(safeRepository.getSafeCount())
             }
         }
     }
