@@ -114,7 +114,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         }
                     }
                     is CloseScreen -> {
-                        findNavController().popBackStack(R.id.settingsFragment, false)
+                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
