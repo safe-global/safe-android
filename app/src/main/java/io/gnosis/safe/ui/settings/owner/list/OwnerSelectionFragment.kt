@@ -139,6 +139,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                     override fun onAnimationStart(animation: Animator?) {}
                                 })
                                 visualFeedback.start()
+                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
                                 showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                             }
                         }
