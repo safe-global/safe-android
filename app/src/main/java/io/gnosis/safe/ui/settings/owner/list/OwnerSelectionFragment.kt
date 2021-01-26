@@ -165,16 +165,16 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         })
 
         if (usingSeedPhrase()) {
-            viewModel.loadOwners(seedPhrase!!)
+            viewModel.loadFirstDerivedOwner(seedPhrase!!)
         } else {
-            viewModel.loadOwner(privateKey!!)
+            viewModel.loadSingleOwner(privateKey!!)
         }
     }
 
     private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
     override fun onOwnerClicked(ownerIndex: Long) {
-        viewModel.setOwnerIndex(ownerIndex)
+        viewModel.setOwnerIndex(ownerIndex) // TODO adjust for first owner outside adapter
     }
 
     companion object {
