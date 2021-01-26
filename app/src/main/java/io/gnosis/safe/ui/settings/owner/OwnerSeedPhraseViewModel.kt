@@ -4,7 +4,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.PublishViewModel
 import pm.gnosis.mnemonic.Bip39
-import timber.log.Timber
 import javax.inject.Inject
 
 class OwnerSeedPhraseViewModel
@@ -15,7 +14,6 @@ class OwnerSeedPhraseViewModel
 
     fun validate(seedPhraseOrKey: String) {
         if (detectPrivateKey(seedPhraseOrKey)) {
-            Timber.i("---> detected private key: seedPhraseOrKey")
             validatePrivateKey(seedPhraseOrKey)
         } else {
             validateSeedPhrase(seedPhraseOrKey)
