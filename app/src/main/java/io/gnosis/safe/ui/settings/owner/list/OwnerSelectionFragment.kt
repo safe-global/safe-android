@@ -62,7 +62,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.progress.visible(true)
                 }
 
-                if (viewModel.state.value?.viewAction is LoadedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     binding.showMoreOwners.visible(false)
                 } else {
                     binding.progress.visible(false)
@@ -93,7 +93,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is FirstOwner -> {
+                    is SingleOwner -> {
                         lifecycleScope.launch {
                             with(binding) {
                                 progress.visible(false)
@@ -103,18 +103,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                     binding.derivedOwners.visible(true)
                                     binding.singleOwner.visible(false)
 
-//                                    firstOwnerAddress.text = viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
-//                                    firstOwnerImage.setAddress(viewAction.owner)
-//                                    firstOwnerNumber.text = "#1"
-//
-//                                    firstOwnerSelection.visible(true)
-
                                     showMoreOwners.visible(viewAction.hasMore)
                                     showMoreOwners.setOnClickListener {
                                         viewModel.loadMoreOwners()
                                     }
                                 } else {
-//                                    firstOwnerNumber.text = ""
 
                                     binding.singleOwner.visible(true)
                                     binding.singleOwnerAddress.text =
@@ -126,7 +119,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                             }
                         }
                     }
-                    is LoadedOwners -> {
+                    is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
                                 adapter.pagesVisible++

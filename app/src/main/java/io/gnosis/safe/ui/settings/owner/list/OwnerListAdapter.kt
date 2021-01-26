@@ -70,7 +70,7 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
             return 1
         }
         return if (itemCount != 0)
-            min(pagesVisible * PAGE_SIZE + 1, itemCount)
+            min(pagesVisible * PAGE_SIZE, itemCount)
         else 0
     }
 

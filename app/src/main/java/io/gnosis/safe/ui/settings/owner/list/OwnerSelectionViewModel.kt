@@ -36,41 +36,22 @@ class OwnerSelectionViewModel
         safeLaunch {
             val keyPair = KeyPair.fromPrivate(privateKey.hexAsBigInteger())
             updateState {
-                OwnerSelectionState(FirstOwner(Solidity.Address(keyPair.address.asBigInteger()), false))
+                OwnerSelectionState(SingleOwner(Solidity.Address(keyPair.address.asBigInteger()), false))
             }
         }
     }
 
     fun loadFirstDerivedOwner(mnemonic: String) {
         derivator.initialize(mnemonic)
-        safeLaunch {
-            OwnerPagingProvider(derivator).getOwnersStream()
-//                .map { pagingData ->
-//                    pagingData.filter {
-//                        it != firstDerivedAddress()
-//                    }
-//                }
-                .cachedIn(viewModelScope)
-                .collectLatest {
-                    updateState { OwnerSelectionState(LoadedOwners(it)) }
-                }
-        }
-//        safeLaunch {
-//            updateState { OwnerSelectionState(FirstOwner(firstDerivedAddress(), true)) }
-//        }
+        loadMoreOwners()
     }
 
     fun loadMoreOwners() {
         safeLaunch {
             OwnerPagingProvider(derivator).getOwnersStream()
-//                .map { pagingData ->
-//                    pagingData.filter {
-//                        it != firstDerivedAddress()
-//                    }
-//                }
                 .cachedIn(viewModelScope)
                 .collectLatest {
-                    updateState { OwnerSelectionState(LoadedOwners(it)) }
+                    updateState { OwnerSelectionState(DerivedOwners(it)) }
                 }
         }
     }
@@ -109,12 +90,12 @@ data class OwnerSelectionState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
-data class FirstOwner(
+data class SingleOwner(
     val owner: Solidity.Address,
     val hasMore: Boolean
 ) : BaseStateViewModel.ViewAction
 
-data class LoadedOwners(
+data class DerivedOwners(
     val newOwners: PagingData<Solidity.Address>
 ) : BaseStateViewModel.ViewAction
 
