@@ -313,6 +313,8 @@
     <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
     <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
+    <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
+    <string name="import_owner_key_default">Default</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>

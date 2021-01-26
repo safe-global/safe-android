@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.owner.list
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -13,7 +12,6 @@ import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
@@ -46,18 +44,31 @@ class OwnerSelectionViewModel
     fun loadFirstDerivedOwner(mnemonic: String) {
         derivator.initialize(mnemonic)
         safeLaunch {
-            updateState { OwnerSelectionState(FirstOwner(firstDerivedAddress(), true)) }
+            OwnerPagingProvider(derivator).getOwnersStream()
+//                .map { pagingData ->
+//                    pagingData.filter {
+//                        it != firstDerivedAddress()
+//                    }
+//                }
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    updateState { OwnerSelectionState(LoadedOwners(it)) }
+                }
         }
+//        safeLaunch {
+//            updateState { OwnerSelectionState(FirstOwner(firstDerivedAddress(), true)) }
+//        }
     }
 
     fun loadMoreOwners() {
         safeLaunch {
             OwnerPagingProvider(derivator).getOwnersStream()
-                .map { pagingData ->
-                    pagingData.filter {
-                        it != firstDerivedAddress()
-                    }
-                }.cachedIn(viewModelScope)
+//                .map { pagingData ->
+//                    pagingData.filter {
+//                        it != firstDerivedAddress()
+//                    }
+//                }
+                .cachedIn(viewModelScope)
                 .collectLatest {
                     updateState { OwnerSelectionState(LoadedOwners(it)) }
                 }

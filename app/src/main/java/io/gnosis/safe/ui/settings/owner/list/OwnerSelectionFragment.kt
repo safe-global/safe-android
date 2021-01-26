@@ -103,18 +103,18 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                     binding.derivedOwners.visible(true)
                                     binding.singleOwner.visible(false)
 
-                                    firstOwnerAddress.text = viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
-                                    firstOwnerImage.setAddress(viewAction.owner)
-                                    firstOwnerNumber.text = "#1"
-
-                                    firstOwnerSelection.visible(true)
+//                                    firstOwnerAddress.text = viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
+//                                    firstOwnerImage.setAddress(viewAction.owner)
+//                                    firstOwnerNumber.text = "#1"
+//
+//                                    firstOwnerSelection.visible(true)
 
                                     showMoreOwners.visible(viewAction.hasMore)
                                     showMoreOwners.setOnClickListener {
                                         viewModel.loadMoreOwners()
                                     }
                                 } else {
-                                    firstOwnerNumber.text = ""
+//                                    firstOwnerNumber.text = ""
 
                                     binding.singleOwner.visible(true)
                                     binding.singleOwnerAddress.text =
@@ -172,7 +172,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
     private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
-    override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex + 1)
+    override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex)
 
     companion object {
         private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES
