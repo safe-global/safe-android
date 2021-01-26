@@ -173,9 +173,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
     private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
-    override fun onOwnerClicked(ownerIndex: Long) {
-        viewModel.setOwnerIndex(ownerIndex) // TODO adjust for first owner outside adapter
-    }
+    override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex + 1)
 
     companion object {
         private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES

@@ -24,13 +24,6 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-//        AccountItemViewType.HEADER.ordinal -> HeaderViewHolder(
-//            ItemOwnerSelectionHeaderBinding.inflate(
-//                LayoutInflater.from(parent.context),
-//                parent,
-//                false
-//            )
-//        )
         AccountItemViewType.OWNER.ordinal -> OwnerViewHolder(
             ItemOwnerSelectionOwnerBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -68,11 +61,8 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     }
 
     enum class AccountItemViewType {
-//        HEADER,
         OWNER
     }
-
-//    class HeaderViewHolder(private val binding: ItemOwnerSelectionHeaderBinding) : RecyclerView.ViewHolder(binding.root)
 
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -83,7 +73,7 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
                     notifyDataSetChanged()
                     listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
                 }
-                ownerNumber.text = "#$position"
+                ownerNumber.text = "#${position + 2}"
                 ownerImage.setAddress(address)
                 ownerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
                 ownerSelection.visible(selectedOwnerPosition == position)
