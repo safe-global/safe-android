@@ -75,11 +75,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         })
 
         viewModel.loadUserDefaultFiat()
-
-        if (ownerImported()) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            resetOwnerImported()
-        }
     }
 
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
@@ -113,17 +108,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         snackbar(requireView(), getString(R.string.signing_owner_key_removed))
     }
 
-    private fun ownerImported(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
-    }
-
-    private fun resetOwnerImported() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
-    }
-
     companion object {
-
-        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
 
         fun newInstance(): AppSettingsFragment {
             return AppSettingsFragment()

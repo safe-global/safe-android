@@ -1,9 +1,12 @@
 package io.gnosis.safe.ui.base
 
 import android.content.Context
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.snackbar
 
 abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where T : ViewBinding {
 
@@ -19,7 +22,27 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         navHandler = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (ownerImported()) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            resetOwnerImported()
+        }
+    }
+
     abstract fun handleActiveSafe(safe: Safe?)
+
+    private fun ownerImported(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
+    }
+
+    private fun resetOwnerImported() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
+    }
+
+    companion object {
+        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
+    }
 }
 
 interface SafeOverviewNavigationHandler {

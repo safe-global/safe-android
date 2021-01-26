@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -19,7 +18,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.BalanceFormatter
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -86,10 +84,6 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                 }
             }
         })
-        if (ownerImported()) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            resetOwnerImported()
-        }
     }
 
     private fun hideLoading() {
@@ -97,18 +91,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
         binding.refresh.isRefreshing = false
     }
 
-    private fun ownerImported(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
-    }
-
-    private fun resetOwnerImported() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
-    }
-
     companion object {
-
-        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
-
         fun newInstance(): CoinsFragment = CoinsFragment()
     }
 }
