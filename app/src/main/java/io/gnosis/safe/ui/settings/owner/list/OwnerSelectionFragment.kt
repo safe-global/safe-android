@@ -85,9 +85,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
-            owners.addItemDecoration(dividerItemDecoration)
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -122,6 +119,9 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
+                                val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+                                dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
+                                owners.addItemDecoration(dividerItemDecoration)
                                 adapter.pagesVisible++
                                 val visualFeedback = it.animate().alpha(0.0f)
                                 visualFeedback.duration = 100
@@ -145,6 +145,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         lifecycleScope.launch {
                             adapter.submitData(viewAction.newOwners)
                         }
+
                     }
                     is CloseScreen -> {
                         findNavController().popBackStack(R.id.settingsFragment, false)

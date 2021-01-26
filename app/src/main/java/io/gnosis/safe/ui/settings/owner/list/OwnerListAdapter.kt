@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner.list
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -124,7 +125,7 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
                 defaultOwnerNumber.text = "#${position + 1}"
                 defaultOwnerImage.setAddress(address)
                 defaultOwnerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
-                defaultOwnerSelection.visible(selectedOwnerPosition == position)
+                defaultOwnerSelection.visibility = if (selectedOwnerPosition == position) View.VISIBLE else View.INVISIBLE
                 derivedKeysExplanation.visible(itemCount > 1)
             }
         }
