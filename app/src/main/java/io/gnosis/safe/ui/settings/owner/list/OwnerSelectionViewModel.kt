@@ -71,7 +71,6 @@ class OwnerSelectionViewModel
     }
 
     fun importOwner(privateKey: String? = null) {
-        //TODO Distinguish between secret key load and seed load
         safeLaunch {
 
             val key = privateKey?.hexAsBigInteger() ?: derivator.keyForIndex(ownerIndex)

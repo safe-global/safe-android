@@ -24,7 +24,6 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.AppSettingsFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -104,19 +103,19 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                     binding.derivedOwners.visible(true)
                                     binding.singleOwner.visible(false)
 
-                                    firstOwnerAddress.text = viewAction.owner.asEthereumAddressChecksumString()
+                                    firstOwnerAddress.text = viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
                                     firstOwnerImage.setAddress(viewAction.owner)
-                                    if (viewAction.hasMore) {
-                                        firstOwnerNumber.text = "#1"
-                                    } else {
-                                        firstOwnerNumber.text = ""
-                                    }
+                                    firstOwnerNumber.text = "#1"
+
+                                    firstOwnerSelection.visible(true)
 
                                     showMoreOwners.visible(viewAction.hasMore)
                                     showMoreOwners.setOnClickListener {
                                         viewModel.loadMoreOwners()
                                     }
                                 } else {
+                                    firstOwnerNumber.text = ""
+
                                     binding.singleOwner.visible(true)
                                     binding.singleOwnerAddress.text =
                                         viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)

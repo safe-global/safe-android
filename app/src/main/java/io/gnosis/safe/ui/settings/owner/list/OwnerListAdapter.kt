@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -15,7 +16,7 @@ import java.lang.ref.WeakReference
 class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.ViewHolder>(COMPARATOR) {
 
     var pagesVisible = 1
-    private var selectedOwnerPosition: Int = 1
+    private var selectedOwnerPosition: Int = -1
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
 
@@ -66,6 +67,7 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
 
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(address: Solidity.Address, position: Int) {
             with(binding) {
                 root.setOnClickListener {
