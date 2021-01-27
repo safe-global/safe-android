@@ -74,7 +74,6 @@ class OwnerSelectionViewModel
             }
             OwnerCredentials(address = addresses[0], key = key).let {
                 ownerCredentialsVault.storeCredentials(it)
-                notificationRepository.registerOwner(it.key)
             }
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
@@ -82,6 +81,9 @@ class OwnerSelectionViewModel
             tracker.setNumKeysImported(1)
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
+            }
+            OwnerCredentials(address = addresses[0], key = key).let {
+                notificationRepository.registerOwner(it.key)
             }
         }
     }
