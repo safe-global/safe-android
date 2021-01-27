@@ -10,6 +10,7 @@ import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
 import io.gnosis.safe.ui.assets.collectibles.details.CollectiblesDetailsFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
+import io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
@@ -47,6 +48,8 @@ interface ViewComponent {
     fun inject(fragment: AddSafeFragment)
 
     fun inject(fragment: AddSafeNameFragment)
+
+    fun inject(fragemnt: AddSafeOwnerFragment)
 
     fun inject(fragment: TransactionsFragment)
 

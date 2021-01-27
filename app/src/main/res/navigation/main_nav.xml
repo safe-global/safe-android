@@ -386,8 +386,28 @@
         android:label="AddSafeNameFragment"
         tools:layout="@layout/fragment_add_safe_name">
 
+        <action
+            android:id="@+id/action_addSafeNameFragment_to_addSafeOwnerFragment"
+            app:destination="@id/addSafeOwnerFragment" />
+
         <argument
             android:name="newAddress"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addSafeOwnerFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment"
+        android:label="AddSafeOwnerFragment"
+        tools:layout="@layout/fragment_add_safe_owner">
+
+        <argument
+            android:name="safeName"
+            app:argType="string" />
+
+        <argument
+            android:name="safeAddress"
             app:argType="string" />
 
     </fragment>

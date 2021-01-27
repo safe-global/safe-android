@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_safes_loaded">No Safe loaded</string>
+    <string name="safe_loaded">Safe loaded</string>
     <string name="load_safe_multisig_start">Get started by loading your Safe Multisig</string>
     <string name="load_safe_multisig">Load Safe Multisig</string>
     <string name="tab_title_coins">COINS</string>
@@ -13,6 +14,11 @@
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
     <string name="add_safe_label_link">https://gnosis-safe.io</string>
     <string name="back">Back</string>
+
+    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to import owner key for this Safe to confirm transactions?</string>
+    <string name="add_safe_owner_import">Import owner key</string>
+    <string name="add_safe_owner_skip">Skip</string>
+
     <string name="choose_input_method">Choose input method</string>
     <string name="address_input_ens">ENS name</string>
     <string name="address_input_qr_code">Scan QR code</string>

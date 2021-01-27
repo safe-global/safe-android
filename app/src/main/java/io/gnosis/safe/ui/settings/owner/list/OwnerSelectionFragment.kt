@@ -20,8 +20,8 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.AppSettingsFragment.Companion.OWNER_IMPORT_RESULT
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -114,7 +114,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         }
                     }
                     is CloseScreen -> {
-                        findNavController().popBackStack(R.id.settingsFragment, false)
+                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {

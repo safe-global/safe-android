@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        style="@style/Toolbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:elevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_weight="0"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:text="@string/back" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/ToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_weight="1"
+            android:text="@string/load_safe_multisig" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <TextView
+        android:id="@+id/loaded"
+        style="@style/TextDark"
+        android:layout_width="116dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginTop="24dp"
+        android:drawableLeft="@drawable/ic_baseline_check_circle_outline_24"
+        android:drawablePadding="6dp"
+        android:gravity="center"
+        android:text="@string/safe_loaded"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_shadow" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/blockie"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loaded" />
+
+    <TextView
+        android:id="@+id/safe_name"
+        style="@style/TextDark.Bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginTop="18dp"
+        android:drawablePadding="6dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/blockie"
+        tools:text="My Company Funds" />
+
+    <TextView
+        android:id="@+id/safe_address"
+        style="@style/TextMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/background_selectable"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="3"
+        android:textColor="@color/text_emphasis_low"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/safe_link"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/safe_name"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <ImageView
+        android:id="@+id/safe_link"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/background_selectable"
+        android:src="@drawable/ic_link_green_24dp"
+        app:layout_constraintBottom_toBottomOf="@id/safe_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/safe_address"
+        app:layout_constraintTop_toTopOf="@id/safe_address" />
+
+    <TextView
+        android:id="@+id/read_only_description"
+        style="@style/TextDark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginTop="39dp"
+        android:gravity="center"
+        android:text="@string/add_safe_owner_read_only_notice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/safe_address" />
+
+    <Button
+        android:id="@+id/import_button"
+        style="@style/PrimaryButton"
+        android:layout_width="0dp"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="32dp"
+        android:text="@string/add_safe_owner_import"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/read_only_description" />
+
+    <TextView
+        android:id="@+id/skip"
+        style="@style/TextLink"
+        android:layout_width="256dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="11dp"
+        android:text="@string/add_safe_owner_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/import_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
