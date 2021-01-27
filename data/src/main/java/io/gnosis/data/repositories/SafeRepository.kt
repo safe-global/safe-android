@@ -78,7 +78,8 @@ class SafeRepository(
 
         val supportedContracts = setOf(
             SAFE_IMPLEMENTATION_1_0_0,
-            SAFE_IMPLEMENTATION_1_1_1
+            SAFE_IMPLEMENTATION_1_1_1,
+            SAFE_IMPLEMENTATION_1_2_0
         )
 
         return when {
@@ -101,10 +102,11 @@ class SafeRepository(
         val SAFE_IMPLEMENTATION_0_1_0 = BuildConfig.SAFE_IMPLEMENTATION_0_1_0.asEthereumAddress()!!
         val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_IMPLEMENTATION_1_0_0.asEthereumAddress()!!
         val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_IMPLEMENTATION_1_1_1.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_2_0 = BuildConfig.SAFE_IMPLEMENTATION_1_2_0.asEthereumAddress()!!
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
-        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_IMPLEMENTATION_1_1_1
+        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_IMPLEMENTATION_1_1_1 || address == SAFE_IMPLEMENTATION_1_2_0
 
         const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
         const val METHOD_ADD_OWNER_WITH_THRESHOLD = "addOwnerWithThreshold"

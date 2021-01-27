@@ -17,4 +17,5 @@
     <string name="implementation_version_0_1_0" translatable="false">0.1.0</string>
     <string name="implementation_version_1_0_0" translatable="false">1.0.0</string>
     <string name="implementation_version_1_1_1" translatable="false">1.1.1</string>
+    <string name="implementation_version_1_2_0" translatable="false">1.2.0</string>
 </resources>
