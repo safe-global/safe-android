@@ -61,6 +61,14 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var showOwnerScreen: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_SHOW_OWNER_SCREEN, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_SHOW_OWNER_SCREEN, value)
+            }
+        }
+
     suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
 
     companion object {
@@ -68,5 +76,6 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
         internal const val KEY_USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
         internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
+        internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
     }
 }
