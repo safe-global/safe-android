@@ -34,7 +34,7 @@ class OwnerSeedPhraseViewModel
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
 
-        if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
+        if (input == "0000000000000000000000000000000000000000000000000000000000000000" || !detectPrivateKey(input)) {
             safeLaunch {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
             }
