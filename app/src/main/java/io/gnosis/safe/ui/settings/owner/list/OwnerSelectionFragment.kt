@@ -97,8 +97,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                 importButton.isEnabled = true
 
                                 if (viewAction.hasMore) {
-                                    binding.derivedOwners.visible(true)
-                                    binding.singleOwner.visible(false)
+                                    derivedOwners.visible(true)
+                                    singleOwner.visible(false)
 
                                     showMoreOwners.visible(viewAction.hasMore)
                                     showMoreOwners.setOnClickListener {
@@ -106,11 +106,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                     }
                                 } else {
 
-                                    binding.singleOwner.visible(true)
-                                    binding.singleOwnerAddress.text =
+                                    singleOwner.visible(true)
+                                    singleOwnerAddress.text =
                                         viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
-                                    binding.singleOwnerImage.setAddress(viewAction.owner)
-                                    binding.derivedOwners.visible(false)
+                                    singleOwnerImage.setAddress(viewAction.owner)
+                                    derivedOwners.visible(false)
                                 }
 
                             }
