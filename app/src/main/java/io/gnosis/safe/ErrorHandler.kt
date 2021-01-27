@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.safe.add.InvalidName
 import io.gnosis.safe.ui.safe.add.SafeNotFound
 import io.gnosis.safe.ui.safe.add.SafeNotSupported
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
+import io.gnosis.safe.ui.settings.owner.InvalidPrivateKey
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
@@ -79,6 +80,7 @@ fun Throwable.toError(): Error =
         this is UsedSafeAddress -> Error.ERROR_1101
         this is InvalidAddressException -> Error.ERROR_1102
         this is InvalidSeedPhrase -> Error.ERROR_1103
+        this is InvalidPrivateKey -> Error.ERROR_1103
         this is MismatchingSafeTxHash -> Error.ERROR_1104
         this is SafeNotSupported -> Error.ERROR_1105
         this is EnsResolutionError -> Error.ERROR_1106
