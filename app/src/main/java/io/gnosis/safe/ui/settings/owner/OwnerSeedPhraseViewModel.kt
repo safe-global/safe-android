@@ -13,14 +13,14 @@ class OwnerSeedPhraseViewModel
 ) : PublishViewModel<ImportOwnerKeyState>(appDispatchers) {
 
     fun validate(seedPhraseOrKey: String) {
-        if (detectPrivateKey(seedPhraseOrKey)) {
+        if (isPrivateKey(seedPhraseOrKey)) {
             validatePrivateKey(seedPhraseOrKey)
         } else {
             validateSeedPhrase(seedPhraseOrKey)
         }
     }
 
-    internal fun detectPrivateKey(seedPhraseOrKey: String): Boolean {
+    internal fun isPrivateKey(seedPhraseOrKey: String): Boolean {
         val input = removeHexPrefix(seedPhraseOrKey)
 
         val pattern = "[0-9a-fA-F]{64}".toRegex()
@@ -34,7 +34,7 @@ class OwnerSeedPhraseViewModel
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
 
-        if (input == "0000000000000000000000000000000000000000000000000000000000000000" || !detectPrivateKey(input)) {
+        if (input == "0000000000000000000000000000000000000000000000000000000000000000" || !isPrivateKey(input)) {
             safeLaunch {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
             }

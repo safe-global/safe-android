@@ -188,46 +188,46 @@ class OwnerSeedPhraseViewModelTest {
     }
 
     @Test
-    fun `detectPrivateKey (64 character long) should succeed`() {
+    fun `isPrivateKey (64 character long) should succeed`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 
-        val result = viewModel.detectPrivateKey("0000000000000000000000000000000000000000000000000000000000000001")
+        val result = viewModel.isPrivateKey("0000000000000000000000000000000000000000000000000000000000000001")
 
         assertTrue(result)
     }
 
     @Test
-    fun `detectPrivateKey (64 character long with 0x prefix) should succeed`() {
+    fun `isPrivateKey (64 character long with 0x prefix) should succeed`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 
-        val result = viewModel.detectPrivateKey("0x0000000000000000000000000000000000000000000000000000000000000001")
+        val result = viewModel.isPrivateKey("0x0000000000000000000000000000000000000000000000000000000000000001")
 
         assertTrue(result)
     }
 
     @Test
-    fun `detectPrivateKey (not 64 character long) should fail`() {
+    fun `isPrivateKey (not 64 character long) should fail`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 
-        val result = viewModel.detectPrivateKey("00")
+        val result = viewModel.isPrivateKey("00")
 
         assertFalse(result)
     }
 
     @Test
-    fun `detectPrivateKey (random key) should succeed`() {
+    fun `isPrivateKey (random key) should succeed`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 
-        val result = viewModel.detectPrivateKey("203dA5d2babe41e03b85496a8aDeaDe0472b3ec443edebeed3277501d227DAda")
+        val result = viewModel.isPrivateKey("203dA5d2babe41e03b85496a8aDeaDe0472b3ec443edebeed3277501d227DAda")
 
         assertTrue(result)
     }
 
     @Test
-    fun `detectPrivateKey (containing white space) should fail`() {
+    fun `isPrivateKey (containing white space) should fail`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 
-        val result = viewModel.detectPrivateKey("203dA5d2babe41e03b85496a8aDe De0472b3ec443edebeed3277501d227DAda")
+        val result = viewModel.isPrivateKey("203dA5d2babe41e03b85496a8aDe De0472b3ec443edebeed3277501d227DAda")
 
         assertFalse(result)
     }
