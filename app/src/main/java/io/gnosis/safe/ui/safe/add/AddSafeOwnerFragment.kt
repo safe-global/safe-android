@@ -13,14 +13,19 @@ import io.gnosis.safe.databinding.FragmentAddSafeOwnerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding>() {
 
     private val navArgs by navArgs<AddSafeOwnerFragmentArgs>()
     private val name by lazy { navArgs.safeName }
     private val address by lazy { navArgs.safeAddress.asEthereumAddress()!! }
+    
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun screenId() = ScreenId.SAFE_ADD_OWNER
 
@@ -55,6 +60,8 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 finishAddSafeFlow()
             }
         })
+
+        settingsHandler.showOwnerScreen = false
     }
 
     private fun finishAddSafeFlow() {
