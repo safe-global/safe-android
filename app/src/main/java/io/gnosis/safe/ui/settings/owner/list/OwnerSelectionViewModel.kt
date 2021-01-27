@@ -77,6 +77,7 @@ class OwnerSelectionViewModel
                 notificationRepository.registerOwner(it.key)
             }
             settingsHandler.showOwnerBanner = false
+            settingsHandler.showOwnerScreen = false
             tracker.logKeyImported()
             tracker.setNumKeysImported(1)
             updateState {

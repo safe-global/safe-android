@@ -62,6 +62,10 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                                 requireActivity().hideSoftKeyboard()
                                 findNavController().popBackStack(R.id.addSafeFragment, true)
                             }
+                            is ImportOwner -> {
+                                requireActivity().hideSoftKeyboard()
+                                findNavController().navigate(AddSafeNameFragmentDirections.actionAddSafeNameFragmentToAddSafeOwnerFragment(binding.addSafeNameEntry.text.toString(), navArgs.newAddress))
+                            }
                             is Loading -> {}
                             is ShowError -> {
                                 val error = action.error.toError()

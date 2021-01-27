@@ -43,6 +43,14 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.BANNER_OWNER_IMPORT, null)
     }
 
+    fun logOnboardingOwnerSkipped() {
+        logEvent(Event.ONBOARDING_OWNER_SKIPPED, null)
+    }
+
+    fun logOnboardingOwnerImport() {
+        logEvent(Event.ONBOARDING_OWNER_IMPORT, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -71,6 +79,8 @@ class Tracker private constructor(context: Context) {
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
+        val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
+        val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"
     }
 
     object Param {
@@ -109,6 +119,7 @@ enum class ScreenId(val value: String) {
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
     SAFE_ADD_NAME("screen_safe_add_name"),
+    SAFE_ADD_OWNER("screen_safe_add_owner"),
     SAFE_ADD_ENS("screen_safe_add_ens"),
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
     TRANSACTIONS_QUEUE("screen_transactions_queue"),
