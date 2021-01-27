@@ -206,6 +206,15 @@ class OwnerSeedPhraseViewModelTest {
     }
 
     @Test
+    fun `isPrivateKey (key with additional white space) should fail`() {
+        viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
+
+        val result = viewModel.isPrivateKey("0x0000000000000000000000000000000000000000000000000000000000000001 ")
+
+        assertFalse(result)
+    }
+
+    @Test
     fun `isPrivateKey (not 64 character long) should fail`() {
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
 

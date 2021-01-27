@@ -23,7 +23,7 @@ class OwnerSeedPhraseViewModel
     internal fun isPrivateKey(seedPhraseOrKey: String): Boolean {
         val input = removeHexPrefix(seedPhraseOrKey)
 
-        val pattern = "[0-9a-fA-F]{64}".toRegex()
+        val pattern = "^[0-9a-fA-F]{64}$".toRegex()
         pattern.find(input)?.let {
             return true
         }
