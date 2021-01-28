@@ -16,7 +16,7 @@ import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
-class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.ViewHolder>(COMPARATOR) {
+class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, OwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 0
     private var selectedOwnerPosition: Int = 0
@@ -45,34 +45,22 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
         else -> throw UnsupportedViewType(javaClass.name)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is OwnerViewHolder) {
-            kotlin.runCatching {
-                val uiModel = getItem(position)
-                uiModel?.let {
-                    holder.bind(it, position)
-                }
-            }
-        }
-        if (holder is DefaultOwnerViewHolder) {
-            kotlin.runCatching {
-                val uiModel = getItem(position)
-                uiModel?.let {
-                    holder.bind(it, position)
-                }
+    override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
+        kotlin.runCatching {
+            val uiModel = getItem(position)
+            uiModel?.let {
+                holder.bind(it, position)
             }
         }
     }
 
     override fun getItemCount(): Int {
         val itemCount = super.getItemCount()
-
-        if (itemCount > 0 && pagesVisible == 0) {
-            return 1
+        return when {
+            itemCount > 0 && pagesVisible == 0 -> 1
+            itemCount != 0 -> min(pagesVisible * PAGE_SIZE, itemCount)
+            else -> 0
         }
-        return if (itemCount != 0)
-            min(pagesVisible * PAGE_SIZE, itemCount)
-        else 0
     }
 
     override fun getItemViewType(position: Int): Int =
@@ -94,10 +82,14 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
         OWNER
     }
 
-    inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
+    abstract class BaseOwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        abstract fun bind(address: Solidity.Address, position: Int)
+    }
+
+    inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : BaseOwnerViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(address: Solidity.Address, position: Int) {
+        override fun bind(address: Solidity.Address, position: Int) {
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
@@ -112,10 +104,10 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
         }
     }
 
-    inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : BaseOwnerViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(address: Solidity.Address, position: Int) {
+        override fun bind(address: Solidity.Address, position: Int) {
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position

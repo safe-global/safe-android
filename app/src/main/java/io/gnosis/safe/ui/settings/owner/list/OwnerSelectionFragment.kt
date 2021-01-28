@@ -99,13 +99,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                 if (viewAction.hasMore) {
                                     derivedOwners.visible(true)
                                     singleOwner.visible(false)
-
                                     showMoreOwners.visible(viewAction.hasMore)
                                     showMoreOwners.setOnClickListener {
                                         viewModel.loadMoreOwners()
                                     }
                                 } else {
-
                                     singleOwner.visible(true)
                                     singleOwnerAddress.text =
                                         viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)

@@ -56,8 +56,6 @@ class OwnerSelectionViewModel
         }
     }
 
-    private fun firstDerivedAddress() = derivator.addressesForRange(LongRange(0, 0))[0]
-
     fun setOwnerIndex(index: Long) {
         ownerIndex = index
     }
