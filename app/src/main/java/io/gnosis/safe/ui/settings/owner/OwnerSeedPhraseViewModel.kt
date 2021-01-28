@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
+import androidx.annotation.VisibleForTesting
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.PublishViewModel
@@ -19,7 +20,7 @@ class OwnerSeedPhraseViewModel
             validateSeedPhrase(seedPhraseOrKey)
         }
     }
-
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun isPrivateKey(seedPhraseOrKey: String): Boolean {
         val input = removeHexPrefix(seedPhraseOrKey)
 
