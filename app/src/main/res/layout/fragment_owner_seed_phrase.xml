@@ -80,10 +80,10 @@
                 style="@style/TextDark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="28dp"
                 android:paddingHorizontal="16dp"
                 android:text="@string/enter_seed_phrase_description"
-                android:gravity="center" />
+                android:gravity="center_horizontal" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/seed_phrase_layout"
