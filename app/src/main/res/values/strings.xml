@@ -308,7 +308,7 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
-    <string name="enter_seed_phrase_description">Enter the seed phrase from your hardware wallet or MetaMask or the private key from any wallet.\nA seed phrase is typically 12 (sometimes 24) words separated by single spaces.\nA private key is a string of 64 characters. </string>
+    <string name="enter_seed_phrase_description">Enter the seed phrase from your hardware wallet or MetaMask or the private key from any wallet.\n\nA seed phrase is typically 12 (sometimes 24) words separated by single spaces.\nA private key is a string of 64 characters.</string>
     <string name="enter_seed_phrase_hint">Enter private key or seed phrase</string>
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
     <string name="import_owner_key_title">Import Owner Key</string>

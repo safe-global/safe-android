@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:paddingHorizontal="16dp"
-                android:text="@string/enter_seed_phrase_description"
+                tools:text="@string/enter_seed_phrase_description"
                 android:gravity="center_horizontal" />
 
             <com.google.android.material.textfield.TextInputLayout
