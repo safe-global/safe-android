@@ -8,10 +8,10 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/logo"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="@dimen/safe_blockie_size"
+        android:layout_height="@dimen/safe_blockie_size"
+        android:layout_marginTop="@dimen/default_small_margin"
+        android:layout_marginBottom="@dimen/default_small_margin"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
