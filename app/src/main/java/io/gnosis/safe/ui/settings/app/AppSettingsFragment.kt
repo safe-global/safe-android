@@ -15,7 +15,9 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
@@ -91,6 +93,13 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                             onOwnerRemove()
                         }
                     }
+                   root.setOnClickListener {
+                       address?.let {
+                           context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+                               snackbar(view = root, textId = R.string.copied_success)
+                           }
+                       }
+                   }
                 }
             } else {
                 with(importOwnerKey) {
