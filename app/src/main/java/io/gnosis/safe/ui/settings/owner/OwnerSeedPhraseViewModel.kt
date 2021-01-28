@@ -31,11 +31,11 @@ class OwnerSeedPhraseViewModel
 
         return false
     }
-
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
 
-        if (input == "0000000000000000000000000000000000000000000000000000000000000000" || !isPrivateKey(input)) {
+        if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
             safeLaunch {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
             }

@@ -259,20 +259,6 @@ class OwnerSeedPhraseViewModelTest {
     }
 
     @Test
-    fun `validatePrivateKey (key too short) should fail`() {
-
-        viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
-        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel.state().observeForever(stateObserver)
-
-        viewModel.validatePrivateKey("0x1234")
-
-        stateObserver.assertValues(
-            ImportOwnerKeyState.Error(InvalidPrivateKey)
-        )
-    }
-
-    @Test
     fun `validatePrivateKey (good key) should succeed`() {
 
         viewModel = OwnerSeedPhraseViewModel(bip39Generator, appDispatchers)
