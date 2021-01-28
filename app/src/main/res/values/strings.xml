@@ -60,7 +60,7 @@
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
-    <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+    <string name="error_description_seed_phrase">Can\'t use this seed phrase or private key</string>
     <string name="error_description_fiat">Failed to load supported fiat list</string>
 
     <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
@@ -86,8 +86,8 @@
     <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
     <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
-    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase for an Ethereum account</string>
-    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase</string>
+    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase or private key for an Ethereum account</string>
+    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase or private key</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
     <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
     <string name="error_client_unsupported_implementation_copy_reason">the implementation copy of your Safe is not supported by this app</string>
@@ -262,6 +262,7 @@
     <string name="signing_owner_selection_import">Import</string>
     <string name="signing_owner_selection_select_key">Select key</string>
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
+    <string name="signing_owner_selection_more_derived_keys">Show more derived keys</string>
     <string name="signing_owner_selection_more">Show more</string>
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
@@ -307,10 +308,9 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
-    <string name="enter_seed_phrase_description">"Enter the seed phrase from your hardware wallet or MetaMask owner wallet. Typically 12 (sometimes 24) words separated by single spaces. "</string>
-    <string name="enter_your_seed_phrase">Enter your seed phrase</string>
+    <string name="enter_seed_phrase_description">Enter the private key or the seed phrase from your hardware wallet or MetaMask owner wallet.\n\nA seed phrase is typically 12 (sometimes 24) words separated by single spaces.\nA private key is a string of 64 characters.</string>
 
-    <string name="enter_seed_phrase_hint">Enter seed phrase</string>
+    <string name="enter_seed_phrase_hint">Enter private key or seed phrase</string>
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
     <string name="import_owner_key_title">Import Owner Key</string>
     <string name="import_owner_key_intro_seed_phrase_title">How does it work?</string>
@@ -319,6 +319,8 @@
     <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
     <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
+    <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
+    <string name="import_owner_key_default">Default</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>

@@ -22,6 +22,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -31,7 +32,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
 
     private val navArgs by navArgs<OwnerSelectionFragmentArgs>()
-    private val seedPhrase by lazy { navArgs.seedPhrase }
+    private val privateKey: String? by lazy { navArgs.privateKey }
+    private val seedPhrase: String? by lazy { navArgs.seedPhrase }
 
     @Inject
     lateinit var viewModel: OwnerSelectionViewModel
@@ -60,11 +62,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.progress.visible(true)
                 }
 
-                if (viewModel.state.value?.viewAction is LoadedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     binding.showMoreOwners.visible(false)
                 } else {
                     binding.progress.visible(false)
-                    binding.nextButton.isEnabled = true
+                    binding.importButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
@@ -74,62 +76,96 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            nextButton.setOnClickListener {
-                viewModel.importOwner()
+            importButton.setOnClickListener {
+                if (usingSeedPhrase()) {
+                    viewModel.importOwner()
+                } else {
+                    viewModel.importOwner(privateKey)
+                }
             }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-            dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
-            owners.addItemDecoration(dividerItemDecoration)
-            showMoreOwners.setOnClickListener {
-                adapter.pagesVisible++
-                val visualFeedback = it.animate().alpha(0.0f)
-                visualFeedback.duration = 100
-                visualFeedback.setListener(object : Animator.AnimatorListener {
-
-                    override fun onAnimationRepeat(animation: Animator?) {}
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        adapter.notifyDataSetChanged()
-                        showMoreOwners.alpha = 1.0f
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {}
-
-                    override fun onAnimationStart(animation: Animator?) {}
-                })
-                visualFeedback.start()
-                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is LoadedOwners -> {
+                    is SingleOwner -> {
+                        lifecycleScope.launch {
+                            with(binding) {
+                                progress.visible(false)
+                                importButton.isEnabled = true
+
+                                if (viewAction.hasMore) {
+                                    derivedOwners.visible(true)
+                                    singleOwner.visible(false)
+                                    showMoreOwners.visible(viewAction.hasMore)
+                                    showMoreOwners.setOnClickListener {
+                                        viewModel.loadMoreOwners()
+                                    }
+                                } else {
+                                    singleOwner.visible(true)
+                                    singleOwnerAddress.text =
+                                        viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
+                                    singleOwnerImage.setAddress(viewAction.owner)
+                                    derivedOwners.visible(false)
+                                }
+
+                            }
+                        }
+                    }
+                    is DerivedOwners -> {
+                        with(binding) {
+                            showMoreOwners.setOnClickListener {
+                                val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+                                dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
+                                owners.addItemDecoration(dividerItemDecoration)
+                                adapter.pagesVisible++
+                                val visualFeedback = it.animate().alpha(0.0f)
+                                visualFeedback.duration = 100
+                                visualFeedback.setListener(object : Animator.AnimatorListener {
+
+                                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                                    override fun onAnimationEnd(animation: Animator?) {
+                                        adapter.notifyDataSetChanged()
+                                        showMoreOwners.alpha = 1.0f
+                                    }
+
+                                    override fun onAnimationCancel(animation: Animator?) {}
+
+                                    override fun onAnimationStart(animation: Animator?) {}
+                                })
+                                visualFeedback.start()
+                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
+                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                            }
+                        }
                         lifecycleScope.launch {
                             adapter.submitData(viewAction.newOwners)
                         }
+
                     }
                     is CloseScreen -> {
                         findNavController().popBackStack(R.id.ownerInfoFragment, true)
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
-
                     }
                 }
             }
         })
 
-        viewModel.loadOwners(seedPhrase)
+        if (usingSeedPhrase()) {
+            viewModel.loadFirstDerivedOwner(seedPhrase!!)
+        } else {
+            viewModel.loadSingleOwner(privateKey!!)
+        }
     }
 
-    override fun onOwnerClicked(ownerIndex: Long) {
-        viewModel.setOwnerIndex(ownerIndex)
-    }
+    private fun usingSeedPhrase(): Boolean = seedPhrase != null
+
+    override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex)
 
     companion object {
         private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES

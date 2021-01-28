@@ -59,11 +59,11 @@ class OwnerSelectionViewModelTest {
             derivator.keyForIndex(any())
             derivator.addressesForPage(any(), any())
             ownerCredentialsVault.storeCredentials(any())
-            notificationRepository.registerOwner(any())
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported()
             tracker.setNumKeysImported(any())
+            notificationRepository.registerOwner(any())
         }
     }
 }
