@@ -121,8 +121,14 @@
         tools:layout="@layout/fragment_owner_selection">
 
         <argument
+            android:name="privateKey"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="seedPhrase"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"/>
 
     </fragment>
 

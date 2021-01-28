@@ -1,22 +1,25 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.gnosis.safe.databinding.ItemOwnerSelectionHeaderBinding
+import io.gnosis.safe.databinding.ItemDefaultOwnerKeyBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
+import kotlin.math.min
 
-class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.ViewHolder>(COMPARATOR) {
+class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, OwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
-    var pagesVisible = 1
-    private var selectedOwnerPosition: Int = 1
+    var pagesVisible = 0
+    private var selectedOwnerPosition: Int = 0
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
 
@@ -25,8 +28,8 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        AccountItemViewType.HEADER.ordinal -> HeaderViewHolder(
-            ItemOwnerSelectionHeaderBinding.inflate(
+        AccountItemViewType.DEFAULT_OWNER.ordinal -> DefaultOwnerViewHolder(
+            ItemDefaultOwnerKeyBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -42,57 +45,80 @@ class OwnerListAdapter() : PagingDataAdapter<Solidity.Address, RecyclerView.View
         else -> throw UnsupportedViewType(javaClass.name)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is OwnerViewHolder) {
-            kotlin.runCatching {
-                val uiModel = getItem(position)
-                uiModel?.let {
-                    holder.bind(it, position)
-                }
+    override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
+        kotlin.runCatching {
+            val uiModel = getItem(position)
+            uiModel?.let {
+                holder.bind(it, position)
             }
         }
     }
 
     override fun getItemCount(): Int {
         val itemCount = super.getItemCount()
-        return if (itemCount != 0)
-            Math.min(pagesVisible * PAGE_SIZE + 1, itemCount)
-        else 0
+        return when {
+            itemCount > 0 && pagesVisible == 0 -> 1
+            itemCount != 0 -> min(pagesVisible * PAGE_SIZE, itemCount)
+            else -> 0
+        }
     }
 
-    override fun getItemViewType(position: Int): Int = when {
-        position == 0 -> AccountItemViewType.HEADER.ordinal
-        else -> AccountItemViewType.OWNER.ordinal
-    }
+    override fun getItemViewType(position: Int): Int =
+        if (position == 0) {
+            AccountItemViewType.DEFAULT_OWNER.ordinal
+        } else {
+            AccountItemViewType.OWNER.ordinal
+        }
 
-    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long {
-        return selectedOwnerPosition.toLong() - 1 //account for header
-    }
+
+    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long = selectedOwnerPosition.toLong()
 
     interface OnOwnerItemClickedListener {
         fun onOwnerClicked(ownerIndex: Long)
     }
 
     enum class AccountItemViewType {
-        HEADER,
+        DEFAULT_OWNER,
         OWNER
     }
 
-    class HeaderViewHolder(private val binding: ItemOwnerSelectionHeaderBinding) : RecyclerView.ViewHolder(binding.root)
+    abstract class BaseOwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        abstract fun bind(address: Solidity.Address, position: Int)
+    }
 
-    inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : BaseOwnerViewHolder(binding.root) {
 
-        fun bind(address: Solidity.Address, position: Int) {
+        @SuppressLint("SetTextI18n")
+        override fun bind(address: Solidity.Address, position: Int) {
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
                     listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
                 }
-                ownerNumber.text = "#$position"
+                ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(address)
                 ownerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
                 ownerSelection.visible(selectedOwnerPosition == position)
+            }
+        }
+    }
+
+    inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : BaseOwnerViewHolder(binding.root) {
+
+        @SuppressLint("SetTextI18n")
+        override fun bind(address: Solidity.Address, position: Int) {
+            with(binding) {
+                root.setOnClickListener {
+                    selectedOwnerPosition = position
+                    notifyDataSetChanged()
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
+                }
+                defaultOwnerNumber.text = "#${position + 1}"
+                defaultOwnerImage.setAddress(address)
+                defaultOwnerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                defaultOwnerSelection.visibility = if (selectedOwnerPosition == position) View.VISIBLE else View.INVISIBLE
+                derivedKeysExplanation.visible(itemCount > 1)
             }
         }
     }

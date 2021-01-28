@@ -283,7 +283,7 @@ class TransactionListViewModel
             creationDetails = TransactionView.CreationDetails(
                 statusText = displayString(txStatus),
                 statusColorRes = statusTextColor(txStatus),
-                dateTimeText = timestamp.formatBackendTimeOfDay(),
+                dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
                 factory = txInfo.factory?.asEthereumAddressString(),
                 implementation = txInfo.implementation?.asEthereumAddressString(),

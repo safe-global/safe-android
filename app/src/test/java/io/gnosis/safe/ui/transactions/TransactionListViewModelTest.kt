@@ -765,6 +765,7 @@ class TransactionListViewModelTest {
         assertEquals(R.string.tx_status_success, creationTransactionView.statusText)
         assertEquals(R.string.tx_list_creation, creationTransactionView.label)
         assertEquals(Date(1).formatBackendTimeOfDay(), creationTransactionView.dateTimeText)
+        assertEquals(Date(1).formatBackendDateTime(), creationTransactionView.creationDetails?.dateTimeText)
         assertEquals(R.color.primary, creationTransactionView.statusColorRes)
         assertEquals("<random-id>", creationTransactionView.id)
         assertEquals(defaultFactoryAddress.asEthereumAddressString(), creationTransactionView.creationDetails?.factory)
