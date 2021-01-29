@@ -17,4 +17,6 @@
     <dimen name="item_setting_margin">2dp</dimen>
     <dimen name="item_separator_height">2dp</dimen>
     <dimen name="header_height">44dp</dimen>
+    <dimen name="default_paragraph_line_spacing">8dp</dimen>
+
 </resources>

@@ -86,6 +86,13 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isLoading()) {
+            viewModel.load(true)
+        }
+    }
+
     private fun hideLoading() {
         binding.progress.visible(false)
         binding.refresh.isRefreshing = false

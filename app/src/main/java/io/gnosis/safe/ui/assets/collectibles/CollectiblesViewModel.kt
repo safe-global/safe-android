@@ -47,6 +47,10 @@ class CollectiblesViewModel
         }
     }
 
+    fun isLoading(): Boolean {
+        return (state.value as CollectiblesState).loading
+    }
+
     private suspend fun getCollectibles(safe: Solidity.Address): List<CollectibleViewData> {
 
         val collectiblesViewData = mutableListOf<CollectibleViewData>()
