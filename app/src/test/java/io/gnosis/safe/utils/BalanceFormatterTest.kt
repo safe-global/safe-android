@@ -125,8 +125,9 @@ class BalanceFormatterTest {
     fun `fiatBalanceWithCurrency (USD 0 with US locale) $0 with 2 decimals`() {
         val input = BigDecimal.valueOf(0)
         Locale.setDefault(Locale.US)
+        val balanceFormatter = BalanceFormatter()
         val actual = balanceFormatter.fiatBalanceWithCurrency(input, "USD")
-        val expected = "$0.00"
+        val expected = "$0"
 
         assertEquals(expected, actual)
     }
@@ -135,8 +136,9 @@ class BalanceFormatterTest {
     fun `fiatBalanceWithCurrency (USD 1000 with US locale) $1,000 with 2 decimals`() {
         val input = BigDecimal.valueOf(1000)
         Locale.setDefault(Locale.US)
+        val balanceFormatter = BalanceFormatter()
         val actual = balanceFormatter.fiatBalanceWithCurrency(input, "USD")
-        val expected = "$1,000.00"
+        val expected = "$1,000"
 
         assertEquals(expected, actual)
     }
@@ -145,8 +147,9 @@ class BalanceFormatterTest {
     fun `fiatBalanceWithCurrency (EUR 1000 with US locale) €1,000 with 2 decimals`() {
         val input = BigDecimal.valueOf(1000)
         Locale.setDefault(Locale.UK)
+        val balanceFormatter = BalanceFormatter()
         val actual = balanceFormatter.fiatBalanceWithCurrency(input, "EUR")
-        val expected = "€1,000.00"
+        val expected = "€1,000"
 
         assertEquals(expected, actual)
     }
@@ -155,8 +158,9 @@ class BalanceFormatterTest {
     fun `fiatBalanceWithCurrency (EUR 1000 with DE locale) €1,000 with 2 decimals`() {
         val input = BigDecimal.valueOf(1000)
         Locale.setDefault(Locale.GERMANY)
+        val balanceFormatter = BalanceFormatter()
         val actual = balanceFormatter.fiatBalanceWithCurrency(input, "EUR")
-        val expected = "1.000,00 €"
+        val expected = "1.000 €"
 
         assertEquals(expected, actual)
     }
