@@ -48,7 +48,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     private val adapter by lazy { TransactionViewListAdapter(TransactionViewHolderFactory()) }
     private val noSafeFragment by lazy { NoSafeFragment.newInstance(NoSafeFragment.Position.TRANSACTIONS) }
 
-    private var reload: Boolean = false
+    private var reload: Boolean = true
 
     private val handler = Handler()
     private val intervalUpdateRunnable = object : Runnable {
