@@ -96,7 +96,12 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
         val spannableString = SpannableString(resources.getString(stringResource));
         val matcher = Pattern.compile("\n\n").matcher(resources.getString(stringResource));
         while (matcher.find()) {
-            spannableString.setSpan(AbsoluteSizeSpan(8, true), matcher.start() + 1, matcher.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(
+                AbsoluteSizeSpan(resources.getDimension(R.dimen.default_paragraph_line_spacing).toInt()),
+                matcher.start() + 1,
+                matcher.end(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
         }
         return spannableString
     }
