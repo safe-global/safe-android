@@ -56,6 +56,7 @@ class BalanceFormatter {
 
     fun fiatBalanceWithCurrency(amount: BigDecimal, currencyCode: String): String {
         val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
+            maximumFractionDigits = 2
             currency = Currency.getInstance(currencyCode)
         }
         val formattedAmount = numberFormat.format(0)
