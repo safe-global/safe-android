@@ -2,10 +2,14 @@ package io.gnosis.safe.ui.settings.owner
 
 import android.os.Bundle
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.annotation.StringRes
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,6 +22,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import timber.log.Timber
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseBinding>() {
@@ -32,6 +37,8 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            enterSeedPhraseDescription.text = replaceDoubleNewlineWithParagraphLineSpacing(R.string.enter_seed_phrase_description)
 
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener { submit() }
@@ -83,6 +90,20 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
                 }
             }
         })
+    }
+
+    private fun replaceDoubleNewlineWithParagraphLineSpacing(@StringRes stringResource: Int): SpannableString {
+        val spannableString = SpannableString(resources.getString(stringResource));
+        val matcher = Pattern.compile("\n\n").matcher(resources.getString(stringResource));
+        while (matcher.find()) {
+            spannableString.setSpan(
+                AbsoluteSizeSpan(resources.getDimension(R.dimen.default_paragraph_line_spacing).toInt()),
+                matcher.start() + 1,
+                matcher.end(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return spannableString
     }
 
     override fun onPause() {
