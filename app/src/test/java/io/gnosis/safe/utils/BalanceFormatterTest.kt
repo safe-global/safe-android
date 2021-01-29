@@ -166,7 +166,7 @@ class BalanceFormatterTest {
     }
 
     @Test
-    fun `fiatBalanceWithCurrency () should have correct number of decimals`() {
+    fun `fiatBalanceWithCurrency (EUR with DE locale) should have correct number of decimals`() {
 
         Locale.setDefault(Locale.GERMANY)
         val balanceFormatter = BalanceFormatter()
@@ -203,7 +203,7 @@ class BalanceFormatterTest {
     }
 
     @Test
-    fun `fiatBalanceWithCurrency () should have correct notation for big numbers`() {
+    fun `fiatBalanceWithCurrency (EUR with DE locale) should have correct notation for big numbers`() {
 
         Locale.setDefault(Locale.GERMANY)
         val balanceFormatter = BalanceFormatter()
