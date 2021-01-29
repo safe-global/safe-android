@@ -312,7 +312,7 @@
 
     <string name="enter_seed_phrase_hint">Enter private key or seed phrase</string>
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
-    <string name="import_owner_key_title">Import Owner Key</string>
+    <string name="import_owner_key_title">Import owner key</string>
     <string name="import_owner_key_intro_seed_phrase_title">How does it work?</string>
     <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
     <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
