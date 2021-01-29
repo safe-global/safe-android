@@ -22,7 +22,6 @@ import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -84,6 +83,13 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isLoading()) {
+            viewModel.reload()
+        }
     }
 
     private fun showContentNoData() {

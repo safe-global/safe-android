@@ -54,6 +54,10 @@ class CoinsViewModel
         }
     }
 
+    fun isLoading(): Boolean {
+        return (state.value as CoinsState).loading
+    }
+
     suspend fun getBalanceViewData(coinBalanceData: CoinBalances, showBanner: Boolean): List<CoinsViewData> {
         val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
