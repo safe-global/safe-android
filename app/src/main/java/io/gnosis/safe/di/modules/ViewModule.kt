@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
+import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
@@ -146,4 +147,8 @@ class ViewModule(
     @Provides
     @ForView
     fun providesShareSafeViewModel(provider: ViewModelProvider) = provider[ShareSafeViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAppFiatViewModel(provider: ViewModelProvider) = provider[AppFiatViewModel::class.java]
 }

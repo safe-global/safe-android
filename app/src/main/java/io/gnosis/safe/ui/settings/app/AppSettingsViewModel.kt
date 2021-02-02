@@ -13,10 +13,19 @@ import javax.inject.Inject
 class AppSettingsViewModel @Inject constructor(
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
     private val notificationRepository: NotificationRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker
 ) : ViewModel() {
 
     val signingOwner = MutableLiveData<SigningOwner?>()
+    val defaultFiat = MutableLiveData<String>()
+
+    fun loadUserDefaultFiat() {
+        viewModelScope.launch {
+            val userDefaultFiat = settingsHandler.userDefaultFiat
+            defaultFiat.postValue(userDefaultFiat)
+        }
+    }
 
     fun loadSigningOwner() {
         if (ownerCredentialsRepository.hasCredentials()) {
