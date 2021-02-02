@@ -9,25 +9,25 @@ import pm.gnosis.utils.asEthereumAddress
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
 
-    class FactorialTask : Callable<String> {
-        var address = ""
-        var domain: String;
-        private val library: Resolution = Resolution.builder()
-                .build();
+class BackgroundTask : Callable<String> {
+    var address = ""
+    var domain: String;
+    private val library: Resolution = Resolution.builder()
+            .build();
 
-        constructor(domain: String)  {
-            this.domain = domain;
-        }
-
-        override fun call(): String {
-            address = library.getAddress(domain, "eth");
-            return address
-        }
+    constructor(domain: String)  {
+        this.domain = domain;
     }
+
+    override fun call(): String {
+        address = library.getAddress(domain, "eth");
+        return address
+    }
+}
 
 class UnstoppableDomainsRepository() {
     suspend fun resolve(domain: String): Solidity.Address {
-        val futureTask: FutureTask<String> = FutureTask<String>(FactorialTask(domain))
+        val futureTask: FutureTask<String> = FutureTask<String>(BackgroundTask(domain))
         val t = Thread(futureTask)
         t.start();
         return futureTask.get().asEthereumAddress()!!;
