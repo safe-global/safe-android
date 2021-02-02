@@ -15,6 +15,14 @@
       "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
       "decimals": 18,
       "value": "1000000000000000000"
+    },
+    "recipientInfo": {
+      "name": "Foo Bar Recipient",
+      "logoUri": "https://www.foobar.de"
+    },
+    "senderInfo": {
+      "name": "Foo Bar Sender",
+      "logoUri": "https://www.barfoo.de"
     }
   },
   "executionInfo": null
