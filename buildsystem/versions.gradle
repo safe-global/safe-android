@@ -47,6 +47,8 @@ ext {
             svalinn                         : 'v0.13.0',
             timber                          : '4.7.1',
             zxing                           : '3.3.1',
+            play_core                       : '1.9.1',
+            play_core_ktx                   : '1.8.1',
 
             // Test dependencies
             espresso                        : '3.1.1',
