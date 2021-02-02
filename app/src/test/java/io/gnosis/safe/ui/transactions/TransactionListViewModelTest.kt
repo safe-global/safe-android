@@ -551,7 +551,7 @@ class TransactionListViewModelTest {
                     METHOD_CHANGE_MASTER_COPY,
                     listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1)
+                settingsInfo = SettingsInfo.ChangeImplementation(implementation = SAFE_IMPLEMENTATION_1_1_1, implementationInfo = null)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
@@ -569,7 +569,7 @@ class TransactionListViewModelTest {
                     METHOD_DISABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.DisableModule(defaultModuleAddress)
+                settingsInfo = SettingsInfo.DisableModule(module = defaultModuleAddress, moduleInfo = null)
             ),
             buildSettingsChange(
                 status = AWAITING_EXECUTION,
@@ -578,7 +578,7 @@ class TransactionListViewModelTest {
                     METHOD_ENABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
+                settingsInfo = SettingsInfo.EnableModule(module = defaultModuleAddress, moduleInfo = null)
             ),
             // history
             buildSettingsChange(
@@ -587,7 +587,7 @@ class TransactionListViewModelTest {
                     METHOD_SET_FALLBACK_HANDLER,
                     listOf(Param.Address("address", "handler", defaultFallbackHandler))
                 ),
-                settingsInfo = SettingsInfo.SetFallbackHandler(defaultFallbackHandler)
+                settingsInfo = SettingsInfo.SetFallbackHandler(handler = defaultFallbackHandler, handlerInfo = null)
             ),
             buildSettingsChange(
                 status = SUCCESS,
@@ -596,7 +596,7 @@ class TransactionListViewModelTest {
                     METHOD_CHANGE_MASTER_COPY,
                     listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_0_0))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(SAFE_IMPLEMENTATION_1_0_0)
+                settingsInfo = SettingsInfo.ChangeImplementation(implementation = SAFE_IMPLEMENTATION_1_0_0, implementationInfo = null)
             ),
             buildSettingsChange(
                 status = FAILED,
@@ -604,7 +604,7 @@ class TransactionListViewModelTest {
                     METHOD_ENABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.EnableModule(defaultModuleAddress)
+                settingsInfo = SettingsInfo.EnableModule(module = defaultModuleAddress, moduleInfo = null)
             ),
             buildSettingsChange(
                 status = SUCCESS,
