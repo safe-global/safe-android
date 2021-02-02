@@ -294,7 +294,7 @@ dependencies {
     profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
 
     // Unstoppabledomains
-    implementation 'com.unstoppabledomains:resolution:1.9.1'
+    implementation 'com.unstoppabledomains:resolution:1.10.0'
 }
 
 
