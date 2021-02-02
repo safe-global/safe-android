@@ -13,8 +13,7 @@ class BackgroundTask : Callable<String> {
     var address = ""
     var domain: String;
     private val library: Resolution = Resolution.builder()
-            // .infura(NamingServiceType.CNS, <ProjectId>)
-            // .infura(NamingServiceType.ENS, <ProjectId>)
+            .infura(NamingServiceType.CNS, asString(getKey("INFURA_API_KEY", ""))
             .build();
 
     constructor(domain: String)  {
