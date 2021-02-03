@@ -129,6 +129,7 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
+    <string name="settings_app_rate">Rate the app</string>
 
     <string name="ens_resolver_address">ENS RESOLVER ADDRESS</string>
     <string name="endpoints">ENDPOINTS</string>
