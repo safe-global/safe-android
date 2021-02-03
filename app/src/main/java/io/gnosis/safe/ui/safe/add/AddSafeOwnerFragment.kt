@@ -64,7 +64,7 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
             importButton.setOnClickListener {
                 tracker.logOnboardingOwnerImport()
                 finishAddSafeFlow()
-                findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToOwnerInfoFragment())
+                findNavController().navigate(R.id.action_to_import_owner)
             }
             skip.setOnClickListener {
                 tracker.logOnboardingOwnerSkipped()
