@@ -46,7 +46,8 @@ class TxUtilsKtTest {
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = BigInteger.ZERO,
-            methodName = null
+            methodName = null,
+            toInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -60,7 +61,8 @@ class TxUtilsKtTest {
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = "1000000000000000000".decimalAsBigInteger(),
-            methodName = null
+            methodName = null,
+            toInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -74,7 +76,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
+            recipientInfo = null,
+            senderInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -88,7 +92,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = BigInteger.ZERO)
+            transferInfo = buildTransferInfo(value = BigInteger.ZERO),
+            senderInfo = null,
+            recipientInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -102,7 +108,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE),
+            recipientInfo = null,
+            senderInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -116,7 +124,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null),
+            senderInfo = null,
+            recipientInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -130,7 +140,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc721TransferInfo(tokenSymbol = null)
+            transferInfo = buildErc721TransferInfo(tokenSymbol = null),
+            recipientInfo = null,
+            senderInfo = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -144,7 +156,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
+            senderInfo = null,
+            recipientInfo = null
         )
         val result = txInfo.logoUri()
 
@@ -159,7 +173,9 @@ class TxUtilsKtTest {
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger())
+            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger()),
+            recipientInfo = null,
+            senderInfo = null
         )
         val result = txInfo.logoUri()
 
