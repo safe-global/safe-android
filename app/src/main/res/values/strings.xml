@@ -243,6 +243,8 @@
     <string name="safe_settings_fallback_handler">Fallback handler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
+    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Gnosis Safe?</string>
+    <string name="safe_settings_fallback_handler_help_url">https://help.gnosis-safe.io/en/articles/4738352-what-is-a-fallback-handler-and-how-does-it-relate-to-the-gnosis-safe</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
 

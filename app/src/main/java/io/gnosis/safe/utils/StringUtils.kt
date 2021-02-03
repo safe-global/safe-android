@@ -125,12 +125,12 @@ fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<A
     return this
 }
 
-fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int? = null, @ColorRes textColor: Int = R.color.primary) {
+fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int? = null, @ColorRes textColor: Int = R.color.primary, prefix: String = "") {
     movementMethod = LinkMovementMethod.getInstance()
 
     append(
         SpannableStringBuilder()
-            .append(" ")
+            .append(prefix)
             .appendTextWithSpans(urlText, listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor))))
     )
 

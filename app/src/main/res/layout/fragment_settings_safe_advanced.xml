@@ -87,7 +87,15 @@
                     android:id="@+id/fallback_handler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
+                <TextView
+                    android:id="@+id/fallback_handler_help_link"
+                    style="@style/TextLink"
+                    android:paddingHorizontal="@dimen/default_margin"
+                    android:paddingVertical="12dp"
+                    tools:text="@string/safe_settings_fallback_handler_help"
+                    android:background="@color/background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
                 <TextView
                     style="@style/SettingsHeader"
                     android:text="@string/safe_settings_nonce"
