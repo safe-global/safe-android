@@ -327,9 +327,10 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
             nonce.text = sectionDateHeader.nonce.toString()
             sectionTitle.text = resources.getString(R.string.tx_list_conflict_header_explainer)
             sectionTitle.appendLink(
-                resources.getString(R.string.tx_list_conflict_header_link),
-                resources.getString(R.string.tx_list_conflict_header_learn_more),
-                R.drawable.ic_link_green_24dp
+                url = resources.getString(R.string.tx_list_conflict_header_link),
+                urlText = resources.getString(R.string.tx_list_conflict_header_learn_more),
+                linkIcon = R.drawable.ic_link_green_24dp,
+                prefix = " "
             )
         }
     }
@@ -372,6 +373,7 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
     fun hasNext() = conflictView.conflictType != ConflictType.End
 }
+
 fun ElapsedInterval.format(resources: Resources) = when (unit) {
     ChronoUnit.SECONDS -> resources.getString(R.string.tx_list_ago_now)
     ChronoUnit.DAYS -> resources.getQuantityString(R.plurals.tx_list_ago_day, value, value)
