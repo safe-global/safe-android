@@ -228,7 +228,7 @@
     <string name="tx_status_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
-    <string name="safe_settings_contract_version">Contract version</string>
+    <string name="safe_settings_contract_version">Safe version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
     <string name="safe_settings_safe_name">Safe name</string>

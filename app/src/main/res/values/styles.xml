@@ -122,12 +122,12 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="Header">
+    <style name="SettingsHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/header_height</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_emphasis_low</item>

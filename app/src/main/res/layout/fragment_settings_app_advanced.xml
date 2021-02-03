@@ -56,7 +56,7 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/Header"
+                style="@style/SettingsHeader"
                 android:text="@string/ens_resolver_address" />
 
             <io.gnosis.safe.ui.settings.view.AddressItem
@@ -66,7 +66,7 @@
                 android:background="@drawable/background_selectable_white"/>
 
             <TextView
-                style="@style/Header"
+                style="@style/SettingsHeader"
                 android:text="@string/endpoints" />
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
@@ -106,7 +106,7 @@
                 android:background="@color/separator"/>
 
             <TextView
-                style="@style/Header"
+                style="@style/SettingsHeader"
                 android:text="@string/screenshots" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
