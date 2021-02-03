@@ -123,7 +123,7 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="SettingsHeader">
+    <style name="Header">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/header_height</item>
         <item name="android:gravity">center_vertical</item>

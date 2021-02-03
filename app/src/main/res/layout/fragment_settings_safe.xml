@@ -42,7 +42,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
@@ -59,7 +59,7 @@
                     app:setting_openable="true" />
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
@@ -76,7 +76,7 @@
                     app:setting_openable="false" />
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
@@ -91,7 +91,7 @@
                     android:orientation="vertical" />
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
@@ -114,7 +114,7 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:gravity="center_vertical"

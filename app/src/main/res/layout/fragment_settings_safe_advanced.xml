@@ -78,7 +78,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:text="@string/safe_settings_fallback_handler"
                     android:textAllCaps="true"
                     android:background="@color/background" />
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <TextView
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:text="@string/safe_settings_nonce"
                     android:textAllCaps="true"
                     android:background="@color/background" />
@@ -111,7 +111,7 @@
 
                 <TextView
                     android:id="@+id/module_label"
-                    style="@style/SettingsHeader"
+                    style="@style/Header"
                     android:text="@string/safe_settings_modules"
                     android:textAllCaps="true"
                     android:background="@color/background" />
