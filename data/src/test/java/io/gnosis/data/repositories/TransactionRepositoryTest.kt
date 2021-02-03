@@ -319,7 +319,8 @@ private fun buildCustomTxInfo(
         value = value,
         to = to,
         dataSize = dataSize,
-        methodName = null
+        methodName = null,
+        toInfo = null
     )
 
 private fun buildCreationTxInfo(
@@ -356,7 +357,9 @@ private fun buildTransferTxInfo(
         sender = sender,
         recipient = recipient,
         direction = direction,
-        transferInfo = transferInfo
+        transferInfo = transferInfo,
+        senderInfo = null,
+        recipientInfo = null
     )
 
 private fun buildTransferInfoERC20(

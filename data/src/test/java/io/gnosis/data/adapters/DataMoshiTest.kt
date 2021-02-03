@@ -1,6 +1,7 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
@@ -31,7 +32,9 @@ class DataMoshiTest {
             txInfo = TransactionInfo.Transfer(
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
+                recipientInfo = AddressInfo("Foo Bar Recipient", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x1C8b9B78e3085866521FE206fa4c1a67F49f153A.png"),
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
+                senderInfo = AddressInfo("Foo Bar Sender", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"),
                 transferInfo = TransferInfo.Erc20Transfer(
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
@@ -59,6 +62,7 @@ class DataMoshiTest {
             txInfo = TransactionInfo.Custom(
                 dataSize = 0,
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
+                toInfo = AddressInfo("Foo Bar", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"),
                 value = "3140000000000000000".toBigInteger(),
                 methodName = null
             ),
@@ -96,7 +100,11 @@ class DataMoshiTest {
                 ),
                 settingsInfo = SettingsInfo.AddOwner(
                     owner = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
-                    threshold = 1
+                    threshold = 1,
+                    ownerInfo = AddressInfo(
+                        name = "Foo Bar",
+                        logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0x5c9E7b93900536D9cc5559b881375Bae93c933D0.png"
+                    )
                 )
             ),
             executionInfo = ExecutionInfo(
