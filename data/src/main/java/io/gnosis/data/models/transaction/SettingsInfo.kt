@@ -2,6 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.models.AddressInfo
 import pm.gnosis.model.Solidity
 
 enum class SettingsInfoType {

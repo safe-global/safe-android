@@ -2,6 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.models.AddressInfo
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -54,9 +55,3 @@ enum class TransactionDirection {
     @Json(name = "UNKNOWN")
     UNKNOWN
 }
-
-@JsonClass(generateAdapter = true)
-data class AddressInfo(
-    @Json(name = "name") val name: String,
-    @Json(name = "logoUri") val logoUri: String?
-)

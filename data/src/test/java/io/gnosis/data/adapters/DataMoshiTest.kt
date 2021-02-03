@@ -1,6 +1,7 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
