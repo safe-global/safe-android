@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
@@ -77,6 +78,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                         })
                     }
                 }
+            } ?: run {
+                settingsHandler.appStartCount++
+                if (settingsHandler.appStartCount >= 3) {
+                    startRateFlow()
+                }
             }
         }
     }
@@ -139,6 +145,25 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             }
 
             safeSelection.visible(true)
+        }
+    }
+
+    private fun startRateFlow() {
+        val manager = ReviewManagerFactory.create(this)
+        val request = manager.requestReviewFlow()
+        request.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                // We got the ReviewInfo object
+                val reviewInfo = request.result
+                val flow = manager.launchReviewFlow(this, reviewInfo)
+                flow.addOnCompleteListener {
+                    // The flow has finished. The API does not indicate whether the user
+                    // reviewed or not, or even whether the review dialog was shown. Thus, no
+                    // matter the result, we continue our app flow and reset the counter
+                    settingsHandler.appStartCount = 0
+                }
+
+            }
         }
     }
 

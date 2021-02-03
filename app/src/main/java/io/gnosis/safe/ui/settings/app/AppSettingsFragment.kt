@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.settings.app
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,6 +61,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             getInTouch.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
+            rateApp.setOnClickListener {
+                openPlayStore()
+            }
             version.value = BuildConfig.VERSION_NAME
             network.value = BuildConfig.BLOCKCHAIN_NAME
             advanced.setOnClickListener {
@@ -79,6 +84,15 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         viewModel.loadUserDefaultFiat()
     }
 
+    private fun openPlayStore() {
+        kotlin.runCatching {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${requireActivity().packageName}")))
+        }
+            .onFailure {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store.apps/details?id=${requireActivity().packageName}")))
+            }
+    }
+
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
             if (address != null) {
@@ -93,13 +107,13 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                             onOwnerRemove()
                         }
                     }
-                   root.setOnClickListener {
-                       address?.let {
-                           context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
-                               snackbar(view = root, textId = R.string.copied_success)
-                           }
-                       }
-                   }
+                    root.setOnClickListener {
+                        address?.let {
+                            context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+                                snackbar(view = root, textId = R.string.copied_success)
+                            }
+                        }
+                    }
                 }
             } else {
                 with(importOwnerKey) {
