@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.adapters.dataMoshi
@@ -124,6 +125,9 @@ fun Throwable.toError(): Error =
                         val serverError = errorBodyString?.let {
                             serverErrorAdapter.fromJson(errorBodyString)
                         }
+
+                        FirebaseCrashlytics.getInstance().recordException(it)
+
                         when (serverError?.code) {
                             1 -> Error.Error42201
                             50 -> Error.Error42250
