@@ -45,10 +45,11 @@ class TransactionListViewModel
 
     fun load(type: TransactionPagingSource.Type) {
         safeLaunch {
-            val safe = safeRepository.getActiveSafe()
-            if (safe != null) {
+            val activeSafe = safeRepository.getActiveSafe()
+            val safes = safeRepository.getSafes()
+            if (activeSafe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner, type).collectLatest {
+                getTransactions(activeSafe.address, safes, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -63,12 +64,13 @@ class TransactionListViewModel
     }
 
     private fun getTransactions(
-        safe: Solidity.Address,
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>,
         owner: Solidity.Address?,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(activeSafeAddress, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
@@ -78,7 +80,8 @@ class TransactionListViewModel
                                 val txView =
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
-                                        activeSafe = safe,
+                                        activeSafeAddress = activeSafeAddress,
+                                        safes = safes,
                                         awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
                                         isConflict = isConflict
                                     )
@@ -101,7 +104,8 @@ class TransactionListViewModel
 
     fun getTransactionView(
         transaction: Transaction,
-        activeSafe: Solidity.Address,
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean = false,
         isConflict: Boolean = false
     ): TransactionView {
@@ -109,7 +113,7 @@ class TransactionListViewModel
             return when (val txInfo = txInfo) {
                 is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafeAddress, safes, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -220,19 +224,21 @@ class TransactionListViewModel
 
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address,
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation, isConflict)
-        else historicCustomTransaction(txInfo, safeAddress)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, activeSafeAddress, safes, awaitingYourConfirmation, isConflict)
+        else historicCustomTransaction(txInfo, activeSafeAddress, safes)
 
     private fun Transaction.historicCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>
     ): TransactionView.CustomTransaction {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == safeAddress
+        val isIncoming: Boolean = txInfo.to == activeSafeAddress
         return TransactionView.CustomTransaction(
             id = id,
             status = txStatus,
@@ -247,12 +253,13 @@ class TransactionListViewModel
 
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address,
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == safeAddress
+        val isIncoming: Boolean = txInfo.to == activeSafeAddress
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
