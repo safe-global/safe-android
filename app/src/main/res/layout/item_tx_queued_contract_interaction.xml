@@ -8,15 +8,15 @@
     android:background="@color/surface_01"
     android:minHeight="@dimen/item_tx_m_height">
 
-    <ImageView
-        android:id="@+id/tx_type_icon"
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/address_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_settings_change_14dp" />
+        android:src="@drawable/ic_code_16dp" />
 
     <ImageView
         android:id="@+id/chevron"
@@ -39,19 +39,19 @@
         app:srcCompat="@drawable/ic_confirmations_grey_16dp" />
 
     <TextView
-        android:id="@+id/action"
+        android:id="@+id/address_name"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/tx_type_icon"
-        app:layout_constraintStart_toEndOf="@+id/tx_type_icon"
-        app:layout_constraintTop_toTopOf="@+id/tx_type_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintStart_toEndOf="@+id/address_logo"
+        app:layout_constraintTop_toTopOf="@+id/address_logo"
         tools:text="@string/tx_list_change_mastercopy" />
 
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/action"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -61,10 +61,10 @@
         android:lineSpacingExtra="4sp"
         android:text="@string/tx_list_change_mastercopy"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/action"
+        app:layout_constraintBottom_toBottomOf="@+id/address_name"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintStart_toEndOf="@+id/action"
-        app:layout_constraintTop_toTopOf="@+id/action" />
+        app:layout_constraintStart_toEndOf="@+id/address_name"
+        app:layout_constraintTop_toTopOf="@+id/address_name" />
 
     <TextView
         android:id="@+id/nonce"
@@ -74,7 +74,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tx_type_icon"
+        app:layout_constraintTop_toBottomOf="@+id/address_logo"
         tools:text="10" />
 
     <TextView
