@@ -80,7 +80,6 @@ class TransactionListViewModel
                                 val txView =
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
-                                        activeSafeAddress = activeSafeAddress,
                                         safes = safes,
                                         awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
                                         isConflict = isConflict
@@ -104,7 +103,6 @@ class TransactionListViewModel
 
     fun getTransactionView(
         transaction: Transaction,
-        activeSafeAddress: Solidity.Address,
         safes: List<Safe>,
         awaitingYourConfirmation: Boolean = false,
         isConflict: Boolean = false
@@ -113,7 +111,7 @@ class TransactionListViewModel
             return when (val txInfo = txInfo) {
                 is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafeAddress, safes, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, safes, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -224,25 +222,26 @@ class TransactionListViewModel
 
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
-        activeSafeAddress: Solidity.Address,
         safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, activeSafeAddress, safes, awaitingYourConfirmation, isConflict)
-        else historicCustomTransaction(txInfo, activeSafeAddress, safes)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safes, awaitingYourConfirmation, isConflict)
+        else historicCustomTransaction(txInfo, safes)
 
     private fun Transaction.historicCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        activeSafeAddress: Solidity.Address,
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
-        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == activeSafeAddress
 
-        //TODO:
-        if(txInfo.toInfo != null) {
+        val address = txInfo.to.asEthereumAddressString()
+        val localName = safes.find { it.address == txInfo.to }?.localName
+        val toInfo = txInfo.toInfo
 
+        val addressInfo = when {
+            localName != null -> AddressInfoData.Local(localName, address)
+            toInfo != null -> AddressInfoData.Remote(toInfo.name, toInfo.logoUri, address)
+            else -> AddressInfoData.Default
         }
 
         return TransactionView.CustomTransaction(
@@ -254,28 +253,29 @@ class TransactionListViewModel
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
-            address = txInfo.to.asEthereumAddressString(),
-            addressName = txInfo.toInfo?.name,
-            addressLogoUri = txInfo.toInfo?.logoUri
+            addressInfo = addressInfo
         )
     }
 
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        activeSafeAddress: Solidity.Address,
         safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
-        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == activeSafeAddress
+
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
-        //TODO:
-        if(txInfo.toInfo != null) {
+        val address = txInfo.to.asEthereumAddressString()
+        val localName = safes.find { it.address == txInfo.to }?.localName
+        val toInfo = txInfo.toInfo
 
+        val addressInfo = when {
+            localName != null -> AddressInfoData.Local(localName, address)
+            toInfo != null -> AddressInfoData.Remote(toInfo.name, toInfo.logoUri, address)
+            else -> AddressInfoData.Default
         }
 
         return TransactionView.CustomTransactionQueued(
@@ -290,9 +290,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
-            address = txInfo.to.asEthereumAddressString(),
-            addressName = txInfo.toInfo?.name,
-            addressLogoUri = txInfo.toInfo?.logoUri
+            addressInfo = addressInfo
         )
     }
 

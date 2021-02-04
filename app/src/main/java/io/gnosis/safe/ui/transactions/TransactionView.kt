@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.data.models.transaction.TransactionStatus
+import io.gnosis.safe.R
 import java.util.*
 
 sealed class TransactionView(
@@ -84,9 +85,7 @@ sealed class TransactionView(
         val alpha: Float,
         val nonce: String,
         val methodName: String?,
-        val address: String,
-        val addressName: String?,
-        val addressLogoUri: String?
+        val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
     data class CustomTransactionQueued(
@@ -101,9 +100,7 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val methodName: String?,
-        val address: String,
-        val addressName: String?,
-        val addressLogoUri: String?
+        val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
     data class Creation(
@@ -130,4 +127,25 @@ sealed class TransactionView(
     data class SectionLabelHeader(val label: LabelType, override val id: String = "<unused>") : TransactionView(null, id)
     data class SectionConflictHeader(val nonce: Long, override val id: String = "<unused>") : TransactionView(null, id)
     object Unknown : TransactionView(null, "<unused>")
+}
+
+sealed class AddressInfoData {
+
+    data class Local(
+        val name: String,
+        val address: String
+    ) : AddressInfoData()
+
+    data class Remote(
+        val name: String,
+        val addressLogoUri: String?,
+        val address: String
+    ) : AddressInfoData()
+
+    object Default : AddressInfoData() {
+        @StringRes
+        val nameResId: Int = R.string.tx_list_contract_interaction
+        @DrawableRes
+        val logoResId: Int = R.drawable.ic_code_16dp
+    }
 }
