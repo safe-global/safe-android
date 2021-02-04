@@ -213,7 +213,9 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            addressLogo.setImageResource(R.drawable.ic_code_16dp)
+            addressName.setText(R.string.tx_list_contract_interaction)
 
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -224,8 +226,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -243,20 +244,22 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            addressLogo.setImageResource(R.drawable.ic_code_16dp)
+            addressName.setText(R.string.tx_list_contract_interaction)
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
             finalStatus.alpha = OPACITY_FULL
-            txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             action.alpha = viewTransfer.alpha
-            label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {

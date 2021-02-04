@@ -239,6 +239,12 @@ class TransactionListViewModel
     ): TransactionView.CustomTransaction {
         //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
         val isIncoming: Boolean = txInfo.to == activeSafeAddress
+
+        //TODO:
+        if(txInfo.toInfo != null) {
+
+        }
+
         return TransactionView.CustomTransaction(
             id = id,
             status = txStatus,
@@ -247,7 +253,10 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
-            methodName = txInfo.methodName
+            methodName = txInfo.methodName,
+            address = txInfo.to.asEthereumAddressString(),
+            addressName = txInfo.toInfo?.name,
+            addressLogoUri = txInfo.toInfo?.logoUri
         )
     }
 
@@ -264,6 +273,11 @@ class TransactionListViewModel
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
+        //TODO:
+        if(txInfo.toInfo != null) {
+
+        }
+
         return TransactionView.CustomTransactionQueued(
             id = id,
             status = txStatus,
@@ -275,7 +289,10 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
-            methodName = txInfo.methodName
+            methodName = txInfo.methodName,
+            address = txInfo.to.asEthereumAddressString(),
+            addressName = txInfo.toInfo?.name,
+            addressLogoUri = txInfo.toInfo?.logoUri
         )
     }
 
