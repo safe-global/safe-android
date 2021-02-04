@@ -8,16 +8,6 @@
     android:background="@color/surface_01"
     android:minHeight="@dimen/item_tx_s_height">
 
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/address_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_code_16dp"/>
-
     <ImageView
         android:id="@+id/chevron"
         android:layout_width="wrap_content"
@@ -44,17 +34,17 @@
     <TextView
         android:id="@+id/action"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
+        android:maxWidth="200dp"
         android:singleLine="true"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/address_name"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintStart_toEndOf="@+id/address_name"
         app:layout_constraintTop_toTopOf="@+id/address_name"
         tools:text="approve" />
 
@@ -74,9 +64,12 @@
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:singleLine="true"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
         tools:text="@string/tx_list_contract_interaction" />
@@ -93,5 +86,15 @@
         app:layout_constraintStart_toEndOf="@+id/date_time"
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Success" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/address_logo"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_code_16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
