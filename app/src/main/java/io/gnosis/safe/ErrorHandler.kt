@@ -4,6 +4,9 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsResolutionError
 import io.gnosis.data.repositories.EnsReverseRecordNotSetError
@@ -18,7 +21,6 @@ import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import retrofit2.HttpException
-import timber.log.Timber
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -34,8 +36,6 @@ sealed class Error(
     val trackingRequired: Boolean = false
 
 ) {
-
-
     // Network-related errors
     object Error101 : Error(101, 101, R.string.error_network_no_internet_reason, R.string.error_network_no_internet_fix)
     object Error102 : Error(102, 102, R.string.error_network_ssl_reason, R.string.error_network_ssl_fix)
@@ -52,9 +52,9 @@ sealed class Error(
     object Error400 : Error(400, 400, R.string.error_network_request_reason, R.string.error_network_request_fix)
     object Error401 : Error(401, 401, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix)
     object Error403 : Error(403, 403, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix)
-    object Error42200 : Error(42200, 422, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix, true)
-    object Error42201 : Error(42201, 422, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix, true)
-    object Error42250 : Error(42250, 422, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix, true)
+    object Error42200 : Error(42200, 42200, R.string.error_network_unexpected_reason, R.string.error_network_unexpected_fix, true)
+    object Error42201 : Error(42201, 42201, R.string.error_network_address_format_invalid_reason, R.string.error_network_address_format_invalid_fix, true)
+    object Error42250 : Error(42250, 42250, R.string.error_network_safe_info_not_found_reason, R.string.error_network_safe_info_not_found_fix, true)
 
     data class Error500(override val httpCode: Int? = null) :
         Error(500, 500, R.string.error_network_server_side_reason, R.string.error_network_server_side_fix) {
@@ -120,9 +120,15 @@ fun Throwable.toError(): Error =
                     this.code() == HttpCodes.FORBIDDEN -> Error.Error403
                     this.code() == HttpCodes.SERVER_ERROR -> Error.Error500(500)
                     this.code() == 422 -> {
-                        Timber.i("Response: " + this.response()?.body().toString())
-                        Timber.i("Response: " + this.message()?.toString())
-                        Error.Error42200
+                        val errorBodyString = it.response()?.errorBody()?.source()
+                        val serverError = errorBodyString?.let {
+                            serverErrorAdapter.fromJson(errorBodyString)
+                        }
+                        when (serverError?.code) {
+                            1 -> Error.Error42201
+                            50 -> Error.Error42250
+                            else -> Error.Error42200
+                        }
                     }
                     this.code() in 300..599 -> Error.Error500(this.code())
                     else -> Error.ErrorUnknown
@@ -141,3 +147,12 @@ fun errorSnackbar(view: View, text: CharSequence, duration: Int = 6000, action: 
         action?.let { setAction(it.first, it.second) }
         show()
     }
+
+@JsonClass(generateAdapter = true)
+data class ServerError(
+    @Json(name = "code") val code: Int,
+    @Json(name = "message") val message: String?,
+    @Json(name = "arguments") val arguments: List<String>?
+)
+
+private val serverErrorAdapter = dataMoshi.adapter(ServerError::class.java)

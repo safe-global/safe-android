@@ -78,7 +78,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             addSafeAddressInputLayout.setError(error.message(requireContext(), R.string.error_description_safe_address), input)
         }
     }
-    
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         addressInputHelper.handleResult(requestCode, resultCode, data)
