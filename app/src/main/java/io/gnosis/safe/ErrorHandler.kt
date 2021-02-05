@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.adapters.dataMoshi
@@ -52,12 +53,17 @@ sealed class Error(
     object Error400 : Error(400, 400, R.string.error_network_request_reason, R.string.error_network_request_fix)
     object Error401 : Error(401, 401, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix)
     object Error403 : Error(403, 403, R.string.error_network_not_authorized_reason, R.string.error_network_not_authorized_fix)
+    object Error404 : Error(404, 404, R.string.error_network_safe_not_found_reason, R.string.error_network_try_again_fix)
     object Error42200 : Error(42200, 42200, R.string.error_network_unexpected_reason, R.string.error_network_unexpected_fix, true)
-    object Error42201 : Error(42201, 42201, R.string.error_network_address_format_invalid_reason, R.string.error_network_address_format_invalid_fix, true)
+    object Error42201 :
+        Error(42201, 42201, R.string.error_network_address_format_invalid_reason, R.string.error_network_address_format_invalid_fix, true)
+
     object Error42250 : Error(42250, 42250, R.string.error_network_safe_info_not_found_reason, R.string.error_network_safe_info_not_found_fix, true)
+    data class Error422xx(override val httpCode: Int? = null) :
+        Error(422, httpCode, R.string.error_network_unexpected_reason, R.string.error_network_unexpected_fix, true)
 
     data class Error500(override val httpCode: Int? = null) :
-        Error(500, 500, R.string.error_network_server_side_reason, R.string.error_network_server_side_fix) {
+        Error(500, httpCode, R.string.error_network_server_side_reason, R.string.error_network_server_side_fix) {
         override fun message(context: Context): String {
             return "${context.getString(reason, 30)}. ${context.getString(howToFix)}. (${context.getString(
                 R.string.error_id,
@@ -118,15 +124,28 @@ fun Throwable.toError(): Error =
                     this.code() == HttpCodes.BAD_REQUEST -> Error.Error400
                     this.code() == HttpCodes.UNAUTHORIZED -> Error.Error401
                     this.code() == HttpCodes.FORBIDDEN -> Error.Error403
+                    this.code() == HttpCodes.NOT_FOUND -> Error.Error404
                     this.code() == HttpCodes.SERVER_ERROR -> Error.Error500(500)
                     this.code() == 422 -> {
-                        val errorBodyString = it.response()?.errorBody()?.source()
+                        val errorBodyString = it.response()?.errorBody()?.string()
                         val serverError = errorBodyString?.let {
-                            serverErrorAdapter.fromJson(errorBodyString)
+                            if (errorBodyString.isNotEmpty()) {
+                                serverErrorAdapter.fromJson(errorBodyString)
+                            } else {
+                                null
+                            }
                         }
-                        when (serverError?.code) {
-                            1 -> Error.Error42201
-                            50 -> Error.Error42250
+
+                        if (Tracker.isInitialized()) {
+                            FirebaseCrashlytics.getInstance().recordException(it)
+                        }
+
+                        when {
+                            serverError?.code == 1 -> Error.Error42201
+                            serverError?.code == 50 -> Error.Error42250
+                            serverError?.code == null -> Error.Error42200
+                            serverError.code in 2..9 -> Error.Error422xx("4220${serverError.code}".toInt() )
+                            serverError.code >= 10 -> Error.Error422xx("422${serverError.code}".toInt())
                             else -> Error.Error42200
                         }
                     }

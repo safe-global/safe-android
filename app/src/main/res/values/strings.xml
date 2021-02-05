@@ -83,6 +83,8 @@
     <string name="error_network_address_format_invalid_fix">Please reach out to the Safe support</string>
     <string name="error_network_safe_info_not_found_reason">safe info is not found</string>
     <string name="error_network_safe_info_not_found_fix">Please reach out to the Safe support</string>
+    <string name="error_network_safe_not_found_reason">safe not found</string>
+    <string name="error_network_try_again_fix">Please check that the Safe exists on the blockchain</string>
 
     <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
     <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>

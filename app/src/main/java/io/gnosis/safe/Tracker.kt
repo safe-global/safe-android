@@ -103,6 +103,10 @@ class Tracker private constructor(context: Context) {
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Tracker(context).also { INSTANCE = it }
             }
+
+        fun isInitialized(): Boolean {
+            return INSTANCE != null
+        }
     }
 }
 
