@@ -22,8 +22,9 @@ class ErrorHandlerTest {
         val result = Offline().toError()
 
         assertTrue(result is Error.Error101)
-        assertEquals(result.httpCode, 101)
+        assertEquals(101, result.httpCode)
     }
+
     @Test
     fun `toError() (HttpException with code 400 and no body) should create Error400 with http code 400`() {
         val exception = HttpException(Response.error<String>(400, emptyResponseBody))
@@ -31,7 +32,7 @@ class ErrorHandlerTest {
         val result = exception.toError()
 
         assertTrue(result is Error.Error400)
-        assertEquals(result.httpCode, 400)
+        assertEquals(400, result.httpCode)
     }
 
     @Test
@@ -41,7 +42,7 @@ class ErrorHandlerTest {
         val result = exception.toError()
 
         assertTrue(result is Error.Error401)
-        assertEquals(result.httpCode, 401)
+        assertEquals(401, result.httpCode)
     }
 
     @Test
@@ -51,7 +52,7 @@ class ErrorHandlerTest {
         val result = exception.toError()
 
         assertTrue(result is Error.Error403)
-        assertEquals(result.httpCode, 403)
+        assertEquals(403, result.httpCode)
     }
 
     @Test
@@ -61,7 +62,7 @@ class ErrorHandlerTest {
         val result = exception.toError()
 
         assertTrue(result is Error.Error404)
-        assertEquals(result.httpCode, 404)
+        assertEquals(404, result.httpCode)
     }
 
     @Test
@@ -71,7 +72,7 @@ class ErrorHandlerTest {
         val result = exception.toError()
 
         assertTrue(result is Error.Error42200)
-        assertEquals(result.httpCode, 42200)
+        assertEquals(42200, result.httpCode)
     }
 
     @Test
