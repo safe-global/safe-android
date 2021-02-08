@@ -13,6 +13,7 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
+import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -33,7 +34,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Unknown txInfo) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Unknown
+        val txInfo = TransactionInfoViewData.Unknown
         val result = txInfo.formattedAmount(balanceFormatter)
 
         assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
@@ -42,7 +43,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Custom txInfo) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Custom(
+        val txInfo = TransactionInfoViewData.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = BigInteger.ZERO,
@@ -57,7 +58,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Custom txInfo with amount) should return negative ETH amount`() {
 
-        val txInfo = TransactionInfo.Custom(
+        val txInfo = TransactionInfoViewData.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = "1000000000000000000".decimalAsBigInteger(),
@@ -72,7 +73,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Outgoing Transfer 1 ETH) should return -1 ETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
@@ -88,7 +89,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Outgoing Transfer 0 ETH) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
@@ -104,7 +105,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Incoming WETH Transfer) should return +0_1 WETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
@@ -120,7 +121,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (null ERC20 tokenSymbol) should return +0_1 ERC20`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
@@ -136,7 +137,7 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (null ERC721 tokenSymbol) should return +1 NFT`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.INCOMING,
@@ -152,7 +153,7 @@ class TxUtilsKtTest {
     @Test
     fun `logoUri (Ether transfer) load ethereum url`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
@@ -169,7 +170,7 @@ class TxUtilsKtTest {
     @Test
     fun `logoUri (WETH transfer) load ethereum url`() {
 
-        val txInfo = TransactionInfo.Transfer(
+        val txInfo = TransactionInfoViewData.Transfer(
             sender = Solidity.Address(BigInteger.ZERO),
             recipient = Solidity.Address(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING,
@@ -185,8 +186,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (SettingsChange addOwnerWithThreshold) should return Address and Value `() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_ADD_OWNER_WITH_THRESHOLD,
                     parameters = listOf(
@@ -212,8 +213,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Enable Module) result one address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_ENABLE_MODULE,
                     parameters = listOf(
@@ -233,8 +234,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Disable Module) result one adress item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_DISABLE_MODULE,
                     parameters = listOf(
@@ -253,8 +254,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Change Implementation) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_CHANGE_MASTER_COPY,
                     parameters = listOf(
@@ -274,8 +275,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Swap Owner) result two address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_SWAP_OWNER,
                     parameters = listOf(
@@ -300,8 +301,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Remove Owner) result one address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_REMOVE_OWNER,
                     parameters = listOf(
@@ -325,8 +326,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Set Fallback Handler ) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_SET_FALLBACK_HANDLER,
                     parameters = listOf(
@@ -346,8 +347,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Set Fallback Handler to default) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_SET_FALLBACK_HANDLER,
                     parameters = listOf(
@@ -371,8 +372,8 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Change threshold ) result one value item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
                 dataDecoded = DataDecoded(
                     method = METHOD_CHANGE_THRESHOLD,
                     parameters = listOf(

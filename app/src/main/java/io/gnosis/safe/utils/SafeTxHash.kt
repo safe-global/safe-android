@@ -1,9 +1,9 @@
-package io.gnosis.data.utils
+package io.gnosis.safe.utils
 
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
-import io.gnosis.data.models.transaction.TransactionDetails
-import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.models.transaction.TransferInfo
+import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
@@ -14,11 +14,11 @@ private const val ERC191_BYTE = "19"
 private const val ERC191_VERSION = "01"
 
 fun calculateSafeTxHash(
-    safeAddress: Solidity.Address, transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
+    safeAddress: Solidity.Address, transaction: TransactionDetailsViewData, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
 ): ByteArray? {
 
     val to = when (val txInfo = transaction.txInfo) {
-        is TransactionInfo.Transfer -> {
+        is TransactionInfoViewData.Transfer -> {
             when (val transferInfo = txInfo.transferInfo) {
                 is TransferInfo.Erc20Transfer -> {
                     transferInfo.tokenAddress
@@ -31,10 +31,10 @@ fun calculateSafeTxHash(
                 }
             }
         }
-        is TransactionInfo.Custom -> {
+        is TransactionInfoViewData.Custom -> {
             txInfo.to
         }
-        is TransactionInfo.SettingsChange -> {
+        is TransactionInfoViewData.SettingsChange -> {
             safeAddress
         }
         else -> {

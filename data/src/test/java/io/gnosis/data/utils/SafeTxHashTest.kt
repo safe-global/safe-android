@@ -11,9 +11,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.toHexString
 
 class SafeTxHashTest {
 
@@ -32,7 +30,7 @@ class SafeTxHashTest {
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txCustom, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txCustom, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -45,7 +43,7 @@ class SafeTxHashTest {
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txTransfer, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txTransfer, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -58,7 +56,7 @@ class SafeTxHashTest {
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txSettingsChange, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txSettingsChange, executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }

@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -79,7 +80,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is ConfirmationSubmitted -> {
                     binding.txConfirmButtonContainer.visible(false)
-                    viewAction.txDetails?.let(::updateUi)
+                    viewAction.txDetails?.let { updateUi(it) }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
                 is Loading -> {
@@ -131,7 +132,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    private fun updateUi(txDetails: TransactionDetails) {
+    private fun updateUi(txDetails: TransactionDetailsViewData) {
 
         var awaitingYourConfirmation = false
 
@@ -223,7 +224,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
 
         when (val txInfo = txDetails.txInfo) {
-            is TransactionInfo.Transfer -> {
+            is TransactionInfoViewData.Transfer -> {
                 val viewStub = binding.stubTransfer
                 if (viewStub.parent != null) {
                     val inflate = viewStub.inflate()
@@ -270,7 +271,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     getColorForStatus(txDetails.txStatus)
                 )
             }
-            is TransactionInfo.SettingsChange -> {
+            is TransactionInfoViewData.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
@@ -285,7 +286,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     getColorForStatus(txDetails.txStatus)
                 )
             }
-            is TransactionInfo.Custom -> {
+            is TransactionInfoViewData.Custom -> {
                 val viewStub = binding.stubCustom
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())

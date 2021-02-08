@@ -2,24 +2,24 @@ package io.gnosis.safe.utils
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
-import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
 import io.gnosis.safe.R
+import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import java.math.BigInteger
 
 const val DEFAULT_ERC20_SYMBOL = "ERC20"
 const val DEFAULT_ERC721_SYMBOL = "NFT"
 
-fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String =
+fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
-        is TransactionInfo.Custom -> {
+        is TransactionInfoViewData.Custom -> {
             balanceFormatter.formatAmount(txInfo.value, false, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL)
         }
-        is TransactionInfo.Transfer -> {
+        is TransactionInfoViewData.Transfer -> {
             val incoming = txInfo.direction == TransactionDirection.INCOMING
             val decimals: Int = when (val transferInfo = txInfo.transferInfo) {
                 is TransferInfo.Erc20Transfer -> {
@@ -54,14 +54,14 @@ fun TransactionInfo.formattedAmount(balanceFormatter: BalanceFormatter): String 
             }
             balanceFormatter.formatAmount(value, incoming, decimals, symbol)
         }
-        is TransactionInfo.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
-        is TransactionInfo.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
-        TransactionInfo.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfoViewData.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfoViewData.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        TransactionInfoViewData.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
     }
 
-fun TransactionInfo.logoUri(): String? =
+fun TransactionInfoViewData.logoUri(): String? =
     when (val transactionInfo = this) {
-        is TransactionInfo.Transfer -> when (val transferInfo = transactionInfo.transferInfo) {
+        is TransactionInfoViewData.Transfer -> when (val transferInfo = transactionInfo.transferInfo) {
             is TransferInfo.Erc20Transfer -> {
                 transferInfo.logoUri
             }
@@ -72,10 +72,10 @@ fun TransactionInfo.logoUri(): String? =
                 "local::native_currency"
             }
         }
-        is TransactionInfo.Custom, is TransactionInfo.SettingsChange, is TransactionInfo.Creation, TransactionInfo.Unknown -> "local::native_currency"
+        is TransactionInfoViewData.Custom, is TransactionInfoViewData.SettingsChange, is TransactionInfoViewData.Creation, TransactionInfoViewData.Unknown -> "local::native_currency"
     }
 
-fun TransactionInfo.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
+fun TransactionInfoViewData.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
     val settingsMethodTitle = mapOf(
         SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD to R.string.tx_details_add_owner,
         SafeRepository.METHOD_CHANGE_MASTER_COPY to R.string.tx_details_new_mastercopy,
