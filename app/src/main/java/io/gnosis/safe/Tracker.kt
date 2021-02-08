@@ -70,7 +70,7 @@ class Tracker private constructor(context: Context) {
         }
     }
 
-    private fun logException(exception: Exception) {
+    fun logException(exception: Throwable) {
         FirebaseCrashlytics.getInstance().recordException(exception)
     }
 
@@ -103,10 +103,6 @@ class Tracker private constructor(context: Context) {
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Tracker(context).also { INSTANCE = it }
             }
-
-        fun isInitialized(): Boolean {
-            return INSTANCE != null
-        }
     }
 }
 

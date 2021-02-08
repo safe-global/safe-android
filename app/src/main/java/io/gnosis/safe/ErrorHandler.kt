@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.adapters.dataMoshi
@@ -136,15 +135,11 @@ fun Throwable.toError(): Error =
                             }
                         }
 
-                        if (Tracker.isInitialized()) {
-                            FirebaseCrashlytics.getInstance().recordException(it)
-                        }
-
                         when {
                             serverError?.code == 1 -> Error.Error42201
                             serverError?.code == 50 -> Error.Error42250
                             serverError?.code == null -> Error.Error42200
-                            serverError.code in 2..9 -> Error.Error422xx("4220${serverError.code}".toInt() )
+                            serverError.code in 2..9 -> Error.Error422xx("4220${serverError.code}".toInt())
                             serverError.code >= 10 -> Error.Error422xx("422${serverError.code}".toInt())
                             else -> Error.Error42200
                         }

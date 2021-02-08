@@ -75,6 +75,9 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             bottomLabels.visible(false)
 
             val error = throwable.toError()
+            if (error.trackingRequired) {
+                tracker.logException(throwable)
+            }
             addSafeAddressInputLayout.setError(error.message(requireContext(), R.string.error_description_safe_address), input)
         }
     }

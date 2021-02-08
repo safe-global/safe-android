@@ -66,6 +66,9 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
                 is ImportOwnerKeyState.Error -> {
                     Timber.e(state.throwable)
                     val error = state.throwable.toError()
+                    if (error.trackingRequired) {
+                        tracker.logException(state.throwable)
+                    }
                     with(binding) {
                         seedPhraseLayout.error = error.message(requireContext(), R.string.error_description_seed_phrase)
                         seedPhraseLayout.isErrorEnabled = true
