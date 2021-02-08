@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -234,15 +235,7 @@ class TransactionListViewModel
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
 
-        val address = txInfo.to.asEthereumAddressString()
-        val localName = safes.find { it.address == txInfo.to }?.localName
-        val toInfo = txInfo.toInfo
-
-        val addressInfo = when {
-            localName != null -> AddressInfoData.Local(localName, address)
-            toInfo != null -> AddressInfoData.Remote(toInfo.name, toInfo.logoUri, address)
-            else -> AddressInfoData.Default
-        }
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
 
         return TransactionView.CustomTransaction(
             id = id,
@@ -268,15 +261,7 @@ class TransactionListViewModel
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
-        val address = txInfo.to.asEthereumAddressString()
-        val localName = safes.find { it.address == txInfo.to }?.localName
-        val toInfo = txInfo.toInfo
-
-        val addressInfo = when {
-            localName != null -> AddressInfoData.Local(localName, address)
-            toInfo != null -> AddressInfoData.Remote(toInfo.name, toInfo.logoUri, address)
-            else -> AddressInfoData.Default
-        }
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
             id = id,
@@ -292,6 +277,16 @@ class TransactionListViewModel
             methodName = txInfo.methodName,
             addressInfo = addressInfo
         )
+    }
+
+    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safes: List<Safe>): AddressInfoData {
+        val localName = safes.find { it.address == address }?.localName
+        val addressString = address.asEthereumAddressString()
+        return when {
+            localName != null -> AddressInfoData.Local(localName, addressString)
+            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString)
+            else -> AddressInfoData.Default
+        }
     }
 
     private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation): TransactionView.Creation =

@@ -64,7 +64,6 @@ class TransactionListViewModelTest {
     private val defaultFromAddress: Solidity.Address = "0x1234567890".asEthereumAddress()!!
     private val defaultModuleAddress: Solidity.Address = "0x25F73b24B866963B0e560fFF9bbA7908be0263E8".asEthereumAddress()!!
     private val defaultFallbackHandler: Solidity.Address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
-    private val defaultSafe = Safe(defaultSafeAddress, defaultSafeName)
     private val defaultThreshold: Int = 2
     private val defaultNonce: BigInteger = BigInteger.ONE
 
