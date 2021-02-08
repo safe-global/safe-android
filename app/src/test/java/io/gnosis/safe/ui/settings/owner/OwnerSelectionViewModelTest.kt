@@ -61,7 +61,7 @@ class OwnerSelectionViewModelTest {
             ownerCredentialsVault.storeCredentials(any())
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
-            tracker.logKeyImported(any())
+            tracker.logKeyImported(true)
             tracker.setNumKeysImported(any())
             notificationRepository.registerOwner(any())
         }
