@@ -79,6 +79,7 @@
 
                 <TextView
                     style="@style/Header"
+                    android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_fallback_handler"
                     android:textAllCaps="true"
                     android:background="@color/background" />
@@ -87,9 +88,18 @@
                     android:id="@+id/fallback_handler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
+                <TextView
+                    android:id="@+id/fallback_handler_help_link"
+                    style="@style/TextLink"
+                    android:paddingHorizontal="@dimen/default_margin"
+                    android:paddingVertical="12dp"
+                    tools:text="@string/safe_settings_fallback_handler_help"
+                    android:background="@color/background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
                 <TextView
                     style="@style/Header"
+                    android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_nonce"
                     android:textAllCaps="true"
                     android:background="@color/background" />
@@ -104,6 +114,7 @@
                 <TextView
                     android:id="@+id/module_label"
                     style="@style/Header"
+                    android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_modules"
                     android:textAllCaps="true"
                     android:background="@color/background" />

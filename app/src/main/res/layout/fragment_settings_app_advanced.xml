@@ -57,7 +57,8 @@
 
             <TextView
                 style="@style/Header"
-                android:text="@string/ens_resolver_address" />
+                android:text="@string/ens_resolver_address"
+                android:layout_height="@dimen/header_height" />
 
             <io.gnosis.safe.ui.settings.view.AddressItem
                 android:id="@+id/ens"
@@ -67,7 +68,8 @@
 
             <TextView
                 style="@style/Header"
-                android:text="@string/endpoints" />
+                android:text="@string/endpoints"
+                android:layout_height="@dimen/header_height" />
 
             <io.gnosis.safe.ui.settings.view.EndpointItem
                 android:id="@+id/rpc_endpoint"
@@ -107,7 +109,8 @@
 
             <TextView
                 style="@style/Header"
-                android:text="@string/screenshots" />
+                android:text="@string/screenshots"
+                android:layout_height="@dimen/header_height" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/screenshot_permission"

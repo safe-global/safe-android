@@ -23,9 +23,9 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
+import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import java.math.BigInteger
@@ -85,6 +85,13 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         with(binding) {
             fallbackHandlerContainer.removeAllViews()
             fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
+
+            fallbackHandlerHelpLink.text = ""
+            fallbackHandlerHelpLink.appendLink(
+                urlText = resources.getString(R.string.safe_settings_fallback_handler_help),
+                url = resources.getString(R.string.safe_settings_fallback_handler_help_url),
+                linkIcon = R.drawable.ic_link_green_24dp
+            )
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
             safeInfo.modules.takeUnless { it.isEmpty() }?.let {

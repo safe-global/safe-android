@@ -1,6 +1,8 @@
 package io.gnosis.safe.ui.transactions
 
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +10,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.safe.R
@@ -20,6 +24,9 @@ import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.blockies.BlockiesImageView
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -205,7 +212,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 }
 
 class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedContractInteractionBinding) :
-    BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding), Target {
 
     @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
@@ -213,7 +220,22 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            when(val addressInfo = viewTransfer.addressInfo) {
+                is AddressInfoData.Local -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                }
+                is AddressInfoData.Remote -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.loadKnownAddressLogo(addressInfo.addressLogoUri, addressInfo.address.asEthereumAddress()!!, this@ContractInteractionQueuedViewHolder)
+                }
+                is AddressInfoData.Default -> {
+                    addressName.setText(addressInfo.nameResId)
+                    addressLogo.setAddress(null)
+                    addressLogo.setImageResource(addressInfo.logoResId)
+                }
+            }
 
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -224,8 +246,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -233,30 +254,56 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             }
         }
     }
+
+    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+        with(viewBinding) {
+            addressLogo.setAddress(null)
+            addressLogo.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+
+    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
 }
 
 class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInteractionBinding) :
-    BaseTransactionViewHolder<TransactionView.CustomTransaction>(viewBinding) {
+    BaseTransactionViewHolder<TransactionView.CustomTransaction>(viewBinding), Target {
 
     override fun bind(viewTransfer: TransactionView.CustomTransaction, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            when(val addressInfo = viewTransfer.addressInfo) {
+                is AddressInfoData.Local -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                }
+                is AddressInfoData.Remote -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.loadKnownAddressLogo(addressInfo.addressLogoUri, addressInfo.address.asEthereumAddress()!!, this@ContractInteractionViewHolder)
+                }
+                is AddressInfoData.Default -> {
+                    addressName.setText(addressInfo.nameResId)
+                    addressLogo.setAddress(null)
+                    addressLogo.setImageResource(addressInfo.logoResId)
+                }
+            }
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
             finalStatus.alpha = OPACITY_FULL
-            txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             action.alpha = viewTransfer.alpha
-            label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
@@ -264,6 +311,17 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             }
         }
     }
+
+    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+        with(viewBinding) {
+            addressLogo.setAddress(null)
+            addressLogo.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+
+    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
 }
 
 class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
@@ -327,9 +385,10 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
             nonce.text = sectionDateHeader.nonce.toString()
             sectionTitle.text = resources.getString(R.string.tx_list_conflict_header_explainer)
             sectionTitle.appendLink(
-                resources.getString(R.string.tx_list_conflict_header_link),
-                resources.getString(R.string.tx_list_conflict_header_learn_more),
-                R.drawable.ic_link_green_24dp
+                url = resources.getString(R.string.tx_list_conflict_header_link),
+                urlText = resources.getString(R.string.tx_list_conflict_header_learn_more),
+                linkIcon = R.drawable.ic_link_green_24dp,
+                prefix = " "
             )
         }
     }
@@ -372,6 +431,7 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
     fun hasNext() = conflictView.conflictType != ConflictType.End
 }
+
 fun ElapsedInterval.format(resources: Resources) = when (unit) {
     ChronoUnit.SECONDS -> resources.getString(R.string.tx_list_ago_now)
     ChronoUnit.DAYS -> resources.getQuantityString(R.plurals.tx_list_ago_day, value, value)
@@ -379,4 +439,13 @@ fun ElapsedInterval.format(resources: Resources) = when (unit) {
     else -> resources.getString(R.string.tx_list_ago_min, value)
 }
 
-
+fun BlockiesImageView.loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target) {
+    setAddress(address)
+    when {
+        !logoUri.isNullOrBlank() -> {
+            Picasso.get()
+                .load(logoUri)
+                .into(target)
+        }
+    }
+}

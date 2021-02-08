@@ -69,6 +69,14 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var appStartCount: Int
+        get() = preferencesManager.prefs.getInt(KEY_APP_START_COUNT, 0)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putInt(KEY_APP_START_COUNT, value)
+            }
+        }
+
     suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
 
     companion object {
@@ -77,5 +85,6 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
         internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
         internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
+        internal const val KEY_APP_START_COUNT = "prefs.integer.app_start_count"
     }
 }

@@ -129,6 +129,7 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
+    <string name="settings_app_rate">Rate the app</string>
 
     <string name="ens_resolver_address">ENS RESOLVER ADDRESS</string>
     <string name="endpoints">ENDPOINTS</string>
@@ -228,7 +229,7 @@
     <string name="tx_status_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
-    <string name="safe_settings_contract_version">Contract version</string>
+    <string name="safe_settings_contract_version">Safe version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
     <string name="safe_settings_safe_name">Safe name</string>
@@ -243,6 +244,7 @@
     <string name="safe_settings_fallback_handler">Fallback handler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
+    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Gnosis Safe?</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
 
@@ -331,7 +333,6 @@
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
-    <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
     <string name="label_type_next">Next</string>
     <string name="label_type_queued">Queued</string>

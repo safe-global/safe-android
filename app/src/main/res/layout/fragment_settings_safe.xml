@@ -44,7 +44,7 @@
                 <TextView
                     style="@style/Header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/header_height"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/safe_settings_safe_name"
@@ -61,7 +61,7 @@
                 <TextView
                     style="@style/Header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/header_height"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/safe_settings_required_confirmations"
@@ -78,7 +78,7 @@
                 <TextView
                     style="@style/Header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/header_height"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/safe_settings_owner_addresses"
@@ -93,7 +93,7 @@
                 <TextView
                     style="@style/Header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/header_height"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/safe_settings_contract_version"
@@ -116,7 +116,7 @@
                 <TextView
                     style="@style/Header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/header_height"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp"
                     android:text="@string/safe_settings_ens_name"
