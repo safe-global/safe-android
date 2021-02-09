@@ -196,8 +196,11 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
         }
     }
 
-    private fun handleError(error: Throwable) {
-        val error = error.toError()
+    private fun handleError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error.trackingRequired) {
+            tracker.logException(throwable)
+        }
         errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
     }
 

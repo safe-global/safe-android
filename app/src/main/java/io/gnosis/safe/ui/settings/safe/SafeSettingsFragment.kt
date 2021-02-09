@@ -79,6 +79,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         showContentNoData()
                     }
                     val error = viewAction.error.toError()
+                    if (error.trackingRequired) {
+                        tracker.logException(viewAction.error)
+                    }
                     errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings))
                 }
             }

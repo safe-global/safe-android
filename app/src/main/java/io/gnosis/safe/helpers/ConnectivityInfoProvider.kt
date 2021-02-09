@@ -32,12 +32,12 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
             var online = false
             // Active network is null after returning from sleep. Default active network listener is not triggered
             // Thus we check connectivity of all available networks to see if device is offline
-            connectivityManager.allNetworks.forEach loop@{
-                online = connectivityManager.getNetworkCapabilities(it).run {
-                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                            || hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                            || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                }
+            connectivityManager.allNetworks.forEach loop@{ network ->
+                online = connectivityManager.getNetworkCapabilities(network)?.let {
+                    it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                            || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                } ?: false
                 if (online) return@loop
             }
             !online

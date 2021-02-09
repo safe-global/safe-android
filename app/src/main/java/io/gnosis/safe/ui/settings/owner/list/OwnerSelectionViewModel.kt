@@ -75,7 +75,7 @@ class OwnerSelectionViewModel
             }
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
-            tracker.logKeyImported()
+            tracker.logKeyImported(privateKey == null)
             tracker.setNumKeysImported(1)
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
