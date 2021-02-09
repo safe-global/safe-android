@@ -105,7 +105,7 @@ class TxTransferActionView @JvmOverloads constructor(
         addressItem.layoutParams = layoutParams
         addressItem.address = address
         addressItem.name = name
-        addressItem.loadKnownAddressLogo(addressUri, address, addressItem)
+        addressItem.loadKnownAddressLogo(addressUri, address)
         addView(addressItem)
     }
 

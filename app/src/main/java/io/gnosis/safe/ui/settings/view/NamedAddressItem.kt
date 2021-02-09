@@ -101,7 +101,7 @@ class NamedAddressItem @JvmOverloads constructor(
         }
     }
 
-    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address, addressItem: NamedAddressItem) {
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address) {
         binding.blockies.loadKnownAddressLogo(addressUri, address, this)
     }
 }

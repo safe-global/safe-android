@@ -280,7 +280,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
-                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
+                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems(requireContext()))
                 txDetailsSettingsChangeBinding.txStatus.setStatus(
                     TxType.MODIFY_SETTINGS.titleRes,
                     TxType.MODIFY_SETTINGS.iconRes,
@@ -296,15 +296,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
                 val addressUri = when (val toInfo = txInfo.toInfo) {
                     is AddressInfoData.Remote -> toInfo.addressLogoUri
-                    is AddressInfoData.Local -> null
-                    AddressInfoData.Default -> null
-                    null -> null
+                    else -> null
                 }
-                val addressName = when(val  toInfo = txInfo.toInfo) {
+                val addressName = when (val toInfo = txInfo.toInfo) {
                     is AddressInfoData.Local -> toInfo.name
                     is AddressInfoData.Remote -> toInfo.name
-                    AddressInfoData.Default -> null
-                    null -> null
+                    else -> null
                 }
                 txDetailsCustomBinding.txAction.setActionInfo(
                     outgoing = true,

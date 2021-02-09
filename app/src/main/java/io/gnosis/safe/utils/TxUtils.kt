@@ -1,14 +1,16 @@
 package io.gnosis.safe.utils
 
+import android.content.Context
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.getAddressValueByName
-import io.gnosis.data.repositories.getIntValueByName
 import io.gnosis.safe.R
+import io.gnosis.safe.ui.transactions.AddressInfoData
+import io.gnosis.safe.ui.transactions.details.models.SettingsInfoViewData
 import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
+import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 const val DEFAULT_ERC20_SYMBOL = "ERC20"
@@ -75,7 +77,7 @@ fun TransactionInfoViewData.logoUri(): String? =
         is TransactionInfoViewData.Custom, is TransactionInfoViewData.SettingsChange, is TransactionInfoViewData.Creation, TransactionInfoViewData.Unknown -> "local::native_currency"
     }
 
-fun TransactionInfoViewData.SettingsChange.txActionInfoItems(): List<ActionInfoItem> {
+fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): List<ActionInfoItem> {
     val settingsMethodTitle = mapOf(
         SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD to R.string.tx_details_add_owner,
         SafeRepository.METHOD_CHANGE_MASTER_COPY to R.string.tx_details_new_mastercopy,
@@ -90,84 +92,86 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(): List<ActionInfoI
     val settingsChange = this
 
     val params = settingsChange.dataDecoded.parameters
-    when (settingsChange.dataDecoded.method) {
-        SafeRepository.METHOD_CHANGE_MASTER_COPY -> {
-            val mainCopy = params.getAddressValueByName("_masterCopy")
-            val label = mainCopy?.implementationVersion()
+    when (val settingsInfo = settingsChange.settingsInfo) {
+        is SettingsInfoViewData.ChangeImplementation -> {
+            val mainCopy = settingsInfo.implementation
+            val label = settingsInfo.implementationInfo?.getLabel() ?: context.resources.getString(mainCopy.implementationVersion())
 
             result.add(
-                ActionInfoItem.AddressWithLabel(
-                    itemLabel = settingsMethodTitle[settingsChange.dataDecoded.method],
-                    address = mainCopy,
-                    addressLabel = label
+                getAddressActionInfoItem(
+                    settingsInfo.implementation,
+                    settingsMethodTitle[SafeRepository.METHOD_CHANGE_MASTER_COPY],
+                    settingsInfo.implementationInfo,
+                    label
                 )
             )
         }
-        SafeRepository.METHOD_CHANGE_THRESHOLD -> {
-            val value = params.getIntValueByName("_threshold") ?: ""
+        is SettingsInfoViewData.ChangeThreshold -> {
+            val value = settingsInfo.threshold.toString()
             result.add(ActionInfoItem.Value(itemLabel = settingsMethodTitle[settingsChange.dataDecoded.method], value = value))
         }
-        SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD -> {
+        is SettingsInfoViewData.AddOwner -> {
             result.add(
-                ActionInfoItem.Address(
+                getAddressActionInfoItem(
+                    settingsInfo.owner,
                     settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    params.getAddressValueByName("owner")
+                    settingsInfo.ownerInfo
                 )
             )
-            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getIntValueByName("_threshold")!!))
+            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], settingsInfo.threshold.toString()))
         }
-        SafeRepository.METHOD_REMOVE_OWNER -> {
-            result.add(
-                ActionInfoItem.Address(
-                    settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
-                    params.getAddressValueByName("owner")
-                )
-            )
-            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], params.getIntValueByName("_threshold")!!))
+        is SettingsInfoViewData.RemoveOwner -> {
+            result.add(getAddressActionInfoItem(settingsInfo.owner, settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER], settingsInfo.ownerInfo))
+            result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], settingsInfo.threshold.toString()))
         }
-        SafeRepository.METHOD_SET_FALLBACK_HANDLER -> {
-            val fallbackHandler = params.getAddressValueByName("handler")
-            val label =
-                if (SafeRepository.DEFAULT_FALLBACK_HANDLER == fallbackHandler) {
-                    R.string.default_fallback_handler
+        is SettingsInfoViewData.SetFallbackHandler -> {
+
+            val label: String = settingsInfo.handlerInfo?.getLabel()
+                ?: if (SafeRepository.DEFAULT_FALLBACK_HANDLER == settingsInfo.handler) {
+                    context.resources.getString(R.string.default_fallback_handler)
                 } else {
-                    R.string.unknown_fallback_handler
+                    context.resources.getString(R.string.unknown_fallback_handler)
                 }
             result.add(
-                ActionInfoItem.AddressWithLabel(
-                    itemLabel = settingsMethodTitle[SafeRepository.METHOD_SET_FALLBACK_HANDLER],
-                    address = fallbackHandler,
-                    addressLabel = label
+                getAddressActionInfoItem(
+                    settingsInfo.handler,
+                    settingsMethodTitle[SafeRepository.METHOD_SET_FALLBACK_HANDLER],
+                    settingsInfo.handlerInfo,
+                    label
                 )
             )
         }
-        SafeRepository.METHOD_SWAP_OWNER -> {
+        is SettingsInfoViewData.SwapOwner -> {
             result.add(
-                ActionInfoItem.Address(
-                    settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
-                    params.getAddressValueByName("oldOwner")
+                getAddressActionInfoItem(
+                    settingsInfo.oldOwner,
+                    settingsMethodTitle[SafeRepository.METHOD_SET_FALLBACK_HANDLER],
+                    settingsInfo.oldOwnerInfo
                 )
             )
             result.add(
-                ActionInfoItem.Address(
+                getAddressActionInfoItem(
+                    settingsInfo.newOwner,
                     settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    params.getAddressValueByName("newOwner")
+                    settingsInfo.newOwnerInfo
                 )
             )
         }
-        SafeRepository.METHOD_ENABLE_MODULE -> {
+        is SettingsInfoViewData.EnableModule -> {
             result.add(
-                ActionInfoItem.Address(
+                getAddressActionInfoItem(
+                    settingsInfo.module,
                     settingsMethodTitle[SafeRepository.METHOD_ENABLE_MODULE],
-                    params.getAddressValueByName("module")
+                    settingsInfo.moduleInfo
                 )
             )
         }
-        SafeRepository.METHOD_DISABLE_MODULE -> {
+        is SettingsInfoViewData.DisableModule -> {
             result.add(
-                ActionInfoItem.Address(
+                getAddressActionInfoItem(
+                    settingsInfo.module,
                     settingsMethodTitle[SafeRepository.METHOD_DISABLE_MODULE],
-                    params.getAddressValueByName("module")
+                    settingsInfo.moduleInfo
                 )
             )
         }
@@ -175,3 +179,37 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(): List<ActionInfoI
 
     return result
 }
+
+private fun getAddressActionInfoItem(
+    address: Solidity.Address,
+    title: Int?,
+    ownerInfo: AddressInfoData?,
+    label: String? = null
+): ActionInfoItem =
+    if (ownerInfo?.getLabel() != null || label != null) {
+        ActionInfoItem.AddressWithLabel(
+            title,
+            address,
+            label ?: ownerInfo?.getLabel(),
+            ownerInfo?.getUrl()
+        )
+    } else {
+        ActionInfoItem.Address(
+            title,
+            address
+        )
+    }
+
+
+fun AddressInfoData.getLabel(): String? =
+    when (this) {
+        is AddressInfoData.Local -> name
+        is AddressInfoData.Remote -> name
+        else -> null
+    }
+
+fun AddressInfoData.getUrl(): String? =
+    when (this) {
+        is AddressInfoData.Remote -> addressLogoUri
+        else -> null
+    }
