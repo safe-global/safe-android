@@ -27,8 +27,12 @@ class Tracker private constructor(context: Context) {
         logEvent(screenId.value, null)
     }
 
-    fun logKeyImported() {
-        logEvent(Event.KEY_IMPORTED, null)
+    fun logKeyImported(usingSeedPhrase: Boolean) {
+        logEvent(
+            Event.KEY_IMPORTED, mapOf(
+                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
+            )
+        )
     }
 
     fun logTransactionConfirmed() {
@@ -87,11 +91,14 @@ class Tracker private constructor(context: Context) {
         val NUM_SAFES = "num_safes"
         val PUSH_INFO = "push_info"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
+        val KEY_IMPORT_TYPE = "import_type"
     }
 
     object ParamValues {
         val PUSH_ENABLED = "enabled"
         val PUSH_DISABLED = "disabled"
+        val KEY_IMPORT_TYPE_SEED = "seed"
+        val KEY_IMPORT_TYPE_KEY = "key"
     }
 
     companion object {

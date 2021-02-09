@@ -41,7 +41,7 @@ class OwnerSelectionViewModelTest {
         coEvery { notificationRepository.registerOwner(any()) } just Runs
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
-        coEvery { tracker.logKeyImported() } just Runs
+        coEvery { tracker.logKeyImported(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
 
         viewModel = OwnerSelectionViewModel(derivator, ownerCredentialsVault, notificationRepository, settingsHandler, tracker, appDispatchers)
@@ -61,7 +61,7 @@ class OwnerSelectionViewModelTest {
             ownerCredentialsVault.storeCredentials(any())
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
-            tracker.logKeyImported()
+            tracker.logKeyImported(true)
             tracker.setNumKeysImported(any())
             notificationRepository.registerOwner(any())
         }
