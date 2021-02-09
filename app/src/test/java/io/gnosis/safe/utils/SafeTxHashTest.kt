@@ -1,17 +1,20 @@
-package io.gnosis.data.utils
+package io.gnosis.safe.utils
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
-import io.gnosis.data.readJsonFrom
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.safe.readJsonFrom
+import io.gnosis.safe.ui.transactions.details.toTransactionDetailsViewData
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.toHexString
 
 class SafeTxHashTest {
 
@@ -30,7 +33,7 @@ class SafeTxHashTest {
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txCustom, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txCustom.toTransactionDetailsViewData(emptyList()), executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -43,7 +46,7 @@ class SafeTxHashTest {
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txTransfer, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txTransfer.toTransactionDetailsViewData(emptyList()), executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -56,7 +59,7 @@ class SafeTxHashTest {
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = io.gnosis.safe.utils.calculateSafeTxHash(safeAddress, txSettingsChange, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(safeAddress, txSettingsChange.toTransactionDetailsViewData(emptyList()), executionInfo)?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
