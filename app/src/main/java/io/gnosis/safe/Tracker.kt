@@ -74,7 +74,7 @@ class Tracker private constructor(context: Context) {
         }
     }
 
-    private fun logException(exception: Exception) {
+    fun logException(exception: Throwable) {
         FirebaseCrashlytics.getInstance().recordException(exception)
     }
 

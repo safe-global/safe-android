@@ -67,6 +67,9 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
                             binding.contentNoData.root.visible(true)
                         }
                         val error = action.error.toError()
+                        if (error.trackingRequired) {
+                            tracker.logException(action.error)
+                        }
                         errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_collectibles))
                     }
                     else -> {

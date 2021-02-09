@@ -74,6 +74,9 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                                     binding.contentNoData.root.visible(true)
                                 }
                                 val error = action.error.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(action.error)
+                                }
                                 errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins))
                             }
                             else -> {
