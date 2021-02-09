@@ -11,7 +11,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -25,6 +24,9 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.AddressInfoData
+import io.gnosis.safe.ui.transactions.details.models.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
@@ -80,7 +82,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is ConfirmationSubmitted -> {
                     binding.txConfirmButtonContainer.visible(false)
-                    viewAction.txDetails?.let { updateUi(it) }
+                    viewAction.txDetails?.let { ::updateUi }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
                 is Loading -> {
@@ -251,7 +253,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
-                        txDetailsTransferBinding.contractAddress.name = R.string.tx_details_asset_contract
+                        txDetailsTransferBinding.contractAddress.name = getString(R.string.tx_details_asset_contract)
                     }
                     else -> {
                         txDetailsTransferBinding.txAction.setActionInfo(
@@ -292,8 +294,26 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
-
-                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
+                val addressUri = when (val toInfo = txInfo.toInfo) {
+                    is AddressInfoData.Remote -> toInfo.addressLogoUri
+                    is AddressInfoData.Local -> null
+                    AddressInfoData.Default -> null
+                    null -> null
+                }
+                val addressName = when(val  toInfo = txInfo.toInfo) {
+                    is AddressInfoData.Local -> toInfo.name
+                    is AddressInfoData.Remote -> toInfo.name
+                    AddressInfoData.Default -> null
+                    null -> null
+                }
+                txDetailsCustomBinding.txAction.setActionInfo(
+                    outgoing = true,
+                    amount = txInfo.formattedAmount(balanceFormatter),
+                    logoUri = txInfo.logoUri()!!,
+                    address = txInfo.to,
+                    addressUri = addressUri,
+                    addressName = addressName
+                )
 
                 val decodedData = txDetails.txData?.dataDecoded
                 if (decodedData == null) {

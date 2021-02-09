@@ -65,7 +65,7 @@ class TxSettingsActionView @JvmOverloads constructor(
     private fun addNamedAddressItem(address: Solidity.Address?, @StringRes label: Int?) {
         val addressItem = NamedAddressItem(context)
         addressItem.address = address
-        addressItem.name = label
+        addressItem.name = label?.let { context.getString(label) }
         addressItem.showSeparator = false
         addView(addressItem)
     }

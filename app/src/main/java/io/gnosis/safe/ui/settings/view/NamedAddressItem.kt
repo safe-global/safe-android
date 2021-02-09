@@ -2,12 +2,16 @@ package io.gnosis.safe.ui.settings.view
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
+import io.gnosis.safe.ui.transactions.loadKnownAddressLogo
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -21,7 +25,7 @@ class NamedAddressItem @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr), Target {
 
     private val binding by lazy { ViewNamedAddressItemBinding.inflate(LayoutInflater.from(context), this) }
 
@@ -53,12 +57,11 @@ class NamedAddressItem @JvmOverloads constructor(
             field = value
         }
 
-   @StringRes
-   var name: Int? = null
+    var name: String? = null
         set(value) {
-            value?.let{
+            value?.let {
                 binding.name.visible(true)
-                binding.name.setText(it)
+                binding.name.text = it
             } ?: binding.name.visible(false)
             field = value
         }
@@ -85,5 +88,20 @@ class NamedAddressItem @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, a: TypedArray) {
         binding.namedAddressItemSeparator.visible(a.getBoolean(R.styleable.NamedAddressItem_show_named_address_separator, false))
+    }
+
+    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+
+    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+        with(binding) {
+            blockies.setAddress(null)
+            blockies.setImageBitmap(bitmap)
+        }
+    }
+
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address, addressItem: NamedAddressItem) {
+        binding.blockies.loadKnownAddressLogo(addressUri, address, this)
     }
 }

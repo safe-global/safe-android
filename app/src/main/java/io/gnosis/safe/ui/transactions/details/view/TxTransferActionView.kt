@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
 
@@ -31,7 +32,9 @@ class TxTransferActionView @JvmOverloads constructor(
         amount: String,
         logoUri: String,
         address: Solidity.Address,
-        tokenId: String = ""
+        tokenId: String = "",
+        addressUri: String? = null,
+        addressName: String? = null
     ) {
 
         clear()
@@ -43,13 +46,21 @@ class TxTransferActionView @JvmOverloads constructor(
                 addAmountItem(amount, logoUri, outgoing)
             }
         } else {
-            addAddressItem(address)
+            if (addressName != null) {
+                addNamedAddressItem(address, addressName, addressUri)
+            } else {
+                addAddressItem(address)
+            }
         }
 
         addArrow()
 
         if (outgoing) {
-            addAddressItem(address)
+            if (addressName != null) {
+                addNamedAddressItem(address, addressName, addressUri)
+            } else {
+                addAddressItem(address)
+            }
         } else {
             if (tokenId.isNotEmpty()) {
                 addErc721Item(logoUri, outgoing, tokenId, amount)
@@ -84,6 +95,17 @@ class TxTransferActionView @JvmOverloads constructor(
         layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
         addressItem.layoutParams = layoutParams
         addressItem.address = address
+        addView(addressItem)
+    }
+
+    private fun addNamedAddressItem(address: Solidity.Address, name: String, addressUri: String?) {
+        val addressItem = NamedAddressItem(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
+        layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
+        addressItem.layoutParams = layoutParams
+        addressItem.address = address
+        addressItem.name = name
+        addressItem.loadKnownAddressLogo(addressUri, address, addressItem)
         addView(addressItem)
     }
 

@@ -2,8 +2,8 @@ package io.gnosis.safe.utils
 
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransferInfo
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewData
-import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.models.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray

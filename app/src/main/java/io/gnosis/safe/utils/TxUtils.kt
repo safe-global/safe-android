@@ -7,7 +7,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.getAddressValueByName
 import io.gnosis.data.repositories.getIntValueByName
 import io.gnosis.safe.R
-import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import java.math.BigInteger
 
