@@ -94,6 +94,9 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.successViews.visible(false)
 
                     val error = it.toError()
+                    if (error.trackingRequired) {
+                        tracker.logException(it)
+                    }
                     binding.dialogEnsInputUrlLayout.error = error.message(requireContext(), R.string.error_description_ens_name)
 
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = true

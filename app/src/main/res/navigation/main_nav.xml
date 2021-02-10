@@ -7,9 +7,13 @@
     app:startDestination="@id/assetsFragment">
 
     <action
-        android:id="@+id/action_to_add_safe_nav"
+        android:id="@+id/action_to_add_safe"
         app:destination="@id/addSafeFragment"
         app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_to_import_owner"
+        app:destination="@id/ownerInfoFragment" />
 
     <dialog
         android:id="@+id/safeSelectionDialog"
@@ -18,7 +22,7 @@
         tools:layout="@layout/dialog_safe_selection">
 
         <action
-            android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
+            android:id="@+id/action_safeSelectionDialog_to_add_safe"
             app:destination="@id/addSafeFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/addSafeFragment"
@@ -41,10 +45,6 @@
         <action
             android:id="@+id/action_assetsFragment_to_collectiblesDetailsFragment"
             app:destination="@id/collectiblesDetailsFragment" />
-
-        <action
-            android:id="@+id/action_assetsFragment_to_ownerInfoFragment"
-            app:destination="@id/ownerInfoFragment" />
 
     </fragment>
 

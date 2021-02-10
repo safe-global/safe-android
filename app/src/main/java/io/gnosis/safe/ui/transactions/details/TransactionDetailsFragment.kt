@@ -100,6 +100,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     viewAction.error.let {
                         if (it is TxConfirmationFailed) {
                             val error = it.cause.toError()
+                            if (error.trackingRequired) {
+                                tracker.logException(it.cause)
+                            }
                             errorSnackbar(
                                 requireView(),
                                 error.message(
@@ -109,6 +112,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             )
                         } else {
                             val error = it.toError()
+                            if (error.trackingRequired) {
+                                tracker.logException(it)
+                            }
                             errorSnackbar(
                                 requireView(),
                                 error.message(

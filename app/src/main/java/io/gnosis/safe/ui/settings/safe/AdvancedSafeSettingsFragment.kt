@@ -72,6 +72,9 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             progress.visible(false)
         }
         val error = viewAction.error.toError()
+        if (error.trackingRequired) {
+            tracker.logException(viewAction.error)
+        }
         errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings_advanced))
         Timber.e(viewAction.error)
     }
