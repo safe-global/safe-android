@@ -10,14 +10,17 @@
     <TextView
         android:id="@+id/name"
         style="@style/TextDark.Bold"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toTopOf="@id/address"
         app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/address"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+        android:ellipsize="end"
+        android:singleLine="true"
         tools:text="@string/default_fallback_handler" />
 
     <TextView
