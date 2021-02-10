@@ -19,12 +19,12 @@ import io.gnosis.safe.databinding.*
 import io.gnosis.safe.ui.base.adapter.Adapter
 import io.gnosis.safe.ui.base.adapter.BaseFactory
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
+import io.gnosis.safe.ui.settings.view.KnownAddressLogoView
 import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
 import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
-import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.time.Instant
@@ -221,14 +221,18 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
 
         with(viewBinding) {
 
-            when(val addressInfo = viewTransfer.addressInfo) {
+            when (val addressInfo = viewTransfer.addressInfo) {
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
-                    addressLogo.loadKnownAddressLogo(addressInfo.addressLogoUri, addressInfo.address.asEthereumAddress()!!, this@ContractInteractionQueuedViewHolder)
+                    addressLogo.loadKnownAddressLogo(
+                        addressInfo.addressLogoUri,
+                        addressInfo.address.asEthereumAddress()!!,
+                        this@ContractInteractionQueuedViewHolder
+                    )
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
@@ -276,14 +280,18 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
 
         with(viewBinding) {
 
-            when(val addressInfo = viewTransfer.addressInfo) {
+            when (val addressInfo = viewTransfer.addressInfo) {
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
-                    addressLogo.loadKnownAddressLogo(addressInfo.addressLogoUri, addressInfo.address.asEthereumAddress()!!, this@ContractInteractionViewHolder)
+                    addressLogo.loadKnownAddressLogo(
+                        addressInfo.addressLogoUri,
+                        addressInfo.address.asEthereumAddress()!!,
+                        this@ContractInteractionViewHolder
+                    )
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
@@ -439,7 +447,7 @@ fun ElapsedInterval.format(resources: Resources) = when (unit) {
     else -> resources.getString(R.string.tx_list_ago_min, value)
 }
 
-fun BlockiesImageView.loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target) {
+fun KnownAddressLogoView.loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target) {
     setAddress(address)
     when {
         !logoUri.isNullOrBlank() -> {

@@ -87,7 +87,7 @@
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Success" />
 
-    <pm.gnosis.blockies.BlockiesImageView
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/address_logo"
         android:layout_width="16dp"
         android:layout_height="16dp"
@@ -95,6 +95,9 @@
         android:layout_marginTop="16dp"
         android:src="@drawable/ic_code_16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeWidth="0.01dp"
+        app:strokeColor="@color/illustration_background" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

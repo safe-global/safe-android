@@ -146,7 +146,7 @@ internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>): SettingsIn
         )
         is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(module, moduleInfo.toAddressInfoData(module, safes))
         is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(module, moduleInfo.toAddressInfoData(module, safes))
-        null -> TODO()
+        null -> null
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
