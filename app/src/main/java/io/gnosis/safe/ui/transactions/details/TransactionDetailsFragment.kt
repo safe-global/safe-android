@@ -243,10 +243,19 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
                 val address = if (outgoing) txInfo.recipient else txInfo.sender
 
-                val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
+                val txType = if (!outgoing) {
                     TxType.TRANSFER_INCOMING
                 } else {
                     TxType.TRANSFER_OUTGOING
+                }
+                val addressUri = when (val info = if (outgoing) txInfo.recipientInfo else txInfo.senderInfo) {
+                    is AddressInfoData.Remote -> info.addressLogoUri
+                    else -> null
+                }
+                val addressName = when (val info = if (outgoing) txInfo.recipientInfo else txInfo.senderInfo) {
+                    is AddressInfoData.Local -> info.name
+                    is AddressInfoData.Remote -> info.name
+                    else -> null
                 }
                 when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc721Transfer -> {
@@ -255,7 +264,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
                             address = address,
-                            tokenId = transferInfo.tokenId
+                            tokenId = transferInfo.tokenId,
+                            addressName = addressName,
+                            addressUri = addressUri
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
@@ -266,7 +277,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             outgoing = outgoing,
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
-                            address = address
+                            address = address,
+                            addressName = addressName,
+                            addressUri = addressUri
                         )
                         txDetailsTransferBinding.contractAddress.visible(false)
                         txDetailsTransferBinding.contractSeparator.visible(false)
