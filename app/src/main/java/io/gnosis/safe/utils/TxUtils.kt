@@ -1,6 +1,6 @@
 package io.gnosis.safe.utils
 
-import android.content.Context
+import android.content.res.Resources
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransferInfo
@@ -77,7 +77,7 @@ fun TransactionInfoViewData.logoUri(): String? =
         is TransactionInfoViewData.Custom, is TransactionInfoViewData.SettingsChange, is TransactionInfoViewData.Creation, TransactionInfoViewData.Unknown -> "local::native_currency"
     }
 
-fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): List<ActionInfoItem> {
+fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resources): List<ActionInfoItem> {
     val settingsMethodTitle = mapOf(
         SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD to R.string.tx_details_add_owner,
         SafeRepository.METHOD_CHANGE_MASTER_COPY to R.string.tx_details_new_mastercopy,
@@ -91,11 +91,10 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): 
     val result = mutableListOf<ActionInfoItem>()
     val settingsChange = this
 
-    val params = settingsChange.dataDecoded.parameters
     when (val settingsInfo = settingsChange.settingsInfo) {
         is SettingsInfoViewData.ChangeImplementation -> {
             val mainCopy = settingsInfo.implementation
-            val label = settingsInfo.implementationInfo?.getLabel() ?: context.resources.getString(mainCopy.implementationVersion())
+            val label = settingsInfo.implementationInfo?.getLabel() ?: resources.getString(mainCopy.implementationVersion())
 
             result.add(
                 getAddressActionInfoItem(
@@ -108,7 +107,7 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): 
         }
         is SettingsInfoViewData.ChangeThreshold -> {
             val value = settingsInfo.threshold.toString()
-            result.add(ActionInfoItem.Value(itemLabel = settingsMethodTitle[settingsChange.dataDecoded.method], value = value))
+            result.add(ActionInfoItem.Value(itemLabel = settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], value = value))
         }
         is SettingsInfoViewData.AddOwner -> {
             result.add(
@@ -126,11 +125,11 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): 
         }
         is SettingsInfoViewData.SetFallbackHandler -> {
 
-            val label: String = settingsInfo.handlerInfo?.getLabel()
+            val label: String? = settingsInfo.handlerInfo?.getLabel()
                 ?: if (SafeRepository.DEFAULT_FALLBACK_HANDLER == settingsInfo.handler) {
-                    context.resources.getString(R.string.default_fallback_handler)
+                    resources.getString(R.string.default_fallback_handler)
                 } else {
-                    context.resources.getString(R.string.unknown_fallback_handler)
+                    resources.getString(R.string.unknown_fallback_handler)
                 }
             result.add(
                 getAddressActionInfoItem(
@@ -145,7 +144,7 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(context: Context): 
             result.add(
                 getAddressActionInfoItem(
                     settingsInfo.oldOwner,
-                    settingsMethodTitle[SafeRepository.METHOD_SET_FALLBACK_HANDLER],
+                    settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
                     settingsInfo.oldOwnerInfo
                 )
             )

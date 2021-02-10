@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions.details.models
 
+import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
@@ -100,11 +101,11 @@ sealed class SettingsInfoViewData(
     ) : SettingsInfoViewData(SettingsInfoType.DISABLE_MODULE)
 }
 
-
 fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): TransactionDetailsViewData =
     TransactionDetailsViewData(txHash, txStatus, txInfo.toTransactionInfoViewData(safes), executedAt, txData, detailedExecutionInfo)
 
-private fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): TransactionInfoViewData =
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
 
@@ -126,7 +127,8 @@ private fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Transa
         is TransactionInfo.Unknown -> TransactionInfoViewData.Unknown
     }
 
-private fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>): SettingsInfoViewData? =
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>): SettingsInfoViewData? =
     when (this) {
         is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(handler, handlerInfo.toAddressInfoData(handler, safes))
         is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner, ownerInfo.toAddressInfoData(owner, safes), threshold)
@@ -147,8 +149,8 @@ private fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>): SettingsInf
         null -> TODO()
     }
 
-
-private fun AddressInfo?.toAddressInfoData(address: Solidity.Address, safes: List<Safe>): AddressInfoData? {
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun AddressInfo?.toAddressInfoData(address: Solidity.Address, safes: List<Safe>): AddressInfoData? {
     val localName = safes.find { it.address == address }?.localName
     val addressString = address.asEthereumAddressString()
     return when {

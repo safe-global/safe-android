@@ -1,21 +1,20 @@
 package io.gnosis.safe.utils
 
+import android.content.res.Resources
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
-import io.gnosis.safe.ui.transactions.details.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.models.SettingsInfoViewData
+import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -30,6 +29,17 @@ class TxUtilsKtTest {
 
     private val balanceFormatter: BalanceFormatter = BalanceFormatter()
     private val DS = balanceFormatter.decimalSeparator
+    private val resources = mockk<Resources>(relaxed = true)
+
+    @Before
+    fun setUp() {
+        resources.apply {
+            every { getString(R.string.default_fallback_handler) } returns "DefaultFallbackHandler"
+            every { getString(R.string.unknown_fallback_handler) } returns "Unknown"
+            every { getString(R.string.implementation_version_1_1_1) } returns SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString()
+            every { getString(R.string.tx_details_change_required_confirmations) } returns "Change required confirmations:"
+        }
+    }
 
     @Test
     fun `formattedAmount (Unknown txInfo) should return 0 ETH`() {
@@ -188,17 +198,11 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (SettingsChange addOwnerWithThreshold) should return Address and Value `() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_ADD_OWNER_WITH_THRESHOLD,
-                    parameters = listOf(
-                        Param.Value("uint256", "_threshold", "1"),
-                        Param.Address("address", "owner", anyAddress)
-                    )
-                ),
-                settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.AddOwner(anyAddress, null, 1)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         assertEquals(R.string.tx_details_add_owner, result[0].itemLabel)
@@ -215,16 +219,11 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Enable Module) result one address item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_ENABLE_MODULE,
-                    parameters = listOf(
-                        Param.Address("address", "module", anyAddress)
-                    )
-                ),
-                settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.EnableModule(anyAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(R.string.tx_details_enable_module, result[0].itemLabel)
         assertEquals(1, result.size)
@@ -236,15 +235,11 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Disable Module) result one adress item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_DISABLE_MODULE,
-                    parameters = listOf(
-                        Param.Address("address", "module", anyAddress)
-                    )
-                ), settingsInfo = null
+                settingsInfo = SettingsInfoViewData.DisableModule(anyAddress, null),
+                dataDecoded = dummyDataDecoded
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.Address)
@@ -256,20 +251,16 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Change Implementation) result one address with label item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_CHANGE_MASTER_COPY,
-                    parameters = listOf(
-                        Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1)
-                    )
-                ), settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals(R.string.implementation_version_1_1_1, address.addressLabel)
+        assertEquals(resources.getString(R.string.implementation_version_1_1_1), address.addressLabel)
         assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
@@ -277,16 +268,11 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Swap Owner) result two address item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SWAP_OWNER,
-                    parameters = listOf(
-                        Param.Address("address", "oldOwner", anyAddress),
-                        Param.Address("address", "newOwner", anotherAddress)
-                    )
-                ), settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SwapOwner(anyAddress, null, anotherAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         val addressOldOwner = (result[0] as ActionInfoItem.Address)
@@ -303,16 +289,11 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Remove Owner) result one address item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_REMOVE_OWNER,
-                    parameters = listOf(
-                        Param.Address("address", "owner", anyAddress),
-                        Param.Value("uint256", "_threshold", "2")
-                    )
-                ), settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.RemoveOwner(anyAddress, null, 2)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         val addressOwner = (result[0] as ActionInfoItem.Address)
@@ -328,61 +309,42 @@ class TxUtilsKtTest {
     fun `txActionInfoItems (Set Fallback Handler ) result one address with label item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SET_FALLBACK_HANDLER,
-                    parameters = listOf(
-                        Param.Address("address", "handler", anyAddress)
-                    )
-                ), settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SetFallbackHandler(anyAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
-        assertEquals(R.string.unknown_fallback_handler, addressOwner.addressLabel)
+        assertEquals(resources.getString(R.string.unknown_fallback_handler), addressOwner.addressLabel)
     }
 
     @Test
     fun `txActionInfoItems (Set Fallback Handler to default) result one address with label item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SET_FALLBACK_HANDLER,
-                    parameters = listOf(
-                        Param.Address(
-                            "address",
-                            "handler",
-                            SafeRepository.DEFAULT_FALLBACK_HANDLER
-                        )
-                    )
-                ), settingsInfo = null
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SetFallbackHandler(SafeRepository.DEFAULT_FALLBACK_HANDLER, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(SafeRepository.DEFAULT_FALLBACK_HANDLER, addressOwner.address)
-        assertEquals(R.string.default_fallback_handler, addressOwner.addressLabel)
+        assertEquals(resources.getString(R.string.default_fallback_handler), addressOwner.addressLabel)
     }
 
     @Test
     fun `txActionInfoItems (Change threshold ) result one value item`() {
         val settingsChange: TransactionInfoViewData.SettingsChange =
-            TransactionInfoViewData.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_CHANGE_THRESHOLD,
-                    parameters = listOf(
-                        Param.Value("uint256", "_threshold", "4")
-                    )
-                ), settingsInfo = null
-            )
+            TransactionInfoViewData.SettingsChange(dataDecoded = dummyDataDecoded, settingsInfo = SettingsInfoViewData.ChangeThreshold(4))
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.Value)
@@ -410,4 +372,9 @@ class TxUtilsKtTest {
             tokenSymbol = tokenSymbol,
             tokenId = "dummy"
         )
+
+    private val dummyDataDecoded = DataDecoded(
+        method = "dummy",
+        parameters = null
+    )
 }
