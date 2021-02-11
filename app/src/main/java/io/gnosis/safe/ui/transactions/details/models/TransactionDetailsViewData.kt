@@ -108,7 +108,6 @@ fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): Transact
 internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-
             TransactionInfoViewData.Custom(to, toInfo.toAddressInfoData(to, safes), dataSize, value, methodName)
         }
         is TransactionInfo.Creation -> TransactionInfoViewData.Creation(creator, transactionHash, implementation, factory)
