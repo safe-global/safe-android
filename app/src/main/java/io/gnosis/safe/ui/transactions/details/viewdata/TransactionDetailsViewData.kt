@@ -24,7 +24,8 @@ sealed class TransactionInfoViewData(
 ) {
     data class Custom(
         val to: Solidity.Address,
-        val toInfo: AddressInfoData?,
+        val addressName: String?,
+        val addressUri: String?,
         val dataSize: Int,
         val value: BigInteger,
         val methodName: String?
@@ -37,7 +38,8 @@ sealed class TransactionInfoViewData(
 
     data class Transfer(
         val address: Solidity.Address,
-        val addressInfoData: AddressInfoData?,
+        val addressUri: String?,
+        val addressName: String?,
         val transferInfo: TransferInfo,
         val direction: TransactionDirection
     ) : TransactionInfoViewData(TransactionType.Transfer)
@@ -106,22 +108,55 @@ fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): Transact
 internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            TransactionInfoViewData.Custom(to, toInfo.toAddressInfoData(to, safes), dataSize, value, methodName)
+            val addressUri = when (val toInfo = toInfo.toAddressInfoData(to, safes)) {
+                is AddressInfoData.Remote -> toInfo.addressLogoUri
+                else -> null
+            }
+            val addressName = when (val toInfo = toInfo.toAddressInfoData(to, safes)) {
+                is AddressInfoData.Local -> toInfo.name
+                is AddressInfoData.Remote -> toInfo.name
+                else -> null
+            }
+            TransactionInfoViewData.Custom(
+                to = to,
+                addressName = addressName,
+                addressUri = addressUri,
+                dataSize = dataSize,
+                value = value,
+                methodName = methodName
+            )
         }
         is TransactionInfo.Creation -> TransactionInfoViewData.Creation(creator, transactionHash, implementation, factory)
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
             settingsInfo.toSettingsInfoViewData(safes)
         )
-        is TransactionInfo.Transfer -> TransactionInfoViewData.Transfer(
-            address = if (direction == TransactionDirection.OUTGOING) recipient else sender,
-            addressInfoData = if (direction == TransactionDirection.OUTGOING) recipientInfo.toAddressInfoData(
-                recipient,
-                safes
-            ) else senderInfo.toAddressInfoData(sender, safes),
-            transferInfo = transferInfo,
-            direction = direction
-        )
+        is TransactionInfo.Transfer -> {
+            val addressInfoData =
+                if (direction == TransactionDirection.OUTGOING) {
+                    recipientInfo.toAddressInfoData(recipient, safes)
+                } else {
+                    senderInfo.toAddressInfoData(sender, safes)
+                }
+
+            val addressUri = when (addressInfoData) {
+                is AddressInfoData.Remote -> addressInfoData.addressLogoUri
+                else -> null
+            }
+            val addressName = when (addressInfoData) {
+                is AddressInfoData.Local -> addressInfoData.name
+                is AddressInfoData.Remote -> addressInfoData.name
+                else -> null
+            }
+            TransactionInfoViewData.Transfer(
+                address = if (direction == TransactionDirection.OUTGOING) recipient else sender,
+                addressUri = addressUri,
+                addressName = addressName,
+
+                transferInfo = transferInfo,
+                direction = direction
+            )
+        }
         is TransactionInfo.Unknown -> TransactionInfoViewData.Unknown
     }
 

@@ -24,7 +24,6 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.AddressInfoData
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
@@ -248,15 +247,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 } else {
                     TxType.TRANSFER_OUTGOING
                 }
-                val addressUri = when (val info = txInfo.addressInfoData) {
-                    is AddressInfoData.Remote -> info.addressLogoUri
-                    else -> null
-                }
-                val addressName = when (val info = txInfo.addressInfoData) {
-                    is AddressInfoData.Local -> info.name
-                    is AddressInfoData.Remote -> info.name
-                    else -> null
-                }
                 when (val transferInfo = txInfo.transferInfo) {
                     is TransferInfo.Erc721Transfer -> {
                         txDetailsTransferBinding.txAction.setActionInfo(
@@ -265,8 +255,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             logoUri = txInfo.logoUri() ?: "",
                             address = address,
                             tokenId = transferInfo.tokenId,
-                            addressName = addressName,
-                            addressUri = addressUri
+                            addressName = txInfo.addressName,
+                            addressUri = txInfo.addressUri
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
@@ -278,8 +268,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
                             address = address,
-                            addressName = addressName,
-                            addressUri = addressUri
+                            addressName = txInfo.addressName,
+                            addressUri = txInfo.addressUri
                         )
                         txDetailsTransferBinding.contractAddress.visible(false)
                         txDetailsTransferBinding.contractSeparator.visible(false)
@@ -313,22 +303,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
-                val addressUri = when (val toInfo = txInfo.toInfo) {
-                    is AddressInfoData.Remote -> toInfo.addressLogoUri
-                    else -> null
-                }
-                val addressName = when (val toInfo = txInfo.toInfo) {
-                    is AddressInfoData.Local -> toInfo.name
-                    is AddressInfoData.Remote -> toInfo.name
-                    else -> null
-                }
+
                 txDetailsCustomBinding.txAction.setActionInfo(
                     outgoing = true,
                     amount = txInfo.formattedAmount(balanceFormatter),
                     logoUri = txInfo.logoUri()!!,
                     address = txInfo.to,
-                    addressUri = addressUri,
-                    addressName = addressName
+                    addressUri = txInfo.addressUri,
+                    addressName = txInfo.addressName
                 )
 
                 val decodedData = txDetails.txData?.dataDecoded

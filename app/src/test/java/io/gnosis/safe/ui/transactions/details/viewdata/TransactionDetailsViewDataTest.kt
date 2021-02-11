@@ -113,11 +113,12 @@ class TransactionDetailsViewDataTest {
 
         assertEquals(
             TransactionInfoViewData.Custom(
-                anyAddress,
-                AddressInfoData.Remote("Remote Name", null, anyAddress.asEthereumAddressChecksumString()),
-                1,
-                BigInteger.ZERO,
-                "dummyName"
+                to = anyAddress,
+                addressName = "Remote Name",
+                addressUri = null,
+                dataSize = 1,
+                value = BigInteger.ZERO,
+                methodName = "dummyName"
             ),
             result
         )
@@ -150,11 +151,13 @@ class TransactionDetailsViewDataTest {
 
         assertEquals(
             TransactionInfoViewData.Transfer(
-                anyAddress,
-                AddressInfoData.Remote("Sender Name", null, anyAddress.asEthereumAddressChecksumString()),
-                TransferInfo.EtherTransfer(
+                address = anyAddress,
+                addressName = "Sender Name",
+                addressUri = null,
+                transferInfo = TransferInfo.EtherTransfer(
                     BigInteger.ONE
-                ), TransactionDirection.INCOMING
+                ),
+                direction = TransactionDirection.INCOMING
             ),
             result
         )
@@ -173,11 +176,13 @@ class TransactionDetailsViewDataTest {
 
         assertEquals(
             TransactionInfoViewData.Transfer(
-                anotherAddress,
-                AddressInfoData.Local("Local Name", anotherAddress.asEthereumAddressChecksumString()),
-                TransferInfo.EtherTransfer(
+                address = anotherAddress,
+                addressName = "Local Name",
+                addressUri = null,
+                transferInfo = TransferInfo.EtherTransfer(
                     BigInteger.ONE
-                ), TransactionDirection.OUTGOING
+                ),
+                direction = TransactionDirection.OUTGOING
             ),
             result
         )

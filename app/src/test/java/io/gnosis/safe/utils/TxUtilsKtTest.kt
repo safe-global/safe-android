@@ -58,7 +58,9 @@ class TxUtilsKtTest {
             dataSize = 0,
             value = BigInteger.ZERO,
             methodName = null,
-            toInfo = null
+            addressName = null,
+            addressUri = null
+
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -73,7 +75,8 @@ class TxUtilsKtTest {
             dataSize = 0,
             value = "1000000000000000000".decimalAsBigInteger(),
             methodName = null,
-            toInfo = null
+            addressName = null,
+            addressUri = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -85,7 +88,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
@@ -99,7 +103,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = BigInteger.ZERO)
         )
@@ -113,7 +118,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
         )
@@ -127,7 +133,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
         )
@@ -141,7 +148,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc721TransferInfo(tokenSymbol = null)
         )
@@ -155,7 +163,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
@@ -169,7 +178,8 @@ class TxUtilsKtTest {
 
         val txInfo = TransactionInfoViewData.Transfer(
             address = Solidity.Address(BigInteger.ZERO),
-            addressInfoData = null,
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger())
         )
