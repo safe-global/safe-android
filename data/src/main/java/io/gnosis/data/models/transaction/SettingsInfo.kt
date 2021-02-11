@@ -30,20 +30,20 @@ sealed class SettingsInfo(
     @JsonClass(generateAdapter = true)
     data class SetFallbackHandler(
         @Json(name = "handler") val handler: Solidity.Address,
-        @Json(name = "handler_info") val handlerInfo: AddressInfo?
+        @Json(name = "handlerInfo") val handlerInfo: AddressInfo?
     ) : SettingsInfo(SettingsInfoType.SET_FALLBACK_HANDLER)
 
     @JsonClass(generateAdapter = true)
     data class AddOwner(
         @Json(name = "owner") val owner: Solidity.Address,
-        @Json(name = "owner_info") val ownerInfo: AddressInfo?,
+        @Json(name = "ownerInfo") val ownerInfo: AddressInfo?,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.ADD_OWNER)
 
     @JsonClass(generateAdapter = true)
     data class RemoveOwner(
         @Json(name = "owner") val owner: Solidity.Address,
-        @Json(name = "owner_info") val ownerInfo: AddressInfo?,
+        @Json(name = "ownerInfo") val ownerInfo: AddressInfo?,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.REMOVE_OWNER)
 
@@ -63,18 +63,18 @@ sealed class SettingsInfo(
     @JsonClass(generateAdapter = true)
     data class ChangeImplementation(
         @Json(name = "implementation") val implementation: Solidity.Address,
-        @Json(name = "implementation_info") val implementationInfo: AddressInfo?
+        @Json(name = "implementationInfo") val implementationInfo: AddressInfo?
     ) : SettingsInfo(SettingsInfoType.CHANGE_IMPLEMENTATION)
 
     @JsonClass(generateAdapter = true)
     data class EnableModule(
         @Json(name = "module") val module: Solidity.Address,
-        @Json(name = "module_info") val moduleInfo: AddressInfo?
+        @Json(name = "moduleInfo") val moduleInfo: AddressInfo?
     ) : SettingsInfo(SettingsInfoType.ENABLE_MODULE)
 
     @JsonClass(generateAdapter = true)
     data class DisableModule(
         @Json(name = "module") val module: Solidity.Address,
-        @Json(name = "module_info") val moduleInfo: AddressInfo?
+        @Json(name = "moduleInfo") val moduleInfo: AddressInfo?
     ) : SettingsInfo(SettingsInfoType.DISABLE_MODULE)
 }
