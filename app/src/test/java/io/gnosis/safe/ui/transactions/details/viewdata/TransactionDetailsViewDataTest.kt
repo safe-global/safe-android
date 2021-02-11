@@ -152,10 +152,32 @@ class TransactionDetailsViewDataTest {
             TransactionInfoViewData.Transfer(
                 anyAddress,
                 AddressInfoData.Remote("Sender Name", null, anyAddress.asEthereumAddressChecksumString()),
-                anotherAddress, AddressInfoData.Local("Local Name", anotherAddress.asEthereumAddressChecksumString()),
                 TransferInfo.EtherTransfer(
                     BigInteger.ONE
                 ), TransactionDirection.INCOMING
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun `toTransactionInfoViewData() (TransactionInfo_Transfer direction outgoing) should return otherAddress `() {
+        val transactionInfo = TransactionInfo.Transfer(
+            anyAddress, AddressInfo("Sender Name", null), anotherAddress, null, TransferInfo.EtherTransfer(
+                BigInteger.ONE
+            ), TransactionDirection.OUTGOING
+        )
+        val safes = listOf(Safe(anotherAddress, "Local Name"))
+
+        val result = transactionInfo.toTransactionInfoViewData(safes)
+
+        assertEquals(
+            TransactionInfoViewData.Transfer(
+                anotherAddress,
+                AddressInfoData.Local("Local Name", anotherAddress.asEthereumAddressChecksumString()),
+                TransferInfo.EtherTransfer(
+                    BigInteger.ONE
+                ), TransactionDirection.OUTGOING
             ),
             result
         )

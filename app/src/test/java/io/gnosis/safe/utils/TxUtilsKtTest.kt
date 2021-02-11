@@ -8,9 +8,9 @@ import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
+import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
-import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -84,12 +84,10 @@ class TxUtilsKtTest {
     fun `formattedAmount (Outgoing Transfer 1 ETH) should return -1 ETH`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -100,12 +98,10 @@ class TxUtilsKtTest {
     fun `formattedAmount (Outgoing Transfer 0 ETH) should return 0 ETH`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = BigInteger.ZERO),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildTransferInfo(value = BigInteger.ZERO)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -116,12 +112,10 @@ class TxUtilsKtTest {
     fun `formattedAmount (Incoming WETH Transfer) should return +0_1 WETH`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -132,12 +126,10 @@ class TxUtilsKtTest {
     fun `formattedAmount (null ERC20 tokenSymbol) should return +0_1 ERC20`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -148,12 +140,10 @@ class TxUtilsKtTest {
     fun `formattedAmount (null ERC721 tokenSymbol) should return +1 NFT`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc721TransferInfo(tokenSymbol = null),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc721TransferInfo(tokenSymbol = null)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -164,29 +154,24 @@ class TxUtilsKtTest {
     fun `logoUri (Ether transfer) load ethereum url`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.logoUri()
 
         assertEquals("local::native_currency", result)
     }
 
-
     @Test
     fun `logoUri (WETH transfer) load ethereum url`() {
 
         val txInfo = TransactionInfoViewData.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+            address = Solidity.Address(BigInteger.ZERO),
+            addressInfoData = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger()),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.logoUri()
 

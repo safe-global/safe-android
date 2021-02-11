@@ -91,5 +91,3 @@ data class ConfirmationSubmitted(
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()
-
-

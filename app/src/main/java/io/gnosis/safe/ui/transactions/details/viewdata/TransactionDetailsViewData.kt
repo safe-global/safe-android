@@ -36,10 +36,8 @@ sealed class TransactionInfoViewData(
     ) : TransactionInfoViewData(TransactionType.SettingsChange)
 
     data class Transfer(
-        val sender: Solidity.Address,
-        val senderInfo: AddressInfoData?,
-        val recipient: Solidity.Address,
-        val recipientInfo: AddressInfoData?,
+        val address: Solidity.Address,
+        val addressInfoData: AddressInfoData?,
         val transferInfo: TransferInfo,
         val direction: TransactionDirection
     ) : TransactionInfoViewData(TransactionType.Transfer)
@@ -116,12 +114,13 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Trans
             settingsInfo.toSettingsInfoViewData(safes)
         )
         is TransactionInfo.Transfer -> TransactionInfoViewData.Transfer(
-            sender,
-            senderInfo.toAddressInfoData(sender, safes),
-            recipient,
-            recipientInfo.toAddressInfoData(recipient, safes),
-            transferInfo,
-            direction
+            address = if (direction == TransactionDirection.OUTGOING) recipient else sender,
+            addressInfoData = if (direction == TransactionDirection.OUTGOING) recipientInfo.toAddressInfoData(
+                recipient,
+                safes
+            ) else senderInfo.toAddressInfoData(sender, safes),
+            transferInfo = transferInfo,
+            direction = direction
         )
         is TransactionInfo.Unknown -> TransactionInfoViewData.Unknown
     }

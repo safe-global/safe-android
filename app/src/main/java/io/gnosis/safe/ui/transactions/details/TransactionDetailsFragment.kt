@@ -25,9 +25,9 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.AddressInfoData
+import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
-import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -241,18 +241,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
-                val address = if (outgoing) txInfo.recipient else txInfo.sender
+                val address = txInfo.address
 
                 val txType = if (!outgoing) {
                     TxType.TRANSFER_INCOMING
                 } else {
                     TxType.TRANSFER_OUTGOING
                 }
-                val addressUri = when (val info = if (outgoing) txInfo.recipientInfo else txInfo.senderInfo) {
+                val addressUri = when (val info = txInfo.addressInfoData) {
                     is AddressInfoData.Remote -> info.addressLogoUri
                     else -> null
                 }
-                val addressName = when (val info = if (outgoing) txInfo.recipientInfo else txInfo.senderInfo) {
+                val addressName = when (val info = txInfo.addressInfoData) {
                     is AddressInfoData.Local -> info.name
                     is AddressInfoData.Remote -> info.name
                     else -> null

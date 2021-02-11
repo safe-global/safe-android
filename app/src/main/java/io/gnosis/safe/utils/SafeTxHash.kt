@@ -27,7 +27,7 @@ fun calculateSafeTxHash(
                     transferInfo.tokenAddress
                 }
                 is TransferInfo.EtherTransfer -> {
-                    txInfo.recipient
+                    txInfo.address
                 }
             }
         }
