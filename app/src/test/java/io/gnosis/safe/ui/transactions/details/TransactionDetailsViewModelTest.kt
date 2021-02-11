@@ -10,7 +10,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transactions.details.models.toTransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*

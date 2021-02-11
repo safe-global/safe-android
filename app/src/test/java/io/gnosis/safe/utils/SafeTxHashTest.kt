@@ -6,7 +6,7 @@ import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.readJsonFrom
-import io.gnosis.safe.ui.transactions.details.models.toTransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking

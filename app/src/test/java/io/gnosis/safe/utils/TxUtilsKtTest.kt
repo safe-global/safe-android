@@ -8,8 +8,8 @@ import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
-import io.gnosis.safe.ui.transactions.details.models.SettingsInfoViewData
-import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.mockk.every
 import io.mockk.mockk

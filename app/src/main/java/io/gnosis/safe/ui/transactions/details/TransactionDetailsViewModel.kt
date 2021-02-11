@@ -7,8 +7,8 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transactions.details.models.TransactionDetailsViewData
-import io.gnosis.safe.ui.transactions.details.models.toTransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.calculateSafeTxHash
 import pm.gnosis.utils.addHexPrefix

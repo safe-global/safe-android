@@ -25,8 +25,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.AddressInfoData
-import io.gnosis.safe.ui.transactions.details.models.TransactionDetailsViewData
-import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl

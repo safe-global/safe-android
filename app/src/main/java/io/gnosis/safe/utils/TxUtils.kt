@@ -7,8 +7,8 @@ import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.AddressInfoData
-import io.gnosis.safe.ui.transactions.details.models.SettingsInfoViewData
-import io.gnosis.safe.ui.transactions.details.models.TransactionInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import pm.gnosis.model.Solidity
 import java.math.BigInteger

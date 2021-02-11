@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.transactions.details.models
+package io.gnosis.safe.ui.transactions.details.viewdata
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.AddressInfo
