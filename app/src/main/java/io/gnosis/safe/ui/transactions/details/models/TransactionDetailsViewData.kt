@@ -10,7 +10,7 @@ import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import java.util.*
 
-class TransactionDetailsViewData(
+data class TransactionDetailsViewData(
     val txHash: String?,
     val txStatus: TransactionStatus,
     val txInfo: TransactionInfoViewData,

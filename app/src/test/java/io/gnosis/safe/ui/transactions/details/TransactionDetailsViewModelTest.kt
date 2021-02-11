@@ -17,7 +17,6 @@ import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
@@ -51,18 +50,17 @@ class TransactionDetailsViewModelTest {
     }
 
     @Test
-    @Ignore
     fun `loadDetails (successful) should emit txDetails`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         coEvery { transactionRepository.getTransactionDetails(any()) } returns transactionDetails
-        coEvery { safeRepository.getSafes()} returns emptyList()
-        val transactionInfoViewData = transactionDetails.toTransactionDetailsViewData(emptyList())
+        coEvery { safeRepository.getSafes() } returns emptyList()
+        val expectedTransactionInfoViewData = transactionDetails.toTransactionDetailsViewData(emptyList())
 
         viewModel.loadDetails("tx_details_id")
 
         with(viewModel.state.test().values()) {
-            assertEquals(UpdateDetails(transactionInfoViewData), this[0].viewAction)
+            assertEquals(UpdateDetails(expectedTransactionInfoViewData), this[0].viewAction)
         }
         coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id") }
     }
@@ -242,12 +240,11 @@ class TransactionDetailsViewModelTest {
     }
 
     @Test
-    @Ignore
     fun `submitConfirmation (successful) emits ConfirmationSubmitted`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
-        coEvery { safeRepository.getSafes()} returns emptyList()
+        coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { transactionRepository.sign(any(), any()) } returns ""
         coEvery { transactionRepository.submitConfirmation(any(), any()) } returns transactionDetails
         coEvery { ownerCredentialsRepository.retrieveCredentials() } returns OwnerCredentials(
