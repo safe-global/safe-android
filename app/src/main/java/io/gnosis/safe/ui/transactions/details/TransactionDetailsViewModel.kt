@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
+import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
@@ -46,7 +47,9 @@ class TransactionDetailsViewModel
 
 
     var txDetails: TransactionDetails? = null
-        private set
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        set
+
 
     fun submitConfirmation(transaction: TransactionDetails) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails

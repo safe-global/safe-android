@@ -151,6 +151,7 @@ class TransactionDetailsViewModelTest {
     fun `submitConfirmation (invalid safeTxHash) emits error MismatchingSafeTxHash`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
 
@@ -166,6 +167,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { ownerCredentialsRepository.retrieveCredentials() } returns null
+        viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
 
@@ -189,6 +191,7 @@ class TransactionDetailsViewModelTest {
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
+        viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
 
@@ -214,7 +217,7 @@ class TransactionDetailsViewModelTest {
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
-        coEvery { viewModel.txDetails } returns transactionDetails
+        viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
 
@@ -241,6 +244,7 @@ class TransactionDetailsViewModelTest {
             BigInteger.ONE
         )
         coEvery { tracker.logTransactionConfirmed() } just Runs
+        viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
 
