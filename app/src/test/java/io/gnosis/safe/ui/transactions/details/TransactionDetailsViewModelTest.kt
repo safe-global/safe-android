@@ -152,10 +152,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
 
-        viewModel.submitConfirmation(
-            transactionDetails.toTransactionDetailsViewData(emptyList()),
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        )
+        viewModel.submitConfirmation(transactionDetails)
 
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MismatchingSafeTxHash))
@@ -170,10 +167,7 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { ownerCredentialsRepository.retrieveCredentials() } returns null
 
-        viewModel.submitConfirmation(
-            transactionDetails.toTransactionDetailsViewData(emptyList()),
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        )
+        viewModel.submitConfirmation(transactionDetails)
 
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MissingOwnerCredential))
@@ -196,10 +190,7 @@ class TransactionDetailsViewModelTest {
             BigInteger.ONE
         )
 
-        viewModel.submitConfirmation(
-            transactionDetails.toTransactionDetailsViewData(emptyList()),
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        )
+        viewModel.submitConfirmation(transactionDetails)
 
         with(viewModel.state.test().values()) {
             assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
@@ -223,11 +214,9 @@ class TransactionDetailsViewModelTest {
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
+        coEvery { viewModel.txDetails } returns transactionDetails
 
-        viewModel.submitConfirmation(
-            transactionDetails.toTransactionDetailsViewData(emptyList()),
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        )
+        viewModel.submitConfirmation(transactionDetails)
 
         with(viewModel.state.test().values()) {
             assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
@@ -253,10 +242,7 @@ class TransactionDetailsViewModelTest {
         )
         coEvery { tracker.logTransactionConfirmed() } just Runs
 
-        viewModel.submitConfirmation(
-            transactionDetails.toTransactionDetailsViewData(emptyList()),
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        )
+        viewModel.submitConfirmation(transactionDetails)
 
         with(viewModel.state.test().values()) {
             assertEquals(ConfirmationSubmitted(transactionDetails.toTransactionDetailsViewData(emptyList())), this[0].viewAction)

@@ -1,16 +1,17 @@
 package io.gnosis.safe.ui.transactions.details
 
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
+import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.OwnerCredentialsRepository
-import io.gnosis.safe.utils.calculateSafeTxHash
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -29,10 +30,10 @@ class TransactionDetailsViewModel
     fun loadDetails(txId: String) {
         safeLaunch {
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            val txDetails = transactionRepository.getTransactionDetails(txId)
+            txDetails = transactionRepository.getTransactionDetails(txId)
             val safes = safeRepository.getSafes()
             updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
-            updateState { TransactionDetailsViewState(UpdateDetails(txDetails.toTransactionDetailsViewData(safes))) }
+            updateState { TransactionDetailsViewState(UpdateDetails(txDetails?.toTransactionDetailsViewData(safes))) }
         }
     }
 
@@ -43,7 +44,14 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address) && !executionInfo.confirmations.map { it.signer }.contains(credentials.address)
         }
 
-    fun submitConfirmation(transaction: TransactionDetailsViewData, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails) {
+
+    var txDetails: TransactionDetails? = null
+        private set
+
+    fun submitConfirmation(transaction: TransactionDetails) {
+        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+            ?: throw RuntimeException("MissingCorrectExecutionDetailsException")
+
         safeLaunch {
             validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
@@ -61,10 +69,11 @@ class TransactionDetailsViewModel
                 throw TxConfirmationFailed(it)
             }
         }
+
     }
 
     private suspend fun validateSafeTxHash(
-        transaction: TransactionDetailsViewData,
+        transaction: TransactionDetails,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
     ): Boolean {
         return kotlin.runCatching {

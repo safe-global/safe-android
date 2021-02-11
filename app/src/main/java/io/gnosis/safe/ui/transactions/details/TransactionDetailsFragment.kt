@@ -161,7 +161,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             confirmColor = R.color.primary
                         ) {
                             binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(txDetails, executionInfo)
+                            viewModel.submitConfirmation(viewModel.txDetails!!)
                         }
                     }
                 } else {
