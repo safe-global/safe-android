@@ -5,9 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import com.google.android.material.imageview.ShapeableImageView
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import io.gnosis.safe.R
 import pm.gnosis.blockies.Blockies
 import pm.gnosis.blockies.BlockiesPainter
 import pm.gnosis.model.Solidity
@@ -44,6 +46,7 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
         setAddress(null)
         setImageBitmap(bitmap)
+        background = ContextCompat.getDrawable(context, R.drawable.circle)
     }
 
     fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target = this) {
@@ -56,5 +59,4 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
             }
         }
     }
-
 }
