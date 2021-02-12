@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
-import io.gnosis.safe.ui.transactions.loadKnownAddressLogo
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -87,6 +86,6 @@ class NamedAddressItem @JvmOverloads constructor(
     }
 
     fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address) {
-        binding.blockies.loadKnownAddressLogo(addressUri, address, binding.blockies)
+        binding.blockies.loadKnownAddressLogo(addressUri, address)
     }
 }

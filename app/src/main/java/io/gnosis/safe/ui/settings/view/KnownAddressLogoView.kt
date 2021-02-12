@@ -45,4 +45,16 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
         setAddress(null)
         setImageBitmap(bitmap)
     }
+
+    fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target = this) {
+        setAddress(address)
+        when {
+            !logoUri.isNullOrBlank() -> {
+                Picasso.get()
+                    .load(logoUri)
+                    .into(target)
+            }
+        }
+    }
+
 }
