@@ -10,14 +10,17 @@
     <TextView
         android:id="@+id/name"
         style="@style/TextDark.Bold"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toTopOf="@id/address"
         app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/address"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+        android:ellipsize="end"
+        android:singleLine="true"
         tools:text="@string/default_fallback_handler" />
 
     <TextView
@@ -50,7 +53,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_link_green_24dp" />
 
-    <pm.gnosis.blockies.BlockiesImageView
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/blockies"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -58,12 +61,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeWidth="0.01dp"
+        app:strokeColor="@color/illustration_background" />
 
     <View
         android:id="@+id/named_address_item_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
         android:background="@color/separator"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeWidth="0.01dp"
+        app:strokeColor="@color/illustration_background" />
 </merge>

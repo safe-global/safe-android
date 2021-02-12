@@ -32,7 +32,11 @@ class SafeTxHashTest {
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txCustom, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(
+            safeAddress,
+            txCustom,
+            executionInfo
+        )?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -45,7 +49,11 @@ class SafeTxHashTest {
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txTransfer, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(
+            safeAddress,
+            txTransfer,
+            executionInfo
+        )?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -58,7 +66,11 @@ class SafeTxHashTest {
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
-        val calculatedTxHash = calculateSafeTxHash(safeAddress, txSettingsChange, executionInfo)?.toHexString()?.addHexPrefix()
+        val calculatedTxHash = calculateSafeTxHash(
+            safeAddress,
+            txSettingsChange,
+            executionInfo
+        )?.toHexString()?.addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }

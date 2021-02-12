@@ -1,20 +1,20 @@
 package io.gnosis.safe.utils
 
+import android.content.res.Resources
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.models.transaction.*
+import io.gnosis.data.models.transaction.DataDecoded
+import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ADD_OWNER_WITH_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_MASTER_COPY
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_CHANGE_THRESHOLD
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_DISABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_ENABLE_MODULE
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SWAP_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
+import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -29,11 +29,22 @@ class TxUtilsKtTest {
 
     private val balanceFormatter: BalanceFormatter = BalanceFormatter()
     private val DS = balanceFormatter.decimalSeparator
+    private val resources = mockk<Resources>(relaxed = true)
+
+    @Before
+    fun setUp() {
+        resources.apply {
+            every { getString(R.string.default_fallback_handler) } returns "DefaultFallbackHandler"
+            every { getString(R.string.unknown_fallback_handler) } returns "Unknown"
+            every { getString(R.string.implementation_version_1_1_1) } returns SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString()
+            every { getString(R.string.tx_details_change_required_confirmations) } returns "Change required confirmations:"
+        }
+    }
 
     @Test
     fun `formattedAmount (Unknown txInfo) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Unknown
+        val txInfo = TransactionInfoViewData.Unknown
         val result = txInfo.formattedAmount(balanceFormatter)
 
         assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
@@ -42,12 +53,14 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Custom txInfo) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Custom(
+        val txInfo = TransactionInfoViewData.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = BigInteger.ZERO,
             methodName = null,
-            toInfo = null
+            addressName = null,
+            addressUri = null
+
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -57,12 +70,13 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Custom txInfo with amount) should return negative ETH amount`() {
 
-        val txInfo = TransactionInfo.Custom(
+        val txInfo = TransactionInfoViewData.Custom(
             to = Solidity.Address(BigInteger.ZERO),
             dataSize = 0,
             value = "1000000000000000000".decimalAsBigInteger(),
             methodName = null,
-            toInfo = null
+            addressName = null,
+            addressUri = null
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -72,13 +86,12 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Outgoing Transfer 1 ETH) should return -1 ETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -88,13 +101,12 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Outgoing Transfer 0 ETH) should return 0 ETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = BigInteger.ZERO),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildTransferInfo(value = BigInteger.ZERO)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -104,13 +116,12 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (Incoming WETH Transfer) should return +0_1 WETH`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -120,13 +131,12 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (null ERC20 tokenSymbol) should return +0_1 ERC20`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -136,13 +146,12 @@ class TxUtilsKtTest {
     @Test
     fun `formattedAmount (null ERC721 tokenSymbol) should return +1 NFT`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.INCOMING,
-            transferInfo = buildErc721TransferInfo(tokenSymbol = null),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc721TransferInfo(tokenSymbol = null)
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -152,30 +161,27 @@ class TxUtilsKtTest {
     @Test
     fun `logoUri (Ether transfer) load ethereum url`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger()),
-            senderInfo = null,
-            recipientInfo = null
+            transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.logoUri()
 
         assertEquals("local::native_currency", result)
     }
 
-
     @Test
     fun `logoUri (WETH transfer) load ethereum url`() {
 
-        val txInfo = TransactionInfo.Transfer(
-            sender = Solidity.Address(BigInteger.ZERO),
-            recipient = Solidity.Address(BigInteger.ONE),
+        val txInfo = TransactionInfoViewData.Transfer(
+            address = Solidity.Address(BigInteger.ZERO),
+            addressName = null,
+            addressUri = null,
             direction = TransactionDirection.OUTGOING,
-            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger()),
-            recipientInfo = null,
-            senderInfo = null
+            transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger())
         )
         val result = txInfo.logoUri()
 
@@ -185,19 +191,13 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (SettingsChange addOwnerWithThreshold) should return Address and Value `() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_ADD_OWNER_WITH_THRESHOLD,
-                    parameters = listOf(
-                        Param.Value("uint256", "_threshold", "1"),
-                        Param.Address("address", "owner", anyAddress)
-                    )
-                ),
-                settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.AddOwner(anyAddress, null, 1)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         assertEquals(R.string.tx_details_add_owner, result[0].itemLabel)
@@ -212,18 +212,13 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Enable Module) result one address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_ENABLE_MODULE,
-                    parameters = listOf(
-                        Param.Address("address", "module", anyAddress)
-                    )
-                ),
-                settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.EnableModule(anyAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(R.string.tx_details_enable_module, result[0].itemLabel)
         assertEquals(1, result.size)
@@ -233,17 +228,13 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Disable Module) result one adress item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_DISABLE_MODULE,
-                    parameters = listOf(
-                        Param.Address("address", "module", anyAddress)
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                settingsInfo = SettingsInfoViewData.DisableModule(anyAddress, null),
+                dataDecoded = dummyDataDecoded
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.Address)
@@ -253,39 +244,30 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Change Implementation) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_CHANGE_MASTER_COPY,
-                    parameters = listOf(
-                        Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1)
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals(R.string.implementation_version_1_1_1, address.addressLabel)
+        assertEquals(resources.getString(R.string.implementation_version_1_1_1), address.addressLabel)
         assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
     @Test
     fun `txActionInfoItems (Swap Owner) result two address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SWAP_OWNER,
-                    parameters = listOf(
-                        Param.Address("address", "oldOwner", anyAddress),
-                        Param.Address("address", "newOwner", anotherAddress)
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SwapOwner(anyAddress, null, anotherAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         val addressOldOwner = (result[0] as ActionInfoItem.Address)
@@ -300,18 +282,13 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Remove Owner) result one address item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_REMOVE_OWNER,
-                    parameters = listOf(
-                        Param.Address("address", "owner", anyAddress),
-                        Param.Value("uint256", "_threshold", "2")
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.RemoveOwner(anyAddress, null, 2)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(2, result.size)
         val addressOwner = (result[0] as ActionInfoItem.Address)
@@ -325,63 +302,44 @@ class TxUtilsKtTest {
 
     @Test
     fun `txActionInfoItems (Set Fallback Handler ) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SET_FALLBACK_HANDLER,
-                    parameters = listOf(
-                        Param.Address("address", "handler", anyAddress)
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SetFallbackHandler(anyAddress, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
-        assertEquals(R.string.unknown_fallback_handler, addressOwner.addressLabel)
+        assertEquals(resources.getString(R.string.unknown_fallback_handler), addressOwner.addressLabel)
     }
 
     @Test
     fun `txActionInfoItems (Set Fallback Handler to default) result one address with label item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_SET_FALLBACK_HANDLER,
-                    parameters = listOf(
-                        Param.Address(
-                            "address",
-                            "handler",
-                            SafeRepository.DEFAULT_FALLBACK_HANDLER
-                        )
-                    )
-                ), settingsInfo = null
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SetFallbackHandler(SafeRepository.DEFAULT_FALLBACK_HANDLER, null)
             )
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
         assertEquals(R.string.tx_details_set_fallback_handler, addressOwner.itemLabel)
         assertEquals(SafeRepository.DEFAULT_FALLBACK_HANDLER, addressOwner.address)
-        assertEquals(R.string.default_fallback_handler, addressOwner.addressLabel)
+        assertEquals(resources.getString(R.string.default_fallback_handler), addressOwner.addressLabel)
     }
 
     @Test
     fun `txActionInfoItems (Change threshold ) result one value item`() {
-        val settingsChange: TransactionInfo.SettingsChange =
-            TransactionInfo.SettingsChange(
-                dataDecoded = DataDecoded(
-                    method = METHOD_CHANGE_THRESHOLD,
-                    parameters = listOf(
-                        Param.Value("uint256", "_threshold", "4")
-                    )
-                ), settingsInfo = null
-            )
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(dataDecoded = dummyDataDecoded, settingsInfo = SettingsInfoViewData.ChangeThreshold(4))
 
-        val result = settingsChange.txActionInfoItems()
+        val result = settingsChange.txActionInfoItems(resources)
 
         assertEquals(1, result.size)
         val addressOwner = (result[0] as ActionInfoItem.Value)
@@ -409,4 +367,9 @@ class TxUtilsKtTest {
             tokenSymbol = tokenSymbol,
             tokenId = "dummy"
         )
+
+    private val dummyDataDecoded = DataDecoded(
+        method = "dummy",
+        parameters = null
+    )
 }

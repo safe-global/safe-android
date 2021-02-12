@@ -124,7 +124,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             this.address = address
-            this.name = label
+            this.name = label?.let { getString(label) }
             showSeparator = true
         }
     }
