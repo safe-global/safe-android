@@ -85,7 +85,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                             content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value))
                         }
                         is Param.Array -> {
-                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType()))
+                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type))
                         }
                         is Param.Bytes -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
@@ -112,13 +112,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType): LabeledArrayItem {
+    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String): LabeledArrayItem {
         val item = LabeledArrayItem(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
         item.label = name
-        item.showArray(value, paramType)
+        item.showArray(value, paramType, paramTypeValue)
         return item
     }
 

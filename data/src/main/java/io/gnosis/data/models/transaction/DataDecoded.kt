@@ -44,14 +44,7 @@ sealed class Param {
         override val value: List<Any>
     ) : Param() {
 
-        fun getItemType(): ParamType {
-            val baseType = type.split("[")[0]
-            return when  {
-                baseType == "address" -> ParamType.ADDRESS
-                baseType.startsWith("bytes") -> ParamType.BYTES
-                else -> ParamType.VALUE
-            }
-        }
+        fun getItemType(): ParamType = getParamItemType(type)
     }
 
     data class Bytes(
@@ -83,10 +76,21 @@ sealed class Param {
 enum class ParamType {
     ADDRESS,
     BYTES,
-    VALUE
+    VALUE,
+    MIXED
 }
 
 enum class Operation(val id: Int) {
     CALL(0),
     DELEGATE(1)
+}
+
+fun getParamItemType(type: String): ParamType {
+    val baseType = type.split("[")[0]
+    return when  {
+        baseType == "address" -> ParamType.ADDRESS
+        baseType.startsWith("bytes") -> ParamType.BYTES
+        baseType.startsWith("(") -> ParamType.MIXED
+        else -> ParamType.VALUE
+    }
 }
