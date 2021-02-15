@@ -32,9 +32,15 @@ class DataMoshiTest {
             txInfo = TransactionInfo.Transfer(
                 direction = TransactionDirection.INCOMING,
                 recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
-                recipientInfo = AddressInfo("Foo Bar Recipient", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x1C8b9B78e3085866521FE206fa4c1a67F49f153A.png"),
+                recipientInfo = AddressInfo(
+                    "Foo Bar Recipient",
+                    "https://gnosis-safe-token-logos.s3.amazonaws.com/0x1C8b9B78e3085866521FE206fa4c1a67F49f153A.png"
+                ),
                 sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                senderInfo = AddressInfo("Foo Bar Sender", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"),
+                senderInfo = AddressInfo(
+                    "Foo Bar Sender",
+                    "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
+                ),
                 transferInfo = TransferInfo.Erc20Transfer(
                     decimals = 18,
                     logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0xc778417E063141139Fce010982780140Aa0cD5Ab.png",
@@ -144,7 +150,7 @@ class DataMoshiTest {
 
         val params = paramAdapter.fromJson(jsonString)!!
 
-        assertEquals(8, params?.size)
+        assertEquals(10, params.size)
 
         assertTrue(params[0] is Param.Address)
         assertEquals("from", params[0].name)
@@ -171,23 +177,63 @@ class DataMoshiTest {
         assertEquals("bytes", params[4].type)
         assertEquals("0x00", params[4].value)
 
-        assertTrue(params[5] is Param.Bytes)
-        assertEquals("transactions", params[5].name)
-        assertEquals("bytes", params[5].type)
+        assertTrue(params[5] is Param.Array)
+        assertEquals("desc", params[5].name)
+        assertEquals("(address,address,address,address,uint256,uint256,uint256,uint256,address,bytes)", params[5].type)
         assertEquals(
-            "0x00c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000470de4df81ffec0000000000000000000000000000000000000000000000000000000000000004d0e30db000c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044095ea7b30000000000000000000000007ee114c3628ca90119fc699f03665bf9db8f5faf00000000000000000000000000000000000000000000000000470de4df81ffec007ee114c3628ca90119fc699f03665bf9db8f5faf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4dc7d93690000000000000000000000006e45d69a383ceca3d54688e833bd0e1388747e6b00000000000000000000000000000000000000000000000000470de4df81ffec000000000000000000000000c778417e063141139fce010982780140aa0cd5ab000000000000000000000000000000000000000000000000000000005f59386c000000000000000000000000000000000000000000000000000000005f593920",
+            listOf(
+                "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+                "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+                "0xe069CB01D06bA617bCDf789bf2ff0D5E5ca20C71",
+                "0xeaFCF7D8Afe33e443041E073c52423538c0D7851",
+                "3000000000000000000",
+                "2887838364160259767",
+                "2977152952742535843",
+                "4",
+                "0x0000000000000000000000000000000000000000",
+                "0x"
+            ),
             params[5].value
         )
 
         assertTrue(params[6] is Param.Bytes)
-        assertEquals("data", params[6].name)
+        assertEquals("transactions", params[6].name)
         assertEquals("bytes", params[6].type)
-        assertEquals("0x00", params[6].value)
+        assertEquals(
+            "0x00c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000470de4df81ffec0000000000000000000000000000000000000000000000000000000000000004d0e30db000c778417e063141139fce010982780140aa0cd5ab00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044095ea7b30000000000000000000000007ee114c3628ca90119fc699f03665bf9db8f5faf00000000000000000000000000000000000000000000000000470de4df81ffec007ee114c3628ca90119fc699f03665bf9db8f5faf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4dc7d93690000000000000000000000006e45d69a383ceca3d54688e833bd0e1388747e6b00000000000000000000000000000000000000000000000000470de4df81ffec000000000000000000000000c778417e063141139fce010982780140aa0cd5ab000000000000000000000000000000000000000000000000000000005f59386c000000000000000000000000000000000000000000000000000000005f593920",
+            params[6].value
+        )
 
         assertTrue(params[7] is Param.Bytes)
         assertEquals("data", params[7].name)
         assertEquals("bytes", params[7].type)
         assertEquals("0x00", params[7].value)
+
+        assertTrue(params[8] is Param.Bytes)
+        assertEquals("data", params[8].name)
+        assertEquals("bytes", params[8].type)
+        assertEquals("0x00", params[8].value)
+
+        assertTrue(params[9] is Param.Array)
+        assertEquals("desc", params[9].name)
+        assertEquals("(address,address,address,address,uint256,uint256,uint256,uint256,address,bytes)[]", params[9].type)
+        assertEquals(
+            listOf(
+                listOf(
+                    "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+                    "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+                    "0xe069CB01D06bA617bCDf789bf2ff0D5E5ca20C71",
+                    "0xeaFCF7D8Afe33e443041E073c52423538c0D7851",
+                    "3000000000000000000",
+                    "2887838364160259767",
+                    "2977152952742535843",
+                    "4",
+                    "0x0000000000000000000000000000000000000000",
+                    "0x"
+                )
+            ),
+            params[9].value
+        )
 
         val json = paramAdapter.toJson(params)
         assertTrue(json.isNotEmpty())

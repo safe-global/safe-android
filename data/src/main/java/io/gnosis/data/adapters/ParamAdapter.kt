@@ -106,7 +106,7 @@ class ParamAdapter {
                                         return Param.Bytes(type, name, value, null)
                                     }
                                 }
-                                !type.contains("[") -> {
+                                !type.contains("[") && !type.contains("(") -> {
                                     val value = reader.nextString()
                                     reader.endObject()
                                     return Param.Value(type, name, value)
