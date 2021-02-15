@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.transaction.ParamType
+import io.gnosis.data.models.transaction.getParamItemType
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewLabeledArrayArrayItemBinding
 import io.gnosis.safe.databinding.ViewLabeledArrayItemBinding
@@ -35,16 +36,26 @@ class LabeledArrayItem @JvmOverloads constructor(
             field = value
         }
 
-    fun showArray(array: List<Any>?, paramType: ParamType) {
+    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String) {
         binding.arrayItemValues.removeAllViews()
+        val typeValues = if (paramType == ParamType.MIXED) {
+            paramValue.replace("[]", "").removeSurrounding("(", ")")
+        } else {
+            paramValue
+        }
         nestingLevel = 1
         if (!array.isNullOrEmpty()) {
-            array.forEach {
-                if (it is List<*>) {
-                    addArrayItem(binding.arrayItemValues, it as List<Any>, paramType)
+            array.forEachIndexed { index, value ->
+                if (value is List<*>) {
+                    addArrayItem(binding.arrayItemValues, value as List<Any>, paramType, typeValues)
 
                 } else {
-                    addValueItem(binding.arrayItemValues, it, paramType)
+                    if (paramType == ParamType.MIXED) {
+                        val valueType = typeValues.split(",")[index]
+                        addValueItem(binding.arrayItemValues, value, getParamItemType(valueType))
+                    } else {
+                        addValueItem(binding.arrayItemValues, value, paramType)
+                    }
                 }
             }
         } else {
@@ -52,7 +63,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         }
     }
 
-    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType) {
+    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String) {
         val arrayItem = ArrayItem(context)
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(6), 0, 0)
@@ -61,16 +72,21 @@ class LabeledArrayItem @JvmOverloads constructor(
         if (values.isEmpty()) {
             addEmptyValue(arrayItem.container)
         } else {
-            values.forEach {
-                if (it is List<*>) {
+            values.forEachIndexed { index, value ->
+                if (value is List<*>) {
                     if (nestingLevel < NESTING_LEVEL_THRESHOLD) {
                         nestingLevel++
-                        addArrayItem(arrayItem.container, it as List<Any>, paramType)
+                        addArrayItem(arrayItem.container, value as List<Any>, paramType, typeValues)
                     } else {
                         addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE)
                     }
                 } else {
-                    addValueItem(arrayItem.container, it, paramType)
+                    if (paramType == ParamType.MIXED) {
+                        val valueType = typeValues.split(",")[index]
+                        addValueItem(arrayItem.container, value, getParamItemType(valueType))
+                    } else {
+                        addValueItem(arrayItem.container, value, paramType)
+                    }
                 }
             }
         }
@@ -103,6 +119,9 @@ class LabeledArrayItem @JvmOverloads constructor(
                 valueItem.layoutParams = layoutParams
                 valueItem.text = value as String
                 container.addView(valueItem)
+            }
+            ParamType.MIXED -> {
+
             }
         }
     }
