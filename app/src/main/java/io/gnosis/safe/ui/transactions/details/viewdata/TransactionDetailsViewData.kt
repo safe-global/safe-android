@@ -28,7 +28,8 @@ sealed class TransactionInfoViewData(
         val addressUri: String?,
         val dataSize: Int,
         val value: BigInteger,
-        val methodName: String?
+        val methodName: String?,
+        val isCancellation: Boolean
     ) : TransactionInfoViewData(TransactionType.Custom)
 
     data class SettingsChange(
@@ -123,7 +124,8 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Trans
                 addressUri = addressUri,
                 dataSize = dataSize,
                 value = value,
-                methodName = methodName
+                methodName = methodName,
+                isCancellation = isCancellation
             )
         }
         is TransactionInfo.Creation -> TransactionInfoViewData.Creation(creator, transactionHash, implementation, factory)

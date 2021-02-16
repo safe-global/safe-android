@@ -59,8 +59,8 @@ class TxUtilsKtTest {
             value = BigInteger.ZERO,
             methodName = null,
             addressName = null,
-            addressUri = null
-
+            addressUri = null,
+            isCancellation = false
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 
@@ -76,7 +76,8 @@ class TxUtilsKtTest {
             value = "1000000000000000000".decimalAsBigInteger(),
             methodName = null,
             addressName = null,
-            addressUri = null
+            addressUri = null,
+            isCancellation = false
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 

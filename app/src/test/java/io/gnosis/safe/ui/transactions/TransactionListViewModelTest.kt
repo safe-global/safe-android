@@ -489,7 +489,8 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.primary,
                 threshold = 2,
                 confirmations = 2,
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                isCancellation = false
             ),
             transactionViews[0]
         )
@@ -506,7 +507,8 @@ class TransactionListViewModelTest {
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 confirmations = 0,
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                isCancellation = false
             ),
             transactionViews[1]
         )
@@ -520,7 +522,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                isCancellation = false
             ),
             transactionViews[2]
         )
@@ -534,7 +537,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_HALF,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                isCancellation = false
             ),
             transactionViews[3]
         )
@@ -548,7 +552,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_HALF,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                isCancellation = false
             ),
             transactionViews[4]
         )
@@ -929,7 +934,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                isCancellation = false
             ),
             transactionViews[0]
         )
@@ -944,7 +950,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Remote(defaultKnownAddressName, defaultKnownAddressLogo, defaultKnownAddressAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Remote(defaultKnownAddressName, defaultKnownAddressLogo, defaultKnownAddressAddress.asEthereumAddressString()),
+                isCancellation = false
             ),
             transactionViews[1]
         )
@@ -959,7 +966,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                isCancellation = false
             ),
             transactionViews[2]
         )
@@ -974,7 +982,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                isCancellation = false
             ),
             transactionViews[3]
         )
@@ -1094,7 +1103,7 @@ class TransactionListViewModelTest {
         Transaction(
             id = "",
             txStatus = status,
-            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend", toInfo = toInfo),
+            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend", toInfo = toInfo, isCancellation = false),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
                 confirmationsRequired = defaultThreshold,
