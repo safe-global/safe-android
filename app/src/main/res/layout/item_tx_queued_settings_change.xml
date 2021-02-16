@@ -97,7 +97,7 @@
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
-        tools:text="\u2022 Awaiting execution" />
+        tools:text="\u2022 Needs execution" />
 
     <TextView
         android:id="@+id/confirmations"
