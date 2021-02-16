@@ -246,7 +246,8 @@ class TransactionListViewModel
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
-            addressInfo = addressInfo
+            addressInfo = addressInfo,
+            isCancellation = txInfo.isCancellation
         )
     }
 
@@ -275,7 +276,8 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
-            addressInfo = addressInfo
+            addressInfo = addressInfo,
+            isCancellation = txInfo.isCancellation
         )
     }
 

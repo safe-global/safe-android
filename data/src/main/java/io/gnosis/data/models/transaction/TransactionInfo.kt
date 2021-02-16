@@ -16,7 +16,7 @@ sealed class TransactionInfo(
         @Json(name = "dataSize") val dataSize: Int,
         @Json(name = "value") val value: BigInteger,
         @Json(name = "methodName") val methodName: String?,
-        @Json(name = "isCancellation") val isCancellation: Boolean?
+        @Json(name = "isCancellation") val isCancellation: Boolean
     ) : TransactionInfo(TransactionType.Custom)
 
     @JsonClass(generateAdapter = true)

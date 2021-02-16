@@ -85,7 +85,8 @@ sealed class TransactionView(
         val alpha: Float,
         val nonce: String,
         val methodName: String?,
-        val addressInfo: AddressInfoData
+        val addressInfo: AddressInfoData,
+        val isCancellation: Boolean
     ) : TransactionView(status, id)
 
     data class CustomTransactionQueued(
@@ -100,7 +101,8 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val methodName: String?,
-        val addressInfo: AddressInfoData
+        val addressInfo: AddressInfoData,
+        val isCancellation: Boolean
     ) : TransactionView(status, id)
 
     data class Creation(
