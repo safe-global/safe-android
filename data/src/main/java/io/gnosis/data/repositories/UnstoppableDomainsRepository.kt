@@ -14,7 +14,6 @@ class BackgroundTask : Callable<String> {
     var address = ""
     var domain: String;
     private val library: Resolution = Resolution.builder()
-            .chainId(NamingServiceType.CNS, Network.RINKEBY)
             .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
             .build();
 
