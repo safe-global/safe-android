@@ -23,9 +23,9 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
+import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import java.math.BigInteger
@@ -72,6 +72,9 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             progress.visible(false)
         }
         val error = viewAction.error.toError()
+        if (error.trackingRequired) {
+            tracker.logException(viewAction.error)
+        }
         errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_safe_settings_advanced))
         Timber.e(viewAction.error)
     }
@@ -85,6 +88,13 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         with(binding) {
             fallbackHandlerContainer.removeAllViews()
             fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
+
+            fallbackHandlerHelpLink.text = ""
+            fallbackHandlerHelpLink.appendLink(
+                urlText = resources.getString(R.string.safe_settings_fallback_handler_help),
+                url = resources.getString(R.string.safe_settings_fallback_handler_help_url),
+                linkIcon = R.drawable.ic_link_green_24dp
+            )
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
             safeInfo.modules.takeUnless { it.isEmpty() }?.let {
@@ -114,7 +124,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             this.address = address
-            this.name = label
+            this.name = label?.let { getString(label) }
             showSeparator = true
         }
     }

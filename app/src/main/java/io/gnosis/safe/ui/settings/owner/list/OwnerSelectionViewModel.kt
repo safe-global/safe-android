@@ -3,18 +3,19 @@ package io.gnosis.safe.ui.settings.owner.list
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.insertSeparators
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.OwnerCredentials
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
-import java.math.BigInteger
+import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
 
 class OwnerSelectionViewModel
@@ -22,6 +23,7 @@ class OwnerSelectionViewModel
     private val derivator: MnemonicKeyAndAddressDerivator,
     private val ownerCredentialsVault: OwnerCredentialsRepository,
     private val notificationRepository: NotificationRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
@@ -30,28 +32,26 @@ class OwnerSelectionViewModel
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
-    fun loadOwners(mnemonic: String) {
+    fun loadSingleOwner(privateKey: String) {
         safeLaunch {
-            derivator.initialize(mnemonic)
+            val keyPair = KeyPair.fromPrivate(privateKey.hexAsBigInteger())
+            updateState {
+                OwnerSelectionState(SingleOwner(Solidity.Address(keyPair.address.asBigInteger()), false))
+            }
+        }
+    }
+
+    fun loadFirstDerivedOwner(mnemonic: String) {
+        derivator.initialize(mnemonic)
+        loadMoreOwners()
+    }
+
+    fun loadMoreOwners() {
+        safeLaunch {
             OwnerPagingProvider(derivator).getOwnersStream()
-                .map {
-                    it.insertSeparators { before, after ->
-                        return@insertSeparators if (before == null) {
-                            Solidity.Address(BigInteger.ZERO)
-                        } else {
-                            null
-                        }
-                    }
-                }
                 .cachedIn(viewModelScope)
                 .collectLatest {
-                    updateState {
-                        OwnerSelectionState(
-                            LoadedOwners(
-                                it
-                            )
-                        )
-                    }
+                    updateState { OwnerSelectionState(DerivedOwners(it)) }
                 }
         }
     }
@@ -60,18 +60,28 @@ class OwnerSelectionViewModel
         ownerIndex = index
     }
 
-    fun importOwner() {
+    fun importOwner(privateKey: String? = null) {
         safeLaunch {
-            val key = derivator.keyForIndex(ownerIndex)
-            val addresses = derivator.addressesForPage(ownerIndex, 1)
+
+            val key = privateKey?.hexAsBigInteger() ?: derivator.keyForIndex(ownerIndex)
+
+            val addresses = if (privateKey != null) {
+                listOf(Solidity.Address(KeyPair.fromPrivate(privateKey.hexAsBigInteger()).address.asBigInteger()))
+            } else {
+                derivator.addressesForPage(ownerIndex, 1)
+            }
             OwnerCredentials(address = addresses[0], key = key).let {
                 ownerCredentialsVault.storeCredentials(it)
-                notificationRepository.registerOwner(it.key)
             }
-            tracker.logKeyImported()
+            settingsHandler.showOwnerBanner = false
+            settingsHandler.showOwnerScreen = false
+            tracker.logKeyImported(privateKey == null)
             tracker.setNumKeysImported(1)
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
+            }
+            OwnerCredentials(address = addresses[0], key = key).let {
+                notificationRepository.registerOwner(it.key)
             }
         }
     }
@@ -81,8 +91,12 @@ data class OwnerSelectionState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
+data class SingleOwner(
+    val owner: Solidity.Address,
+    val hasMore: Boolean
+) : BaseStateViewModel.ViewAction
 
-data class LoadedOwners(
+data class DerivedOwners(
     val newOwners: PagingData<Solidity.Address>
 ) : BaseStateViewModel.ViewAction
 

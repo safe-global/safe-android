@@ -7,9 +7,13 @@
     app:startDestination="@id/assetsFragment">
 
     <action
-        android:id="@+id/action_to_add_safe_nav"
+        android:id="@+id/action_to_add_safe"
         app:destination="@id/addSafeFragment"
         app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_to_import_owner"
+        app:destination="@id/ownerInfoFragment" />
 
     <dialog
         android:id="@+id/safeSelectionDialog"
@@ -18,7 +22,7 @@
         tools:layout="@layout/dialog_safe_selection">
 
         <action
-            android:id="@+id/action_safeSelectionDialog_to_add_safe_nav"
+            android:id="@+id/action_safeSelectionDialog_to_add_safe"
             app:destination="@id/addSafeFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/addSafeFragment"
@@ -87,6 +91,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerInfoFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment"
+        android:label="OwnerInfoFragment"
+        tools:layout="@layout/fragment_owner_info">
+
+        <action
+            android:id="@+id/action_ownerInfoFragment_to_ownerSeedPhraseFragment"
+            app:destination="@id/ownerSeedPhraseFragment" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ownerSeedPhraseFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment"
         android:label="OwnerSeedPhraseFragment"
@@ -105,8 +121,14 @@
         tools:layout="@layout/fragment_owner_selection">
 
         <argument
+            android:name="privateKey"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="seedPhrase"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"/>
 
     </fragment>
 
@@ -142,8 +164,9 @@
             app:destination="@id/safeSettingsEditNameFragment" />
 
         <action
-            android:id="@+id/action_settingsFragment_to_ownerSeedPhraseFragment"
-            app:destination="@id/ownerSeedPhraseFragment" />
+            android:id="@+id/action_settingsFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
         <action
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
             app:destination="@id/appFiatFragment" />
@@ -369,8 +392,28 @@
         android:label="AddSafeNameFragment"
         tools:layout="@layout/fragment_add_safe_name">
 
+        <action
+            android:id="@+id/action_addSafeNameFragment_to_addSafeOwnerFragment"
+            app:destination="@id/addSafeOwnerFragment" />
+
         <argument
             android:name="newAddress"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addSafeOwnerFragment"
+        android:name="io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment"
+        android:label="AddSafeOwnerFragment"
+        tools:layout="@layout/fragment_add_safe_owner">
+
+        <argument
+            android:name="safeName"
+            app:argType="string" />
+
+        <argument
+            android:name="safeAddress"
             app:argType="string" />
 
     </fragment>

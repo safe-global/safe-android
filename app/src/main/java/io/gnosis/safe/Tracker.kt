@@ -27,12 +27,32 @@ class Tracker private constructor(context: Context) {
         logEvent(screenId.value, null)
     }
 
-    fun logKeyImported() {
-        logEvent(Event.KEY_IMPORTED, null)
+    fun logKeyImported(usingSeedPhrase: Boolean) {
+        logEvent(
+            Event.KEY_IMPORTED, mapOf(
+                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
+            )
+        )
     }
 
     fun logTransactionConfirmed() {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
+    }
+
+    fun logBannerOwnerSkipped() {
+        logEvent(Event.BANNER_OWNER_SKIPPED, null)
+    }
+
+    fun logBannerOwnerImport() {
+        logEvent(Event.BANNER_OWNER_IMPORT, null)
+    }
+
+    fun logOnboardingOwnerSkipped() {
+        logEvent(Event.ONBOARDING_OWNER_SKIPPED, null)
+    }
+
+    fun logOnboardingOwnerImport() {
+        logEvent(Event.ONBOARDING_OWNER_IMPORT, null)
     }
 
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
@@ -54,24 +74,31 @@ class Tracker private constructor(context: Context) {
         }
     }
 
-    private fun logException(exception: Exception) {
+    fun logException(exception: Throwable) {
         FirebaseCrashlytics.getInstance().recordException(exception)
     }
 
     object Event {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
+        val BANNER_OWNER_IMPORT = "user_banner_owner_import"
+        val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
+        val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"
     }
 
     object Param {
         val NUM_SAFES = "num_safes"
         val PUSH_INFO = "push_info"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
+        val KEY_IMPORT_TYPE = "import_type"
     }
 
     object ParamValues {
         val PUSH_ENABLED = "enabled"
         val PUSH_DISABLED = "disabled"
+        val KEY_IMPORT_TYPE_SEED = "seed"
+        val KEY_IMPORT_TYPE_KEY = "key"
     }
 
     companion object {
@@ -93,11 +120,13 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
+    OWNER_INFO("screen_owner_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
     SAFE_ADD_NAME("screen_safe_add_name"),
+    SAFE_ADD_OWNER("screen_safe_add_owner"),
     SAFE_ADD_ENS("screen_safe_add_ens"),
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
     TRANSACTIONS_QUEUE("screen_transactions_queue"),

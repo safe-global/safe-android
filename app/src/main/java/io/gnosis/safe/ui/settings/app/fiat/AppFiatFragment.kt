@@ -18,7 +18,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
-import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
@@ -69,13 +68,11 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
                     binding.refresh.isRefreshing = false
                     with(viewAction.error) {
                         Timber.e(this)
-                        errorSnackbar(
-                            requireView(),
-                            toError().message(
-                                requireContext(),
-                                R.string.error_description_fiat
-                            )
-                        )
+                        val error = toError()
+                        if (error.trackingRequired) {
+                            tracker.logException(this)
+                        }
+                        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_fiat))
                     }
                 }
             }

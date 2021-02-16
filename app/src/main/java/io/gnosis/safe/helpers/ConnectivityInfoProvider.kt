@@ -28,18 +28,24 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
     }
 
     private fun isOffline(): Boolean =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)?.run {
-                    !(hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                            || hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                            || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
-                } ?: true
-            } else {
-                val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                activeNetworkInfo == null || !activeNetworkInfo.isConnected
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            var online = false
+            // Active network is null after returning from sleep. Default active network listener is not triggered
+            // Thus we check connectivity of all available networks to see if device is offline
+            connectivityManager.allNetworks.forEach loop@{ network ->
+                online = connectivityManager.getNetworkCapabilities(network)?.let {
+                    it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                            || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                            || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                } ?: false
+                if (online) return@loop
             }
-
-
+            !online
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            activeNetworkInfo == null || !activeNetworkInfo.isConnected
+        }
+    
     private fun register() {
         val builder = NetworkRequest.Builder()
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)

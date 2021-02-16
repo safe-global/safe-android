@@ -11,6 +11,7 @@ import io.gnosis.safe.ui.assets.collectibles.details.CollectiblesDetailsFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.dialogs.UnstoppableInputDialog
 import io.gnosis.safe.ui.safe.add.AddSafeFragment
+import io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
@@ -20,6 +21,7 @@ import io.gnosis.safe.ui.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
+import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
@@ -48,6 +50,8 @@ interface ViewComponent {
 
     fun inject(fragment: AddSafeNameFragment)
 
+    fun inject(fragemnt: AddSafeOwnerFragment)
+
     fun inject(fragment: TransactionsFragment)
 
     fun inject(fragment: TransactionListFragment)
@@ -61,6 +65,8 @@ interface ViewComponent {
     fun inject(fragment: AdvancedTransactionDetailsFragment)
 
     fun inject(fragment: SettingsFragment)
+
+    fun inject(fragment: OwnerInfoFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
 

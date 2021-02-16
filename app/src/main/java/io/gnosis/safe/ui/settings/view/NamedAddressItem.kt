@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
@@ -53,12 +52,11 @@ class NamedAddressItem @JvmOverloads constructor(
             field = value
         }
 
-   @StringRes
-   var name: Int? = null
+    var name: String? = null
         set(value) {
-            value?.let{
+            value?.let {
                 binding.name.visible(true)
-                binding.name.setText(it)
+                binding.name.text = it
             } ?: binding.name.visible(false)
             field = value
         }
@@ -85,5 +83,9 @@ class NamedAddressItem @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, a: TypedArray) {
         binding.namedAddressItemSeparator.visible(a.getBoolean(R.styleable.NamedAddressItem_show_named_address_separator, false))
+    }
+
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address) {
+        binding.blockies.loadKnownAddressLogo(addressUri, address)
     }
 }

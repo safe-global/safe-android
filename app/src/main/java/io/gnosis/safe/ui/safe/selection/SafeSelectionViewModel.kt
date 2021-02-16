@@ -60,7 +60,7 @@ class SafeSelectionViewModel @Inject constructor(
             updateState {
                 SafeSelectionState.AddSafeState(
                     ViewAction.NavigateTo(
-                        SafeSelectionDialogDirections.actionSafeSelectionDialogToAddSafeNav()
+                        SafeSelectionDialogDirections.actionSafeSelectionDialogToAddSafe()
                     )
                 )
             }

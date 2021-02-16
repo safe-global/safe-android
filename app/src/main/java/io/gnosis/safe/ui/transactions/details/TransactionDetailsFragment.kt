@@ -25,6 +25,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
+import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.*
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -79,7 +81,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is ConfirmationSubmitted -> {
                     binding.txConfirmButtonContainer.visible(false)
-                    viewAction.txDetails?.let(::updateUi)
+                    viewAction.txDetails?.let { ::updateUi }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
                 is Loading -> {
@@ -97,6 +99,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     viewAction.error.let {
                         if (it is TxConfirmationFailed) {
                             val error = it.cause.toError()
+                            if (error.trackingRequired) {
+                                tracker.logException(it.cause)
+                            }
                             errorSnackbar(
                                 requireView(),
                                 error.message(
@@ -106,6 +111,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             )
                         } else {
                             val error = it.toError()
+                            if (error.trackingRequired) {
+                                tracker.logException(it)
+                            }
                             errorSnackbar(
                                 requireView(),
                                 error.message(
@@ -131,7 +139,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    private fun updateUi(txDetails: TransactionDetails) {
+    private fun updateUi(txDetails: TransactionDetailsViewData) {
 
         var awaitingYourConfirmation = false
 
@@ -153,7 +161,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             confirmColor = R.color.primary
                         ) {
                             binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(txDetails, executionInfo)
+                            viewModel.submitConfirmation(viewModel.txDetails!!)
                         }
                     }
                 } else {
@@ -223,7 +231,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
 
         when (val txInfo = txDetails.txInfo) {
-            is TransactionInfo.Transfer -> {
+            is TransactionInfoViewData.Transfer -> {
                 val viewStub = binding.stubTransfer
                 if (viewStub.parent != null) {
                     val inflate = viewStub.inflate()
@@ -232,9 +240,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
 
                 val outgoing = txInfo.direction == TransactionDirection.OUTGOING
-                val address = if (outgoing) txInfo.recipient else txInfo.sender
+                val address = txInfo.address
 
-                val txType = if (txInfo.direction == TransactionDirection.INCOMING) {
+                val txType = if (!outgoing) {
                     TxType.TRANSFER_INCOMING
                 } else {
                     TxType.TRANSFER_OUTGOING
@@ -246,18 +254,22 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
                             address = address,
-                            tokenId = transferInfo.tokenId
+                            tokenId = transferInfo.tokenId,
+                            addressName = txInfo.addressName,
+                            addressUri = txInfo.addressUri
                         )
 
                         txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
-                        txDetailsTransferBinding.contractAddress.name = R.string.tx_details_asset_contract
+                        txDetailsTransferBinding.contractAddress.name = getString(R.string.tx_details_asset_contract)
                     }
                     else -> {
                         txDetailsTransferBinding.txAction.setActionInfo(
                             outgoing = outgoing,
                             amount = txInfo.formattedAmount(balanceFormatter),
                             logoUri = txInfo.logoUri() ?: "",
-                            address = address
+                            address = address,
+                            addressName = txInfo.addressName,
+                            addressUri = txInfo.addressUri
                         )
                         txDetailsTransferBinding.contractAddress.visible(false)
                         txDetailsTransferBinding.contractSeparator.visible(false)
@@ -270,14 +282,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     getColorForStatus(txDetails.txStatus)
                 )
             }
-            is TransactionInfo.SettingsChange -> {
+            is TransactionInfoViewData.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
 
-                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems())
+                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems(requireContext().resources))
                 txDetailsSettingsChangeBinding.txStatus.setStatus(
                     TxType.MODIFY_SETTINGS.titleRes,
                     TxType.MODIFY_SETTINGS.iconRes,
@@ -285,14 +297,21 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     getColorForStatus(txDetails.txStatus)
                 )
             }
-            is TransactionInfo.Custom -> {
+            is TransactionInfoViewData.Custom -> {
                 val viewStub = binding.stubCustom
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
                 }
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                txDetailsCustomBinding.txAction.setActionInfo(true, txInfo.formattedAmount(balanceFormatter), txInfo.logoUri()!!, txInfo.to)
+                txDetailsCustomBinding.txAction.setActionInfo(
+                    outgoing = true,
+                    amount = txInfo.formattedAmount(balanceFormatter),
+                    logoUri = txInfo.logoUri()!!,
+                    address = txInfo.to,
+                    addressUri = txInfo.addressUri,
+                    addressName = txInfo.addressName
+                )
 
                 val decodedData = txDetails.txData?.dataDecoded
                 if (decodedData == null) {

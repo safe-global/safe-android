@@ -26,4 +26,11 @@
     <declare-styleable name="NamedAddressItem">
         <attr name="show_named_address_separator" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="InfoItem">
+        <attr name="info_icon" format="reference" />
+        <attr name="info_title" format="string" />
+        <attr name="info_text" format="string" />
+    </declare-styleable>
+
 </resources>

@@ -3,7 +3,7 @@ package io.gnosis.safe.ui.settings.app
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate.*
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.safe.ui.settings.app.SettingsHandler.Companion.USER_DEFAULT_FIAT
+import io.gnosis.safe.ui.settings.app.SettingsHandler.Companion.KEY_USER_DEFAULT_FIAT
 import io.mockk.*
 import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
@@ -174,20 +174,20 @@ class SettingsHandlerTest {
         val actual = settingsHandler.userDefaultFiat
         val expected = "USD"
 
-        verify(exactly = 1) { preferences.getString(USER_DEFAULT_FIAT, "USD") }
+        verify(exactly = 1) { preferences.getString(KEY_USER_DEFAULT_FIAT, "USD") }
         Assert.assertEquals(expected, actual)
     }
 
     @Test
     fun `getUserDefaultFiat - value set`() = runBlocking {
-        preferences.edit().putString(USER_DEFAULT_FIAT, "EUR")
+        preferences.edit().putString(KEY_USER_DEFAULT_FIAT, "EUR")
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
 
 
         val actual = settingsHandler.userDefaultFiat
         val expected = "EUR"
 
-        verify(exactly = 1) { preferences.getString(USER_DEFAULT_FIAT, "USD") }
+        verify(exactly = 1) { preferences.getString(KEY_USER_DEFAULT_FIAT, "USD") }
         assertEquals(expected, actual)
     }
 }

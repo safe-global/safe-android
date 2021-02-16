@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.SafeRepository
@@ -45,10 +46,11 @@ class TransactionListViewModel
 
     fun load(type: TransactionPagingSource.Type) {
         safeLaunch {
-            val safe = safeRepository.getActiveSafe()
-            if (safe != null) {
+            val activeSafe = safeRepository.getActiveSafe()
+            val safes = safeRepository.getSafes()
+            if (activeSafe != null) {
                 val owner = ownerCredentialsRepository.retrieveCredentials()?.address
-                getTransactions(safe.address, owner, type).collectLatest {
+                getTransactions(activeSafe.address, safes, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -63,12 +65,13 @@ class TransactionListViewModel
     }
 
     private fun getTransactions(
-        safe: Solidity.Address,
+        activeSafeAddress: Solidity.Address,
+        safes: List<Safe>,
         owner: Solidity.Address?,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(activeSafeAddress, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
@@ -78,7 +81,7 @@ class TransactionListViewModel
                                 val txView =
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
-                                        activeSafe = safe,
+                                        safes = safes,
                                         awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
                                         isConflict = isConflict
                                     )
@@ -101,7 +104,7 @@ class TransactionListViewModel
 
     fun getTransactionView(
         transaction: Transaction,
-        activeSafe: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean = false,
         isConflict: Boolean = false
     ): TransactionView {
@@ -109,7 +112,7 @@ class TransactionListViewModel
             return when (val txInfo = txInfo) {
                 is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, activeSafe, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, safes, awaitingYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -220,19 +223,20 @@ class TransactionListViewModel
 
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safeAddress, awaitingYourConfirmation, isConflict)
-        else historicCustomTransaction(txInfo, safeAddress)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safes, awaitingYourConfirmation, isConflict)
+        else historicCustomTransaction(txInfo, safes)
 
     private fun Transaction.historicCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address
+        safes: List<Safe>
     ): TransactionView.CustomTransaction {
-        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == safeAddress
+
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+
         return TransactionView.CustomTransaction(
             id = id,
             status = txStatus,
@@ -241,21 +245,23 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
-            methodName = txInfo.methodName
+            methodName = txInfo.methodName,
+            addressInfo = addressInfo
         )
     }
 
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
-        safeAddress: Solidity.Address,
+        safes: List<Safe>,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
-        //FIXME https://github.com/gnosis/safe-client-gateway/issues/189
-        val isIncoming: Boolean = txInfo.to == safeAddress
+
         //FIXME this wouldn't make sense for incoming Ethereum TXs
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
             id = id,
@@ -268,8 +274,19 @@ class TransactionListViewModel
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
-            methodName = txInfo.methodName
+            methodName = txInfo.methodName,
+            addressInfo = addressInfo
         )
+    }
+
+    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safes: List<Safe>): AddressInfoData {
+        val localName = safes.find { it.address == address }?.localName
+        val addressString = address.asEthereumAddressString()
+        return when {
+            localName != null -> AddressInfoData.Local(localName, addressString)
+            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString)
+            else -> AddressInfoData.Default
+        }
     }
 
     private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation): TransactionView.Creation =
@@ -283,7 +300,7 @@ class TransactionListViewModel
             creationDetails = TransactionView.CreationDetails(
                 statusText = displayString(txStatus),
                 statusColorRes = statusTextColor(txStatus),
-                dateTimeText = timestamp.formatBackendTimeOfDay(),
+                dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
                 factory = txInfo.factory?.asEthereumAddressString(),
                 implementation = txInfo.implementation?.asEthereumAddressString(),

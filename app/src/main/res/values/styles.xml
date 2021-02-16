@@ -88,6 +88,7 @@
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
     </style>
 
     <style name="TextMedium" parent="Text">
@@ -127,11 +128,11 @@
         <item name="android:layout_height">@dimen/header_height</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_emphasis_low</item>
-        <item name="android:letterSpacing">0.15</item>
+        <item name="android:letterSpacing">0.04</item>
         <item name="android:lineSpacingExtra">2sp</item>
     </style>
 

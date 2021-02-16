@@ -29,7 +29,7 @@ class NoSafeFragment : BaseViewBindingFragment<FragmentNoSafesBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loadSafeButton.setOnClickListener {
-            requireParentFragment().findNavController().navigate(R.id.action_to_add_safe_nav)
+            requireParentFragment().findNavController().navigate(R.id.action_to_add_safe)
         }
     }
 

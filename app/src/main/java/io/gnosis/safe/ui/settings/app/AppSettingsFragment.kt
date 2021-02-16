@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.settings.app
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +17,9 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
@@ -57,6 +61,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             getInTouch.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
+            rateApp.setOnClickListener {
+                openPlayStore()
+            }
             version.value = BuildConfig.VERSION_NAME
             network.value = BuildConfig.BLOCKCHAIN_NAME
             advanced.setOnClickListener {
@@ -75,11 +82,15 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         })
 
         viewModel.loadUserDefaultFiat()
+    }
 
-        if (ownerImported()) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            resetOwnerImported()
+    private fun openPlayStore() {
+        kotlin.runCatching {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${requireActivity().packageName}")))
         }
+            .onFailure {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store.apps/details?id=${requireActivity().packageName}")))
+            }
     }
 
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
@@ -96,11 +107,18 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                             onOwnerRemove()
                         }
                     }
+                    root.setOnClickListener {
+                        address?.let {
+                            context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+                                snackbar(view = root, textId = R.string.copied_success)
+                            }
+                        }
+                    }
                 }
             } else {
                 with(importOwnerKey) {
                     root.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerSeedPhraseFragment())
+                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
                     }
                 }
             }
@@ -113,17 +131,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         snackbar(requireView(), getString(R.string.signing_owner_key_removed))
     }
 
-    private fun ownerImported(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
-    }
-
-    private fun resetOwnerImported() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
-    }
-
     companion object {
-
-        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
 
         fun newInstance(): AppSettingsFragment {
             return AppSettingsFragment()

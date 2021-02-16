@@ -20,6 +20,7 @@ import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.utils.asEthereumAddress
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -213,7 +214,25 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            when (val addressInfo = viewTransfer.addressInfo) {
+                is AddressInfoData.Local -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                }
+                is AddressInfoData.Remote -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.loadKnownAddressLogo(
+                        addressInfo.addressLogoUri,
+                        addressInfo.address.asEthereumAddress()!!
+                    )
+                }
+                is AddressInfoData.Default -> {
+                    addressName.setText(addressInfo.nameResId)
+                    addressLogo.setAddress(null)
+                    addressLogo.setImageResource(addressInfo.logoResId)
+                }
+            }
 
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -224,8 +243,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -243,20 +261,38 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
         val theme = viewBinding.root.context.theme
 
         with(viewBinding) {
-            txTypeIcon.setImageResource(R.drawable.ic_code_16dp)
+
+            when (val addressInfo = viewTransfer.addressInfo) {
+                is AddressInfoData.Local -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                }
+                is AddressInfoData.Remote -> {
+                    addressName.text = addressInfo.name
+                    addressLogo.loadKnownAddressLogo(
+                        addressInfo.addressLogoUri,
+                        addressInfo.address.asEthereumAddress()!!
+                    )
+                }
+                is AddressInfoData.Default -> {
+                    addressName.setText(addressInfo.nameResId)
+                    addressLogo.setAddress(null)
+                    addressLogo.setImageResource(addressInfo.logoResId)
+                }
+            }
 
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
-            action.setText(R.string.tx_list_contract_interaction)
-            label.text = viewTransfer.methodName
+
+            action.text = viewTransfer.methodName
             nonce.text = viewTransfer.nonce
 
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
             finalStatus.alpha = OPACITY_FULL
-            txTypeIcon.alpha = viewTransfer.alpha
             dateTime.alpha = viewTransfer.alpha
             action.alpha = viewTransfer.alpha
-            label.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
@@ -327,9 +363,10 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
             nonce.text = sectionDateHeader.nonce.toString()
             sectionTitle.text = resources.getString(R.string.tx_list_conflict_header_explainer)
             sectionTitle.appendLink(
-                resources.getString(R.string.tx_list_conflict_header_link),
-                resources.getString(R.string.tx_list_conflict_header_learn_more),
-                R.drawable.ic_link_green_24dp
+                url = resources.getString(R.string.tx_list_conflict_header_link),
+                urlText = resources.getString(R.string.tx_list_conflict_header_learn_more),
+                linkIcon = R.drawable.ic_link_green_24dp,
+                prefix = " "
             )
         }
     }
@@ -372,11 +409,11 @@ class ConflictViewHolder(private val viewBinding: ItemTxConflictTxBinding, priva
 
     fun hasNext() = conflictView.conflictType != ConflictType.End
 }
+
 fun ElapsedInterval.format(resources: Resources) = when (unit) {
     ChronoUnit.SECONDS -> resources.getString(R.string.tx_list_ago_now)
     ChronoUnit.DAYS -> resources.getQuantityString(R.plurals.tx_list_ago_day, value, value)
     ChronoUnit.HOURS -> resources.getQuantityString(R.plurals.tx_list_ago_hour, value, value)
     else -> resources.getString(R.string.tx_list_ago_min, value)
 }
-
 

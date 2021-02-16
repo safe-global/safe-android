@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_safes_loaded">No Safe loaded</string>
+    <string name="safe_loaded">Safe loaded</string>
     <string name="load_safe_multisig_start">Get started by loading your Safe Multisig</string>
     <string name="load_safe_multisig">Load Safe Multisig</string>
     <string name="tab_title_coins">COINS</string>
@@ -13,6 +14,11 @@
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
     <string name="add_safe_label_link">https://gnosis-safe.io</string>
     <string name="back">Back</string>
+
+    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to import owner key for this Safe to confirm transactions?</string>
+    <string name="add_safe_owner_import">Import owner key</string>
+    <string name="add_safe_owner_skip">Skip</string>
+
     <string name="choose_input_method">Choose input method</string>
     <string name="address_input_ens">ENS name</string>
     <string name="address_input_qr_code">Scan QR code</string>
@@ -54,7 +60,7 @@
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
-    <string name="error_description_seed_phrase">Can\'t use this seed phrase</string>
+    <string name="error_description_seed_phrase">Can\'t use this seed phrase or private key</string>
     <string name="error_description_fiat">Failed to load supported fiat list</string>
 
     <string name="error_network_no_internet_reason">device is not connected to the Internet</string>
@@ -71,6 +77,14 @@
     <string name="error_network_server_side_fix">Please try again later or contact Safe support if the issue persists.</string>
     <string name="error_network_not_authorized_reason">you are not authorized to perform this action</string>
     <string name="error_network_not_authorized_fix">Please contact Safe support if the issue persists</string>
+    <string name="error_network_unexpected_reason">network request failed with an unexpected error</string>
+    <string name="error_network_unexpected_fix">Please reach out to the Safe support</string>
+    <string name="error_network_address_format_invalid_reason">address format is not valid</string>
+    <string name="error_network_address_format_invalid_fix">Please reach out to the Safe support</string>
+    <string name="error_network_safe_info_not_found_reason">safe info is not found</string>
+    <string name="error_network_safe_info_not_found_fix">Please reach out to the Safe support</string>
+    <string name="error_network_safe_not_found_reason">safe not found</string>
+    <string name="error_network_try_again_fix">Please check that the Safe exists on the blockchain</string>
 
     <string name="error_client_safe_duplicate_reason">a Safe with this address has been added already</string>
     <string name="error_client_safe_duplicate_fix">Please use another Safe address</string>
@@ -80,8 +94,8 @@
     <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
     <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
-    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase for an Ethereum account</string>
-    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase</string>
+    <string name="error_client_seed_phrase_reason">this is not a valid seed phrase or private key for an Ethereum account</string>
+    <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase or private key</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
     <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
     <string name="error_client_unsupported_implementation_copy_reason">the implementation copy of your Safe is not supported by this app</string>
@@ -144,6 +158,7 @@
     <string name="settings_app_version">App version</string>
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
+    <string name="settings_app_rate">Rate the app</string>
 
     <string name="ens_resolver_address">ENS RESOLVER ADDRESS</string>
     <string name="endpoints">ENDPOINTS</string>
@@ -243,7 +258,7 @@
     <string name="tx_status_success">Success</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
-    <string name="safe_settings_contract_version">Contract version</string>
+    <string name="safe_settings_contract_version">Safe version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
     <string name="safe_settings_safe_name">Safe name</string>
@@ -258,6 +273,7 @@
     <string name="safe_settings_fallback_handler">Fallback handler</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
+    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Gnosis Safe?</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
 
@@ -266,6 +282,7 @@
     <string name="tx_confirmations_failed">Failed</string>
     <string name="tx_confirmations_cancelled">Cancelled</string>
     <string name="tx_confirmations_execute_ready">Execute</string>
+    <string name="tx_confirmations_execute_ready_description">Execution is currently not possible in this app. Please execute the transaction in the web interface or desktop app.</string>
     <string name="tx_confirmations_execute_waiting">Execute (%1$d more confirmation needed)</string>
     <string name="tx_confirmations_executed">Executed</string>
 
@@ -276,9 +293,14 @@
     <string name="signing_owner_selection_import">Import</string>
     <string name="signing_owner_selection_select_key">Select key</string>
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
+    <string name="signing_owner_selection_more_derived_keys">Show more derived keys</string>
     <string name="signing_owner_selection_more">Show more</string>
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
+
+    <string name="banner_owner_title">Import owner key</string>
+    <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
+    <string name="banner_owner_action">Import owner key now</string>
 
     <string name="push_safe_name">Safe %1$s</string>
 
@@ -318,12 +340,18 @@
 
     <string name="channel_tx_notifications_name">Tx Notifications</string>
     <string name="channel_tx_notifications_description">Notifications about incoming transfers and processed transactions.</string>
-    <string name="enter_seed_phrase_description">"Enter the seed phrase from your hardware wallet or MetaMask owner wallet. Typically 12 (sometimes 24) words separated by single spaces. "</string>
-    <string name="enter_your_seed_phrase">Enter your seed phrase</string>
-
-    <string name="enter_seed_phrase_hint">Enter seed phrase</string>
+    <string name="enter_seed_phrase_description">Enter the seed phrase from your hardware wallet or MetaMask or the private key from any wallet.\n\nA seed phrase is typically 12 (sometimes 24) words separated by single spaces.\nA private key is a string of 64 characters.</string>
+    <string name="enter_seed_phrase_hint">Enter private key or seed phrase</string>
     <string name="enter_seed_phrase_error">Seed phrase is not valid</string>
-    <string name="import_owner_key_title">Import Owner Key</string>
+    <string name="import_owner_key_title">Import owner key</string>
+    <string name="import_owner_key_intro_seed_phrase_title">How does it work?</string>
+    <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
+    <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
+    <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
+    <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
+    <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
+    <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
+    <string name="import_owner_key_default">Default</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
@@ -335,7 +363,6 @@
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
-    <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
     <string name="address_input_unstoppabledomains">Unstoppable domain</string>
     <string name="label_type_next">Next</string>

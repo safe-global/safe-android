@@ -57,6 +57,11 @@ class SafeSettingsViewModel @Inject constructor(
         }
     }
 
+    fun isLoading(): Boolean {
+        val viewAction = (state.value as SafeSettingsState).viewAction
+        return (viewAction is ViewAction.Loading && viewAction.isLoading)
+    }
+
     fun removeSafe() {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()

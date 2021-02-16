@@ -17,6 +17,7 @@ import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.parseEthereumAddress
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.exceptions.InvalidAddressException
+import timber.log.Timber
 
 class AddressInputHelper(
     fragment: BaseFragment,
@@ -56,7 +57,9 @@ class AddressInputHelper(
                     val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim()
                     (input?.let { parseEthereumAddress(it.toString()) }
                         ?: run {
-                            handleError(InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)), input.toString())
+                            fragment.context?.let {
+                                handleError(InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)), input.toString())
+                            } ?: Timber.e(InvalidAddressException(), "Fragment lost context.")
                             null
                         })?.let { addressCallback(it) }
                     dismiss()
