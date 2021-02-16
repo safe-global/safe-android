@@ -4,6 +4,7 @@ import com.unstoppabledomains.config.network.model.Network
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.unstoppabledomains.resolution.Resolution
 import com.unstoppabledomains.resolution.naming.service.NamingServiceType
+import io.gnosis.data.BuildConfig
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.util.concurrent.Callable
@@ -13,7 +14,8 @@ class BackgroundTask : Callable<String> {
     var address = ""
     var domain: String;
     private val library: Resolution = Resolution.builder()
-            .infura(NamingServiceType.CNS, asString(getKey("INFURA_API_KEY", ""))
+            .chainId(NamingServiceType.CNS, Network.RINKEBY)
+            .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
             .build();
 
     constructor(domain: String)  {
