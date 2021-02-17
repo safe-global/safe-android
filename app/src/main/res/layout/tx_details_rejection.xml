@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/tx_rejection_info"
-        style="@style/TextDark.Bold"
+        style="@style/TextDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_margin"
@@ -28,10 +28,8 @@
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginRight="@dimen/default_margin"
         android:layout_marginTop="10dp"
-        android:drawablePadding="6dp"
         android:gravity="center_vertical"
-        android:text="@string/tx_details_rejection_payment_reason"
-        app:drawableEndCompat="@drawable/ic_external_link_green_16dp" />
+        android:text="@string/tx_details_rejection_payment_reason" />
 
     <View
         android:layout_width="match_parent"

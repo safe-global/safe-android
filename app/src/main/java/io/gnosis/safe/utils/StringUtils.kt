@@ -125,13 +125,27 @@ fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<A
     return this
 }
 
-fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int? = null, @ColorRes textColor: Int = R.color.primary, prefix: String = "") {
+fun TextView.appendLink(
+    url: String,
+    urlText: String,
+    @DrawableRes linkIcon: Int? = null,
+    @ColorRes textColor: Int = R.color.primary,
+    prefix: String = "",
+    underline: Boolean = false
+) {
     movementMethod = LinkMovementMethod.getInstance()
 
     append(
         SpannableStringBuilder()
             .append(prefix)
-            .appendTextWithSpans(urlText, listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor))))
+            .appendTextWithSpans(
+                urlText,
+                if (underline) {
+                    listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor)), UnderlineSpan())
+                } else {
+                    listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor)))
+                }
+            )
     )
 
     linkIcon?.let {
