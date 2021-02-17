@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:orientation="vertical"
-    android:background="@color/surface_01">
+    android:background="@color/surface_01"
+    android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tx_rejection_info"
+        style="@style/TextDark.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/tx_details_rejection_info" />
+
+    <TextView
+        android:id="@+id/tx_payment_reason_link"
+        style="@style/TextLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/tx_details_rejection_payment_reason" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
         android:background="@color/separator" />
 
-    
-
     <View
         android:id="@+id/tx_data_separator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_separator_height"
+        android:background="@color/separator" />
+
+    <View
+        android:id="@+id/tx_status_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
         android:background="@color/separator" />
@@ -27,9 +46,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View
-        android:id="@+id/tx_status_separator"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_separator_height"
-        android:background="@color/separator" />
 </LinearLayout>
