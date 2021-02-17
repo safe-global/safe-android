@@ -20,4 +20,5 @@
     <string name="implementation_version_1_2_0" translatable="false">1.2.0</string>
     <string name="safe_settings_fallback_handler_help_url">https://help.gnosis-safe.io/en/articles/4738352-what-is-a-fallback-handler-and-how-does-it-relate-to-the-gnosis-safe</string>
     <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
+    <string name="tx_details_rejection_payment_reason_link">https://help.gnosis-safe.io/en/articles/4738501-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
 </resources>
