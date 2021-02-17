@@ -45,7 +45,7 @@
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
     <TextView
-        android:id="@+id/address_name"
+        android:id="@+id/tx_type"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
