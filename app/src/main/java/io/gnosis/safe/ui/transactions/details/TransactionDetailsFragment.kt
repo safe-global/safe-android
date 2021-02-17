@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.transactions.details
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -371,8 +370,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
                 with(txDetailsRejectionBinding) {
                     txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
-                    txPaymentReasonLink.text = null
-                    txPaymentReasonLink.appendLink(
+                    txPaymentReasonLink.setLink(
                         url = getString(R.string.tx_details_rejection_payment_reason_link),
                         urlText = getString(R.string.tx_details_rejection_payment_reason),
                         linkIcon = R.drawable.ic_external_link_green_16dp,

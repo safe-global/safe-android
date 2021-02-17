@@ -158,3 +158,15 @@ fun TextView.appendLink(
         )
     }
 }
+
+fun TextView.setLink(
+    url: String,
+    urlText: String,
+    @DrawableRes linkIcon: Int? = null,
+    @ColorRes textColor: Int = R.color.primary,
+    prefix: String = "",
+    underline: Boolean = false
+) {
+    text = null
+    appendLink(url, urlText, linkIcon, textColor, prefix, underline)
+}
