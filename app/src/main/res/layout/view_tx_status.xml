@@ -61,6 +61,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/type"
-        tools:text="@string/tx_status_awaiting_confirmations" />
+        tools:text="@string/tx_status_needs_confirmations" />
 
 </merge>

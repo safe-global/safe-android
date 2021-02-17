@@ -196,7 +196,7 @@ class TransactionListViewModelTest {
         val transactionViews = transactions.results.map { transaction ->
             transactionListViewModel.getTransactionView(
                 transaction, safes,
-                awaitingYourConfirmation = false,
+                needsYourConfirmation = false,
                 isConflict = false
             )
         }
@@ -221,7 +221,7 @@ class TransactionListViewModelTest {
             transactionListViewModel.getTransactionView(
                 transaction = transaction,
                 safes = safes,
-                awaitingYourConfirmation = false,
+                needsYourConfirmation = false,
                 isConflict = true
             )
         }
@@ -280,7 +280,7 @@ class TransactionListViewModelTest {
             TransactionView.TransferQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_status_awaiting_confirmations,
+                statusText = R.string.tx_status_needs_confirmations,
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
@@ -299,7 +299,7 @@ class TransactionListViewModelTest {
             TransactionView.TransferQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_status_awaiting_execution,
+                statusText = R.string.tx_status_needs_execution,
                 statusColorRes = R.color.secondary,
                 amountText = "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}",
                 amountColor = R.color.text_emphasis_high,
@@ -480,7 +480,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransactionQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_status_awaiting_execution,
+                statusText = R.string.tx_status_needs_execution,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 methodName = "multiSend",
@@ -497,7 +497,7 @@ class TransactionListViewModelTest {
             TransactionView.CustomTransactionQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_status_awaiting_confirmations,
+                statusText = R.string.tx_status_needs_confirmations,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 methodName = "multiSend",
@@ -637,7 +637,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_status_awaiting_execution,
+                statusText = R.string.tx_status_needs_execution,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 confirmations = 2,
@@ -653,7 +653,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_status_awaiting_confirmations,
+                statusText = R.string.tx_status_needs_confirmations,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 method = "removeOwner",
@@ -669,7 +669,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_status_awaiting_confirmations,
+                statusText = R.string.tx_status_needs_confirmations,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 confirmations = 0,
@@ -685,7 +685,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
-                statusText = R.string.tx_status_awaiting_confirmations,
+                statusText = R.string.tx_status_needs_confirmations,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 confirmations = 0,
@@ -701,7 +701,7 @@ class TransactionListViewModelTest {
             TransactionView.SettingsChangeQueued(
                 id = "",
                 status = AWAITING_EXECUTION,
-                statusText = R.string.tx_status_awaiting_execution,
+                statusText = R.string.tx_status_needs_execution,
                 statusColorRes = R.color.secondary,
                 dateTime = Date(0),
                 confirmations = 2,
@@ -791,7 +791,7 @@ class TransactionListViewModelTest {
     }
 
     @Test
-    fun `mapToTransactionView (tx list with awaiting confirmation transactions) should map to list with items having correct awaiting confirmation string`() {
+    fun `mapToTransactionView (tx list with needs confirmation transactions) should map to list with items having correct needs confirmation string`() {
 
         transactionListViewModel =
             TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
@@ -836,25 +836,25 @@ class TransactionListViewModelTest {
         }
 
         assertTrue(transactionViewData[0] is TransactionView.TransferQueued)
-        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[0] as TransactionView.TransferQueued).statusText)
+        assertEquals(R.string.tx_status_needs_your_confirmation, (transactionViewData[0] as TransactionView.TransferQueued).statusText)
 
         assertTrue(transactionViewData[1] is TransactionView.TransferQueued)
-        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[1] as TransactionView.TransferQueued).statusText)
+        assertEquals(R.string.tx_status_needs_confirmations, (transactionViewData[1] as TransactionView.TransferQueued).statusText)
 
         assertTrue(transactionViewData[2] is TransactionView.SettingsChangeQueued)
-        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[2] as TransactionView.SettingsChangeQueued).statusText)
+        assertEquals(R.string.tx_status_needs_your_confirmation, (transactionViewData[2] as TransactionView.SettingsChangeQueued).statusText)
 
         assertTrue(transactionViewData[3] is TransactionView.SettingsChangeQueued)
-        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[3] as TransactionView.SettingsChangeQueued).statusText)
+        assertEquals(R.string.tx_status_needs_confirmations, (transactionViewData[3] as TransactionView.SettingsChangeQueued).statusText)
 
         assertTrue(transactionViewData[4] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_status_awaiting_your_confirmation, (transactionViewData[4] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_needs_your_confirmation, (transactionViewData[4] as TransactionView.CustomTransactionQueued).statusText)
 
         assertTrue(transactionViewData[5] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_status_awaiting_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_needs_confirmations, (transactionViewData[5] as TransactionView.CustomTransactionQueued).statusText)
 
         assertTrue(transactionViewData[6] is TransactionView.CustomTransactionQueued)
-        assertEquals(R.string.tx_status_awaiting_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
+        assertEquals(R.string.tx_status_needs_execution, (transactionViewData[6] as TransactionView.CustomTransactionQueued).statusText)
     }
 
     @Test

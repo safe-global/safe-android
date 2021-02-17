@@ -228,9 +228,9 @@
     <string name="tx_status_type_custom">Contract interaction</string>
     <string name="tx_status_type_creation">Safe created</string>
 
-    <string name="tx_status_awaiting_confirmations">\u2022 Awaiting confirmations</string>
-    <string name="tx_status_awaiting_your_confirmation">\u2022 Awaiting your confirmation</string>
-    <string name="tx_status_awaiting_execution">\u2022 Awaiting execution</string>
+    <string name="tx_status_needs_confirmations">\u2022 Needs confirmations</string>
+    <string name="tx_status_needs_your_confirmation">\u2022 Needs your confirmation</string>
+    <string name="tx_status_needs_execution">\u2022 Needs execution</string>
     <string name="tx_status_pending">\u2022 Pending</string>
     <string name="tx_status_cancelled">Cancelled</string>
     <string name="tx_status_failed">Failed</string>
