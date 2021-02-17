@@ -112,7 +112,13 @@ class TransactionListViewModel
             return when (val txInfo = txInfo) {
                 is TransactionInfo.Transfer -> toTransferView(txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, needsYourConfirmation, isConflict)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> {
+                    if (txInfo.isCancellation) {
+                        toRejectionTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
+                    } else {
+                        toCustomTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
+                    }
+                }
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -275,6 +281,62 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
+            addressInfo = addressInfo
+        )
+    }
+
+    private fun Transaction.toRejectionTransactionView(
+        txInfo: TransactionInfo.Custom,
+        safes: List<Safe>,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView =
+        if (!isCompleted(txStatus)) queuedRejectionTransaction(txInfo, safes, awaitingYourConfirmation, isConflict)
+        else historicRejectionTransaction(txInfo, safes)
+
+    private fun Transaction.historicRejectionTransaction(
+        txInfo: TransactionInfo.Custom,
+        safes: List<Safe>
+    ): TransactionView.RejectionTransaction {
+
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+
+        return TransactionView.RejectionTransaction(
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus),
+            statusColorRes = statusTextColor(txStatus),
+            dateTimeText = timestamp.formatBackendTimeOfDay(),
+            alpha = alpha(txStatus),
+            nonce = executionInfo?.nonce?.toString() ?: "",
+            addressInfo = addressInfo
+        )
+    }
+
+    private fun Transaction.queuedRejectionTransaction(
+        txInfo: TransactionInfo.Custom,
+        safes: List<Safe>,
+        awaitingYourConfirmation: Boolean,
+        isConflict: Boolean
+    ): TransactionView.RejectionTransactionQueued {
+
+        //FIXME this wouldn't make sense for incoming Ethereum TXs
+        val threshold = executionInfo?.confirmationsRequired ?: -1
+        val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
+
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+
+        return TransactionView.RejectionTransactionQueued(
+            id = id,
+            status = txStatus,
+            statusText = displayString(txStatus, awaitingYourConfirmation),
+            statusColorRes = statusTextColor(txStatus),
+            dateTime = timestamp,
+            confirmations = executionInfo?.confirmationsSubmitted ?: 0,
+            threshold = threshold,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
+            confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
+            nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             addressInfo = addressInfo
         )
     }

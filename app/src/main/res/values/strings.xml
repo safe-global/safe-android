@@ -340,6 +340,7 @@
     <string name="unknown_module">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>
+    <string name="tx_list_rejection">ON-CHAIN REJECTION</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
     <string name="label_type_next">Next</string>

@@ -1094,7 +1094,7 @@ class TransactionListViewModelTest {
         Transaction(
             id = "",
             txStatus = status,
-            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend", toInfo = toInfo),
+            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend", toInfo = toInfo, isCancellation = false),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
                 confirmationsRequired = defaultThreshold,

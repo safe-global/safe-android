@@ -37,6 +37,8 @@ enum class TransactionViewType {
     SECTION_CONFLICT_HEADER,
     SECTION_LABEL_HEADER,
     CREATION,
+    REJECTION,
+    REJECTION_QUEUED,
     CONFLICT
 }
 
@@ -56,6 +58,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> SectionLabelHeaderViewHolder(viewBinding as ItemTxSectionHeaderBinding)
             TransactionViewType.CREATION.ordinal -> CreationTransactionViewHolder(viewBinding as ItemTxSettingsChangeBinding)
             TransactionViewType.CONFLICT.ordinal -> ConflictViewHolder(viewBinding as ItemTxConflictTxBinding, this)
+            TransactionViewType.REJECTION.ordinal -> RejectionViewHolder(viewBinding as ItemTxRejectionBinding)
+            TransactionViewType.REJECTION_QUEUED.ordinal -> RejectionQueuedViewHolder(viewBinding as ItemTxQueuedRejectionBinding)
             else -> throw UnsupportedViewType(javaClass.name)
         } as BaseTransactionViewHolder<TransactionView>
 
@@ -72,6 +76,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             TransactionViewType.SECTION_LABEL_HEADER.ordinal -> ItemTxSectionHeaderBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.CREATION.ordinal -> ItemTxSettingsChangeBinding.inflate(layoutInflater, parent, false)
             TransactionViewType.CONFLICT.ordinal -> ItemTxConflictTxBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.REJECTION.ordinal -> ItemTxRejectionBinding.inflate(layoutInflater, parent, false)
+            TransactionViewType.REJECTION_QUEUED.ordinal -> ItemTxQueuedRejectionBinding.inflate(layoutInflater, parent, false)
             else -> throw UnsupportedViewType(javaClass.name)
         }
 
@@ -89,6 +95,8 @@ class TransactionViewHolderFactory : BaseFactory<BaseTransactionViewHolder<Trans
             is TransactionView.Creation -> TransactionViewType.CREATION
             is TransactionView.Unknown -> throw UnsupportedViewType(javaClass.name)
             is TransactionView.Conflict -> TransactionViewType.CONFLICT
+            is TransactionView.RejectionTransaction -> TransactionViewType.REJECTION
+            is TransactionView.RejectionTransactionQueued -> TransactionViewType.REJECTION_QUEUED
         }.ordinal
 }
 
@@ -301,6 +309,67 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
         }
     }
 }
+
+class RejectionQueuedViewHolder(private val viewBinding: ItemTxQueuedRejectionBinding) :
+    BaseTransactionViewHolder<TransactionView.RejectionTransactionQueued>(viewBinding) {
+
+    @ExperimentalTime
+    override fun bind(viewTransfer: TransactionView.RejectionTransactionQueued, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+
+            addressName.text = resources.getString(R.string.tx_list_rejection)
+
+            status.setText(viewTransfer.statusText)
+            status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+
+            dateTime.text = viewTransfer.dateTime.elapsedIntervalTo(Date.from(Instant.now())).format(resources)
+
+            confirmationsIcon.setImageDrawable(ResourcesCompat.getDrawable(resources, viewTransfer.confirmationsIcon, theme))
+            confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
+            confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
+
+            nonce.text = viewTransfer.nonce
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
+        }
+    }
+}
+
+class RejectionViewHolder(private val viewBinding: ItemTxRejectionBinding) :
+    BaseTransactionViewHolder<TransactionView.RejectionTransaction>(viewBinding) {
+
+    override fun bind(viewTransfer: TransactionView.RejectionTransaction, payloads: List<Any>) {
+        val resources = viewBinding.root.context.resources
+        val theme = viewBinding.root.context.theme
+
+        with(viewBinding) {
+
+            addressName.text = resources.getString(R.string.tx_list_rejection)
+            
+            finalStatus.setText(viewTransfer.statusText)
+            finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
+            dateTime.text = viewTransfer.dateTimeText
+
+            nonce.text = viewTransfer.nonce
+
+            addressLogo.alpha = viewTransfer.alpha
+            addressName.alpha = viewTransfer.alpha
+            finalStatus.alpha = OPACITY_FULL
+            dateTime.alpha = viewTransfer.alpha
+            nonce.alpha = viewTransfer.alpha
+
+            root.setOnClickListener {
+                navigateToTxDetails(it, viewTransfer.id)
+            }
+        }
+    }
+}
+
 
 class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.Creation>(viewBinding) {
