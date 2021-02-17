@@ -7,9 +7,9 @@ import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.transactions.AddressInfoData
+import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
-import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -58,6 +58,7 @@ fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter):
         }
         is TransactionInfoViewData.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
         is TransactionInfoViewData.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfoViewData.Rejection -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
         TransactionInfoViewData.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
     }
 
@@ -74,7 +75,11 @@ fun TransactionInfoViewData.logoUri(): String? =
                 "local::native_currency"
             }
         }
-        is TransactionInfoViewData.Custom, is TransactionInfoViewData.SettingsChange, is TransactionInfoViewData.Creation, TransactionInfoViewData.Unknown -> "local::native_currency"
+        is TransactionInfoViewData.Custom,
+        is TransactionInfoViewData.SettingsChange,
+        is TransactionInfoViewData.Creation,
+        is TransactionInfoViewData.Rejection,
+        TransactionInfoViewData.Unknown -> "local::native_currency"
     }
 
 fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resources): List<ActionInfoItem> {

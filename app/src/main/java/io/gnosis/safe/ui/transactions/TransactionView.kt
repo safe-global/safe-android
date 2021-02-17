@@ -85,8 +85,7 @@ sealed class TransactionView(
         val alpha: Float,
         val nonce: String,
         val methodName: String?,
-        val addressInfo: AddressInfoData,
-        val isCancellation: Boolean
+        val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
     data class CustomTransactionQueued(
@@ -101,8 +100,7 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val methodName: String?,
-        val addressInfo: AddressInfoData,
-        val isCancellation: Boolean
+        val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
     data class Creation(
@@ -124,6 +122,31 @@ sealed class TransactionView(
         val factory: String?,
         val transactionHash: String
     )
+
+    data class RejectionTransaction(
+        override val id: String,
+        override val status: TransactionStatus,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTimeText: String,
+        val alpha: Float,
+        val nonce: String,
+        val addressInfo: AddressInfoData
+    ) : TransactionView(status, id)
+
+    data class RejectionTransactionQueued(
+        override val id: String,
+        override val status: TransactionStatus,
+        @StringRes val statusText: Int,
+        @ColorRes val statusColorRes: Int,
+        val dateTime: Date,
+        val confirmations: Int,
+        val threshold: Int,
+        @ColorRes val confirmationsTextColor: Int,
+        @DrawableRes val confirmationsIcon: Int,
+        val nonce: String,
+        val addressInfo: AddressInfoData
+    ) : TransactionView(status, id)
 
     data class SectionDateHeader(val date: Date, override val id: String = "<unused>") : TransactionView(null, id)
     data class SectionLabelHeader(val label: LabelType, override val id: String = "<unused>") : TransactionView(null, id)
