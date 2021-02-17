@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
     android:background="@color/surface_01"
     android:orientation="vertical">
@@ -22,6 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="10dp"
+        app:drawableEndCompat="@drawable/ic_external_link_green_16dp"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical"
         android:text="@string/tx_details_rejection_payment_reason" />
 
     <View

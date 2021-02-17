@@ -14,10 +14,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentTransactionDetailsBinding
-import io.gnosis.safe.databinding.TxDetailsCustomBinding
-import io.gnosis.safe.databinding.TxDetailsSettingsChangeBinding
-import io.gnosis.safe.databinding.TxDetailsTransferBinding
+import io.gnosis.safe.databinding.*
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
@@ -299,69 +296,81 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 )
             }
             is TransactionInfoViewData.Custom -> {
-                val viewStub = binding.stubCustom
-                if (viewStub.parent != null) {
-                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
-                }
-                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                txDetailsCustomBinding.txAction.setActionInfo(
-                    outgoing = true,
-                    amount = txInfo.formattedAmount(balanceFormatter),
-                    logoUri = txInfo.logoUri()!!,
-                    address = txInfo.to,
-                    addressUri = txInfo.addressUri,
-                    addressName = txInfo.addressName
-                )
+                if (txInfo.isCancellation) {
+                    val viewStub = binding.stubRejection
+                    if (viewStub.parent != null) {
+                        contentBinding = TxDetailsRejectionBinding.bind(viewStub.inflate())
+                    }
+                    val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
 
-                val decodedData = txDetails.txData?.dataDecoded
-                if (decodedData == null) {
-                    txDetailsCustomBinding.txDataDecoded.visible(false)
-                    txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
+                    txDetailsRejectionBinding.txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
+
                 } else {
-                    if (decodedData.method.toLowerCase() == "multisend") {
+                    val viewStub = binding.stubCustom
+                    if (viewStub.parent != null) {
+                        contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                    }
+                    val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
 
-                        val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
+                    txDetailsCustomBinding.txAction.setActionInfo(
+                        outgoing = true,
+                        amount = txInfo.formattedAmount(balanceFormatter),
+                        logoUri = txInfo.logoUri()!!,
+                        address = txInfo.to,
+                        addressUri = txInfo.addressUri,
+                        addressName = txInfo.addressName
+                    )
 
-                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                    val decodedData = txDetails.txData?.dataDecoded
+                    if (decodedData == null) {
+                        txDetailsCustomBinding.txDataDecoded.visible(false)
+                        txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
+                    } else {
+                        if (decodedData.method.toLowerCase() == "multisend") {
 
-                        txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                            txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
-                                if (it is Param.Bytes && it.valueDecoded != null) {
+                            val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
+
+                            txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+
+                            txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                                txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
+                                    if (it is Param.Bytes && it.valueDecoded != null) {
+                                        findNavController().navigate(
+                                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                                paramSerializer.serializeDecodedValues(it.valueDecoded!!)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+
+                            txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+
+                            txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                                txDetails.txData?.let {
                                     findNavController().navigate(
-                                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
-                                            paramSerializer.serializeDecodedValues(it.valueDecoded!!)
+                                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                            it.dataDecoded?.method ?: "",
+                                            it.hexData ?: "",
+                                            it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
                                         )
                                     )
                                 }
                             }
+
                         }
-                    } else {
-
-                        txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
-
-                        txDetailsCustomBinding.txDataDecoded.setOnClickListener {
-                            txDetails.txData?.let {
-                                findNavController().navigate(
-                                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                        it.dataDecoded?.method ?: "",
-                                        it.hexData ?: "",
-                                        it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
-                                    )
-                                )
-                            }
-                        }
-
                     }
-                }
 
-                txDetailsCustomBinding.txStatus.setStatus(
-                    TxType.CUSTOM.titleRes,
-                    TxType.CUSTOM.iconRes,
-                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
-                    getColorForStatus(txDetails.txStatus)
-                )
-                txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
+                    txDetailsCustomBinding.txStatus.setStatus(
+                        TxType.CUSTOM.titleRes,
+                        TxType.CUSTOM.iconRes,
+                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getColorForStatus(txDetails.txStatus)
+                    )
+                    txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
+                }
             }
         }
 
