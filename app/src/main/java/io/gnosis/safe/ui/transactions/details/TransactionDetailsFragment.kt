@@ -169,6 +169,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
+                    rejection = false,
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
