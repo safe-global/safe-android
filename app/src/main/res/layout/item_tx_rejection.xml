@@ -76,7 +76,7 @@
         android:layout_height="16dp"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="@dimen/default_margin"
-        app:srcCompat="@drawable/ic_tx_confirmations_failed_16dp"
+        app:srcCompat="@drawable/ic_circle_cross_red_16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
