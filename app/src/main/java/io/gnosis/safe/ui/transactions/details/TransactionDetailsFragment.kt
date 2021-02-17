@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -166,7 +167,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
-                    rejection = false,
+                    rejection = txDetails.txInfo is TransactionInfoViewData.Rejection,
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
@@ -236,49 +237,50 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     contentBinding = TxDetailsTransferBinding.bind(inflate)
                 }
                 val txDetailsTransferBinding = contentBinding as TxDetailsTransferBinding
+                with(txDetailsTransferBinding) {
 
-                val outgoing = txInfo.direction == TransactionDirection.OUTGOING
-                val address = txInfo.address
+                    val outgoing = txInfo.direction == TransactionDirection.OUTGOING
+                    val address = txInfo.address
 
-                val txType = if (!outgoing) {
-                    TxType.TRANSFER_INCOMING
-                } else {
-                    TxType.TRANSFER_OUTGOING
-                }
-                when (val transferInfo = txInfo.transferInfo) {
-                    is TransferInfo.Erc721Transfer -> {
-                        txDetailsTransferBinding.txAction.setActionInfo(
-                            outgoing = outgoing,
-                            amount = txInfo.formattedAmount(balanceFormatter),
-                            logoUri = txInfo.logoUri() ?: "",
-                            address = address,
-                            tokenId = transferInfo.tokenId,
-                            addressName = txInfo.addressName,
-                            addressUri = txInfo.addressUri
-                        )
-
-                        txDetailsTransferBinding.contractAddress.address = transferInfo.tokenAddress
-                        txDetailsTransferBinding.contractAddress.name = getString(R.string.tx_details_asset_contract)
+                    val txType = if (!outgoing) {
+                        TxType.TRANSFER_INCOMING
+                    } else {
+                        TxType.TRANSFER_OUTGOING
                     }
-                    else -> {
-                        txDetailsTransferBinding.txAction.setActionInfo(
-                            outgoing = outgoing,
-                            amount = txInfo.formattedAmount(balanceFormatter),
-                            logoUri = txInfo.logoUri() ?: "",
-                            address = address,
-                            addressName = txInfo.addressName,
-                            addressUri = txInfo.addressUri
-                        )
-                        txDetailsTransferBinding.contractAddress.visible(false)
-                        txDetailsTransferBinding.contractSeparator.visible(false)
+                    when (val transferInfo = txInfo.transferInfo) {
+                        is TransferInfo.Erc721Transfer -> {
+                            txAction.setActionInfo(
+                                outgoing = outgoing,
+                                amount = txInfo.formattedAmount(balanceFormatter),
+                                logoUri = txInfo.logoUri() ?: "",
+                                address = address,
+                                tokenId = transferInfo.tokenId,
+                                addressName = txInfo.addressName,
+                                addressUri = txInfo.addressUri
+                            )
+                            contractAddress.address = transferInfo.tokenAddress
+                            contractAddress.name = getString(R.string.tx_details_asset_contract)
+                        }
+                        else -> {
+                            txAction.setActionInfo(
+                                outgoing = outgoing,
+                                amount = txInfo.formattedAmount(balanceFormatter),
+                                logoUri = txInfo.logoUri() ?: "",
+                                address = address,
+                                addressName = txInfo.addressName,
+                                addressUri = txInfo.addressUri
+                            )
+                            contractAddress.visible(false)
+                            contractSeparator.visible(false)
+                        }
                     }
+                    txStatus.setStatus(
+                        txType.titleRes,
+                        txType.iconRes,
+                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getColorForStatus(txDetails.txStatus)
+                    )
                 }
-                txDetailsTransferBinding.txStatus.setStatus(
-                    txType.titleRes,
-                    txType.iconRes,
-                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
-                    getColorForStatus(txDetails.txStatus)
-                )
             }
             is TransactionInfoViewData.SettingsChange -> {
                 val viewStub = binding.stubSettingsChange
@@ -286,34 +288,25 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     contentBinding = TxDetailsSettingsChangeBinding.bind(viewStub.inflate())
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
-
-                txDetailsSettingsChangeBinding.txAction.setActionInfoItems(txInfo.txActionInfoItems(requireContext().resources))
-                txDetailsSettingsChangeBinding.txStatus.setStatus(
-                    TxType.MODIFY_SETTINGS.titleRes,
-                    TxType.MODIFY_SETTINGS.iconRes,
-                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
-                    getColorForStatus(txDetails.txStatus)
-                )
+                with(txDetailsSettingsChangeBinding) {
+                    txAction.setActionInfoItems(txInfo.txActionInfoItems(requireContext().resources))
+                    txStatus.setStatus(
+                        TxType.MODIFY_SETTINGS.titleRes,
+                        TxType.MODIFY_SETTINGS.iconRes,
+                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getColorForStatus(txDetails.txStatus)
+                    )
+                }
             }
             is TransactionInfoViewData.Custom -> {
 
-                if (txInfo.isCancellation) {
-                    val viewStub = binding.stubRejection
-                    if (viewStub.parent != null) {
-                        contentBinding = TxDetailsRejectionBinding.bind(viewStub.inflate())
-                    }
-                    val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
-
-                    txDetailsRejectionBinding.txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
-
-                } else {
-                    val viewStub = binding.stubCustom
-                    if (viewStub.parent != null) {
-                        contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
-                    }
-                    val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
-
-                    txDetailsCustomBinding.txAction.setActionInfo(
+                val viewStub = binding.stubCustom
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
+                }
+                val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
+                with(txDetailsCustomBinding) {
+                    txAction.setActionInfo(
                         outgoing = true,
                         amount = txInfo.formattedAmount(balanceFormatter),
                         logoUri = txInfo.logoUri()!!,
@@ -321,19 +314,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         addressUri = txInfo.addressUri,
                         addressName = txInfo.addressName
                     )
-
                     val decodedData = txDetails.txData?.dataDecoded
                     if (decodedData == null) {
-                        txDetailsCustomBinding.txDataDecoded.visible(false)
-                        txDetailsCustomBinding.txDataDecodedSeparator.visible(false)
+                        txDataDecoded.visible(false)
+                        txDataDecodedSeparator.visible(false)
                     } else {
+
                         if (decodedData.method.toLowerCase() == "multisend") {
 
                             val valueDecoded = (decodedData.parameters?.get(0) as Param.Bytes).valueDecoded
 
-                            txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
-
-                            txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                            txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                            txDataDecoded.setOnClickListener {
                                 txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
@@ -346,9 +338,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             }
                         } else {
 
-                            txDetailsCustomBinding.txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
-
-                            txDetailsCustomBinding.txDataDecoded.setOnClickListener {
+                            txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                            txDataDecoded.setOnClickListener {
                                 txDetails.txData?.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
@@ -363,13 +354,36 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         }
                     }
 
-                    txDetailsCustomBinding.txStatus.setStatus(
+                    txStatus.setStatus(
                         TxType.CUSTOM.titleRes,
                         TxType.CUSTOM.iconRes,
                         getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                         getColorForStatus(txDetails.txStatus)
                     )
-                    txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
+                    txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
+                }
+            }
+
+            is TransactionInfoViewData.Rejection -> {
+                val viewStub = binding.stubRejection
+                if (viewStub.parent != null) {
+                    contentBinding = TxDetailsRejectionBinding.bind(viewStub.inflate())
+                }
+                val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
+
+                with(txDetailsRejectionBinding) {
+
+                    txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
+                    txPaymentReasonLink.paintFlags = txPaymentReasonLink.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                    txPaymentReasonLink.setOnClickListener {
+                        requireContext().openUrl(getString(R.string.tx_details_rejection_payment_reason_link))
+                    }
+                    txStatus.setStatus(
+                        TxType.REJECTION.titleRes,
+                        TxType.REJECTION.iconRes,
+                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getColorForStatus(txDetails.txStatus)
+                    )
                 }
             }
         }
