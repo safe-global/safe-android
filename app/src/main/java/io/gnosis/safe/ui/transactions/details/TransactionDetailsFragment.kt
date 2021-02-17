@@ -299,7 +299,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
             }
             is TransactionInfoViewData.Custom -> {
-
                 val viewStub = binding.stubCustom
                 if (viewStub.parent != null) {
                     contentBinding = TxDetailsCustomBinding.bind(viewStub.inflate())
