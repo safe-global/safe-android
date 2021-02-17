@@ -111,7 +111,7 @@
         android:textColor="@color/secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
-        tools:text="\u2022 Awaiting your confirmation" />
+        tools:text="\u2022 Needs your confirmation" />
 
     <TextView
         android:id="@+id/confirmations"

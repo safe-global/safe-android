@@ -82,7 +82,7 @@ class TransactionListViewModel
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
                                         safes = safes,
-                                        awaitingYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
+                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
                                         isConflict = isConflict
                                     )
                                 if (isConflict) {
@@ -105,14 +105,14 @@ class TransactionListViewModel
     fun getTransactionView(
         transaction: Transaction,
         safes: List<Safe>,
-        awaitingYourConfirmation: Boolean = false,
+        needsYourConfirmation: Boolean = false,
         isConflict: Boolean = false
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
-                is TransactionInfo.Transfer -> toTransferView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, awaitingYourConfirmation, isConflict)
-                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, safes, awaitingYourConfirmation, isConflict)
+                is TransactionInfo.Transfer -> toTransferView(txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.Custom -> toCustomTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
                 is TransactionInfo.Creation -> toHistoryCreation(txInfo)
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -121,11 +121,11 @@ class TransactionListViewModel
 
     private fun Transaction.toTransferView(
         txInfo: TransactionInfo.Transfer,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean = false
     ): TransactionView =
         if (isCompleted(txStatus)) historicTransfer(txInfo, isConflict)
-        else queuedTransfer(txInfo, awaitingYourConfirmation, isConflict)
+        else queuedTransfer(txInfo, needsYourConfirmation, isConflict)
 
     private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer, isConflict: Boolean): TransactionView.Transfer =
         TransactionView.Transfer(
@@ -144,7 +144,7 @@ class TransactionListViewModel
 
     private fun Transaction.queuedTransfer(
         txInfo: TransactionInfo.Transfer,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean = false
     ): TransactionView.TransferQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
@@ -155,7 +155,7 @@ class TransactionListViewModel
         return TransactionView.TransferQueued(
             id = id,
             status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
+            statusText = displayString(txStatus, needsYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
             dateTime = timestamp,
@@ -172,11 +172,11 @@ class TransactionListViewModel
 
     private fun Transaction.toSettingsChangeView(
         txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean = false
     ): TransactionView =
         when {
-            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, awaitingYourConfirmation, isConflict)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, needsYourConfirmation, isConflict)
             isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
             else -> TransactionView.Unknown
         }
@@ -199,7 +199,7 @@ class TransactionListViewModel
 
     private fun Transaction.queuedSettingsChange(
         txInfo: TransactionInfo.SettingsChange,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.SettingsChangeQueued {
         //FIXME this wouldn't make sense for incoming Ethereum TXs
@@ -209,7 +209,7 @@ class TransactionListViewModel
         return TransactionView.SettingsChangeQueued(
             id = id,
             status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
+            statusText = displayString(txStatus, needsYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTime = timestamp,
             method = txInfo.dataDecoded.method,
@@ -224,10 +224,10 @@ class TransactionListViewModel
     private fun Transaction.toCustomTransactionView(
         txInfo: TransactionInfo.Custom,
         safes: List<Safe>,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safes, awaitingYourConfirmation, isConflict)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safes, needsYourConfirmation, isConflict)
         else historicCustomTransaction(txInfo, safes)
 
     private fun Transaction.historicCustomTransaction(
@@ -253,7 +253,7 @@ class TransactionListViewModel
     private fun Transaction.queuedCustomTransaction(
         txInfo: TransactionInfo.Custom,
         safes: List<Safe>,
-        awaitingYourConfirmation: Boolean,
+        needsYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.CustomTransactionQueued {
 
@@ -266,7 +266,7 @@ class TransactionListViewModel
         return TransactionView.CustomTransactionQueued(
             id = id,
             status = txStatus,
-            statusText = displayString(txStatus, awaitingYourConfirmation),
+            statusText = displayString(txStatus, needsYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             dateTime = timestamp,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
@@ -319,10 +319,10 @@ class TransactionListViewModel
         }
 
     @StringRes
-    private fun displayString(status: TransactionStatus, awaitingYourConfirmation: Boolean = false): Int =
+    private fun displayString(status: TransactionStatus, needsYourConfirmation: Boolean = false): Int =
         when (status) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> if (awaitingYourConfirmation) R.string.tx_status_awaiting_your_confirmation else R.string.tx_status_awaiting_confirmations
-            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_awaiting_execution
+            TransactionStatus.AWAITING_CONFIRMATIONS -> if (needsYourConfirmation) R.string.tx_status_needs_your_confirmation else R.string.tx_status_needs_confirmations
+            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_needs_execution
             TransactionStatus.CANCELLED -> R.string.tx_status_cancelled
             TransactionStatus.FAILED -> R.string.tx_status_failed
             TransactionStatus.SUCCESS -> R.string.tx_status_success

@@ -141,17 +141,17 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private fun updateUi(txDetails: TransactionDetailsViewData) {
 
-        var awaitingYourConfirmation = false
+        var needsYourConfirmation = false
 
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
 
-                awaitingYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
+                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
 
                 binding.txConfirmations.visible(true)
 
-                if (awaitingYourConfirmation) {
+                if (needsYourConfirmation) {
                     binding.txConfirmButtonContainer.visible(true)
                     binding.txConfirmButton.setOnClickListener {
                         showConfirmDialog(
@@ -278,7 +278,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsTransferBinding.txStatus.setStatus(
                     txType.titleRes,
                     txType.iconRes,
-                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
+                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
             }
@@ -293,7 +293,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsSettingsChangeBinding.txStatus.setStatus(
                     TxType.MODIFY_SETTINGS.titleRes,
                     TxType.MODIFY_SETTINGS.iconRes,
-                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
+                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
             }
@@ -357,7 +357,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 txDetailsCustomBinding.txStatus.setStatus(
                     TxType.CUSTOM.titleRes,
                     TxType.CUSTOM.iconRes,
-                    getStringResForStatus(txDetails.txStatus, awaitingYourConfirmation),
+                    getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                     getColorForStatus(txDetails.txStatus)
                 )
                 txDetailsCustomBinding.txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
@@ -381,10 +381,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         }
 
     @StringRes
-    private fun getStringResForStatus(txStatus: TransactionStatus, awaitingYourConfirmation: Boolean): Int =
+    private fun getStringResForStatus(txStatus: TransactionStatus, needsYourConfirmation: Boolean): Int =
         when (txStatus) {
-            TransactionStatus.AWAITING_CONFIRMATIONS -> if (awaitingYourConfirmation) R.string.tx_status_awaiting_your_confirmation else R.string.tx_status_awaiting_confirmations
-            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_awaiting_execution
+            TransactionStatus.AWAITING_CONFIRMATIONS -> if (needsYourConfirmation) R.string.tx_status_needs_your_confirmation else R.string.tx_status_needs_confirmations
+            TransactionStatus.AWAITING_EXECUTION -> R.string.tx_status_needs_execution
             TransactionStatus.SUCCESS -> R.string.tx_status_success
             TransactionStatus.CANCELLED -> R.string.tx_status_cancelled
             TransactionStatus.FAILED -> R.string.tx_status_failed
