@@ -41,7 +41,9 @@
         app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
-        tools:text="@string/tx_list_rejection" />
+        android:textAllCaps="true"
+        tools:text="@string/tx_list_rejection"
+        android:background="@color/tomato"/>
 
     <TextView
         android:id="@+id/nonce"

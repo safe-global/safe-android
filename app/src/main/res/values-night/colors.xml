@@ -24,4 +24,6 @@
     <color name="illustration_background">@color/dark_grey_two</color>
     <color name="logo_background">@color/white_two</color>
 
+    <color name="rejection">@color/black_six</color>
+
 </resources>

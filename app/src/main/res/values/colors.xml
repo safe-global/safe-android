@@ -78,6 +78,8 @@
     <color name="black_five">#121212</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
+    <color name="black_six">#3b2c2c</color>
+    <color name="light_pink">#ffe6ea</color>
 
     <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
@@ -92,4 +94,5 @@
     <color name="blue">#001e3b</color>
     <color name="divider">@color/pale_grey_four</color>
 
+    <color name="rejection">@color/light_pink</color>
 </resources>
