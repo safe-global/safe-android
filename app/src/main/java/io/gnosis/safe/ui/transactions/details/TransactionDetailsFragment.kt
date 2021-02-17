@@ -371,6 +371,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
                 with(txDetailsRejectionBinding) {
                     txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
+                    txPaymentReasonLink.text = null
                     txPaymentReasonLink.appendLink(
                         url = getString(R.string.tx_details_rejection_payment_reason_link),
                         urlText = getString(R.string.tx_details_rejection_payment_reason),
