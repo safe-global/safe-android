@@ -43,7 +43,7 @@
         app:layout_constraintTop_toTopOf="@+id/address_logo"
         android:textAllCaps="true"
         tools:text="@string/tx_list_rejection"
-        android:background="@color/tomato"/>
+        android:background="@color/rejection"/>
 
     <TextView
         android:id="@+id/nonce"
