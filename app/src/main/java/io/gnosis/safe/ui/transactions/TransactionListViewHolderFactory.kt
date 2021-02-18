@@ -320,7 +320,7 @@ class RejectionQueuedViewHolder(private val viewBinding: ItemTxQueuedRejectionBi
 
         with(viewBinding) {
 
-            addressName.text = resources.getString(R.string.tx_list_rejection)
+            txType.text = resources.getString(R.string.tx_list_rejection)
 
             status.setText(viewTransfer.statusText)
             status.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -349,7 +349,7 @@ class RejectionViewHolder(private val viewBinding: ItemTxRejectionBinding) :
 
         with(viewBinding) {
 
-            addressName.text = resources.getString(R.string.tx_list_rejection)
+            txType.text = resources.getString(R.string.tx_list_rejection)
             
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
@@ -358,7 +358,7 @@ class RejectionViewHolder(private val viewBinding: ItemTxRejectionBinding) :
             nonce.text = viewTransfer.nonce
 
             addressLogo.alpha = viewTransfer.alpha
-            addressName.alpha = viewTransfer.alpha
+            txType.alpha = viewTransfer.alpha
             finalStatus.alpha = OPACITY_FULL
             dateTime.alpha = viewTransfer.alpha
             nonce.alpha = viewTransfer.alpha
