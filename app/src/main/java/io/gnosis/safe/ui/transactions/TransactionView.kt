@@ -130,8 +130,7 @@ sealed class TransactionView(
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val alpha: Float,
-        val nonce: String,
-        val addressInfo: AddressInfoData
+        val nonce: String
     ) : TransactionView(status, id)
 
     data class RejectionTransactionQueued(
@@ -144,8 +143,7 @@ sealed class TransactionView(
         val threshold: Int,
         @ColorRes val confirmationsTextColor: Int,
         @DrawableRes val confirmationsIcon: Int,
-        val nonce: String,
-        val addressInfo: AddressInfoData
+        val nonce: String
     ) : TransactionView(status, id)
 
     data class SectionDateHeader(val date: Date, override val id: String = "<unused>") : TransactionView(null, id)
