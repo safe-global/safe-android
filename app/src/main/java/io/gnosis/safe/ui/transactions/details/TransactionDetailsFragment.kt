@@ -76,6 +76,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         updateUi(it)
                     }
                 }
+                is RejectionSubmitted -> {
+                    showLoading(false)
+                    binding.txConfirmButtonContainer.visible(false)
+                    snackbar(requireView(), R.string.confirmation_successfully_submitted)
+                }
                 is ConfirmationSubmitted -> {
                     binding.txConfirmButtonContainer.visible(false)
                     viewAction.txDetails?.let { ::updateUi }
@@ -158,7 +163,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             confirmColor = R.color.primary
                         ) {
                             binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(viewModel.txDetails!!)
+//                            viewModel.submitConfirmation(viewModel.txDetails!!)
+                            viewModel.submitRejection(viewModel.txDetails!!)
                         }
                     }
                 } else {

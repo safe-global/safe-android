@@ -4,9 +4,11 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
+import io.gnosis.data.models.transaction.MultisigTransactionRequest
 import io.gnosis.data.models.transaction.TransactionConfirmationRequest
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TxListEntry
+import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
 
@@ -26,6 +28,12 @@ interface GatewayApi {
         @Path("safeTxHash") safeTxHash: String,
         @Body txConfirmationRequest: TransactionConfirmationRequest
     ): TransactionDetails
+
+    @POST("v1/transactions/{safeAddress}/propose")
+    suspend fun proposeTransaction(
+        @Path("safeAddress") safeAddress: String,
+        @Body multisigTransactionRequest: MultisigTransactionRequest
+    ): Response<Unit>
 
     @GET("v1/safes/{safeAddress}/collectibles")
     suspend fun loadCollectibles(@Path("safeAddress") safeAddress: String): List<Collectible>

@@ -7,7 +7,7 @@ import io.gnosis.data.models.transaction.Operation
 
 class OperationEnumAdapter {
     @ToJson
-    fun toJson(operation: Operation): String = operation.id.toString()
+    fun toJson(operation: Operation): Int = operation.id
 
     @FromJson
     fun fromJson(operation: String): Operation =
