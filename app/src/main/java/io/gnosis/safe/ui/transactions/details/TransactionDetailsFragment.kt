@@ -369,13 +369,19 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsRejectionBinding = contentBinding as TxDetailsRejectionBinding
                 with(txDetailsRejectionBinding) {
-                    txRejectionInfo.text = getString(R.string.tx_details_rejection_info, nonce)
-                    txPaymentReasonLink.setLink(
-                        url = getString(R.string.tx_details_rejection_payment_reason_link),
-                        urlText = getString(R.string.tx_details_rejection_payment_reason),
-                        linkIcon = R.drawable.ic_external_link_green_16dp,
-                        underline = true
-                    )
+                    if (txDetails.txStatus.isCompleted()) {
+                        txRejectionInfo.text = getString(R.string.tx_details_rejection_info_historic, nonce)
+                        txPaymentReasonLink.visible(false)
+                    } else {
+                        txRejectionInfo.text = getString(R.string.tx_details_rejection_info_queued, nonce)
+                        txPaymentReasonLink.visible(true)
+                        txPaymentReasonLink.setLink(
+                            url = getString(R.string.tx_details_rejection_payment_reason_link),
+                            urlText = getString(R.string.tx_details_rejection_payment_reason),
+                            linkIcon = R.drawable.ic_external_link_green_16dp,
+                            underline = true
+                        )
+                    }
                     txStatus.setStatus(
                         TxType.REJECTION.titleRes,
                         TxType.REJECTION.iconRes,
