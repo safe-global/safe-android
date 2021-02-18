@@ -56,14 +56,15 @@ class TransactionDetailsViewModel
             ?: throw RuntimeException("MissingCorrectExecutionDetailsException")
 
         safeLaunch {
+            val activeSafeAddress = safeRepository.getActiveSafe()!!.address
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(safeRepository.getActiveSafe()!!.address),
+                txInfo = TransactionInfo.Custom(activeSafeAddress),
                 detailedExecutionInfo = rejectionExecutionInfo
             )
             val safeTxHash =
                 calculateSafeTxHash(
-                    safeAddress = safeRepository.getActiveSafe()!!.address,
+                    safeAddress = activeSafeAddress,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
                 )!!.toHexString()
@@ -73,7 +74,7 @@ class TransactionDetailsViewModel
 
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
-                    safeAddress = safeRepository.getActiveSafe()!!.address,
+                    safeAddress = activeSafeAddress,
                     nonce = rejectionExecutionInfo.nonce,
                     signature = transactionRepository.sign(ownerCredentials.key, safeTxHash),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),

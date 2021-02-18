@@ -73,12 +73,6 @@ class TransactionRepository(
             .toSignatureString()
 }
 
-fun List<Param>?.getAddressValueByName(name: String): Solidity.Address? {
-    return this?.find {
-        it is Param.Address && it.name == name
-    }?.value as Solidity.Address?
-}
-
 fun List<Param>?.getIntValueByName(name: String): String? {
     return this?.find {
         it is Param.Value && it.name == name

@@ -4,7 +4,10 @@ import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import pm.gnosis.ethereum.*
+import pm.gnosis.ethereum.Block
+import pm.gnosis.ethereum.EthCall
+import pm.gnosis.ethereum.EthRequest
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -161,11 +164,62 @@ class EnsRepositoryTest {
         }
     }
 
+    @Test
+    fun `resolveReverse (valid resolver and address) should return name`() = runBlocking {
+        coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
+                EthCall(
+                    transaction = Transaction(
+                        ENS_ADDRESS,
+                        data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6"
+                    )
+                ).apply {
+                    response = EthRequest.Response.Success(ENS_ADDRESS.asEthereumAddressString())
+                } andThen
+                EthCall(
+                    transaction = Transaction(
+                        ENS_ADDRESS,
+                        data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6"
+                    )
+                ).apply {
+                    response =
+                        EthRequest.Response.Success("0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000f6c696c74657374736166652e6574680000000000000000000000000000000000")
+                }
+
+        val actual = runCatching { repository.reverseResolve(TEST_SAFE) }
+        
+        with(actual) {
+            assert(isSuccess)
+            assert(getOrNull() == "liltestsafe.eth")
+        }
+
+        coVerifySequence {
+            ethereumRepository.request(
+                EthCall(
+                    transaction = Transaction(
+                        ENS_ADDRESS,
+                        data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6"
+                    ),
+                    block = Block.LATEST
+                )
+            )
+            ethereumRepository.request(
+                EthCall(
+                    transaction = Transaction(
+                        ENS_ADDRESS,
+                        data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6"
+                    ),
+                    block = Block.LATEST
+                )
+            )
+        }
+    }
+
     companion object {
         private val TEST_ADDRESS = "0xbaddad".asEthereumAddress()!!
         private val TEST_SAFE = "0xdadada".asEthereumAddress()!!
         private val ENS_ADDRESS = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e".asEthereumAddress()!!
         private const val GET_RESOLVER = "0x0178b8bf"
         private const val GET_ADDRESS = "0x3b3b57de"
+        private const val GET_NAME = "0x691f3431" // name(bytes32)
     }
 }
