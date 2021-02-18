@@ -164,7 +164,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         ) {
                             binding.txConfirmButton.isEnabled = false
 //                            viewModel.submitConfirmation(viewModel.txDetails!!)
-                            viewModel.submitRejection(viewModel.txDetails!!)
+                            viewModel.submitRejection()
                         }
                     }
                 } else {

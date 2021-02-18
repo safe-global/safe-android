@@ -12,11 +12,11 @@ sealed class TransactionInfo(
     @JsonClass(generateAdapter = true)
     data class Custom(
         @Json(name = "to") val to: Solidity.Address,
-        @Json(name = "toInfo") val toInfo: AddressInfo?,
-        @Json(name = "dataSize") val dataSize: Int,
-        @Json(name = "value") val value: BigInteger,
-        @Json(name = "methodName") val methodName: String?,
-        @Json(name = "isCancellation") val isCancellation: Boolean
+        @Json(name = "toInfo") val toInfo: AddressInfo? = null,
+        @Json(name = "dataSize") val dataSize: Int = 0,
+        @Json(name = "value") val value: BigInteger = BigInteger.ZERO,
+        @Json(name = "methodName") val methodName: String? = null,
+        @Json(name = "isCancellation") val isCancellation: Boolean = false
     ) : TransactionInfo(TransactionType.Custom)
 
     @JsonClass(generateAdapter = true)

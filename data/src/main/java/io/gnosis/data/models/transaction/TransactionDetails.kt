@@ -3,23 +3,24 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class TransactionDetails(
     @Json(name = "txHash")
-    val txHash: String?,
+    val txHash: String? = null,
     @Json(name = "txStatus")
-    val txStatus: TransactionStatus,
+    val txStatus: TransactionStatus = TransactionStatus.PENDING,
     @Json(name = "txInfo")
     val txInfo: TransactionInfo,
     @Json(name = "executedAt")
-    val executedAt: Date?,
+    val executedAt: Date? = null,
     @Json(name = "txData")
-    val txData: TxData?,
+    val txData: TxData? = null,
     @Json(name = "detailedExecutionInfo")
-    val detailedExecutionInfo: DetailedExecutionInfo?
+    val detailedExecutionInfo: DetailedExecutionInfo? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -37,8 +38,10 @@ data class TxData(
 )
 
 enum class DetailedExecutionInfoType {
-    @Json(name = "MULTISIG") MULTISIG,
-    @Json(name = "MODULE") MODULE
+    @Json(name = "MULTISIG")
+    MULTISIG,
+    @Json(name = "MODULE")
+    MODULE
 }
 
 sealed class DetailedExecutionInfo(
@@ -47,27 +50,27 @@ sealed class DetailedExecutionInfo(
     @JsonClass(generateAdapter = true)
     data class MultisigExecutionDetails(
         @Json(name = "submittedAt")
-        val submittedAt: Date,
+        val submittedAt: Date = Date(),
         @Json(name = "nonce")
         val nonce: BigInteger,
         @Json(name = "safeTxHash")
-        val safeTxHash: String,
+        val safeTxHash: String = "",
         @Json(name = "signers")
-        val signers: List<Solidity.Address>,
+        val signers: List<Solidity.Address> = emptyList(),
         @Json(name = "confirmationsRequired")
-        val confirmationsRequired: Int,
+        val confirmationsRequired: Int = 0,
         @Json(name = "confirmations")
-        val confirmations: List<Confirmations>,
+        val confirmations: List<Confirmations> = emptyList(),
         @Json(name = "executor")
-        val executor: Solidity.Address?,
+        val executor: Solidity.Address? = null,
         @Json(name = "safeTxGas")
-        val safeTxGas: BigInteger,
+        val safeTxGas: BigInteger = BigInteger.ZERO,
         @Json(name = "baseGas")
-        val baseGas: BigInteger,
+        val baseGas: BigInteger = BigInteger.ZERO,
         @Json(name = "gasPrice")
-        val gasPrice: BigInteger,
+        val gasPrice: BigInteger = BigInteger.ZERO,
         @Json(name = "gasToken")
-        val gasToken: Solidity.Address
+        val gasToken: Solidity.Address = "0".asEthereumAddress()!!
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MULTISIG)
 
     @JsonClass(generateAdapter = true)
