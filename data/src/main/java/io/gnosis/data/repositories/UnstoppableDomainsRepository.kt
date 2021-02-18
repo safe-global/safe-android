@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import com.unstoppabledomains.config.network.model.Network
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
+import com.unstoppabledomains.resolution.DomainResolution
 import com.unstoppabledomains.resolution.Resolution
 import com.unstoppabledomains.resolution.naming.service.NamingServiceType
 import io.gnosis.data.BuildConfig
@@ -13,15 +14,15 @@ import java.util.concurrent.FutureTask
 class BackgroundTask : Callable<String> {
     var address = ""
     var domain: String;
-    private val library: Resolution = Resolution.builder()
-            .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
-            .build();
 
     constructor(domain: String)  {
         this.domain = domain;
     }
 
     override fun call(): String {
+        val library: DomainResolution = Resolution.builder()
+                .providerUrl(NamingServiceType.CNS, BuildConfig.BLOCKCHAIN_NET_URL + BuildConfig.INFURA_API_KEY)
+                .build();
         address = library.getAddress(domain, "eth");
         return address
     }
