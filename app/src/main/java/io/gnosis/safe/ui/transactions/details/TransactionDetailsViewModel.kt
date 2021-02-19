@@ -53,7 +53,7 @@ class TransactionDetailsViewModel
 
     fun submitRejection() {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-            ?: throw RuntimeException("MissingCorrectExecutionDetailsException")
+            ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
             val activeSafeAddress = safeRepository.getActiveSafe()!!.address
@@ -93,7 +93,7 @@ class TransactionDetailsViewModel
     fun submitConfirmation(transaction: TransactionDetails) {
 
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-            ?: throw RuntimeException("MissingCorrectExecutionDetailsException")
+            ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
             validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
@@ -144,4 +144,6 @@ class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
 class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()
+object MissingCorrectExecutionDetailsException : Throwable()
+
 object RejectionSubmitted : BaseStateViewModel.ViewAction
