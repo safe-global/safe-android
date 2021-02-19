@@ -223,8 +223,18 @@
     <string name="tx_details_set_fallback_handler">Set fallback handler:</string>
     <string name="tx_details_asset_contract">Asset Contract</string>
 
-    <string name="tx_details_rejection_info">This is an on-chain rejection that doesn’t send any funds. Executing this on-chain rejection will replace all currently awaiting transactions with nonce %1$d.</string>
+    <string name="tx_details_rejection_info_queued">This is an on-chain rejection that doesn’t send any funds. Executing this on-chain rejection will replace all currently awaiting transactions with nonce %1$d.</string>
+    <string name="tx_details_rejection_info_historic">This is an on-chain rejection that didn’t send any funds. This on-chain rejection replaced all transactions with nonce %1$d. </string>
     <string name="tx_details_rejection_payment_reason">Why do I need to pay for rejecting a transaction?</string>
+
+    <string name="tx_details_rejection_confirmation_title">Reject transaction</string>
+    <string name="tx_details_rejection_confirmation_info">This will create an on-chain rejection with the same nonce that doesn’t send any funds. The on-chain rejection will replace the transaction you wish to reject.\n\nYou\'ll have to confirm the creation of the on-chain rejection with your imported owner key.</string>
+    <string name="tx_details_rejection_confirmation_reject_transaction">Reject transaction</string>
+    <string name="tx_details_rejection_confirmation_learn_more">Advanced users can create a non-empty (useful) transaction with the same nonce (in the web interface only). Learn more in this article:</string>
+    <string name="tx_details_rejection_confirmation_step1">Create on-chain rejection</string>
+    <string name="tx_details_rejection_confirmation_step2">Collect confirmations</string>
+    <string name="tx_details_rejection_confirmation_step3">Execute on-chain rejection</string>
+    <string name="tx_details_rejection_confirmation_step4">The initial transaction is replaced</string>
 
     <string name="tx_status_type_transfer_incoming">Incoming Transfer</string>
     <string name="tx_status_type_transfer_outgoing">Outgoing Transfer</string>
@@ -316,6 +326,7 @@
     <string name="address_found">Address found</string>
     <string name="retry">RETRY</string>
     <string name="confirm">Confirm</string>
+    <string name="reject">Reject</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
 
@@ -339,6 +350,7 @@
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
+    <string name="rejection_successfully_submitted">Rejection successfully submitted</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>

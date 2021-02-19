@@ -63,6 +63,8 @@ interface ViewComponent {
 
     fun inject(fragment: AdvancedTransactionDetailsFragment)
 
+    fun inject(fragment: ConfirmRejectionFragment)
+
     fun inject(dialog: EnsInputDialog)
 
     fun inject(fragment: SettingsFragment)

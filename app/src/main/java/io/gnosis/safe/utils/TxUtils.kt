@@ -3,6 +3,7 @@ package io.gnosis.safe.utils
 import android.content.res.Resources
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.transaction.TransactionDirection
+import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
@@ -15,6 +16,16 @@ import java.math.BigInteger
 
 const val DEFAULT_ERC20_SYMBOL = "ERC20"
 const val DEFAULT_ERC721_SYMBOL = "NFT"
+
+fun TransactionStatus.isCompleted(): Boolean =
+    when (this) {
+        TransactionStatus.AWAITING_CONFIRMATIONS,
+        TransactionStatus.AWAITING_EXECUTION,
+        TransactionStatus.PENDING -> false
+        TransactionStatus.SUCCESS,
+        TransactionStatus.FAILED,
+        TransactionStatus.CANCELLED -> true
+    }
 
 fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
