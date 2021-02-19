@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
@@ -16,6 +17,7 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import io.gnosis.safe.utils.formatForTxList
+import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
@@ -24,10 +26,22 @@ import timber.log.Timber
 class NotificationManager(
     private val context: Context,
     private val preferencesManager: PreferencesManager,
-    private val balanceFormatter: BalanceFormatter
+    private val balanceFormatter: BalanceFormatter,
+    private val safeRepository: SafeRepository,
+    private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
 ) {
 
-    private val notificationManager = NotificationManagerCompat.from(context)
+    init {
+        if (Build.VERSION.SDK_INT >= 26) {
+            // For upgrading users. Can be removed in a future release?
+            runBlocking {
+                safeRepository.getSafes().forEach { safe ->
+                    createNotificationChannelGroup(safe)
+                }
+            }
+        }
+    }
+
 
     private var latestNotificationId: Int
         get() = preferencesManager.prefs.getInt(LATEST_NOTIFICATION_ID, -1)
@@ -47,7 +61,7 @@ class NotificationManager(
     }
 
     fun deleteNotificationChannelGroup(safe: Safe) {
-        val subChannels = SubChannel.values()
+        val subChannels = ChannelType.values()
 
         subChannels.forEach { subChannel ->
             notificationManager.deleteNotificationChannel(safe.address.asEthereumAddressChecksumString() + "." + context.getString(subChannel.resId))
@@ -56,13 +70,12 @@ class NotificationManager(
     }
 
     fun updateNotificationChannelGroupForSafe(safe: Safe) {
-        if (Build.VERSION.SDK_INT < 26) {
-            return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannelGroup(safe)
         }
-        createNotificationChannelGroup(safe)
     }
 
-    enum class SubChannel(@StringRes val resId: Int) {
+    enum class ChannelType(@StringRes val resId: Int) {
         CONFIRMATION_REQUESTS(R.string.channel_tx_confirmation_request),
         EXECUTED_TRANSACTIONS(R.string.channel_tx_executed_transactions),
         INCOMING_TOKENS(R.string.channel_tx_incoming_tokens),
@@ -70,12 +83,11 @@ class NotificationManager(
     }
 
     private fun createNotificationChannel(channelId: String, importance: Int = NotificationManager.IMPORTANCE_HIGH) {
-        if (Build.VERSION.SDK_INT < 26) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return
         }
-        val subChannels = SubChannel.values()
 
-        subChannels.forEach { subChannel ->
+        ChannelType.values().forEach { subChannel ->
             val name = context.getString(subChannel.resId)
             val channel = NotificationChannel("$channelId.$name", name, importance)
             channel.description = name
@@ -147,12 +159,12 @@ class NotificationManager(
         return builder(title, text, channelId, intent)
     }
 
-    private fun subChannelForPushNotificationSubType(pushNotification: PushNotification): SubChannel {
+    private fun subChannelForPushNotificationSubType(pushNotification: PushNotification): ChannelType {
         return when (pushNotification) {
-            is PushNotification.ConfirmationRequest -> SubChannel.CONFIRMATION_REQUESTS
-            is PushNotification.ExecutedTransaction -> SubChannel.EXECUTED_TRANSACTIONS
-            is PushNotification.IncomingToken -> SubChannel.INCOMING_TOKENS
-            is PushNotification.IncomingEther -> SubChannel.INCOMING_ETHER
+            is PushNotification.ConfirmationRequest -> ChannelType.CONFIRMATION_REQUESTS
+            is PushNotification.ExecutedTransaction -> ChannelType.EXECUTED_TRANSACTIONS
+            is PushNotification.IncomingToken -> ChannelType.INCOMING_TOKENS
+            is PushNotification.IncomingEther -> ChannelType.INCOMING_ETHER
         }
     }
 
