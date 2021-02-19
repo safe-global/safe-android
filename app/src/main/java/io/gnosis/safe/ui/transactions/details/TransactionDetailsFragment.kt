@@ -178,6 +178,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                     binding.txRejectButton.isEnabled = true
                     binding.txRejectButton.setOnClickListener {
+                        binding.txRejectButton.isEnabled = false
                         findNavController().navigate(
                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
                         )
@@ -189,6 +190,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         binding.txConfirmButton.isEnabled = false
                         binding.txRejectButton.isEnabled = true
                         binding.txRejectButton.setOnClickListener {
+                            binding.txRejectButton.isEnabled = false
                             findNavController().navigate(
                                 TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
                             )
