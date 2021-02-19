@@ -91,7 +91,6 @@ class TransactionDetailsViewModel
     }
 
     fun submitConfirmation(transaction: TransactionDetails) {
-
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
 

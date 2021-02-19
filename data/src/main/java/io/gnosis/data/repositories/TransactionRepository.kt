@@ -10,7 +10,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
-import retrofit2.Response
 import java.math.BigInteger
 
 class TransactionRepository(
@@ -47,7 +46,7 @@ class TransactionRepository(
         sender: Solidity.Address,
         signature: String,
         origin: Solidity.Address? = null
-    ): Response<Unit> =
+    ) {
         gatewayApi.proposeTransaction(
             safeAddress.asEthereumAddressChecksumString(), MultisigTransactionRequest(
                 to = safeAddress,
@@ -66,6 +65,7 @@ class TransactionRepository(
                 origin = origin?.asEthereumAddressChecksumString()
             )
         )
+    }
 
     fun sign(ownerKey: BigInteger, safeTxHash: String): String =
         KeyPair.fromPrivate(ownerKey.toByteArray())
