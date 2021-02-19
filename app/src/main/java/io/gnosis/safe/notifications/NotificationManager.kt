@@ -21,7 +21,6 @@ import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
-import timber.log.Timber
 
 class NotificationManager(
     private val context: Context,
@@ -42,7 +41,6 @@ class NotificationManager(
             }
         }
     }
-
 
     private var latestNotificationId: Int
         get() = preferencesManager.prefs.getInt(LATEST_NOTIFICATION_ID, -1)
@@ -156,7 +154,7 @@ class NotificationManager(
 
         val resId = subChannelForPushNotificationSubType(pushNotification).resId
         val channelId = safe.address.asEthereumAddressChecksumString() + "." + context.getString(resId)
-        Timber.i("---> channelId: $channelId")
+
         return builder(title, text, channelId, intent)
     }
 
