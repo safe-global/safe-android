@@ -77,7 +77,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
                 is ConfirmationSubmitted -> {
-                    binding.txConfirmButtonContainer.visible(false)
                     viewAction.txDetails?.let { ::updateUi }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
@@ -148,8 +147,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 binding.txConfirmations.visible(true)
 
+                //TODO: check if tx was already rejected
                 if (needsYourConfirmation) {
-                    binding.txConfirmButtonContainer.visible(true)
+                    binding.txButtonContainer.visible(true)
+                    binding.txConfirmButton.isEnabled = true
                     binding.txConfirmButton.setOnClickListener {
                         showConfirmDialog(
                             requireContext(),
@@ -162,7 +163,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         }
                     }
                 } else {
-                    binding.txConfirmButton.visible(false)
+//                    binding.txConfirmButton.visible(false)
+//                    binding.txConfirmButton.isEnabled = false
+                    //TODO: set confirm / reject button enable / disable
+                    binding.txButtonContainer.visible(true)
+                    binding.txConfirmButton.isEnabled = true
+                    binding.txRejectButton.isEnabled = true
+                    binding.txRejectButton.setOnClickListener {
+                        findNavController().navigate(
+                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
+                        )
+                    }
+
                 }
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
@@ -423,7 +435,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun hideCreatedAndConfirmations() {
         binding.txConfirmations.visible(false)
         binding.txConfirmationsDivider.visible(false)
-        binding.txConfirmButtonContainer.visible(false)
+        binding.txButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
     }
