@@ -21,6 +21,7 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
@@ -77,8 +78,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
                 is ConfirmationSubmitted -> {
-                    viewAction.txDetails?.let { ::updateUi }
+                    viewAction.txDetails?.let {
+                        updateUi(it)
+                    }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
+                }
+                is RejectionSubmitted -> {
+                    viewAction.txDetails?.let {
+                        updateUi(it)
+                    }
+                    snackbar(requireView(), R.string.rejection_successfully_submitted)
                 }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
@@ -126,7 +135,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadDetails(txId)
+        if (rejectionConfirmed()) {
+            resetRejectionConfirmed()
+            viewModel.submitRejection()
+        } else {
+            viewModel.loadDetails(txId)
+        }
     }
 
     private lateinit var contentBinding: ViewBinding
@@ -162,20 +176,28 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             viewModel.submitConfirmation(viewModel.txDetails!!)
                         }
                     }
-                } else {
-//                    binding.txConfirmButton.visible(false)
-//                    binding.txConfirmButton.isEnabled = false
-                    //TODO: set confirm / reject button enable / disable
-                    binding.txButtonContainer.visible(true)
-                    binding.txConfirmButton.isEnabled = true
                     binding.txRejectButton.isEnabled = true
                     binding.txRejectButton.setOnClickListener {
                         findNavController().navigate(
                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
                         )
                     }
+                } else {
 
+                    if (viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
+                        binding.txButtonContainer.visible(true)
+                        binding.txConfirmButton.isEnabled = false
+                        binding.txRejectButton.isEnabled = true
+                        binding.txRejectButton.setOnClickListener {
+                            findNavController().navigate(
+                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
+                            )
+                        }
+                    } else {
+                        binding.txButtonContainer.visible(false)
+                    }
                 }
+
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
                     rejection = txDetails.txInfo is TransactionInfoViewData.Rejection,
@@ -438,6 +460,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.txButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
+    }
+
+    private fun rejectionConfirmed(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REJECTION_CONFIRMATION_RESULT) == true
+    }
+
+    private fun resetRejectionConfirmed() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, false)
     }
 }
 

@@ -13,6 +13,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.OwnerCredentialsRepository
+import io.gnosis.safe.utils.isCompleted
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -45,6 +46,14 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address) && !executionInfo.confirmations.map { it.signer }.contains(credentials.address)
         }
 
+    //TODO: remove when backend provides info about rejections
+    fun canBeRejectedFromDevice(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails, status: TransactionStatus): Boolean =
+        !status.isCompleted() &&
+                ownerCredentialsRepository.hasCredentials() &&
+                true == ownerCredentialsRepository.retrieveCredentials()?.let { credentials ->
+            executionInfo.signers.contains(credentials.address)
+        }
+
 
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -72,7 +81,27 @@ class TransactionDetailsViewModel
                 throw TxConfirmationFailed(it)
             }
         }
+    }
 
+    fun submitRejection() {
+        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+            ?: throw RuntimeException("MissingCorrectExecutionDetailsException")
+
+        safeLaunch {
+            validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
+            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
+            kotlin.runCatching {
+                //TODO: submit rejection here and remove line below
+                txDetails!!
+            }.onSuccess {
+                tracker.logTransactionRejected()
+                val safes = safeRepository.getSafes()
+                updateState { TransactionDetailsViewState(RejectionSubmitted(it.toTransactionDetailsViewData(safes))) }
+            }.onFailure {
+                throw TxRejectionFailed(it)
+            }
+        }
     }
 
     private suspend fun validateSafeTxHash(
@@ -100,6 +129,11 @@ data class ConfirmationSubmitted(
     val txDetails: TransactionDetailsViewData?
 ) : BaseStateViewModel.ViewAction
 
+data class RejectionSubmitted(
+    val txDetails: TransactionDetailsViewData?
+) : BaseStateViewModel.ViewAction
+
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
+class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()

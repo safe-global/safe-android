@@ -38,6 +38,14 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                 prefix = " ",
                 underline = true
             )
+            confirmRejection.setOnClickListener {
+                findNavController().navigateUp()
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
+            }
         }
+    }
+
+    companion object {
+        const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
 }
