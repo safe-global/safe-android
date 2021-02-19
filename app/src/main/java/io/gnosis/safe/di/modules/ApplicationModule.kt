@@ -200,7 +200,7 @@ class ApplicationModule(private val application: Application) {
         preferencesManager: PreferencesManager,
         balanceFormatter: BalanceFormatter,
         safeRepository: SafeRepository
-    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter, safeRepository)
+    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter)
 
     @Provides
     @Singleton

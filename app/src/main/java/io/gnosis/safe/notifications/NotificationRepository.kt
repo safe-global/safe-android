@@ -1,6 +1,7 @@
 package io.gnosis.safe.notifications
 
 import com.google.firebase.iid.FirebaseInstanceId
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
@@ -123,7 +124,7 @@ class NotificationRepository(
         }
     }
 
-    suspend fun registerSafe(safeAddress: Solidity.Address) {
+    suspend fun registerSafe(safe: Safe) {
 
         kotlin.runCatching {
 
@@ -131,7 +132,7 @@ class NotificationRepository(
 
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
-                safes = listOf(safeAddress.asEthereumAddressChecksumString()),
+                safes = listOf(safe.address.asEthereumAddressChecksumString()),
                 cloudMessagingToken = token,
                 bundle = BuildConfig.APPLICATION_ID,
                 deviceType = "ANDROID",
@@ -148,8 +149,10 @@ class NotificationRepository(
         }
             .onSuccess {
                 deviceUuid = it.uuid
-                safeRepository.saveSafeMeta(SafeMetaData(safeAddress, true))
+                safeRepository.saveSafeMeta(SafeMetaData(safe.address, true))
                 registrationUpdateFailed = false
+
+                notificationManager.updateNotificationChannelGroupForSafe(safe)
             }
             .onFailure {
                 registrationUpdateFailed = true
