@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/surface_01">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -21,8 +20,7 @@
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
                 android:id="@+id/back_button"
@@ -50,10 +48,91 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <io.gnosis.safe.ui.transactions.details.view.StepIndicator
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/default_margin"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginTop="24dp">
+
+                <io.gnosis.safe.ui.transactions.details.view.RejectionStep
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:step_connector_margin="4dp"
+                    app:step_icon="@drawable/ic_tx_rejection_create_28dp"
+                    app:step_text="@string/tx_details_rejection_confirmation_step1"
+                    app:step_active="true" />
+
+                <io.gnosis.safe.ui.transactions.details.view.RejectionStep
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:step_connector_margin="4dp"
+                    app:step_icon="@drawable/ic_tx_rejection_collect_28dp"
+                    app:step_text="@string/tx_details_rejection_confirmation_step2"
+                    app:step_active="false" />
+
+                <io.gnosis.safe.ui.transactions.details.view.RejectionStep
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:step_connector_margin="4dp"
+                    app:step_icon="@drawable/ic_tx_rejection_execute_28dp"
+                    app:step_text="@string/tx_details_rejection_confirmation_step3"
+                    app:step_active="false" />
+
+                <io.gnosis.safe.ui.transactions.details.view.RejectionStep
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:step_connector_margin="4dp"
+                    app:step_icon="@drawable/ic_tx_rejection_replace_28dp"
+                    app:step_text="@string/tx_details_rejection_confirmation_step4"
+                    app:step_active="false" />
+
+            </io.gnosis.safe.ui.transactions.details.view.StepIndicator>
+
+            <TextView
+                android:id="@+id/info"
+                style="@style/TextDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginRight="@dimen/default_margin"
+                android:text="@string/tx_details_rejection_confirmation_info" />
+
+            <TextView
+                android:id="@+id/confirm_rejection"
+                style="@style/RejectButton"
+                android:layout_width="match_parent"
+                android:layout_marginTop="22dp"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:text="@string/tx_details_rejection_confirmation_reject_transaction" />
+
+            <TextView
+                android:id="@+id/learn_more"
+                style="@style/TextDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginRight="@dimen/default_margin"
+                android:text="@string/tx_details_rejection_confirmation_learn_more" />
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

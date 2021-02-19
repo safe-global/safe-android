@@ -167,21 +167,35 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <FrameLayout
-        android:id="@+id/tx_confirm_button_container"
+    <LinearLayout
+        android:id="@+id/tx_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_gravity="bottom"
         android:background="@color/surface_01"
         android:visibility="gone"
         tools:visibility="visible">
 
         <TextView
+            android:id="@+id/tx_reject_button"
+            style="@style/RejectButton"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="20dp"
+            android:layout_marginVertical="@dimen/default_margin"
+            android:text="@string/reject" />
+
+        <TextView
             android:id="@+id/tx_confirm_button"
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="@dimen/default_margin"
+            android:layout_weight="1"
+            android:layout_marginRight="@dimen/default_margin"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/confirm" />
-    </FrameLayout>
+
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
