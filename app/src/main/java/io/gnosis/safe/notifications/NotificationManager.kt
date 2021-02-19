@@ -38,6 +38,7 @@ class NotificationManager(
                 safeRepository.getSafes().forEach { safe ->
                     createNotificationChannelGroup(safe)
                 }
+                notificationManager.deleteNotificationChannel(CHANNEL_ID)
             }
         }
     }
