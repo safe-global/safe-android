@@ -60,45 +60,6 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-//    fun submitRejection() {
-//        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-//            ?: throw MissingCorrectExecutionDetailsException
-//
-//        safeLaunch {
-//            val activeSafeAddress = safeRepository.getActiveSafe()!!.address
-//            val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
-//            val rejectionTxDetails = TransactionDetails(
-//                txInfo = TransactionInfo.Custom(activeSafeAddress),
-//                detailedExecutionInfo = rejectionExecutionInfo
-//            )
-//            val safeTxHash =
-//                calculateSafeTxHash(
-//                    safeAddress = activeSafeAddress,
-//                    transaction = rejectionTxDetails,
-//                    executionInfo = rejectionExecutionInfo
-//                )!!.toHexString()
-//
-//            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-//            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
-//
-//            kotlin.runCatching {
-//                transactionRepository.proposeTransaction(
-//                    safeAddress = activeSafeAddress,
-//                    nonce = rejectionExecutionInfo.nonce,
-//                    signature = transactionRepository.sign(ownerCredentials.key, safeTxHash),
-//                    safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
-//                    safeTxHash = safeTxHash,
-//                    sender = ownerCredentials.address
-//                )
-//            }.onSuccess {
-//                tracker.logTransactionRejected()
-//                updateState { TransactionDetailsViewState(RejectionSubmitted) }
-//            }.onFailure {
-//                throw TxRejectionFailed(it)
-//            }
-//        }
-//    }
-
     fun submitRejection() {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
