@@ -41,7 +41,7 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
     }
 
     companion object {
-        const val OWNER_IMPORT_RESULT = "args.string.owner_import_result"
+        const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
     }
 }
 

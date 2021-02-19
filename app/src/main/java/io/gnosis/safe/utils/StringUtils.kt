@@ -1,6 +1,7 @@
 package io.gnosis.safe.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -24,6 +25,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import java.util.regex.Pattern
 
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
     return if (this.length > boundariesLength * 2)
@@ -123,6 +125,20 @@ fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<A
         setSpan(span, start, length, flags)
     }
     return this
+}
+
+fun Resources.replaceDoubleNewlineWithParagraphLineSpacing(@StringRes stringResource: Int): SpannableString {
+    val spannableString = SpannableString(getString(stringResource));
+    val matcher = Pattern.compile("\n\n").matcher(getString(stringResource));
+    while (matcher.find()) {
+        spannableString.setSpan(
+            AbsoluteSizeSpan(getDimension(R.dimen.default_paragraph_line_spacing).toInt()),
+            matcher.start() + 1,
+            matcher.end(),
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+    return spannableString
 }
 
 fun TextView.appendLink(
