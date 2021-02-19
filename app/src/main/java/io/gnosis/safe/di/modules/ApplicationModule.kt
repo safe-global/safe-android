@@ -198,8 +198,9 @@ class ApplicationModule(private val application: Application) {
     fun providesNotificationManager(
         @ApplicationContext context: Context,
         preferencesManager: PreferencesManager,
-        balanceFormatter: BalanceFormatter
-    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter)
+        balanceFormatter: BalanceFormatter,
+        safeRepository: SafeRepository
+    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter, safeRepository)
 
     @Provides
     @Singleton
