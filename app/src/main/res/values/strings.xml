@@ -227,7 +227,7 @@
     <string name="tx_details_rejection_payment_reason">Why do I need to pay for rejecting a transaction?</string>
 
     <string name="tx_details_rejection_confirmation_title">Reject transaction</string>
-    <string name="tx_details_rejection_confirmation_info">This will create an on-chain rejection with the same nonce that doesn’t send any funds. The on-chain rejection will replace the transaction you wish to reject.\n\nYou&apos;ll have to confirm the creation of the on-chain rejection with your imported owner key.</string>
+    <string name="tx_details_rejection_confirmation_info">This will create an on-chain rejection with the same nonce that doesn’t send any funds. The on-chain rejection will replace the transaction you wish to reject.\n\nYou\'ll have to confirm the creation of the on-chain rejection with your imported owner key.</string>
     <string name="tx_details_rejection_confirmation_reject_transaction">Reject transaction</string>
     <string name="tx_details_rejection_confirmation_learn_more">Advanced users can create a non-empty (useful) transaction with the same nonce (in the web interface only). Learn more in this article:</string>
     <string name="tx_details_rejection_confirmation_step1">Create on-chain rejection</string>
