@@ -102,30 +102,28 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
 
                     viewAction.error.let {
-                        if (it is TxConfirmationFailed) {
-                            val error = it.cause.toError()
-                            if (error.trackingRequired) {
-                                tracker.logException(it.cause)
+                        when (it) {
+                            is TxConfirmationFailed -> {
+                                val error = it.cause.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it.cause)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_confirmation))
                             }
-                            errorSnackbar(
-                                requireView(),
-                                error.message(
-                                    requireContext(),
-                                    R.string.error_description_tx_confirmation
-                                )
-                            )
-                        } else {
-                            val error = it.toError()
-                            if (error.trackingRequired) {
-                                tracker.logException(it)
+                            is TxRejectionFailed -> {
+                                val error = it.cause.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it.cause)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_rejection))
                             }
-                            errorSnackbar(
-                                requireView(),
-                                error.message(
-                                    requireContext(),
-                                    R.string.error_description_tx_details
-                                )
-                            )
+                            else -> {
+                                val error = it.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_details))
+                            }
                         }
                     }
                 }
