@@ -7,14 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/background">
+    android:background="@color/surface_01">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/dialog_ens_input_url_layout"
+        app:layout_constraintBottom_toTopOf="@id/dialog_unstoppable_domain_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -121,7 +121,7 @@
     <TextView
         android:id="@+id/dialog_unstoppable_input_address"
         style="@style/TextLight"
-        android:background="@color/background"
+        android:background="@color/surface_01"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
