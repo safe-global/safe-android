@@ -10,7 +10,8 @@
     "toInfo": {
       "name": "Foo Bar",
       "logoUri": "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
-    }
+    },
+    "isCancellation": true
   },
   "executionInfo": {
     "nonce": 8,

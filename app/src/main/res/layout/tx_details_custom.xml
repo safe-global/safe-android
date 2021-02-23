@@ -53,4 +53,5 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_separator_height"
         android:background="@color/separator" />
+
 </LinearLayout>

@@ -60,7 +60,6 @@ class TxUtilsKtTest {
             methodName = null,
             addressName = null,
             addressUri = null
-
         )
         val result = txInfo.formattedAmount(balanceFormatter)
 

@@ -39,6 +39,10 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
     }
 
+    fun logTransactionRejected() {
+        logEvent(Event.TRANSACTION_REJECTED, null)
+    }
+
     fun logBannerOwnerSkipped() {
         logEvent(Event.BANNER_OWNER_SKIPPED, null)
     }
@@ -81,6 +85,7 @@ class Tracker private constructor(context: Context) {
     object Event {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val TRANSACTION_REJECTED = "user_transaction_rejected"
         val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
         val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
@@ -135,6 +140,7 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_DETAILS_ACTION("screen_transaction_details_action"),
     TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
+    TRANSACTIONS_REJECTION_CONFIRMATION("transactions_rejection_confirmation"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),

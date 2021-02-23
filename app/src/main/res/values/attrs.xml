@@ -33,4 +33,11 @@
         <attr name="info_text" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="StepIndicator">
+        <attr name="step_icon" format="reference" />
+        <attr name="step_text" format="string" />
+        <attr name="step_active" format="boolean" />
+        <attr name="step_connector_margin" format="dimension" />
+    </declare-styleable>
+
 </resources>
