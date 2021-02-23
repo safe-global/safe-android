@@ -1,14 +1,9 @@
 package io.gnosis.safe.ui.dialogs
 
 import androidx.lifecycle.ViewModel
-import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
-import com.unstoppabledomains.exceptions.*;
-import com.unstoppabledomains.exceptions.ns.NSExceptionCode
-import com.unstoppabledomains.exceptions.ns.NamingServiceException
-import java.util.concurrent.ExecutionException
 
 class UnstoppableInputViewModel
 @Inject constructor(

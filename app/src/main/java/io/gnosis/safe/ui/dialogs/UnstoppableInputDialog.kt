@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import com.unstoppabledomains.exceptions.ns.NSExceptionCode
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
