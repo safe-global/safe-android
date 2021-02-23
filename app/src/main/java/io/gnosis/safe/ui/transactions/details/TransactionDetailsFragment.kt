@@ -88,6 +88,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         updateUi(it)
                     }
                     snackbar(requireView(), R.string.rejection_successfully_submitted)
+                    findNavController().navigateUp()
                 }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
