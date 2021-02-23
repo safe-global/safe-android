@@ -364,7 +364,7 @@
     <string name="tx_list_contract_interaction">Contract interaction</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
-    <string name="address_input_unstoppabledomains">Unstoppable domain</string>
+    <string name="address_input_unstoppable_domain">Unstoppable domain</string>
     <string name="label_type_next">Next</string>
     <string name="label_type_queued">Queued</string>
 
