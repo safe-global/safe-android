@@ -423,6 +423,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                         getColorForStatus(txDetails.txStatus)
                     )
+                    if (needsYourConfirmation) {
+                        binding.txButtonContainer.visible(true)
+                        binding.txRejectButton.visible(false)
+                        binding.txConfirmButton.visible(true)
+                    } else {
+                        binding.txButtonContainer.visible(false)
+                    }
+
                 }
             }
         }

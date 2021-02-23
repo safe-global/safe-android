@@ -183,7 +183,7 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_marginLeft="@dimen/default_margin"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="4dp"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/reject" />
 
@@ -192,6 +192,7 @@
             style="@style/PrimaryButton"
             android:layout_width="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/default_margin"
             android:layout_marginRight="@dimen/default_margin"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/confirm" />
