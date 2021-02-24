@@ -131,16 +131,17 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetailsViewData) {
 
         var needsYourConfirmation = false
+        var hasBeenRejected = false
 
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
 
                 needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
+                hasBeenRejected = executionInfo.rejections.isNotEmpty()
 
                 binding.txConfirmations.visible(true)
 
-                //TODO: check if tx was already rejected
                 if (needsYourConfirmation) {
                     binding.txButtonContainer.visible(true)
                     binding.txConfirmButton.isEnabled = true
@@ -155,18 +156,28 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             viewModel.submitConfirmation(viewModel.txDetails!!)
                         }
                     }
-                    binding.txRejectButton.isEnabled = true
-                    binding.txRejectButton.setOnClickListener {
+                    if (!hasBeenRejected) {
+                        binding.txRejectButton.isEnabled = true
+                        binding.txRejectButton.setOnClickListener {
+                            binding.txRejectButton.isEnabled = false
+                            findNavController().navigate(
+                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
+                            )
+                        }
+                    } else {
                         binding.txRejectButton.isEnabled = false
-                        findNavController().navigate(
-                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
-                        )
                     }
                 } else {
 
-                    if (viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
+                    if (!hasBeenRejected && viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
                         binding.txButtonContainer.visible(true)
-                        binding.txConfirmButton.isEnabled = false
+                        if (txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION) {
+                            binding.txConfirmButton.visible(false)
+                            binding.spaceBetweenButtons.visible(false)
+                        } else {
+                            binding.txConfirmButton.visible(true)
+                            binding.txConfirmButton.isEnabled = false
+                        }
                         binding.txRejectButton.isEnabled = true
                         binding.txRejectButton.setOnClickListener {
                             binding.txRejectButton.isEnabled = false
@@ -406,11 +417,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     if (needsYourConfirmation) {
                         binding.txButtonContainer.visible(true)
                         binding.txRejectButton.visible(false)
+                        binding.spaceBetweenButtons.visible(false)
                         binding.txConfirmButton.visible(true)
                     } else {
                         binding.txButtonContainer.visible(false)
                     }
-
                 }
             }
         }

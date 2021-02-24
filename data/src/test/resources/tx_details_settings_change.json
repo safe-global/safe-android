@@ -46,10 +46,10 @@
     "safeTxHash": "0x65a2f38ef0f68c30d1d0310521e3853a3b46d4aa4d53b7d1dce3335b7b2b38a0",
     "executor": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
     "signers": [
-      "0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164",
-      "0xBEA2F9227230976d2813a2f8b922c22bE1DE1B23",
-      "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
       "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
+    ],
+    "rejections": [
+      "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B1"
     ],
     "confirmationsRequired": 2,
     "confirmations": [
