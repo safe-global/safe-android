@@ -60,7 +60,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                 viewModel.submitRejection()
             }
         }
-
+        binding.confirmRejection.isEnabled = false
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is RejectionSubmitted -> {
@@ -72,20 +72,15 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
                 }
                 is BaseStateViewModel.ViewAction.Loading -> {
-                    // ignore
+                    if (!viewAction.isLoading) {
+                        binding.confirmRejection.isEnabled = true
+                    }
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.confirmRejection.isEnabled = true
 
                     viewAction.error.let {
                         when (it) {
-                            is TxConfirmationFailed -> {
-                                val error = it.cause.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it.cause)
-                                }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_confirmation))
-                            }
                             is TxRejectionFailed -> {
                                 val error = it.cause.toError()
                                 if (error.trackingRequired) {
@@ -102,9 +97,6 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                             }
                         }
                     }
-                }
-                else -> {
-                    // ignore
                 }
             }
         })

@@ -54,50 +54,9 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address)
         }
 
-
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
-
-//    fun submitRejection() {
-//        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-//            ?: throw MissingCorrectExecutionDetailsException
-//
-//        safeLaunch {
-//            val activeSafeAddress = safeRepository.getActiveSafe()!!.address
-//            val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
-//            val rejectionTxDetails = TransactionDetails(
-//                txInfo = TransactionInfo.Custom(activeSafeAddress),
-//                detailedExecutionInfo = rejectionExecutionInfo
-//            )
-//            val safeTxHash =
-//                calculateSafeTxHash(
-//                    safeAddress = activeSafeAddress,
-//                    transaction = rejectionTxDetails,
-//                    executionInfo = rejectionExecutionInfo
-//                )!!.toHexString()
-//            validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
-//            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-//            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
-//            kotlin.runCatching {
-//                transactionRepository.proposeTransaction(
-//                    safeAddress = activeSafeAddress,
-//                    nonce = rejectionExecutionInfo.nonce,
-//                    signature = transactionRepository.sign(ownerCredentials.key, safeTxHash),
-//                    safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
-//                    safeTxHash = safeTxHash,
-//                    sender = ownerCredentials.address
-//                )
-//            }.onSuccess {
-//                tracker.logTransactionRejected()
-//                val safes = safeRepository.getSafes()
-//                //TODO ? Modify txDetails to look like it got rejected ?
-//                updateState { TransactionDetailsViewState(RejectionSubmitted(txDetails!!.toTransactionDetailsViewData(safes))) }
-//            }.onFailure {
-//                throw TxRejectionFailed(it)
-//            }
-//        }
-//    }
 
     fun submitConfirmation(transaction: TransactionDetails) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails

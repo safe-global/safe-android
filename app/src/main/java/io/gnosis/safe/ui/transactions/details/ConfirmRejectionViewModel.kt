@@ -10,8 +10,6 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
-import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.OwnerCredentialsRepository
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
@@ -24,13 +22,13 @@ class ConfirmRejectionViewModel
     private val ownerCredentialsRepository: OwnerCredentialsRepository,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
+) : BaseStateViewModel<ConfirmationRejectedViewState>(appDispatchers) {
 
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-    override fun initialState(): TransactionDetailsViewState = TransactionDetailsViewState(ViewAction.Loading(true))
+    override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
 
     fun submitRejection() {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
@@ -50,7 +48,6 @@ class ConfirmRejectionViewModel
                     executionInfo = rejectionExecutionInfo
                 )!!.toHexString()
             validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
-            updateState { TransactionDetailsViewState(BaseStateViewModel.ViewAction.Loading(true)) }
             val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
@@ -63,9 +60,7 @@ class ConfirmRejectionViewModel
                 )
             }.onSuccess {
                 tracker.logTransactionRejected()
-                val safes = safeRepository.getSafes()
-                //TODO ? Modify txDetails to look like it got rejected ?
-                updateState { TransactionDetailsViewState(RejectionSubmitted(txDetails!!.toTransactionDetailsViewData(safes))) }
+                updateState { ConfirmationRejectedViewState(RejectionSubmitted) }
             }.onFailure {
                 throw TxRejectionFailed(it)
             }
@@ -74,11 +69,9 @@ class ConfirmRejectionViewModel
 
     fun loadDetails(txId: String) {
         safeLaunch {
-            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
+            updateState { ConfirmationRejectedViewState(ViewAction.Loading(true)) }
             txDetails = transactionRepository.getTransactionDetails(txId)
-            val safes = safeRepository.getSafes()
-            updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
-            updateState { TransactionDetailsViewState(UpdateDetails(txDetails?.toTransactionDetailsViewData(safes))) }
+            updateState { ConfirmationRejectedViewState(ViewAction.Loading(false)) }
         }
     }
 
@@ -95,6 +88,8 @@ class ConfirmRejectionViewModel
     }
 }
 
-data class RejectionSubmitted(
-    val txDetails: TransactionDetailsViewData?
-) : BaseStateViewModel.ViewAction
+open class ConfirmationRejectedViewState(
+    override var viewAction: BaseStateViewModel.ViewAction?
+) : BaseStateViewModel.State
+
+object RejectionSubmitted : BaseStateViewModel.ViewAction
