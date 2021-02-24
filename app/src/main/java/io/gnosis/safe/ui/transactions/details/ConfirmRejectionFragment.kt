@@ -4,28 +4,44 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentConfirmRejectionBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.replaceDoubleNewlineWithParagraphLineSpacing
+import javax.inject.Inject
 
 class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectionBinding>() {
 
     override fun screenId() = ScreenId.TRANSACTIONS_REJECTION_CONFIRMATION
 
+    private val navArgs by navArgs<ConfirmRejectionFragmentArgs>()
+    private val txId by lazy { navArgs.txId }
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
+
+    @Inject
+    lateinit var viewModel: ConfirmRejectionViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentConfirmRejectionBinding =
         FragmentConfirmRejectionBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.loadDetails(txId)
+
         with(binding) {
             backButton.setOnClickListener {
                 findNavController().navigateUp()
@@ -39,10 +55,58 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                 underline = true
             )
             confirmRejection.setOnClickListener {
-                findNavController().navigateUp()
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
+                confirmRejection.isEnabled = false
+                viewModel.submitRejection()
             }
         }
+
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            when (val viewAction = state.viewAction) {
+                is RejectionSubmitted -> {
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
+                    Navigation.findNavController(view).navigate(
+                        ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToTransactionsFragment(
+                            TxPagerAdapter.Tabs.QUEUE.ordinal
+                        )
+                    )
+                }
+                is BaseStateViewModel.ViewAction.Loading -> {
+                    // ignore
+                }
+                is BaseStateViewModel.ViewAction.ShowError -> {
+                    binding.confirmRejection.isEnabled = true
+
+                    viewAction.error.let {
+                        when (it) {
+                            is TxConfirmationFailed -> {
+                                val error = it.cause.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it.cause)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_confirmation))
+                            }
+                            is TxRejectionFailed -> {
+                                val error = it.cause.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it.cause)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_rejection))
+                            }
+                            else -> {
+                                val error = it.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(it)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_details))
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    // ignore
+                }
+            }
+        })
     }
 
     companion object {
