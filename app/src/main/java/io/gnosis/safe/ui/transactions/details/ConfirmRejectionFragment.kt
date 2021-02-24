@@ -15,6 +15,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.appendLink
@@ -63,12 +64,12 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is RejectionSubmitted -> {
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
                     Navigation.findNavController(view).navigate(
                         ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToTransactionsFragment(
                             TxPagerAdapter.Tabs.QUEUE.ordinal
                         )
                     )
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
                 }
                 is BaseStateViewModel.ViewAction.Loading -> {
                     // ignore
@@ -107,9 +108,5 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                 }
             }
         })
-    }
-
-    companion object {
-        const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
 }

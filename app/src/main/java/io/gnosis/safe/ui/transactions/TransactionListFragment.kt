@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -26,15 +25,12 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.safe.empty.NoSafeFragment
-import io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment
 import io.gnosis.safe.ui.transactions.paging.TransactionLoadStateAdapter
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingSource
 import io.gnosis.safe.ui.transactions.paging.TransactionViewListAdapter
 import kotlinx.coroutines.launch
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
-import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListBinding>() {
@@ -180,10 +176,6 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
             viewModel.load(type)
         }
         startElapsedIntervalsUpdate()
-        if (rejectionConfirmed()) {
-            resetRejectionConfirmed()
-            snackbar(requireView(), R.string.rejection_successfully_submitted)
-        }
     }
 
     override fun onPause() {
@@ -261,13 +253,5 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
                 putSerializable(ARGS_TYPE, TransactionPagingSource.Type.HISTORY)
             }) as TransactionListFragment
         }
-    }
-
-    private fun rejectionConfirmed(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(ConfirmRejectionFragment.REJECTION_CONFIRMATION_RESULT) == true
-    }
-
-    private fun resetRejectionConfirmed() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(ConfirmRejectionFragment.REJECTION_CONFIRMATION_RESULT, false)
     }
 }
