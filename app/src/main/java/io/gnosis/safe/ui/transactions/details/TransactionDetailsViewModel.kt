@@ -60,7 +60,6 @@ class TransactionDetailsViewModel
         }
     }
 
-
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
