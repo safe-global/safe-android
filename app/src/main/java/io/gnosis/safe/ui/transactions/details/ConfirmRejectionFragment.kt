@@ -83,21 +83,18 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                         when (it) {
                             is TxRejectionFailed -> {
                                 val error = it.cause.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it.cause)
-                                }
+                                tracker.logException(it.cause, error.trackingRequired)
                                 errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_rejection))
                             }
                             else -> {
                                 val error = it.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it)
-                                }
+                                tracker.logException(it, error.trackingRequired)
                                 errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_details))
                             }
                         }
                     }
                 }
+
             }
         })
     }
