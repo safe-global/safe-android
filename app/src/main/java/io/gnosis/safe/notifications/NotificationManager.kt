@@ -35,7 +35,9 @@ class NotificationManager(
             // For upgrading users. Can be removed in a future release?
             runBlocking {
                 safeRepository.getSafes().forEach { safe ->
-                    createNotificationChannelGroup(safe)
+                    if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) == null) {
+                        createNotificationChannelGroup(safe)
+                    }
                 }
                 notificationManager.deleteNotificationChannel(CHANNEL_ID)
             }
