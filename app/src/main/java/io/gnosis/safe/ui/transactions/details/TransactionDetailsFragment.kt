@@ -167,6 +167,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     } else {
                         binding.txRejectButton.isEnabled = false
                     }
+
+                    if (txDetails.txInfo is TransactionInfoViewData.Rejection) {
+                        binding.txRejectButton.visible(false)
+                        binding.spaceBetweenButtons.visible(false)
+                        binding.txConfirmButton.visible(true)
+                    }
+
                 } else {
 
                     if (!hasBeenRejected && viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
@@ -414,14 +421,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
                         getColorForStatus(txDetails.txStatus)
                     )
-                    if (needsYourConfirmation) {
-                        binding.txButtonContainer.visible(true)
-                        binding.txRejectButton.visible(false)
-                        binding.spaceBetweenButtons.visible(false)
-                        binding.txConfirmButton.visible(true)
-                    } else {
-                        binding.txButtonContainer.visible(false)
-                    }
                 }
             }
         }
