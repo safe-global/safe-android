@@ -127,75 +127,51 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     private fun updateUi(txDetails: TransactionDetailsViewData) {
 
         var needsYourConfirmation = false
-        var hasBeenRejected = false
 
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
-
-                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
-                hasBeenRejected = executionInfo.rejectors.isNotEmpty()
-
                 binding.txConfirmations.visible(true)
 
-                if (needsYourConfirmation) {
-                    binding.txButtonContainer.visible(true)
-                    binding.txConfirmButton.isEnabled = true
-                    binding.txConfirmButton.setOnClickListener {
-                        showConfirmDialog(
-                            requireContext(),
-                            message = R.string.confirm_transaction_dialog_message,
-                            confirm = R.string.confirm,
-                            confirmColor = R.color.primary
-                        ) {
-                            binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(viewModel.txDetails!!)
-                        }
-                    }
-                    if (!hasBeenRejected) {
-                        binding.txRejectButton.isEnabled = true
-                        binding.txRejectButton.setOnClickListener {
-                            binding.txRejectButton.isEnabled = false
-                            findNavController().navigate(
-                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
-                            )
-                        }
-                    } else {
-                        binding.txRejectButton.isEnabled = false
-                    }
+                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
+                val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
+                val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
+                val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
+                val buttonState = ButtonStateHelper(
+                    hasBeenRejected = hasBeenRejected,
+                    needsYourConfirmation = needsYourConfirmation,
+                    isRejection = isRejection,
+                    needsExecution = needsExecution
+                )
 
-                    if (txDetails.txInfo is TransactionInfoViewData.Rejection) {
-                        binding.txRejectButton.visible(false)
-                        binding.spaceBetweenButtons.visible(false)
-                        binding.txConfirmButton.visible(true)
-                    }
+                binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
 
-                } else {
-
-                    if (!hasBeenRejected && viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
-                        binding.txButtonContainer.visible(true)
-                        if (txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION) {
-                            binding.txConfirmButton.visible(false)
-                            binding.spaceBetweenButtons.visible(false)
-                        } else {
-                            binding.txConfirmButton.visible(true)
-                            binding.txConfirmButton.isEnabled = false
-                        }
-                        binding.txRejectButton.isEnabled = true
-                        binding.txRejectButton.setOnClickListener {
-                            binding.txRejectButton.isEnabled = false
-                            findNavController().navigate(
-                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
-                            )
-                        }
-                    } else {
-                        binding.txButtonContainer.visible(false)
+                binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
+                binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
+                binding.txConfirmButton.setOnClickListener {
+                    showConfirmDialog(
+                        requireContext(),
+                        message = R.string.confirm_transaction_dialog_message,
+                        confirm = R.string.confirm,
+                        confirmColor = R.color.primary
+                    ) {
+                        binding.txConfirmButton.isEnabled = false
+                        viewModel.submitConfirmation(viewModel.txDetails!!)
                     }
                 }
+                binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
+                binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()
+                binding.txRejectButton.setOnClickListener {
+                    binding.txRejectButton.isEnabled = false
+                    findNavController().navigate(
+                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
+                    )
+                }
+                binding.spaceBetweenButtons.visible(buttonState.spacerIsVisible())
 
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
-                    rejection = txDetails.txInfo is TransactionInfoViewData.Rejection,
+                    rejection = isRejection,
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
@@ -236,7 +212,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         if (txDetails.executedAt != null) {
             binding.executed.visible(true)
             binding.executedDivider.visible(true)
-            binding.executed.value = txDetails.executedAt!!.formatBackendDateTime()
+            binding.executed.value = txDetails.executedAt.formatBackendDateTime()
         } else {
             binding.executed.visible(false)
             binding.executedDivider.visible(false)
@@ -353,7 +329,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                             txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
                             txDataDecoded.setOnClickListener {
-                                txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
+                                txDetails.txData.dataDecoded?.parameters?.getOrNull(0)?.let {
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
                                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
@@ -365,9 +341,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             }
                         } else {
 
-                            txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                            txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData.dataDecoded?.method)
                             txDataDecoded.setOnClickListener {
-                                txDetails.txData?.let {
+                                txDetails.txData.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                                             it.dataDecoded?.method ?: "",
