@@ -77,11 +77,11 @@ class OwnerSelectionViewModel
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(privateKey == null)
             tracker.setNumKeysImported(1)
-            updateState {
-                OwnerSelectionState(ViewAction.CloseScreen)
-            }
             OwnerCredentials(address = addresses[0], key = key).let {
                 notificationRepository.registerOwner(it.key)
+            }
+            updateState {
+                OwnerSelectionState(ViewAction.CloseScreen)
             }
         }
     }
