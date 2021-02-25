@@ -34,6 +34,9 @@ class ButtonStateHelper(
         if (!rejectButtonIsVisible()) {
             return false
         }
+        if (!isRejection && needsYourConfirmation && hasBeenRejected && !needsExecution) {
+            return false
+        }
         return true
     }
 
