@@ -140,7 +140,7 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_DETAILS_ACTION("screen_transaction_details_action"),
     TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
-    TRANSACTIONS_REJECTION_CONFIRMATION("transactions_rejection_confirmation"),
+    TRANSACTIONS_REJECTION_CONFIRMATION("screen_transactions_reject_confirmation"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
