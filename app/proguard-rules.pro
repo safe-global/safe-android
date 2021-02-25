@@ -76,6 +76,8 @@
 -keep interface io.gnosis.data.models.** { *; }
 -keep class io.gnosis.data.models.** { *; }
 
+-keep interface io.gnosis.safe.notifications.models.** { *; }
+-keep class io.gnosis.safe.notifications.models.** { *; }
 ####################################################################################################
 # Retrofit
 ####################################################################################################
