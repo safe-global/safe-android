@@ -2,7 +2,10 @@ package io.gnosis.data.repositories
 
 import io.gnosis.contracts.BuildConfig
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.ethereum.*
+import pm.gnosis.ethereum.Block
+import pm.gnosis.ethereum.EthCall
+import pm.gnosis.ethereum.EthRequest
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -61,7 +64,6 @@ class EnsRepository(
     suspend fun reverseResolve(address: Solidity.Address): String? {
 
         val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
-
         val resolver = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,

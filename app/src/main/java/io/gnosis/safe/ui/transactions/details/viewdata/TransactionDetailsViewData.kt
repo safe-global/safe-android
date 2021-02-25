@@ -51,6 +51,12 @@ sealed class TransactionInfoViewData(
         val factory: Solidity.Address?
     ) : TransactionInfoViewData(TransactionType.Creation)
 
+    data class Rejection(
+        val to: Solidity.Address,
+        val addressName: String?,
+        val addressUri: String?
+    ) : TransactionInfoViewData(TransactionType.Custom)
+
     object Unknown : TransactionInfoViewData(TransactionType.Unknown)
 }
 
@@ -117,14 +123,22 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Trans
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
             }
-            TransactionInfoViewData.Custom(
-                to = to,
-                addressName = addressName,
-                addressUri = addressUri,
-                dataSize = dataSize,
-                value = value,
-                methodName = methodName
-            )
+            if (isCancellation) {
+                TransactionInfoViewData.Rejection(
+                    to = to,
+                    addressName = addressName,
+                    addressUri = addressUri
+                )
+            } else {
+                TransactionInfoViewData.Custom(
+                    to = to,
+                    addressName = addressName,
+                    addressUri = addressUri,
+                    dataSize = dataSize,
+                    value = value,
+                    methodName = methodName
+                )
+            }
         }
         is TransactionInfo.Creation -> TransactionInfoViewData.Creation(creator, transactionHash, implementation, factory)
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(

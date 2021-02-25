@@ -39,11 +39,15 @@ class TxConfirmationsView @JvmOverloads constructor(
         linePaint.color = context.getColorCompat(LINE_COLOR)
     }
 
-    fun setExecutionData(status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null) {
+    fun setExecutionData(rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null) {
 
         clear()
 
-        addExecutionStep(TxExecutionStep.Type.CREATED)
+        if (rejection) {
+            addExecutionStep(TxExecutionStep.Type.REJECTION_CREATED)
+        } else {
+            addExecutionStep(TxExecutionStep.Type.CREATED)
+        }
 
         confirmations.forEach {
             addExecutionStep(TxExecutionStep.Type.CONFIRMED)
@@ -160,7 +164,8 @@ class TxConfirmationsView @JvmOverloads constructor(
             FAILED,
             EXECUTE_WAITING,
             EXECUTE_READY,
-            EXECUTE_DONE
+            EXECUTE_DONE,
+            REJECTION_CREATED
         }
 
         private val binding by lazy { ViewTxConfirmationsExecutionStepBinding.inflate(LayoutInflater.from(context), this) }
@@ -191,7 +196,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
                     }
                     Type.FAILED -> {
-                        stepIcon.setImageResource(R.drawable.ic_tx_confirmations_failed_16dp)
+                        stepIcon.setImageResource(R.drawable.ic_circle_cross_red_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_failed)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.error))
                     }
@@ -209,6 +214,11 @@ class TxConfirmationsView @JvmOverloads constructor(
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_executed)
                         stepTitle.setTextColor(ContextCompat.getColor(context, R.color.primary))
+                    }
+                    Type.REJECTION_CREATED -> {
+                        stepIcon.setImageResource(R.drawable.ic_circle_cross_red_16dp)
+                        stepTitle.text = resources.getString(R.string.tx_confirmations_rejection_created)
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.error))
                     }
                 }
             }

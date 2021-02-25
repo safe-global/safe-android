@@ -70,7 +70,8 @@ class DataMoshiTest {
                 to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                 toInfo = AddressInfo("Foo Bar", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"),
                 value = "3140000000000000000".toBigInteger(),
-                methodName = null
+                methodName = null,
+                isCancellation = true
             ),
             executionInfo = ExecutionInfo(
                 nonce = 8.toBigInteger(),

@@ -1,6 +1,7 @@
 package io.gnosis.safe.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -24,6 +25,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import java.util.regex.Pattern
 
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
     return if (this.length > boundariesLength * 2)
@@ -125,13 +127,41 @@ fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<A
     return this
 }
 
-fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int? = null, @ColorRes textColor: Int = R.color.primary, prefix: String = "") {
+fun Resources.replaceDoubleNewlineWithParagraphLineSpacing(@StringRes stringResource: Int): SpannableString {
+    val spannableString = SpannableString(getString(stringResource));
+    val matcher = Pattern.compile("\n\n").matcher(getString(stringResource));
+    while (matcher.find()) {
+        spannableString.setSpan(
+            AbsoluteSizeSpan(getDimension(R.dimen.default_paragraph_line_spacing).toInt()),
+            matcher.start() + 1,
+            matcher.end(),
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+    return spannableString
+}
+
+fun TextView.appendLink(
+    url: String,
+    urlText: String,
+    @DrawableRes linkIcon: Int? = null,
+    @ColorRes textColor: Int = R.color.primary,
+    prefix: String = "",
+    underline: Boolean = false
+) {
     movementMethod = LinkMovementMethod.getInstance()
 
     append(
         SpannableStringBuilder()
             .append(prefix)
-            .appendTextWithSpans(urlText, listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor))))
+            .appendTextWithSpans(
+                urlText,
+                if (underline) {
+                    listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor)), UnderlineSpan())
+                } else {
+                    listOf(URLSpan(url), ForegroundColorSpan(ContextCompat.getColor(context, textColor)))
+                }
+            )
     )
 
     linkIcon?.let {
@@ -143,4 +173,16 @@ fun TextView.appendLink(url: String, urlText: String, @DrawableRes linkIcon: Int
                 .appendTextWithSpans(" ", listOf(ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE), URLSpan(url)))
         )
     }
+}
+
+fun TextView.setLink(
+    url: String,
+    urlText: String,
+    @DrawableRes linkIcon: Int? = null,
+    @ColorRes textColor: Int = R.color.primary,
+    prefix: String = "",
+    underline: Boolean = false
+) {
+    text = null
+    appendLink(url, urlText, linkIcon, textColor, prefix, underline)
 }
