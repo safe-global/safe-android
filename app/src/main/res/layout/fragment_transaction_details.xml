@@ -193,7 +193,7 @@
             android:layout_height="0dp" />
         <TextView
             android:id="@+id/tx_confirm_button"
-            style="@style/PrimaryButton"
+            style="@style/ConfirmButton"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_marginVertical="@dimen/default_margin"

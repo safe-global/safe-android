@@ -48,7 +48,7 @@
     "signers": [
       "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
     ],
-    "rejections": [
+    "rejectors": [
       "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B1"
     ],
     "confirmationsRequired": 2,

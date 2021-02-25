@@ -138,7 +138,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
 
                 needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
-                hasBeenRejected = executionInfo.rejections.isNotEmpty()
+                hasBeenRejected = executionInfo.rejectors.isNotEmpty()
 
                 binding.txConfirmations.visible(true)
 
