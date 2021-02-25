@@ -54,6 +54,13 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address)
         }
 
+    fun isOwner(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
+        return ownerCredentialsRepository.hasCredentials() && true == ownerCredentialsRepository.retrieveCredentials()?.let { credentials ->
+            executionInfo.signers.contains(credentials.address)
+        }
+    }
+
+
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set

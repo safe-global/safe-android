@@ -4,11 +4,17 @@ class ButtonStateHelper(
     val hasBeenRejected: Boolean,
     val needsYourConfirmation: Boolean,
     val isRejection: Boolean,
-    val needsExecution: Boolean
+    val needsExecution: Boolean,
+    val canReject: Boolean,
+    val isOwner: Boolean,
+    val completed: Boolean
 ) {
 
     fun rejectButtonIsVisible(): Boolean {
-        if (isRejection) {
+        if (!isOwner || completed) {
+            return false
+        }
+        if (isRejection || !canReject) {
             return false
         }
         if (!isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution) {
@@ -18,6 +24,9 @@ class ButtonStateHelper(
     }
 
     fun confirmButtonIsVisible(): Boolean {
+        if (!isOwner || completed) {
+            return false
+        }
         if (needsYourConfirmation) {
             return true
         }

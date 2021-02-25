@@ -137,11 +137,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
                 val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
                 val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
+                val canReject = viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)
+                val isOwner = viewModel.isOwner(executionInfo)
                 val buttonState = ButtonStateHelper(
                     hasBeenRejected = hasBeenRejected,
                     needsYourConfirmation = needsYourConfirmation,
                     isRejection = isRejection,
-                    needsExecution = needsExecution
+                    needsExecution = needsExecution,
+                    canReject = canReject,
+                    isOwner = isOwner,
+                    completed = txDetails.txStatus.isCompleted()
                 )
 
                 binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
