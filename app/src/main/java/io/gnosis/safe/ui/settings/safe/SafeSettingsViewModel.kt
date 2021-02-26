@@ -6,6 +6,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -18,6 +19,7 @@ class SafeSettingsViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
     private val ensRepository: EnsRepository,
     private val notificationRepository: NotificationRepository,
+    private val notificationManager: NotificationManager,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSettingsState>(appDispatchers) {
@@ -80,6 +82,7 @@ class SafeSettingsViewModel @Inject constructor(
                     updateState { SafeSettingsState(safe, null, null, SafeRemoved) }
                     tracker.setNumSafes(safeRepository.getSafeCount())
                     notificationRepository.unregisterSafe(safe.address)
+                    notificationManager.deleteNotificationChannelGroup(safe)
                 }
             }
         }

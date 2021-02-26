@@ -6,8 +6,12 @@ import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
@@ -24,6 +28,7 @@ class SafeSettingsEditNameViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>(relaxed = true)
+    private val notificationManager = mockk<NotificationManager>(relaxed = true)
     private lateinit var viewModel: SafeSettingsEditNameViewModel
 
     @Test
@@ -41,7 +46,7 @@ class SafeSettingsEditNameViewModelTest {
         coEvery { safeRepository.saveSafe(any()) } just Runs
 
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel = SafeSettingsEditNameViewModel(safeRepository, appDispatchers)
+        viewModel = SafeSettingsEditNameViewModel(safeRepository, notificationManager, appDispatchers)
         viewModel.state.observeForever(stateObserver)
 
         with(stateObserver.values()[0] as EditNameState) {
@@ -71,7 +76,7 @@ class SafeSettingsEditNameViewModelTest {
         coEvery { safeRepository.saveSafe(any()) } throws throwable
 
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        viewModel = SafeSettingsEditNameViewModel(safeRepository, appDispatchers)
+        viewModel = SafeSettingsEditNameViewModel(safeRepository, notificationManager, appDispatchers)
         viewModel.state.observeForever(stateObserver)
 
         with(stateObserver.values()[0] as EditNameState) {

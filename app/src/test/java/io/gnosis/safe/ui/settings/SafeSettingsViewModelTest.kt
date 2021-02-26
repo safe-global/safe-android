@@ -5,6 +5,7 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
+import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.safe.SafeRemoved
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -33,6 +35,9 @@ class SafeSettingsViewModelTest {
 
     private val safeRepository = mockk<SafeRepository>()
     private val notificationRepository = mockk<NotificationRepository>()
+    private val notificationManager = mockk<NotificationManager>().apply {
+        coEvery { deleteNotificationChannelGroup(any()) } just Runs
+    }
     private val tracker = mockk<Tracker>()
     private val ensRepository = mockk<EnsRepository>().apply {
         coEvery { reverseResolve(any()) } returns null
@@ -45,7 +50,8 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         safeSettingsViewModel.state.observeForever(testObserver)
 
         testObserver.assertValueCount(1)
@@ -71,7 +77,8 @@ class SafeSettingsViewModelTest {
         coEvery { ensRepository.reverseResolve(any()) } returnsMany listOf(ensName1, ensName2)
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         safeSettingsViewModel.state.observeForever(testObserver)
 
         testObserver.assertValueCount(1)
@@ -95,7 +102,8 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { safeRepository.getActiveSafe() } returns null
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -125,7 +133,8 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { ensRepository.reverseResolve(any()) } returns ensName
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -156,7 +165,8 @@ class SafeSettingsViewModelTest {
         coEvery { ensRepository.reverseResolve(any()) } throws throwable
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -185,7 +195,8 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getSafeInfo(any()) } throws throwable
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -220,7 +231,8 @@ class SafeSettingsViewModelTest {
         coEvery { notificationRepository.unregisterSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
@@ -231,7 +243,9 @@ class SafeSettingsViewModelTest {
         }
 
         with(stateObserver.values()[1] as SafeSettingsState) {
-            assert(safe == SAFE_1 && viewAction is SafeRemoved)
+            assertEquals(safe, SAFE_1)
+            println("viewAction: $viewAction")
+            assertTrue(viewAction is SafeRemoved)
         }
 
         coVerifySequence {
@@ -271,7 +285,8 @@ class SafeSettingsViewModelTest {
         coEvery { notificationRepository.unregisterSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
-        safeSettingsViewModel = SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, tracker, appDispatchers)
+        safeSettingsViewModel =
+            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
