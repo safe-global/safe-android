@@ -42,7 +42,6 @@ class ButtonStateHelper(
             else -> false
         }
 
-
     fun rejectButtonIsEnabled(): Boolean =
         when {
             !rejectButtonIsVisible() -> {

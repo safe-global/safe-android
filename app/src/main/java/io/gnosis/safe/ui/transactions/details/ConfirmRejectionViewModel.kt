@@ -62,7 +62,7 @@ class ConfirmRejectionViewModel
                 tracker.logTransactionRejected()
                 updateState { ConfirmationRejectedViewState(RejectionSubmitted) }
             }.onFailure {
-                throw TxRejectionFailed(it)
+                throw TxRejectionFailed(it.cause ?: it)
             }
         }
     }

@@ -82,7 +82,7 @@ class TransactionDetailsViewModel
                 val safes = safeRepository.getSafes()
                 updateState { TransactionDetailsViewState(ConfirmationSubmitted(it.toTransactionDetailsViewData(safes))) }
             }.onFailure {
-                throw TxConfirmationFailed(it)
+                throw TxConfirmationFailed(it.cause ?: it)
             }
         }
     }
