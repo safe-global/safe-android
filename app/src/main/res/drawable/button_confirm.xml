@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
         <shape>
-            <solid android:color="#aaf02525" />
+            <solid android:color="#aa008c73" />
             <corners android:radius="@dimen/primary_button_radius" />
         </shape>
     </item>
@@ -10,7 +10,7 @@
         <ripple android:color="@color/pressed_shade">
             <item>
                 <shape>
-                    <solid android:color="@color/error" />
+                    <solid android:color="@color/primary" />
                     <corners android:radius="@dimen/primary_button_radius" />
                 </shape>
             </item>
