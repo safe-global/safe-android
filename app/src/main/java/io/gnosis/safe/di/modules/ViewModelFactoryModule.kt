@@ -20,13 +20,14 @@ import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
+import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import javax.inject.Singleton
 
@@ -112,6 +113,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TransactionDetailsViewModel::class)
     abstract fun providesTransactionDetailsViewModel(viewModel: TransactionDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmRejectionViewModel::class)
+    abstract fun providesConfirmRejectionViewModel(viewModel: ConfirmRejectionViewModel): ViewModel
 
     @Binds
     @IntoMap

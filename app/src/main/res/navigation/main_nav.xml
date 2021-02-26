@@ -259,7 +259,17 @@
         android:id="@+id/confirmRejectionFragment"
         android:name="io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment"
         android:label="ConfirmRejectionFragment"
-        tools:layout="@layout/fragment_confirm_rejection" />
+        tools:layout="@layout/fragment_confirm_rejection" >
+
+        <action
+            android:id="@+id/action_confirmRejectionFragment_to_transactionsFragment"
+            app:destination="@id/transactionsFragment"
+            app:popUpTo="@id/transactionsFragment" />
+
+        <argument
+            android:name="txId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/transactionDetailsActionMultisendFragment"

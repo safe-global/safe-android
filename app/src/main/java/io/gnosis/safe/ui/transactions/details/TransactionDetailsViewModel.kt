@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.transactions.details
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
-import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
@@ -55,50 +54,15 @@ class TransactionDetailsViewModel
             executionInfo.signers.contains(credentials.address)
         }
 
+    fun isOwner(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
+        return ownerCredentialsRepository.hasCredentials() && true == ownerCredentialsRepository.retrieveCredentials()?.let { credentials ->
+            executionInfo.signers.contains(credentials.address)
+        }
+    }
 
     var txDetails: TransactionDetails? = null
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
-
-    fun submitRejection() {
-        val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
-            ?: throw MissingCorrectExecutionDetailsException
-
-        safeLaunch {
-            val activeSafeAddress = safeRepository.getActiveSafe()!!.address
-            val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
-            val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(activeSafeAddress),
-                detailedExecutionInfo = rejectionExecutionInfo
-            )
-            val safeTxHash =
-                calculateSafeTxHash(
-                    safeAddress = activeSafeAddress,
-                    transaction = rejectionTxDetails,
-                    executionInfo = rejectionExecutionInfo
-                )!!.toHexString()
-            validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
-            updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
-            kotlin.runCatching {
-                transactionRepository.proposeTransaction(
-                    safeAddress = activeSafeAddress,
-                    nonce = rejectionExecutionInfo.nonce,
-                    signature = transactionRepository.sign(ownerCredentials.key, safeTxHash),
-                    safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
-                    safeTxHash = safeTxHash,
-                    sender = ownerCredentials.address
-                )
-            }.onSuccess {
-                tracker.logTransactionRejected()
-                val safes = safeRepository.getSafes()
-                //TODO ? Modify txDetails to look like it got rejected ?
-                updateState { TransactionDetailsViewState(RejectionSubmitted(txDetails!!.toTransactionDetailsViewData(safes))) }
-            }.onFailure {
-                throw TxRejectionFailed(it)
-            }
-        }
-    }
 
     fun submitConfirmation(transaction: TransactionDetails) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
@@ -118,7 +82,7 @@ class TransactionDetailsViewModel
                 val safes = safeRepository.getSafes()
                 updateState { TransactionDetailsViewState(ConfirmationSubmitted(it.toTransactionDetailsViewData(safes))) }
             }.onFailure {
-                throw TxConfirmationFailed(it)
+                throw TxConfirmationFailed(it.cause ?: it)
             }
         }
     }
@@ -145,10 +109,6 @@ data class UpdateDetails(
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmationSubmitted(
-    val txDetails: TransactionDetailsViewData?
-) : BaseStateViewModel.ViewAction
-
-data class RejectionSubmitted(
     val txDetails: TransactionDetailsViewData?
 ) : BaseStateViewModel.ViewAction
 

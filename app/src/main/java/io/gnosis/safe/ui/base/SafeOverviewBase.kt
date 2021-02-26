@@ -28,6 +28,10 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
             resetOwnerImported()
         }
+        if (rejectionConfirmed()) {
+            resetRejectionConfirmed()
+            snackbar(requireView(), R.string.rejection_successfully_submitted)
+        }
     }
 
     abstract fun handleActiveSafe(safe: Safe?)
@@ -40,8 +44,17 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
     }
 
+    private fun rejectionConfirmed(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REJECTION_CONFIRMATION_RESULT) == true
+    }
+
+    private fun resetRejectionConfirmed() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, false)
+    }
+
     companion object {
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
+        const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
 }
 

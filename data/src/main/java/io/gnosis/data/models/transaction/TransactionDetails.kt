@@ -57,6 +57,8 @@ sealed class DetailedExecutionInfo(
         val safeTxHash: String = "",
         @Json(name = "signers")
         val signers: List<Solidity.Address> = emptyList(),
+        @Json(name = "rejectors")
+        val rejectors: List<Solidity.Address> = emptyList(),
         @Json(name = "confirmationsRequired")
         val confirmationsRequired: Int = 0,
         @Json(name = "confirmations")

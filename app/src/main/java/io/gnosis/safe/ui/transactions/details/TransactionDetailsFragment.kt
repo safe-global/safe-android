@@ -21,7 +21,6 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
@@ -83,12 +82,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
-                is RejectionSubmitted -> {
-                    viewAction.txDetails?.let {
-                        updateUi(it)
-                    }
-                    snackbar(requireView(), R.string.rejection_successfully_submitted)
-                }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
                 }
@@ -102,28 +95,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
 
                     viewAction.error.let {
+                        val error = it.toError()
+                        if (error.trackingRequired) {
+                            tracker.logException(it)
+                        }
                         when (it) {
-                            is TxConfirmationFailed -> {
-                                val error = it.cause.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it.cause)
-                                }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_confirmation))
-                            }
-                            is TxRejectionFailed -> {
-                                val error = it.cause.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it.cause)
-                                }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_rejection))
-                            }
-                            else -> {
-                                val error = it.toError()
-                                if (error.trackingRequired) {
-                                    tracker.logException(it)
-                                }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_details))
-                            }
+                            is TxConfirmationFailed -> errorSnackbar(
+                                requireView(),
+                                error.message(requireContext(), R.string.error_description_tx_confirmation)
+                            )
+                            else -> errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_details))
                         }
                     }
                 }
@@ -133,12 +114,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        if (rejectionConfirmed()) {
-            resetRejectionConfirmed()
-            viewModel.submitRejection()
-        } else {
-            viewModel.loadDetails(txId)
-        }
+        viewModel.loadDetails(txId)
     }
 
     private lateinit var contentBinding: ViewBinding
@@ -154,53 +130,52 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
-
-                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
-
                 binding.txConfirmations.visible(true)
 
-                //TODO: check if tx was already rejected
-                if (needsYourConfirmation) {
-                    binding.txButtonContainer.visible(true)
-                    binding.txConfirmButton.isEnabled = true
-                    binding.txConfirmButton.setOnClickListener {
-                        showConfirmDialog(
-                            requireContext(),
-                            message = R.string.confirm_transaction_dialog_message,
-                            confirm = R.string.confirm,
-                            confirmColor = R.color.primary
-                        ) {
-                            binding.txConfirmButton.isEnabled = false
-                            viewModel.submitConfirmation(viewModel.txDetails!!)
-                        }
-                    }
-                    binding.txRejectButton.isEnabled = true
-                    binding.txRejectButton.setOnClickListener {
-                        binding.txRejectButton.isEnabled = false
-                        findNavController().navigate(
-                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
-                        )
-                    }
-                } else {
+                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
+                val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
+                val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
+                val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
+                val canReject = viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)
+                val isOwner = viewModel.isOwner(executionInfo)
+                val buttonState = ButtonStateHelper(
+                    hasBeenRejected = hasBeenRejected,
+                    needsYourConfirmation = needsYourConfirmation,
+                    isRejection = isRejection,
+                    needsExecution = needsExecution,
+                    canReject = canReject,
+                    isOwner = isOwner,
+                    completed = txDetails.txStatus.isCompleted()
+                )
 
-                    if (viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)) {
-                        binding.txButtonContainer.visible(true)
+                binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
+
+                binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
+                binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
+                binding.txConfirmButton.setOnClickListener {
+                    showConfirmDialog(
+                        requireContext(),
+                        message = R.string.confirm_transaction_dialog_message,
+                        confirm = R.string.confirm,
+                        confirmColor = R.color.primary
+                    ) {
                         binding.txConfirmButton.isEnabled = false
-                        binding.txRejectButton.isEnabled = true
-                        binding.txRejectButton.setOnClickListener {
-                            binding.txRejectButton.isEnabled = false
-                            findNavController().navigate(
-                                TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment()
-                            )
-                        }
-                    } else {
-                        binding.txButtonContainer.visible(false)
+                        viewModel.submitConfirmation(viewModel.txDetails!!)
                     }
                 }
+                binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
+                binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()
+                binding.txRejectButton.setOnClickListener {
+                    binding.txRejectButton.isEnabled = false
+                    findNavController().navigate(
+                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToConfirmRejectionFragment(txId)
+                    )
+                }
+                binding.spaceBetweenButtons.visible(buttonState.spacerIsVisible())
 
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
-                    rejection = txDetails.txInfo is TransactionInfoViewData.Rejection,
+                    rejection = isRejection,
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
@@ -241,7 +216,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         if (txDetails.executedAt != null) {
             binding.executed.visible(true)
             binding.executedDivider.visible(true)
-            binding.executed.value = txDetails.executedAt!!.formatBackendDateTime()
+            binding.executed.value = txDetails.executedAt.formatBackendDateTime()
         } else {
             binding.executed.visible(false)
             binding.executedDivider.visible(false)
@@ -358,7 +333,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                             txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
                             txDataDecoded.setOnClickListener {
-                                txDetails.txData?.dataDecoded?.parameters?.getOrNull(0)?.let {
+                                txDetails.txData.dataDecoded?.parameters?.getOrNull(0)?.let {
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
                                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
@@ -370,9 +345,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                             }
                         } else {
 
-                            txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData?.dataDecoded?.method)
+                            txDataDecoded.name = getString(R.string.tx_details_action, txDetails.txData.dataDecoded?.method)
                             txDataDecoded.setOnClickListener {
-                                txDetails.txData?.let {
+                                txDetails.txData.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                                             it.dataDecoded?.method ?: "",
@@ -460,14 +435,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.txButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
-    }
-
-    private fun rejectionConfirmed(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(REJECTION_CONFIRMATION_RESULT) == true
-    }
-
-    private fun resetRejectionConfirmed() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, false)
     }
 }
 

@@ -37,6 +37,13 @@
 
     <style name="RejectButton" parent="PrimaryButton">
         <item name="android:background">@drawable/button_reject</item>
+        <item name="android:textColor">@color/white_two</item>
+    </style>
+
+    <style name="ConfirmButton" parent="PrimaryButton">
+        <item name="android:background">@drawable/button_confirm</item>
+        <item name="android:textColor">@color/white_two</item>
+
     </style>
 
     <style name="TextButton">
