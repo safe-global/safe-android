@@ -10,53 +10,58 @@ class ButtonStateHelper(
     val completed: Boolean
 ) {
 
-    fun rejectButtonIsVisible(): Boolean {
-        if (!isOwner || completed) {
-            return false
-        }
-        if (isRejection || !canReject) {
-            return false
-        }
-        if (!isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution) {
-            return false
-        }
-        return true
-    }
+    fun rejectButtonIsVisible(): Boolean =
+        when {
+            !isOwner || completed -> {
+                false
+            }
+            isRejection || !canReject -> {
+                false
+            }
+            !isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution -> {
+                false
+            }
+            else -> true
 
-    fun confirmButtonIsVisible(): Boolean {
-        if (!isOwner || completed) {
-            return false
         }
-        if (needsYourConfirmation) {
-            return true
-        }
-        if (!isRejection && !hasBeenRejected && !needsExecution) {
-            return true
-        }
-        if (!isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution) {
-            return true
-        }
-        return false
-    }
 
-    fun rejectButtonIsEnabled(): Boolean {
-        if (!rejectButtonIsVisible()) {
-            return false
+    fun confirmButtonIsVisible(): Boolean =
+        when {
+            !isOwner || completed -> {
+                false
+            }
+            needsYourConfirmation -> {
+                true
+            }
+            !isRejection && !hasBeenRejected && !needsExecution -> {
+                true
+            }
+            !isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution -> {
+                true
+            }
+            else -> false
         }
-        if (!isRejection && needsYourConfirmation && hasBeenRejected && !needsExecution) {
-            return false
-        }
-        return true
-    }
 
-    fun confirmButtonIsEnabled(): Boolean {
-        if (!confirmButtonIsVisible()) {
-            return false
+
+    fun rejectButtonIsEnabled(): Boolean =
+        when {
+            !rejectButtonIsVisible() -> {
+                false
+            }
+            !isRejection && needsYourConfirmation && hasBeenRejected && !needsExecution -> {
+                false
+            }
+            else -> true
         }
-        if (!needsYourConfirmation && !needsExecution) {
-            return false
+
+    fun confirmButtonIsEnabled(): Boolean = when {
+        !confirmButtonIsVisible() -> {
+            false
         }
-        return true
+        !needsYourConfirmation && !needsExecution -> {
+            false
+        }
+        else -> true
     }
 
     fun spacerIsVisible(): Boolean = confirmButtonIsVisible() && rejectButtonIsVisible()
