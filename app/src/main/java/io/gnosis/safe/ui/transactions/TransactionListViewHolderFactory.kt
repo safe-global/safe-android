@@ -20,6 +20,7 @@ import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -274,6 +275,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                    appLabel.visible(false)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
@@ -281,11 +283,13 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                         addressInfo.addressLogoUri,
                         addressInfo.address.asEthereumAddress()!!
                     )
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
                     addressLogo.setAddress(null)
                     addressLogo.setImageResource(addressInfo.logoResId)
+                    appLabel.visible(false)
                 }
             }
 
@@ -293,7 +297,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
 
-            action.text = viewTransfer.methodName
+            action.text = viewTransfer.methodName //TODO: use actionCount if available? or if methodName is multiSend
             nonce.text = viewTransfer.nonce
 
             addressLogo.alpha = viewTransfer.alpha

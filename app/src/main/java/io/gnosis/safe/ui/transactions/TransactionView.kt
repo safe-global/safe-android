@@ -162,12 +162,14 @@ sealed class AddressInfoData {
     data class Remote(
         val name: String,
         val addressLogoUri: String?,
-        val address: String
+        val address: String,
+        val appInfo: Boolean = false
     ) : AddressInfoData()
 
     object Default : AddressInfoData() {
         @StringRes
         val nameResId: Int = R.string.tx_list_contract_interaction
+
         @DrawableRes
         val logoResId: Int = R.drawable.ic_code_16dp
     }

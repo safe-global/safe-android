@@ -10,5 +10,6 @@ data class SafeInfo(
     val owners: List<Solidity.Address>,
     val masterCopy: Solidity.Address,
     val modules: List<Solidity.Address>,
-    val fallbackHandler: Solidity.Address?
+    val fallbackHandler: Solidity.Address?,
+    val version: String
 )

@@ -241,7 +241,7 @@ class TransactionListViewModel
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
 
-        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransaction(
             id = id,
@@ -267,7 +267,7 @@ class TransactionListViewModel
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
-        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
             id = id,
@@ -328,12 +328,13 @@ class TransactionListViewModel
         )
     }
 
-    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safes: List<Safe>): AddressInfoData {
+    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safeAppInfo: SafeAppInfo?, safes: List<Safe>): AddressInfoData {
         val localName = safes.find { it.address == address }?.localName
         val addressString = address.asEthereumAddressString()
         return when {
             localName != null -> AddressInfoData.Local(localName, addressString)
-            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString)
+            safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUrl, addressString, true)
+            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString, false)
             else -> AddressInfoData.Default
         }
     }
