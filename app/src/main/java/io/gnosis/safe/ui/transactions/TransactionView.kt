@@ -85,6 +85,7 @@ sealed class TransactionView(
         val alpha: Float,
         val nonce: String,
         val methodName: String?,
+        val actionCount: Int?,
         val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
@@ -100,6 +101,7 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val methodName: String?,
+        val actionCount: Int?,
         val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 

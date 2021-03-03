@@ -38,7 +38,7 @@ class ConfirmRejectionViewModel
             val activeSafeAddress = safeRepository.getActiveSafe()!!.address
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(activeSafeAddress),
+                txInfo = TransactionInfo.Custom(to = activeSafeAddress),
                 detailedExecutionInfo = rejectionExecutionInfo
             )
             val safeTxHash =

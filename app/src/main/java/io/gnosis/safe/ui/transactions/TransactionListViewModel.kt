@@ -251,8 +251,9 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
+            addressInfo = addressInfo,
             methodName = txInfo.methodName,
-            addressInfo = addressInfo
+            actionCount = txInfo.actionCount
         )
     }
 
@@ -281,6 +282,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
+            actionCount = txInfo.actionCount,
             addressInfo = addressInfo
         )
     }
@@ -328,7 +330,12 @@ class TransactionListViewModel
         )
     }
 
-    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safeAppInfo: SafeAppInfo?, safes: List<Safe>): AddressInfoData {
+    private fun resolveKnownAddress(
+        address: Solidity.Address,
+        addressInfo: AddressInfo?,
+        safeAppInfo: SafeAppInfo?,
+        safes: List<Safe>
+    ): AddressInfoData {
         val localName = safes.find { it.address == address }?.localName
         val addressString = address.asEthereumAddressString()
         return when {
@@ -424,6 +431,7 @@ class TransactionListViewModel
         const val OPACITY_HALF = 0.5F
     }
 }
+
 
 data class TransactionsViewState(
     override var viewAction: BaseStateViewModel.ViewAction?,
