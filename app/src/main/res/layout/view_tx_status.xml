@@ -8,28 +8,31 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <ImageView
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/type_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginStart="@dimen/default_margin"
+        android:src="@drawable/ic_code_16dp"
         app:layout_constraintBottom_toBottomOf="@+id/type"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/type"
-        app:srcCompat="@drawable/ic_arrow_green_10dp" />
+        app:srcCompat="@drawable/ic_arrow_green_10dp"
+        app:strokeColor="@color/illustration_background"
+        app:strokeWidth="0.01dp" />
 
     <TextView
         android:id="@+id/status"
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/type"
+        app:layout_constraintStart_toEndOf="@+id/app_label"
         app:layout_constraintTop_toTopOf="@+id/type"
         tools:text="Failed"
         tools:visibility="visible" />
@@ -46,6 +49,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginBottom="16dp"
         tools:text="@string/tx_status_type_transfer_incoming" />
+
+    <TextView
+        android:id="@+id/app_label"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/background_app_label"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="@string/app"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/type"
+        app:layout_constraintStart_toEndOf="@+id/type"
+        app:layout_constraintTop_toTopOf="@+id/type"
+        android:visibility="gone"/>
+
 
     <TextView
         android:id="@+id/status_long"

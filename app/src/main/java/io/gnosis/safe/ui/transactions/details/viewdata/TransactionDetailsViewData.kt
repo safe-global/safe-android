@@ -24,8 +24,11 @@ sealed class TransactionInfoViewData(
 ) {
     data class Custom(
         val to: Solidity.Address,
-        val addressName: String?,
-        val addressUri: String?,
+        val actionInfoAddressName: String?,
+        val actionInfoAddressUri: String?,
+        val statusTitle: String?,
+        val statusIconUri: String?,
+        val safeApp: Boolean = false,
         val dataSize: Int,
         val value: BigInteger,
         val methodName: String?
@@ -132,11 +135,14 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
             } else {
                 TransactionInfoViewData.Custom(
                     to = to,
-                    addressName = addressName,
-                    addressUri = addressUri,
+                    actionInfoAddressName = addressName,
+                    actionInfoAddressUri = addressUri,
+                    statusTitle = safeAppInfo?.name,
+                    statusIconUri = safeAppInfo?.logoUrl,
                     dataSize = dataSize,
                     value = value,
-                    methodName = methodName
+                    methodName = methodName,
+                    safeApp = safeAppInfo != null
                 )
             }
         }
