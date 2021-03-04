@@ -72,7 +72,8 @@ class AdvancedSafeSettingsViewModelTest {
             emptyList(),
             Solidity.Address(BigInteger.ONE),
             emptyList(),
-            Solidity.Address(BigInteger.ONE)
+            Solidity.Address(BigInteger.ONE),
+            "1.1.1"
         )
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.getActiveSafe() } returns defaultActiveSafe

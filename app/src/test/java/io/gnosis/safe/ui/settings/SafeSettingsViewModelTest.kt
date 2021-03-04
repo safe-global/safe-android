@@ -68,8 +68,8 @@ class SafeSettingsViewModelTest {
     fun `init - (activeSafe change) should load new data`() = runBlockingTest {
         val safe1 = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safe2 = Safe(Solidity.Address(BigInteger.TEN), "safe")
-        val safeInfo1 = SafeInfo(safe1.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
-        val safeInfo2 = SafeInfo(safe2.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val safeInfo1 = SafeInfo(safe1.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
+        val safeInfo2 = SafeInfo(safe2.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
         val ensName1 = "ens.name"
         val ensName2 = "ens.name"
         coEvery { safeRepository.getSafeInfo(any()) } returnsMany listOf(safeInfo1, safeInfo2)
@@ -126,7 +126,7 @@ class SafeSettingsViewModelTest {
     @Test
     fun `reload - (activeSafe available, everything works) should emit everything`() = runBlockingTest {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
         val ensName = "ens.name"
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
@@ -158,7 +158,7 @@ class SafeSettingsViewModelTest {
     fun `reload - (activeSafe available, ensFailure) should emit safe data with null name`() = runBlockingTest {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null)
+        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
@@ -270,7 +270,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             Solidity.Address(BigInteger.ONE),
             emptyList(),
-            Solidity.Address(BigInteger.ONE)
+            Solidity.Address(BigInteger.ONE),
+            "1.1.1"
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
