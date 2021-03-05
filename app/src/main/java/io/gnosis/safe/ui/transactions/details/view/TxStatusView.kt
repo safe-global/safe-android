@@ -31,7 +31,7 @@ class TxStatusView @JvmOverloads constructor(
         safeApp: Boolean = false
     ) {
 
-        binding.type.text = title
+        binding.statusTitle.text = title
         iconUrl?.let {
             binding.typeIcon.loadKnownSafeAppLogo(logoUri = iconUrl, defaultResId = defaultIconRes)
             binding.typeIcon.shapeAppearanceModel = ShapeAppearanceModel.Builder().setAllCornerSizes(0.5F).build()
