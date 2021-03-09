@@ -17,5 +17,10 @@
     "nonce": 8,
     "confirmationsRequired": 2,
     "confirmationsSubmitted": 2
+  },
+  "safeAppInfo": {
+    "name": "Fnord",
+    "url": "https://www.de",
+    "logoUrl": "https://www.de"
   }
 }

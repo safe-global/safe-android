@@ -468,11 +468,11 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildCustom(status = AWAITING_EXECUTION, confirmations = 2),
-            buildCustom(status = AWAITING_CONFIRMATIONS),
-            buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress),
-            buildCustom(status = FAILED),
-            buildCustom(status = CANCELLED, value = BigInteger("100000000000000"))
+            buildCustom(status = AWAITING_EXECUTION, confirmations = 2, actionCount = 2),
+            buildCustom(status = AWAITING_CONFIRMATIONS, actionCount = 3),
+            buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress, actionCount = 1),
+            buildCustom(status = FAILED, actionCount = 1),
+            buildCustom(status = CANCELLED, value = BigInteger("100000000000000"), actionCount = 1)
         )
         val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
 
@@ -489,7 +489,8 @@ class TransactionListViewModelTest {
                 confirmationsTextColor = R.color.primary,
                 threshold = 2,
                 confirmations = 2,
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                actionCount = 2
             ),
             transactionViews[0]
         )
@@ -506,7 +507,8 @@ class TransactionListViewModelTest {
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 confirmations = 0,
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                actionCount = 3
             ),
             transactionViews[1]
         )
@@ -520,7 +522,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                actionCount = 1
             ),
             transactionViews[2]
         )
@@ -534,7 +537,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_HALF,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                actionCount = 1
             ),
             transactionViews[3]
         )
@@ -548,7 +552,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_HALF,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                actionCount = 1
             ),
             transactionViews[4]
         )
@@ -912,7 +917,7 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, ownerRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildCustom(address = defaultSafeAddress),
+            buildCustom(address = defaultSafeAddress, actionCount = 1),
             buildCustom(address = defaultKnownAddressAddress, toInfo = defaultKnownAddress),
             buildCustom(address = "0x2".asEthereumAddress()!!),
             buildCustom(address = defaultSafeAddress, toInfo = AddressInfo("name", "logoUri"))
@@ -929,7 +934,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                actionCount = 1
             ),
             transactionViews[0]
         )
@@ -944,7 +950,12 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Remote(defaultKnownAddressName, defaultKnownAddressLogo, defaultKnownAddressAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Remote(
+                    defaultKnownAddressName,
+                    defaultKnownAddressLogo,
+                    defaultKnownAddressAddress.asEthereumAddressString()
+                ),
+                actionCount = null
             ),
             transactionViews[1]
         )
@@ -959,7 +970,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Default
+                addressInfo = AddressInfoData.Default,
+                actionCount = null
             ),
             transactionViews[2]
         )
@@ -974,7 +986,8 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 alpha = OPACITY_FULL,
                 nonce = "1",
-                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString())
+                addressInfo = AddressInfoData.Local(defaultSafeName, defaultSafeAddress.asEthereumAddressString()),
+                actionCount = null
             ),
             transactionViews[3]
         )
@@ -1001,7 +1014,8 @@ class TransactionListViewModelTest {
                     confirmationsSubmitted = 1,
                     confirmationsRequired = 1,
                     missingSigners = emptyList()
-                )
+                ),
+                safeAppInfo = null
             )
         )
 
@@ -1022,7 +1036,8 @@ class TransactionListViewModelTest {
                     recipientInfo = null,
                     senderInfo = null
                 ),
-                timestamp = Date(0)
+                timestamp = Date(0),
+                safeAppInfo = null
             )
         }
         return Page(1, "", "", transfers)
@@ -1056,7 +1071,8 @@ class TransactionListViewModelTest {
                 confirmationsSubmitted = confirmations,
                 missingSigners = missingSigners
             ),
-            timestamp = date
+            timestamp = date,
+            safeAppInfo = null
         )
 
     private fun transferInfoFromToken(tokenInfo: TokenInfo, value: BigInteger): TransferInfo {
@@ -1089,19 +1105,29 @@ class TransactionListViewModelTest {
         nonce: BigInteger = defaultNonce,
         address: Solidity.Address = defaultToAddress,
         toInfo: AddressInfo? = null,
-        dataSize: Int = 0
+        dataSize: Int = 0,
+        actionCount: Int? = null
     ): Transaction =
         Transaction(
             id = "",
             txStatus = status,
-            txInfo = TransactionInfo.Custom(to = address, dataSize = dataSize, value = value, methodName = "multiSend", toInfo = toInfo, isCancellation = false),
+            txInfo = TransactionInfo.Custom(
+                to = address,
+                dataSize = dataSize,
+                value = value,
+                methodName = "multiSend",
+                toInfo = toInfo,
+                isCancellation = false,
+                actionCount = actionCount
+            ),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
                 confirmationsRequired = defaultThreshold,
                 confirmationsSubmitted = confirmations,
                 missingSigners = missingSigners
             ),
-            timestamp = date
+            timestamp = date,
+            safeAppInfo = null
         )
 
     private fun buildSettingsChange(
@@ -1123,7 +1149,8 @@ class TransactionListViewModelTest {
                 confirmationsSubmitted = confirmations,
                 missingSigners = missingSigners
             ),
-            timestamp = date
+            timestamp = date,
+            safeAppInfo = null
         )
 
     private fun buildDataDecodedDto(

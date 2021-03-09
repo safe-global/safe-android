@@ -306,7 +306,8 @@ private fun buildGateTransaction(
             confirmationsRequired = 2,
             missingSigners = null
         ),
-        timestamp = Date()
+        timestamp = Date(),
+        safeAppInfo = null
     ), conflictType = ConflictType.None
 )
 

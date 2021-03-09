@@ -32,23 +32,6 @@
         tools:text="10" />
 
     <TextView
-        android:id="@+id/action"
-        style="@style/TextDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:gravity="end"
-        android:lineSpacingExtra="4sp"
-        android:maxWidth="200dp"
-        android:singleLine="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@+id/address_name"
-        app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintTop_toTopOf="@+id/address_name"
-        tools:text="approve" />
-
-    <TextView
         android:id="@+id/date_time"
         style="@style/TextMedium"
         android:layout_width="wrap_content"
@@ -62,17 +45,52 @@
     <TextView
         android:id="@+id/address_name"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:maxWidth="200dp"
+        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintStart_toEndOf="@+id/address_logo"
+        app:layout_constraintTop_toTopOf="@+id/address_logo"
+        app:layout_constraintVertical_bias="0.47000003"
+        tools:text="Lorem ipsum dolor. Lorem ips" />
+
+    <TextView
+        android:id="@+id/app_label"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/background_app_label"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="@string/app"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/address_name"
+        app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintEnd_toStartOf="@+id/barrier2"/>
+
+    <TextView
+        android:id="@+id/action"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:lineSpacingExtra="4sp"
+        android:maxWidth="200dp"
         android:singleLine="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
-        app:layout_constraintEnd_toStartOf="@+id/action"
-        app:layout_constraintStart_toEndOf="@+id/address_logo"
-        app:layout_constraintTop_toTopOf="@+id/address_logo"
-        tools:text="@string/tx_list_contract_interaction" />
+        app:layout_constraintBottom_toBottomOf="@+id/address_name"
+        app:layout_constraintEnd_toStartOf="@+id/chevron"
+        app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/barrier1"
+        tools:text="approve" />
 
     <TextView
         android:id="@+id/final_status"
@@ -87,6 +105,20 @@
         app:layout_constraintTop_toTopOf="@+id/date_time"
         tools:text="Success" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="address_name,app_label" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="action" />
+
     <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/address_logo"
         android:layout_width="16dp"
@@ -97,7 +129,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
-        app:strokeWidth="0.01dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/illustration_background"
+        app:strokeWidth="0.01dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

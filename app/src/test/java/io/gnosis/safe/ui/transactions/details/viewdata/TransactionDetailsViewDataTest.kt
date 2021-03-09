@@ -106,7 +106,7 @@ class TransactionDetailsViewDataTest {
 
     @Test
     fun `toTransactionInfoViewData() (TransactionInfo_Custom with AddressInfo and isCancellation) should return TransactionInfoViewData_Rejection `() {
-        val transactionInfo = TransactionInfo.Custom(anyAddress, AddressInfo("Remote Name", null), 1, BigInteger.ZERO, "dummyName", true)
+        val transactionInfo = TransactionInfo.Custom(anyAddress, AddressInfo("Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, true)
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
         val result = transactionInfo.toTransactionInfoViewData(safes)
