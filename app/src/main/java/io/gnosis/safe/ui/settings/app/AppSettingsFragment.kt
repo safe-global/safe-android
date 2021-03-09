@@ -46,6 +46,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
             }
+            passcode.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToPasscodeSettingsFragment())
+            }
             fiat.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
