@@ -15,10 +15,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
-import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
-import io.gnosis.safe.ui.settings.app.AppSettingsFragment
-import io.gnosis.safe.ui.settings.app.GetInTouchFragment
-import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
+import io.gnosis.safe.ui.settings.app.*
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
@@ -98,6 +95,9 @@ interface ViewComponent {
     fun inject(fragment: NightModeAppSettingsFragment)
 
     fun inject(fragment: AppFiatFragment)
+
+    fun inject(fragment: PasscodeSettingsFragment)
+
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)
 

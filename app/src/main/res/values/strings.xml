@@ -149,6 +149,8 @@
     <string name="settings_app_licenses">Licenses</string>
     <string name="settings_app_get_in_touch">Get in touch</string>
     <string name="settings_app_version">App version</string>
+    <string name="settings_app_use_passcode">Use passcode</string>
+    <string name="settings_app_change_passcode">Change passcode</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
@@ -376,4 +378,5 @@
 
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>
+    <string name="settings_app_passcode_explanation">The passcode is needed to sign transactions.</string>
 </resources>
