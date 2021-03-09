@@ -1,15 +1,15 @@
-package io.gnosis.safe.ui.settings.app
+package io.gnosis.safe.ui.settings.app.passcode
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -42,7 +42,7 @@ class PasscodeSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppPass
             usePasscode.settingSwitch.setOnClickListener {
                 settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
 
-                //TODO Start passcode setup flow
+                //TODO Start passcode setup flow here
 
                 changePasscode.visible(settingsHandler.usePasscode)
             }

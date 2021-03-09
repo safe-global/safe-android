@@ -198,7 +198,7 @@
 
     <fragment
         android:id="@+id/passcodeSettingsFragment"
-        android:name="io.gnosis.safe.ui.settings.app.PasscodeSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment"
         android:label="Passcode"
         tools:layout="@layout/fragment_settings_app_passcode" />
 
