@@ -56,7 +56,8 @@
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_dodgeInsetEdges="bottom" >
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -69,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="visible"
+                 >
 
                 <ViewStub
                     android:id="@+id/stub_transfer"
@@ -178,6 +180,7 @@
         tools:visibility="visible"
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginRight="@dimen/default_margin"
+        app:layout_insetEdge="bottom"
         >
 
         <TextView
