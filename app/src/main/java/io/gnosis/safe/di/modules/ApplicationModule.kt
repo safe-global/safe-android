@@ -14,6 +14,7 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -40,7 +41,6 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.KeyStorage
-import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -228,12 +228,11 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEncryptionManager(
-        application: Application,
         preferencesManager: PreferencesManager,
         keyStorage: KeyStorage
     ): EncryptionManager =
         // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
-        AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
+        HeimdallEncryptionManager(preferencesManager, keyStorage, 4096)
 
     @Provides
     @Singleton
@@ -257,6 +256,7 @@ class ApplicationModule(private val application: Application) {
         resources.updateConfiguration(config, resources.getDisplayMetrics())
     }
 
+    //TODO: remove
     @Provides
     @Singleton
     fun providesOwnerCredentialsRepository(
