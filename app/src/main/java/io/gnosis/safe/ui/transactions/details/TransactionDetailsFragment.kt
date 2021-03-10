@@ -148,6 +148,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     completed = txDetails.txStatus.isCompleted()
                 )
 
+                if (buttonState.buttonContainerIsVisible()) {
+                    binding.scrollView.setPadding(0, 0, 0, resources.getDimension(R.dimen.item_tx_m_height).toInt())
+                }
                 binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
 
                 binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
