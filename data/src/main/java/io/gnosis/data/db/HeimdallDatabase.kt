@@ -41,10 +41,9 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                //TODO: add migration
-//                database.execSQL(
-//
-//                )
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `${Owner.TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `private_key` TEXT, PRIMARY KEY(`address`))"""
+                )
             }
         }
     }
