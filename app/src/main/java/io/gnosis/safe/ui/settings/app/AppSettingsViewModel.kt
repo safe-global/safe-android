@@ -3,7 +3,7 @@ package io.gnosis.safe.ui.settings.app
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import kotlinx.coroutines.launch
@@ -11,7 +11,7 @@ import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
 class AppSettingsViewModel @Inject constructor(
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker
@@ -28,17 +28,20 @@ class AppSettingsViewModel @Inject constructor(
     }
 
     fun loadSigningOwner() {
-        if (ownerCredentialsRepository.hasCredentials()) {
-            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials()!!
-            signingOwner.postValue(SigningOwner(ownerCredentials.address))
-        } else {
-            signingOwner.postValue(null)
+        viewModelScope.launch {
+            if (credentialsRepository.ownerCount() > 0) {
+                val ownerCredentials = credentialsRepository.owners()[0]
+                signingOwner.postValue(SigningOwner(ownerCredentials.address))
+            } else {
+                signingOwner.postValue(null)
+            }
         }
     }
 
     fun removeSigningOwner() {
         viewModelScope.launch {
-            ownerCredentialsRepository.removeCredentials()
+            //FIXME: adjust for multiple owners
+            credentialsRepository.removeOwner(credentialsRepository.owners()[0])
             notificationRepository.unregisterOwner()
             tracker.setNumKeysImported(0)
             signingOwner.postValue(null)

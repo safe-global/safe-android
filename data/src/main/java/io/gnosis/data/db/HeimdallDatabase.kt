@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
@@ -23,6 +24,8 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
 abstract class HeimdallDatabase : RoomDatabase() {
 
     abstract fun safeDao(): SafeDao
+
+    abstract fun ownerDao(): OwnerDao
 
     companion object {
         const val DB_NAME = "safe_db"

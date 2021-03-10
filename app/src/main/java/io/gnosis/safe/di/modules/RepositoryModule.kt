@@ -4,10 +4,8 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
-import io.gnosis.data.security.HeimdallEncryptionManager
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
@@ -53,13 +51,4 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
-
-    @Provides
-    @Singleton
-    fun providesCredentialsRepository(
-        ownerDao: OwnerDao,
-        encryptionManager: HeimdallEncryptionManager,
-        preferencesManager: PreferencesManager
-    ): CredentialsRepository =
-        CredentialsRepository(ownerDao, encryptionManager, preferencesManager)
 }

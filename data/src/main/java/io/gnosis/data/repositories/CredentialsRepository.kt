@@ -4,9 +4,11 @@ import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.models.Owner
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.data.utils.toSignatureString
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import java.math.BigInteger
@@ -14,8 +16,29 @@ import java.math.BigInteger
 class CredentialsRepository(
     private val ownerDao: OwnerDao,
     private val encryptionManager: HeimdallEncryptionManager,
-    private val preferencesManager: PreferencesManager
+    //FIXME: remove after all users migrate to version with db storage for owners
+    private val ownerVault: OwnerCredentialsRepository
 ) {
+
+    init {
+        runBlocking {
+            launch(Dispatchers.IO) {
+//                if (ownerVault.hasCredentials()) {
+//                    val credentials = ownerVault.retrieveCredentials()!!
+//                    saveOwner(credentials.address, credentials.key)
+//                    ownerVault.removeCredentials()
+//                }
+            }
+        }
+    }
+
+    suspend fun ownerCount(): Int {
+        return ownerDao.ownerCount()
+    }
+
+    suspend fun owners(): List<Owner> {
+        return ownerDao.loadAll()
+    }
 
     suspend fun saveOwner(
         address: Solidity.Address,

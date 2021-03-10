@@ -1,9 +1,10 @@
 package io.gnosis.safe.notifications
 
 import com.google.firebase.iid.FirebaseInstanceId
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
-import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
@@ -26,7 +27,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class NotificationRepository(
     private val safeRepository: SafeRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val preferencesManager: PreferencesManager,
     private val notificationService: NotificationServiceApi,
     private val notificationManager: NotificationManager
@@ -100,9 +101,7 @@ class NotificationRepository(
             timestamp = (System.currentTimeMillis() / 1000).toString()
         )
 
-        if (ownerCredentialsRepository.hasCredentials()) {
-            registration.buildAndAddSignature(ownerCredentialsRepository.retrieveCredentials()!!.key.toByteArray())
-        }
+        registration.addSignatures(credentialsRepository.owners())
 
         if (safes.isNotEmpty()) {
             kotlin.runCatching {
@@ -141,9 +140,7 @@ class NotificationRepository(
                 timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
-            if (ownerCredentialsRepository.hasCredentials()) {
-                registration.buildAndAddSignature(ownerCredentialsRepository.retrieveCredentials()!!.key.toByteArray())
-            }
+            registration.addSignatures(credentialsRepository.owners())
 
             notificationService.register(registration)
         }
@@ -262,6 +259,16 @@ class NotificationRepository(
 
     private fun generateUUID(): String {
         return UUID.randomUUID().toString().toLowerCase()
+    }
+
+    private fun Registration.addSignatures(owners: List<Owner>) {
+        if (owners.isNotEmpty()) {
+            val registrationHash = hash().hexToByteArray()
+            owners.forEach {
+                val signature = credentialsRepository.signWithOwner(it, registrationHash).addHexPrefix()
+                addSignature(signature)
+            }
+        }
     }
 
     companion object {

@@ -4,6 +4,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
@@ -12,7 +13,7 @@ interface OwnerCredentialsRepository {
     fun storeCredentials(ownerCredentials: OwnerCredentials)
     fun retrieveCredentials(): OwnerCredentials?
     fun removeCredentials()
-    fun hasCredentials(): Boolean
+   // fun hasCredentials(): Boolean
 }
 
 @Deprecated("use CredentialsRepository")
@@ -23,7 +24,7 @@ data class OwnerCredentials(
 
 @Deprecated("use CredentialsRepository")
 class OwnerCredentialsVault(
-    private val encryptionManager: EncryptionManager,
+    private val encryptionManager: AesEncryptionManager,
     private val preferencesManager: PreferencesManager
 ) : OwnerCredentialsRepository {
 
@@ -38,8 +39,8 @@ class OwnerCredentialsVault(
 
     override fun retrieveCredentials(): OwnerCredentials? {
 
-        if (!hasCredentials())
-            return null
+//        if (!hasCredentials())
+//            return null
 
         val key = retrieveKey()!!
         val address = retrieveAddress()!!
@@ -51,9 +52,9 @@ class OwnerCredentialsVault(
         removeKey()
     }
 
-    override fun hasCredentials(): Boolean {
-        return hasAddress() && hasKey()
-    }
+//    override fun hasCredentials(): Boolean {
+//        return hasAddress() && hasKey()
+//    }
 
     private fun initialize() {
         if (!encryptionManager.initialized()) {

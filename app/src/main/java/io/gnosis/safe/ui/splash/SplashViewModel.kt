@@ -2,7 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.content.Context
 import android.content.Intent
-import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -20,7 +20,7 @@ constructor(
     private val safeRepository: SafeRepository,
     private val tracker: Tracker,
     private val termsChecker: TermsChecker,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers,
     @ApplicationContext private val appContext: Context
 ) : BaseStateViewModel<SplashViewModel.TermsAgreed>(appDispatchers) {
@@ -37,12 +37,7 @@ constructor(
 
         val numSafes = safeRepository.getSafeCount()
         tracker.setNumSafes(numSafes)
-
-        if (ownerCredentialsRepository.hasCredentials()) {
-            tracker.setNumKeysImported(1)
-        } else {
-            tracker.setNumKeysImported(0)
-        }
+        tracker.setNumKeysImported(credentialsRepository.ownerCount())
     }
 
     fun onStartClicked() {

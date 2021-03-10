@@ -12,10 +12,8 @@ import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.repositories.OwnerCredentialsRepository
-import io.gnosis.data.repositories.OwnerCredentialsVault
-import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.db.daos.OwnerDao
+import io.gnosis.data.repositories.*
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
@@ -43,6 +41,7 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.KeyStorage
+import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -188,12 +187,12 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesNotificationRepo(
         safeRepository: SafeRepository,
-        ownerCredentialsRepository: OwnerCredentialsRepository,
+        credentialsRepository: CredentialsRepository,
         preferencesManager: PreferencesManager,
         notificationServiceApi: NotificationServiceApi,
         notificationManager: NotificationManager
     ): NotificationRepository =
-        NotificationRepository(safeRepository, ownerCredentialsRepository, preferencesManager, notificationServiceApi, notificationManager)
+        NotificationRepository(safeRepository, credentialsRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
@@ -232,9 +231,19 @@ class ApplicationModule(private val application: Application) {
     fun providesEncryptionManager(
         preferencesManager: PreferencesManager,
         keyStorage: KeyStorage
-    ): EncryptionManager =
+    ): HeimdallEncryptionManager =
         // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
         HeimdallEncryptionManager(preferencesManager, keyStorage, 4096)
+
+    //TODO: remove
+    @Provides
+    @Singleton
+    fun providesAesEncryptionManager(
+        preferencesManager: PreferencesManager,
+        keyStorage: KeyStorage
+    ): AesEncryptionManager =
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
 
     @Provides
     @Singleton
@@ -261,8 +270,17 @@ class ApplicationModule(private val application: Application) {
     //TODO: remove
     @Provides
     @Singleton
-    fun providesOwnerCredentialsRepository(
-        encryptionManager: EncryptionManager,
+    fun providesOwnerVault(
+        encryptionManager: AesEncryptionManager,
         preferencesManager: PreferencesManager
     ): OwnerCredentialsRepository = OwnerCredentialsVault(encryptionManager, preferencesManager)
+
+    @Provides
+    @Singleton
+    fun providesCredentialsRepository(
+        ownerDao: OwnerDao,
+        encryptionManager: HeimdallEncryptionManager,
+        ownerVault: OwnerCredentialsRepository
+    ): CredentialsRepository =
+        CredentialsRepository(ownerDao, encryptionManager, ownerVault)
 }
