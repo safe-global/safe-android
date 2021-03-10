@@ -54,7 +54,6 @@ class RepositoryModule {
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
 
-
     @Provides
     @Singleton
     fun providesCredentialsRepository(
@@ -63,5 +62,4 @@ class RepositoryModule {
         preferencesManager: PreferencesManager
     ): CredentialsRepository =
         CredentialsRepository(ownerDao, encryptionManager, preferencesManager)
-
 }

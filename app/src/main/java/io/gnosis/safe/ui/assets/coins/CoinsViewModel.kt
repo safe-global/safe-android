@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.assets.coins
 
 import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.Tracker
@@ -8,7 +9,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode

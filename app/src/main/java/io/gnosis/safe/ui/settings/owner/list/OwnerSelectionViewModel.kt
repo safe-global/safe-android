@@ -3,14 +3,14 @@ package io.gnosis.safe.ui.settings.owner.list
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import io.gnosis.data.repositories.OwnerCredentials
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
-import io.gnosis.safe.utils.OwnerCredentials
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import kotlinx.coroutines.flow.collectLatest
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity

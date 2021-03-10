@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.calculateSafeTxHash
@@ -12,7 +13,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.isCompleted
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString

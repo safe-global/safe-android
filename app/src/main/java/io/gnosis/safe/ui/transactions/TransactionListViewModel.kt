@@ -9,6 +9,7 @@ import androidx.paging.map
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers

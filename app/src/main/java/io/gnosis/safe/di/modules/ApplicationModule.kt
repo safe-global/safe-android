@@ -12,6 +12,8 @@ import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.OwnerCredentialsVault
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.security.HeimdallEncryptionManager
@@ -263,5 +265,4 @@ class ApplicationModule(private val application: Application) {
         encryptionManager: EncryptionManager,
         preferencesManager: PreferencesManager
     ): OwnerCredentialsRepository = OwnerCredentialsVault(encryptionManager, preferencesManager)
-
 }

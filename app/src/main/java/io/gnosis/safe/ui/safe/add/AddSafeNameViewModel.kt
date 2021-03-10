@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationManager
@@ -8,7 +9,6 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 

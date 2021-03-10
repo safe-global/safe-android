@@ -3,9 +3,9 @@ package io.gnosis.safe.ui.settings.app
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import javax.inject.Inject

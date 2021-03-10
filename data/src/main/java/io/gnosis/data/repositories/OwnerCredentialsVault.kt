@@ -1,4 +1,4 @@
-package io.gnosis.safe.utils
+package io.gnosis.data.repositories
 
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager

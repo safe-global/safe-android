@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.content.Context
 import android.content.Intent
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -10,7 +11,6 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import javax.inject.Inject
 
 class SplashViewModel

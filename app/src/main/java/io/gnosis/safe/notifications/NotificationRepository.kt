@@ -3,12 +3,12 @@ package io.gnosis.safe.notifications
 import com.google.firebase.iid.FirebaseInstanceId
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
+import io.gnosis.data.repositories.OwnerCredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.notifications.models.Registration
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
