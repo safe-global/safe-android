@@ -445,7 +445,7 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
             sectionTitle.appendLink(
                 url = resources.getString(R.string.tx_list_conflict_header_link),
                 urlText = resources.getString(R.string.tx_list_conflict_header_learn_more),
-                linkIcon = R.drawable.ic_link_green_24dp,
+                linkIcon = R.drawable.ic_external_link_green_16dp,
                 prefix = " "
             )
         }
