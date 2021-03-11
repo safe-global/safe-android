@@ -21,7 +21,6 @@ class TxStatusView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxStatusBinding.inflate(LayoutInflater.from(context), this) }
 
-
     fun setStatus(
         title: String,
         iconUrl: String? = null,
@@ -56,14 +55,12 @@ class TxStatusView @JvmOverloads constructor(
         }
     }
 
-
     fun setStatus(
         @StringRes titleRes: Int,
         @DrawableRes iconRes: Int,
         @StringRes statusTextRes: Int,
         @ColorRes statusColorRes: Int
     ) {
-
         val resources = context.resources
         setStatus(title = resources.getString(titleRes), defaultIconRes = iconRes, statusTextRes = statusTextRes, statusColorRes = statusColorRes)
     }

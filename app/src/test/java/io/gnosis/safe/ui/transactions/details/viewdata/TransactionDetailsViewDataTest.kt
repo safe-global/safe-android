@@ -220,10 +220,10 @@ class TransactionDetailsViewDataTest {
         assertEquals(
             TransactionInfoViewData.Custom(
                 to = anyAddress,
+                actionInfoAddressName = "Remote Name",
+                actionInfoAddressUri = null,
                 statusTitle = "app name",
                 statusIconUri = "http://www.de/image.png",
-                actionInfoAddressName = "app name",
-                actionInfoAddressUri = "http://www.de/image.png",
                 safeApp = true,
                 value = BigInteger.ZERO,
                 dataSize = 1    ,
