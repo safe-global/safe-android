@@ -321,8 +321,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         amount = txInfo.formattedAmount(balanceFormatter),
                         logoUri = txInfo.logoUri()!!,
                         address = txInfo.to,
-                        addressUri = txInfo.addressUri,
-                        addressName = txInfo.addressName
+                        addressUri = txInfo.actionInfoAddressUri,
+                        addressName = txInfo.actionInfoAddressName
                     )
                     val decodedData = txDetails.txData?.dataDecoded
                     if (decodedData == null) {
@@ -365,10 +365,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
 
                     txStatus.setStatus(
-                        TxType.CUSTOM.titleRes,
-                        TxType.CUSTOM.iconRes,
-                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
-                        getColorForStatus(txDetails.txStatus)
+                        title = txInfo.statusTitle ?: resources.getString(TxType.CUSTOM.titleRes),
+                        iconUrl = txInfo.statusIconUri,
+                        defaultIconRes = TxType.CUSTOM.iconRes,
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        statusColorRes = getColorForStatus(txDetails.txStatus),
+                        safeApp = txInfo.safeApp
                     )
                     txData.setData(txDetails.txData?.hexData, txInfo.dataSize, getString(R.string.tx_details_data))
                 }
