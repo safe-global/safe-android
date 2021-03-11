@@ -14,13 +14,14 @@ class TransactionDetailsViewDataTest {
 
     private val anyAddress = "0x0000000000000000000000000000000000000001".asEthereumAddress()!!
     private val anotherAddress = "0x0000000000000000000000000000000000000002".asEthereumAddress()!!
+    private val aSafeAppInfo = SafeAppInfo("app name", "http://www.de", "http://www.de/image.png")
 
     @Test
     fun `toAddressInfoData() (Address matches local safe) should return AddressInfoData_Local`() {
         val addressInfo = AddressInfo("Foo", "https://www.foo.de/foo.png")
         val safes = listOf(Safe(anyAddress, "Local Name"))
 
-        val result = addressInfo.toAddressInfoData(anyAddress, safes)
+        val result = addressInfo.toAddressInfoData(address = anyAddress, safes = safes, safeAppInfo = aSafeAppInfo)
 
         assertEquals(AddressInfoData.Local("Local Name", "0x0000000000000000000000000000000000000001"), result)
     }
@@ -30,7 +31,7 @@ class TransactionDetailsViewDataTest {
         val addressInfo = AddressInfo("Foo", "https://www.foo.de/foo.png")
         val safes = listOf(Safe(anyAddress, "Local Name"))
 
-        val result = addressInfo.toAddressInfoData(anotherAddress, safes)
+        val result = addressInfo.toAddressInfoData(anotherAddress, safes, null)
 
         assertEquals(AddressInfoData.Remote("Foo", "https://www.foo.de/foo.png", "0x0000000000000000000000000000000000000002"), result)
     }
@@ -39,7 +40,7 @@ class TransactionDetailsViewDataTest {
     fun `toAddressInfoData() (No AddressInfo and emptySafeList) should return AddressInfoData_Default`() {
         val safes = emptyList<Safe>()
 
-        val result = null.toAddressInfoData(anotherAddress, safes)
+        val result = null.toAddressInfoData(anotherAddress, safes, null)
 
         assertEquals(AddressInfoData.Default, result)
     }
@@ -48,7 +49,7 @@ class TransactionDetailsViewDataTest {
     fun `toAddressInfoData() (No AddressInfo and non matching safeList) should return AddressInfoData_Default`() {
         val safes = listOf(Safe(anyAddress, "Local Name"))
 
-        val result = null.toAddressInfoData(anotherAddress, safes)
+        val result = null.toAddressInfoData(anotherAddress, safes, null)
 
         assertEquals(AddressInfoData.Default, result)
     }
@@ -58,7 +59,7 @@ class TransactionDetailsViewDataTest {
         val settingsInfo = SettingsInfo.DisableModule(anyAddress, AddressInfo("Remote Name", null))
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = settingsInfo.toSettingsInfoViewData(safes)
+        val result = settingsInfo.toSettingsInfoViewData(safes, null)
 
         assertEquals(
             SettingsInfoViewData.DisableModule(
@@ -74,7 +75,7 @@ class TransactionDetailsViewDataTest {
         val settingsInfo = SettingsInfo.SwapOwner(anyAddress, AddressInfo("Remote Old Owner Name", null), anotherAddress, null)
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = settingsInfo.toSettingsInfoViewData(safes)
+        val result = settingsInfo.toSettingsInfoViewData(safes, null)
 
         assertEquals(
             SettingsInfoViewData.SwapOwner(
@@ -168,7 +169,7 @@ class TransactionDetailsViewDataTest {
         )
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes)
+        val result = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
 
         assertEquals(
             TransactionInfoViewData.Transfer(
@@ -184,6 +185,75 @@ class TransactionDetailsViewDataTest {
         )
     }
 
+    @Test
+    fun `toTransactionInfoViewData() (TransactionInfo_Transfer with AddressInfo and safeAppInfo) should ignore safeAppInfo`() {
+        val transactionInfo = TransactionInfo.Transfer(
+            anyAddress, AddressInfo("Sender Name", null), anotherAddress, null, TransferInfo.EtherTransfer(
+                BigInteger.ONE
+            ), TransactionDirection.INCOMING
+        )
+        val safes = listOf(Safe(anotherAddress, "Local Name"))
+
+        val result = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+
+        assertEquals(
+            TransactionInfoViewData.Transfer(
+                address = anyAddress,
+                addressName = "Sender Name",
+                addressUri = null,
+                transferInfo = TransferInfo.EtherTransfer(
+                    BigInteger.ONE
+                ),
+                direction = TransactionDirection.INCOMING
+            ),
+            result
+        )
+    }
+
+    @Test
+    fun `toTransactionInfoViewData() (TransactionInfo_Custom with non matching local name, AddressInfo and safeAppInfo) should return name and uri from safeAppInfo `() {
+        val transactionInfo = TransactionInfo.Custom(anyAddress, AddressInfo("Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, false)
+        val safes = listOf(Safe(anotherAddress, "Local Name"))
+
+        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+
+        assertEquals(
+            TransactionInfoViewData.Custom(
+                to = anyAddress,
+                statusTitle = "app name",
+                statusIconUri = "http://www.de/image.png",
+                actionInfoAddressName = "app name",
+                actionInfoAddressUri = "http://www.de/image.png",
+                safeApp = true,
+                value = BigInteger.ZERO,
+                dataSize = 1    ,
+                methodName = "dummyName"
+            ),
+            transactionInfoViewData
+        )
+    }
+    @Test
+    fun `toTransactionInfoViewData() (TransactionInfo_Custom with matching local name and safeAppInfo) should return local name for actionInfo and safeAppInfo for statusTitle`() {
+        val transactionInfo = TransactionInfo.Custom(anyAddress, AddressInfo("Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, false)
+        val safes = listOf(Safe(anyAddress, "Local Name"))
+
+        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+
+        assertEquals(
+            TransactionInfoViewData.Custom(
+                to = anyAddress,
+                statusTitle = "app name",
+                statusIconUri = "http://www.de/image.png",
+                actionInfoAddressName = "Local Name",
+                actionInfoAddressUri = null,
+                safeApp = true,
+                value = BigInteger.ZERO,
+                dataSize = 1    ,
+                methodName = "dummyName"
+            ),
+            transactionInfoViewData
+        )
+    }
     private val dummyDataDecoded = DataDecoded(
         method = "dummy",
         parameters = null

@@ -111,8 +111,8 @@
     <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase or private key</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
     <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
-    <string name="error_client_unsupported_implementation_copy_reason">the implementation copy of your Safe is not supported by this app</string>
-    <string name="error_client_unsupported_implementation_copy_fix">Please change the implementation copy before adding it or use another Safe</string>
+    <string name="error_client_unsupported_implementation_copy_reason">the master copy of your Safe is not supported by this app</string>
+    <string name="error_client_unsupported_implementation_copy_fix">Please change the master copy before adding it or use another Safe</string>
     <string name="error_client_ens_resolution_reason">address not found</string>
     <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
