@@ -13,6 +13,7 @@ import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.KeyStorage
 import pm.gnosis.svalinn.security.exceptions.DeviceIsLockedException
+import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.security.SecureRandom
@@ -32,7 +33,7 @@ class HeimdallEncryptionManager(
 
     init {
         if (preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_APP_KEY, null) == null) {
-            preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_APP_KEY, generateKey().toString()) }
+            preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTED_APP_KEY, generateKey().toHexString()) }
         }
     }
 
@@ -124,7 +125,7 @@ class HeimdallEncryptionManager(
     }
 
     private fun decryptAppKey(): ByteArray? {
-        return keyStorage.retrieve(preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_APP_KEY, null)?.toByteArray() ?: return null)
+        return keyStorage.retrieve(preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_APP_KEY, null)?.hexToByteArray() ?: return null)
     }
 
     private fun keyChecksum(key: ByteArray) =

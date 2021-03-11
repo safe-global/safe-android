@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
@@ -38,13 +39,15 @@ class TransactionDetailsViewModel
 
             val executionInfo = txDetails?.detailedExecutionInfo
 
+            val owners = credentialsRepository.owners()
+
             var awaitingConfirm = false
             var rejectable = false
             var safeOwner = false
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus)
-                rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus)
-                safeOwner = isOwner(executionInfo)
+                awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
+                rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                safeOwner = isOwner(executionInfo, owners)
             }
 
             updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
@@ -55,28 +58,36 @@ class TransactionDetailsViewModel
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun isAwaitingOwnerConfirmation(
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
-        status: TransactionStatus
+        status: TransactionStatus,
+        owners: List<Owner>
     ): Boolean =
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
-                credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0].let { owner ->
+                owners.isNotEmpty() &&
+                owners[0].let { owner ->
                     executionInfo.signers.contains(owner.address) && !executionInfo.confirmations.map { it.signer }.contains(owner.address)
                 }
 
 
     //TODO: remove when backend provides info about rejections
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    suspend fun canBeRejectedFromDevice(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails, status: TransactionStatus): Boolean =
+    suspend fun canBeRejectedFromDevice(
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
+        status: TransactionStatus,
+        owners: List<Owner>
+    ): Boolean =
         !status.isCompleted() &&
-                credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0].let { credentials ->
+                owners.isNotEmpty() &&
+                owners[0].let { credentials ->
                     executionInfo.signers.contains(credentials.address)
                 }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    suspend fun isOwner(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
-        return credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0].let { owner ->
+    suspend fun isOwner(
+        executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
+        owners: List<Owner>
+    ): Boolean {
+        return owners.isNotEmpty() &&
+                owners[0].let { owner ->
                     executionInfo.signers.contains(owner.address)
                 }
     }
@@ -95,12 +106,12 @@ class TransactionDetailsViewModel
             if (credentialsRepository.ownerCount() == 0) {
                 throw MissingOwnerCredential
             }
-            val owner = credentialsRepository.owners()[0]
+            val owners = credentialsRepository.owners()
             //TODO: unlock with passcode if passcode is enabled
             kotlin.runCatching {
                 transactionRepository.submitConfirmation(
                     executionInfo.safeTxHash,
-                    credentialsRepository.signWithOwner(owner, executionInfo.safeTxHash.hexToByteArray())
+                    credentialsRepository.signWithOwner(owners[0], executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
                 tracker.logTransactionConfirmed()
@@ -110,9 +121,9 @@ class TransactionDetailsViewModel
                 var rejectable = false
                 var safeOwner = false
                 if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus)
-                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus)
-                    safeOwner = isOwner(executionInfo)
+                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
+                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                    safeOwner = isOwner(executionInfo, owners)
                 }
 
                 updateState { TransactionDetailsViewState(ConfirmationSubmitted(it.toTransactionDetailsViewData(safes), awaitingConfirm, rejectable, safeOwner)) }
