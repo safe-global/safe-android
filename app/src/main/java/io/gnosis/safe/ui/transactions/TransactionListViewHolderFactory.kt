@@ -228,6 +228,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                    appLabel.visible(false)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
@@ -235,11 +236,13 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
                         addressInfo.addressLogoUri,
                         addressInfo.address.asEthereumAddress()!!
                     )
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
                     addressLogo.setAddress(null)
                     addressLogo.setImageResource(addressInfo.logoResId)
+                    appLabel.visible(false)
                 }
             }
 
