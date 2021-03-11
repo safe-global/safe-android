@@ -20,7 +20,9 @@ data class TransactionDetails(
     @Json(name = "txData")
     val txData: TxData? = null,
     @Json(name = "detailedExecutionInfo")
-    val detailedExecutionInfo: DetailedExecutionInfo? = null
+    val detailedExecutionInfo: DetailedExecutionInfo? = null,
+    @Json(name = "safeAppInfo")
+    val safeAppInfo: SafeAppInfo?
 )
 
 @JsonClass(generateAdapter = true)

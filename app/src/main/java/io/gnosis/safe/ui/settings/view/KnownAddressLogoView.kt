@@ -59,4 +59,16 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
             }
         }
     }
+
+    fun loadKnownSafeAppLogo(logoUri: String?, defaultResId: Int = R.drawable.ic_code_16dp, target: Target = this) {
+        setAddress(null)
+        setImageResource(defaultResId)
+        when {
+            !logoUri.isNullOrBlank() -> {
+                Picasso.get()
+                    .load(logoUri)
+                    .into(target)
+            }
+        }
+    }
 }
