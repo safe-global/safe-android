@@ -93,7 +93,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             fallbackHandlerHelpLink.appendLink(
                 urlText = resources.getString(R.string.safe_settings_fallback_handler_help),
                 url = resources.getString(R.string.safe_settings_fallback_handler_help_url),
-                linkIcon = R.drawable.ic_link_green_24dp
+                linkIcon = R.drawable.ic_external_link_green_16dp
             )
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
