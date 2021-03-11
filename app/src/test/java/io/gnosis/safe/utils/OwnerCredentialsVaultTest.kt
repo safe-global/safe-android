@@ -1,6 +1,9 @@
 package io.gnosis.safe.utils
 
 import android.app.Application
+import io.gnosis.data.repositories.OwnerCredentials
+import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.OwnerCredentialsVault
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -12,6 +15,7 @@ import org.junit.Before
 import org.junit.Test
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
@@ -21,7 +25,7 @@ class OwnerCredentialsVaultTest {
 
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
-    private lateinit var encryptionManager: EncryptionManager
+    private lateinit var encryptionManager: AesEncryptionManager
     private lateinit var ownerCredentialsVault: OwnerCredentialsRepository
 
     @Before
@@ -32,7 +36,7 @@ class OwnerCredentialsVaultTest {
         }
         preferencesManager = PreferencesManager(application)
 
-        encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
+        encryptionManager = mockk<AesEncryptionManager>(relaxed = true).apply {
             every { initialized() } returns true
             every { unlocked() } returns true
             every { unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) } returns true
@@ -88,7 +92,7 @@ class OwnerCredentialsVaultTest {
 
     @Test
     fun `storeCredentials (while not initialized) should store after password setup`() {
-        encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
+        encryptionManager = mockk<AesEncryptionManager>(relaxed = true).apply {
             every { initialized() } returns false
             every { setupPassword(any(), any()) } returns true
             every { unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) } returns true
@@ -138,7 +142,7 @@ class OwnerCredentialsVaultTest {
 
     @Test
     fun `storeCredentials (hardcoded password was wrong) should reset password`() {
-        encryptionManager = mockk<EncryptionManager>(relaxed = true).apply {
+        encryptionManager = mockk<AesEncryptionManager>(relaxed = true).apply {
             every { initialized() } returns false
             every { setupPassword(any(), any()) } returns true
             every { unlockWithPassword(OwnerCredentialsVault.HARDCODED_PASSWORD.toByteArray()) } returns false

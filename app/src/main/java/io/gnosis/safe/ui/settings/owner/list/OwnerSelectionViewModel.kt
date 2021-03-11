@@ -3,8 +3,7 @@ package io.gnosis.safe.ui.settings.owner.list
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.gnosis.data.repositories.OwnerCredentials
-import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -21,7 +20,7 @@ import javax.inject.Inject
 class OwnerSelectionViewModel
 @Inject constructor(
     private val derivator: MnemonicKeyAndAddressDerivator,
-    private val ownerCredentialsVault: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
@@ -70,16 +69,16 @@ class OwnerSelectionViewModel
             } else {
                 derivator.addressesForPage(ownerIndex, 1)
             }
-            OwnerCredentials(address = addresses[0], key = key).let {
-                ownerCredentialsVault.storeCredentials(it)
-            }
+
+            credentialsRepository.saveOwner(addresses[0], key)
+
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(privateKey == null)
             tracker.setNumKeysImported(1)
-            OwnerCredentials(address = addresses[0], key = key).let {
-                notificationRepository.registerOwner(it.key)
-            }
+
+            notificationRepository.registerOwner(key)
+
             updateState {
                 OwnerSelectionState(ViewAction.CloseScreen)
             }

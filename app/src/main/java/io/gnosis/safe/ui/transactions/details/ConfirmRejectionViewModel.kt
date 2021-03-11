@@ -4,7 +4,7 @@ import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionInfo
-import io.gnosis.data.repositories.OwnerCredentialsRepository
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.utils.calculateSafeTxHash
@@ -12,6 +12,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ class ConfirmRejectionViewModel
 @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<ConfirmationRejectedViewState>(appDispatchers) {
@@ -49,15 +50,21 @@ class ConfirmRejectionViewModel
                     executionInfo = rejectionExecutionInfo
                 )!!.toHexString()
             validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
-            val ownerCredentials = ownerCredentialsRepository.retrieveCredentials() ?: run { throw MissingOwnerCredential }
+
+            //FIXME: adjust for multiple owners
+            if (credentialsRepository.ownerCount() == 0) {
+                throw MissingOwnerCredential
+            }
+            val owner = credentialsRepository.owners()[0]
+
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
                     safeAddress = activeSafeAddress,
                     nonce = rejectionExecutionInfo.nonce,
-                    signature = transactionRepository.sign(ownerCredentials.key, safeTxHash),
+                    signature = credentialsRepository.signWithOwner(owner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
                     safeTxHash = safeTxHash,
-                    sender = ownerCredentials.address
+                    sender = owner.address
                 )
             }.onSuccess {
                 tracker.logTransactionRejected()

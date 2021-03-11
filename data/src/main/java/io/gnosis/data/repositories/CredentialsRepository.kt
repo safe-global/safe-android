@@ -4,8 +4,6 @@ import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.models.Owner
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.data.utils.toSignatureString
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
@@ -22,12 +20,10 @@ class CredentialsRepository(
 
     init {
         runBlocking {
-            launch(Dispatchers.IO) {
-//                if (ownerVault.hasCredentials()) {
-//                    val credentials = ownerVault.retrieveCredentials()!!
-//                    saveOwner(credentials.address, credentials.key)
-//                    ownerVault.removeCredentials()
-//                }
+            if (ownerVault.hasCredentials()) {
+                val credentials = ownerVault.retrieveCredentials()!!
+                saveOwner(credentials.address, credentials.key)
+                ownerVault.removeCredentials()
             }
         }
     }

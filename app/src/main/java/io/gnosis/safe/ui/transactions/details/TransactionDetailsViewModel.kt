@@ -52,28 +52,31 @@ class TransactionDetailsViewModel
         }
     }
 
-    private suspend fun isAwaitingOwnerConfirmation(
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun isAwaitingOwnerConfirmation(
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         status: TransactionStatus
     ): Boolean =
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
                 credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0]?.let { owner ->
+                credentialsRepository.owners()[0].let { owner ->
                     executionInfo.signers.contains(owner.address) && !executionInfo.confirmations.map { it.signer }.contains(owner.address)
                 }
 
 
     //TODO: remove when backend provides info about rejections
-    private suspend fun canBeRejectedFromDevice(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails, status: TransactionStatus): Boolean =
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun canBeRejectedFromDevice(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails, status: TransactionStatus): Boolean =
         !status.isCompleted() &&
                 credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0]?.let { credentials ->
+                credentialsRepository.owners()[0].let { credentials ->
                     executionInfo.signers.contains(credentials.address)
                 }
 
-    private suspend fun isOwner(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    suspend fun isOwner(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails): Boolean {
         return credentialsRepository.ownerCount() > 0 &&
-                credentialsRepository.owners()[0]?.let { owner ->
+                credentialsRepository.owners()[0].let { owner ->
                     executionInfo.signers.contains(owner.address)
                 }
     }

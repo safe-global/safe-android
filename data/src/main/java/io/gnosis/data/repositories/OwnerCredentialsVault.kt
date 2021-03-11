@@ -13,7 +13,7 @@ interface OwnerCredentialsRepository {
     fun storeCredentials(ownerCredentials: OwnerCredentials)
     fun retrieveCredentials(): OwnerCredentials?
     fun removeCredentials()
-   // fun hasCredentials(): Boolean
+    fun hasCredentials(): Boolean
 }
 
 @Deprecated("use CredentialsRepository")
@@ -39,8 +39,8 @@ class OwnerCredentialsVault(
 
     override fun retrieveCredentials(): OwnerCredentials? {
 
-//        if (!hasCredentials())
-//            return null
+        if (!hasCredentials())
+            return null
 
         val key = retrieveKey()!!
         val address = retrieveAddress()!!
@@ -52,9 +52,9 @@ class OwnerCredentialsVault(
         removeKey()
     }
 
-//    override fun hasCredentials(): Boolean {
-//        return hasAddress() && hasKey()
-//    }
+    override fun hasCredentials(): Boolean {
+        return hasAddress() && hasKey()
+    }
 
     private fun initialize() {
         if (!encryptionManager.initialized()) {

@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
@@ -8,7 +9,6 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionState
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +24,7 @@ class OwnerSelectionViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val derivator = mockk<MnemonicKeyAndAddressDerivator>()
-    private val ownerCredentialsVault = mockk<OwnerCredentialsRepository>()
+    private val credentialsRepository = mockk<CredentialsRepository>()
     private val notificationRepository = mockk<NotificationRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
 
@@ -37,14 +37,14 @@ class OwnerSelectionViewModelTest {
 
         coEvery { derivator.keyForIndex(any()) } returns BigInteger.ONE
         coEvery { derivator.addressesForPage(any(), any()) } returns listOf(Solidity.Address(BigInteger.ZERO))
-        coEvery { ownerCredentialsVault.storeCredentials(any()) } just Runs
+        coEvery { credentialsRepository.saveOwner(any(), any()) } just Runs
         coEvery { notificationRepository.registerOwner(any()) } just Runs
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
 
-        viewModel = OwnerSelectionViewModel(derivator, ownerCredentialsVault, notificationRepository, settingsHandler, tracker, appDispatchers)
+        viewModel = OwnerSelectionViewModel(derivator, credentialsRepository, notificationRepository, settingsHandler, tracker, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerSelectionState>()
         viewModel.state.observeForever(testObserver)
 
@@ -58,7 +58,7 @@ class OwnerSelectionViewModelTest {
         coVerifySequence {
             derivator.keyForIndex(any())
             derivator.addressesForPage(any(), any())
-            ownerCredentialsVault.storeCredentials(any())
+            credentialsRepository.saveOwner(any(), any())
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(true)

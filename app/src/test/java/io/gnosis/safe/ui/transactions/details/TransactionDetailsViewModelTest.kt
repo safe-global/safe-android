@@ -6,13 +6,12 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
-import io.gnosis.safe.utils.OwnerCredentials
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -29,10 +28,10 @@ class TransactionDetailsViewModelTest {
 
     private val transactionRepository = mockk<TransactionRepository>()
     private val safeRepository = mockk<SafeRepository>()
-    private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
+    private val credentialsRepository = mockk<CredentialsRepository>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, ownerCredentialsRepository, tracker, appDispatchers)
+    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, credentialsRepository, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
@@ -82,7 +81,7 @@ class TransactionDetailsViewModelTest {
     fun `isAwaitingOwnerConfirmation (no owner credential) should return false`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        every { ownerCredentialsRepository.hasCredentials() } returns false
+        coEvery { credentialsRepository.ownerCount() } returns 0
 
         val actual = viewModel.isAwaitingOwnerConfirmation(
             transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
@@ -90,7 +89,7 @@ class TransactionDetailsViewModelTest {
         )
 
         assertEquals(false, actual)
-        verify(exactly = 1) { ownerCredentialsRepository.hasCredentials() }
+        coVerify(exactly = 1) { credentialsRepository.ownerCount() }
     }
 
     @Test
@@ -98,8 +97,8 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val ownerCredentials = OwnerCredentials("0x1".asEthereumAddress()!!, BigInteger.ONE)
-        every { ownerCredentialsRepository.hasCredentials() } returns true
-        every { ownerCredentialsRepository.retrieveCredentials() } returns ownerCredentials
+        every { credentialsRepository.hasCredentials() } returns true
+        every { credentialsRepository.retrieveCredentials() } returns ownerCredentials
 
         val actual = viewModel.isAwaitingOwnerConfirmation(
             transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
@@ -107,8 +106,8 @@ class TransactionDetailsViewModelTest {
         )
 
         assertEquals(false, actual)
-        verify(exactly = 1) { ownerCredentialsRepository.hasCredentials() }
-        verify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        verify(exactly = 1) { credentialsRepository.hasCredentials() }
+        verify(exactly = 1) { credentialsRepository.retrieveCredentials() }
     }
 
     @Test
@@ -116,8 +115,8 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val ownerCredentials = OwnerCredentials("0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0".asEthereumAddress()!!, BigInteger.ONE)
-        every { ownerCredentialsRepository.hasCredentials() } returns true
-        every { ownerCredentialsRepository.retrieveCredentials() } returns ownerCredentials
+        every { credentialsRepository.hasCredentials() } returns true
+        every { credentialsRepository.retrieveCredentials() } returns ownerCredentials
 
         val actual = viewModel.isAwaitingOwnerConfirmation(
             transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
@@ -125,8 +124,8 @@ class TransactionDetailsViewModelTest {
         )
 
         assertEquals(false, actual)
-        verify(exactly = 1) { ownerCredentialsRepository.hasCredentials() }
-        verify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        verify(exactly = 1) { credentialsRepository.hasCredentials() }
+        verify(exactly = 1) { credentialsRepository.retrieveCredentials() }
     }
 
     @Test
@@ -134,8 +133,8 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val ownerCredentials = OwnerCredentials("0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164".asEthereumAddress()!!, BigInteger.ONE)
-        every { ownerCredentialsRepository.hasCredentials() } returns true
-        every { ownerCredentialsRepository.retrieveCredentials() } returns ownerCredentials
+        every { credentialsRepository.hasCredentials() } returns true
+        every { credentialsRepository.retrieveCredentials() } returns ownerCredentials
 
         val actual = viewModel.isAwaitingOwnerConfirmation(
             transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
@@ -143,8 +142,8 @@ class TransactionDetailsViewModelTest {
         )
 
         assertEquals(true, actual)
-        verify(exactly = 1) { ownerCredentialsRepository.hasCredentials() }
-        verify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        verify(exactly = 1) { credentialsRepository.hasCredentials() }
+        verify(exactly = 1) { credentialsRepository.retrieveCredentials() }
     }
 
     @Test
@@ -166,7 +165,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
-        coEvery { ownerCredentialsRepository.retrieveCredentials() } returns null
+        coEvery { credentialsRepository.retrieveCredentials() } returns null
         viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails)
@@ -175,7 +174,7 @@ class TransactionDetailsViewModelTest {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MissingOwnerCredential))
         }
         coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
-        coVerify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        coVerify(exactly = 1) { credentialsRepository.retrieveCredentials() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
 
@@ -187,7 +186,7 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { transactionRepository.sign(any(), any()) } throws throwable
         coEvery { transactionRepository.submitConfirmation(any(), any()) } throws throwable
-        coEvery { ownerCredentialsRepository.retrieveCredentials() } returns OwnerCredentials(
+        coEvery { credentialsRepository.retrieveCredentials() } returns OwnerCredentials(
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
@@ -201,7 +200,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
-        coVerify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        coVerify(exactly = 1) { credentialsRepository.retrieveCredentials() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
 
@@ -213,7 +212,7 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { transactionRepository.sign(any(), any()) } returns ""
         coEvery { transactionRepository.submitConfirmation(any(), any()) } throws throwable
-        coEvery { ownerCredentialsRepository.retrieveCredentials() } returns OwnerCredentials(
+        coEvery { credentialsRepository.retrieveCredentials() } returns OwnerCredentials(
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
@@ -227,7 +226,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
-        coVerify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        coVerify(exactly = 1) { credentialsRepository.retrieveCredentials() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
 
@@ -239,7 +238,7 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { transactionRepository.sign(any(), any()) } returns ""
         coEvery { transactionRepository.submitConfirmation(any(), any()) } returns transactionDetails
-        coEvery { ownerCredentialsRepository.retrieveCredentials() } returns OwnerCredentials(
+        coEvery { credentialsRepository.retrieveCredentials() } returns OwnerCredentials(
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             BigInteger.ONE
         )
@@ -253,7 +252,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67") }
-        coVerify(exactly = 1) { ownerCredentialsRepository.retrieveCredentials() }
+        coVerify(exactly = 1) { credentialsRepository.retrieveCredentials() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionConfirmed() }
     }
