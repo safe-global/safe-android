@@ -37,11 +37,8 @@ class TxStatusView @JvmOverloads constructor(
             binding.typeIcon.shapeAppearanceModel = ShapeAppearanceModel.Builder().setAllCornerSizes(0.5F).build()
         } ?: binding.typeIcon.setImageResource(defaultIconRes)
 
-        if (safeApp) {
-            binding.appLabel.visible(true)
-        } else {
-            binding.appLabel.visible(false)
-        }
+        binding.appLabel.visible(safeApp)
+
         if (statusTextRes == R.string.tx_status_needs_confirmations ||
             statusTextRes == R.string.tx_status_needs_your_confirmation ||
             statusTextRes == R.string.tx_status_needs_execution
