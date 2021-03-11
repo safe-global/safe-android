@@ -24,8 +24,11 @@ sealed class TransactionInfoViewData(
 ) {
     data class Custom(
         val to: Solidity.Address,
-        val addressName: String?,
-        val addressUri: String?,
+        val actionInfoAddressName: String? = null,
+        val actionInfoAddressUri: String? = null,
+        val statusTitle: String? = null,
+        val statusIconUri: String? = null,
+        val safeApp: Boolean = false,
         val dataSize: Int,
         val value: BigInteger,
         val methodName: String?
@@ -108,17 +111,17 @@ sealed class SettingsInfoViewData(
 }
 
 fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): TransactionDetailsViewData =
-    TransactionDetailsViewData(txHash, txStatus, txInfo.toTransactionInfoViewData(safes), executedAt, txData, detailedExecutionInfo)
+    TransactionDetailsViewData(txHash, txStatus, txInfo.toTransactionInfoViewData(safes, safeAppInfo), executedAt, txData, detailedExecutionInfo)
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): TransactionInfoViewData =
+internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            val addressUri = when (val toInfo = toInfo.toAddressInfoData(to, safes)) {
+            val addressUri = when (val toInfo = toInfo.toAddressInfoData(to, safes, safeAppInfo)) {
                 is AddressInfoData.Remote -> toInfo.addressLogoUri
                 else -> null
             }
-            val addressName = when (val toInfo = toInfo.toAddressInfoData(to, safes)) {
+            val addressName = when (val toInfo = toInfo.toAddressInfoData(to, safes, safeAppInfo)) {
                 is AddressInfoData.Local -> toInfo.name
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
@@ -132,11 +135,14 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Trans
             } else {
                 TransactionInfoViewData.Custom(
                     to = to,
-                    addressName = addressName,
-                    addressUri = addressUri,
+                    actionInfoAddressName = addressName,
+                    actionInfoAddressUri = addressUri,
+                    statusTitle = safeAppInfo?.name,
+                    statusIconUri = safeAppInfo?.logoUrl,
                     dataSize = dataSize,
                     value = value,
-                    methodName = methodName
+                    methodName = methodName,
+                    safeApp = safeAppInfo != null
                 )
             }
         }
@@ -175,33 +181,41 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>): Trans
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>): SettingsInfoViewData? =
+internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): SettingsInfoViewData? =
     when (this) {
-        is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(handler, handlerInfo.toAddressInfoData(handler, safes))
-        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner, ownerInfo.toAddressInfoData(owner, safes), threshold)
-        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(owner, ownerInfo.toAddressInfoData(owner, safes), threshold)
+        is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(
+            handler,
+            handlerInfo.toAddressInfoData(handler, safes, safeAppInfo)
+        )
+        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner, ownerInfo.toAddressInfoData(owner, safes, safeAppInfo), threshold)
+        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(owner, ownerInfo.toAddressInfoData(owner, safes, safeAppInfo), threshold)
         is SettingsInfo.SwapOwner -> SettingsInfoViewData.SwapOwner(
             oldOwner,
-            oldOwnerInfo.toAddressInfoData(oldOwner, safes),
+            oldOwnerInfo.toAddressInfoData(oldOwner, safes, safeAppInfo),
             newOwner,
-            newOwnerInfo.toAddressInfoData(newOwner, safes)
+            newOwnerInfo.toAddressInfoData(newOwner, safes, safeAppInfo)
         )
         is SettingsInfo.ChangeThreshold -> SettingsInfoViewData.ChangeThreshold(threshold)
         is SettingsInfo.ChangeImplementation -> SettingsInfoViewData.ChangeImplementation(
             implementation,
-            implementationInfo.toAddressInfoData(implementation, safes)
+            implementationInfo.toAddressInfoData(implementation, safes, safeAppInfo)
         )
-        is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(module, moduleInfo.toAddressInfoData(module, safes))
-        is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(module, moduleInfo.toAddressInfoData(module, safes))
+        is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(module, moduleInfo.toAddressInfoData(module, safes, safeAppInfo))
+        is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(module, moduleInfo.toAddressInfoData(module, safes, safeAppInfo))
         null -> null
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun AddressInfo?.toAddressInfoData(address: Solidity.Address, safes: List<Safe>): AddressInfoData? {
+internal fun AddressInfo?.toAddressInfoData(
+    address: Solidity.Address,
+    safes: List<Safe>,
+    safeAppInfo: SafeAppInfo? = null
+): AddressInfoData? {
     val localName = safes.find { it.address == address }?.localName
     val addressString = address.asEthereumAddressString()
     return when {
         localName != null -> AddressInfoData.Local(localName, addressString)
+        safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUrl, addressString)
         this != null -> AddressInfoData.Remote(this.name, this.logoUri, addressString)
         else -> AddressInfoData.Default
     }
