@@ -15,7 +15,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
-import java.math.BigInteger
+import pm.gnosis.utils.hexToByteArray
 
 
 class ConfirmRejectionViewModelTest {
@@ -35,19 +35,35 @@ class ConfirmRejectionViewModelTest {
     fun `proposeRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        val owner = Owner(
+            "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+            null,
+            Owner.Type.LOCALLY_STORED,
+            null
+        )
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
         coEvery { safeRepository.getSafes() } returns emptyList()
-        coEvery { transactionRepository.sign(any(), any()) } returns ""
-        coEvery { transactionRepository.proposeTransaction(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+        coEvery {
+            transactionRepository.proposeTransaction(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 1
-                coEvery { credentialsRepository.owners() } returns listOf(
-                    Owner(
-                        "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
-                        null,
-                        Owner.Type.LOCALLY_STORED,
-                        null
-                    )
-                )
+        coEvery { credentialsRepository.owners() } returns listOf(owner)
         coEvery { tracker.logTransactionRejected() } just Runs
         viewModel.txDetails = transactionDetails
 
@@ -56,8 +72,25 @@ class ConfirmRejectionViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(RejectionSubmitted, this[0].viewAction)
         }
-        coVerify(exactly = 1) { transactionRepository.proposeTransaction(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
-        coVerify(exactly = 1) { transactionRepository.sign(BigInteger.ONE, "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a") }
+        coVerify(exactly = 1) {
+            transactionRepository.proposeTransaction(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any()
+            )
+        }
+        coVerify(exactly = 1) { credentialsRepository.signWithOwner(owner, "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()) }
         coVerify(exactly = 1) { credentialsRepository.ownerCount() }
         coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
