@@ -31,17 +31,34 @@
     <TextView
         android:id="@+id/address_name"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:ellipsize="end"
         android:singleLine="true"
-        app:layout_constrainedWidth="true"
+        android:maxWidth="200dp"
         app:layout_constraintBottom_toBottomOf="@+id/address_logo"
-        app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
+        app:layout_constraintVertical_bias="0.47000003"
         tools:text="@string/tx_list_contract_interaction" />
+
+    <TextView
+        android:id="@+id/app_label"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/background_app_label"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="@string/app"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/address_name"
+        app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintEnd_toStartOf="@+id/barrier2"/>
 
     <TextView
         android:id="@+id/action"
@@ -58,6 +75,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/address_name"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/barrier1"
         tools:text="approve" />
 
     <TextView
@@ -123,6 +141,20 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:constraint_referenced_ids="confirmations_icon,status,confirmations" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="address_name,app_label" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="action" />
 
     <!-- When making status_pending visible, make group "not_pending" "gone" -->
     <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
