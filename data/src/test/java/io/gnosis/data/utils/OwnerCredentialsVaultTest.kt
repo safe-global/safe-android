@@ -1,4 +1,4 @@
-package io.gnosis.safe.utils
+package io.gnosis.data.utils
 
 import android.app.Application
 import io.gnosis.data.repositories.OwnerCredentials
