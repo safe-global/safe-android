@@ -117,11 +117,11 @@ fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): Transact
 internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            val addressUri = when (val toInfo = toInfo.toAddressInfoData(to, safes, safeAppInfo)) {
+            val addressUri = when (val toInfo = toInfo.toAddressInfoData(to, safes, null)) {
                 is AddressInfoData.Remote -> toInfo.addressLogoUri
                 else -> null
             }
-            val addressName = when (val toInfo = toInfo.toAddressInfoData(to, safes, safeAppInfo)) {
+            val addressName = when (val toInfo = toInfo.toAddressInfoData(to, safes, null)) {
                 is AddressInfoData.Local -> toInfo.name
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
