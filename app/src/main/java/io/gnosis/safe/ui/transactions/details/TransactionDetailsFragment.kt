@@ -124,9 +124,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     }
 
     private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean) {
-
-        var needsYourConfirmation = false
-
+        
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
