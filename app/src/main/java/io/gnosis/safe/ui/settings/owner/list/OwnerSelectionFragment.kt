@@ -22,6 +22,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
@@ -147,8 +148,14 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
                     }
                     is CloseScreen -> {
-                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
+
+                        //TODO: Navigate to create passcode if it has not been setup
+
+                        findNavController().navigate(OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToCreatePasscodeFragment())
+
+
+//                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
+//                        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
                     }
