@@ -61,7 +61,8 @@ class CredentialsRepository(
     }
 
     fun signWithOwner(owner: Owner, data: ByteArray): String {
-        val cryptoData = EncryptionManager.CryptoData.fromString(owner.privateKey.toString())
+        val converter = EncryptedByteArray.Converter()
+        val cryptoData = EncryptionManager.CryptoData.fromString(converter.toStorage(owner.privateKey!!))
         encryptionManager.unlock()
         val key = encryptionManager.decrypt(cryptoData)
         encryptionManager.lock()
