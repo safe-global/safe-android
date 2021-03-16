@@ -154,7 +154,7 @@
         <item name="android:paddingEnd">@dimen/default_margin</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/text_emphasis_low</item>
+        <item name="android:textColor">@color/text_emphasis_medium</item>
     </style>
 
     <style name="SafeOverviewToolbar">

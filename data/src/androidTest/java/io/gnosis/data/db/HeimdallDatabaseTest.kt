@@ -37,7 +37,7 @@ class HeimdallDatabaseTest {
         helper.createDatabase(TEST_DB, 1).apply {
             close()
         }
-        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2)
+        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2, HeimdallDatabase.MIGRATION_2_3)
 
         // Open latest version of the database. Room will validate the schema
         // once all migrations execute.
@@ -81,6 +81,39 @@ class HeimdallDatabaseTest {
 
             close()
         }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate2To3() {
+
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe_local_name")
+
+        helper.createDatabase(TEST_DB, 2).apply {
+
+            val rowId = insert(Safe.TABLE_NAME, OnConflictStrategy.REPLACE,
+                ContentValues().apply {
+                    put(Safe.COL_ADDRESS, addressConverter.toHexString(safe.address))
+                    put(Safe.COL_LOCAL_NAME, safe.localName)
+                })
+
+            assert(rowId >= 0)
+
+            close()
+        }
+
+        helper.runMigrationsAndValidate(TEST_DB, 3, true, HeimdallDatabase.MIGRATION_2_3).apply {
+
+            with(query("SELECT * FROM ${Safe.TABLE_NAME}")) {
+                Assert.assertEquals(1, count)
+                moveToFirst()
+                Assert.assertEquals(getString(getColumnIndex(Safe.COL_ADDRESS)), safe.address.asEthereumAddressString())
+                Assert.assertEquals(getString(getColumnIndex(Safe.COL_LOCAL_NAME)), safe.localName)
+            }
+
+            close()
+        }
+
     }
 
     companion object {

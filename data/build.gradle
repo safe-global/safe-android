@@ -70,24 +70,32 @@ android {
 dependencies {
     implementation project(":contracts")
 
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+    api "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     // Room
     implementation "androidx.room:room-runtime:$versions.androidx_room"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
     kapt "androidx.room:room-compiler:$versions.androidx_room"
 
-    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
-    implementation("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
+    // More
+    api("org.bouncycastle:bcprov-jdk15on:$versions.bouncycastle", {
+        exclude group: 'junit', module: 'junit'
+    })
+
+    api "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
+    api("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
-    implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
 
     implementation "com.squareup.moshi:moshi:$versions.moshi"
     implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"
