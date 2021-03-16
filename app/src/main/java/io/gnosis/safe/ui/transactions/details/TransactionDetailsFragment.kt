@@ -73,12 +73,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             when (val viewAction = state.viewAction) {
                 is UpdateDetails -> {
                     viewAction.txDetails?.let {
-                        updateUi(it)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
                     }
                 }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
-                        updateUi(it)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
                     }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
@@ -123,21 +123,16 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    private fun updateUi(txDetails: TransactionDetailsViewData) {
-
-        var needsYourConfirmation = false
-
+    private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean) {
+        
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
 
-                needsYourConfirmation = viewModel.isAwaitingOwnerConfirmation(executionInfo, txDetails.txStatus)
                 val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
                 val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
                 val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
-                val canReject = viewModel.canBeRejectedFromDevice(executionInfo, txDetails.txStatus)
-                val isOwner = viewModel.isOwner(executionInfo)
                 val buttonState = ButtonStateHelper(
                     hasBeenRejected = hasBeenRejected,
                     needsYourConfirmation = needsYourConfirmation,
