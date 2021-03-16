@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.Tracker
@@ -10,7 +11,6 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -33,7 +33,7 @@ class AddSafeNameViewModelTest {
         coEvery { createNotificationChannelGroup(any()) } just Runs
     }
     private val safeRepository = mockk<SafeRepository>()
-    private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
+    private val credentialsRepository = mockk<CredentialsRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: AddSafeNameViewModel
@@ -43,7 +43,7 @@ class AddSafeNameViewModelTest {
         viewModel = AddSafeNameViewModel(
             safeRepository,
             notificationRepository,
-            ownerCredentialsRepository,
+            credentialsRepository,
             settingsHandler,
             notificationManager,
             appDispatchers,
@@ -115,7 +115,7 @@ class AddSafeNameViewModelTest {
         coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
-        coEvery { ownerCredentialsRepository.hasCredentials() } returns false
+        coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "          Name          ")
@@ -142,7 +142,7 @@ class AddSafeNameViewModelTest {
         coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
-        coEvery { ownerCredentialsRepository.hasCredentials() } returns false
+        coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
@@ -169,7 +169,7 @@ class AddSafeNameViewModelTest {
         coEvery { notificationRepository.registerSafe(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
-        coEvery { ownerCredentialsRepository.hasCredentials() } returns false
+        coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns true
 
         viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
@@ -186,7 +186,7 @@ class AddSafeNameViewModelTest {
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
-            ownerCredentialsRepository.hasCredentials()
+            credentialsRepository.ownerCount()
         }
     }
 

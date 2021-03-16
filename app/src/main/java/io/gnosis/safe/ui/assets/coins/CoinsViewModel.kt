@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.assets.coins
 
 import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.Tracker
@@ -8,7 +9,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
 import java.math.RoundingMode
@@ -18,7 +18,7 @@ class CoinsViewModel
 @Inject constructor(
     private val tokenRepository: TokenRepository,
     private val safeRepository: SafeRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     private val tracker: Tracker,
@@ -47,7 +47,7 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
-                val showBanner = settingsHandler.showOwnerBanner && !ownerCredentialsRepository.hasCredentials()
+                val showBanner = settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() > 0
                 val balances = getBalanceViewData(balanceInfo, showBanner)
                 updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
             }
