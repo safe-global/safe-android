@@ -87,7 +87,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
     private fun setSafeInfo(safeInfo: SafeInfo) {
         with(binding) {
             fallbackHandlerContainer.removeAllViews()
-            fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
+            fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler?.value))
 
             fallbackHandlerHelpLink.text = ""
             fallbackHandlerHelpLink.appendLink(
@@ -101,7 +101,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                 moduleLabel.visible(true)
                 it.forEach { module ->
                     //TODO: set module name if available
-                    modulesContainer.addView(labeledAddress(module, R.string.unknown_module))
+                    modulesContainer.addView(labeledAddress(module.value, R.string.unknown_module))
                 }
             } ?: run { moduleLabel.visible(false) }
         }
