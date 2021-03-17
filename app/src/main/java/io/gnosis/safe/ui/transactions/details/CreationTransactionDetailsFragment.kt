@@ -65,7 +65,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
             implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
             if (implementation != null) {
-                implementationItem.setAddress(implementation!!.asEthereumAddress(), false)
+                implementationItem.setAddress(implementation!!.asEthereumAddress(), null, false)
                 noImplementationItem.visible(false)
             } else {
                 noImplementationItem.text = getString(R.string.tx_details_creation_no_implementation_available)
