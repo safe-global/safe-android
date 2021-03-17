@@ -28,8 +28,14 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     private val statusColorRes by lazy { navArgs.statusColorRes }
     private val transActionHash by lazy { navArgs.transActionHash }
     private val creator by lazy { navArgs.creator }
+    private val creatorName by lazy { navArgs.creatorName }
+    private val creatorLogoUri by lazy { navArgs.creatorLogoUri }
     private val implementation by lazy { navArgs.implementation }
+    private val implementationName by lazy { navArgs.implementationName }
+    private val implementationLogoUri by lazy { navArgs.implementationLogoUri }
     private val factory by lazy { navArgs.factory }
+    private val factoryName by lazy { navArgs.factoryName }
+    private val factoryLogoUri by lazy { navArgs.factoryLogoUri }
     private val dateTimeText by lazy { navArgs.dateTimeText }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsCreationBinding =
@@ -61,11 +67,16 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             }
 
             creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
-            creatorItem.address = creator!!.asEthereumAddress()
+            with(creatorItem) {
+                val creatorAddress = creator!!.asEthereumAddress()
+                address = creatorAddress
+                name = creatorName ?: getString(R.string.unknown_creator)
+                loadKnownAddressLogo(creatorLogoUri, creatorAddress)
+            }
 
             implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)
             if (implementation != null) {
-                implementationItem.setAddress(implementation!!.asEthereumAddress(), null, false)
+                implementationItem.setAddress(implementation!!.asEthereumAddress(), implementationName, false)
                 noImplementationItem.visible(false)
             } else {
                 noImplementationItem.text = getString(R.string.tx_details_creation_no_implementation_available)
@@ -74,13 +85,16 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
             factoryTitle.text = getString(R.string.tx_details_creation_factory_used)
             if (factory != null) {
-                factoryItem.address = factory!!.asEthereumAddress()
-                factoryItem.visible(true)
-
+                with(factoryItem) {
+                    val factoryAddress = factory!!.asEthereumAddress()
+                    address = factoryAddress
+                    name = factoryName ?: getString(R.string.unknown_factory)
+                    loadKnownAddressLogo(factoryLogoUri, factoryAddress)
+                    visible(true)
+                }
                 noFactoryItem.visible(false)
             } else {
                 factoryItem.visible(false)
-
                 noFactoryItem.text = getString(R.string.tx_details_creation_no_factory_used)
                 noFactoryItem.visible(true)
             }

@@ -120,8 +120,11 @@ sealed class TransactionView(
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val creator: String,
+        val creatorInfo: AddressInfoData.Remote,
         val implementation: String?,
+        val implementationInfo: AddressInfoData.Remote,
         val factory: String?,
+        val factoryInfo: AddressInfoData.Remote,
         val transactionHash: String
     )
 
@@ -162,9 +165,9 @@ sealed class AddressInfoData {
     ) : AddressInfoData()
 
     data class Remote(
-        val name: String,
+        val name: String?,
         val addressLogoUri: String?,
-        val address: String,
+        val address: String?,
         val appInfo: Boolean = false
     ) : AddressInfoData()
 

@@ -89,7 +89,7 @@
                 android:layout_marginTop="@dimen/default_margin"
                 tools:text="Creator" />
 
-            <io.gnosis.safe.ui.settings.view.AddressItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/creator_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,7 +142,7 @@
                 android:layout_marginTop="@dimen/default_margin"
                 tools:text="Factory" />
 
-            <io.gnosis.safe.ui.settings.view.AddressItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/factory_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -49,7 +49,7 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
         background = ContextCompat.getDrawable(context, R.drawable.circle)
     }
 
-    fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target = this) {
+    fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address?, target: Target = this) {
         setAddress(address)
         when {
             !logoUri.isNullOrBlank() -> {

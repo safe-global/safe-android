@@ -360,8 +360,11 @@ class TransactionListViewModel
                 statusColorRes = statusTextColor(txStatus),
                 dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
+                creatorInfo = AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString()),
                 factory = txInfo.factory?.asEthereumAddressString(),
+                factoryInfo = AddressInfoData.Remote(txInfo.factoryInfo?.name, txInfo.factoryInfo?.logoUri, txInfo.factory?.asEthereumAddressString()),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
+                implementationInfo = AddressInfoData.Remote(txInfo.implementationInfo?.name, txInfo.implementationInfo?.logoUri, txInfo.implementation?.asEthereumAddressString()),
                 transactionHash = txInfo.transactionHash
             )
         )
