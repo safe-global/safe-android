@@ -49,6 +49,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
         android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,27 +59,132 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/surface_04"
             android:orientation="vertical">
 
-            <!-- TODO Add stuff here -->
-
-            <!-- status: Owner key successfully imported -->
-            <TextView
-                android:id="@+id/status"
+            <ImageView
+                android:id="@+id/digit1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toStartOf="@+id/digit2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <ImageView
+                android:id="@+id/digit2"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toStartOf="@+id/digit3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/digit1"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <ImageView
+                android:id="@+id/digit3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toStartOf="@+id/digit4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/digit2"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <ImageView
+                android:id="@+id/digit4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toStartOf="@+id/digit5"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/digit3"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <ImageView
+                android:id="@+id/digit5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toStartOf="@+id/digit6"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/digit4"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <ImageView
+                android:id="@+id/digit6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="70dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_circle_passcode_20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/digit5"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+
+            <TextView
+                android:id="@+id/status"
+                style="@style/TextDark.Bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="6dp"
+                android:drawableStart="@drawable/ic_baseline_check_circle_outline_24"
                 android:text="Owner key successful imported"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tool:text="Owner key successful imported" />
+                tool:text="Owner key successfully imported" />
 
-            <!-- Create a 6-digit passcode -->
-<!-- Oval 0 - Oval 5 -->
-<!-- The passcode will be needed to sign transactions. -->
-<!-- Skip Button -->
+            <TextView
+                android:id="@+id/create_passcode"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Create a 6-digit passcode"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/status"
+                tool:text="Create a 6-digit passcode" />
 
+            <TextView
+                android:id="@+id/help_text"
+                style="@style/TextMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_marginTop="100dp"
+                android:text="The passcode will be needed to sign transactions."
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode"
+                tool:text="The passcode will be needed to sign transactions." />
 
+            <TextView
+                android:id="@+id/skip"
+                style="@style/TextLink"
+                android:layout_width="256dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="11dp"
+                android:gravity="center"
+                android:text="@string/add_safe_owner_skip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/help_text" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

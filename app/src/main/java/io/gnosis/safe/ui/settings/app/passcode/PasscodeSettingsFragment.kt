@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -43,6 +44,9 @@ class PasscodeSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppPass
                 settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
 
                 //TODO Start passcode setup flow here
+
+                findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment())
+
 
                 changePasscode.visible(settingsHandler.usePasscode)
             }

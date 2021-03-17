@@ -224,7 +224,12 @@
         android:id="@+id/passcodeSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment"
         android:label="Passcode"
-        tools:layout="@layout/fragment_settings_app_passcode" />
+        tools:layout="@layout/fragment_settings_app_passcode">
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nightModeAppSettingsFragment"

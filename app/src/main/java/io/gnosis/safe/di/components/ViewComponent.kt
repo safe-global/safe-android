@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.*
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
+import io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
@@ -98,6 +99,8 @@ interface ViewComponent {
     fun inject(fragment: AppFiatFragment)
 
     fun inject(fragment: PasscodeSettingsFragment)
+
+    fun inject(fragment: CreatePasscodeFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)

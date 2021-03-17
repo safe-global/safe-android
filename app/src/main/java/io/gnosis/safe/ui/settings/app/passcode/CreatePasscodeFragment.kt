@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
-import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsCreatePasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -19,20 +18,13 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
         fun newInstance() = CreatePasscodeFragment()
     }
 
-    private lateinit var viewModel: CreatePasscodeViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_settings_create_passcode, container, false)
-    }
+//    private lateinit var viewModel: CreatePasscodeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsCreatePasscodeBinding =
         FragmentSettingsCreatePasscodeBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
-        TODO("Not yet implemented")
+        component.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
