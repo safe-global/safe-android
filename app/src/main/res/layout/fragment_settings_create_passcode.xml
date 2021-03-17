@@ -175,7 +175,7 @@
                 tool:text="The passcode will be needed to sign transactions." />
 
             <TextView
-                android:id="@+id/skip"
+                android:id="@+id/skip_button"
                 style="@style/TextLink"
                 android:layout_width="256dp"
                 android:layout_height="56dp"
@@ -185,6 +185,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/help_text" />
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:inputType="number" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
