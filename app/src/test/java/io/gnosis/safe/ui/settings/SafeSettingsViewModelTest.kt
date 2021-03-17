@@ -95,6 +95,7 @@ class SafeSettingsViewModelTest {
         val ensName2 = "ens.name"
         coEvery { safeRepository.getSafeInfo(any()) } returnsMany listOf(safeInfo1, safeInfo2)
         coEvery { safeRepository.activeSafeFlow() } returns flowOf(safe1, safe2)
+        coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { ensRepository.reverseResolve(any()) } returnsMany listOf(ensName1, ensName2)
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
@@ -162,6 +163,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+        coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { ensRepository.reverseResolve(any()) } returns ensName
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel =
@@ -269,6 +271,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
+        coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { notificationRepository.unregisterSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
@@ -324,6 +327,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getSafes() } returns listOf(SAFE_2)
         coEvery { safeRepository.getSafeCount() } returns 1
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
+        coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { notificationRepository.unregisterSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
