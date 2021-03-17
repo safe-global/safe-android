@@ -1007,8 +1007,11 @@ class TransactionListViewModelTest {
                 txStatus = SUCCESS,
                 txInfo = TransactionInfo.Creation(
                     creator = defaultFromAddress,
+                    creatorInfo = null,
                     factory = defaultFactoryAddress,
+                    factoryInfo = null,
                     implementation = defaultSafeAddress,
+                    implementationInfo = null,
                     transactionHash = "0x00"
                 ),
                 timestamp = Date(1),
