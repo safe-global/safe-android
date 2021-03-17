@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
@@ -20,6 +21,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -67,7 +69,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     binding.progress.visible(!didLoadOnce && viewAction.isLoading)
                     binding.refresh.isRefreshing = didLoadOnce && viewAction.isLoading
                     if (!viewAction.isLoading)
-                        showSafeInfo(it.safe, it.safeInfo, it.ensName)
+                        showSafeInfo(it.safe, it.safeInfo, it.ensName, it.localOwners)
                 }
                 is UpdateActiveSafe -> {
                     hideContent()
@@ -106,25 +108,39 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
     private fun showSafeInfo(
         safe: Safe?,
         safeInfo: SafeInfo?,
-        ensNameValue: String?
+        ensNameValue: String?,
+        localOwners: List<Owner>
     ) {
         with(binding) {
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner)) }
-            masterCopy.setAddress(safeInfo?.masterCopy)
+            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner.value, localOwners)) }
+            masterCopy.setAddress(safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
     }
 
-    private fun ownerView(owner: Solidity.Address): AddressItem {
-        return AddressItem(requireContext()).apply {
-            background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-            address = owner
-            showSeparator = true
+    private fun ownerView(owner: Solidity.Address, localOwners: List<Owner>): View {
+
+        val localOwner = localOwners.find { it.address == owner }
+
+        return if (localOwner != null) {
+            NamedAddressItem(requireContext()).apply {
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                address = owner
+                name = localOwner.name
+                showSeparator = true
+            }
+        } else {
+            AddressItem(requireContext()).apply {
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                address = owner
+                showSeparator = true
+            }
         }
     }
 
