@@ -1,7 +1,9 @@
 package io.gnosis.safe.ui.settings
 
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
@@ -34,6 +36,7 @@ class SafeSettingsViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
+    private val credentialsRepository = mockk<CredentialsRepository>()
     private val notificationRepository = mockk<NotificationRepository>()
     private val notificationManager = mockk<NotificationManager>().apply {
         coEvery { deleteNotificationChannelGroup(any()) } just Runs
@@ -51,7 +54,7 @@ class SafeSettingsViewModelTest {
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         safeSettingsViewModel.state.observeForever(testObserver)
 
         testObserver.assertValueCount(1)
@@ -68,8 +71,26 @@ class SafeSettingsViewModelTest {
     fun `init - (activeSafe change) should load new data`() = runBlockingTest {
         val safe1 = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safe2 = Safe(Solidity.Address(BigInteger.TEN), "safe")
-        val safeInfo1 = SafeInfo(safe1.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
-        val safeInfo2 = SafeInfo(safe2.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
+        val safeInfo1 = SafeInfo(
+            AddressInfoExtended(safe1.address),
+            BigInteger.TEN,
+            2,
+            emptyList(),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            emptyList(),
+            null,
+            "1.1.1"
+        )
+        val safeInfo2 = SafeInfo(
+            AddressInfoExtended(safe2.address),
+            BigInteger.TEN,
+            2,
+            emptyList(),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            emptyList(),
+            null,
+            "1.1.1"
+        )
         val ensName1 = "ens.name"
         val ensName2 = "ens.name"
         coEvery { safeRepository.getSafeInfo(any()) } returnsMany listOf(safeInfo1, safeInfo2)
@@ -78,7 +99,7 @@ class SafeSettingsViewModelTest {
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         safeSettingsViewModel.state.observeForever(testObserver)
 
         testObserver.assertValueCount(1)
@@ -101,9 +122,10 @@ class SafeSettingsViewModelTest {
     fun `reload - (activeSafe null) should emit not loading`() = runBlockingTest {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { safeRepository.getActiveSafe() } returns null
+        coEvery { credentialsRepository.owners() } returns emptyList()
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -126,7 +148,16 @@ class SafeSettingsViewModelTest {
     @Test
     fun `reload - (activeSafe available, everything works) should emit everything`() = runBlockingTest {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
+        val safeInfo = SafeInfo(
+            AddressInfoExtended(safe.address),
+            BigInteger.TEN,
+            2,
+            emptyList(),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            emptyList(),
+            null,
+            "1.1.1"
+        )
         val ensName = "ens.name"
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
@@ -134,7 +165,7 @@ class SafeSettingsViewModelTest {
         coEvery { ensRepository.reverseResolve(any()) } returns ensName
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -158,15 +189,25 @@ class SafeSettingsViewModelTest {
     fun `reload - (activeSafe available, ensFailure) should emit safe data with null name`() = runBlockingTest {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val safeInfo = SafeInfo(safe.address, BigInteger.TEN, 2, emptyList(), Solidity.Address(BigInteger.ONE), emptyList(), null, "1.1.1")
+        val safeInfo = SafeInfo(
+            AddressInfoExtended(safe.address),
+            BigInteger.TEN,
+            2,
+            emptyList(),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            emptyList(),
+            null,
+            "1.1.1"
+        )
         coEvery { safeRepository.getActiveSafe() } returns safe
+        coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         coEvery { ensRepository.reverseResolve(any()) } throws throwable
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -196,7 +237,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
 
         safeSettingsViewModel.reload()
         safeSettingsViewModel.state.observeForever(testObserver)
@@ -232,7 +273,7 @@ class SafeSettingsViewModelTest {
         coEvery { tracker.setNumSafes(any()) } just Runs
 
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
@@ -264,13 +305,13 @@ class SafeSettingsViewModelTest {
     @Test
     fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
-            SAFE_1.address,
+            AddressInfoExtended(SAFE_1.address),
             BigInteger.ONE,
             2,
             emptyList(),
-            Solidity.Address(BigInteger.ONE),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             emptyList(),
-            Solidity.Address(BigInteger.ONE),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             "1.1.1"
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
@@ -287,7 +328,7 @@ class SafeSettingsViewModelTest {
         coEvery { tracker.setNumSafes(any()) } just Runs
 
         safeSettingsViewModel =
-            SafeSettingsViewModel(safeRepository, ensRepository, notificationRepository, notificationManager, tracker, appDispatchers)
+            SafeSettingsViewModel(safeRepository, ensRepository, credentialsRepository, notificationRepository, notificationManager, tracker, appDispatchers)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         safeSettingsViewModel.state.observeForever(stateObserver)
 
