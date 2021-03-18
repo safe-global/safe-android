@@ -30,7 +30,8 @@
         app:layout_constraintEnd_toStartOf="@+id/arrow"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginRight="16dp"
-        tools:text="EUR" />
+        tools:text="EUR"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/arrow"
@@ -52,7 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_settings_arrow"
-        />
+        tools:visibility="gone" />
 
     <ImageView
         android:id="@+id/check_mark"

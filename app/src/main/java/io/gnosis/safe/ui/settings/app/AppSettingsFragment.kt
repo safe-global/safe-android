@@ -42,7 +42,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            setupOwnerKeyView()
+            ownerKeys.setOnClickListener {
+                //TODO: open key list
+            }
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
             }
@@ -74,8 +76,8 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             }
         }
 
-        viewModel.signingOwner.observe(viewLifecycleOwner, Observer {
-            setupOwnerKeyView(it?.address)
+        viewModel.signingOwnerCount.observe(viewLifecycleOwner, Observer {
+            binding.ownerKeys.value = it.toString()
         })
 
         viewModel.loadSigningOwner()
@@ -95,44 +97,47 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store.apps/details?id=${requireActivity().packageName}")))
             }
     }
+//TODO: cleanup
+//    private fun setupOwnerKeyView(address: Solidity.Address? = null) {
+//        with(binding) {
+//            if (address != null) {
+//                if (ownerKey.currentView.id == R.id.import_owner_key) {
+//                    ownerKey.showNext()
+//                }
+//                with(removeOwnerKey) {
+//                    blockies.setAddress(address)
+//                    ownerAddress.text = address.shortChecksumString()
+//                    remove.setOnClickListener {
+//                        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
+//                            onOwnerRemove()
+//                        }
+//                    }
+//                    root.setOnClickListener {
+//                        address?.let {
+//                            context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
+//                                snackbar(view = root, textId = R.string.copied_success)
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                with(importOwnerKey) {
+//                    root.setOnClickListener {
+//                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-    private fun setupOwnerKeyView(address: Solidity.Address? = null) {
-        with(binding) {
-            if (address != null) {
-                if (ownerKey.currentView.id == R.id.import_owner_key) {
-                    ownerKey.showNext()
-                }
-                with(removeOwnerKey) {
-                    blockies.setAddress(address)
-                    ownerAddress.text = address.shortChecksumString()
-                    remove.setOnClickListener {
-                        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            onOwnerRemove()
-                        }
-                    }
-                    root.setOnClickListener {
-                        address?.let {
-                            context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
-                                snackbar(view = root, textId = R.string.copied_success)
-                            }
-                        }
-                    }
-                }
-            } else {
-                with(importOwnerKey) {
-                    root.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
-                    }
-                }
-            }
-        }
-    }
 
-    private fun onOwnerRemove() {
-        viewModel.removeSigningOwner()
-        binding.ownerKey.showNext()
-        snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-    }
+    //TODO: move
+
+//    private fun onOwnerRemove() {
+//        viewModel.removeSigningOwner()
+//        binding.ownerKey.showNext()
+//        snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+//    }
 
     companion object {
 
