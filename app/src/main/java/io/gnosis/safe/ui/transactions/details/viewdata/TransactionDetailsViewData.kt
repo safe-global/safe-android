@@ -49,9 +49,12 @@ sealed class TransactionInfoViewData(
 
     data class Creation(
         val creator: Solidity.Address,
+        val creatorInfo: AddressInfoData?,
         val transactionHash: String,
         val implementation: Solidity.Address?,
-        val factory: Solidity.Address?
+        val implementationInfo: AddressInfoData?,
+        val factory: Solidity.Address?,
+        val factoryInfo: AddressInfoData?
     ) : TransactionInfoViewData(TransactionType.Creation)
 
     data class Rejection(
@@ -146,7 +149,15 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
                 )
             }
         }
-        is TransactionInfo.Creation -> TransactionInfoViewData.Creation(creator, transactionHash, implementation, factory)
+        is TransactionInfo.Creation -> TransactionInfoViewData.Creation(
+            creator,
+            AddressInfoData.Remote(creatorInfo?.name, creatorInfo?.logoUri, creator.asEthereumAddressString()),
+            transactionHash,
+            implementation,
+            AddressInfoData.Remote(implementationInfo?.name, implementationInfo?.logoUri, implementation?.asEthereumAddressString()),
+            factory,
+            AddressInfoData.Remote(factoryInfo?.name, factoryInfo?.logoUri, factory?.asEthereumAddressString())
+        )
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
             settingsInfo.toSettingsInfoViewData(safes)

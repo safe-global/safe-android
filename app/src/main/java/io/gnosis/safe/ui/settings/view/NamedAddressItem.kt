@@ -85,7 +85,7 @@ class NamedAddressItem @JvmOverloads constructor(
         binding.namedAddressItemSeparator.visible(a.getBoolean(R.styleable.NamedAddressItem_show_named_address_separator, false))
     }
 
-    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address) {
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address?) {
         binding.blockies.loadKnownAddressLogo(addressUri, address)
     }
 }

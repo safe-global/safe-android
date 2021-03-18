@@ -234,7 +234,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
                     addressName.text = addressInfo.name
                     addressLogo.loadKnownAddressLogo(
                         addressInfo.addressLogoUri,
-                        addressInfo.address.asEthereumAddress()!!
+                        addressInfo.address?.asEthereumAddress()!!
                     )
                     appLabel.visible(addressInfo.appInfo)
                 }
@@ -284,7 +284,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                     addressName.text = addressInfo.name
                     addressLogo.loadKnownAddressLogo(
                         addressInfo.addressLogoUri,
-                        addressInfo.address.asEthereumAddress()!!
+                        addressInfo.address?.asEthereumAddress()!!
                     )
                     appLabel.visible(addressInfo.appInfo)
                 }
@@ -415,8 +415,14 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
                 statusTextRes = details.statusText,
                 dateTimeText = details.dateTimeText,
                 implementation = details.implementation,
+                implementationName = details.implementationInfo.name,
+                implementationLogoUri = details.implementationInfo.addressLogoUri,
                 factory = details.factory,
+                factoryName = details.factoryInfo.name,
+                factoryLogoUri = details.factoryInfo.addressLogoUri,
                 creator = details.creator,
+                creatorName = details.creatorInfo.name,
+                creatorLogoUri = details.creatorInfo.addressLogoUri,
                 transActionHash = details.transactionHash
             )
         )

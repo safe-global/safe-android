@@ -39,9 +39,12 @@ sealed class TransactionInfo(
     @JsonClass(generateAdapter = true)
     data class Creation(
         @Json(name = "creator") val creator: Solidity.Address,
+        @Json(name = "creatorInfo") val creatorInfo: AddressInfo?,
         @Json(name = "transactionHash") val transactionHash: String,
         @Json(name = "implementation") val implementation: Solidity.Address?,
-        @Json(name = "factory") val factory: Solidity.Address?
+        @Json(name = "implementationInfo") val implementationInfo: AddressInfo?,
+        @Json(name = "factory") val factory: Solidity.Address?,
+        @Json(name = "factoryInfo") val factoryInfo: AddressInfo?
     ) : TransactionInfo(TransactionType.Creation)
 
     object Unknown : TransactionInfo(TransactionType.Unknown)

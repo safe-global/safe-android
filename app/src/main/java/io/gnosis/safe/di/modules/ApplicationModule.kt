@@ -11,7 +11,6 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.repositories.*
 import io.gnosis.data.security.HeimdallEncryptionManager
@@ -104,16 +103,6 @@ class ApplicationModule(private val application: Application) {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(RetrofitEthereumRpcApi::class.java)
-
-    @Provides
-    @Singleton
-    fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
-        Retrofit.Builder()
-            .client(client)
-            .baseUrl(TransactionServiceApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-            .create(TransactionServiceApi::class.java)
 
     @Provides
     @Singleton

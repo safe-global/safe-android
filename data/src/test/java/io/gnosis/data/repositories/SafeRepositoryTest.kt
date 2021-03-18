@@ -1,10 +1,11 @@
 package io.gnosis.data.repositories
 
 import android.app.Application
-import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.backend.dto.SafeInfoDto
+import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.SafeInfo
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -21,7 +22,7 @@ import java.math.BigInteger
 class SafeRepositoryTest {
 
     private val safeDao = mockk<SafeDao>()
-    private val transactionServiceApi = mockk<TransactionServiceApi>()
+    private val gatewayApi = mockk<GatewayApi>()
 
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
@@ -33,7 +34,7 @@ class SafeRepositoryTest {
             every { getSharedPreferences(any(), any()) } returns preferences
         }
         val preferencesManager = PreferencesManager(application)
-        safeRepository = SafeRepository(safeDao, preferencesManager, transactionServiceApi)
+        safeRepository = SafeRepository(safeDao, preferencesManager, gatewayApi)
     }
 
     @Test
@@ -115,36 +116,39 @@ class SafeRepositoryTest {
     @Test
     fun `isValidSafe - valid safe`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
-        val safeInfoDto = SafeInfoDto(
-            Solidity.Address(BigInteger.ONE),
+        val safeInfo = SafeInfo(
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
             1,
-            listOf(Solidity.Address(BigInteger.ONE)),
-            SafeRepository.SAFE_IMPLEMENTATION_1_0_0,
-            listOf(Solidity.Address(BigInteger.ONE)),
-            Solidity.Address(BigInteger.ONE),
+            listOf(
+                AddressInfoExtended(Solidity.Address(BigInteger.ONE))
+            ),
+            AddressInfoExtended(SafeRepository.SAFE_IMPLEMENTATION_1_0_0),
+            listOf(AddressInfoExtended(Solidity.Address(BigInteger.ONE))),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
-        coEvery { transactionServiceApi.getSafeInfo(any()) } returns safeInfoDto
+
+        coEvery { gatewayApi.getSafeInfo(any()) } returns safeInfo
 
         val actual = safeRepository.getSafeStatus(safeAddress)
 
         assertEquals(SafeStatus.VALID, actual)
-        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
     fun `isValidSafe - invalid safe`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(any()) } throws throwable
 
         kotlin.runCatching {
             safeRepository.getSafeStatus(safeAddress)
             Assert.fail()
         }
 
-        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
@@ -188,7 +192,7 @@ class SafeRepositoryTest {
     fun `getSafeInfo - (transaction service failure) should throw`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { transactionServiceApi.getSafeInfo(any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(any()) } throws throwable
 
         val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
 
@@ -196,34 +200,36 @@ class SafeRepositoryTest {
             assertEquals(true, isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
 
     @Test
     fun `getSafeInfo - (valid address) should return safeInfo`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
-        val safeInfoDto = SafeInfoDto(
-            Solidity.Address(BigInteger.ONE),
+        val safeInfo = SafeInfo(
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
             1,
-            listOf(Solidity.Address(BigInteger.ONE)),
-            Solidity.Address(BigInteger.ONE),
-            listOf(Solidity.Address(BigInteger.ONE)),
-            Solidity.Address(BigInteger.ONE),
+            listOf(
+                AddressInfoExtended(Solidity.Address(BigInteger.ONE))
+            ),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            listOf(AddressInfoExtended(Solidity.Address(BigInteger.ONE))),
+            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
-        coEvery { transactionServiceApi.getSafeInfo(any()) } returns safeInfoDto
+        coEvery { gatewayApi.getSafeInfo(any()) } returns safeInfo
 
         val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
 
         with(actual) {
             assertEquals(true, isSuccess)
-            val safeInfo = getOrNull()
-            assertEquals(safeInfoDto.address, safeInfo?.address)
-            assertEquals(safeInfoDto.nonce, safeInfo?.nonce)
-            assertEquals(safeInfoDto.threshold, safeInfo?.threshold)
+            val result = getOrNull()
+            assertEquals(safeInfo.address, result?.address)
+            assertEquals(safeInfo.nonce, result?.nonce)
+            assertEquals(safeInfo.threshold, result?.threshold)
         }
-        coVerify(exactly = 1) { transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
 
     companion object {
