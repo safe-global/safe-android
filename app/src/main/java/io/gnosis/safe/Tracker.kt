@@ -51,8 +51,8 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.BANNER_PASSCODE_CREATE, null)
     }
 
-    fun logBannerOwnerSkipped() {
-        logEvent(Event.BANNER_OWNER_SKIPPED, null)
+    fun logBannerOwnerSkip() {
+        logEvent(Event.BANNER_OWNER_SKIP, null)
     }
 
     fun logBannerOwnerImport() {
@@ -96,7 +96,7 @@ class Tracker private constructor(context: Context) {
         val TRANSACTION_REJECTED = "user_transaction_rejected"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
-        val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
+        val BANNER_OWNER_SKIP = "user_banner_owner_skip"
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
         val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
         val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"

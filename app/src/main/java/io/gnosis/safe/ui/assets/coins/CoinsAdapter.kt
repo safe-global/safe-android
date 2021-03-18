@@ -9,6 +9,9 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemBannerBinding
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.databinding.ItemCoinTotalBinding
+import io.gnosis.safe.ui.assets.coins.CoinsViewData.Banner
+import io.gnosis.safe.ui.assets.coins.CoinsViewData.TotalBalance
+import io.gnosis.safe.ui.assets.coins.CoinsViewData.CoinBalance
 import io.gnosis.safe.utils.loadTokenLogo
 import java.lang.ref.WeakReference
 
@@ -25,7 +28,7 @@ class CoinsAdapter(
     }
 
     fun removeBanner() {
-        val bannerIndex = items.indexOfFirst { it  is CoinsViewData.Banner }
+        val bannerIndex = items.indexOfFirst { it  is Banner }
         if (bannerIndex >= 0) {
             items.removeAt(bannerIndex)
             notifyItemRemoved(bannerIndex)
@@ -35,15 +38,15 @@ class CoinsAdapter(
     override fun onBindViewHolder(holder: BaseCoinsViewHolder, position: Int) {
         when (holder) {
             is BannerViewHolder -> {
-                val banner = items[position] as CoinsViewData.Banner
+                val banner = items[position] as Banner
                 holder.bind(banner.type, bannerListener)
             }
             is TotalBalanceViewHolder -> {
-                val total = items[position] as CoinsViewData.TotalBalance
+                val total = items[position] as TotalBalance
                 holder.bind(total)
             }
             is CoinBalanceViewHolder -> {
-                val balance = items[position] as CoinsViewData.CoinBalance
+                val balance = items[position] as CoinBalance
                 holder.bind(balance)
             }
         }
@@ -70,9 +73,9 @@ class CoinsAdapter(
     override fun getItemViewType(position: Int): Int {
         val item = items[position]
         return when (item) {
-            is CoinsViewData.Banner -> BalanceItemViewType.BANNER
-            is CoinsViewData.TotalBalance -> BalanceItemViewType.TOTAL
-            is CoinsViewData.CoinBalance -> BalanceItemViewType.COIN
+            is Banner -> BalanceItemViewType.BANNER
+            is TotalBalance -> BalanceItemViewType.TOTAL
+            is CoinBalance -> BalanceItemViewType.COIN
         }.ordinal
     }
 
@@ -85,8 +88,8 @@ class CoinsAdapter(
     }
 
     interface OwnerBannerListener {
-        fun onBannerDismissed(type: CoinsViewData.Banner.Type)
-        fun onBannerActionTriggered(type: CoinsViewData.Banner.Type)
+        fun onBannerDismissed(type: Banner.Type)
+        fun onBannerActionTriggered(type: Banner.Type)
     }
 }
 
@@ -97,7 +100,7 @@ abstract class BaseCoinsViewHolder(
 
 class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(coinBalance: CoinsViewData.CoinBalance) {
+    fun bind(coinBalance: CoinBalance) {
         with(viewBinding) {
             logoImage.loadTokenLogo(icon = coinBalance.logoUri)
             symbol.text = coinBalance.symbol
@@ -109,7 +112,7 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
 
 class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(total: CoinsViewData.TotalBalance) {
+    fun bind(total: TotalBalance) {
         with(viewBinding) {
             totalBalance.text = total.totalFiat
         }
@@ -118,16 +121,16 @@ class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : Ba
 
 class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(type: CoinsViewData.Banner.Type, bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>) {
+    fun bind(type: Banner.Type, bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>) {
         val context = viewBinding.root.context
         with(viewBinding) {
             when(type) {
-                CoinsViewData.Banner.Type.IMPORT_OWNER_KEY -> {
+                Banner.Type.IMPORT_OWNER_KEY -> {
                     bannerTitle.text = context.getString(R.string.banner_owner_title)
                     bannerText.text = context.getString(R.string.banner_owner_text)
                     bannerAction.text = context.getString(R.string.banner_owner_action)
                 }
-                CoinsViewData.Banner.Type.PASSCODE -> {
+                Banner.Type.PASSCODE -> {
                     bannerTitle.text = context.getString(R.string.banner_passcode_title)
                     bannerText.text = context.getString(R.string.banner_passcode_text)
                     bannerAction.text = context.getString(R.string.banner_passcode_action)
@@ -140,10 +143,10 @@ class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsVi
             bannerAction.setOnClickListener {
                 bannerListener.get()?.onBannerActionTriggered(type)
                 when(type) {
-                    CoinsViewData.Banner.Type.IMPORT_OWNER_KEY -> {
+                    Banner.Type.IMPORT_OWNER_KEY -> {
                         Navigation.findNavController(it).navigate(R.id.action_to_import_owner)
                     }
-                    CoinsViewData.Banner.Type.PASSCODE -> {
+                    Banner.Type.PASSCODE -> {
                         //TODO: start passcode setup flow
                     }
                 }

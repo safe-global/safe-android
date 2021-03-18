@@ -106,7 +106,7 @@ class CoinsViewModel
         when (type) {
             Banner.Type.IMPORT_OWNER_KEY -> {
                 settingsHandler.showOwnerBanner = false
-                tracker.logBannerOwnerSkipped()
+                tracker.logBannerOwnerSkip()
             }
             Banner.Type.PASSCODE -> {
                 settingsHandler.showPasscodeBanner = false
