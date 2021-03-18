@@ -6,10 +6,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ItemBannerImportKeyBinding
+import io.gnosis.safe.databinding.ItemBannerBinding
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
 import io.gnosis.safe.databinding.ItemCoinTotalBinding
-import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.utils.loadTokenLogo
 import java.lang.ref.WeakReference
 
@@ -26,7 +25,7 @@ class CoinsAdapter(
     }
 
     fun removeBanner() {
-        val bannerIndex = items.indexOf(CoinsViewData.Banner)
+        val bannerIndex = items.indexOfFirst { it  is CoinsViewData.Banner }
         if (bannerIndex >= 0) {
             items.removeAt(bannerIndex)
             notifyItemRemoved(bannerIndex)
@@ -36,7 +35,8 @@ class CoinsAdapter(
     override fun onBindViewHolder(holder: BaseCoinsViewHolder, position: Int) {
         when (holder) {
             is BannerViewHolder -> {
-                holder.bind(bannerListener)
+                val banner = items[position] as CoinsViewData.Banner
+                holder.bind(banner.type, bannerListener)
             }
             is TotalBalanceViewHolder -> {
                 val total = items[position] as CoinsViewData.TotalBalance
@@ -52,7 +52,7 @@ class CoinsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseCoinsViewHolder {
         return when (BalanceItemViewType.values()[viewType]) {
             BalanceItemViewType.BANNER -> BannerViewHolder(
-                ItemBannerImportKeyBinding.inflate(
+                ItemBannerBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -85,8 +85,8 @@ class CoinsAdapter(
     }
 
     interface OwnerBannerListener {
-        fun onBannerDismissed()
-        fun onBannerActionTriggered()
+        fun onBannerDismissed(type: CoinsViewData.Banner.Type)
+        fun onBannerActionTriggered(type: CoinsViewData.Banner.Type)
     }
 }
 
@@ -116,16 +116,37 @@ class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : Ba
     }
 }
 
-class BannerViewHolder(private val viewBinding: ItemBannerImportKeyBinding) : BaseCoinsViewHolder(viewBinding) {
+class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>) {
+    fun bind(type: CoinsViewData.Banner.Type, bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>) {
+        val context = viewBinding.root.context
         with(viewBinding) {
+            when(type) {
+                CoinsViewData.Banner.Type.IMPORT_OWNER_KEY -> {
+                    bannerTitle.text = context.getString(R.string.banner_owner_title)
+                    bannerText.text = context.getString(R.string.banner_owner_text)
+                    bannerAction.text = context.getString(R.string.banner_owner_action)
+                }
+                CoinsViewData.Banner.Type.PASSCODE -> {
+                    bannerTitle.text = context.getString(R.string.banner_passcode_title)
+                    bannerText.text = context.getString(R.string.banner_passcode_text)
+                    bannerAction.text = context.getString(R.string.banner_passcode_action)
+                }
+            }
+
             bannerClose.setOnClickListener {
-                bannerListener.get()?.onBannerDismissed()
+                bannerListener.get()?.onBannerDismissed(type)
             }
             bannerAction.setOnClickListener {
-                bannerListener.get()?.onBannerActionTriggered()
-                Navigation.findNavController(it).navigate(R.id.action_to_import_owner)
+                bannerListener.get()?.onBannerActionTriggered(type)
+                when(type) {
+                    CoinsViewData.Banner.Type.IMPORT_OWNER_KEY -> {
+                        Navigation.findNavController(it).navigate(R.id.action_to_import_owner)
+                    }
+                    CoinsViewData.Banner.Type.PASSCODE -> {
+                        //TODO: start passcode setup flow
+                    }
+                }
             }
         }
     }
