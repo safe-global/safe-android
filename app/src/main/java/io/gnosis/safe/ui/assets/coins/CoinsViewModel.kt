@@ -64,7 +64,7 @@ class CoinsViewModel
         return (state.value as CoinsState).loading
     }
 
-    suspend fun getBalanceViewData(coinBalanceData: CoinBalances, banner: CoinsViewData.Banner.Type): List<CoinsViewData> {
+    suspend fun getBalanceViewData(coinBalanceData: CoinBalances, banner: Banner.Type): List<CoinsViewData> {
         val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
 
