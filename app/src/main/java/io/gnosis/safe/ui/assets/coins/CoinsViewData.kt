@@ -19,7 +19,8 @@ sealed class CoinsViewData {
     ) : CoinsViewData() {
         enum class Type {
             IMPORT_OWNER_KEY,
-            PASSCODE
+            PASSCODE,
+            NONE
         }
     }
 }
