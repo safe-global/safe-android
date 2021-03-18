@@ -155,13 +155,13 @@ class SettingsHandlerTest {
     }
 
     @Test
-    fun `loadSupportedFiatCodes - successful`() = runBlocking {
+    fun `loadSupportedFiatCodes - backend sorting is used - successful`() = runBlocking {
         val supportedFiats = listOf("USD", "EUR", "CAD")
         coEvery { gatewayApi.loadSupportedCurrencies() } returns supportedFiats
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
 
         val actual = runCatching { settingsHandler.loadSupportedFiatCodes() }
-        val expected = supportedFiats.sorted()
+        val expected = supportedFiats
 
         coVerify(exactly = 1) { gatewayApi.loadSupportedCurrencies() }
         Assert.assertEquals(expected, actual.getOrNull())

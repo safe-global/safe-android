@@ -85,7 +85,7 @@ class SettingsHandler @Inject constructor(
             }
         }
 
-    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
+    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies()
 
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
