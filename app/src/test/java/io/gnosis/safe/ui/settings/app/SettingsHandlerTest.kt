@@ -161,10 +161,9 @@ class SettingsHandlerTest {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
 
         val actual = runCatching { settingsHandler.loadSupportedFiatCodes() }
-        val expected = supportedFiats
 
         coVerify(exactly = 1) { gatewayApi.loadSupportedCurrencies() }
-        Assert.assertEquals(expected, actual.getOrNull())
+        Assert.assertEquals(supportedFiats, actual.getOrNull())
     }
 
     @Test
