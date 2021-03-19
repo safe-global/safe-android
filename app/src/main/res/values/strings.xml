@@ -302,6 +302,10 @@
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
+    <string name="signing_owner_name_title">Enter Key Name</string>
+    <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
+    <string name="signing_owner_import">Import</string>
+
     <string name="banner_owner_title">Import owner key</string>
     <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
     <string name="banner_owner_action">Import owner key now</string>
