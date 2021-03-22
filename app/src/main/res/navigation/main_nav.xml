@@ -141,19 +141,16 @@
         android:name="io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment"
         android:label="CreatePasscodeFragment"
         tools:layout="@layout/fragment_settings_create_passcode">
-        <action
-            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
-            app:destination="@id/createPasscodeFragment" />
-    </fragment>
 
-    <fragment
-        android:id="@+id/verifyPasscodeFragment"
-        android:name="io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment"
-        android:label="CreatePasscodeFragment"
-        tools:layout="@layout/fragment_settings_create_passcode">
         <action
             android:id="@+id/action_createPasscodeFragment_to_createPasscodeFragment"
-            app:destination="@id/verifyPasscodeFragment" />
+            app:destination="@id/createPasscodeFragment" />
+
+        <argument
+            android:name="passcode"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment

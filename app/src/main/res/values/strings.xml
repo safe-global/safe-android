@@ -153,6 +153,7 @@
     <string name="settings_app_change_passcode">Change passcode</string>
     <string name="settings_app_passcode_explanation">The passcode is needed to sign transactions.</string>
     <string name="settings_create_passcode">Create passcode</string>
+    <string name="settings_create_passcode_needed_to_sign">The passcode will be needed to sign transactions.</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
