@@ -69,6 +69,7 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
             val context = root.context
             blockies.setAddress(owner.address)
             ownerAddress.text = owner.address.shortChecksumString()
+            title.text = if (!owner.name.isNullOrBlank()) owner.name else context.getString(R.string.settings_app_imported_owner_key)
             remove.setOnClickListener {
                 showConfirmDialog(context, R.string.signing_owner_dialog_description) {
                    // onOwnerRemove()
