@@ -52,6 +52,7 @@ class OwnerNameFragment : BaseViewBindingFragment<FragmentOwnerNameBinding>() {
                     ownerNameLayout.isErrorEnabled = false
                     viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
                     findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                    //TODO: handle case when owner was added from owner list screen
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
             }

@@ -43,7 +43,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 
         with(binding) {
             ownerKeys.setOnClickListener {
-                //TODO: open key list
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerListFragment())
             }
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())

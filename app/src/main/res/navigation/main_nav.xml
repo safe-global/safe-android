@@ -158,6 +158,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerListFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerListFragment"
+        android:label="OwnerListFragment"
+        tools:layout="@layout/fragment_owner_list">
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/settingsFragment"
         android:name="io.gnosis.safe.ui.settings.SettingsFragment"
         android:label="SafeSettingsFragment"
@@ -189,8 +201,8 @@
             app:destination="@id/safeSettingsEditNameFragment" />
 
         <action
-            android:id="@+id/action_settingsFragment_to_ownerInfoFragment"
-            app:destination="@id/ownerInfoFragment" />
+            android:id="@+id/action_settingsFragment_to_ownerListFragment"
+            app:destination="@+id/ownerListFragment" />
 
         <action
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
