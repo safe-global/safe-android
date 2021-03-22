@@ -132,15 +132,15 @@
 
         <action
             android:id="@+id/action_ownerSelectionFragment_to_ownerNameFragment"
-            app:destination="@id/ownerNameFragment" />
+            app:destination="@id/ownerEnterNameFragment" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/ownerNameFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.OwnerNameFragment"
+        android:id="@+id/ownerEnterNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
         android:label="OwnerNameFragment"
-        tools:layout="@layout/fragment_owner_name">
+        tools:layout="@layout/fragment_owner_name_enter">
 
         <argument
             android:name="ownerAddress"
