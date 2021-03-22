@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.list
+package io.gnosis.safe.ui.settings.owner.selection
 
 import android.animation.Animator
 import android.os.Bundle
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), OwnerListAdapter.OnOwnerItemClickedListener {
+class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), DerivedOwnerListAdapter.OnOwnerItemClickedListener {
 
     override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
 
@@ -36,7 +36,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     @Inject
     lateinit var viewModel: OwnerSelectionViewModel
 
-    private lateinit var adapter: OwnerListAdapter
+    private lateinit var adapter: DerivedOwnerListAdapter
 
 
     override fun inject(component: ViewComponent) {
@@ -51,7 +51,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = OwnerListAdapter()
+        adapter = DerivedOwnerListAdapter()
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
@@ -161,6 +161,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex)
 
     companion object {
-        private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES
+        private const val MAX_PAGES = DerivedOwnerPagingProvider.MAX_PAGES
     }
 }

@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.list
+package io.gnosis.safe.ui.settings.owner.selection
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -41,7 +41,7 @@ class OwnerSelectionViewModel
 
     fun loadMoreOwners() {
         safeLaunch {
-            OwnerPagingProvider(derivator).getOwnersStream()
+            DerivedOwnerPagingProvider(derivator).getOwnersStream()
                 .cachedIn(viewModelScope)
                 .collectLatest {
                     updateState { OwnerSelectionState(DerivedOwners(it)) }

@@ -6,8 +6,8 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionState
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionState
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.mockk.*
 import org.junit.Rule

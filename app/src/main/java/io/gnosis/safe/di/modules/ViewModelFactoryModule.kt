@@ -21,7 +21,8 @@ import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
@@ -84,6 +85,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(OwnerNameViewModel::class)
     abstract fun providesOwnerNameViewModel(viewModel: OwnerNameViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerListViewModel::class)
+    abstract fun providesOwnerListViewModel(viewModel: OwnerListViewModel): ViewModel
 
     @Binds
     @IntoMap

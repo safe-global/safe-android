@@ -116,7 +116,7 @@
 
     <fragment
         android:id="@+id/ownerSelectionFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment"
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
 
