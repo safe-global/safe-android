@@ -7,12 +7,9 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
 import io.gnosis.safe.utils.shortChecksumString
-import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.model.Solidity
 
-class OwnerListAdapter : RecyclerView.Adapter<BaseOwnerViewHolder>() {
+class OwnerListAdapter(private val ownerListener: OwnerListener) : RecyclerView.Adapter<BaseOwnerViewHolder>() {
 
     private val items = mutableListOf<OwnerViewData>()
 
@@ -26,7 +23,7 @@ class OwnerListAdapter : RecyclerView.Adapter<BaseOwnerViewHolder>() {
         when (holder) {
             is LocalOwnerViewHolder -> {
                 val owner = items[position] as OwnerViewData.LocalOwner
-                holder.bind(owner)
+                holder.bind(owner, ownerListener, position)
             }
         }
     }
@@ -55,6 +52,11 @@ class OwnerListAdapter : RecyclerView.Adapter<BaseOwnerViewHolder>() {
     enum class OwnerItemViewType {
         LOCAL
     }
+
+    interface OwnerListener {
+        fun onOwnerRemove(owner: Solidity.Address, position: Int)
+        fun onOwnerClick(owner: Solidity.Address)
+    }
 }
 
 abstract class BaseOwnerViewHolder(
@@ -64,23 +66,17 @@ abstract class BaseOwnerViewHolder(
 
 class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(owner: OwnerViewData.LocalOwner) {
+    fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (!owner.name.isNullOrBlank()) owner.name else context.getString(R.string.settings_app_imported_owner_key)
             remove.setOnClickListener {
-                showConfirmDialog(context, R.string.signing_owner_dialog_description) {
-                   // onOwnerRemove()
-                }
+                ownerListener.onOwnerRemove(owner.address, position)
             }
             root.setOnClickListener {
-                owner.address.let {
-                    context?.copyToClipboard(context.getString(R.string.address_copied), owner.address.asEthereumAddressChecksumString()) {
-                        //     snackbar(view = root, textId = R.string.copied_success)
-                    }
-                }
+                ownerListener.onOwnerClick(owner.address)
             }
         }
     }

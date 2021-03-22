@@ -131,14 +131,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
 //    }
 
 
-    //TODO: move
-
-//    private fun onOwnerRemove() {
-//        viewModel.removeSigningOwner()
-//        binding.ownerKey.showNext()
-//        snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-//    }
-
     companion object {
 
         fun newInstance(): AppSettingsFragment {

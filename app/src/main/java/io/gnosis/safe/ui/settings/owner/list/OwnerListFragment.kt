@@ -14,9 +14,14 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.showConfirmDialog
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
 
-class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>() {
+class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), OwnerListAdapter.OwnerListener {
 
     @Inject
     lateinit var viewModel: OwnerListViewModel
@@ -34,7 +39,7 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = OwnerListAdapter()
+        adapter = OwnerListAdapter(this)
         with(binding) {
             backButton.setOnClickListener {
                 findNavController().navigateUp()
@@ -67,5 +72,19 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>() {
     override fun onResume() {
         super.onResume()
         viewModel.loadOwners()
+    }
+
+    override fun onOwnerRemove(owner: Solidity.Address, position: Int) {
+        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
+            viewModel.removeOwner(owner)
+            adapter.notifyItemRemoved(position)
+            snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+        }
+    }
+
+    override fun onOwnerClick(owner: Solidity.Address) {
+        context?.copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
+            snackbar(view = binding.root, textId = R.string.copied_success)
+        }
     }
 }

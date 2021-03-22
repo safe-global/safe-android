@@ -63,6 +63,10 @@ class CredentialsRepository(
         ownerDao.delete(owner)
     }
 
+    suspend fun removeOwner(ownerAddress: Solidity.Address) {
+        ownerDao.deleteByAddress(ownerAddress)
+    }
+
     fun encryptKey(key: BigInteger): EncryptedByteArray {
         encryptionManager.unlock()
         val encryptedKey = EncryptedByteArray.create(encryptionManager, key.toByteArray())
