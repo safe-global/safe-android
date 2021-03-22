@@ -6,15 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class PasscodeSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppPasscodeBinding>() {
+class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPasscodeBinding>() {
 
     override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
 
@@ -44,13 +45,16 @@ class PasscodeSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppPass
                 settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
 
                 //TODO Start passcode setup flow here
-
-                findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment())
+                findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(passcode = null))
 
 
                 changePasscode.visible(settingsHandler.usePasscode)
             }
             changePasscode.visible(settingsHandler.usePasscode)
         }
+    }
+
+    override fun handleActiveSafe(safe: Safe?) {
+        // ignored for now
     }
 }

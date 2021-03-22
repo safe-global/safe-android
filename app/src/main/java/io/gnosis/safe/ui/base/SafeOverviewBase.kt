@@ -32,6 +32,9 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
             resetRejectionConfirmed()
             snackbar(requireView(), R.string.rejection_successfully_submitted)
         }
+        if (passCodeSet()) {
+            snackbar(requireView(), R.string.passcode_created)
+        }
     }
 
     abstract fun handleActiveSafe(safe: Safe?)
@@ -52,8 +55,13 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, false)
     }
 
+    private fun passCodeSet(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_SET_RESULT) == true
+    }
+
     companion object {
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
+        const val PASSCODE_SET_RESULT = "args.boolean.passcode_set_result"
         const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
 }

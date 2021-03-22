@@ -155,6 +155,8 @@
     <string name="settings_create_passcode">Create passcode</string>
     <string name="settings_create_passcode_needed_to_sign">The passcode will be needed to sign transactions.</string>
     <string name="settings_create_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
+    <string name="settings_create_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
+    <string name="settings_create_passcode_owner_key_successful_imported">Owner key successful imported</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
@@ -367,6 +369,7 @@
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
     <string name="rejection_successfully_submitted">Rejection successfully submitted</string>
+    <string name="passcode_created">Passcode created</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
@@ -382,5 +385,4 @@
 
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>
-    <string name="settings_create_passcode_owner_key_successful_imported">Owner key successful imported</string>
 </resources>
