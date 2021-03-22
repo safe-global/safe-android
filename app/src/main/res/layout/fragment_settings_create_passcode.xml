@@ -59,8 +59,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/surface_04"
-            android:orientation="vertical">
+            android:background="@color/surface_04" >
 
             <ImageView
                 android:id="@+id/digit1"
@@ -142,11 +141,10 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="6dp"
                 android:drawableStart="@drawable/ic_baseline_check_circle_outline_24"
-                android:text="Owner key successful imported"
+                android:text="@string/settings_create_passcode_owner_key_successful_imported"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tool:text="Owner key successfully imported" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/create_passcode"
@@ -154,28 +152,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Create a 6-digit passcode"
+                android:text="@string/settings_create_passcode_create_a_6_digit_passcode"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/status"
-                tool:text="Create a 6-digit passcode" />
+                app:layout_constraintTop_toBottomOf="@+id/status" />
 
             <TextView
                 android:id="@+id/help_text"
                 style="@style/TextMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="100dp"
                 android:text="@string/settings_create_passcode_needed_to_sign"
+                android:textAlignment="center"
+                android:gravity="center_horizontal"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/create_passcode"
-                tool:text="The passcode will be needed to sign transactions." />
+                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
 
             <TextView
                 android:id="@+id/skip_button"
