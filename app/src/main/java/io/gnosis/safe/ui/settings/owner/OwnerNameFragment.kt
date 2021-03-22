@@ -47,7 +47,7 @@ class OwnerNameFragment : BaseViewBindingFragment<FragmentOwnerNameBinding>() {
             newAddressBlockies.setAddress(ownerAddress)
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
-            nextButton.setOnClickListener {
+            importButton.setOnClickListener {
                 lifecycleScope.launch {
                     ownerNameLayout.isErrorEnabled = false
                     viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
@@ -55,7 +55,7 @@ class OwnerNameFragment : BaseViewBindingFragment<FragmentOwnerNameBinding>() {
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
             }
-            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
+            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
         }
     }
 }
