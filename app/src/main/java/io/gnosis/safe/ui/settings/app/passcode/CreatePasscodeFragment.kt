@@ -100,10 +100,10 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                                 // pass codes are the same an need to be stored
 
                                 //TODO: Store passcode
-                                encryptionManagerX.setupPassword(text.toString().toByteArray())
+                               val success =  encryptionManagerX.setupPassword(text.toString().toByteArray())
                                 //TODO: Navigate back and show success snackbar
 
-                                Timber.i("---> Passcode saved")
+                                Timber.i("---> Passcode saved: $success")
                                 // pop confirm fragment
                                 val popped = findNavController().popBackStack(R.id.createPasscodeFragment, true)
 
@@ -112,7 +112,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                                 // pass on success of setting pass code
 
 
-                                findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, true)
+                                findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, success)
 
                             } else {
                                 // TODO("Show error")

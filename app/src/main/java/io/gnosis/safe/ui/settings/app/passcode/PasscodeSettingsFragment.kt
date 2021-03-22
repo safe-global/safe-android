@@ -13,6 +13,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPasscodeBinding>() {
@@ -42,11 +43,18 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             usePasscode.settingSwitch.setOnClickListener {
+
+                //TODO: update switch status only when passcode was created or deleted
                 settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
 
-                //TODO Start passcode setup flow here
-                findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(passcode = null))
+                if (settingsHandler.usePasscode) {
+                    //TODO Start passcode deletion flow here
+                    Timber.i("---> Delete  owner keys")
+                } else {
 
+                    //TODO Start passcode setup flow here
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(passcode = null))
+                }
 
                 changePasscode.visible(settingsHandler.usePasscode)
             }

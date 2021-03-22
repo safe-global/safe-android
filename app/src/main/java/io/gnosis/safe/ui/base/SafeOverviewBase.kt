@@ -33,6 +33,7 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
             snackbar(requireView(), R.string.rejection_successfully_submitted)
         }
         if (passCodeSet()) {
+            resetPassCodeSet()
             snackbar(requireView(), R.string.passcode_created)
         }
     }
@@ -57,6 +58,10 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
 
     private fun passCodeSet(): Boolean {
         return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_SET_RESULT) == true
+    }
+
+    private fun resetPassCodeSet() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, false)
     }
 
     companion object {
