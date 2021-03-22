@@ -171,6 +171,11 @@
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
             app:destination="@id/appFiatFragment" />
 
+        <action
+            android:id="@+id/action_settingsFragment_to_passcodeSettingsFragment"
+            app:destination="@id/passcodeSettingsFragment"
+            app:popUpTo="@id/settingsFragment" />
+
     </fragment>
 
     <fragment
@@ -190,6 +195,12 @@
         android:name="io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment"
         android:label="AdvancedAppSettingsFragment"
         tools:layout="@layout/fragment_settings_app_advanced" />
+
+    <fragment
+        android:id="@+id/passcodeSettingsFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment"
+        android:label="Passcode"
+        tools:layout="@layout/fragment_settings_app_passcode" />
 
     <fragment
         android:id="@+id/nightModeAppSettingsFragment"
@@ -348,13 +359,49 @@
             app:nullable="true" />
 
         <argument
+            android:name="creatorName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="creatorLogoUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="factory"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
 
         <argument
+            android:name="factoryName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="factoryLogoUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="implementation"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="implementationName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="implementationLogoUri"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

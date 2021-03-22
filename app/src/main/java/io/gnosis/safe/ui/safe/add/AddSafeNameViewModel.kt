@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationManager
@@ -8,7 +9,6 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class AddSafeNameViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
     private val notificationRepository: NotificationRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
     private val notificationManager: NotificationManager,
     appDispatchers: AppDispatchers,
@@ -40,7 +40,7 @@ class AddSafeNameViewModel
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
                 tracker.setNumSafes(safeRepository.getSafeCount())
-                if(settingsHandler.showOwnerScreen && !ownerCredentialsRepository.hasCredentials()) {
+                if(settingsHandler.showOwnerScreen && credentialsRepository.ownerCount() == 0) {
                     updateState { AddSafeNameState(ImportOwner) }
                 } else {
                     updateState { AddSafeNameState(ViewAction.CloseScreen) }

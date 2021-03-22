@@ -29,10 +29,11 @@ class MasterCopyItem @JvmOverloads constructor(
 
     private val binding by lazy { ViewMastercopyItemBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setAddress(value: Solidity.Address?, showUpdateAvailable: Boolean = true) {
+
+    fun setAddress(value: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean = true) {
         with(binding) {
             blockies.setAddress(value)
-            setVersionName(value, showUpdateAvailable)
+            setVersionName(value, version, showUpdateAvailable)
             address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
 
             binding.link.setOnClickListener {
@@ -54,13 +55,13 @@ class MasterCopyItem @JvmOverloads constructor(
         }
     }
 
-    private fun setVersionName(address: Solidity.Address?, showUpdateAvailable: Boolean) {
+    private fun setVersionName(address: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean) {
         with(binding) {
             if (address?.implementationVersion() == null) {
-                implementationVersionName.text = context.getString(R.string.unknown_implementation_version)
+                implementationVersionName.text = version ?: context.getString(R.string.unknown_implementation_version)
                 versionInfo.visible(false, View.INVISIBLE)
             } else {
-                implementationVersionName.text = context.getString(address.implementationVersion() ?: R.string.unknown_implementation_version)
+                implementationVersionName.text = version ?: context.getString(address.implementationVersion() ?: R.string.unknown_implementation_version)
                 if (showUpdateAvailable) {
                     versionInfo.apply {
                         visible(true)

@@ -9,6 +9,7 @@ import androidx.paging.map
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -29,7 +30,7 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
@@ -49,7 +50,7 @@ class TransactionListViewModel
             val activeSafe = safeRepository.getActiveSafe()
             val safes = safeRepository.getSafes()
             if (activeSafe != null) {
-                val owner = ownerCredentialsRepository.retrieveCredentials()?.address
+                val owner = if (credentialsRepository.ownerCount() > 0) credentialsRepository.owners()[0].address else null
                 getTransactions(activeSafe.address, safes, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
@@ -359,8 +360,11 @@ class TransactionListViewModel
                 statusColorRes = statusTextColor(txStatus),
                 dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
+                creatorInfo = AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString()),
                 factory = txInfo.factory?.asEthereumAddressString(),
+                factoryInfo = AddressInfoData.Remote(txInfo.factoryInfo?.name, txInfo.factoryInfo?.logoUri, txInfo.factory?.asEthereumAddressString()),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
+                implementationInfo = AddressInfoData.Remote(txInfo.implementationInfo?.name, txInfo.implementationInfo?.logoUri, txInfo.implementation?.asEthereumAddressString()),
                 transactionHash = txInfo.transactionHash
             )
         )

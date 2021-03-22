@@ -3,7 +3,6 @@ package io.gnosis.safe.di.modules
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.TransactionServiceApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
 import pm.gnosis.ethereum.EthereumRepository
@@ -20,9 +19,9 @@ class RepositoryModule {
     fun provideSafeRepository(
         safeDao: SafeDao,
         preferencesManager: PreferencesManager,
-        transactionServiceApi: TransactionServiceApi
+        gatewayApi: GatewayApi
     ): SafeRepository {
-        return SafeRepository(safeDao, preferencesManager, transactionServiceApi)
+        return SafeRepository(safeDao, preferencesManager, gatewayApi)
     }
 
     @Provides
@@ -51,5 +50,4 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
-
 }

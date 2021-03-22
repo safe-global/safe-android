@@ -139,8 +139,11 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Creation(
                 creator = "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!,
+                creatorInfo = null,
                 factory = null,
+                factoryInfo = null,
                 implementation = null,
+                implementationInfo = null,
                 transactionHash = "0xe4f00086442eadbac4975c6aa87110ac72700dca905da1d908947e04ed9cee47"
             ),
             executionInfo = null,

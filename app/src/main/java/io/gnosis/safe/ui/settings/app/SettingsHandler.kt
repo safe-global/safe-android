@@ -77,7 +77,15 @@ class SettingsHandler @Inject constructor(
             }
         }
 
-    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
+    var usePasscode: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_USE_PASSCODE, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_USE_PASSCODE, value)
+            }
+        }
+
+    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies()
 
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
@@ -86,5 +94,6 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
         internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
         internal const val KEY_APP_START_COUNT = "prefs.integer.app_start_count"
+        internal const val KEY_USE_PASSCODE = "prefs.boolean.use_passcode"
     }
 }
