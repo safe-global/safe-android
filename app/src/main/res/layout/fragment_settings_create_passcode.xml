@@ -168,7 +168,6 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="100dp"
                 android:text="@string/settings_create_passcode_needed_to_sign"
-                android:textAlignment="center"
                 android:gravity="center_horizontal"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
