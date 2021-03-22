@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
@@ -78,6 +79,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(OwnerSelectionViewModel::class)
     abstract fun providesOwnerSelectionViewModel(viewModel: OwnerSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerNameViewModel::class)
+    abstract fun providesOwnerNameViewModel(viewModel: OwnerNameViewModel): ViewModel
 
     @Binds
     @IntoMap

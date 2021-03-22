@@ -3,27 +3,21 @@ package io.gnosis.safe.ui.settings.owner.list
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import io.gnosis.data.repositories.CredentialsRepository
-import io.gnosis.safe.Tracker
-import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import kotlinx.coroutines.flow.collectLatest
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 
 class OwnerSelectionViewModel
 @Inject constructor(
     private val derivator: MnemonicKeyAndAddressDerivator,
-    private val credentialsRepository: CredentialsRepository,
-    private val notificationRepository: NotificationRepository,
-    private val settingsHandler: SettingsHandler,
-    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
 
@@ -59,30 +53,16 @@ class OwnerSelectionViewModel
         ownerIndex = index
     }
 
-    fun importOwner(privateKey: String? = null) {
-        safeLaunch {
+    fun getOwnerData(privateKey: String? = null): Pair<String, String> {
+        val key = privateKey?.hexAsBigInteger() ?: derivator.keyForIndex(ownerIndex)
 
-            val key = privateKey?.hexAsBigInteger() ?: derivator.keyForIndex(ownerIndex)
-
-            val addresses = if (privateKey != null) {
-                listOf(Solidity.Address(KeyPair.fromPrivate(privateKey.hexAsBigInteger()).address.asBigInteger()))
-            } else {
-                derivator.addressesForPage(ownerIndex, 1)
-            }
-
-            credentialsRepository.saveOwner(addresses[0], key)
-
-            settingsHandler.showOwnerBanner = false
-            settingsHandler.showOwnerScreen = false
-            tracker.logKeyImported(privateKey == null)
-            tracker.setNumKeysImported(1)
-
-            notificationRepository.registerOwner(key)
-
-            updateState {
-                OwnerSelectionState(ViewAction.CloseScreen)
-            }
+        val address = if (privateKey != null) {
+            listOf(Solidity.Address(KeyPair.fromPrivate(privateKey.hexAsBigInteger()).address.asBigInteger()))[0]
+        } else {
+            derivator.addressesForPage(ownerIndex, 1)[0]
         }
+
+        return address.asEthereumAddressString() to key.toHexString()
     }
 }
 
@@ -98,4 +78,5 @@ data class SingleOwner(
 data class DerivedOwners(
     val newOwners: PagingData<Solidity.Address>
 ) : BaseStateViewModel.ViewAction
+
 

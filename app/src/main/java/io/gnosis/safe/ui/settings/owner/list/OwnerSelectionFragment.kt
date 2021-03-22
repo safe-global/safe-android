@@ -19,8 +19,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
@@ -66,7 +64,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.showMoreOwners.visible(false)
                 } else {
                     binding.progress.visible(false)
-                    binding.importButton.isEnabled = true
+                    binding.nextButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
@@ -76,12 +74,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            importButton.setOnClickListener {
-                if (usingSeedPhrase()) {
-                    viewModel.importOwner()
-                } else {
-                    viewModel.importOwner(privateKey)
-                }
+            nextButton.setOnClickListener {
+                val (address, key) = viewModel.getOwnerData(privateKey)
+                findNavController().navigate(
+                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerNameFragment(address, key, usingSeedPhrase())
+                )
             }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
@@ -94,7 +91,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         lifecycleScope.launch {
                             with(binding) {
                                 progress.visible(false)
-                                importButton.isEnabled = true
+                                nextButton.isEnabled = true
 
                                 if (viewAction.hasMore) {
                                     derivedOwners.visible(true)
@@ -145,10 +142,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                             adapter.submitData(viewAction.newOwners)
                         }
 
-                    }
-                    is CloseScreen -> {
-                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                     }
                     else -> {
                     }

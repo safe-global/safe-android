@@ -130,6 +130,31 @@
             app:argType="string"
             app:nullable="true"/>
 
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_ownerNameFragment"
+            app:destination="@id/ownerNameFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerNameFragment"
+        android:label="OwnerNameFragment"
+        tools:layout="@layout/fragment_owner_name">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerKey"
+            app:argType="string" />
+
+        <argument
+            android:name="fromSeedPhrase"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
     </fragment>
 
     <fragment

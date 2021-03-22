@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
@@ -113,6 +114,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesImportOwnerKeyViewModel(provider: ViewModelProvider) = provider[OwnerSeedPhraseViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesOwnerNameViewModel(provider: ViewModelProvider) = provider[OwnerNameViewModel::class.java]
 
     @Provides
     @ForView

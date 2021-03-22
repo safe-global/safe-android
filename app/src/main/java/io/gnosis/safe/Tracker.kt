@@ -127,6 +127,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
     OWNER_INFO("screen_owner_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
+    OWNER_NAME("screen_owner_enter_name"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
