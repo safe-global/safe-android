@@ -19,6 +19,11 @@ class OwnerListAdapter(private val ownerListener: OwnerListener) : RecyclerView.
         notifyDataSetChanged()
     }
 
+    fun removeItem(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
         when (holder) {
             is LocalOwnerViewHolder -> {
