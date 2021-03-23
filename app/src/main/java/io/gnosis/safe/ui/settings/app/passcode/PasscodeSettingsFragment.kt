@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
@@ -45,11 +47,13 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.setOnClickListener {
 
                 //TODO: update switch status only when passcode was created or deleted
-                settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
+                //settingsHandler.usePasscode = usePasscode.settingSwitch.isChecked
 
                 if (settingsHandler.usePasscode) {
-                    //TODO Start passcode deletion flow here
-                    Timber.i("---> Delete  owner keys")
+                    //TODO Start passcode deletion/deactivation flow here
+                    Timber.i("---> Delete  owner keys and reset passcode")
+                    snackbar(requireView(), "Delete  owner keys, resetting passcode & deactivating passcode protection")
+                    settingsHandler.usePasscode = false
                 } else {
 
                     //TODO Start passcode setup flow here
@@ -64,5 +68,10 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
     }
 }

@@ -157,6 +157,8 @@
     <string name="settings_create_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
     <string name="settings_create_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
     <string name="settings_create_passcode_owner_key_successful_imported">Owner key successful imported</string>
+    <string name="settings_create_passcode_dont_match">Passcodes don’t match</string>
+    <string name="settings_create_passcode_wrong_passcode">Wrong passcode</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>

@@ -160,19 +160,36 @@
                 app:layout_constraintTop_toBottomOf="@+id/status" />
 
             <TextView
+                android:id="@+id/error_message"
+                style="@style/TextMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="12dp"
+                android:text="@string/settings_create_passcode_dont_match"
+                android:gravity="center_horizontal"
+                android:textSize="16sp"
+                android:textColor="@color/error"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/digit1"
+                android:visibility="invisible"/>
+
+            <TextView
                 android:id="@+id/help_text"
                 style="@style/TextMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/settings_create_passcode_needed_to_sign"
                 android:gravity="center_horizontal"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/create_passcode" />
+                app:layout_constraintTop_toBottomOf="@+id/error_message" />
 
             <TextView
                 android:id="@+id/skip_button"

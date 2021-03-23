@@ -17,7 +17,9 @@ import io.gnosis.safe.databinding.FragmentSettingsCreatePasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.PASSCODE_SET_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,7 +29,10 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
     private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
 
     @Inject
-    lateinit var encryptionManagerX: HeimdallEncryptionManager
+    lateinit var encryptionManager: HeimdallEncryptionManager
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     private val passcodeArg by lazy { navArgs.passcode }
 
@@ -47,6 +52,8 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
     override fun onResume() {
         super.onResume()
         binding.input.showKeyboardForView()
+        Timber.i("---> onResume() passcodeArg: $passcodeArg")
+        Timber.i("---> onResume()  input.text: ${binding.input.text}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,10 +67,19 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
 
         with(binding) {
             if (passcodeArg?.isNotEmpty() == true) {
+                Timber.i("---> createPasscode(repeat_the_6_digit_passcode)")
                 createPasscode.setText(R.string.settings_create_passcode_repeat_the_6_digit_passcode)
+            } else {
+                Timber.i("---> createPasscode(create_a_6_digit_passcode)")
+                createPasscode.setText(R.string.settings_create_passcode_create_a_6_digit_passcode)
             }
             backButton.setOnClickListener {
-                Navigation.findNavController(it).navigateUp()
+                if (passcodeArg == null) {
+                    Navigation.findNavController(it).navigateUp()
+                } else {
+                    input.setText("")
+                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                }
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
@@ -75,7 +91,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
             }
 
             input.doOnTextChanged { text, _, _, _ ->
-                Timber.i("--->       text:  $text")
+                Timber.i("--->       text:  $text, length: ${text?.length ?: 0}")
 
                 text?.let {
 
@@ -100,7 +116,9 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                                 // pass codes are the same an need to be stored
 
                                 //TODO: Store passcode
-                               val success =  encryptionManagerX.setupPassword(text.toString().toByteArray())
+                                encryptionManager.removePassword()
+                                //TODO ? Remove all owner keys?
+                                val success = encryptionManager.setupPassword(text.toString().toByteArray())
                                 //TODO: Navigate back and show success snackbar
 
                                 Timber.i("---> Passcode saved: $success")
@@ -111,12 +129,16 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                                 if (popped) findNavController().popBackStack(R.id.createPasscodeFragment, true)
                                 // pass on success of setting pass code
 
-
+                                settingsHandler.usePasscode = success
                                 findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, success)
 
                             } else {
                                 // TODO("Show error")
-
+                                errorMessage.visible(true)
+                                input.setText("")
+                                digits.forEach {
+                                    it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
+                                }
                                 Timber.w("---> Passcode did not match")
                             }
                         } else {
@@ -138,7 +160,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                 Timber.i("---> Skip flow.")
                 val popped = findNavController().popBackStack(R.id.createPasscodeFragment, true)
                 if (popped) findNavController().popBackStack(R.id.createPasscodeFragment, true)
-
+                settingsHandler.usePasscode = false
                 findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, false)
             }
 
