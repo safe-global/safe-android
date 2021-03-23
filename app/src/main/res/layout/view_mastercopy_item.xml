@@ -69,7 +69,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_link_green_24dp" />
 
-    <pm.gnosis.blockies.BlockiesImageView
+    <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/blockies"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -77,6 +77,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+        app:strokeWidth="0.01dp"
+        app:strokeColor="@color/illustration_background" />
 
 </merge>
