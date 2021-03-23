@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsCreatePasscodeBinding
@@ -17,15 +16,11 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.PASSCODE_SET_RE
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
-import timber.log.Timber
 import javax.inject.Inject
 
 class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePasscodeBinding>() {
 
     override fun screenId() = ScreenId.CREATE_PASSCODE
-
-    @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -51,7 +46,6 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
 
         with(binding) {
 
-            Timber.i("---> createPasscode(create_a_6_digit_passcode)")
             createPasscode.setText(R.string.settings_create_passcode_create_a_6_digit_passcode)
             backButton.setOnClickListener {
                 findNavController().popBackStack(R.id.createPasscodeFragment, true)
@@ -59,14 +53,12 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
-            Timber.i("---> setOnEditorActionListener()")
 
             input.setOnEditorActionListener { v, actionId, event ->
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
             input.doOnTextChanged { text, _, _, _ ->
-                Timber.i("---> doOnTextChanged: text:  $text, length: ${text?.length ?: 0}")
 
                 text?.let {
                     if (input.text.length < 6) {
@@ -86,10 +78,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
             }
 
             skipButton.setOnClickListener {
-
-                Timber.i("---> Skip flow.")
-                val popped = findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                if (popped) findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                findNavController().popBackStack(R.id.createPasscodeFragment, true)
                 settingsHandler.usePasscode = false
                 findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, false)
             }

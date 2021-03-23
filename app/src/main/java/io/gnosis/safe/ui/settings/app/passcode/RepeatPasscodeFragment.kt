@@ -15,7 +15,6 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePasscodeBinding>() {
@@ -35,8 +34,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
         fun newInstance() = CreatePasscodeFragment()
     }
 
-//    private lateinit var viewModel: CreatePasscodeViewModel
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsCreatePasscodeBinding =
         FragmentSettingsCreatePasscodeBinding.inflate(inflater, container, false)
 
@@ -47,15 +44,12 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
     override fun onResume() {
         super.onResume()
         binding.input.showKeyboardForView()
-        Timber.i("---> onResume() passcodeArg: $passcodeArg")
-        Timber.i("---> onResume()  input.text: ${binding.input.text}")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            Timber.i("---> createPasscode(repeat_the_6_digit_passcode)")
             createPasscode.setText(io.gnosis.safe.R.string.settings_create_passcode_repeat_the_6_digit_passcode)
 
             backButton.setOnClickListener {
@@ -64,9 +58,8 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
 
             status.visibility = View.INVISIBLE
 
-            val digits = kotlin.collections.listOf(digit1, digit2, digit3, digit4, digit5, digit6)
+            val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
-            Timber.i("---> setOnEditorActionListener()")
 
             input.setOnEditorActionListener { v, actionId, event ->
                 actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE
@@ -87,13 +80,9 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                         }
                     } else {
                         if (passcodeArg == text.toString()) {
-
-                            Timber.d("---> Passcode matches")
-
                             encryptionManager.removePassword()
                             val success = encryptionManager.setupPassword(text.toString().toByteArray())
-                            val popped = findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
-                            if (popped) findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
+                            findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
 
                             settingsHandler.usePasscode = success
                             findNavController().currentBackStackEntry?.savedStateHandle?.set(
@@ -102,7 +91,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
                             )
 
                         } else {
-                            Timber.d("---> Passcode did not match")
                             errorMessage.visible(true)
                             input.setText("")
                             digits.forEach {
@@ -115,9 +103,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
             }
 
             skipButton.setOnClickListener {
-                Timber.i("---> Skip flow.")
-                val popped = findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
-                if (popped) findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
+                findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
                 settingsHandler.usePasscode = false
                 findNavController().currentBackStackEntry?.savedStateHandle?.set(
                     io.gnosis.safe.ui.base.SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
