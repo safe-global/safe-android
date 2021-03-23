@@ -29,6 +29,13 @@ class OwnerEditNameViewModel
             }
         }
     }
+
+    fun removeOwner(address: Solidity.Address) {
+        safeLaunch {
+            credentialsRepository.removeOwner(address)
+            updateState { OwnerNameState(null, ViewAction.CloseScreen) }
+        }
+    }
 }
 
 data class OwnerNameState(

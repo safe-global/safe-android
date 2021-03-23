@@ -9,13 +9,16 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEditBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
@@ -46,6 +49,13 @@ class OwnerEditNameFragment : BaseViewBindingFragment<FragmentOwnerNameEditBindi
             }
             saveButton.setOnClickListener {
                 viewModel.saveOwnerName(ownerAddress, ownerName.text.trim().toString())
+            }
+            removeButton.setOnClickListener {
+                showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
+                    viewModel.removeOwner(ownerAddress)
+                    snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+                }
+
             }
             ownerName.showKeyboardForView()
             ownerName.doOnTextChanged { text, _, _, _ -> binding.saveButton.isEnabled = !text.isNullOrBlank() }
