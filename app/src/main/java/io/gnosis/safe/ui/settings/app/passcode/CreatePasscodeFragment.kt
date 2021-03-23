@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -21,6 +22,8 @@ import javax.inject.Inject
 class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.CREATE_PASSCODE
+    private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
+    private val ownerImported by lazy { navArgs.ownerImported }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -45,6 +48,12 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            if (ownerImported) {
+                status.visibility = View.VISIBLE
+            } else {
+                status.visibility = View.INVISIBLE
+            }
 
             createPasscode.setText(R.string.settings_create_passcode_create_a_6_digit_passcode)
             backButton.setOnClickListener {

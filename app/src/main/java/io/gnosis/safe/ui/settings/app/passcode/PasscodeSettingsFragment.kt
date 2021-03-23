@@ -50,7 +50,11 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 } else {
 
                     //TODO Start passcode setup flow here
-                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment())
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(
+                            ownerImported = false
+                        )
+                    )
                 }
 
                 changePasscode.visible(settingsHandler.usePasscode)

@@ -22,14 +22,13 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
     override fun screenId() = ScreenId.REPEAT_PASSCODE
     private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
+    private val passcodeArg by lazy { navArgs.passcode }
 
     @Inject
     lateinit var encryptionManager: HeimdallEncryptionManager
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
-
-    private val passcodeArg by lazy { navArgs.passcode }
 
     companion object {
         fun newInstance() = CreatePasscodeFragment()

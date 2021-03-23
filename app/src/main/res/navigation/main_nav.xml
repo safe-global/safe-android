@@ -120,19 +120,19 @@
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
 
-        <argument
-            android:name="privateKey"
-            app:argType="string"
-            app:nullable="true" />
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
 
         <argument
             android:name="seedPhrase"
             app:argType="string"
-            app:nullable="true"/>
+            app:nullable="true" />
 
-        <action
-            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
-            app:destination="@id/createPasscodeFragment" />
+        <argument
+            android:name="privateKey"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -145,6 +145,10 @@
         <action
             android:id="@+id/action_createPasscodeFragment_to_repeatPasscodeFragment"
             app:destination="@id/repeatPasscodeFragment" />
+
+        <argument
+            android:name="ownerImported"
+            app:argType="boolean" />
 
     </fragment>
 
@@ -303,7 +307,7 @@
         android:id="@+id/confirmRejectionFragment"
         android:name="io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment"
         android:label="ConfirmRejectionFragment"
-        tools:layout="@layout/fragment_confirm_rejection" >
+        tools:layout="@layout/fragment_confirm_rejection">
 
         <action
             android:id="@+id/action_confirmRejectionFragment_to_transactionsFragment"
