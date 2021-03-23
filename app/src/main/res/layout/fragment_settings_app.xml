@@ -13,26 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-<!--            <ViewSwitcher-->
-<!--                android:id="@+id/owner_key"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-
-<!--                <include-->
-<!--                    android:id="@+id/import_owner_key"-->
-<!--                    layout="@layout/item_import_owner_key"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"/>-->
-
-<!--                <include-->
-<!--                    android:id="@+id/remove_owner_key"-->
-<!--                    layout="@layout/item_remove_owner_key"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"/>-->
-
-<!--            </ViewSwitcher>-->
-
+            
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/owner_keys"
                 android:layout_width="match_parent"
