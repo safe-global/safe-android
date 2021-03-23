@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -61,8 +62,9 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
 
-            input.setOnEditorActionListener { v, actionId, event ->
-                actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+            //Disable done button
+            input.setOnEditorActionListener { _, actionId, _ ->
+                actionId == EditorInfo.IME_ACTION_DONE
             }
 
             input.doOnTextChanged { text, _, _, _ ->

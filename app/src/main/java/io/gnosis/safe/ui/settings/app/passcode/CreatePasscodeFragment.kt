@@ -54,7 +54,8 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
 
-            input.setOnEditorActionListener { v, actionId, event ->
+            //Disable done button
+            input.setOnEditorActionListener { _, actionId, _ ->
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
