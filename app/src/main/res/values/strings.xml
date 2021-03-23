@@ -301,11 +301,13 @@
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
+    <string name="signing_owner_import">Import</string>
     <string name="signing_owner_name_title">Enter Key Name</string>
     <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
-    <string name="signing_owner_name_import">Import</string>
 
-    <string name="signing_owner_import">Import</string>
+    <string name="signing_owner_name_edit_title">Edit owner name</string>
+    <string name="signing_owner_name_edit_remove">Remove owner key</string>
+
     <string name="signing_owner_list_title">Owner keys</string>
     <string name="signing_owner_list_empty">There are no imported owner keys</string>
 

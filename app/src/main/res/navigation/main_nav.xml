@@ -139,7 +139,7 @@
     <fragment
         android:id="@+id/ownerEnterNameFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
-        android:label="OwnerNameFragment"
+        android:label="OwnerEnterNameFragment"
         tools:layout="@layout/fragment_owner_name_enter">
 
         <argument
@@ -158,6 +158,18 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerEditNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment"
+        android:label="OwnerEditNameFragment"
+        tools:layout="@layout/fragment_owner_name_edit">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ownerListFragment"
         android:name="io.gnosis.safe.ui.settings.owner.list.OwnerListFragment"
         android:label="OwnerListFragment"
@@ -166,6 +178,10 @@
         <action
             android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
             app:destination="@id/ownerInfoFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
 
     </fragment>
 

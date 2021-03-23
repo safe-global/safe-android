@@ -9,7 +9,7 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import javax.inject.Inject
 
-class OwnerNameViewModel
+class OwnerEnterNameViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,

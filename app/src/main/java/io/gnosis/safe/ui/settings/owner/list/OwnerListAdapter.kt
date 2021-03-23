@@ -60,6 +60,7 @@ class OwnerListAdapter(private val ownerListener: OwnerListener) : RecyclerView.
 
     interface OwnerListener {
         fun onOwnerRemove(owner: Solidity.Address, position: Int)
+        fun onOwnerEdit(owner: Solidity.Address)
         fun onOwnerClick(owner: Solidity.Address)
     }
 }
@@ -79,6 +80,9 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
             title.text = if (!owner.name.isNullOrBlank()) owner.name else context.getString(R.string.settings_app_imported_owner_key)
             remove.setOnClickListener {
                 ownerListener.onOwnerRemove(owner.address, position)
+            }
+            edit.setOnClickListener {
+                ownerListener.onOwnerEdit(owner.address)
             }
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)

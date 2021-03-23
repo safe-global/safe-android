@@ -22,6 +22,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), OwnerListAdapter.OwnerListener {
@@ -98,6 +99,10 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
             }
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
         }
+    }
+
+    override fun onOwnerEdit(owner: Solidity.Address) {
+        findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {

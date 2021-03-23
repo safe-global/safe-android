@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentOwnerNameBinding
+import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -20,17 +20,17 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
 
-class OwnerNameFragment : BaseViewBindingFragment<FragmentOwnerNameBinding>() {
+class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBinding>() {
 
     @Inject
-    lateinit var viewModel: OwnerNameViewModel
+    lateinit var viewModel: OwnerEnterNameViewModel
 
-    private val navArgs by navArgs<OwnerNameFragmentArgs>()
+    private val navArgs by navArgs<OwnerEnterNameFragmentArgs>()
     private val ownerAddress by lazy { navArgs.ownerAddress.asEthereumAddress()!! }
     private val ownerKey by lazy { navArgs.ownerKey.hexAsBigInteger() }
     private val fromSeedPhrase by lazy { navArgs.fromSeedPhrase }
 
-    override fun screenId() = ScreenId.OWNER_NAME
+    override fun screenId() = ScreenId.OWNER_ENTER_NAME
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -38,8 +38,8 @@ class OwnerNameFragment : BaseViewBindingFragment<FragmentOwnerNameBinding>() {
 
     override fun viewModelProvider() = this
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerNameBinding =
-        FragmentOwnerNameBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerNameEnterBinding =
+        FragmentOwnerNameEnterBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
