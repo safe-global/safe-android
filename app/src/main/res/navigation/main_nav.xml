@@ -140,7 +140,7 @@
         android:id="@+id/createPasscodeFragment"
         android:name="io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment"
         android:label="CreatePasscodeFragment"
-        tools:layout="@layout/fragment_settings_create_passcode">
+        tools:layout="@layout/fragment_passcode">
 
         <action
             android:id="@+id/action_createPasscodeFragment_to_repeatPasscodeFragment"
@@ -152,7 +152,7 @@
         android:id="@+id/repeatPasscodeFragment"
         android:name="io.gnosis.safe.ui.settings.app.passcode.RepeatPasscodeFragment"
         android:label="RepeatPasscodeFragment"
-        tools:layout="@layout/fragment_settings_create_passcode">
+        tools:layout="@layout/fragment_passcode">
 
         <argument
             android:name="passcode"

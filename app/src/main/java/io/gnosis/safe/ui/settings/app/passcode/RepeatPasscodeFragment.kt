@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentSettingsCreatePasscodeBinding
+import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -18,7 +18,7 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePasscodeBinding>() {
+class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.REPEAT_PASSCODE
     private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
@@ -35,8 +35,8 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentSettingsCreatePas
         fun newInstance() = CreatePasscodeFragment()
     }
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsCreatePasscodeBinding =
-        FragmentSettingsCreatePasscodeBinding.inflate(inflater, container, false)
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
+        FragmentPasscodeBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
