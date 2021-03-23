@@ -153,5 +153,6 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
-    CREATE_PASSCODE("screen_passcode_create")
+    CREATE_PASSCODE("screen_passcode_create"),
+    REPEAT_PASSCODE("screen_passcode_create_repeat")
 }
