@@ -125,14 +125,15 @@
             app:destination="@id/createPasscodeFragment" />
 
         <argument
-            android:name="seedPhrase"
+            android:name="privateKey"
             app:argType="string"
             app:nullable="true" />
 
         <argument
-            android:name="privateKey"
+            android:name="seedPhrase"
             app:argType="string"
             app:nullable="true" />
+
 
     </fragment>
 

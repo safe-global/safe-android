@@ -74,16 +74,16 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
                 is ImportOwnerKeyState.ValidSeedPhraseSubmitted -> {
                     findNavController().navigate(
                         OwnerSeedPhraseFragmentDirections.actionOwnerSeedPhraseFragmentToOwnerSelectionFragment(
-                            null,
-                            state.validSeedPhrase
+                            privateKey = null,
+                            seedPhrase = state.validSeedPhrase
                         )
                     )
                 }
                 is ImportOwnerKeyState.ValidKeySubmitted -> {
                     findNavController().navigate(
                         OwnerSeedPhraseFragmentDirections.actionOwnerSeedPhraseFragmentToOwnerSelectionFragment(
-                            state.key,
-                            null
+                            privateKey = state.key,
+                            seedPhrase = null
                         )
                     )
                 }
