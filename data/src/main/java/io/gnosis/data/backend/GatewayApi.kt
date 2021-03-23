@@ -2,6 +2,7 @@ package io.gnosis.data.backend
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Page
+import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.transaction.MultisigTransactionRequest
@@ -15,6 +16,9 @@ interface GatewayApi {
 
     @GET("/v1/balances/supported-fiat-codes")
     suspend fun loadSupportedCurrencies(): List<String>
+
+    @GET("/v1/safes/{address}")
+    suspend fun getSafeInfo(@Path("address") address: String): SafeInfo
 
     @GET("/v1/safes/{address}/balances/{fiat}")
     suspend fun loadBalances(@Path("address") address: String, @Path("fiat") fiat: String = "usd"): CoinBalances

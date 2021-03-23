@@ -392,13 +392,49 @@
             app:nullable="true" />
 
         <argument
+            android:name="creatorName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="creatorLogoUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="factory"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
 
         <argument
+            android:name="factoryName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="factoryLogoUri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="implementation"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="implementationName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="implementationLogoUri"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

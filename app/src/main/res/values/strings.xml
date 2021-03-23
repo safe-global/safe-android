@@ -376,6 +376,8 @@
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
     <string name="unknown_fallback_handler">Unknown</string>
+    <string name="unknown_factory">Unknown</string>
+    <string name="unknown_creator">Unknown</string>
     <string name="unknown_module">Unknown</string>
     <string name="unknown_implementation_version">Unknown</string>
     <string name="tx_list_contract_interaction">Contract interaction</string>

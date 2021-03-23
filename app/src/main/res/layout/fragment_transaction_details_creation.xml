@@ -18,7 +18,7 @@
             style="@style/Toolbar"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:elevation="4dp"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -89,12 +89,10 @@
                 android:layout_marginTop="@dimen/default_margin"
                 tools:text="Creator" />
 
-            <io.gnosis.safe.ui.settings.view.AddressItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/creator_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content" />
 
             <View
                 android:id="@+id/creator_separator"
@@ -111,7 +109,7 @@
                 android:layout_marginTop="@dimen/default_margin"
                 tools:text="Implementation" />
 
-            <io.gnosis.safe.ui.settings.view.MasterCopyItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/implementation_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -142,12 +140,10 @@
                 android:layout_marginTop="@dimen/default_margin"
                 tools:text="Factory" />
 
-            <io.gnosis.safe.ui.settings.view.AddressItem
+            <io.gnosis.safe.ui.settings.view.NamedAddressItem
                 android:id="@+id/factory_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/no_factory_item"
