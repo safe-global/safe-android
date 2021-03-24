@@ -23,7 +23,7 @@ class DisablePasscodeViewModel
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
             }
-            // Make sure all owners are delete at this point
+            // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
                 updateState { ResetPasscodeState(AllOwnersRemoved) }
             } else {
