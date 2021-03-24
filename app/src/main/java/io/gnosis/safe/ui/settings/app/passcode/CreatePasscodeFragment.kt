@@ -57,7 +57,6 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 status.visibility = View.INVISIBLE
             }
 
-            createPasscode.setText(R.string.settings_passcode_create_a_6_digit_passcode)
             backButton.setOnClickListener {
                 findNavController().popBackStack(R.id.createPasscodeFragment, true)
             }
