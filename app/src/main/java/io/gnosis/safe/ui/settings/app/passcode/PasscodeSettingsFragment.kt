@@ -29,10 +29,6 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsAppPasscodeBinding =
         FragmentSettingsAppPasscodeBinding.inflate(inflater, container, false)
 
-    companion object {
-        fun newInstance() = PasscodeSettingsFragment()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {

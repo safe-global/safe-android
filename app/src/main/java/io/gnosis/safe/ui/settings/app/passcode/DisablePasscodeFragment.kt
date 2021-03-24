@@ -31,9 +31,6 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
     @Inject
     lateinit var encryptionManager: HeimdallEncryptionManager
 
-    companion object {
-        fun newInstance() = CreatePasscodeFragment()
-    }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
