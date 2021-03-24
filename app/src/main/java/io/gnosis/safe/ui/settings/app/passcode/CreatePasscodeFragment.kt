@@ -54,7 +54,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                skipPasscodeSetup()
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
@@ -88,21 +88,25 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
             // Skip Button
             actionButton.setOnClickListener {
-                input.hideSoftKeyboard()
-
-                settingsHandler.usePasscode = false
-                tracker.setPasscodeIsSet(false)
-                tracker.logPasscodeSkipped()
-
-                if (ownerImported) {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                } else {
-                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                }
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
+                skipPasscodeSetup()
             }
         }
+    }
+
+    private fun FragmentPasscodeBinding.skipPasscodeSetup() {
+        input.hideSoftKeyboard()
+
+        settingsHandler.usePasscode = false
+        tracker.setPasscodeIsSet(false)
+        tracker.logPasscodeSkipped()
+
+        if (ownerImported) {
+            findNavController().popBackStack(R.id.ownerInfoFragment, true)
+        } else {
+            findNavController().popBackStack(R.id.createPasscodeFragment, true)
+        }
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
 }
 
