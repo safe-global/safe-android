@@ -1,10 +1,12 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
@@ -13,7 +15,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.PASSCODE_SET_RESULT
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -69,7 +71,6 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             input.doOnTextChanged { text, _, _, _ ->
-
                 text?.let {
                     if (input.text.length < 6) {
                         digits.forEach {
@@ -81,17 +82,30 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     } else {
                         input.setText("") // So it is empty, when the user navigates back
                         findNavController().navigate(
-                            CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(passcode = text.toString())
+                            CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
+                                passcode = text.toString(),
+                                ownerImported = ownerImported
+                            )
                         )
                     }
                 }
             }
 
             skipButton.setOnClickListener {
-                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                input.hideSoftKeyboard()
                 settingsHandler.usePasscode = false
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, false)
+                if (ownerImported) {
+                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                } else {
+                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                }
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
             }
         }
     }
+}
+
+fun View.hideSoftKeyboard() {
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(windowToken, 0)
 }

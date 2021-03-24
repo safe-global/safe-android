@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.security.HeimdallEncryptionManager
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -23,6 +26,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun screenId() = ScreenId.REPEAT_PASSCODE
     private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
     private val passcodeArg by lazy { navArgs.passcode }
+    private val ownerImported by lazy { navArgs.ownerImported }
 
     @Inject
     lateinit var encryptionManager: HeimdallEncryptionManager
@@ -50,10 +54,10 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            createPasscode.setText(io.gnosis.safe.R.string.settings_create_passcode_repeat_the_6_digit_passcode)
+            createPasscode.setText(R.string.settings_create_passcode_repeat_the_6_digit_passcode)
 
             backButton.setOnClickListener {
-                findNavController().popBackStack(io.gnosis.safe.R.id.repeatPasscodeFragment, true)
+                findNavController().popBackStack(R.id.repeatPasscodeFragment, true)
             }
 
             status.visibility = View.INVISIBLE
@@ -71,32 +75,37 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 text?.let {
                     if (input.text.length < 6) {
                         digits.forEach {
-                            it.background = androidx.core.content.ContextCompat.getDrawable(requireContext(), io.gnosis.safe.R.color.surface_01)
+                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                         }
                         (1..text.length).forEach { i ->
-                            digits[i - 1].background = androidx.core.content.ContextCompat.getDrawable(
+                            digits[i - 1].background = ContextCompat.getDrawable(
                                 requireContext(),
-                                io.gnosis.safe.R.drawable.ic_circle_passcode_filled_20dp
+                                R.drawable.ic_circle_passcode_filled_20dp
                             )
                         }
                     } else {
                         if (passcodeArg == text.toString()) {
                             encryptionManager.removePassword()
                             val success = encryptionManager.setupPassword(text.toString().toByteArray())
-                            findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
+
+                            input.hideSoftKeyboard()
+
+                            if (ownerImported) {
+                                findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                            } else {
+                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                            }
 
                             settingsHandler.usePasscode = success
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                io.gnosis.safe.ui.base.SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                                success
-                            )
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, success)
 
                         } else {
                             errorMessage.visible(true)
                             input.setText("")
                             digits.forEach {
                                 it.background =
-                                    androidx.core.content.ContextCompat.getDrawable(requireContext(), io.gnosis.safe.R.color.surface_01)
+                                    ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                             }
                         }
                     }
@@ -104,12 +113,16 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             skipButton.setOnClickListener {
-                findNavController().popBackStack(io.gnosis.safe.R.id.createPasscodeFragment, true)
+                input.hideSoftKeyboard()
+
                 settingsHandler.usePasscode = false
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                    io.gnosis.safe.ui.base.SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                    false
-                )
+                if (ownerImported) {
+                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                } else {
+                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                }
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
             }
         }
     }

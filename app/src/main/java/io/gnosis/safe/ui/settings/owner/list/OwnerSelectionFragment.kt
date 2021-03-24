@@ -155,7 +155,9 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                             findNavController().popBackStack(R.id.ownerInfoFragment, true)
                             findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
                         } else {
-                            findNavController().navigate(OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToCreatePasscodeFragment(ownerImported = true))
+                            findNavController().navigate(
+                                OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToCreatePasscodeFragment(ownerImported = true)
+                            )
                         }
                     }
                     else -> {

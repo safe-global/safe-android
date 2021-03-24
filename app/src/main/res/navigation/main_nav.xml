@@ -162,6 +162,10 @@
         <argument
             android:name="passcode"
             app:argType="string" />
+
+        <argument
+            android:name="ownerImported"
+            app:argType="boolean" />
     </fragment>
 
 
