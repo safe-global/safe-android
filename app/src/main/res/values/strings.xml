@@ -317,6 +317,10 @@
     <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
     <string name="banner_owner_action">Import owner key now</string>
 
+    <string name="banner_passcode_title">Create passcode</string>
+    <string name="banner_passcode_text">Secure your owner keys by setting up a passcode. The passcode will be needed to sign transactions.</string>
+    <string name="banner_passcode_action">Create passcode now</string>
+
     <string name="push_safe_name">Safe %1$s</string>
 
     <string name="push_title_confirmation_required">Confirmation required</string>

@@ -5,6 +5,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.Tracker
+import io.gnosis.safe.ui.assets.coins.CoinsViewData.Banner
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -47,8 +48,13 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
-                val showBanner = settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() > 0
-                val balances = getBalanceViewData(balanceInfo, showBanner)
+
+                val banner = when {
+                    settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.IMPORT_OWNER_KEY
+                    settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE
+                    else -> Banner.Type.NONE
+                }
+                val balances = getBalanceViewData(balanceInfo, banner)
                 updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
             }
         }
@@ -58,12 +64,17 @@ class CoinsViewModel
         return (state.value as CoinsState).loading
     }
 
-    suspend fun getBalanceViewData(coinBalanceData: CoinBalances, showBanner: Boolean): List<CoinsViewData> {
+    suspend fun getBalanceViewData(coinBalanceData: CoinBalances, banner: Banner.Type): List<CoinsViewData> {
         val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
 
-        if (showBanner) {
-            result.add(CoinsViewData.Banner)
+        when (banner) {
+            Banner.Type.IMPORT_OWNER_KEY -> {
+                result.add(Banner(Banner.Type.IMPORT_OWNER_KEY))
+            }
+            Banner.Type.PASSCODE -> {
+                result.add(Banner(Banner.Type.PASSCODE))
+            }
         }
 
         val totalBalance = CoinsViewData.TotalBalance(
@@ -91,17 +102,33 @@ class CoinsViewModel
         return result
     }
 
-    override fun onBannerDismissed() {
-        settingsHandler.showOwnerBanner = false
-        tracker.logBannerOwnerSkipped()
+    override fun onBannerDismissed(type: Banner.Type) {
+        when (type) {
+            Banner.Type.IMPORT_OWNER_KEY -> {
+                settingsHandler.showOwnerBanner = false
+                tracker.logBannerOwnerSkip()
+            }
+            Banner.Type.PASSCODE -> {
+                settingsHandler.showPasscodeBanner = false
+                tracker.logBannerPasscodeSkip()
+            }
+        }
         safeLaunch {
             updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
         }
     }
 
-    override fun onBannerActionTriggered() {
-        settingsHandler.showOwnerBanner = false
-        tracker.logBannerOwnerImport()
+    override fun onBannerActionTriggered(type: Banner.Type) {
+        when (type) {
+            Banner.Type.IMPORT_OWNER_KEY -> {
+                settingsHandler.showOwnerBanner = false
+                tracker.logBannerOwnerImport()
+            }
+            Banner.Type.PASSCODE -> {
+                settingsHandler.showPasscodeBanner = false
+                tracker.logBannerPasscodeCreate()
+            }
+        }
         safeLaunch {
             updateState { CoinsState(loading = false, refreshing = false, viewAction = DismissOwnerBanner) }
         }
