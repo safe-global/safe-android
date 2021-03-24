@@ -32,9 +32,14 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
             resetRejectionConfirmed()
             snackbar(requireView(), R.string.rejection_successfully_submitted)
         }
-        if (passCodeSet()) {
-            resetPassCodeSet()
+        if (passcodeSet()) {
+            resetPasscodeSet()
             snackbar(requireView(), R.string.passcode_created)
+        }
+
+        if (passcodeDisabled()) {
+            resetPasscodeDisabled()
+            snackbar(requireView(), R.string.passcode_disabled)
         }
     }
 
@@ -56,17 +61,26 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, false)
     }
 
-    private fun passCodeSet(): Boolean {
+    private fun passcodeSet(): Boolean {
         return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_SET_RESULT) == true
     }
 
-    private fun resetPassCodeSet() {
+    private fun resetPasscodeSet() {
         findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_SET_RESULT, false)
+    }
+
+    private fun passcodeDisabled(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_DISABLED_RESULT) == true
+    }
+
+    private fun resetPasscodeDisabled() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_DISABLED_RESULT, false)
     }
 
     companion object {
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
         const val PASSCODE_SET_RESULT = "args.boolean.passcode_set_result"
+        const val PASSCODE_DISABLED_RESULT = "args.boolean.passcode_disabled_result"
         const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
 }

@@ -54,7 +54,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            createPasscode.setText(R.string.settings_create_passcode_repeat_the_6_digit_passcode)
+            createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
 
             backButton.setOnClickListener {
                 findNavController().popBackStack(R.id.repeatPasscodeFragment, true)

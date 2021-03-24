@@ -12,7 +12,6 @@ import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -45,11 +44,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.setOnClickListener {
 
                 if (settingsHandler.usePasscode) {
-                    snackbar(requireView(), "Ask for passcode then deactivate passcode protection")
-                    settingsHandler.usePasscode = false
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
                 } else {
-
-                    //TODO Start passcode setup flow here
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(
                             ownerImported = false

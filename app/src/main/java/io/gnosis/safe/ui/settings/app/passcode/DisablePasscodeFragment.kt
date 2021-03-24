@@ -1,34 +1,34 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
-import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.CREATE_PASSCODE
-    private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
-    private val ownerImported by lazy { navArgs.ownerImported }
+    override fun screenId() = null // ScreenId.DISABLE_PASSCODE
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
+
+    @Inject
+    lateinit var encryptionManager: HeimdallEncryptionManager
 
     companion object {
         fun newInstance() = CreatePasscodeFragment()
@@ -50,16 +50,13 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            title.setText(R.string.settings_passcode_enter_passcode)
 
-            if (ownerImported) {
-                status.visibility = View.VISIBLE
-            } else {
-                status.visibility = View.INVISIBLE
-            }
+            status.visibility = View.INVISIBLE
 
-            createPasscode.setText(R.string.settings_passcode_create_a_6_digit_passcode)
+            createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
@@ -80,32 +77,32 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
                         }
                     } else {
-                        input.setText("") // So it is empty, when the user navigates back
-                        findNavController().navigate(
-                            CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
-                                passcode = text.toString(),
-                                ownerImported = ownerImported
-                            )
-                        )
+
+                        //TODO verify passcode and disable passcode
+                        val success = encryptionManager.unlockWithPassword(text.toString().toByteArray())
+                        if (success) {
+                            settingsHandler.usePasscode = false
+                            findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                        } else {
+                            errorMessage.setText(R.string.settings_passcode_wrong_passcode)
+                            errorMessage.visible(true)
+                            input.setText("")
+                        }
+
                     }
                 }
             }
 
+            helpText.visible(false)
+
+            skipButton.setText(R.string.settings_passcode_forgot_your_passcode)
             skipButton.setOnClickListener {
+                snackbar(requireView(), R.string.settings_passcode_reset_passcode)
                 input.hideSoftKeyboard()
-                settingsHandler.usePasscode = false
-                if (ownerImported) {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                } else {
-                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                }
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
+                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, false)
             }
         }
     }
-}
-
-fun View.hideSoftKeyboard() {
-    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(windowToken, 0)
 }

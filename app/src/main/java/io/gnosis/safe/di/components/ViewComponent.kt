@@ -18,6 +18,7 @@ import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.*
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
 import io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment
+import io.gnosis.safe.ui.settings.app.passcode.DisablePasscodeFragment
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment
 import io.gnosis.safe.ui.settings.app.passcode.RepeatPasscodeFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
@@ -104,6 +105,8 @@ interface ViewComponent {
     fun inject(fragment: CreatePasscodeFragment)
 
     fun inject(fragment: RepeatPasscodeFragment)
+
+    fun inject(fragment: DisablePasscodeFragment)
 
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)

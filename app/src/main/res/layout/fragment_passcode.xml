@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="@string/settings_create_passcode" />
+                android:text="@string/settings_passcode_create_passcode" />
 
         </LinearLayout>
 
@@ -141,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="6dp"
                 app:drawableStartCompat="@drawable/ic_baseline_check_circle_outline_24"
-                android:text="@string/settings_create_passcode_owner_key_successful_imported"
+                android:text="@string/settings_passcode_owner_key_successful_imported"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -152,7 +152,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/settings_create_passcode_create_a_6_digit_passcode"
+                android:text="@string/settings_passcode_create_a_6_digit_passcode"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -167,7 +167,7 @@
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="12dp"
-                android:text="@string/settings_create_passcode_dont_match"
+                android:text="@string/settings_passcode_dont_match"
                 android:gravity="center_horizontal"
                 android:textSize="16sp"
                 android:textColor="@color/error"
@@ -184,7 +184,7 @@
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="12dp"
-                android:text="@string/settings_create_passcode_needed_to_sign"
+                android:text="@string/settings_passcode_will_be_needed_to_sign"
                 android:gravity="center_horizontal"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"

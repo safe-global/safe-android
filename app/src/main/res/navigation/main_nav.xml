@@ -168,6 +168,14 @@
             app:argType="boolean" />
     </fragment>
 
+    <fragment
+        android:id="@+id/disablePasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.DisablePasscodeFragment"
+        android:label="DisablePasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -242,6 +250,10 @@
         <action
             android:id="@+id/action_passcodeSettingsFragment_to_createPasscodeFragment"
             app:destination="@id/createPasscodeFragment" />
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_disablePasscodeFragment"
+            app:destination="@id/disablePasscodeFragment" />
     </fragment>
 
     <fragment
