@@ -76,7 +76,6 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                         }
                     } else {
 
-                        //TODO verify passcode and disable passcode
                         val success = encryptionManager.unlockWithPassword(text.toString().toByteArray())
                         if (success) {
                             settingsHandler.usePasscode = false
