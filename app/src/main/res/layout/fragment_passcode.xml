@@ -192,7 +192,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/error_message" />
 
             <TextView
-                android:id="@+id/skip_button"
+                android:id="@+id/action_button"
                 style="@style/TextLink"
                 android:layout_width="256dp"
                 android:layout_height="56dp"
@@ -210,7 +210,7 @@
                 android:layout_width="1dp"
                 android:layout_height="1dp"
                 android:inputType="number"
-                app:layout_constraintTop_toBottomOf="@id/skip_button"
+                app:layout_constraintTop_toBottomOf="@id/action_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

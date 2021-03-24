@@ -85,6 +85,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                         }
                     } else {
                         if (passcodeArg == text.toString()) {
+
                             encryptionManager.removePassword()
                             val success = encryptionManager.setupPassword(text.toString().toByteArray())
 
@@ -97,6 +98,9 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             }
 
                             settingsHandler.usePasscode = success
+                            tracker.setPasscodeIsSet(success)
+                            tracker.logPasscodeEnabled()
+
                             findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
                             findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, success)
 
@@ -112,10 +116,14 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
             }
 
-            skipButton.setOnClickListener {
+            // Skip Button
+            actionButton.setOnClickListener {
                 input.hideSoftKeyboard()
 
                 settingsHandler.usePasscode = false
+                tracker.setPasscodeIsSet(false)
+                tracker.logPasscodeSkipped()
+
                 if (ownerImported) {
                     findNavController().popBackStack(R.id.ownerInfoFragment, true)
                 } else {

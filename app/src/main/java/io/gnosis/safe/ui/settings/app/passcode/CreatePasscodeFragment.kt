@@ -91,9 +91,14 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
             }
 
-            skipButton.setOnClickListener {
+            // Skip Button
+            actionButton.setOnClickListener {
                 input.hideSoftKeyboard()
+
                 settingsHandler.usePasscode = false
+                tracker.setPasscodeIsSet(false)
+                tracker.logPasscodeSkipped()
+
                 if (ownerImported) {
                     findNavController().popBackStack(R.id.ownerInfoFragment, true)
                 } else {

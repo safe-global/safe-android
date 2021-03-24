@@ -23,6 +23,10 @@ class Tracker private constructor(context: Context) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
 
+    fun setPasscodeIsSet(usePasscode: Boolean) {
+        firebaseAnalytics.setUserProperty(Param.PASSCODE_IS_SET, usePasscode.toString())
+    }
+
     fun logScreen(screenId: ScreenId) {
         logEvent(screenId.value, null)
     }
@@ -59,6 +63,22 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.ONBOARDING_OWNER_IMPORT, null)
     }
 
+    fun logPasscodeEnabled() {
+        logEvent(Event.PASSCODE_ENABLED, null)
+    }
+
+    fun logPasscodeDisabled() {
+        logEvent(Event.PASSCODE_DISABLED, null)
+    }
+
+    fun logPasscodeReset() {
+        logEvent(Event.PASSCODE_RESET, null)
+    }
+
+    fun logPasscodeSkipped() {
+        logEvent(Event.PASSCODE_SKIPPED, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -90,6 +110,11 @@ class Tracker private constructor(context: Context) {
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
         val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
         val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"
+        val PASSCODE_ENABLED = "user_passcode_enabled"
+        val PASSCODE_DISABLED = "user_passcode_disabled"
+        val PASSCODE_RESET = "user_passcode_reset"
+        val PASSCODE_SKIPPED = "user_passcode_skipped"
+
     }
 
     object Param {
@@ -97,6 +122,7 @@ class Tracker private constructor(context: Context) {
         val PUSH_INFO = "push_info"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
         val KEY_IMPORT_TYPE = "import_type"
+        val PASSCODE_IS_SET = "passcode_is_set"
     }
 
     object ParamValues {

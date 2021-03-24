@@ -10,6 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = null // ScreenId.DISABLE_PASSCODE
+    override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -82,6 +83,8 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                         val success = encryptionManager.unlockWithPassword(text.toString().toByteArray())
                         if (success) {
                             settingsHandler.usePasscode = false
+                            tracker.setPasscodeIsSet(false)
+                            tracker.logPasscodeDisabled()
                             findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                             findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                         } else {
@@ -96,9 +99,11 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
 
             helpText.visible(false)
 
-            skipButton.setText(R.string.settings_passcode_forgot_your_passcode)
-            skipButton.setOnClickListener {
+            // Forgot your passcode button
+            actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
+            actionButton.setOnClickListener {
                 snackbar(requireView(), R.string.settings_passcode_reset_passcode)
+
                 input.hideSoftKeyboard()
                 findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                 findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, false)
