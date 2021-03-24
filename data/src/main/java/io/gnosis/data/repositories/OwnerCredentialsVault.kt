@@ -1,12 +1,14 @@
-package io.gnosis.safe.utils
+package io.gnosis.data.repositories
 
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
+@Deprecated("use CredentialsRepository")
 interface OwnerCredentialsRepository {
     fun storeCredentials(ownerCredentials: OwnerCredentials)
     fun retrieveCredentials(): OwnerCredentials?
@@ -14,13 +16,15 @@ interface OwnerCredentialsRepository {
     fun hasCredentials(): Boolean
 }
 
+@Deprecated("use CredentialsRepository")
 data class OwnerCredentials(
     val address: Solidity.Address,
     val key: BigInteger
 )
 
+@Deprecated("use CredentialsRepository")
 class OwnerCredentialsVault(
-    private val encryptionManager: EncryptionManager,
+    private val encryptionManager: AesEncryptionManager,
     private val preferencesManager: PreferencesManager
 ) : OwnerCredentialsRepository {
 

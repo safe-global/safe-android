@@ -20,6 +20,7 @@ import io.gnosis.safe.utils.ElapsedInterval
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -227,18 +228,21 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                    appLabel.visible(false)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
                     addressLogo.loadKnownAddressLogo(
                         addressInfo.addressLogoUri,
-                        addressInfo.address.asEthereumAddress()!!
+                        addressInfo.address?.asEthereumAddress()!!
                     )
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
                     addressLogo.setAddress(null)
                     addressLogo.setImageResource(addressInfo.logoResId)
+                    appLabel.visible(false)
                 }
             }
 
@@ -251,7 +255,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             confirmations.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.confirmationsTextColor, theme))
             confirmations.text = resources.getString(R.string.tx_list_confirmations, viewTransfer.confirmations, viewTransfer.threshold)
 
-            action.text = viewTransfer.methodName
+            action.text = resources.getAction(viewTransfer.methodName, viewTransfer.actionCount)
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
@@ -274,18 +278,21 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
+                    appLabel.visible(false)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
                     addressLogo.loadKnownAddressLogo(
                         addressInfo.addressLogoUri,
-                        addressInfo.address.asEthereumAddress()!!
+                        addressInfo.address?.asEthereumAddress()!!
                     )
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
                     addressLogo.setAddress(null)
                     addressLogo.setImageResource(addressInfo.logoResId)
+                    appLabel.visible(false)
                 }
             }
 
@@ -293,7 +300,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
 
-            action.text = viewTransfer.methodName
+            action.text = resources.getAction(viewTransfer.methodName, viewTransfer.actionCount)
             nonce.text = viewTransfer.nonce
 
             addressLogo.alpha = viewTransfer.alpha
@@ -309,6 +316,13 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
         }
     }
 }
+
+private fun Resources.getAction(methodName: String?, actionCount: Int?): String? =
+    if (actionCount != null) {
+        if (actionCount > 0) this.getQuantityString(R.plurals.tx_list_actions, actionCount, actionCount) else methodName
+    } else {
+        methodName
+    }
 
 class RejectionQueuedViewHolder(private val viewBinding: ItemTxQueuedRejectionBinding) :
     BaseTransactionViewHolder<TransactionView.RejectionTransactionQueued>(viewBinding) {
@@ -350,7 +364,7 @@ class RejectionViewHolder(private val viewBinding: ItemTxRejectionBinding) :
         with(viewBinding) {
 
             txType.text = resources.getString(R.string.tx_list_rejection)
-            
+
             finalStatus.setText(viewTransfer.statusText)
             finalStatus.setTextColor(ResourcesCompat.getColor(resources, viewTransfer.statusColorRes, theme))
             dateTime.text = viewTransfer.dateTimeText
@@ -401,8 +415,14 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
                 statusTextRes = details.statusText,
                 dateTimeText = details.dateTimeText,
                 implementation = details.implementation,
+                implementationName = details.implementationInfo.name,
+                implementationLogoUri = details.implementationInfo.addressLogoUri,
                 factory = details.factory,
+                factoryName = details.factoryInfo.name,
+                factoryLogoUri = details.factoryInfo.addressLogoUri,
                 creator = details.creator,
+                creatorName = details.creatorInfo.name,
+                creatorLogoUri = details.creatorInfo.addressLogoUri,
                 transActionHash = details.transactionHash
             )
         )
@@ -434,7 +454,7 @@ class SectionConflictHeaderViewHolder(private val viewBinding: ItemTxConflictSec
             sectionTitle.appendLink(
                 url = resources.getString(R.string.tx_list_conflict_header_link),
                 urlText = resources.getString(R.string.tx_list_conflict_header_learn_more),
-                linkIcon = R.drawable.ic_link_green_24dp,
+                linkIcon = R.drawable.ic_external_link_green_16dp,
                 prefix = " "
             )
         }

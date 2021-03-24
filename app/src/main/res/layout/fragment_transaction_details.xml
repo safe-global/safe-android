@@ -56,9 +56,10 @@
         android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -69,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="visible" >
 
                 <ViewStub
                     android:id="@+id/stub_transfer"
@@ -175,24 +176,26 @@
         android:layout_gravity="bottom"
         android:background="@color/surface_01"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="visible"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin" >
 
         <TextView
             android:id="@+id/tx_reject_button"
             style="@style/RejectButton"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:layout_marginRight="20dp"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/reject" />
-
+        <View
+            android:id="@+id/space_between_buttons"
+            android:layout_width="20dp"
+            android:layout_height="0dp" />
         <TextView
             android:id="@+id/tx_confirm_button"
-            style="@style/PrimaryButton"
+            style="@style/ConfirmButton"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_marginRight="@dimen/default_margin"
             android:layout_marginVertical="@dimen/default_margin"
             android:text="@string/confirm" />
 

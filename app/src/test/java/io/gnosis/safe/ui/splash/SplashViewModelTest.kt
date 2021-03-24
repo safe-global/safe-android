@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.app.Application
 import android.content.Context
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.Tracker
@@ -10,7 +11,6 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.test
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
-import io.gnosis.safe.utils.OwnerCredentialsRepository
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -25,7 +25,7 @@ class SplashViewModelTest {
     private val tracker: Tracker = mockk()
     private val notificationRepository = mockk<NotificationRepository>()
     private val safeRepository = mockk<SafeRepository>()
-    private val ownerCredentialsRepository = mockk<OwnerCredentialsRepository>()
+    private val ownerCredentialsRepository = mockk<CredentialsRepository>()
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var termsChecker: TermsChecker
@@ -128,7 +128,7 @@ class SplashViewModelTest {
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
-        coEvery { ownerCredentialsRepository.hasCredentials() } returns true
+        coEvery { ownerCredentialsRepository.ownerCount() } returns 1
 
         val viewModel =
             SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
@@ -141,7 +141,7 @@ class SplashViewModelTest {
             notificationRepository.checkPermissions()
             tracker.setPushInfo(true)
             tracker.setNumSafes(0)
-            ownerCredentialsRepository.hasCredentials()
+            ownerCredentialsRepository.ownerCount()
             tracker.setNumKeysImported(1)
         }
     }
@@ -156,7 +156,7 @@ class SplashViewModelTest {
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
-        coEvery { ownerCredentialsRepository.hasCredentials() } returns false
+        coEvery { ownerCredentialsRepository.ownerCount() } returns 0
 
         val viewModel =
             SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
@@ -169,7 +169,7 @@ class SplashViewModelTest {
             notificationRepository.checkPermissions()
             tracker.setPushInfo(true)
             tracker.setNumSafes(0)
-            ownerCredentialsRepository.hasCredentials()
+            ownerCredentialsRepository.ownerCount()
             tracker.setNumKeysImported(0)
         }
     }

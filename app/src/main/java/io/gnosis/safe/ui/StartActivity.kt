@@ -15,6 +15,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
+import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.abbreviateEthAddress
 import kotlinx.coroutines.launch
@@ -73,9 +74,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                         })
                     } else {
-                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionDetailsFragment, Bundle().apply {
-                            putString("txId", txId)
-                        })
+                        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                            navigate(R.id.transactionsFragment, Bundle().apply {
+                                putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
+                            })
+
+                            navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId))
+                        }
                     }
                 }
             } ?: run {

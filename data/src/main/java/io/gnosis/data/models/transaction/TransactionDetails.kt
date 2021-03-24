@@ -20,7 +20,9 @@ data class TransactionDetails(
     @Json(name = "txData")
     val txData: TxData? = null,
     @Json(name = "detailedExecutionInfo")
-    val detailedExecutionInfo: DetailedExecutionInfo? = null
+    val detailedExecutionInfo: DetailedExecutionInfo? = null,
+    @Json(name = "safeAppInfo")
+    val safeAppInfo: SafeAppInfo?
 )
 
 @JsonClass(generateAdapter = true)
@@ -57,6 +59,8 @@ sealed class DetailedExecutionInfo(
         val safeTxHash: String = "",
         @Json(name = "signers")
         val signers: List<Solidity.Address> = emptyList(),
+        @Json(name = "rejectors")
+        val rejectors: List<Solidity.Address> = emptyList(),
         @Json(name = "confirmationsRequired")
         val confirmationsRequired: Int = 0,
         @Json(name = "confirmations")

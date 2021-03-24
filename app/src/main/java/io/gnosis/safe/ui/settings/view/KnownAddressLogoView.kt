@@ -49,8 +49,20 @@ open class KnownAddressLogoView(context: Context, attributeSet: AttributeSet?) :
         background = ContextCompat.getDrawable(context, R.drawable.circle)
     }
 
-    fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address, target: Target = this) {
+    fun loadKnownAddressLogo(logoUri: String?, address: Solidity.Address?, target: Target = this) {
         setAddress(address)
+        when {
+            !logoUri.isNullOrBlank() -> {
+                Picasso.get()
+                    .load(logoUri)
+                    .into(target)
+            }
+        }
+    }
+
+    fun loadKnownSafeAppLogo(logoUri: String?, defaultResId: Int = R.drawable.ic_code_16dp, target: Target = this) {
+        setAddress(null)
+        setImageResource(defaultResId)
         when {
             !logoUri.isNullOrBlank() -> {
                 Picasso.get()

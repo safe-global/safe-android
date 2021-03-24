@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.safe
 
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
@@ -9,6 +10,7 @@ import javax.inject.Inject
 class SafeSettingsEditNameViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
+    private val notificationManager: NotificationManager,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<EditNameState>(appDispatchers) {
 
@@ -29,6 +31,7 @@ class SafeSettingsEditNameViewModel
                 val safeUpdate = it.copy(localName = name)
                 safeRepository.saveSafe(safeUpdate)
                 safeRepository.setActiveSafe(safeUpdate)
+                notificationManager.updateNotificationChannelGroupForSafe(safeUpdate)
                 updateState { EditNameState(safeUpdate.localName, ViewAction.CloseScreen) }
             }
         }

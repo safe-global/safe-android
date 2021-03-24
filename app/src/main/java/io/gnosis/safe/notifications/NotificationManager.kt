@@ -1,15 +1,15 @@
 package io.gnosis.safe.notifications
 
-import android.app.Notification
-import android.app.NotificationChannel
+import android.app.*
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
@@ -17,19 +17,31 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import io.gnosis.safe.utils.formatForTxList
+import kotlinx.coroutines.runBlocking
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 
 class NotificationManager(
     private val context: Context,
     private val preferencesManager: PreferencesManager,
-    private val balanceFormatter: BalanceFormatter
+    private val balanceFormatter: BalanceFormatter,
+    private val safeRepository: SafeRepository,
+    private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
 ) {
 
-    private val notificationManager = NotificationManagerCompat.from(context)
-
     init {
-        createNotificationChannel(CHANNEL_ID)
+        if (Build.VERSION.SDK_INT >= 26) {
+            // For upgrading users. Can be removed in a future release?
+            runBlocking {
+                safeRepository.getSafes().forEach { safe ->
+                    if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) == null) {
+                        createNotificationChannelGroup(safe)
+                    }
+                }
+                notificationManager.deleteNotificationChannel(CHANNEL_ID)
+            }
+        }
     }
 
     private var latestNotificationId: Int
@@ -40,21 +52,57 @@ class NotificationManager(
             }
         }
 
+    fun createNotificationChannelGroup(safe: Safe) {
+        val id = safe.address.asEthereumAddressChecksumString()
+        val name = safe.localName
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannelGroup(NotificationChannelGroup(id, name))
+            createNotificationChannel(id)
+        }
+    }
+
+    fun deleteNotificationChannelGroup(safe: Safe) {
+        val subChannels = ChannelType.values()
+
+        subChannels.forEach { subChannel ->
+            notificationManager.deleteNotificationChannel(safe.address.asEthereumAddressChecksumString() + "." + context.getString(subChannel.resId))
+        }
+        notificationManager.deleteNotificationChannelGroup(safe.address.asEthereumAddressChecksumString())
+    }
+
+    fun updateNotificationChannelGroupForSafe(safe: Safe) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannelGroup(safe)
+        }
+    }
+
+    enum class ChannelType(@StringRes val resId: Int) {
+        CONFIRMATION_REQUESTS(R.string.channel_tx_confirmation_request),
+        EXECUTED_TRANSACTIONS(R.string.channel_tx_executed_transactions),
+        INCOMING_TOKENS(R.string.channel_tx_incoming_tokens),
+        INCOMING_ETHER(R.string.channel_tx_incoming_ether)
+    }
+
     private fun createNotificationChannel(channelId: String, importance: Int = NotificationManager.IMPORTANCE_HIGH) {
-        if (Build.VERSION.SDK_INT < 26) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return
         }
-        val name = context.getString(R.string.channel_tx_notifications_name)
-        val channel = NotificationChannel(channelId, name, importance)
-        channel.description = context.getString(R.string.channel_tx_notifications_description)
 
-        channel.enableLights(true)
-        channel.lightColor = LIGHT_COLOR
+        ChannelType.values().forEach { subChannel ->
+            val name = context.getString(subChannel.resId)
+            val channel = NotificationChannel("$channelId.$name", name, importance)
+            channel.description = name
 
-        channel.enableVibration(true)
-        channel.vibrationPattern = VIBRATE_PATTERN
+            channel.enableLights(true)
+            channel.lightColor = LIGHT_COLOR
 
-        notificationManager.createNotificationChannel(channel)
+            channel.enableVibration(true)
+            channel.vibrationPattern = VIBRATE_PATTERN
+
+            channel.group = channelId
+
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     fun builder(
@@ -106,7 +154,19 @@ class NotificationManager(
             }
         }
 
-        return builder(title, text, CHANNEL_ID, intent)
+        val resId = subChannelForPushNotificationSubType(pushNotification).resId
+        val channelId = safe.address.asEthereumAddressChecksumString() + "." + context.getString(resId)
+
+        return builder(title, text, channelId, intent)
+    }
+
+    private fun subChannelForPushNotificationSubType(pushNotification: PushNotification): ChannelType {
+        return when (pushNotification) {
+            is PushNotification.ConfirmationRequest -> ChannelType.CONFIRMATION_REQUESTS
+            is PushNotification.ExecutedTransaction -> ChannelType.EXECUTED_TRANSACTIONS
+            is PushNotification.IncomingToken -> ChannelType.INCOMING_TOKENS
+            is PushNotification.IncomingEther -> ChannelType.INCOMING_ETHER
+        }
     }
 
     fun builder(

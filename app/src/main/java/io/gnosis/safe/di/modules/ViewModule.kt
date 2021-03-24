@@ -25,13 +25,14 @@ import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
 import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
+import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import java.lang.ref.WeakReference
 
@@ -141,6 +142,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesTransactionDetailsViewModel(provider: ViewModelProvider) = provider[TransactionDetailsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesConfirmRejectionViewModel(provider: ViewModelProvider) = provider[ConfirmRejectionViewModel::class.java]
 
     @Provides
     @ForView

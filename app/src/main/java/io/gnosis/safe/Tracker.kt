@@ -43,8 +43,16 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_REJECTED, null)
     }
 
-    fun logBannerOwnerSkipped() {
-        logEvent(Event.BANNER_OWNER_SKIPPED, null)
+    fun logBannerPasscodeSkip() {
+        logEvent(Event.BANNER_PASSCODE_SKIP, null)
+    }
+
+    fun logBannerPasscodeCreate() {
+        logEvent(Event.BANNER_PASSCODE_CREATE, null)
+    }
+
+    fun logBannerOwnerSkip() {
+        logEvent(Event.BANNER_OWNER_SKIP, null)
     }
 
     fun logBannerOwnerImport() {
@@ -86,7 +94,9 @@ class Tracker private constructor(context: Context) {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
-        val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
+        val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
+        val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
+        val BANNER_OWNER_SKIP = "user_banner_owner_skip"
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
         val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
         val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"
@@ -140,11 +150,12 @@ enum class ScreenId(val value: String) {
     TRANSACTIONS_DETAILS_ACTION("screen_transaction_details_action"),
     TRANSACTIONS_DETAILS_ACTION_LIST("screen_transaction_details_action_list"),
     TRANSACTIONS_DETAILS_ADVANCED("screen_transactions_details_advanced"),
-    TRANSACTIONS_REJECTION_CONFIRMATION("transactions_rejection_confirmation"),
+    TRANSACTIONS_REJECTION_CONFIRMATION("screen_transactions_reject_confirmation"),
     SETTINGS_APP("screen_settings_app"),
     SETTINGS_APP_ADVANCED("screen_settings_app_advanced"),
     SETTINGS_APP_APPEARANCE("screen_settings_app_appearance"),
     SETTINGS_APP_FIAT("screen_settings_app_edit_fiat"),
+    SETTINGS_APP_PASSCODE("screen_settings_app_passcode"),
     SETTINGS_GET_IN_TOUCH("screen_settings_app_support"),
     SETTINGS_SAFE_NO_SAFE("screen_settings_safe_no_safe"),
     SETTINGS_SAFE("screen_settings_safe"),

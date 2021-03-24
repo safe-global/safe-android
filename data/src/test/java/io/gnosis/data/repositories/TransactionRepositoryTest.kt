@@ -306,7 +306,8 @@ private fun buildGateTransaction(
             confirmationsRequired = 2,
             missingSigners = null
         ),
-        timestamp = Date()
+        timestamp = Date(),
+        safeAppInfo = null
     ), conflictType = ConflictType.None
 )
 
@@ -333,8 +334,11 @@ private fun buildCreationTxInfo(
     TransactionInfo.Creation(
         transactionHash = hash,
         implementation = implementation,
+        implementationInfo = null,
         factory = factory,
-        creator = creator
+        factoryInfo = null,
+        creator = creator,
+        creatorInfo = null
     )
 
 private fun buildSettingsChangeTxInfo(

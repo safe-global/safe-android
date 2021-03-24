@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "2.9.0")
+        versionName getKey("APP_VERSION_NAME", "2.12.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // API keys
@@ -198,31 +198,8 @@ dependencies {
     implementation project(":data")
     implementation project(":qrscanner")
 
-    // Gnosis Bivrost
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
-    // Gnosis Svalinn
-    implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:blockies:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:eip712:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:eip712-adapter-moshi:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
-    implementation("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
-        exclude group: "com.squareup.retrofit2", module: "converter-moshi"
-    }
-    implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
-    implementation "com.github.gnosis.svalinn-kotlin:common-adapter-moshi:$versions.svalinn"
-
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     // Appcompat, views
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
@@ -270,10 +247,6 @@ dependencies {
 
     implementation "com.squareup.picasso:picasso:$versions.picasso"
 
-    // More
-    implementation("org.bouncycastle:bcprov-jdk15on:$versions.bouncycastle", {
-        exclude group: 'junit', module: 'junit'
-    })
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
@@ -287,7 +260,6 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:$versions.firebase_analytics"
     implementation "com.google.firebase:firebase-crashlytics:$versions.firebase_crashlytics"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
-//    androidTestImplementation "androidx.navigation:navigation-testing:2.3.0-alpha05" //TODO change to stable when available
 
     // Play Core Library (For in-app reviews)
     implementation "com.google.android.play:core:$versions.play_core"

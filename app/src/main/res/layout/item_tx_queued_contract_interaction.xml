@@ -12,7 +12,7 @@
         android:id="@+id/chevron"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,17 +31,34 @@
     <TextView
         android:id="@+id/address_name"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="@dimen/default_small_margin"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:ellipsize="end"
         android:singleLine="true"
-        app:layout_constrainedWidth="true"
+        android:maxWidth="200dp"
         app:layout_constraintBottom_toBottomOf="@+id/address_logo"
-        app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
+        app:layout_constraintVertical_bias="0.47000003"
         tools:text="@string/tx_list_contract_interaction" />
+
+    <TextView
+        android:id="@+id/app_label"
+        style="@style/TextDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_small_margin"
+        android:background="@drawable/background_app_label"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="@string/app"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/address_name"
+        app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintEnd_toStartOf="@+id/barrier2"/>
 
     <TextView
         android:id="@+id/action"
@@ -49,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="200dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/default_small_margin"
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
@@ -58,6 +75,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/address_name"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintStart_toEndOf="@+id/barrier1"
         tools:text="approve" />
 
     <TextView
@@ -65,8 +83,8 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_small_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/address_logo"
         tools:text="10" />
@@ -76,7 +94,7 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/default_small_margin"
         app:layout_constraintBottom_toBottomOf="@+id/nonce"
         app:layout_constraintStart_toEndOf="@+id/nonce"
         app:layout_constraintTop_toTopOf="@+id/nonce"
@@ -87,7 +105,7 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/default_margin"
         android:textColor="@color/secondary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/date_time"
@@ -100,7 +118,7 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/default_margin"
         android:textColor="@color/secondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date_time"
@@ -111,7 +129,7 @@
         style="@style/TextMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/default_small_margin"
         app:layout_constraintBottom_toBottomOf="@+id/confirmations_icon"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
         app:layout_constraintTop_toTopOf="@+id/confirmations_icon"
@@ -124,13 +142,27 @@
         android:visibility="visible"
         app:constraint_referenced_ids="confirmations_icon,status,confirmations" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="address_name,app_label" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="action" />
+
     <!-- When making status_pending visible, make group "not_pending" "gone" -->
     <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/address_logo"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
         android:src="@drawable/ic_code_16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

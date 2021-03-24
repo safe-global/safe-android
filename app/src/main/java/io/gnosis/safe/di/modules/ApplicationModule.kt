@@ -11,9 +11,9 @@ import dagger.Module
 import dagger.Provides
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.backend.TransactionServiceApi
-import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.db.daos.OwnerDao
+import io.gnosis.data.repositories.*
+import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -106,16 +106,6 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesTransactionServiceApi(moshi: Moshi, client: OkHttpClient): TransactionServiceApi =
-        Retrofit.Builder()
-            .client(client)
-            .baseUrl(TransactionServiceApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-            .create(TransactionServiceApi::class.java)
-
-    @Provides
-    @Singleton
     fun providesGatewayApi(moshi: Moshi, client: OkHttpClient): GatewayApi =
         Retrofit.Builder()
             .client(client)
@@ -186,20 +176,21 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesNotificationRepo(
         safeRepository: SafeRepository,
-        ownerCredentialsRepository: OwnerCredentialsRepository,
+        credentialsRepository: CredentialsRepository,
         preferencesManager: PreferencesManager,
         notificationServiceApi: NotificationServiceApi,
         notificationManager: NotificationManager
     ): NotificationRepository =
-        NotificationRepository(safeRepository, ownerCredentialsRepository, preferencesManager, notificationServiceApi, notificationManager)
+        NotificationRepository(safeRepository, credentialsRepository, preferencesManager, notificationServiceApi, notificationManager)
 
     @Provides
     @Singleton
     fun providesNotificationManager(
         @ApplicationContext context: Context,
         preferencesManager: PreferencesManager,
-        balanceFormatter: BalanceFormatter
-    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter)
+        balanceFormatter: BalanceFormatter,
+        safeRepository: SafeRepository
+    ): NotificationManager = NotificationManager(context, preferencesManager, balanceFormatter, safeRepository)
 
     @Provides
     @Singleton
@@ -227,10 +218,19 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEncryptionManager(
-        application: Application,
         preferencesManager: PreferencesManager,
         keyStorage: KeyStorage
-    ): EncryptionManager =
+    ): HeimdallEncryptionManager =
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        HeimdallEncryptionManager(preferencesManager, keyStorage, 4096)
+
+    //TODO: remove
+    @Provides
+    @Singleton
+    fun providesAesEncryptionManager(
+        preferencesManager: PreferencesManager,
+        keyStorage: KeyStorage
+    ): AesEncryptionManager =
         // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
         AesEncryptionManager(application, preferencesManager, keyStorage, 4096)
 
@@ -256,11 +256,20 @@ class ApplicationModule(private val application: Application) {
         resources.updateConfiguration(config, resources.getDisplayMetrics())
     }
 
+    //TODO: remove
     @Provides
     @Singleton
-    fun providesOwnerCredentialsRepository(
-        encryptionManager: EncryptionManager,
+    fun providesOwnerVault(
+        encryptionManager: AesEncryptionManager,
         preferencesManager: PreferencesManager
     ): OwnerCredentialsRepository = OwnerCredentialsVault(encryptionManager, preferencesManager)
 
+    @Provides
+    @Singleton
+    fun providesCredentialsRepository(
+        ownerDao: OwnerDao,
+        encryptionManager: HeimdallEncryptionManager,
+        ownerVault: OwnerCredentialsRepository
+    ): CredentialsRepository =
+        CredentialsRepository(ownerDao, encryptionManager, ownerVault)
 }

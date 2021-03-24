@@ -1,14 +1,18 @@
 package io.gnosis.data.models
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
+@JsonClass(generateAdapter = true)
 data class SafeInfo(
-    val address: Solidity.Address,
-    val nonce: BigInteger,
-    val threshold: Int,
-    val owners: List<Solidity.Address>,
-    val masterCopy: Solidity.Address,
-    val modules: List<Solidity.Address>,
-    val fallbackHandler: Solidity.Address?
+    @Json(name = "address") val address: AddressInfoExtended,
+    @Json(name = "nonce") val nonce: BigInteger,
+    @Json(name = "threshold") val threshold: Int,
+    @Json(name = "owners") val owners: List<AddressInfoExtended>,
+    @Json(name = "implementation") val implementation: AddressInfoExtended,
+    @Json(name = "modules") val modules: List<AddressInfoExtended>,
+    @Json(name = "fallbackHandler") val fallbackHandler: AddressInfoExtended?,
+    @Json(name = "version") val version: String
 )

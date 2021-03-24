@@ -45,6 +45,8 @@ class SettingsHandler @Inject constructor(
         }
     }
 
+    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies()
+
     var userDefaultFiat: String
         get() = preferencesManager.prefs.getString(KEY_USER_DEFAULT_FIAT, "USD") ?: "USD"
         set(value) {
@@ -77,7 +79,23 @@ class SettingsHandler @Inject constructor(
             }
         }
 
-    suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies().sorted()
+    var usePasscode: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_USE_PASSCODE, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_USE_PASSCODE, value)
+            }
+        }
+
+    var showPasscodeBanner: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_SHOW_PASSCODE_BANNER, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_SHOW_PASSCODE_BANNER, value)
+            }
+        }
+
+
 
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
@@ -86,5 +104,7 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
         internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
         internal const val KEY_APP_START_COUNT = "prefs.integer.app_start_count"
+        internal const val KEY_USE_PASSCODE = "prefs.boolean.use_passcode"
+        internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
     }
 }

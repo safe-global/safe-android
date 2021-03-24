@@ -39,7 +39,12 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            nonceItem.value = nonce
+            if (nonce.isBlank()) {
+                nonceItem.visible(false)
+                nonceSeparator.visible(false)
+            } else {
+                nonceItem.value = nonce
+            }
             operationItem.value = operation
             if (hash.isNullOrBlank()) {
                 hashItem.visible(false)

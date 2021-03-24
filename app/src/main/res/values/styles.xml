@@ -37,6 +37,13 @@
 
     <style name="RejectButton" parent="PrimaryButton">
         <item name="android:background">@drawable/button_reject</item>
+        <item name="android:textColor">@color/white_two</item>
+    </style>
+
+    <style name="ConfirmButton" parent="PrimaryButton">
+        <item name="android:background">@drawable/button_confirm</item>
+        <item name="android:textColor">@color/white_two</item>
+
     </style>
 
     <style name="TextButton">
@@ -147,7 +154,7 @@
         <item name="android:paddingEnd">@dimen/default_margin</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textColor">@color/text_emphasis_low</item>
+        <item name="android:textColor">@color/text_emphasis_medium</item>
     </style>
 
     <style name="SafeOverviewToolbar">

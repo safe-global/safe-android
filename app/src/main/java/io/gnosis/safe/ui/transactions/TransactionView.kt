@@ -85,6 +85,7 @@ sealed class TransactionView(
         val alpha: Float,
         val nonce: String,
         val methodName: String?,
+        val actionCount: Int?,
         val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
@@ -100,6 +101,7 @@ sealed class TransactionView(
         @DrawableRes val confirmationsIcon: Int,
         val nonce: String,
         val methodName: String?,
+        val actionCount: Int?,
         val addressInfo: AddressInfoData
     ) : TransactionView(status, id)
 
@@ -118,8 +120,11 @@ sealed class TransactionView(
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val creator: String,
+        val creatorInfo: AddressInfoData.Remote,
         val implementation: String?,
+        val implementationInfo: AddressInfoData.Remote,
         val factory: String?,
+        val factoryInfo: AddressInfoData.Remote,
         val transactionHash: String
     )
 
@@ -160,14 +165,16 @@ sealed class AddressInfoData {
     ) : AddressInfoData()
 
     data class Remote(
-        val name: String,
+        val name: String?,
         val addressLogoUri: String?,
-        val address: String
+        val address: String?,
+        val appInfo: Boolean = false
     ) : AddressInfoData()
 
     object Default : AddressInfoData() {
         @StringRes
         val nameResId: Int = R.string.tx_list_contract_interaction
+
         @DrawableRes
         val logoResId: Int = R.drawable.ic_code_16dp
     }

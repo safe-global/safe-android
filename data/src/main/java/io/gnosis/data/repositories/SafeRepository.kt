@@ -2,7 +2,7 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
-import io.gnosis.data.backend.TransactionServiceApi
+import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -19,7 +19,7 @@ import pm.gnosis.utils.asEthereumAddressString
 class SafeRepository(
     private val safeDao: SafeDao,
     private val preferencesManager: PreferencesManager,
-    private val transactionServiceApi: TransactionServiceApi
+    private val gatewayApi: GatewayApi
 ) {
 
     private val keyFlow = callbackFlow {
@@ -74,7 +74,7 @@ class SafeRepository(
 
     suspend fun getSafeStatus(safeAddress: Solidity.Address): SafeStatus {
 
-        val safeInfo = transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
+        val safeInfo = gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
 
         val supportedContracts = setOf(
             SAFE_IMPLEMENTATION_1_0_0,
@@ -83,16 +83,14 @@ class SafeRepository(
         )
 
         return when {
-            safeInfo != null && safeInfo.masterCopy in supportedContracts -> SafeStatus.VALID
+            safeInfo != null && safeInfo.implementation.value in supportedContracts -> SafeStatus.VALID
             safeInfo != null -> SafeStatus.NOT_SUPPORTED
             else -> SafeStatus.INVALID
         }
     }
 
     suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
-        transactionServiceApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()).let {
-            SafeInfo(it.address, it.nonce, it.threshold, it.owners, it.masterCopy, it.modules, it.fallbackHandler)
-        }
+        gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
 
     companion object {
 

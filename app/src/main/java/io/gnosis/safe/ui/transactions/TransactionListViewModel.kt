@@ -9,6 +9,7 @@ import androidx.paging.map
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -29,7 +30,7 @@ class TransactionListViewModel
 @Inject constructor(
     private val transactionsPager: TransactionPagingProvider,
     private val safeRepository: SafeRepository,
-    private val ownerCredentialsRepository: OwnerCredentialsRepository,
+    private val credentialsRepository: CredentialsRepository,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionsViewState>(appDispatchers) {
@@ -49,7 +50,7 @@ class TransactionListViewModel
             val activeSafe = safeRepository.getActiveSafe()
             val safes = safeRepository.getSafes()
             if (activeSafe != null) {
-                val owner = ownerCredentialsRepository.retrieveCredentials()?.address
+                val owner = if (credentialsRepository.ownerCount() > 0) credentialsRepository.owners()[0].address else null
                 getTransactions(activeSafe.address, safes, owner, type).collectLatest {
                     updateState {
                         TransactionsViewState(
@@ -241,7 +242,7 @@ class TransactionListViewModel
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
 
-        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransaction(
             id = id,
@@ -251,8 +252,9 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             alpha = alpha(txStatus),
             nonce = executionInfo?.nonce?.toString() ?: "",
+            addressInfo = addressInfo,
             methodName = txInfo.methodName,
-            addressInfo = addressInfo
+            actionCount = txInfo.actionCount
         )
     }
 
@@ -267,7 +269,7 @@ class TransactionListViewModel
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
-        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
             id = id,
@@ -281,6 +283,7 @@ class TransactionListViewModel
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
+            actionCount = txInfo.actionCount,
             addressInfo = addressInfo
         )
     }
@@ -328,12 +331,18 @@ class TransactionListViewModel
         )
     }
 
-    private fun resolveKnownAddress(address: Solidity.Address, addressInfo: AddressInfo?, safes: List<Safe>): AddressInfoData {
+    private fun resolveKnownAddress(
+        address: Solidity.Address,
+        addressInfo: AddressInfo?,
+        safeAppInfo: SafeAppInfo?,
+        safes: List<Safe>
+    ): AddressInfoData {
         val localName = safes.find { it.address == address }?.localName
         val addressString = address.asEthereumAddressString()
         return when {
             localName != null -> AddressInfoData.Local(localName, addressString)
-            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString)
+            safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUrl, addressString, true)
+            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString, false)
             else -> AddressInfoData.Default
         }
     }
@@ -351,8 +360,11 @@ class TransactionListViewModel
                 statusColorRes = statusTextColor(txStatus),
                 dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
+                creatorInfo = AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString()),
                 factory = txInfo.factory?.asEthereumAddressString(),
+                factoryInfo = AddressInfoData.Remote(txInfo.factoryInfo?.name, txInfo.factoryInfo?.logoUri, txInfo.factory?.asEthereumAddressString()),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
+                implementationInfo = AddressInfoData.Remote(txInfo.implementationInfo?.name, txInfo.implementationInfo?.logoUri, txInfo.implementation?.asEthereumAddressString()),
                 transactionHash = txInfo.transactionHash
             )
         )
@@ -423,6 +435,7 @@ class TransactionListViewModel
         const val OPACITY_HALF = 0.5F
     }
 }
+
 
 data class TransactionsViewState(
     override var viewAction: BaseStateViewModel.ViewAction?,
