@@ -62,6 +62,15 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
+                is DisablePasscodeViewModel.PasswordWrong -> {
+                    binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
+                    binding.errorMessage.visible(true)
+                    binding.input.setText("")
+                }
+                is DisablePasscodeViewModel.PasswordDisabled -> {
+                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                }
             }
         })
 
@@ -93,20 +102,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                             digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
                         }
                     } else {
-
-                        val success = encryptionManager.unlockWithPassword(text.toString().toByteArray())
-                        if (success) {
-                            settingsHandler.usePasscode = false
-                            tracker.setPasscodeIsSet(false)
-                            tracker.logPasscodeDisabled()
-                            findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
-                        } else {
-                            errorMessage.setText(R.string.settings_passcode_wrong_passcode)
-                            errorMessage.visible(true)
-                            input.setText("")
-                        }
-
+                        viewModel.disablePasscode(text.toString())
                     }
                 }
             }

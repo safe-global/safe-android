@@ -13,6 +13,9 @@ class DisablePasscodeViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
+    private val encryptionManager: HeimdallEncryptionManager,
+    private val settingsHandler: SettingsHandler,
+    private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<DisablePasscodeViewModel.ResetPasscodeState>(appDispatchers) {
 
@@ -33,7 +36,23 @@ class DisablePasscodeViewModel
         }
     }
 
+    fun disablePasscode(passcode: String) {
+        safeLaunch {
+            val success = encryptionManager.unlockWithPassword(passcode.toString().toByteArray())
+            if (success) {
+                settingsHandler.usePasscode = false
+                tracker.setPasscodeIsSet(false)
+                tracker.logPasscodeDisabled()
+                updateState { ResetPasscodeState(PasswordDisabled) }
+            } else {
+                updateState { ResetPasscodeState(PasswordWrong) }
+            }
+        }
+    }
+
     data class ResetPasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : ViewAction
+    object PasswordDisabled : ViewAction
+    object PasswordWrong : ViewAction
 }
