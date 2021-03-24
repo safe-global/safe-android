@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.*
+import io.gnosis.safe.ui.assets.coins.CoinsViewData.Banner
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
@@ -116,9 +117,10 @@ class CoinsViewModelTest {
         coEvery { tokenRepository.loadBalanceOf(any(), any()) } returns CoinBalances(BigDecimal.ZERO, balances)
         coEvery { settingsHandler.userDefaultFiat } returns "USD"
         coEvery { settingsHandler.showOwnerBanner } returns false
+        coEvery { settingsHandler.showPasscodeBanner } returns false
         coEvery { credentialsRepository.ownerCount() } returns 0
 
-        val balancesViewData = viewModel.getBalanceViewData(CoinBalances(BigDecimal.ZERO, balances), false)
+        val balancesViewData = viewModel.getBalanceViewData(CoinBalances(BigDecimal.ZERO, balances), Banner.Type.NONE)
 
         viewModel.load()
 

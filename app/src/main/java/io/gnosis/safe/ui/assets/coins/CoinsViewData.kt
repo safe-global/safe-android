@@ -14,5 +14,13 @@ sealed class CoinsViewData {
         val totalFiat: String
     ) : CoinsViewData()
 
-    object Banner : CoinsViewData()
+    data class Banner(
+        val type: Type
+    ) : CoinsViewData() {
+        enum class Type {
+            IMPORT_OWNER_KEY,
+            PASSCODE,
+            NONE
+        }
+    }
 }
