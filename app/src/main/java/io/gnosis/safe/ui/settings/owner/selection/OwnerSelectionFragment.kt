@@ -38,7 +38,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
     private lateinit var adapter: DerivedOwnerListAdapter
 
-
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }

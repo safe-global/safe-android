@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
@@ -25,9 +26,10 @@ class ConfirmRejectionViewModelTest {
     private val transactionRepository = mockk<TransactionRepository>()
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, tracker, appDispatchers)
+    private val viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 

@@ -23,6 +23,10 @@ class Tracker private constructor(context: Context) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
 
+    fun setPasscodeIsSet(usePasscode: Boolean) {
+        firebaseAnalytics.setUserProperty(Param.PASSCODE_IS_SET, usePasscode.toString())
+    }
+
     fun logScreen(screenId: ScreenId) {
         logEvent(screenId.value, null)
     }
@@ -43,8 +47,16 @@ class Tracker private constructor(context: Context) {
         logEvent(Event.TRANSACTION_REJECTED, null)
     }
 
-    fun logBannerOwnerSkipped() {
-        logEvent(Event.BANNER_OWNER_SKIPPED, null)
+    fun logBannerPasscodeSkip() {
+        logEvent(Event.BANNER_PASSCODE_SKIP, null)
+    }
+
+    fun logBannerPasscodeCreate() {
+        logEvent(Event.BANNER_PASSCODE_CREATE, null)
+    }
+
+    fun logBannerOwnerSkip() {
+        logEvent(Event.BANNER_OWNER_SKIP, null)
     }
 
     fun logBannerOwnerImport() {
@@ -57,6 +69,22 @@ class Tracker private constructor(context: Context) {
 
     fun logOnboardingOwnerImport() {
         logEvent(Event.ONBOARDING_OWNER_IMPORT, null)
+    }
+
+    fun logPasscodeEnabled() {
+        logEvent(Event.PASSCODE_ENABLED, null)
+    }
+
+    fun logPasscodeDisabled() {
+        logEvent(Event.PASSCODE_DISABLED, null)
+    }
+
+    fun logPasscodeReset() {
+        logEvent(Event.PASSCODE_RESET, null)
+    }
+
+    fun logPasscodeSkipped() {
+        logEvent(Event.PASSCODE_SKIPPED, null)
     }
 
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
@@ -86,10 +114,17 @@ class Tracker private constructor(context: Context) {
         val KEY_IMPORTED = "user_key_imported"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
-        val BANNER_OWNER_SKIPPED = "user_banner_owner_skip"
+        val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
+        val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
+        val BANNER_OWNER_SKIP = "user_banner_owner_skip"
         val BANNER_OWNER_IMPORT = "user_banner_owner_import"
         val ONBOARDING_OWNER_SKIPPED = "user_onboarding_owner_skip"
         val ONBOARDING_OWNER_IMPORT = "user_onboarding_owner_import"
+        val PASSCODE_ENABLED = "user_passcode_enabled"
+        val PASSCODE_DISABLED = "user_passcode_disabled"
+        val PASSCODE_RESET = "user_passcode_reset"
+        val PASSCODE_SKIPPED = "user_passcode_skipped"
+
     }
 
     object Param {
@@ -97,6 +132,7 @@ class Tracker private constructor(context: Context) {
         val PUSH_INFO = "push_info"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
         val KEY_IMPORT_TYPE = "import_type"
+        val PASSCODE_IS_SET = "passcode_is_set"
     }
 
     object ParamValues {
@@ -155,5 +191,11 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_EDIT_NAME("screen_settings_safe_edit_name"),
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
-    OWNER_SELECT_ACCOUNT("screen_owner_select_account")
+    OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
+    PASSCODE_CREATE("screen_passcode_create"),
+    PASSCODE_CREATE_REPEAT("screen_passcode_create_repeat"),
+    PASSCODE_CHANGE("screen_passcode_change"),
+    PASSCODE_CHANGE_CREATE("screen_passcode_change_create"),
+    PASSCODE_CHANGE_REPEAT("screen_passcode_change_repeat"),
+    PASSCODE_ENTER("screen_passcode_enter")
 }

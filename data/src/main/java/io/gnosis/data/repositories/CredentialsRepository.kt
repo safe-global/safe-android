@@ -28,6 +28,10 @@ class CredentialsRepository(
         }
     }
 
+    fun credentialsUnlocked(): Boolean {
+        return encryptionManager.unlocked()
+    }
+
     suspend fun ownerCount(): Int {
         return ownerDao.ownerCount()
     }

@@ -117,6 +117,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             ownersContainer.removeAllViews()
             safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner.value, localOwners)) }
             masterCopy.setAddress(safeInfo?.implementation?.value, safeInfo?.version)
+            masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUrl, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }

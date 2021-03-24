@@ -30,6 +30,10 @@ class MasterCopyItem @JvmOverloads constructor(
     private val binding by lazy { ViewMastercopyItemBinding.inflate(LayoutInflater.from(context), this) }
 
 
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address?) {
+        binding.blockies.loadKnownAddressLogo(addressUri, address)
+    }
+
     fun setAddress(value: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean = true) {
         with(binding) {
             blockies.setAddress(value)
