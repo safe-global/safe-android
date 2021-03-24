@@ -51,7 +51,7 @@ class CoinsViewModel
 
                 val banner = when {
                     settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.IMPORT_OWNER_KEY
-                    settingsHandler.showPasscodeBanner -> Banner.Type.PASSCODE
+                    settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE
                     else -> Banner.Type.NONE
                 }
                 val balances = getBalanceViewData(balanceInfo, banner)
