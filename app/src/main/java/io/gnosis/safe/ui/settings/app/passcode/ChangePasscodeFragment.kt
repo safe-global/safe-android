@@ -82,7 +82,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                findNavController().popBackStack(R.id.changePasscodeFragment, true)
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)

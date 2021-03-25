@@ -75,7 +75,7 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
 
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.changePasscodeFragment, true)
+                findNavController().popBackStack(R.id.changeCreatePasscodeFragment, true)
             }
 
             status.visibility = View.INVISIBLE

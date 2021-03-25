@@ -89,12 +89,8 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
     }
 
     private fun FragmentPasscodeBinding.skipPasscodeSetup() {
-        input.hideSoftKeyboard()
 
-        tracker.setPasscodeIsSet(false)
-        tracker.logPasscodeSkipped()
-
-        findNavController().popBackStack(R.id.createPasscodeFragment, true)
+        findNavController().popBackStack(R.id.changePasscodeFragment, true)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
