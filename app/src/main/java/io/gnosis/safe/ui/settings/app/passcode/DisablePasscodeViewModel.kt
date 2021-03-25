@@ -38,7 +38,7 @@ class DisablePasscodeViewModel
 
     fun disablePasscode(passcode: String) {
         safeLaunch {
-            val success = encryptionManager.unlockWithPassword(passcode.toString().toByteArray())
+            val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
                 settingsHandler.usePasscode = false
                 tracker.setPasscodeIsSet(false)

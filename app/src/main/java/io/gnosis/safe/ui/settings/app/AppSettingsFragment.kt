@@ -128,6 +128,11 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadSigningOwner()
+    }
+
     private fun onOwnerRemove() {
         viewModel.removeSigningOwner()
         binding.ownerKey.showNext()

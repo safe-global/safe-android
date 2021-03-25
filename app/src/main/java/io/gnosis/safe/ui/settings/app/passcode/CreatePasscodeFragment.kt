@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
@@ -47,11 +48,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
         with(binding) {
 
-            if (ownerImported) {
-                status.visibility = View.VISIBLE
-            } else {
-                status.visibility = View.INVISIBLE
-            }
+            status.visible(ownerImported, View.INVISIBLE)
 
             backButton.setOnClickListener {
                 skipPasscodeSetup()
