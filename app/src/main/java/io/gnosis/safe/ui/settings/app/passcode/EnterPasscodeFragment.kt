@@ -73,7 +73,9 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
                 text?.let {
                     if (input.text.length < 6) {
-                        errorMessage.visible(false)
+
+                        errorMessage.visible(input.text.isEmpty())
+
                         digits.forEach {
                             it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                         }
@@ -85,7 +87,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                         }
                     } else {
 
-                        if(!encryptionManager.unlockWithPassword(text.toString().toByteArray())) {
+                        if (!encryptionManager.unlockWithPassword(text.toString().toByteArray())) {
                             errorMessage.visible(true)
                             input.setText("")
                             digits.forEach {

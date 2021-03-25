@@ -126,7 +126,7 @@ class TransactionDetailsViewModel
         }
     }
 
-    fun startConfirmationFlow(transaction: TransactionDetails) {
+    fun startConfirmationFlow() {
         safeLaunch {
             if (settingsHandler.usePasscode) {
                 confirmationInProgress = true
@@ -137,10 +137,8 @@ class TransactionDetailsViewModel
                         )
                     )
                 }
-                updateState { TransactionDetailsViewState(ViewAction.None) }
-
             } else {
-                submitConfirmation(transaction)
+                updateState { TransactionDetailsViewState(ConfirmConfirmation) }
             }
         }
     }
@@ -221,6 +219,8 @@ data class ConfirmationSubmitted(
     var rejectable: Boolean,
     var safeOwner: Boolean
 ) : BaseStateViewModel.ViewAction
+
+object ConfirmConfirmation: BaseStateViewModel.ViewAction
 
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
 class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)

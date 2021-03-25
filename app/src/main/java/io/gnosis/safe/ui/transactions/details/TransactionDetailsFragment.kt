@@ -76,6 +76,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
                     }
                 }
+                is ConfirmConfirmation -> {
+                    showConfirmDialog(
+                        requireContext(),
+                        message = R.string.confirm_transaction_dialog_message,
+                        confirm = R.string.confirm,
+                        confirmColor = R.color.primary
+                    ) {
+                        binding.txConfirmButton.isEnabled = false
+                        viewModel.submitConfirmation(viewModel.txDetails!!)
+                    }
+
+                }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
                         updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
@@ -158,15 +170,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
                 binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
-                    showConfirmDialog(
-                        requireContext(),
-                        message = R.string.confirm_transaction_dialog_message,
-                        confirm = R.string.confirm,
-                        confirmColor = R.color.primary
-                    ) {
-                        binding.txConfirmButton.isEnabled = false
-                        viewModel.submitConfirmation(viewModel.txDetails!!)
-                    }
+                    viewModel.startConfirmationFlow()
                 }
                 binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
                 binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()
