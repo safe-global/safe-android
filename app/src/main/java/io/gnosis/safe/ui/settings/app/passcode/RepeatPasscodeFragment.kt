@@ -28,6 +28,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     private val passcodeArg by lazy { navArgs.passcode }
     private val ownerImported by lazy { navArgs.ownerImported }
 
+    //FIXME: implementation details should not be exposed to ui
     @Inject
     lateinit var encryptionManager: HeimdallEncryptionManager
 
@@ -82,8 +83,10 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     } else {
                         if (passcodeArg == text.toString()) {
 
+                            //TODO: move this to a view model
                             encryptionManager.removePassword()
                             val success = encryptionManager.setupPassword(text.toString().toByteArray())
+                            encryptionManager.lock()
 
                             input.hideSoftKeyboard()
 
