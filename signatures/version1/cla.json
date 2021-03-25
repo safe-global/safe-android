@@ -1,3 +1,20 @@
 {
-  "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "JohnnyJumper",
+      "id": 16522024,
+      "comment_id": 806430310,
+      "created_at": "2021-03-25T07:32:11Z",
+      "repoId": 96440096,
+      "pullRequestNo": 1195
+    },
+    {
+      "name": "JohnnyJumper",
+      "id": 16522024,
+      "comment_id": 806431117,
+      "created_at": "2021-03-25T07:32:52Z",
+      "repoId": 96440096,
+      "pullRequestNo": 1195
+    }
+  ]
 }
