@@ -22,8 +22,6 @@ class ChangePasscodeViewModel
 
     override fun initialState(): ChangePasscodeState = ChangePasscodeState(viewAction = null)
 
-//    private var oldPasscode : String? = null
-
     fun removeOwner() {
         safeLaunch {
             credentialsRepository.owners().forEach {

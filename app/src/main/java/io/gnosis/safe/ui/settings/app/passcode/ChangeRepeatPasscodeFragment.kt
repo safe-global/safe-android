@@ -103,8 +103,13 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                         }
                     } else {
                         digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
+                        if (text.toString() == passcodeArg) {
+                            viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
+                        } else {
+                            errorMessage.visible(true)
+                            input.setText("")
+                            digits.forEach { it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01) }
+                        }
                     }
                 }
             }
