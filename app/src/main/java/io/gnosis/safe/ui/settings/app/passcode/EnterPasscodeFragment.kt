@@ -15,7 +15,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
@@ -28,7 +27,6 @@ import javax.inject.Inject
 class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.PASSCODE_ENTER
-    private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -56,9 +54,8 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         viewModel.state.observe(viewLifecycleOwner, Observer {
                when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
-                    encryptionManager.removePassword()
-                    settingsHandler.usePasscode = false
-
+                    findNavController().navigateUp()
+                    snackbar(requireView(), R.string.passcode_disabled)
                 }
                 is PasscodeViewModel.OwnerRemovalFailed -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
@@ -68,10 +65,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
-                }
-                is PasscodeViewModel.PasswordDisabled -> {
-                    findNavController().navigateUp()
-                    snackbar(requireView(), R.string.passcode_disabled)
                 }
             }
         })
