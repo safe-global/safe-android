@@ -9,7 +9,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import javax.inject.Inject
 
-class DisablePasscodeViewModel
+class PasscodeViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
@@ -17,7 +17,7 @@ class DisablePasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<DisablePasscodeViewModel.ResetPasscodeState>(appDispatchers) {
+) : BaseStateViewModel<PasscodeViewModel.ResetPasscodeState>(appDispatchers) {
 
     override fun initialState(): ResetPasscodeState = ResetPasscodeState(viewAction = null)
 

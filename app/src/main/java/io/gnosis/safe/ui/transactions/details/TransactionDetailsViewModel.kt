@@ -12,6 +12,7 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.isCompleted
@@ -25,9 +26,12 @@ class TransactionDetailsViewModel
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
+
+    private var confirmationInProgress = false
 
     override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
@@ -51,7 +55,16 @@ class TransactionDetailsViewModel
             }
 
             updateState { TransactionDetailsViewState(ViewAction.Loading(false)) }
-            updateState { TransactionDetailsViewState(UpdateDetails(txDetails?.toTransactionDetailsViewData(safes), awaitingConfirm, rejectable, safeOwner)) }
+            updateState {
+                TransactionDetailsViewState(
+                    UpdateDetails(
+                        txDetails?.toTransactionDetailsViewData(safes),
+                        awaitingConfirm,
+                        rejectable,
+                        safeOwner
+                    )
+                )
+            }
         }
     }
 
@@ -96,6 +109,42 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
+    fun flowInProgress(): Boolean {
+        return confirmationInProgress
+    }
+
+    fun resumeFlow() {
+        safeLaunch {
+            if (confirmationInProgress) {
+
+                if (credentialsRepository.credentialsUnlocked()) {
+                    submitConfirmation(txDetails!!)
+                }
+
+                confirmationInProgress = false
+            }
+        }
+    }
+
+    fun startConfirmationFlow(transaction: TransactionDetails) {
+        safeLaunch {
+            if (settingsHandler.usePasscode) {
+                confirmationInProgress = true
+                updateState {
+                    TransactionDetailsViewState(
+                        ViewAction.NavigateTo(
+                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToEnterPasscodeFragment()
+                        )
+                    )
+                }
+                updateState { TransactionDetailsViewState(ViewAction.None) }
+
+            } else {
+                submitConfirmation(transaction)
+            }
+        }
+    }
+
     fun submitConfirmation(transaction: TransactionDetails) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
@@ -126,7 +175,16 @@ class TransactionDetailsViewModel
                     safeOwner = isOwner(executionInfo, owners)
                 }
 
-                updateState { TransactionDetailsViewState(ConfirmationSubmitted(it.toTransactionDetailsViewData(safes), awaitingConfirm, rejectable, safeOwner)) }
+                updateState {
+                    TransactionDetailsViewState(
+                        ConfirmationSubmitted(
+                            it.toTransactionDetailsViewData(safes),
+                            awaitingConfirm,
+                            rejectable,
+                            safeOwner
+                        )
+                    )
+                }
             }.onFailure {
                 throw TxConfirmationFailed(it.cause ?: it)
             }
@@ -169,4 +227,5 @@ class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)
 object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()
 object MissingCorrectExecutionDetailsException : Throwable()
+object WrongPasscode : Throwable()
 

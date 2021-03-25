@@ -18,8 +18,8 @@ import io.gnosis.safe.databinding.*
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
@@ -85,6 +85,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 is Loading -> {
                     showLoading(viewAction.isLoading)
                 }
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
+                }
                 is ShowError -> {
                     showLoading(false)
                     binding.txConfirmButton.isEnabled = true
@@ -114,7 +117,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadDetails(txId)
+        if(viewModel.flowInProgress()) {
+            viewModel.resumeFlow()
+        } else {
+            viewModel.loadDetails(txId)
+        }
     }
 
     private lateinit var contentBinding: ViewBinding

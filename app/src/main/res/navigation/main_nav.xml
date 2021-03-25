@@ -176,6 +176,14 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/enterPasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.EnterPasscodeFragment"
+        android:label="EnterPasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -312,6 +320,11 @@
         <action
             android:id="@+id/action_transactionDetailsFragment_to_confirmRejectionFragment"
             app:destination="@id/confirmRejectionFragment"
+            app:popUpTo="@id/transactionDetailsFragment" />
+
+        <action
+            android:id="@+id/action_transactionDetailsFragment_to_enterPasscodeFragment"
+            app:destination="@id/enterPasscodeFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
         <argument

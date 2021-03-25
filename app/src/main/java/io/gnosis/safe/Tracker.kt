@@ -190,5 +190,6 @@ enum class ScreenId(val value: String) {
     SCANNER("screen_camera"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
     CREATE_PASSCODE("screen_passcode_create"),
-    REPEAT_PASSCODE("screen_passcode_create_repeat")
+    REPEAT_PASSCODE("screen_passcode_create_repeat"),
+    PASSCODE_ENTER("screen_passcode_enter")
 }
