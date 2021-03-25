@@ -100,7 +100,7 @@ dependencies {
     api "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
     api "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
 
-    implementation 'com.unstoppabledomains:resolution:1.12.1'
+    api "com.unstoppabledomains:resolution:$versions.unstoppabledomains"
 
     implementation "com.squareup.moshi:moshi:$versions.moshi"
     implementation "com.squareup.moshi:moshi-adapters:$versions.moshi"

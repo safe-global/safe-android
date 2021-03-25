@@ -51,14 +51,12 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun providesDomainResolutionLibrary(): DomainResolution {
-        //        BuildConfig.BLOCKCHAIN_NET_URL + BuildConfig.INFURA_API_KEY
         val firstWord = BuildConfig.BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first();
         val network = Network.valueOf(firstWord.toUpperCase());
         return Resolution.builder()
                 .chainId(NamingServiceType.CNS, network)
                 .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
                 .build()
-
     }
 
     @Provides
