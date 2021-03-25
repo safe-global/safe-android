@@ -120,6 +120,10 @@
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
 
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
+
         <argument
             android:name="privateKey"
             app:argType="string"
@@ -128,9 +132,50 @@
         <argument
             android:name="seedPhrase"
             app:argType="string"
-            app:nullable="true"/>
+            app:nullable="true" />
+
 
     </fragment>
+
+    <fragment
+        android:id="@+id/createPasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.CreatePasscodeFragment"
+        android:label="CreatePasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+        <action
+            android:id="@+id/action_createPasscodeFragment_to_repeatPasscodeFragment"
+            app:destination="@id/repeatPasscodeFragment" />
+
+        <argument
+            android:name="ownerImported"
+            app:argType="boolean" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/repeatPasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.RepeatPasscodeFragment"
+        android:label="RepeatPasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+        <argument
+            android:name="passcode"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerImported"
+            app:argType="boolean" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/disablePasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.DisablePasscodeFragment"
+        android:label="DisablePasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -200,7 +245,16 @@
         android:id="@+id/passcodeSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment"
         android:label="Passcode"
-        tools:layout="@layout/fragment_settings_app_passcode" />
+        tools:layout="@layout/fragment_settings_app_passcode">
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_disablePasscodeFragment"
+            app:destination="@id/disablePasscodeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nightModeAppSettingsFragment"
@@ -270,7 +324,7 @@
         android:id="@+id/confirmRejectionFragment"
         android:name="io.gnosis.safe.ui.transactions.details.ConfirmRejectionFragment"
         android:label="ConfirmRejectionFragment"
-        tools:layout="@layout/fragment_confirm_rejection" >
+        tools:layout="@layout/fragment_confirm_rejection">
 
         <action
             android:id="@+id/action_confirmRejectionFragment_to_transactionsFragment"
