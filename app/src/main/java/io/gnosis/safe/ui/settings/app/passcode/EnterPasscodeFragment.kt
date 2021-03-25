@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.security.HeimdallEncryptionManager
@@ -19,6 +20,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -51,6 +53,28 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+               when (val viewAction = it.viewAction) {
+                is PasscodeViewModel.AllOwnersRemoved -> {
+                    encryptionManager.removePassword()
+                    settingsHandler.usePasscode = false
+
+                }
+                is PasscodeViewModel.OwnerRemovalFailed -> {
+                    binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
+                    binding.errorMessage.visible(true)
+                }
+                is PasscodeViewModel.PasswordWrong -> {
+                    binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
+                    binding.errorMessage.visible(true)
+                    binding.input.setText("")
+                }
+                is PasscodeViewModel.PasswordDisabled -> {
+                    findNavController().navigateUp()
+                    snackbar(requireView(), R.string.passcode_disabled)
+                }
+            }
+        })
 
         with(binding) {
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
@@ -114,7 +138,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     confirm = R.string.settings_passcode_disable_passcode,
                     confirmColor = R.color.error
                 ) {
-                    viewModel.removeOwner()
+                    viewModel.onForgotPasscode()
                 }
             }
         }

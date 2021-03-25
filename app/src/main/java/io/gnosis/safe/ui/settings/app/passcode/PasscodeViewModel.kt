@@ -50,6 +50,25 @@ class PasscodeViewModel
         }
     }
 
+    fun onForgotPasscode() {
+        safeLaunch {
+
+            encryptionManager.removePassword()
+            settingsHandler.usePasscode = false
+
+            credentialsRepository.owners().forEach {
+                credentialsRepository.removeOwner(it)
+            }
+            // Make sure all owners are deleted at this point
+            if (credentialsRepository.ownerCount() == 0) {
+                updateState { ResetPasscodeState(AllOwnersRemoved) }
+            } else {
+                updateState { ResetPasscodeState(OwnerRemovalFailed) }
+            }
+            notificationRepository.unregisterOwner()
+        }
+    }
+
     data class ResetPasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : ViewAction
