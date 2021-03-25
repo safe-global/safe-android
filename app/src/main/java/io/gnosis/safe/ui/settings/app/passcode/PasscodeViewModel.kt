@@ -54,6 +54,7 @@ class PasscodeViewModel
         safeLaunch {
 
             encryptionManager.removePassword()
+            encryptionManager.lock()
             settingsHandler.usePasscode = false
 
             credentialsRepository.owners().forEach {

@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -54,8 +53,8 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         viewModel.state.observe(viewLifecycleOwner, Observer {
                when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
-                    findNavController().navigateUp()
                     snackbar(requireView(), R.string.passcode_disabled)
+                    findNavController().navigateUp()
                 }
                 is PasscodeViewModel.OwnerRemovalFailed -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
