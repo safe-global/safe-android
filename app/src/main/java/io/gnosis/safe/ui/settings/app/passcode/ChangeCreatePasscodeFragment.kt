@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -21,15 +20,11 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.CREATE_REPEAT_PASSCODE
-    private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
-    private val passcodeArg by lazy { navArgs.passcode }
-    private val ownerImported by lazy { navArgs.ownerImported }
-
-    @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
+    override fun screenId() = ScreenId.CHANGE_CREATE_PASSCODE
+    private val navArgs by navArgs<ChangeCreatePasscodeFragmentArgs>()
+    private val oldPasscode by lazy { navArgs.oldPasscode }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -50,13 +45,12 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
-
-            backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.repeatPasscodeFragment, true)
-            }
 
             status.visibility = View.INVISIBLE
+
+            backButton.setOnClickListener {
+                skipPasscodeSetup()
+            }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
@@ -67,74 +61,41 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             input.doOnTextChanged { text, _, _, _ ->
-
                 text?.let {
                     if (input.text.length < 6) {
                         digits.forEach {
                             it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                         }
                         (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_circle_passcode_filled_20dp
-                            )
+                            digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
                         }
                     } else {
                         digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
 
-                        if (passcodeArg == text.toString()) {
-
-                            encryptionManager.removePassword()
-                            val success = encryptionManager.setupPassword(text.toString().toByteArray())
-
-                            input.hideSoftKeyboard()
-
-                            if (ownerImported) {
-                                findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                            } else {
-                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                            }
-
-                            settingsHandler.usePasscode = success
-                            tracker.setPasscodeIsSet(success)
-                            tracker.logPasscodeEnabled()
-
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, success)
-
-                        } else {
-                            errorMessage.visible(true)
-                            input.setText("")
-                            digits.forEach {
-                                it.background =
-                                    ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                            }
-                        }
+                        input.setText("") // So it is empty, when the user navigates back
+                        findNavController().navigate(
+                            ChangeCreatePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeRepeatPasscodeFragment(
+                                passcode = text.toString(),
+                                oldPasscode = oldPasscode
+                            )
+                        )
                     }
                 }
             }
 
             // Skip Button
-            actionButton.setOnClickListener {
-                skipPasscodeSetup()
-            }
+            actionButton.visible(false)
         }
     }
 
     private fun FragmentPasscodeBinding.skipPasscodeSetup() {
         input.hideSoftKeyboard()
 
-        settingsHandler.usePasscode = false
         tracker.setPasscodeIsSet(false)
         tracker.logPasscodeSkipped()
 
-        if (ownerImported) {
-            findNavController().popBackStack(R.id.ownerInfoFragment, true)
-        } else {
-            findNavController().popBackStack(R.id.createPasscodeFragment, true)
-        }
+        findNavController().popBackStack(R.id.createPasscodeFragment, true)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
 }
-

@@ -22,12 +22,12 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
+    override fun screenId() = ScreenId.CHANGE_PASSCODE
 
     @Inject
-    lateinit var viewModel: DisablePasscodeViewModel
+    lateinit var viewModel: ChangePasscodeViewModel
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -51,31 +51,32 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is DisablePasscodeViewModel.AllOwnersRemoved -> {
+                is ChangePasscodeViewModel.AllOwnersRemoved -> {
                     encryptionManager.removePassword()
                     settingsHandler.usePasscode = false
 
                     findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
-                is DisablePasscodeViewModel.OwnerRemovalFailed -> {
+                is ChangePasscodeViewModel.OwnerRemovalFailed -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is DisablePasscodeViewModel.PasswordWrong -> {
+                is ChangePasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is DisablePasscodeViewModel.PasswordDisabled -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                is ChangePasscodeViewModel.PasscodeVerified -> {
+                    findNavController().navigate(
+                        ChangePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
+                    )
                 }
             }
         })
 
         with(binding) {
-            title.setText(R.string.settings_passcode_enter_passcode)
+            title.setText(R.string.settings_passcode_change_passcode)
 
             status.visibility = View.INVISIBLE
 
@@ -85,7 +86,6 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
-            input.showKeyboardForView()
 
             //Disable done button
             input.setOnEditorActionListener { _, actionId, _ ->
@@ -103,8 +103,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                         }
                     } else {
                         digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        viewModel.disablePasscode(text.toString())
+                        viewModel.verifyPasscode(text.toString())
                     }
                 }
             }
@@ -128,4 +127,3 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         }
     }
 }
-

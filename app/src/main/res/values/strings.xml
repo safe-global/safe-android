@@ -385,6 +385,7 @@
     <string name="rejection_successfully_submitted">Rejection successfully submitted</string>
     <string name="passcode_created">Passcode created</string>
     <string name="passcode_disabled">Passcode disabled</string>
+    <string name="passcode_changed">Passcode changed</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>

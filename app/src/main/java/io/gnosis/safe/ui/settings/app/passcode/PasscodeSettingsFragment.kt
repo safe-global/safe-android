@@ -52,6 +52,11 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 changePasscode.visible(settingsHandler.usePasscode)
             }
             changePasscode.visible(settingsHandler.usePasscode)
+            changePasscode.setOnClickListener {
+                findNavController().navigate(
+                    PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToChangePasscodeFragment()
+                )
+            }
         }
     }
 

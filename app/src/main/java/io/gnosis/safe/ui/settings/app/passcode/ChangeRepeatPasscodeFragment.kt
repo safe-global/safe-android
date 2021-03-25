@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -17,23 +18,27 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
-class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
+    override fun screenId() = ScreenId.CHANGE_REPEAT_PASSCODE
+
+    private val navArgs by navArgs<ChangeRepeatPasscodeFragmentArgs>()
+    private val passcodeArg by lazy { navArgs.passcode }
+    private val oldPasscode by lazy { navArgs.oldPasscode }
 
     @Inject
-    lateinit var viewModel: DisablePasscodeViewModel
-
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
+    lateinit var viewModel: ChangePasscodeViewModel
 
     @Inject
     lateinit var encryptionManager: HeimdallEncryptionManager
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -49,40 +54,31 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is DisablePasscodeViewModel.AllOwnersRemoved -> {
-                    encryptionManager.removePassword()
-                    settingsHandler.usePasscode = false
-
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
-                }
-                is DisablePasscodeViewModel.OwnerRemovalFailed -> {
-                    binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
-                    binding.errorMessage.visible(true)
-                }
-                is DisablePasscodeViewModel.PasswordWrong -> {
+                is ChangePasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is DisablePasscodeViewModel.PasswordDisabled -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                is ChangePasscodeViewModel.PasscodeChanged -> {
+
+                    Timber.i("---> Passcode changed. Going back")
+                    findNavController().popBackStack(R.id.changePasscodeFragment, true)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_CHANGED_RESULT, true)
                 }
             }
         })
 
         with(binding) {
-            title.setText(R.string.settings_passcode_enter_passcode)
+            createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
+
+            backButton.setOnClickListener {
+                findNavController().popBackStack(R.id.changePasscodeFragment, true)
+            }
 
             status.visibility = View.INVISIBLE
-
-            createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
-            backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-            }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
@@ -93,39 +89,24 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             input.doOnTextChanged { text, _, _, _ ->
+
                 text?.let {
                     if (input.text.length < 6) {
                         digits.forEach {
                             it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                         }
                         (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
+                            digits[i - 1].background = ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_circle_passcode_filled_20dp
+                            )
                         }
                     } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        viewModel.disablePasscode(text.toString())
+                        viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
                     }
                 }
             }
-
-            helpText.visible(false)
-
-            actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
-            actionButton.setOnClickListener {
-                input.hideSoftKeyboard()
-                binding.errorMessage.visibility = View.INVISIBLE
-
-                showConfirmDialog(
-                    requireContext(),
-                    message = R.string.settings_passcode_confirm_disable_passcode,
-                    confirm = R.string.settings_passcode_disable_passcode,
-                    confirmColor = R.color.error
-                ) {
-                    viewModel.removeOwner()
-                }
-            }
+            actionButton.visible(false)
         }
     }
 }
-

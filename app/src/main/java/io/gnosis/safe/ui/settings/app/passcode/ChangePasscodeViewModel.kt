@@ -9,7 +9,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import javax.inject.Inject
 
-class DisablePasscodeViewModel
+
+class ChangePasscodeViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
@@ -17,9 +18,11 @@ class DisablePasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<DisablePasscodeViewModel.ResetPasscodeState>(appDispatchers) {
+) : BaseStateViewModel<ChangePasscodeViewModel.ChangePasscodeState>(appDispatchers) {
 
-    override fun initialState(): ResetPasscodeState = ResetPasscodeState(viewAction = null)
+    override fun initialState(): ChangePasscodeState = ChangePasscodeState(viewAction = null)
+
+//    private var oldPasscode : String? = null
 
     fun removeOwner() {
         safeLaunch {
@@ -28,32 +31,42 @@ class DisablePasscodeViewModel
             }
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
-                updateState { ResetPasscodeState(AllOwnersRemoved) }
+                updateState { ChangePasscodeState(AllOwnersRemoved) }
             } else {
-                updateState { ResetPasscodeState(OwnerRemovalFailed) }
+                updateState { ChangePasscodeState(OwnerRemovalFailed) }
             }
             notificationRepository.unregisterOwner()
         }
     }
 
-    fun disablePasscode(passcode: String) {
+    fun verifyPasscode(passcode: String) {
         safeLaunch {
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
-                settingsHandler.usePasscode = false
-                tracker.setPasscodeIsSet(false)
-                tracker.logPasscodeDisabled()
-                updateState { ResetPasscodeState(PasswordDisabled) }
+                updateState { ChangePasscodeState(PasscodeVerified) }
             } else {
-                updateState { ResetPasscodeState(PasswordWrong) }
+                updateState { ChangePasscodeState(PasscodeWrong) }
             }
         }
     }
 
-    data class ResetPasscodeState(override var viewAction: ViewAction?) : State
+    fun disableAndSetNewPasscode(newPasscode: String, oldPasscode: String) {
+        safeLaunch {
+            val success = encryptionManager.setupPassword(newPasscode = newPasscode.toByteArray(), oldPasscode = oldPasscode.toByteArray())
+
+            if (success) {
+                tracker.setPasscodeIsSet(true)
+                updateState { ChangePasscodeState(PasscodeChanged) }
+            } else {
+                updateState { ChangePasscodeState(PasscodeWrong) }
+            }
+        }
+    }
+
+    data class ChangePasscodeState(override var viewAction: ViewAction?) : State
+    object PasscodeChanged : ViewAction
+    object PasscodeVerified : ViewAction
+    object PasscodeWrong : ViewAction
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : ViewAction
-    object PasswordDisabled : ViewAction
-    object PasswordChanged : ViewAction
-    object PasswordWrong : ViewAction
 }
