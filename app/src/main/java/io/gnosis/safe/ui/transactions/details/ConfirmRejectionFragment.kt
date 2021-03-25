@@ -15,6 +15,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
@@ -57,12 +58,18 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
             )
             confirmRejection.setOnClickListener {
                 confirmRejection.isEnabled = false
-                viewModel.submitRejection()
+                viewModel.startRejectionFlow()
             }
         }
         binding.confirmRejection.isEnabled = false
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
+                }
+                is ConfirmRejection -> {
+                    viewModel.submitRejection()
+                }
                 is RejectionSubmitted -> {
                     Navigation.findNavController(view).navigate(
                         ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToTransactionsFragment(
@@ -96,5 +103,16 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
 
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(viewModel.flowInProgress()) {
+            viewModel.resumeFlow()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 }

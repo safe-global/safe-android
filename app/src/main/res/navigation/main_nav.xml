@@ -344,6 +344,11 @@
             app:destination="@id/transactionsFragment"
             app:popUpTo="@id/transactionsFragment" />
 
+        <action
+            android:id="@+id/action_confirmRejectionFragment_to_enterPasscodeFragment"
+            app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/confirmRejectionFragment" />
+
         <argument
             android:name="txId"
             app:argType="string" />
