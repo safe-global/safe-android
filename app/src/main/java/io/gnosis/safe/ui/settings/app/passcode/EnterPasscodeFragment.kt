@@ -54,6 +54,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
         with(binding) {
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
+            helpText.visible(false)
 
             backButton.setOnClickListener {
                 findNavController().navigateUp()

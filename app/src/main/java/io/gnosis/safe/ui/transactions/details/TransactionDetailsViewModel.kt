@@ -117,6 +117,34 @@ class TransactionDetailsViewModel
         safeLaunch {
             if (confirmationInProgress) {
 
+                // update ui without reloading tx details
+
+                val safes = safeRepository.getSafes()
+
+                val executionInfo = txDetails?.detailedExecutionInfo
+
+                val owners = credentialsRepository.owners()
+
+                var awaitingConfirm = false
+                var rejectable = false
+                var safeOwner = false
+                if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
+                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
+                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                    safeOwner = isOwner(executionInfo, owners)
+                }
+
+                updateState {
+                    TransactionDetailsViewState(
+                        UpdateDetails(
+                            txDetails?.toTransactionDetailsViewData(safes),
+                            awaitingConfirm,
+                            rejectable,
+                            safeOwner
+                        )
+                    )
+                }
+
                 if (credentialsRepository.credentialsUnlocked()) {
                     submitConfirmation(txDetails!!)
                 }
@@ -137,6 +165,7 @@ class TransactionDetailsViewModel
                         )
                     )
                 }
+                updateState { TransactionDetailsViewState(ViewAction.None) }
             } else {
                 updateState { TransactionDetailsViewState(ConfirmConfirmation) }
             }
