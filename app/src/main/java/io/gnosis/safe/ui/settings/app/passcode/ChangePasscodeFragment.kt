@@ -55,7 +55,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     encryptionManager.removePassword()
                     settingsHandler.usePasscode = false
 
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                    findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
                 is ChangePasscodeViewModel.OwnerRemovalFailed -> {
