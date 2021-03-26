@@ -74,11 +74,22 @@ class PasscodeViewModel
         }
     }
 
+    fun unlockWithPasscode(passcode: String) {
+        safeLaunch {
+            if (encryptionManager.unlockWithPassword(passcode.toString().toByteArray())) {
+                updateState { PasscodeState(PasscodeCorrect) }
+            } else {
+                updateState { PasscodeState(PasscodeWrong) }
+            }
+        }
+    }
+
     data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : Throwable()
     object PasscodeDisabled : ViewAction
     object PasscodeWrong : ViewAction
+    object PasscodeCorrect : ViewAction
     object PasscodeSetup : ViewAction
     object PasscodeSetupFailed : Throwable()
 }
