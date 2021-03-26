@@ -74,13 +74,13 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     } else {
                         digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
 
-                        input.setText("") // So it is empty, when the user navigates back
                         findNavController().navigate(
                             CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
                                 passcode = text.toString(),
                                 ownerImported = ownerImported
                             )
                         )
+                        input.setText("") // So it is empty, when the user navigates back
                     }
                 }
             }

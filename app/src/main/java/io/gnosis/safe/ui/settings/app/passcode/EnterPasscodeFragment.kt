@@ -104,6 +104,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                             )
                         }
                     } else {
+                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
 
                         if (!encryptionManager.unlockWithPassword(text.toString().toByteArray())) {
                             errorMessage.visible(true)
