@@ -101,14 +101,14 @@ fun View.hideSoftKeyboard() {
     (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun FragmentPasscodeBinding.onSixDigitsHandler(
+fun onSixDigitsHandler(
     digits: List<ImageView>,
     context: Context,
     executeWithDigits: (digitsAsString: String) -> Unit
 ): (CharSequence?, Int, Int, Int) -> Unit {
     return { text, _, _, _ ->
         text?.let {
-            if (input.text.length < 6) {
+            if (text.length < 6) {
                 digits.forEach {
                     it.background = ContextCompat.getDrawable(context, R.color.surface_01)
                 }
