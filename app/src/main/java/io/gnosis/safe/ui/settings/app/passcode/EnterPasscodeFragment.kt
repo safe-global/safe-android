@@ -9,25 +9,32 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
+import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
+class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+
+    override fun screenId() = ScreenId.PASSCODE_ENTER
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
+
+    @Inject
+    lateinit var encryptionManager: HeimdallEncryptionManager
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -44,10 +51,10 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (val viewAction = it.viewAction) {
+               when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                    snackbar(requireView(), R.string.passcode_disabled)
+                    findNavController().navigateUp()
                 }
                 is PasscodeViewModel.OwnerRemovalFailed -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
@@ -58,22 +65,18 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is PasscodeViewModel.PasswordDisabled -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
-                }
             }
         })
 
         with(binding) {
-            title.setText(R.string.settings_passcode_enter_passcode)
+            createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
+            helpText.visible(false)
+
+            backButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
 
             status.visibility = View.INVISIBLE
-
-            createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
-            backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-            }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
             input.showKeyboardForView()
@@ -84,24 +87,38 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             input.doOnTextChanged { text, _, _, _ ->
+
                 text?.let {
                     if (input.text.length < 6) {
+
+                        errorMessage.visible(input.text.isEmpty())
+
                         digits.forEach {
                             it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                         }
                         (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
+                            digits[i - 1].background = ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_circle_passcode_filled_20dp
+                            )
                         }
                     } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
 
-                        viewModel.disablePasscode(text.toString())
+                        if (!encryptionManager.unlockWithPassword(text.toString().toByteArray())) {
+                            errorMessage.visible(true)
+                            input.setText("")
+                            digits.forEach {
+                                it.background =
+                                    ContextCompat.getDrawable(requireContext(), R.color.surface_01)
+                            }
+                        } else {
+                            findNavController().navigateUp()
+                        }
                     }
                 }
             }
 
-            helpText.visible(false)
-
+            errorMessage.setText(R.string.settings_passcode_wrong_passcode)
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
             actionButton.setOnClickListener {
                 input.hideSoftKeyboard()
@@ -119,4 +136,3 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         }
     }
 }
-

@@ -114,6 +114,8 @@ interface ViewComponent {
 
     fun inject(fragment: ChangeRepeatPasscodeFragment)
 
+    fun inject(fragment: EnterPasscodeFragment)
+
     // Dialogs
     fun inject(dialog: SafeSelectionDialog)
 

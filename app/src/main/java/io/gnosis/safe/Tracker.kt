@@ -193,5 +193,6 @@ enum class ScreenId(val value: String) {
     CREATE_REPEAT_PASSCODE("screen_passcode_create_repeat"),
     CHANGE_PASSCODE("screen_passcode_change"),
     CHANGE_CREATE_PASSCODE("screen_passcode_change_create"),
-    CHANGE_REPEAT_PASSCODE("screen_passcode_change_repeat")
+    CHANGE_REPEAT_PASSCODE("screen_passcode_change_repeat"),
+    PASSCODE_ENTER("screen_passcode_enter")
 }

@@ -9,7 +9,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import javax.inject.Inject
 
-class DisablePasscodeViewModel
+class PasscodeViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
@@ -17,7 +17,7 @@ class DisablePasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<DisablePasscodeViewModel.ResetPasscodeState>(appDispatchers) {
+) : BaseStateViewModel<PasscodeViewModel.ResetPasscodeState>(appDispatchers) {
 
     override fun initialState(): ResetPasscodeState = ResetPasscodeState(viewAction = null)
 
@@ -47,6 +47,26 @@ class DisablePasscodeViewModel
             } else {
                 updateState { ResetPasscodeState(PasswordWrong) }
             }
+        }
+    }
+
+    fun onForgotPasscode() {
+        safeLaunch {
+
+            encryptionManager.removePassword()
+            encryptionManager.lock()
+            settingsHandler.usePasscode = false
+
+            credentialsRepository.owners().forEach {
+                credentialsRepository.removeOwner(it)
+            }
+            // Make sure all owners are deleted at this point
+            if (credentialsRepository.ownerCount() == 0) {
+                updateState { ResetPasscodeState(AllOwnersRemoved) }
+            } else {
+                updateState { ResetPasscodeState(OwnerRemovalFailed) }
+            }
+            notificationRepository.unregisterOwner()
         }
     }
 
