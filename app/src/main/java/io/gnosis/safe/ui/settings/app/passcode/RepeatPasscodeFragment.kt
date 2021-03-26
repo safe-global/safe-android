@@ -97,39 +97,18 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             input.setOnEditorActionListener { _, actionId, _ ->
                 actionId == EditorInfo.IME_ACTION_DONE
             }
-
-            input.doOnTextChanged { text, _, _, _ ->
-
-                text?.let {
-                    if (input.text.length < 6) {
-                        digits.forEach {
-                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                        }
-                        (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_circle_passcode_filled_20dp
-                            )
-                        }
-                    } else {
-                        digits[digits.size - 1].background =
-                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        if (passcodeArg == text.toString()) {
-
-                            viewModel.setupPassword(text.toString())
-
-                        } else {
-                            errorMessage.visible(true)
-                            input.setText("")
-                            digits.forEach {
-                                it.background =
-                                    ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                            }
-                        }
+            input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
+                if (passcodeArg == digitsAsString) {
+                    viewModel.setupPassword(digitsAsString)
+                } else {
+                    errorMessage.visible(true)
+                    input.setText("")
+                    digits.forEach {
+                        it.background =
+                            ContextCompat.getDrawable(requireContext(), R.color.surface_01)
                     }
                 }
-            }
+            })
 
             // Skip Button
             actionButton.setOnClickListener {

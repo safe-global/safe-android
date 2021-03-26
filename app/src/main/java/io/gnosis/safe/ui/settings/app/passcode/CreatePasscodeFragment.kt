@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
@@ -62,28 +63,15 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
-            input.doOnTextChanged { text, _, _, _ ->
-                text?.let {
-                    if (input.text.length < 6) {
-                        digits.forEach {
-                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                        }
-                        (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-                        }
-                    } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        findNavController().navigate(
-                            CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
-                                passcode = text.toString(),
-                                ownerImported = ownerImported
-                            )
-                        )
-                        input.setText("") // So it is empty, when the user navigates back
-                    }
-                }
-            }
+            input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
+                findNavController().navigate(
+                    CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
+                        passcode = digitsAsString,
+                        ownerImported = ownerImported
+                    )
+                )
+                input.setText("") // So it is empty, when the user navigates back
+            })
 
             // Skip Button
             actionButton.setOnClickListener {
@@ -111,4 +99,26 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
 fun View.hideSoftKeyboard() {
     (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(windowToken, 0)
+}
+
+fun FragmentPasscodeBinding.onSixDigitsHandler(
+    digits: List<ImageView>,
+    context: Context,
+    executeWithDigits: (digitsAsString: String) -> Unit
+): (CharSequence?, Int, Int, Int) -> Unit {
+    return { text, _, _, _ ->
+        text?.let {
+            if (input.text.length < 6) {
+                digits.forEach {
+                    it.background = ContextCompat.getDrawable(context, R.color.surface_01)
+                }
+                (1..text.length).forEach { i ->
+                    digits[i - 1].background = ContextCompat.getDrawable(context, R.drawable.ic_circle_passcode_filled_20dp)
+                }
+            } else {
+                digits[digits.size - 1].background = ContextCompat.getDrawable(context, R.drawable.ic_circle_passcode_filled_20dp)
+                executeWithDigits(text.toString())
+            }
+        }
+    }
 }

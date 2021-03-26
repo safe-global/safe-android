@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -55,28 +54,15 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
-            input.doOnTextChanged { text, _, _, _ ->
-                text?.let {
-                    if (input.text.length < 6) {
-                        digits.forEach {
-                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                        }
-                        (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-                        }
-                    } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        input.setText("") // So it is empty, when the user navigates back
-                        findNavController().navigate(
-                            ChangeCreatePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeRepeatPasscodeFragment(
-                                passcode = text.toString(),
-                                oldPasscode = oldPasscode
-                            )
-                        )
-                    }
-                }
-            }
+            input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
+                input.setText("") // So it is empty, when the user navigates back
+                findNavController().navigate(
+                    ChangeCreatePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeRepeatPasscodeFragment(
+                        passcode = digitsAsString,
+                        oldPasscode = oldPasscode
+                    )
+                )
+            })
 
             // Skip Button
             actionButton.visible(false)

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -82,29 +81,9 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
-            input.doOnTextChanged { text, _, _, _ ->
-
-                text?.let {
-                    if (input.text.length < 6) {
-
-                        errorMessage.visible(input.text.isEmpty(), View.INVISIBLE)
-
-                        digits.forEach {
-                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                        }
-                        (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_circle_passcode_filled_20dp
-                            )
-                        }
-                    } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
-
-                        viewModel.unlockWithPasscode(text.toString())
-                    }
-                }
-            }
+            input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
+                viewModel.unlockWithPasscode(digitsAsString)
+            })
 
             errorMessage.setText(R.string.settings_passcode_wrong_passcode)
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
