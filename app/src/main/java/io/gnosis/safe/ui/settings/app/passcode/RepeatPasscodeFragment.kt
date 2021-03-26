@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -28,9 +29,8 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     private val passcodeArg by lazy { navArgs.passcode }
     private val ownerImported by lazy { navArgs.ownerImported }
 
-    //FIXME: implementation details should not be exposed to ui
     @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
+    lateinit var viewModel: PasscodeViewModel
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -49,6 +49,37 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when (val viewAction = it.viewAction) {
+                is BaseStateViewModel.ViewAction.ShowError -> {
+                    when (viewAction.error) {
+                        is PasscodeViewModel.OwnerRemovalFailed -> {
+                            binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
+                            binding.errorMessage.visible(true)
+                        }
+                        is PasscodeViewModel.PasswordSetupFailed -> {
+                            binding.errorMessage.setText(R.string.settings_passcode_setup_failed)
+                            binding.errorMessage.visible(true)
+                        }
+                    }
+                }
+                is PasscodeViewModel.PasswordSetup -> {
+                    if (ownerImported) {
+                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                    } else {
+                        findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                    }
+
+                    binding.input.hideSoftKeyboard()
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+                        true
+                    )
+                }
+            }
+        })
 
         with(binding) {
             createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
@@ -81,29 +112,12 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             )
                         }
                     } else {
-                        digits[digits.size - 1].background = ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
+                        digits[digits.size - 1].background =
+                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_circle_passcode_filled_20dp)
 
                         if (passcodeArg == text.toString()) {
 
-                            //TODO: move this to a view model
-                            encryptionManager.removePassword()
-                            val success = encryptionManager.setupPassword(text.toString().toByteArray())
-                            encryptionManager.lock()
-
-                            input.hideSoftKeyboard()
-
-                            if (ownerImported) {
-                                findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                            } else {
-                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                            }
-
-                            settingsHandler.usePasscode = success
-                            tracker.setPasscodeIsSet(success)
-                            tracker.logPasscodeEnabled()
-
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, success)
+                            viewModel.setupPassword(text.toString())
 
                         } else {
                             errorMessage.visible(true)

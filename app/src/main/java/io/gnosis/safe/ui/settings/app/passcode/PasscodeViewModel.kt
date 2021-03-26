@@ -17,9 +17,9 @@ class PasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<PasscodeViewModel.ResetPasscodeState>(appDispatchers) {
+) : BaseStateViewModel<PasscodeViewModel.PasscodeState>(appDispatchers) {
 
-    override fun initialState(): ResetPasscodeState = ResetPasscodeState(viewAction = null)
+    override fun initialState(): PasscodeState = PasscodeState(viewAction = null)
 
     fun disablePasscode(passcode: String) {
         safeLaunch {
@@ -28,9 +28,9 @@ class PasscodeViewModel
                 settingsHandler.usePasscode = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
-                updateState { ResetPasscodeState(PasswordDisabled) }
+                updateState { PasscodeState(PasswordDisabled) }
             } else {
-                updateState { ResetPasscodeState(PasswordWrong) }
+                updateState { PasscodeState(PasswordWrong) }
             }
         }
     }
@@ -47,7 +47,7 @@ class PasscodeViewModel
             }
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
-                updateState { ResetPasscodeState(AllOwnersRemoved) }
+                updateState { PasscodeState(AllOwnersRemoved) }
             } else {
                 throw OwnerRemovalFailed
             }
@@ -55,10 +55,30 @@ class PasscodeViewModel
         }
     }
 
-    data class ResetPasscodeState(override var viewAction: ViewAction?) : State
+    fun setupPassword(password: String) {
+        safeLaunch {
+            encryptionManager.removePassword()
+            val success = encryptionManager.setupPassword(password.toString().toByteArray())
+            encryptionManager.lock()
+
+            if (success) {
+                settingsHandler.usePasscode = true
+
+                tracker.setPasscodeIsSet(true)
+                tracker.logPasscodeEnabled()
+
+                updateState { PasscodeState(PasswordSetup) }
+            } else {
+                throw PasswordSetupFailed
+            }
+        }
+    }
+
+    data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : Throwable()
     object PasswordDisabled : ViewAction
-    object PasswordChanged : ViewAction
     object PasswordWrong : ViewAction
+    object PasswordSetup : ViewAction
+    object PasswordSetupFailed : Throwable()
 }
