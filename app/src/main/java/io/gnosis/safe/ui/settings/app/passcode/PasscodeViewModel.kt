@@ -21,21 +21,6 @@ class PasscodeViewModel
 
     override fun initialState(): ResetPasscodeState = ResetPasscodeState(viewAction = null)
 
-    fun removeOwner() {
-        safeLaunch {
-            credentialsRepository.owners().forEach {
-                credentialsRepository.removeOwner(it)
-            }
-            // Make sure all owners are deleted at this point
-            if (credentialsRepository.ownerCount() == 0) {
-                updateState { ResetPasscodeState(AllOwnersRemoved) }
-            } else {
-                updateState { ResetPasscodeState(OwnerRemovalFailed) }
-            }
-            notificationRepository.unregisterOwner()
-        }
-    }
-
     fun disablePasscode(passcode: String) {
         safeLaunch {
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
@@ -64,7 +49,7 @@ class PasscodeViewModel
             if (credentialsRepository.ownerCount() == 0) {
                 updateState { ResetPasscodeState(AllOwnersRemoved) }
             } else {
-                updateState { ResetPasscodeState(OwnerRemovalFailed) }
+                throw OwnerRemovalFailed
             }
             notificationRepository.unregisterOwner()
         }
@@ -72,7 +57,7 @@ class PasscodeViewModel
 
     data class ResetPasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
-    object OwnerRemovalFailed : ViewAction
+    object OwnerRemovalFailed : Throwable()
     object PasswordDisabled : ViewAction
     object PasswordChanged : ViewAction
     object PasswordWrong : ViewAction

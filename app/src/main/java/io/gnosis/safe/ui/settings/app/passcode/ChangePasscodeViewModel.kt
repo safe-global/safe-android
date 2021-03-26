@@ -28,12 +28,12 @@ class ChangePasscodeViewModel
                 credentialsRepository.removeOwner(it)
             }
             // Make sure all owners are deleted at this point
-            if (credentialsRepository.ownerCount() == 0) {
+            if (credentialsRepository.ownerCount() != 0) {
                 encryptionManager.removePassword()
                 settingsHandler.usePasscode = false
                 updateState { ChangePasscodeState(AllOwnersRemoved) }
             } else {
-                updateState { ChangePasscodeState(OwnerRemovalFailed) }
+                throw OwnerRemovalFailed
             }
             notificationRepository.unregisterOwner()
         }
@@ -68,5 +68,5 @@ class ChangePasscodeViewModel
     object PasscodeVerified : ViewAction
     object PasscodeWrong : ViewAction
     object AllOwnersRemoved : ViewAction
-    object OwnerRemovalFailed : ViewAction
+    object OwnerRemovalFailed : Throwable()
 }
