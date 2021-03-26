@@ -29,6 +29,8 @@ class ChangePasscodeViewModel
             }
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
+                encryptionManager.removePassword()
+                settingsHandler.usePasscode = false
                 updateState { ChangePasscodeState(AllOwnersRemoved) }
             } else {
                 updateState { ChangePasscodeState(OwnerRemovalFailed) }

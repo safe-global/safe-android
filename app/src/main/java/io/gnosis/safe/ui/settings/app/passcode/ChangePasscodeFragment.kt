@@ -9,14 +9,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
@@ -28,12 +26,6 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
     @Inject
     lateinit var viewModel: ChangePasscodeViewModel
-
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
-
-    @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -52,8 +44,6 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
                 is ChangePasscodeViewModel.AllOwnersRemoved -> {
-                    encryptionManager.removePassword()
-                    settingsHandler.usePasscode = false
 
                     findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
