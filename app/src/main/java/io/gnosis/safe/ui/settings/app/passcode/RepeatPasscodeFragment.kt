@@ -58,13 +58,13 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                             binding.errorMessage.visible(true)
                         }
-                        is PasscodeViewModel.PasswordSetupFailed -> {
+                        is PasscodeViewModel.PasscodeSetupFailed -> {
                             binding.errorMessage.setText(R.string.settings_passcode_setup_failed)
                             binding.errorMessage.visible(true)
                         }
                     }
                 }
-                is PasscodeViewModel.PasswordSetup -> {
+                is PasscodeViewModel.PasscodeSetup -> {
                     if (ownerImported) {
                         findNavController().popBackStack(R.id.ownerInfoFragment, true)
                     } else {

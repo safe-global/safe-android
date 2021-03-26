@@ -52,12 +52,12 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is PasscodeViewModel.PasswordWrong -> {
+                is PasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is PasscodeViewModel.PasswordDisabled -> {
+                is PasscodeViewModel.PasscodeDisabled -> {
                     findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }

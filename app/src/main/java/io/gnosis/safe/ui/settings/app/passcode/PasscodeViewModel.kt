@@ -28,9 +28,9 @@ class PasscodeViewModel
                 settingsHandler.usePasscode = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
-                updateState { PasscodeState(PasswordDisabled) }
+                updateState { PasscodeState(PasscodeDisabled) }
             } else {
-                updateState { PasscodeState(PasswordWrong) }
+                updateState { PasscodeState(PasscodeWrong) }
             }
         }
     }
@@ -67,9 +67,9 @@ class PasscodeViewModel
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()
 
-                updateState { PasscodeState(PasswordSetup) }
+                updateState { PasscodeState(PasscodeSetup) }
             } else {
-                throw PasswordSetupFailed
+                throw PasscodeSetupFailed
             }
         }
     }
@@ -77,8 +77,8 @@ class PasscodeViewModel
     data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : Throwable()
-    object PasswordDisabled : ViewAction
-    object PasswordWrong : ViewAction
-    object PasswordSetup : ViewAction
-    object PasswordSetupFailed : Throwable()
+    object PasscodeDisabled : ViewAction
+    object PasscodeWrong : ViewAction
+    object PasscodeSetup : ViewAction
+    object PasscodeSetupFailed : Throwable()
 }

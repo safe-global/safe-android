@@ -61,7 +61,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is PasscodeViewModel.PasswordWrong -> {
+                is PasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
