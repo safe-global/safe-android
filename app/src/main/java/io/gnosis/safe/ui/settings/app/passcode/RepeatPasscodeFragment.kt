@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.CREATE_REPEAT_PASSCODE
+    override fun screenId() = ScreenId.PASSCODE_CREATE_REPEAT
     private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
     private val passcodeArg by lazy { navArgs.passcode }
     private val ownerImported by lazy { navArgs.ownerImported }

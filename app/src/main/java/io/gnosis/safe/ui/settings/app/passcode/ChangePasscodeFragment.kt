@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.CHANGE_PASSCODE
+    override fun screenId() = ScreenId.PASSCODE_CHANGE
 
     @Inject
     lateinit var viewModel: ChangePasscodeViewModel

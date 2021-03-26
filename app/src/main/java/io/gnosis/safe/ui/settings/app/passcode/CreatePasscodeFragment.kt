@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.CREATE_PASSCODE
+    override fun screenId() = ScreenId.PASSCODE_CREATE
     private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
     private val ownerImported by lazy { navArgs.ownerImported }
 
