@@ -9,14 +9,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
@@ -27,13 +27,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
     override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
 
     @Inject
-    lateinit var viewModel: DisablePasscodeViewModel
-
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
-
-    @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
+    lateinit var viewModel: PasscodeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -51,23 +45,20 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is DisablePasscodeViewModel.AllOwnersRemoved -> {
-                    encryptionManager.removePassword()
-                    settingsHandler.usePasscode = false
-
+                is PasscodeViewModel.AllOwnersRemoved -> {
                     findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
-                is DisablePasscodeViewModel.OwnerRemovalFailed -> {
+                is PasscodeViewModel.OwnerRemovalFailed -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is DisablePasscodeViewModel.PasswordWrong -> {
+                is PasscodeViewModel.PasswordWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is DisablePasscodeViewModel.PasswordDisabled -> {
+                is PasscodeViewModel.PasswordDisabled -> {
                     findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
@@ -120,7 +111,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     confirm = R.string.settings_passcode_disable_passcode,
                     confirmColor = R.color.error
                 ) {
-                    viewModel.removeOwner()
+                    viewModel.onForgotPasscode()
                 }
             }
         }
