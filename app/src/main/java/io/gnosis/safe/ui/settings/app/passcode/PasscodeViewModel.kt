@@ -52,21 +52,21 @@ class PasscodeViewModel
 
     fun onForgotPasscode() {
         safeLaunch {
-
-            encryptionManager.removePassword()
-            encryptionManager.lock()
-            settingsHandler.usePasscode = false
-
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
+                notificationRepository.unregisterOwner()
             }
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
+                encryptionManager.removePassword()
+                encryptionManager.lock()
+                settingsHandler.usePasscode = false
+                tracker.setPasscodeIsSet(false)
+                tracker.logPasscodeDisabled()
                 updateState { ResetPasscodeState(AllOwnersRemoved) }
             } else {
                 updateState { ResetPasscodeState(OwnerRemovalFailed) }
             }
-            notificationRepository.unregisterOwner()
         }
     }
 
