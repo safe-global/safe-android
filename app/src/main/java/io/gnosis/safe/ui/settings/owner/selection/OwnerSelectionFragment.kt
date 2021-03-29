@@ -74,9 +74,11 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                 Navigation.findNavController(it).navigateUp()
             }
             nextButton.setOnClickListener {
+
                 val (address, key) = viewModel.getOwnerData(privateKey)
+
                 findNavController().navigate(
-                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerNameFragment(address, key, usingSeedPhrase())
+                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(address, key, usingSeedPhrase())
                 )
             }
             owners.adapter = adapter
