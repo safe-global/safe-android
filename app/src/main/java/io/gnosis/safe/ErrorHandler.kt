@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import com.unstoppabledomains.exceptions.ns.NSExceptionCode
+import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.adapters.dataMoshi
@@ -72,6 +74,7 @@ sealed class Error(
     }
 
     // Common client errors
+
     object Error1101 : Error(1101, null, R.string.error_client_safe_duplicate_reason, R.string.error_client_safe_duplicate_fix)
     object Error1102 : Error(1102, null, R.string.error_client_address_invalid_reason, R.string.error_client_address_invalid_fix)
     object Error1103 : Error(1103, null, R.string.error_client_seed_phrase_reason, R.string.error_client_seed_phrase_fix)
@@ -86,11 +89,20 @@ sealed class Error(
     object Error1109 : Error(1109, null, R.string.error_client_safe_not_found_reason, R.string.error_client_safe_not_found_fix)
     object Error1110 : Error(1110, null, R.string.error_client_safe_name_invalid_reason, R.string.error_client_safe_name_invalid_fix)
 
+    object ErrorUdUnsupportedDomain: Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
+    object ErrorUdUnregistered: Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
+    object ErrorUdRecordNotFound: Error(6359, null, R.string.error_client_UD_record_not_found_reason, R.string.error_client_UD_record_not_found_fix)
+    object ErrorUdUnspecifiedResolver: Error(6360, null, R.string.error_client_UD_domain_not_configured_reason, R.string.error_client_UD_domain_not_configured_fix)
+    object ErrorUdBlockhainDown: Error(6361, null, R.string.error_client_UD_blockchain_provider_is_not_accessible_reason, R.string.error_client_UD_blockchain_provider_is_not_accessible_fix)
+    object ErrorUdUnknownCurrency: Error(6357, null, R.string.error_client_UD_currency_not_found_reason, R.string.error_client_UD_currency_not_found_fix)
+
+
     object ErrorUnknown : Error(-1, null, R.string.error_unknown_reason, R.string.error_unknown_fix) {
         override fun message(context: Context): String {
             return "${context.getString(reason)}. ${context.getString(howToFix)}"
         }
     };
+
 
     open fun message(context: Context): String {
         return "${context.getString(reason)}. ${context.getString(howToFix)}. (${context.getString(R.string.error_id, httpCode ?: id)})"
@@ -153,6 +165,19 @@ fun Throwable.toError(): Error =
         this is SSLHandshakeException || this.cause is SSLHandshakeException -> Error.Error102
         this is SocketTimeoutException -> Error.Error103
         this is UnknownHostException || this is ConnectException -> Error.Error104
+        this is NamingServiceException -> {
+            this.let {
+                when (this.getCode()) {
+                    NSExceptionCode.UnregisteredDomain -> Error.ErrorUdUnregistered
+                    NSExceptionCode.UnsupportedDomain -> Error.ErrorUdUnsupportedDomain
+                    NSExceptionCode.RecordNotFound -> Error.ErrorUdRecordNotFound
+                    NSExceptionCode.BlockchainIsDown -> Error.ErrorUdBlockhainDown
+                    NSExceptionCode.UnspecifiedResolver -> Error.ErrorUdUnspecifiedResolver
+                    NSExceptionCode.UnknownCurrency -> Error.ErrorUdUnknownCurrency
+                    else -> Error.ErrorUnknown
+                }
+            }
+        }
         else -> Error.ErrorUnknown
     }
 

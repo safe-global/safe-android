@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -34,10 +33,10 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:padding="14dp"
-        app:tint="@color/text_emphasis_medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_title"
-        app:srcCompat="@drawable/ic_content_paste_white_24dp" />
+        app:srcCompat="@drawable/ic_content_paste_white_24dp"
+        app:tint="@color/text_emphasis_medium" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_paste"
@@ -66,9 +65,9 @@
         android:layout_height="48dp"
         android:padding="14dp"
         android:src="@drawable/ic_qrcode_scan_white_24dp"
-        app:tint="@color/text_emphasis_medium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste"
+        app:tint="@color/text_emphasis_medium" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_qr"
@@ -97,9 +96,9 @@
         android:layout_height="48dp"
         android:padding="14dp"
         android:src="@drawable/ic_ens_icon"
-        app:tint="@color/text_emphasis_medium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_qr" />
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_qr"
+        app:tint="@color/text_emphasis_medium" />
 
 
     <TextView
@@ -116,5 +115,38 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_ens_icon"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
+
+    <View
+        android:id="@+id/bottom_sheet_address_input_unstoppabledomains_touch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/background_selectable_white"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
+
+
+    <ImageView
+        android:id="@+id/bottom_sheet_address_input_unstoppabledomains_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="14dp"
+        android:src="@drawable/ic_unstoppable_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_ens"
+        app:tint="@color/text_emphasis_medium" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_unstoppabledomains"
+        style="@style/TextDarkRegular"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/address_input_unstoppable_domain"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_unstoppabledomains_icon"
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

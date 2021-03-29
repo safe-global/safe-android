@@ -11,6 +11,7 @@ import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
+import io.gnosis.safe.ui.dialogs.UnstoppableInputDialog
 import io.gnosis.safe.utils.handleAddressBookResult
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.parseEthereumAddress
@@ -31,6 +32,14 @@ class AddressInputHelper(
             val binding = BottomSheetAddressInputBinding.inflate(layoutInflater)
             with(binding) {
                 setContentView(root)
+
+                bottomSheetAddressInputUnstoppabledomains.setOnClickListener {
+                    UnstoppableInputDialog.create().apply {
+                        callback = addressCallback
+                        show(fragment.childFragmentManager, null)
+                    }
+                    dismiss()
+                }
 
                 bottomSheetAddressInputEnsTouch.setOnClickListener {
                     EnsInputDialog.create().apply {

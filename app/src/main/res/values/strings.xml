@@ -120,6 +120,27 @@
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
 
+    <string name="error_client_UD_blockchain_provider_is_not_accessible_reason">Blockchain is down</string>
+    <string name="error_client_UD_blockchain_provider_is_not_accessible_fix">Check your internet connection</string>
+
+    <string name="error_client_UD_invalid_domain_reason">Invalid domain name</string>
+    <string name="error_client_UD_invalid_domain_fix">Please check the domain, it should end with .crypto or .zil</string>
+
+    <string name="error_client_UD_not_supported_currency_reason">The desirable currency is not supported by UD</string>
+    <string name="error_client_UD_not_supported_currency_fix">Contact UD to add more coin support</string>
+
+    <string name="error_client_UD_name_not_registered_reason">This domain is not registered with UD</string>
+    <string name="error_client_UD_name_not_registered_fix">Check if domain is correct</string>
+
+    <string name="error_client_UD_record_not_found_reason">Record you are looking is not attached to the domain</string>
+    <string name="error_client_UD_record_not_found_fix">Check the domain records</string>
+
+    <string name="error_client_UD_domain_not_configured_reason">Domain is not configured correctly</string>
+    <string name="error_client_UD_domain_not_configured_fix">Ask Domain owner to configure resolver contract</string>
+
+    <string name="error_client_UD_currency_not_found_reason">Domain don\'t have desirable asset attached</string>
+    <string name="error_client_UD_currency_not_found_fix">Contact domain owner</string>
+
     <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
     <string name="error_unknown_reason">an error occurred</string>
     <string name="error_unknown_fix">Please try again later</string>
@@ -357,6 +378,7 @@
     <string name="reject">Reject</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
+    <string name="enter_unstoppable_domain">Enter Unstoppable domain</string>
 
     <string name="empty">empty</string>
     <string name="array">array</string>
@@ -399,6 +421,7 @@
     <string name="tx_list_rejection">On-chain rejection</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
+    <string name="address_input_unstoppable_domain">Unstoppable domain</string>
     <string name="label_type_next">Next</string>
     <string name="label_type_queued">Queued</string>
 
