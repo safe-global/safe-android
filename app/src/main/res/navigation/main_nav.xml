@@ -243,6 +243,10 @@
         android:label="ChangePasscodeFragment"
         tools:layout="@layout/fragment_passcode">
 
+        <action
+            android:id="@+id/action_changePasscodeFragment_to_changeCreatePasscodeFragment"
+            app:destination="@id/changeCreatePasscodeFragment" />
+
     </fragment>
 
     <fragment
@@ -362,6 +366,7 @@
         <action
             android:id="@+id/action_passcodeSettingsFragment_to_changePasscodeFragment"
             app:destination="@id/changePasscodeFragment" />
+
     </fragment>
 
     <fragment
