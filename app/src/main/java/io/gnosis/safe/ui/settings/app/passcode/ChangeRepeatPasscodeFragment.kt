@@ -55,8 +55,6 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                     binding.input.setText("")
                 }
                 is ChangePasscodeViewModel.PasscodeChanged -> {
-
-                    Timber.i("---> Passcode changed. Going back")
                     findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_CHANGED_RESULT, true)
                 }
