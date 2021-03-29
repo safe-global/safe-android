@@ -24,6 +24,7 @@ ext {
             bivrost                         : '0.8.0',
             bouncycastle                    : '1.61',
             dagger                          : '2.17',
+            firebase_bom                    : '26.8.0',
             firebase_analytics              : '17.5.0',
             firebase_messaging              : '20.2.4',
             firebase_crashlytics            : '17.2.1',

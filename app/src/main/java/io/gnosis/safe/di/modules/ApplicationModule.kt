@@ -6,6 +6,10 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.os.Build
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -15,6 +19,7 @@ import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.repositories.*
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.R
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
 import io.gnosis.safe.helpers.ConnectivityInfoProvider
@@ -272,4 +277,20 @@ class ApplicationModule(private val application: Application) {
         ownerVault: OwnerCredentialsRepository
     ): CredentialsRepository =
         CredentialsRepository(ownerDao, encryptionManager, ownerVault)
+
+    @Provides
+    @Singleton
+    fun providesFirebaseRemoteConfig(): FirebaseRemoteConfig {
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            // increase the number of fetches available per hour during development.
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 0 else 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        // Set default Remote Config parameter values. An app uses the in-app default values, and
+        // when you need to adjust those defaults, you set an updated value for only the values you
+        // want to change in the Firebase console.
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        return remoteConfig
+    }
 }

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.NightMode
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
@@ -16,8 +17,18 @@ import javax.inject.Singleton
 @Singleton
 class SettingsHandler @Inject constructor(
     private val gatewayApi: GatewayApi,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val remoteConfig: FirebaseRemoteConfig
 ) {
+
+    fun fetchRemoteConfig() {
+        remoteConfig.fetchAndActivate().addOnCompleteListener {
+            if (it.isSuccessful) {
+                // do something here
+            }
+        }
+    }
+
     @NightMode
     var nightMode: Int
         get() = preferencesManager.prefs.getInt(KEY_NIGHT_MODE, MODE_NIGHT_FOLLOW_SYSTEM)
