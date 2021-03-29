@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
     <entry>
-        <key>current_version</key>
+        <key>supported_min_version</key>
         <value>0</value>
     </entry>
 </defaultsMap>

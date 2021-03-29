@@ -29,6 +29,9 @@ class SettingsHandler @Inject constructor(
         }
     }
 
+    val supportedMinVersion: Long
+        get() = remoteConfig.getLong(KEY_FIREBASE_SUPPORTED_MIN_VERSION)
+
     @NightMode
     var nightMode: Int
         get() = preferencesManager.prefs.getInt(KEY_NIGHT_MODE, MODE_NIGHT_FOLLOW_SYSTEM)
@@ -157,5 +160,7 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_REQUIRE_PASSCODE_TO_OPEN_APP = "prefs.boolean.require_passcode_to_open_app"
         internal const val KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS = "prefs.boolean.require_passcode_for_confirmations"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
+
+        internal const val KEY_FIREBASE_SUPPORTED_MIN_VERSION = "supported_min_version"
     }
 }
