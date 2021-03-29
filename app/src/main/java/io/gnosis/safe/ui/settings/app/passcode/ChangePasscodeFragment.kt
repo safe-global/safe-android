@@ -20,12 +20,12 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
-    override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
+    override fun screenId() = ScreenId.PASSCODE_CHANGE
 
     @Inject
-    lateinit var viewModel: PasscodeViewModel
+    lateinit var viewModel: ChangePasscodeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -43,38 +43,39 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is PasscodeViewModel.AllOwnersRemoved -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                is ChangePasscodeViewModel.AllOwnersRemoved -> {
+
+                    findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is PasscodeViewModel.PasscodeWrong -> {
+                is ChangePasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is PasscodeViewModel.PasscodeDisabled -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                is ChangePasscodeViewModel.PasscodeVerified -> {
+                    findNavController().navigate(
+                        ChangePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
+                    )
                 }
             }
         })
 
         with(binding) {
-            title.setText(R.string.settings_passcode_enter_passcode)
+            title.setText(R.string.settings_passcode_change_passcode)
 
             status.visibility = View.INVISIBLE
 
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                findNavController().popBackStack(R.id.changePasscodeFragment, true)
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
-            input.showKeyboardForView()
 
             //Disable done button
             input.setOnEditorActionListener { _, actionId, _ ->
@@ -82,7 +83,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                viewModel.disablePasscode(digitsAsString)
+                viewModel.verifyPasscode(digitsAsString)
             })
 
             helpText.visible(false)
@@ -98,10 +99,9 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     confirm = R.string.settings_passcode_disable_passcode,
                     confirmColor = R.color.error
                 ) {
-                    viewModel.onForgotPasscode()
+                    viewModel.removeOwner()
                 }
             }
         }
     }
 }
-

@@ -184,6 +184,49 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/changePasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.ChangePasscodeFragment"
+        android:label="ChangePasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_changeCreatePasscodeFragment"
+            app:destination="@id/changeCreatePasscodeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeCreatePasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.ChangeCreatePasscodeFragment"
+        android:label="ChangeCreatePasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+        <argument
+            android:name="oldPasscode"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_changeRepeatPasscodeFragment"
+            app:destination="@id/changeRepeatPasscodeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/changeRepeatPasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.ChangeRepeatPasscodeFragment"
+        android:label="ChangeRepeatPasscodeFragment"
+        tools:layout="@layout/fragment_passcode">
+
+        <argument
+            android:name="passcode"
+            app:argType="string" />
+
+        <argument
+            android:name="oldPasscode"
+            app:argType="string" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -262,6 +305,10 @@
         <action
             android:id="@+id/action_passcodeSettingsFragment_to_disablePasscodeFragment"
             app:destination="@id/disablePasscodeFragment" />
+
+        <action
+            android:id="@+id/action_passcodeSettingsFragment_to_changePasscodeFragment"
+            app:destination="@id/changePasscodeFragment" />
     </fragment>
 
     <fragment
