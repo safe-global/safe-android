@@ -38,7 +38,7 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `disablePasscode() (with right passcode) should disable passcode`() {
+    fun `disablePasscode (with right passcode) should disable passcode`() {
         coEvery { encryptionManager.unlockWithPassword(examplePasscode.toByteArray()) } returns true
         val testObserver = TestLiveDataObserver<ResetPasscodeState>()
         viewModel.state.observeForever(testObserver)
@@ -56,7 +56,7 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `disablePasscode() (with wrong passcode) should not disable passcode`() {
+    fun `disablePasscode (with wrong passcode) should not disable passcode`() {
         // given: wrong passcode
         coEvery { encryptionManager.unlockWithPassword(examplePasscode.toByteArray()) } returns false
         val testObserver = TestLiveDataObserver<ResetPasscodeState>()
@@ -71,7 +71,7 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `onForgotPasscode() - (successful owner deletion) should remove passcode and delete owner data `() {
+    fun `onForgotPasscode - (successful owner deletion) should remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 0
         every { encryptionManager.removePassword() } just Runs
@@ -97,7 +97,7 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `onForgotPasscode() - (owner deletion failed) should remove passcode and delete owner data `() {
+    fun `onForgotPasscode - (owner deletion failed) should remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 1
         every { encryptionManager.removePassword() } just Runs
