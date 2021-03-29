@@ -13,7 +13,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
@@ -62,7 +62,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     //TODO: handle case when owner was added from owner list screen
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
-                is BaseStateViewModel.ViewAction.NavigateTo -> {
+                is NavigateTo -> {
                     findNavController().popBackStack(R.id.ownerInfoFragment, true)
                     findNavController().navigate(viewAction.navDirections)
                 }
