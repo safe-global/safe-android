@@ -16,9 +16,12 @@ import io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
-import io.gnosis.safe.ui.settings.app.*
+import io.gnosis.safe.ui.settings.app.AdvancedAppSettingsFragment
+import io.gnosis.safe.ui.settings.app.AppSettingsFragment
+import io.gnosis.safe.ui.settings.app.GetInTouchFragment
+import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
-import io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment
+import io.gnosis.safe.ui.settings.app.passcode.*
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment
@@ -97,6 +100,20 @@ interface ViewComponent {
     fun inject(fragment: AppFiatFragment)
 
     fun inject(fragment: PasscodeSettingsFragment)
+
+    fun inject(fragment: CreatePasscodeFragment)
+
+    fun inject(fragment: RepeatPasscodeFragment)
+
+    fun inject(fragment: DisablePasscodeFragment)
+
+    fun inject(fragment: ChangePasscodeFragment)
+
+    fun inject(fragment: ChangeCreatePasscodeFragment)
+
+    fun inject(fragment: ChangeRepeatPasscodeFragment)
+
+    fun inject(fragment: EnterPasscodeFragment)
 
     // Dialogs
     fun inject(dialog: EnsInputDialog)

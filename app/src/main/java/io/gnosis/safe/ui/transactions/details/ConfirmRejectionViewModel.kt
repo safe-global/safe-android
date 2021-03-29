@@ -11,6 +11,7 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
@@ -21,6 +22,7 @@ class ConfirmRejectionViewModel
     private val transactionRepository: TransactionRepository,
     private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<ConfirmationRejectedViewState>(appDispatchers) {
@@ -29,7 +31,38 @@ class ConfirmRejectionViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
+    private var rejectionInProgress = false
+
     override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
+
+    fun flowInProgress():Boolean {
+        return rejectionInProgress
+    }
+
+    fun resumeFlow() {
+        if (credentialsRepository.credentialsUnlocked()) {
+            submitRejection()
+            rejectionInProgress = false
+        }
+    }
+
+    fun startRejectionFlow() {
+        safeLaunch {
+            if (settingsHandler.usePasscode) {
+                rejectionInProgress = true
+                updateState {
+                    ConfirmationRejectedViewState(
+                        ViewAction.NavigateTo(
+                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToEnterPasscodeFragment()
+                        )
+                    )
+                }
+                updateState { ConfirmationRejectedViewState(ViewAction.None) }
+            } else {
+                updateState { ConfirmationRejectedViewState(ConfirmRejection) }
+            }
+        }
+    }
 
     fun submitRejection() {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
@@ -101,3 +134,5 @@ open class ConfirmationRejectedViewState(
 ) : BaseStateViewModel.State
 
 object RejectionSubmitted : BaseStateViewModel.ViewAction
+
+object ConfirmRejection : BaseStateViewModel.ViewAction

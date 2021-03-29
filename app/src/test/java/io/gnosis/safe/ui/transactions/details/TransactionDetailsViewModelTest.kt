@@ -12,6 +12,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
@@ -31,9 +32,10 @@ class TransactionDetailsViewModelTest {
     private val transactionRepository = mockk<TransactionRepository>()
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, credentialsRepository, tracker, appDispatchers)
+    private val viewModel = TransactionDetailsViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 

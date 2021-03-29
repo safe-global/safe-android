@@ -99,7 +99,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     private fun setupOwnerKeyView(address: Solidity.Address? = null) {
         with(binding) {
             if (address != null) {
-                if (ownerKey.currentView.id == R.id.import_owner_key) {
+                if (ownerKey.currentView.id != R.id.remove_owner_key) {
                     ownerKey.showNext()
                 }
                 with(removeOwnerKey) {
@@ -119,6 +119,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                     }
                 }
             } else {
+                if (ownerKey.currentView.id != R.id.import_owner_key) {
+                    ownerKey.showNext()
+                }
                 with(importOwnerKey) {
                     root.setOnClickListener {
                         findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
@@ -126,6 +129,11 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadSigningOwner()
     }
 
     private fun onOwnerRemove() {

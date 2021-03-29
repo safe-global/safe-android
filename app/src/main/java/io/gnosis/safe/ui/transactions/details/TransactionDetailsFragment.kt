@@ -18,8 +18,8 @@ import io.gnosis.safe.databinding.*
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
@@ -76,6 +76,18 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
                     }
                 }
+                is ConfirmConfirmation -> {
+                    showConfirmDialog(
+                        requireContext(),
+                        message = R.string.confirm_transaction_dialog_message,
+                        confirm = R.string.confirm,
+                        confirmColor = R.color.primary
+                    ) {
+                        binding.txConfirmButton.isEnabled = false
+                        viewModel.submitConfirmation(viewModel.txDetails!!)
+                    }
+
+                }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
                         updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
@@ -84,6 +96,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is Loading -> {
                     showLoading(viewAction.isLoading)
+                }
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
                 }
                 is ShowError -> {
                     showLoading(false)
@@ -114,7 +129,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadDetails(txId)
+        if(viewModel.flowInProgress()) {
+            viewModel.resumeFlow()
+        } else {
+            viewModel.loadDetails(txId)
+        }
     }
 
     private lateinit var contentBinding: ViewBinding
@@ -151,15 +170,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
                 binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
-                    showConfirmDialog(
-                        requireContext(),
-                        message = R.string.confirm_transaction_dialog_message,
-                        confirm = R.string.confirm,
-                        confirmColor = R.color.primary
-                    ) {
-                        binding.txConfirmButton.isEnabled = false
-                        viewModel.submitConfirmation(viewModel.txDetails!!)
-                    }
+                    viewModel.startConfirmationFlow()
                 }
                 binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
                 binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()

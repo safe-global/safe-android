@@ -170,9 +170,25 @@
     <string name="settings_app_licenses">Licenses</string>
     <string name="settings_app_get_in_touch">Get in touch</string>
     <string name="settings_app_version">App version</string>
-    <string name="settings_app_use_passcode">Use passcode</string>
-    <string name="settings_app_change_passcode">Change passcode</string>
-    <string name="settings_app_passcode_explanation">The passcode is needed to sign transactions.</string>
+
+    <string name="settings_passcode_use_passcode">Use passcode</string>
+    <string name="settings_passcode_change_passcode">Change passcode</string>
+    <string name="settings_passcode_is_needed_to_sign">The passcode is needed to sign transactions.</string>
+    <string name="settings_passcode_create_passcode">Create passcode</string>
+    <string name="settings_passcode_enter_passcode">Enter passcode</string>
+    <string name="settings_passcode_will_be_needed_to_sign">The passcode will be needed to sign transactions.</string>
+    <string name="settings_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
+    <string name="settings_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
+    <string name="settings_passcode_owner_key_successful_imported">Owner key successful imported</string>
+    <string name="settings_passcode_dont_match">Passcodes don’t match</string>
+    <string name="settings_passcode_wrong_passcode">Wrong passcode</string>
+    <string name="settings_passcode_enter_your_current_passcode">Enter your current passcode</string>
+    <string name="settings_passcode_forgot_your_passcode">Forgot your passcode?</string>
+    <string name="settings_passcode_reset_passcode">Reset passcode</string>
+    <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners from the app.</string>
+    <string name="settings_passcode_disable_passcode">Disable passcode</string>
+    <string name="settings_passcode_owner_removal_failed">Could not delete all owner keys</string>
+    <string name="settings_passcode_setup_failed">Passcode setup failed</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
@@ -390,6 +406,9 @@
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>
     <string name="rejection_successfully_submitted">Rejection successfully submitted</string>
+    <string name="passcode_created">Passcode created</string>
+    <string name="passcode_disabled">Passcode disabled</string>
+    <string name="passcode_changed">Passcode changed</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
