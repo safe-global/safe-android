@@ -7,6 +7,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.app.passcode.PasscodeViewModel.PasscodeState
 import javax.inject.Inject
 
 class PasscodeViewModel
@@ -17,7 +18,7 @@ class PasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<PasscodeViewModel.PasscodeState>(appDispatchers) {
+) : BaseStateViewModel<PasscodeState>(appDispatchers) {
 
     override fun initialState(): PasscodeState = PasscodeState(viewAction = null)
 
@@ -37,32 +38,33 @@ class PasscodeViewModel
 
     fun onForgotPasscode() {
         safeLaunch {
-
-            encryptionManager.removePassword()
-            encryptionManager.lock()
-            settingsHandler.usePasscode = false
-
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
             }
+            notificationRepository.unregisterOwners()
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
+                encryptionManager.removePassword()
+                encryptionManager.lock()
+                settingsHandler.usePasscode = false
+                tracker.setPasscodeIsSet(false)
+                tracker.logPasscodeDisabled()
                 updateState { PasscodeState(AllOwnersRemoved) }
             } else {
                 throw OwnerRemovalFailed
             }
-            notificationRepository.unregisterOwner()
         }
     }
 
-    fun setupPassword(password: String) {
+    fun setupPasscode(password: String) {
         safeLaunch {
             encryptionManager.removePassword()
-            val success = encryptionManager.setupPassword(password.toString().toByteArray())
+            val success = encryptionManager.setupPassword(password.toByteArray())
             encryptionManager.lock()
 
             if (success) {
                 settingsHandler.usePasscode = true
+                settingsHandler.showPasscodeBanner = false
 
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()
@@ -76,8 +78,21 @@ class PasscodeViewModel
 
     fun unlockWithPasscode(passcode: String) {
         safeLaunch {
-            if (encryptionManager.unlockWithPassword(passcode.toString().toByteArray())) {
+            if (encryptionManager.unlockWithPassword(passcode.toByteArray())) {
                 updateState { PasscodeState(PasscodeCorrect) }
+            } else {
+                updateState { PasscodeState(PasscodeWrong) }
+            }
+        }
+    }
+
+    fun disableAndSetNewPasscode(newPasscode: String, oldPasscode: String) {
+        safeLaunch {
+            val success = encryptionManager.setupPassword(newPasscode = newPasscode.toByteArray(), oldPasscode = oldPasscode.toByteArray())
+
+            if (success) {
+                tracker.setPasscodeIsSet(true)
+                updateState { PasscodeState(PasscodeChanged) }
             } else {
                 updateState { PasscodeState(PasscodeWrong) }
             }
@@ -92,4 +107,6 @@ class PasscodeViewModel
     object PasscodeCorrect : ViewAction
     object PasscodeSetup : ViewAction
     object PasscodeSetupFailed : Throwable()
+    object PasscodeChanged : ViewAction
+
 }

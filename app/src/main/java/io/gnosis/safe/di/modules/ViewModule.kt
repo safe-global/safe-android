@@ -14,6 +14,7 @@ import io.gnosis.safe.ui.assets.coins.CoinsAdapter
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
+import io.gnosis.safe.ui.dialogs.UnstoppableInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
@@ -84,6 +85,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesEnsInputViewModel(provider: ViewModelProvider) = provider[EnsInputViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesUnstoppableInputViewModel(provider: ViewModelProvider) = provider[UnstoppableInputViewModel::class.java]
 
     @Provides
     @ForView

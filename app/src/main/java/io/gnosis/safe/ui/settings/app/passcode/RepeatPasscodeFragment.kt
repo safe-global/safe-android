@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
     override fun onResume() {
         super.onResume()
+        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.showKeyboardForView()
     }
 
@@ -99,7 +101,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (passcodeArg == digitsAsString) {
-                    viewModel.setupPassword(digitsAsString)
+                    viewModel.setupPasscode(digitsAsString)
                 } else {
                     errorMessage.visible(true)
                     input.setText("")
