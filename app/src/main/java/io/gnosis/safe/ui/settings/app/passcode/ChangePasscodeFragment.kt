@@ -57,7 +57,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is PasscodeViewModel.PasscodeVerified -> {
+                is PasscodeViewModel.PasscodeCorrect -> {
                     findNavController().navigate(
                         ChangePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
                     )
@@ -83,7 +83,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                viewModel.verifyPasscode(digitsAsString)
+                viewModel.unlockWithPasscode(digitsAsString)
             })
 
             helpText.visible(false)

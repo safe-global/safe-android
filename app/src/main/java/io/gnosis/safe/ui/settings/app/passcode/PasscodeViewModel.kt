@@ -49,19 +49,17 @@ class PasscodeViewModel
                 settingsHandler.usePasscode = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
-                println("--> updateState { PasscodeState(AllOwnersRemoved) }")
                 updateState { PasscodeState(AllOwnersRemoved) }
             } else {
-                println("--> throw OwnerRemovalFailed")
                 throw OwnerRemovalFailed
             }
         }
     }
 
-    fun setupPassword(password: String) {
+    fun setupPasscode(password: String) {
         safeLaunch {
             encryptionManager.removePassword()
-            val success = encryptionManager.setupPassword(password.toString().toByteArray())
+            val success = encryptionManager.setupPassword(password.toByteArray())
             encryptionManager.lock()
 
             if (success) {
@@ -79,19 +77,8 @@ class PasscodeViewModel
 
     fun unlockWithPasscode(passcode: String) {
         safeLaunch {
-            if (encryptionManager.unlockWithPassword(passcode.toString().toByteArray())) {
+            if (encryptionManager.unlockWithPassword(passcode.toByteArray())) {
                 updateState { PasscodeState(PasscodeCorrect) }
-            } else {
-                updateState { PasscodeState(PasscodeWrong) }
-            }
-        }
-    }
-
-    fun verifyPasscode(passcode: String) {
-        safeLaunch {
-            val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
-            if (success) {
-                updateState { PasscodeState(PasscodeVerified) }
             } else {
                 updateState { PasscodeState(PasscodeWrong) }
             }
@@ -120,6 +107,5 @@ class PasscodeViewModel
     object PasscodeSetup : ViewAction
     object PasscodeSetupFailed : Throwable()
     object PasscodeChanged : ViewAction
-    object PasscodeVerified : ViewAction
 
 }

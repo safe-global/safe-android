@@ -99,7 +99,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (passcodeArg == digitsAsString) {
-                    viewModel.setupPassword(digitsAsString)
+                    viewModel.setupPasscode(digitsAsString)
                 } else {
                     errorMessage.visible(true)
                     input.setText("")
