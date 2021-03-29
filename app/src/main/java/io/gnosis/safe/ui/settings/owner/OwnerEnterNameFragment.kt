@@ -5,17 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
-import kotlinx.coroutines.launch
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
@@ -48,15 +49,24 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
             importButton.setOnClickListener {
-                lifecycleScope.launch {
-                    ownerNameLayout.isErrorEnabled = false
-                    viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+                viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+
+
+             }
+            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
+        }
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when(val viewAction = it.viewAction) {
+                is CloseScreen -> {
                     findNavController().popBackStack(R.id.ownerInfoFragment, true)
                     //TODO: handle case when owner was added from owner list screen
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
+                is BaseStateViewModel.ViewAction.NavigateTo -> {
+                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                    findNavController().navigate(viewAction.navDirections)
+                }
             }
-            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
-        }
+        })
     }
 }
