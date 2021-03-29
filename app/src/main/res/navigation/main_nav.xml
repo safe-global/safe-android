@@ -279,10 +279,6 @@
             android:name="oldPasscode"
             app:argType="string" />
 
-        <action
-            android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
-            app:destination="@id/ownerEnterNameFragment" />
-
     </fragment>
 
     <fragment
@@ -290,8 +286,6 @@
         android:name="io.gnosis.safe.ui.settings.SettingsFragment"
         android:label="SafeSettingsFragment"
         tools:layout="@layout/fragment_settings">
-
-        <!-- TODO: remove -->
 
         <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
