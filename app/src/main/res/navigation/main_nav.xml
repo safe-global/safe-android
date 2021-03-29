@@ -120,10 +120,6 @@
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
 
-        <action
-            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
-            app:destination="@id/createPasscodeFragment" />
-
         <argument
             android:name="privateKey"
             app:argType="string"
@@ -134,6 +130,62 @@
             app:argType="string"
             app:nullable="true" />
 
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerEnterNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
+        android:label="OwnerEnterNameFragment"
+        tools:layout="@layout/fragment_owner_name_enter">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerKey"
+            app:argType="string" />
+
+        <argument
+            android:name="fromSeedPhrase"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <action
+            android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerEditNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment"
+        android:label="OwnerEditNameFragment"
+        tools:layout="@layout/fragment_owner_name_edit">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerListFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerListFragment"
+        android:label="OwnerListFragment"
+        tools:layout="@layout/fragment_owner_list">
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
 
     </fragment>
 
@@ -229,55 +281,6 @@
         <action
             android:id="@+id/action_ownerSelectionFragment_to_ownerNameFragment"
             app:destination="@id/ownerEnterNameFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/ownerEnterNameFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
-        android:label="OwnerEnterNameFragment"
-        tools:layout="@layout/fragment_owner_name_enter">
-
-        <argument
-            android:name="ownerAddress"
-            app:argType="string" />
-
-        <argument
-            android:name="ownerKey"
-            app:argType="string" />
-
-        <argument
-            android:name="fromSeedPhrase"
-            app:argType="boolean"
-            android:defaultValue="false" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/ownerEditNameFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment"
-        android:label="OwnerEditNameFragment"
-        tools:layout="@layout/fragment_owner_name_edit">
-
-        <argument
-            android:name="ownerAddress"
-            app:argType="string" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/ownerListFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerListFragment"
-        android:label="OwnerListFragment"
-        tools:layout="@layout/fragment_owner_list">
-
-        <action
-            android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
-            app:destination="@id/ownerInfoFragment" />
-
-        <action
-            android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
-            app:destination="@id/ownerEditNameFragment" />
 
     </fragment>
 
