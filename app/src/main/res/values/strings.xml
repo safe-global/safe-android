@@ -167,6 +167,7 @@
     <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners from the app.</string>
     <string name="settings_passcode_disable_passcode">Disable passcode</string>
     <string name="settings_passcode_owner_removal_failed">Could not delete all owner keys</string>
+    <string name="settings_passcode_setup_failed">Passcode setup failed</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
@@ -385,6 +386,7 @@
     <string name="rejection_successfully_submitted">Rejection successfully submitted</string>
     <string name="passcode_created">Passcode created</string>
     <string name="passcode_disabled">Passcode disabled</string>
+    <string name="passcode_changed">Passcode changed</string>
     <string name="ens_name_contains_illegal_character">Name contains invalid characters</string>
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>

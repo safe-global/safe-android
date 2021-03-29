@@ -5,9 +5,13 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeViewModel.*
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,14 +44,14 @@ class PasscodeViewModelTest {
     @Test
     fun `disablePasscode (with right passcode) should disable passcode`() {
         coEvery { encryptionManager.unlockWithPassword(examplePasscode.toByteArray()) } returns true
-        val testObserver = TestLiveDataObserver<ResetPasscodeState>()
+        val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
 
         viewModel.disablePasscode(examplePasscode)
 
         testObserver.assertValues(
-            ResetPasscodeState(null),
-            ResetPasscodeState(PasscodeViewModel.PasswordDisabled)
+            PasscodeState(null),
+            PasscodeState(PasscodeDisabled)
         )
 
         coVerify { settingsHandler.usePasscode = false }
@@ -59,14 +63,14 @@ class PasscodeViewModelTest {
     fun `disablePasscode (with wrong passcode) should not disable passcode`() {
         // given: wrong passcode
         coEvery { encryptionManager.unlockWithPassword(examplePasscode.toByteArray()) } returns false
-        val testObserver = TestLiveDataObserver<ResetPasscodeState>()
+        val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
 
         viewModel.disablePasscode(examplePasscode)
 
         testObserver.assertValues(
-            ResetPasscodeState(null),
-            ResetPasscodeState(PasscodeViewModel.PasswordWrong)
+            PasscodeState(null),
+            PasscodeState(PasscodeWrong)
         )
     }
 
@@ -74,18 +78,20 @@ class PasscodeViewModelTest {
     fun `onForgotPasscode - (successful owner deletion) should remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 0
-        every { encryptionManager.removePassword() } just Runs
-        every { encryptionManager.lock() } just Runs
-        coEvery { credentialsRepository.removeOwner(any()) } just Runs
-
-        val testObserver = TestLiveDataObserver<ResetPasscodeState>()
+//        every { encryptionManager.removePassword() } just Runs
+//        every { encryptionManager.lock() } just Runs
+//        coEvery { credentialsRepository.removeOwner(any()) } just Runs
+        val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
+        testObserver.assertValues(
+            PasscodeState(null)
+        )
 
         viewModel.onForgotPasscode()
 
         testObserver.assertValues(
-            ResetPasscodeState(null),
-            ResetPasscodeState(AllOwnersRemoved)
+            PasscodeState(null),
+            PasscodeState(AllOwnersRemoved)
         )
         coVerify(exactly = 1) { credentialsRepository.removeOwner(any()) }
         coVerify(exactly = 1) { notificationRepository.unregisterOwner() }
@@ -100,18 +106,20 @@ class PasscodeViewModelTest {
     fun `onForgotPasscode - (owner deletion failed) should remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 1
-        every { encryptionManager.removePassword() } just Runs
-        every { encryptionManager.lock() } just Runs
-        coEvery { credentialsRepository.removeOwner(any()) } just Runs
-
-        val testObserver = TestLiveDataObserver<ResetPasscodeState>()
+//        every { encryptionManager.removePassword() } just Runs
+//        every { encryptionManager.lock() } just Runs
+//        coEvery { credentialsRepository.removeOwner(any()) } just Runs
+        val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
+        testObserver.assertValues(
+            PasscodeState(null)
+        )
 
         viewModel.onForgotPasscode()
 
         testObserver.assertValues(
-            ResetPasscodeState(null),
-            ResetPasscodeState(OwnerRemovalFailed)
+            PasscodeState(null),
+            PasscodeState(BaseStateViewModel.ViewAction.ShowError(OwnerRemovalFailed))
         )
         coVerify(exactly = 1) { credentialsRepository.removeOwner(any()) }
         coVerify(exactly = 1) { notificationRepository.unregisterOwner() }

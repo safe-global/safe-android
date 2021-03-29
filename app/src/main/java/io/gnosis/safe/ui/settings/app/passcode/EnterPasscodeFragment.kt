@@ -5,17 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -29,12 +27,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
-
-    @Inject
-    lateinit var encryptionManager: HeimdallEncryptionManager
-
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -51,19 +43,22 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
-               when (val viewAction = it.viewAction) {
+            when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
                     snackbar(requireView(), R.string.passcode_disabled)
                     findNavController().navigateUp()
                 }
-                is PasscodeViewModel.OwnerRemovalFailed -> {
+                is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is PasscodeViewModel.PasswordWrong -> {
+                is PasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
+                }
+                is PasscodeViewModel.PasscodeCorrect -> {
+                    findNavController().navigateUp()
                 }
             }
         })
@@ -86,37 +81,9 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 actionId == EditorInfo.IME_ACTION_DONE
             }
 
-            input.doOnTextChanged { text, _, _, _ ->
-
-                text?.let {
-                    if (input.text.length < 6) {
-
-                        errorMessage.visible(input.text.isEmpty())
-
-                        digits.forEach {
-                            it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                        }
-                        (1..text.length).forEach { i ->
-                            digits[i - 1].background = ContextCompat.getDrawable(
-                                requireContext(),
-                                R.drawable.ic_circle_passcode_filled_20dp
-                            )
-                        }
-                    } else {
-
-                        if (!encryptionManager.unlockWithPassword(text.toString().toByteArray())) {
-                            errorMessage.visible(true)
-                            input.setText("")
-                            digits.forEach {
-                                it.background =
-                                    ContextCompat.getDrawable(requireContext(), R.color.surface_01)
-                            }
-                        } else {
-                            findNavController().navigateUp()
-                        }
-                    }
-                }
-            }
+            input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
+                viewModel.unlockWithPasscode(digitsAsString)
+            })
 
             errorMessage.setText(R.string.settings_passcode_wrong_passcode)
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
