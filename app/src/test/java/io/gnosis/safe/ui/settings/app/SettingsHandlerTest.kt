@@ -2,7 +2,9 @@ package io.gnosis.safe.ui.settings.app
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate.*
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.settings.app.SettingsHandler.Companion.KEY_USER_DEFAULT_FIAT
 import io.mockk.*
 import junit.framework.TestCase.*
@@ -21,6 +23,7 @@ class SettingsHandlerTest {
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var gatewayApi: GatewayApi
+    private val remoteConfig = mockk<FirebaseRemoteConfig>()
 
     @Before
     fun setup() {
@@ -35,7 +38,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `setAllowScreenshots (true) should save true under ALLOW_SCREENSHOTS`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
         runBlocking {
             settingsHandler.screenshotsAllowed = true
 
@@ -45,7 +48,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `getAllowScreenshots (initially) should return false`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         runBlocking {
             val result = settingsHandler.screenshotsAllowed
@@ -57,7 +60,7 @@ class SettingsHandlerTest {
     @Test
     fun `getAllowScreenshots (screenshots have been authorized previously) should return true`() {
         preferences.edit().putBoolean(SettingsHandler.KEY_ALLOW_SCREENSHOTS, true)
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
         runBlocking {
             val result = settingsHandler.screenshotsAllowed
 
@@ -67,7 +70,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `nightMode (initially) should return MODE_NIGHT_FOLLOW_SYSTEM`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         runBlocking {
             val result = settingsHandler.nightMode
@@ -79,7 +82,7 @@ class SettingsHandlerTest {
     @Test
     fun `nightMode (for preference MODE_NIGHT_YES) should return MODE_NIGHT_YES`() {
         preferences.edit().putInt(SettingsHandler.KEY_NIGHT_MODE, MODE_NIGHT_YES)
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         runBlocking {
             val result = settingsHandler.nightMode
@@ -91,7 +94,7 @@ class SettingsHandlerTest {
     @Test
     fun `nightMode (for preference MODE_NIGHT_NO) should return MODE_NIGHT_NO`() {
         preferences.edit().putInt(SettingsHandler.KEY_NIGHT_MODE, MODE_NIGHT_NO)
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         runBlocking {
             val result = settingsHandler.nightMode
@@ -103,7 +106,7 @@ class SettingsHandlerTest {
     @Test
     fun `nightMode (for preference MODE_NIGHT_FOLLOW_SYSTEM) should return MODE_NIGHT_FOLLOW_SYSTEM`() {
         preferences.edit().putInt(SettingsHandler.KEY_NIGHT_MODE, MODE_NIGHT_FOLLOW_SYSTEM)
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         runBlocking {
             val result = settingsHandler.nightMode
@@ -114,7 +117,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `nightMode (MODE_NIGHT_YES) should save MODE_NIGHT_YES under KEY_NIGHT_MODE`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
         runBlocking {
             settingsHandler.nightMode = MODE_NIGHT_YES
 
@@ -124,7 +127,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `nightMode (MODE_NIGHT_NO) should save MODE_NIGHT_NO under KEY_NIGHT_MODE`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
         runBlocking {
             settingsHandler.nightMode = MODE_NIGHT_NO
 
@@ -134,7 +137,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `nightMode (MODE_NIGHT_FOLLOW_SYSTEM) should save MODE_NIGHT_FOLLOW_SYSTEM under KEY_NIGHT_MODE`() {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
         runBlocking {
             settingsHandler.nightMode = MODE_NIGHT_FOLLOW_SYSTEM
 
@@ -146,7 +149,7 @@ class SettingsHandlerTest {
     fun `loadSupportedFiatCodes - backend error`() = runBlocking {
         val backendError = Throwable()
         coEvery { gatewayApi.loadSupportedCurrencies() } throws backendError
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         val actual = runCatching { settingsHandler.loadSupportedFiatCodes() }
 
@@ -158,7 +161,7 @@ class SettingsHandlerTest {
     fun `loadSupportedFiatCodes - backend sorting is used - successful`() = runBlocking {
         val supportedFiats = listOf("USD", "EUR", "CAD")
         coEvery { gatewayApi.loadSupportedCurrencies() } returns supportedFiats
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         val actual = runCatching { settingsHandler.loadSupportedFiatCodes() }
 
@@ -168,7 +171,7 @@ class SettingsHandlerTest {
 
     @Test
     fun `getUserDefaultFiat - no value set`() = runBlocking {
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
         val actual = settingsHandler.userDefaultFiat
         val expected = "USD"
@@ -180,7 +183,7 @@ class SettingsHandlerTest {
     @Test
     fun `getUserDefaultFiat - value set`() = runBlocking {
         preferences.edit().putString(KEY_USER_DEFAULT_FIAT, "EUR")
-        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager)
+        val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
 
 
         val actual = settingsHandler.userDefaultFiat
