@@ -42,7 +42,7 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
 
         with(binding) {
             title.setText(R.string.settings_passcode_change_passcode)
-
+            createPasscode.setText(R.string.settings_passcode_create_a_new_6_digit_passcode)
             status.visibility = View.INVISIBLE
 
             backButton.setOnClickListener {

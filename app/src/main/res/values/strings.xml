@@ -157,6 +157,7 @@
     <string name="settings_passcode_enter_passcode">Enter passcode</string>
     <string name="settings_passcode_will_be_needed_to_sign">The passcode will be needed to sign transactions.</string>
     <string name="settings_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
+    <string name="settings_passcode_create_a_new_6_digit_passcode">Create a new 6-digit passcode</string>
     <string name="settings_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
     <string name="settings_passcode_owner_key_successful_imported">Owner key successful imported</string>
     <string name="settings_passcode_dont_match">Passcodes don’t match</string>
