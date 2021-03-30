@@ -147,7 +147,7 @@ class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsVi
                         Navigation.findNavController(it).navigate(R.id.action_to_import_owner)
                     }
                     Banner.Type.PASSCODE -> {
-                        //TODO: start passcode setup flow
+                        Navigation.findNavController(it).navigate(R.id.action_to_passcode_setup)
                     }
                 }
             }
