@@ -88,7 +88,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             errorMessage.setText(R.string.settings_passcode_wrong_passcode)
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
             actionButton.setOnClickListener {
-                input.hideSoftKeyboard()
                 binding.errorMessage.visibility = View.INVISIBLE
 
                 showConfirmDialog(
@@ -98,6 +97,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     confirmColor = R.color.error
                 ) {
                     viewModel.onForgotPasscode()
+                    input.hideSoftKeyboard()
                 }
             }
         }
