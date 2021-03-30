@@ -40,6 +40,7 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            title.setText(R.string.settings_passcode_change_passcode)
 
             status.visibility = View.INVISIBLE
 
