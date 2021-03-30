@@ -99,9 +99,13 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     confirmColor = R.color.error
                 ) {
                     viewModel.removeOwner()
-                    input.hideSoftKeyboard()
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.input.hideSoftKeyboard()
     }
 }

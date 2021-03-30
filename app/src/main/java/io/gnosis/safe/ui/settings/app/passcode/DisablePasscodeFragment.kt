@@ -98,10 +98,14 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     confirmColor = R.color.error
                 ) {
                     viewModel.onForgotPasscode()
-                    input.hideSoftKeyboard()
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.input.hideSoftKeyboard()
     }
 }
 
