@@ -90,7 +90,6 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
             actionButton.setOnClickListener {
-                input.hideSoftKeyboard()
                 binding.errorMessage.visibility = View.INVISIBLE
 
                 showConfirmDialog(
@@ -103,5 +102,10 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.input.hideSoftKeyboard()
     }
 }
