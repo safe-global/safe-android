@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,6 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
@@ -41,6 +41,7 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
 
     override fun onResume() {
         super.onResume()
+        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.showKeyboardForView()
     }
 
@@ -73,7 +74,6 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             status.visibility = View.INVISIBLE
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
-            input.showKeyboardForView()
 
             //Disable done button
             input.setOnEditorActionListener { _, actionId, _ ->
