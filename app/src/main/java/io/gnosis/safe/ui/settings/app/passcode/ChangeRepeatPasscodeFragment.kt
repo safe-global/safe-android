@@ -62,6 +62,8 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
         })
 
         with(binding) {
+            title.setText(R.string.settings_passcode_change_passcode)
+
             createPasscode.setText(R.string.settings_passcode_repeat_the_6_digit_passcode)
 
             backButton.setOnClickListener {
