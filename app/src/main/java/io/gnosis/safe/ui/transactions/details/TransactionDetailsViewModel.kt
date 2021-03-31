@@ -197,7 +197,7 @@ class TransactionDetailsViewModel
                 var rejectable = false
                 var safeOwner = false
                 if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
+                    awaitingConfirm = false
                     rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
                     safeOwner = isOwner(executionInfo, owners)
                 }
