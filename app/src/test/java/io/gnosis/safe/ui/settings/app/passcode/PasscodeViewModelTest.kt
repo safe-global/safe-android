@@ -92,7 +92,7 @@ class PasscodeViewModelTest {
             PasscodeState(AllOwnersRemoved)
         )
         coVerify(exactly = 1) { credentialsRepository.removeOwner(any()) }
-        coVerify(exactly = 1) { notificationRepository.unregisterOwner() }
+        coVerify(exactly = 1) { notificationRepository.unregisterOwners() }
         verify(exactly = 1) { encryptionManager.removePassword() }
         verify(exactly = 1) { encryptionManager.lock() }
         verify(exactly = 1) { settingsHandler.usePasscode = false }
@@ -121,7 +121,7 @@ class PasscodeViewModelTest {
             PasscodeState(BaseStateViewModel.ViewAction.ShowError(OwnerRemovalFailed))
         )
         coVerify(exactly = 1) { credentialsRepository.removeOwner(any()) }
-        coVerify(exactly = 1) { notificationRepository.unregisterOwner() }
+        coVerify(exactly = 1) { notificationRepository.unregisterOwners() }
         verify(exactly = 0) { encryptionManager.removePassword() }
         verify(exactly = 0) { encryptionManager.lock() }
         verify(exactly = 0) { settingsHandler.usePasscode = false }

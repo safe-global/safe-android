@@ -191,7 +191,7 @@ class NotificationRepository(
             }
     }
 
-    suspend fun unregisterOwner() {
+    suspend fun unregisterOwners() {
 
         kotlin.runCatching {
 

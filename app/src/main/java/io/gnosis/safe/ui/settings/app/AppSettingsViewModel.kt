@@ -42,7 +42,7 @@ class AppSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             //FIXME: adjust for multiple owners
             credentialsRepository.removeOwner(credentialsRepository.owners()[0])
-            notificationRepository.unregisterOwner()
+            notificationRepository.unregisterOwners()
             tracker.setNumKeysImported(0)
             signingOwner.postValue(null)
         }

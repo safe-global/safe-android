@@ -40,8 +40,8 @@ class PasscodeViewModel
         safeLaunch {
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
-                notificationRepository.unregisterOwner()
             }
+            notificationRepository.unregisterOwners()
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
                 encryptionManager.removePassword()
