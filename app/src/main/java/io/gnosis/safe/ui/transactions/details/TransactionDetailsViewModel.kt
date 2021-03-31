@@ -190,6 +190,7 @@ class TransactionDetailsViewModel
                     credentialsRepository.signWithOwner(owners[0], executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
+                txDetails = it
                 tracker.logTransactionConfirmed()
                 val safes = safeRepository.getSafes()
 
