@@ -50,7 +50,7 @@
         android:layout_marginStart="@dimen/default_small_margin"
         android:ellipsize="end"
         android:singleLine="true"
-        android:maxWidth="200dp"
+        android:maxWidth="180dp"
         app:layout_constraintBottom_toBottomOf="@+id/address_logo"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
