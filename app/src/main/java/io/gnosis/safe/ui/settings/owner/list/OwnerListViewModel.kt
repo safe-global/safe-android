@@ -33,7 +33,7 @@ class OwnerListViewModel
     fun removeOwner(owner: Solidity.Address) {
         safeLaunch {
             credentialsRepository.removeOwner(owner)
-            notificationRepository.unregisterOwner()
+            notificationRepository.unregisterOwners()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
         }
     }
