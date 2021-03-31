@@ -399,6 +399,7 @@
     <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
     <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
     <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
+    <string name="import_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
     <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>

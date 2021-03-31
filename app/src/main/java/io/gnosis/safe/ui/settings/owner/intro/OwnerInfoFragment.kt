@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerInfoBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -28,6 +29,10 @@ class OwnerInfoFragment : BaseViewBindingFragment<FragmentOwnerInfoBinding>() {
                 findNavController().navigate(OwnerInfoFragmentDirections.actionOwnerInfoFragmentToOwnerSeedPhraseFragment())
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
+            infoPrivateKey.addInfoLink(
+                getString(R.string.import_owner_key_intro_private_key_help),
+                getString(R.string.import_owner_key_intro_private_key_url)
+            )
         }
     }
 }
