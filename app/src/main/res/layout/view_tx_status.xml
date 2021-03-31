@@ -41,7 +41,7 @@
         android:id="@+id/status_title"
         style="@style/TextDark"
         android:layout_width="wrap_content"
-        android:maxWidth="220dp"
+        android:maxWidth="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginTop="@dimen/default_margin"
