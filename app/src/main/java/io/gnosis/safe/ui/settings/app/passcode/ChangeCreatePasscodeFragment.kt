@@ -41,8 +41,10 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
             title.setText(R.string.settings_passcode_change_passcode)
             createPasscode.setText(R.string.settings_passcode_create_a_new_6_digit_passcode)
+
             status.visibility = View.INVISIBLE
 
             backButton.setOnClickListener {
@@ -72,7 +74,11 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                     )
                 )
             })
-
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    skipPasscodeSetup()
+                }
+            })
             // Skip Button
             actionButton.visible(false)
         }

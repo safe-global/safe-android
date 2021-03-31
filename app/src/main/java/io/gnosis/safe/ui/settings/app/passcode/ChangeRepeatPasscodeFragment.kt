@@ -30,7 +30,7 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
     private val oldPasscode by lazy { navArgs.oldPasscode }
 
     @Inject
-    lateinit var viewModel: ChangePasscodeViewModel
+    lateinit var viewModel: PasscodeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -50,12 +50,12 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is ChangePasscodeViewModel.PasscodeWrong -> {
+                is PasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is ChangePasscodeViewModel.PasscodeChanged -> {
+                is PasscodeViewModel.PasscodeChanged -> {
                     findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_CHANGED_RESULT, true)
                 }

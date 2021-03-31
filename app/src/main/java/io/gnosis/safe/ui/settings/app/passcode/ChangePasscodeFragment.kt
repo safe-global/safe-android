@@ -26,7 +26,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun screenId() = ScreenId.PASSCODE_CHANGE
 
     @Inject
-    lateinit var viewModel: ChangePasscodeViewModel
+    lateinit var viewModel: PasscodeViewModel
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -45,7 +45,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
-                is ChangePasscodeViewModel.AllOwnersRemoved -> {
+                is PasscodeViewModel.AllOwnersRemoved -> {
 
                     findNavController().popBackStack(R.id.changePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
@@ -54,12 +54,12 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
                     binding.errorMessage.visible(true)
                 }
-                is ChangePasscodeViewModel.PasscodeWrong -> {
+                is PasscodeViewModel.PasscodeWrong -> {
                     binding.errorMessage.setText(R.string.settings_passcode_wrong_passcode)
                     binding.errorMessage.visible(true)
                     binding.input.setText("")
                 }
-                is ChangePasscodeViewModel.PasscodeVerified -> {
+                is PasscodeViewModel.PasscodeCorrect -> {
                     findNavController().navigate(
                         ChangePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
                     )
@@ -85,7 +85,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                viewModel.verifyPasscode(digitsAsString)
+                viewModel.unlockWithPasscode(digitsAsString)
             })
 
             helpText.visible(false)
@@ -100,7 +100,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     confirm = R.string.settings_passcode_disable_passcode,
                     confirmColor = R.color.error
                 ) {
-                    viewModel.removeOwner()
+                    viewModel.onForgotPasscode()
                     input.hideSoftKeyboard()
                 }
             }
