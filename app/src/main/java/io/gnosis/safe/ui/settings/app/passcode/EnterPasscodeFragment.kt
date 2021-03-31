@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     override fun onResume() {
         super.onResume()
+        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.showKeyboardForView()
     }
 
@@ -88,7 +90,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             errorMessage.setText(R.string.settings_passcode_wrong_passcode)
             actionButton.setText(R.string.settings_passcode_forgot_your_passcode)
             actionButton.setOnClickListener {
-                input.hideSoftKeyboard()
                 binding.errorMessage.visibility = View.INVISIBLE
 
                 showConfirmDialog(
@@ -98,6 +99,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     confirmColor = R.color.error
                 ) {
                     viewModel.onForgotPasscode()
+                    input.hideSoftKeyboard()
                 }
             }
         }

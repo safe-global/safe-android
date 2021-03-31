@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
 
     override fun onResume() {
         super.onResume()
+        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.showKeyboardForView()
     }
 
@@ -39,15 +41,23 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
             title.setText(R.string.settings_passcode_change_passcode)
+            createPasscode.setText(R.string.settings_passcode_create_a_new_6_digit_passcode)
 
             status.visibility = View.INVISIBLE
 
             backButton.setOnClickListener {
                 skipPasscodeSetup()
             }
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    skipPasscodeSetup()
+                }
+            })
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
+            input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
             input.showKeyboardForView()
 
             //Disable done button

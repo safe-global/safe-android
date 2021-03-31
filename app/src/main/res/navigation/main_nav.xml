@@ -15,6 +15,10 @@
         android:id="@+id/action_to_import_owner"
         app:destination="@id/ownerInfoFragment" />
 
+    <action
+        android:id="@+id/action_to_passcode_setup"
+        app:destination="@id/createPasscodeFragment" />
+
     <dialog
         android:id="@+id/safeSelectionDialog"
         android:name="io.gnosis.safe.ui.safe.selection.SafeSelectionDialog"

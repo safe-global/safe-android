@@ -83,6 +83,7 @@
                 app:cardCornerRadius="8dp"/>
 
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
+                android:id="@+id/info_private_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/surface_01"
