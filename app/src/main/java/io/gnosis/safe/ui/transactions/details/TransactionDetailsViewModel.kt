@@ -190,6 +190,7 @@ class TransactionDetailsViewModel
                     credentialsRepository.signWithOwner(owners[0], executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
+                txDetails = it
                 tracker.logTransactionConfirmed()
                 val safes = safeRepository.getSafes()
 
@@ -197,7 +198,7 @@ class TransactionDetailsViewModel
                 var rejectable = false
                 var safeOwner = false
                 if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = false
+                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
                     rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
                     safeOwner = isOwner(executionInfo, owners)
                 }
