@@ -61,7 +61,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
                     findNavController().navigate(
-                        ChangePasscodeFragmentDirections.actionPasscodeSettingsFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
+                        ChangePasscodeFragmentDirections.actionChangePasscodeFragmentToChangeCreatePasscodeFragment(oldPasscode = binding.input.text.toString())
                     )
                 }
             }

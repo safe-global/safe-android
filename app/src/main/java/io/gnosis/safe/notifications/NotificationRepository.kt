@@ -213,7 +213,9 @@ class NotificationRepository(
                 timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
-            // registration without signatures
+            registration.addSignatures(credentialsRepository.owners())
+
+            // owners whose signature is missing will be unregistered
             notificationService.register(registration)
         }
             .onSuccess {

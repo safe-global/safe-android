@@ -36,17 +36,17 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="@string/load_safe_multisig" />
+            android:text="@string/signing_owner_name_title" />
 
         <TextView
-            android:id="@+id/next_button"
+            android:id="@+id/import_button"
             style="@style/ToolbarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_weight="0"
             android:enabled="false"
-            android:text="@string/next" />
+            android:text="@string/signing_owner_import" />
     </LinearLayout>
 
     <View
@@ -89,14 +89,14 @@
         android:layout_marginEnd="56dp"
         android:gravity="center"
         android:textSize="17sp"
-        app:layout_constraintBottom_toTopOf="@id/add_safe_name_description"
+        app:layout_constraintBottom_toTopOf="@id/owner_name_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/valid_check_mark"
         app:layout_constraintTop_toBottomOf="@id/new_address_blockies"
         tools:text="0x01293891238912830192831092381238120938120398" />
 
     <TextView
-        android:id="@+id/add_safe_name_description"
+        android:id="@+id/owner_name_description"
         style="@style/TextDark.Bold"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -104,14 +104,14 @@
         android:layout_marginRight="@dimen/default_margin"
         android:layout_marginLeft="@dimen/default_margin"
         android:gravity="center"
-        android:text="@string/enter_safe_name_description"
-        app:layout_constraintBottom_toTopOf="@id/add_safe_name_layout"
+        android:text="@string/signing_owner_name_description"
+        app:layout_constraintBottom_toTopOf="@id/owner_name_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/new_address_hex" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/add_safe_name_layout"
+        android:id="@+id/owner_name_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -125,10 +125,10 @@
         android:hint="@string/enter_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_safe_name_description">
+        app:layout_constraintTop_toBottomOf="@id/owner_name_description">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/add_safe_name_entry"
+            android:id="@+id/owner_name_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lines="1"

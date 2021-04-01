@@ -15,13 +15,7 @@ import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.gnosis.safe.utils.shortChecksumString
-import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
 import javax.inject.Inject
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
@@ -42,7 +36,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            setupOwnerKeyView()
+            ownerKeys.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerListFragment())
+            }
             appearance.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToNightModeSettingsFragment())
             }
@@ -74,8 +70,8 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             }
         }
 
-        viewModel.signingOwner.observe(viewLifecycleOwner, Observer {
-            setupOwnerKeyView(it?.address)
+        viewModel.signingOwnerCount.observe(viewLifecycleOwner, Observer {
+            binding.ownerKeys.value = it.toString()
         })
 
         viewModel.loadSigningOwner()
@@ -94,52 +90,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             .onFailure {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store.apps/details?id=${requireActivity().packageName}")))
             }
-    }
-
-    private fun setupOwnerKeyView(address: Solidity.Address? = null) {
-        with(binding) {
-            if (address != null) {
-                if (ownerKey.currentView.id != R.id.remove_owner_key) {
-                    ownerKey.showNext()
-                }
-                with(removeOwnerKey) {
-                    blockies.setAddress(address)
-                    ownerAddress.text = address.shortChecksumString()
-                    remove.setOnClickListener {
-                        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
-                            onOwnerRemove()
-                        }
-                    }
-                    root.setOnClickListener {
-                        address?.let {
-                            context?.copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
-                                snackbar(view = root, textId = R.string.copied_success)
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (ownerKey.currentView.id != R.id.import_owner_key) {
-                    ownerKey.showNext()
-                }
-                with(importOwnerKey) {
-                    root.setOnClickListener {
-                        findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOwnerInfoFragment())
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadSigningOwner()
-    }
-
-    private fun onOwnerRemove() {
-        viewModel.removeSigningOwner()
-        binding.ownerKey.showNext()
-        snackbar(requireView(), getString(R.string.signing_owner_key_removed))
     }
 
     companion object {

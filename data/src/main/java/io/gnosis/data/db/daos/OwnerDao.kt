@@ -13,6 +13,9 @@ interface OwnerDao {
     @Delete
     suspend fun delete(owner: Owner)
 
+    @Query("DELETE FROM ${Owner.TABLE_NAME} WHERE ${Owner.COL_ADDRESS} = :address")
+    suspend fun deleteByAddress(address: Solidity.Address)
+
     @Query("SELECT COUNT(*) FROM ${Owner.TABLE_NAME}")
     suspend fun ownerCount(): Int
 

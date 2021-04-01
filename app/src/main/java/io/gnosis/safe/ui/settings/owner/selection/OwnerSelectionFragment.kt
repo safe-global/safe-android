@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.list
+package io.gnosis.safe.ui.settings.owner.selection
 
 import android.animation.Animator
 import android.os.Bundle
@@ -19,16 +19,13 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.OWNER_IMPORT_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), OwnerListAdapter.OnOwnerItemClickedListener {
+class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), DerivedOwnerListAdapter.OnOwnerItemClickedListener {
 
     override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
 
@@ -39,11 +36,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     @Inject
     lateinit var viewModel: OwnerSelectionViewModel
 
-    @Inject
-    lateinit var settingsHandler: SettingsHandler
-
-    private lateinit var adapter: OwnerListAdapter
-
+    private lateinit var adapter: DerivedOwnerListAdapter
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -57,7 +50,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = OwnerListAdapter()
+        adapter = DerivedOwnerListAdapter()
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
@@ -70,7 +63,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.showMoreOwners.visible(false)
                 } else {
                     binding.progress.visible(false)
-                    binding.importButton.isEnabled = true
+                    binding.nextButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
@@ -80,12 +73,13 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            importButton.setOnClickListener {
-                if (usingSeedPhrase()) {
-                    viewModel.importOwner()
-                } else {
-                    viewModel.importOwner(privateKey)
-                }
+            nextButton.setOnClickListener {
+
+                val (address, key) = viewModel.getOwnerData(privateKey)
+
+                findNavController().navigate(
+                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(address, key, usingSeedPhrase())
+                )
             }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
@@ -98,7 +92,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         lifecycleScope.launch {
                             with(binding) {
                                 progress.visible(false)
-                                importButton.isEnabled = true
+                                nextButton.isEnabled = true
 
                                 if (viewAction.hasMore) {
                                     derivedOwners.visible(true)
@@ -150,16 +144,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         }
 
                     }
-                    is CloseScreen -> {
-                        if (settingsHandler.usePasscode) {
-                            findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, true)
-                        } else {
-                            findNavController().navigate(
-                                OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToCreatePasscodeFragment(ownerImported = true)
-                            )
-                        }
-                    }
                     else -> {
                     }
                 }
@@ -178,6 +162,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex)
 
     companion object {
-        private const val MAX_PAGES = OwnerPagingProvider.MAX_PAGES
+        private const val MAX_PAGES = DerivedOwnerPagingProvider.MAX_PAGES
     }
 }
