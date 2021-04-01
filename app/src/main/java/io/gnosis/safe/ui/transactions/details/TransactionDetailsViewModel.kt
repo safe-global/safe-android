@@ -81,18 +81,16 @@ class TransactionDetailsViewModel
                 }
 
 
-    //TODO: remove when backend provides info about rejections
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun canBeRejectedFromDevice(
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         status: TransactionStatus,
         owners: List<Owner>
-    ): Boolean =
-        !status.isCompleted() &&
-                owners.isNotEmpty() &&
-                owners[0].let { credentials ->
-                    executionInfo.signers.contains(credentials.address)
-                }
+    ): Boolean = !status.isCompleted() &&
+            owners.isNotEmpty() &&
+            owners.any { credentials ->
+                !executionInfo.rejectors.contains(credentials.address)
+            }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun isOwner(
@@ -250,7 +248,7 @@ data class ConfirmationSubmitted(
     var safeOwner: Boolean
 ) : BaseStateViewModel.ViewAction
 
-object ConfirmConfirmation: BaseStateViewModel.ViewAction
+object ConfirmConfirmation : BaseStateViewModel.ViewAction
 
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
 class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)
