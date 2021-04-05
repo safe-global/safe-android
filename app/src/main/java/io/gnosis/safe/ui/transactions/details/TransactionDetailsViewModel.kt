@@ -156,6 +156,10 @@ class TransactionDetailsViewModel
 
     fun startConfirmationFlow() {
         safeLaunch {
+
+            // TODO: select owner key
+
+
             if (settingsHandler.usePasscode) {
                 confirmationInProgress = true
                 updateState {
