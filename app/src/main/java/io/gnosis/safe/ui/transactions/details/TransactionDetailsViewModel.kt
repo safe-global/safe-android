@@ -158,21 +158,29 @@ class TransactionDetailsViewModel
         safeLaunch {
 
             // TODO: select owner key
-
-
-            if (settingsHandler.usePasscode) {
-                confirmationInProgress = true
-                updateState {
-                    TransactionDetailsViewState(
-                        ViewAction.NavigateTo(
-                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToEnterPasscodeFragment()
-                        )
+            updateState {
+                TransactionDetailsViewState(
+                    ViewAction.NavigateTo(
+                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment()
                     )
-                }
-                updateState { TransactionDetailsViewState(ViewAction.None) }
-            } else {
-                updateState { TransactionDetailsViewState(ConfirmConfirmation) }
+                )
             }
+
+
+
+//            if (settingsHandler.usePasscode) {
+//                confirmationInProgress = true
+//                updateState {
+//                    TransactionDetailsViewState(
+//                        ViewAction.NavigateTo(
+//                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToEnterPasscodeFragment()
+//                        )
+//                    )
+//                }
+//                updateState { TransactionDetailsViewState(ViewAction.None) }
+//            } else {
+//                updateState { TransactionDetailsViewState(ConfirmConfirmation) }
+//            }
         }
     }
 

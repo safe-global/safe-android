@@ -346,6 +346,10 @@
     <string name="signing_owner_name_edit_title">Edit owner name</string>
     <string name="signing_owner_name_edit_remove">Remove owner key</string>
 
+    <string name="signing_owner_selection_list_title">Select owner keys</string>
+    <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
+    <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+
     <string name="signing_owner_list_title">Owner keys</string>
     <string name="signing_owner_list_empty">There are no imported owner keys</string>
 

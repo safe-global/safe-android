@@ -21,10 +21,9 @@ import io.gnosis.safe.ui.settings.app.AppSettingsFragment
 import io.gnosis.safe.ui.settings.app.GetInTouchFragment
 import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
-import io.gnosis.safe.ui.settings.app.passcode.PasscodeSettingsFragment
+import io.gnosis.safe.ui.settings.app.passcode.*
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment
-import io.gnosis.safe.ui.settings.app.passcode.*
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
@@ -124,6 +123,8 @@ interface ViewComponent {
     fun inject(fragment: ChangeRepeatPasscodeFragment)
 
     fun inject(fragment: EnterPasscodeFragment)
+
+    fun inject(fragment: SigningOwnerSelectionFragment)
 
     // Dialogs
     fun inject(dialog: EnsInputDialog)

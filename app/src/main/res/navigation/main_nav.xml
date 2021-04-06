@@ -430,11 +430,25 @@
             app:destination="@id/enterPasscodeFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
+        <action
+            android:id="@+id/action_transactionDetailsFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
+            app:popUpTo="@id/signingOwnerSelectionFragment" />
+
         <argument
             android:name="txId"
             app:argType="string" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/signingOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragment"
+        android:label="SigningOwnerSelectionFragment"
+        tools:layout="@layout/fragment_signing_owner_selection">
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/confirmRejectionFragment"
