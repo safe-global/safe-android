@@ -433,7 +433,7 @@
         <action
             android:id="@+id/action_transactionDetailsFragment_to_signingOwnerSelectionFragment"
             app:destination="@id/signingOwnerSelectionFragment"
-            app:popUpTo="@id/signingOwnerSelectionFragment" />
+            app:popUpTo="@id/transactionDetailsFragment" />
 
         <argument
             android:name="txId"
@@ -447,6 +447,10 @@
         android:label="SigningOwnerSelectionFragment"
         tools:layout="@layout/fragment_signing_owner_selection">
 
+        <argument
+            android:name="missingSigners"
+            app:argType="string[]"
+            app:nullable="true"/>
     </fragment>
 
 

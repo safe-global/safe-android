@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -14,13 +15,16 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSigningOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.list.LocalOwners
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter
 import io.gnosis.safe.ui.settings.owner.list.OwnerListState
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
+import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener as OwnerListener1
@@ -28,13 +32,15 @@ import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener as O
 class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwnerSelectionBinding>(), OwnerListener1 {
 
     override fun screenId(): ScreenId? = ScreenId.OWNER_LIST
+    private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
+    private val missingSigners by lazy { navArgs.missingSigners }
+    // TODO: add navarg for rejection or confirmation
 
     lateinit var adapter: OwnerListAdapter
 
     @Inject
     lateinit var viewModel: OwnerListViewModel
 
-    // TODO: add navarg for rejection or confirmation
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSigningOwnerSelectionBinding =
         FragmentSigningOwnerSelectionBinding.inflate(inflater, container, false)
@@ -45,7 +51,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadOwners()
+        viewModel.loadOwners(missingSigners?.toList())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +59,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
         adapter = OwnerListAdapter(this, true)
 
         with(binding) {
-            title.text = ""
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
@@ -70,36 +75,40 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                     state.viewAction?.let { action ->
                         when (action) {
                             is BaseStateViewModel.ViewAction.Loading -> {
-                                Timber.e("---> Loading state")
-
                                 binding.progress.visible(true)
                             }
                             is LocalOwners -> {
-
-                                Timber.e("---> LocalOwners  state: ")
-
-
                                 binding.progress.visible(false)
                                 if (action.owners.isEmpty()) {
-                                    Timber.e("---> LocalOwners  empty: showEmptyState() ")
-
                                     showEmptyState()
                                 } else {
                                     adapter.updateData(action.owners)
-                                    Timber.e("---> LocalOwners: showList() ")
                                     showList()
                                 }
                             }
                             is BaseStateViewModel.ViewAction.ShowError -> {
-                                Timber.e("---> ShowError  state")
-
                                 binding.progress.visible(false)
                             }
+                            is ConfirmConfirmation -> {
+                                showConfirmDialog(
+                                    requireContext(),
+                                    message = R.string.confirm_transaction_dialog_message,
+                                    confirm = R.string.confirm,
+                                    confirmColor = R.color.primary
+                                ) {
+                                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                                        action.owner.asEthereumAddressString()
+                                    )
+                                }
+
+                            }
                             else -> {
-                                Timber.e("---> Unexpected  state")
+                                Timber.e("---> Unexpected action: $action")
                             }
                         }
-                    }!!
+                    }
                 }
             }
         })
@@ -116,6 +125,10 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onOwnerClick(owner: Solidity.Address) {
         Timber.i("---> Use key for signing: $owner")
+
+
+        viewModel.selectKeyForSigning(owner)
+
         //TODD: sign and continue
     }
 
