@@ -21,7 +21,6 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
-import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionDetailsViewModel
@@ -159,8 +158,6 @@ class TransactionDetailsViewModel
     }
 
     fun startConfirmationFlow() {
-        Timber.i("---> startConfirmationFlow()...")
-
         safeLaunch {
             confirmationInProgress = true
             val executionInfo = txDetails?.detailedExecutionInfo
@@ -173,8 +170,6 @@ class TransactionDetailsViewModel
                         confirmation.signer != possibleSigner
                     }
                 }
-                Timber.i("---> startConfirmationFlow() -> updateState() -> NavigateTo")
-
                 updateState {
                     TransactionDetailsViewState(
                         ViewAction.NavigateTo(

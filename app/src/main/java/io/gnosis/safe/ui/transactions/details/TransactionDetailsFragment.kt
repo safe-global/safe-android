@@ -30,7 +30,6 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -177,7 +176,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
                 binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
-                    Timber.i("---> ---> setOnClickListerner() -> startConfirmationFlow()")
                     viewModel.startConfirmationFlow()
                     binding.txConfirmButton.isEnabled = false
                 }

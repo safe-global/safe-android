@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -25,6 +26,8 @@ import javax.inject.Inject
 class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.PASSCODE_ENTER
+    private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
+    private val selectedOwner by lazy { navArgs.selectedOwner }
 
     @Inject
     lateinit var viewModel: PasscodeViewModel

@@ -7,7 +7,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
-import io.gnosis.safe.ui.transactions.details.TransactionDetailsFragmentDirections
+import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
@@ -53,17 +53,14 @@ class OwnerListViewModel
         }
     }
 
-
-    //TODO: Move to SigningOwnerSelectionViewModel ?
     fun selectKeyForSigning(owner: Solidity.Address) {
-
         safeLaunch {
             if (settingsHandler.usePasscode) {
 //                confirmationInProgress = true
                 updateState {
                     OwnerListState(
                         ViewAction.NavigateTo(
-                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToEnterPasscodeFragment()
+                            SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(selectedOwner = owner.asEthereumAddressString())
                         )
                     )
                 }

@@ -53,7 +53,7 @@ class ConfirmRejectionViewModel
                 updateState {
                     ConfirmationRejectedViewState(
                         ViewAction.NavigateTo(
-                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToEnterPasscodeFragment()
+                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToEnterPasscodeFragment(selectedOwner = "")
                         )
                     )
                 }

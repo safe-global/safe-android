@@ -104,12 +104,16 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                                 }
 
                             }
+                            is BaseStateViewModel.ViewAction.NavigateTo -> {
+                                findNavController().navigate(action.navDirections)
+                            }
                             else -> {
-                                Timber.e("---> Unexpected action: $action")
+                                Timber.e("Unexpected action: $action")
                             }
                         }
                     }
                 }
+
             }
         })
 //        updateUi()
@@ -124,12 +128,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
-        Timber.i("---> Use key for signing: $owner")
-
-
         viewModel.selectKeyForSigning(owner)
-
-        //TODD: sign and continue
     }
 
     private fun showList() {
