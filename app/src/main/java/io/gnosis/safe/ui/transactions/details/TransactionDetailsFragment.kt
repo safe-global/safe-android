@@ -80,6 +80,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
                 is ConfirmConfirmation -> {
+
+                    Timber.i("ConfirmConfirmation -> submitConfirmation(${viewAction.owner})")
                     binding.txConfirmButton.isEnabled = false
                     viewModel.submitConfirmation(viewModel.txDetails!!, viewAction.owner)
                 }
@@ -124,15 +126,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.flowInProgress()) {
-            viewModel.resumeFlow()
+        Timber.i("---> TransactionDetailFragment.onResume()")
+        if (ownerSelected() != null) {
+            Timber.i("---> viewModel.resumeFlow(${ownerSelected()!!})")
+            viewModel.resumeFlow(ownerSelected()!!)
+            resetOwnerSelected()
         } else {
             viewModel.loadDetails(txId)
-        }
-
-        if (ownerSelected() != null) {
-            viewModel.submitConfirmation(viewModel.txDetails!!, ownerSelected()!!)
-            resetOwnerSelected()
         }
     }
 
@@ -143,24 +143,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     }
 
     private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean) {
-        Timber.i("needsYourConfirmation: $needsYourConfirmation")
-        Timber.i("            canReject: $canReject")
-        Timber.i("              isOwner: $isOwner")
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
 
                 val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
-                Timber.i("hasBeenRejected: $hasBeenRejected")
-
                 val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
-                Timber.i("isRejection: $isRejection")
-
                 val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
-                Timber.i("needsExecution: $needsExecution")
-                Timber.i("txDetails.txStatus.isCompleted(): ${txDetails.txStatus.isCompleted()}")
-
                 val buttonState = ButtonStateHelper(
                     hasBeenRejected = hasBeenRejected,
                     needsYourConfirmation = needsYourConfirmation,
@@ -170,7 +160,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     isOwner = isOwner,
                     completed = txDetails.txStatus.isCompleted()
                 )
-                Timber.i("buttonState.ButtonIsVisible(): ${buttonState.confirmButtonIsVisible()}")
 
                 if (buttonState.buttonContainerIsVisible()) {
                     binding.scrollView.setPadding(0, 0, 0, resources.getDimension(R.dimen.item_tx_m_height).toInt())

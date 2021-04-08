@@ -21,7 +21,6 @@ import io.gnosis.safe.ui.settings.owner.list.LocalOwners
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter
 import io.gnosis.safe.ui.settings.owner.list.OwnerListState
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
-import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -90,19 +89,11 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                                 binding.progress.visible(false)
                             }
                             is ConfirmConfirmation -> {
-                                showConfirmDialog(
-                                    requireContext(),
-                                    message = R.string.confirm_transaction_dialog_message,
-                                    confirm = R.string.confirm,
-                                    confirmColor = R.color.primary
-                                ) {
-                                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                                        action.owner.asEthereumAddressString()
-                                    )
-                                }
-
+                                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                                    action.owner.asEthereumAddressString()
+                                )
                             }
                             is BaseStateViewModel.ViewAction.NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
@@ -116,7 +107,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
             }
         })
-//        updateUi()
     }
 
     override fun onOwnerRemove(owner: Solidity.Address, position: Int) {

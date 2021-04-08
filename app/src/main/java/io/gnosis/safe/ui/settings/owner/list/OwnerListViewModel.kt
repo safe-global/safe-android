@@ -31,9 +31,9 @@ class OwnerListViewModel
             val owners = credentialsRepository.owners().map { OwnerViewData.LocalOwner(it.address, it.name) }
             missingSigners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
-                    missingSigners?.any {
+                    missingSigners.any {
                         localOwner.address.asEthereumAddressString() == it
-                    } ?: false
+                    }
                 }
                 updateState {
                     OwnerListState(viewAction = LocalOwners(acceptedOwners))
@@ -64,10 +64,10 @@ class OwnerListViewModel
                         )
                     )
                 }
-                updateState { OwnerListState(ViewAction.None) }
+//                updateState { OwnerListState(ViewAction.None) }
             } else {
                 updateState { OwnerListState(ConfirmConfirmation(owner)) }
-                updateState { OwnerListState(ViewAction.None) }
+//                updateState { OwnerListState(ViewAction.None) }
             }
         }
     }
