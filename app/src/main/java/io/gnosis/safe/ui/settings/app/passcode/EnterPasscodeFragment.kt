@@ -15,6 +15,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -63,7 +64,12 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    findNavController().navigateUp()
+                    //TODO: have TransactionDetails sign the tx
+                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                        selectedOwner
+                    )
                 }
             }
         })
