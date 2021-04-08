@@ -196,7 +196,7 @@ class ButtonStateHelperTest {
     }
 
     @Test
-    fun `(9) when (!isRejection, !needsYourConfirmation, hasBeenRejected, needsExecution) should hide reject button`() {
+    fun `(9) when (!isRejection, !needsYourConfirmation, hasBeenRejected, needsExecution) should hide reject and confirm button`() {
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = false,
@@ -208,13 +208,13 @@ class ButtonStateHelperTest {
                 completed = false
             )
 
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-
-        assertTrue(buttonStateHelper.buttonContainerIsVisible())
         assertFalse(buttonStateHelper.rejectButtonIsVisible())
+        assertFalse(buttonStateHelper.confirmButtonIsVisible())
+
+        assertFalse(buttonStateHelper.buttonContainerIsVisible())
         assertFalse(buttonStateHelper.rejectButtonIsEnabled())
         assertFalse(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
+        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
     }
 
     @Test
