@@ -29,7 +29,8 @@ class ConfirmRejectionViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+    private val viewModel =
+        ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
@@ -64,12 +65,11 @@ class ConfirmRejectionViewModelTest {
                 any()
             )
         } just Runs
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns listOf(owner)
+        coEvery { credentialsRepository.owner(owner.address) } returns owner
         coEvery { tracker.logTransactionRejected() } just Runs
         viewModel.txDetails = transactionDetails
 
-        viewModel.submitRejection()
+        viewModel.submitRejection(owner.address)
 
         with(viewModel.state.test().values()) {
             assertEquals(RejectionSubmitted, this[0].viewAction)
@@ -92,9 +92,13 @@ class ConfirmRejectionViewModelTest {
                 any()
             )
         }
-        coVerify(exactly = 1) { credentialsRepository.signWithOwner(owner, "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()) }
-        coVerify(exactly = 1) { credentialsRepository.ownerCount() }
-        coVerify(exactly = 1) { credentialsRepository.owners() }
+        coVerify(exactly = 1) {
+            credentialsRepository.signWithOwner(
+                owner,
+                "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()
+            )
+        }
+//        coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionRejected() }
     }

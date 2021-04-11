@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.repositories.CredentialsRepository
@@ -50,8 +51,8 @@ class TransactionListViewModel
             val activeSafe = safeRepository.getActiveSafe()
             val safes = safeRepository.getSafes()
             if (activeSafe != null) {
-                val owner = if (credentialsRepository.ownerCount() > 0) credentialsRepository.owners()[0].address else null
-                getTransactions(activeSafe.address, safes, owner, type).collectLatest {
+                val owners = credentialsRepository.owners()
+                getTransactions(activeSafe.address, safes, owners, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -68,7 +69,7 @@ class TransactionListViewModel
     private fun getTransactions(
         activeSafeAddress: Solidity.Address,
         safes: List<Safe>,
-        owner: Solidity.Address?,
+        owner: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
@@ -83,7 +84,7 @@ class TransactionListViewModel
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
                                         safes = safes,
-                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByOwner(owner),
+                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owner),
                                         isConflict = isConflict
                                     )
                                 if (isConflict) {
@@ -162,7 +163,7 @@ class TransactionListViewModel
         return TransactionView.TransferQueued(
             id = id,
             status = txStatus,
-            statusText = displayString(txStatus, needsYourConfirmation),
+            statusText = displayString(txStatus, needsYourConfirmation), // TODO check Needs YOUR confimation
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
             dateTime = timestamp,
@@ -362,9 +363,17 @@ class TransactionListViewModel
                 creator = txInfo.creator.asEthereumAddressString(),
                 creatorInfo = AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString()),
                 factory = txInfo.factory?.asEthereumAddressString(),
-                factoryInfo = AddressInfoData.Remote(txInfo.factoryInfo?.name, txInfo.factoryInfo?.logoUri, txInfo.factory?.asEthereumAddressString()),
+                factoryInfo = AddressInfoData.Remote(
+                    txInfo.factoryInfo?.name,
+                    txInfo.factoryInfo?.logoUri,
+                    txInfo.factory?.asEthereumAddressString()
+                ),
                 implementation = txInfo.implementation?.asEthereumAddressString(),
-                implementationInfo = AddressInfoData.Remote(txInfo.implementationInfo?.name, txInfo.implementationInfo?.logoUri, txInfo.implementation?.asEthereumAddressString()),
+                implementationInfo = AddressInfoData.Remote(
+                    txInfo.implementationInfo?.name,
+                    txInfo.implementationInfo?.logoUri,
+                    txInfo.implementation?.asEthereumAddressString()
+                ),
                 transactionHash = txInfo.transactionHash
             )
         )
@@ -452,8 +461,12 @@ data class ActiveSafeChanged(
 
 object NoSafeSelected : BaseStateViewModel.ViewAction
 
-fun Transaction.canBeSignedByOwner(ownerAddress: Solidity.Address?): Boolean {
-    return executionInfo?.missingSigners?.contains(ownerAddress) == true
+fun Transaction.canBeSignedByAnyOwner(owners: List<Owner>): Boolean {
+    return executionInfo?.missingSigners?.any { address ->
+        owners.any { owner ->
+            owner.address == address
+        }
+    } ?: false
 }
 
 fun TransactionInfo.Transfer.incoming(): Boolean = direction != TransactionDirection.OUTGOING
