@@ -281,6 +281,31 @@ class TransactionDetailsViewModelTest {
         coVerify(exactly = 1) { tracker.logTransactionConfirmed() }
     }
 
+
+    @Test
+    fun `startConfirmationFlow should emit NavigateTo with SigningOwnerSelectionFragment`() = runBlockingTest {
+        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+        val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        viewModel.txDetails = transactionDetails
+
+        viewModel.startConfirmationFlow()
+
+        assertEquals(1, viewModel.state.test().values().size)
+        with(viewModel.state.test().values()) {
+            assertEquals(
+                BaseStateViewModel.ViewAction.NavigateTo(
+                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
+                        missingSigners = listOf(
+                            "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
+                            "0xf2cea96575d6b10f51d9af3b10e3e4e5738aa6bd"
+                        ).toTypedArray(),
+                        isConfirmation = true
+                    )
+                ).toString(), this[0].viewAction.toString()
+            )
+        }
+    }
+
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
         val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(any()) } returns transactionDetailsDto }
         return TransactionRepository(mockGatewayApi).getTransactionDetails("txId")
