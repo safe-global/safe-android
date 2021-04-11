@@ -24,7 +24,6 @@ import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.replaceDoubleNewlineWithParagraphLineSpacing
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
 import javax.inject.Inject
 
 class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectionBinding>() {
@@ -62,11 +61,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
             )
             confirmRejection.setOnClickListener {
                 confirmRejection.isEnabled = false
-
-
-                // TODO Start SigningOwnerSelectionFragment
-                  viewModel.selectSigningOwner()
-//                viewModel.startRejectionFlow()
+                viewModel.selectSigningOwner()
             }
         }
         binding.confirmRejection.isEnabled = false
@@ -76,11 +71,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                     findNavController().navigate(viewAction.navDirections)
                 }
                 is ConfirmRejection -> {
-
-                    Timber.e("---> viewModel.state.observe(): -> ConfirmRejection")
-
                     viewModel.startRejectionFlow(viewAction.owner)
-//                    viewModel.submitRejection()
                 }
                 is RejectionSubmitted -> {
                     Navigation.findNavController(view).navigate(
@@ -119,16 +110,15 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
 
     override fun onResume() {
         super.onResume()
-        Timber.i("--->                 onResume()")
-        Timber.i("--->            ownerSelected(): ${ownerSelected()}")
-        if(ownerSelected() != null) {
+        if (ownerSelected() != null) {
             viewModel.resumeFlow(ownerSelected()!!)
             resetOwnerSelected()
         }
     }
 
     private fun ownerSelected(): Solidity.Address? {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)?.asEthereumAddress()
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            ?.asEthereumAddress()
     }
 
     private fun resetOwnerSelected() {

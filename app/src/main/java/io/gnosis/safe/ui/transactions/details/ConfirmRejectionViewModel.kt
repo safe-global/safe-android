@@ -17,7 +17,6 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
-import timber.log.Timber
 import javax.inject.Inject
 
 class ConfirmRejectionViewModel
@@ -37,8 +36,6 @@ class ConfirmRejectionViewModel
     override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
 
     fun resumeFlow(owner: Solidity.Address) {
-        Timber.e("---> resumeFlow(): owner: $owner")
-
         if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
             submitRejection(owner)
         }

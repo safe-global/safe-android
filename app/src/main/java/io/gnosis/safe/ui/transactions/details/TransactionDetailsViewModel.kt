@@ -21,7 +21,6 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
-import timber.log.Timber
 import javax.inject.Inject
 
 class TransactionDetailsViewModel
@@ -139,10 +138,7 @@ class TransactionDetailsViewModel
                 )
             }
 
-            Timber.i("credentialsRepository.credentialsUnlocked(): ${credentialsRepository.credentialsUnlocked()}")
-
             if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
-                Timber.i("submitConfirmation()")
                 submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
         }

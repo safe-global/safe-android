@@ -30,7 +30,6 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -66,7 +65,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
             }
-
             refresh.setOnRefreshListener {
                 viewModel.loadDetails(txId)
             }
@@ -80,8 +78,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
                 is ConfirmConfirmation -> {
-
-                    Timber.i("ConfirmConfirmation -> submitConfirmation(${viewAction.owner})")
                     binding.txConfirmButton.isEnabled = false
                     viewModel.submitConfirmation(viewModel.txDetails!!, viewAction.owner)
                 }
@@ -126,9 +122,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        Timber.i("---> TransactionDetailFragment.onResume()")
         if (ownerSelected() != null) {
-            Timber.i("---> viewModel.resumeFlow(${ownerSelected()!!})")
             viewModel.resumeFlow(ownerSelected()!!)
             resetOwnerSelected()
         } else {
@@ -449,7 +443,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     }
 
     private fun ownerSelected(): Solidity.Address? {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)?.asEthereumAddress()
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            ?.asEthereumAddress()
     }
 
     private fun resetOwnerSelected() {

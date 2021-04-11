@@ -11,7 +11,6 @@ import io.gnosis.safe.ui.transactions.details.ConfirmRejection
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
 
 class OwnerListViewModel
@@ -56,7 +55,6 @@ class OwnerListViewModel
     }
 
     fun selectKeyForSigning(owner: Solidity.Address, isConfirmation: Boolean) {
-        Timber.i("selectKeyForSigning owner selected: $owner, forConfirmation: $isConfirmation")
         safeLaunch {
             if (settingsHandler.usePasscode) {
 //                confirmationInProgress = true
@@ -70,11 +68,9 @@ class OwnerListViewModel
                 updateState { OwnerListState(ViewAction.None) }
             } else {
                 if (isConfirmation) {
-                    Timber.i("updateState ConfirmConfirmation($owner)")
                     updateState { OwnerListState(ConfirmConfirmation(owner)) }
                     updateState { OwnerListState(ViewAction.None) }
                 } else {
-                    Timber.i("updateState ConfirmRejection($owner)")
                     updateState { OwnerListState(ConfirmRejection(owner)) }
                     updateState { OwnerListState(ViewAction.None) }
                 }

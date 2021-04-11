@@ -50,16 +50,11 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onResume() {
         super.onResume()
-        missingSigners?.toList()?.forEach {
-            Timber.i("missingSigner: $it")
-        }
         viewModel.loadOwners(missingSigners?.toList())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Timber.i("---> onViewCreated()")
 
         adapter = OwnerListAdapter(this, true)
 
@@ -78,8 +73,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            Timber.i("---> state received: $state")
-
             when (state) {
                 is OwnerListState -> {
                     state.viewAction?.let { action ->
@@ -100,7 +93,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                                 binding.progress.visible(false)
                             }
                             is ConfirmConfirmation -> {
-                                Timber.e("----> ConfirmConfirmation action: $action")
                                 findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
                                 findNavController().currentBackStackEntry?.savedStateHandle?.set(
                                     SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
@@ -109,7 +101,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                             }
 
                             is ConfirmRejection -> {
-                                Timber.i("----> ConfirmRejection action: $action")
                                 findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
                                 findNavController().currentBackStackEntry?.savedStateHandle?.set(
                                     SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
@@ -139,8 +130,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
-        Timber.e("onOwnerClick(): owner: $owner")
-
         viewModel.selectKeyForSigning(owner, isConfirmation)
     }
 
