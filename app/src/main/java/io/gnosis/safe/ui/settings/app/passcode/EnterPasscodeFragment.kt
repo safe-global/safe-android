@@ -64,7 +64,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    //TODO: have TransactionDetails sign the tx
                     findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(
                         SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,

@@ -163,7 +163,7 @@ class TransactionListViewModel
         return TransactionView.TransferQueued(
             id = id,
             status = txStatus,
-            statusText = displayString(txStatus, needsYourConfirmation), // TODO check Needs YOUR confimation
+            statusText = displayString(txStatus, needsYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
             amountText = formatTransferAmount(txInfo.transferInfo, incoming),
             dateTime = timestamp,
