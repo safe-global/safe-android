@@ -34,8 +34,6 @@ class TransactionDetailsViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
 
-//    private var confirmationInProgress = false
-
     override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
     fun loadDetails(txId: String) {
@@ -112,16 +110,9 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-//    fun flowInProgress(): Boolean {
-//        return confirmationInProgress
-//    }
-
     fun resumeFlow(selectedOwnerAddress: Solidity.Address) {
         safeLaunch {
-//            if (confirmationInProgress) {
-            Timber.i("resumeFLow()")
             // update ui without reloading tx details
-
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo
@@ -154,22 +145,17 @@ class TransactionDetailsViewModel
                 Timber.i("submitConfirmation()")
                 submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
-
-//                confirmationInProgress = false
-//            }
         }
     }
 
     fun startConfirmationFlow() {
         safeLaunch {
-//            confirmationInProgress = true
             val executionInfo = txDetails?.detailedExecutionInfo
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 val allPossibleSigners = executionInfo.signers
                 val confirmations = executionInfo.confirmations
-
                 val missingSigners = allPossibleSigners.filter { possibleSigner ->
-                    confirmations.any { confirmation ->
+                    confirmations.all { confirmation ->
                         confirmation.signer != possibleSigner
                     }
                 }
@@ -184,7 +170,6 @@ class TransactionDetailsViewModel
                         )
                     )
                 }
-
                 updateState { TransactionDetailsViewState(ViewAction.None) }
             }
         }

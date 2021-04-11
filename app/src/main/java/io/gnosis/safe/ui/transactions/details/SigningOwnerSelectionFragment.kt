@@ -50,6 +50,9 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onResume() {
         super.onResume()
+        missingSigners?.toList()?.forEach {
+            Timber.i("missingSigner: $it")
+        }
         viewModel.loadOwners(missingSigners?.toList())
     }
 
@@ -75,6 +78,8 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            Timber.i("---> state received: $state")
+
             when (state) {
                 is OwnerListState -> {
                     state.viewAction?.let { action ->
