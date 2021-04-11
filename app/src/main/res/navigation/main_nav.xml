@@ -432,11 +432,6 @@
             app:destination="@id/confirmRejectionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
-<!--        <action-->
-<!--            android:id="@+id/action_transactionDetailsFragment_to_enterPasscodeFragment"-->
-<!--            app:destination="@id/enterPasscodeFragment"-->
-<!--            app:popUpTo="@id/transactionDetailsFragment" />-->
-
         <action
             android:id="@+id/action_transactionDetailsFragment_to_signingOwnerSelectionFragment"
             app:destination="@id/signingOwnerSelectionFragment"
