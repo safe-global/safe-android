@@ -270,7 +270,7 @@ data class ConfirmationSubmitted(
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmConfirmation(
-    var owner: Solidity.Address
+    val owner: Solidity.Address
 ) : BaseStateViewModel.ViewAction
 
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)

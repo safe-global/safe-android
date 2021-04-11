@@ -33,7 +33,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     override fun screenId(): ScreenId? = ScreenId.OWNER_LIST
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
-    // TODO: add navarg for rejection or confirmation
+    private val isConfirmation by lazy { navArgs.isConfirmation }
 
     lateinit var adapter: OwnerListAdapter
 
@@ -55,11 +55,17 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Timber.i("---> onViewCreated()")
+
         adapter = OwnerListAdapter(this, true)
 
         with(binding) {
             backButton.setOnClickListener {
                 findNavController().navigateUp()
+            }
+            if (!isConfirmation) {
+                description.setText(R.string.signing_owner_selection_list_rejection_description)
             }
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
@@ -89,6 +95,16 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                                 binding.progress.visible(false)
                             }
                             is ConfirmConfirmation -> {
+                                Timber.e("----> ConfirmConfirmation action: $action")
+                                findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                                    action.owner.asEthereumAddressString()
+                                )
+                            }
+
+                            is ConfirmRejection -> {
+                                Timber.i("----> ConfirmRejection action: $action")
                                 findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
                                 findNavController().currentBackStackEntry?.savedStateHandle?.set(
                                     SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
@@ -118,7 +134,9 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
-        viewModel.selectKeyForSigning(owner)
+        Timber.e("onOwnerClick(): owner: $owner")
+
+        viewModel.selectKeyForSigning(owner, isConfirmation)
     }
 
     private fun showList() {

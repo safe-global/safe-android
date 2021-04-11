@@ -429,10 +429,10 @@
             app:destination="@id/confirmRejectionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
-        <action
-            android:id="@+id/action_transactionDetailsFragment_to_enterPasscodeFragment"
-            app:destination="@id/enterPasscodeFragment"
-            app:popUpTo="@id/transactionDetailsFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_transactionDetailsFragment_to_enterPasscodeFragment"-->
+<!--            app:destination="@id/enterPasscodeFragment"-->
+<!--            app:popUpTo="@id/transactionDetailsFragment" />-->
 
         <action
             android:id="@+id/action_transactionDetailsFragment_to_signingOwnerSelectionFragment"
@@ -456,13 +456,16 @@
             app:destination="@id/enterPasscodeFragment"
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
-
         <argument
             android:name="missingSigners"
             app:argType="string[]"
             app:nullable="true"/>
-    </fragment>
 
+        <argument
+            android:name="isConfirmation"
+            app:argType="boolean"
+            android:defaultValue="true"/>
+    </fragment>
 
     <fragment
         android:id="@+id/confirmRejectionFragment"
@@ -478,6 +481,11 @@
         <action
             android:id="@+id/action_confirmRejectionFragment_to_enterPasscodeFragment"
             app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/confirmRejectionFragment" />
+
+        <action
+            android:id="@+id/action_confirmRejectionFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
             app:popUpTo="@id/confirmRejectionFragment" />
 
         <argument

@@ -23,6 +23,7 @@ import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), OwnerListAdapter.OwnerListener {
@@ -77,6 +78,9 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
                             }
                             is ShowError -> {
                                 binding.progress.visible(false)
+                            }
+                            else -> {
+                                Timber.w("Unknown action: $action")
                             }
                         }
                     }

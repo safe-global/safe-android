@@ -12,9 +12,12 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import pm.gnosis.model.Solidity
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
+import timber.log.Timber
 import javax.inject.Inject
 
 class ConfirmRejectionViewModel
@@ -31,40 +34,37 @@ class ConfirmRejectionViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-    private var rejectionInProgress = false
-
     override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
 
-    fun flowInProgress():Boolean {
-        return rejectionInProgress
-    }
+    fun resumeFlow(owner: Solidity.Address) {
+        Timber.e("---> resumeFlow(): owner: $owner")
 
-    fun resumeFlow() {
-        if (credentialsRepository.credentialsUnlocked()) {
-            submitRejection()
-            rejectionInProgress = false
+        if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
+            submitRejection(owner)
         }
     }
 
-    fun startRejectionFlow() {
+    fun startRejectionFlow(owner: Solidity.Address) {
         safeLaunch {
+
+//            updateState { ConfirmationRejectedViewState(ViewAction.NavigateTo(ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment())) }
+
             if (settingsHandler.usePasscode) {
-                rejectionInProgress = true
                 updateState {
                     ConfirmationRejectedViewState(
                         ViewAction.NavigateTo(
-                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToEnterPasscodeFragment(selectedOwner = "")
+                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToEnterPasscodeFragment(selectedOwner = owner.asEthereumAddressString())
                         )
                     )
                 }
                 updateState { ConfirmationRejectedViewState(ViewAction.None) }
             } else {
-                updateState { ConfirmationRejectedViewState(ConfirmRejection) }
+                updateState { ConfirmationRejectedViewState(ConfirmRejection(owner = owner)) }
             }
         }
     }
 
-    fun submitRejection() {
+    fun submitRejection(owner: Solidity.Address) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
 
@@ -84,20 +84,15 @@ class ConfirmRejectionViewModel
                 )!!.toHexString()
             validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
-            //FIXME: adjust for multiple owners
-            if (credentialsRepository.ownerCount() == 0) {
-                throw MissingOwnerCredential
-            }
-            val owner = credentialsRepository.owners()[0]
-
+            val selectedOwner = credentialsRepository.owner(owner) ?: throw MissingOwnerCredential
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
                     safeAddress = activeSafeAddress,
                     nonce = rejectionExecutionInfo.nonce,
-                    signature = credentialsRepository.signWithOwner(owner, safeTxHash.hexToByteArray()),
+                    signature = credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
                     safeTxHash = safeTxHash,
-                    sender = owner.address
+                    sender = selectedOwner.address
                 )
             }.onSuccess {
                 tracker.logTransactionRejected()
@@ -127,6 +122,34 @@ class ConfirmRejectionViewModel
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
+
+    fun selectSigningOwner() {
+        val executionInfo = txDetails?.detailedExecutionInfo
+        if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
+            val allPossibleSigners = executionInfo.signers
+            val confirmations = executionInfo.confirmations
+
+            val missingSigners = allPossibleSigners.filter { possibleSigner ->
+                confirmations.any { confirmation ->
+                    confirmation.signer != possibleSigner
+                }
+            }
+            safeLaunch {
+                updateState {
+                    ConfirmationRejectedViewState(
+                        ViewAction.NavigateTo(
+                            ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
+                                missingSigners = missingSigners.map {
+                                    it.asEthereumAddressString()
+                                }.toTypedArray(), isConfirmation = false
+                            )
+                        )
+                    )
+                }
+                updateState { ConfirmationRejectedViewState(ViewAction.None) }
+            }
+        }
+    }
 }
 
 open class ConfirmationRejectedViewState(
@@ -135,4 +158,6 @@ open class ConfirmationRejectedViewState(
 
 object RejectionSubmitted : BaseStateViewModel.ViewAction
 
-object ConfirmRejection : BaseStateViewModel.ViewAction
+data class ConfirmRejection(
+    val owner: Solidity.Address
+) : BaseStateViewModel.ViewAction
