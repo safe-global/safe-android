@@ -35,6 +35,10 @@
       "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
       "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
     ],
+    "rejectors": [
+      "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd",
+      "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0"
+    ],
     "confirmationsRequired": 2,
     "confirmations": [
       {

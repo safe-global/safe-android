@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
 import junit.framework.Assert.assertEquals
@@ -35,7 +36,7 @@ class ConfirmRejectionViewModelTest {
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     @Test
-    fun `proposeRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
+    fun `submitRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val owner = Owner(
@@ -98,9 +99,32 @@ class ConfirmRejectionViewModelTest {
                 "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()
             )
         }
-//        coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionRejected() }
+    }
+
+    @Test
+    fun `selectSigningOwner () `() = runBlockingTest {
+        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+        val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        viewModel.txDetails = transactionDetails
+
+        viewModel.selectSigningOwner()
+
+        assert(viewModel.state.test().values().size == 1)
+        with(viewModel.state.test().values()) {
+            assertEquals(
+                BaseStateViewModel.ViewAction.NavigateTo(
+                    ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
+                        missingSigners = listOf(
+                            "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
+                            "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
+                        ).toTypedArray(),
+                        isConfirmation = false
+                    )
+                ).toString(), this[0].viewAction.toString()
+            )
+        }
     }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {

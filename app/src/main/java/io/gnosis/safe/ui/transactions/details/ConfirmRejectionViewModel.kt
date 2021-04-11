@@ -43,9 +43,6 @@ class ConfirmRejectionViewModel
 
     fun startRejectionFlow(owner: Solidity.Address) {
         safeLaunch {
-
-//            updateState { ConfirmationRejectedViewState(ViewAction.NavigateTo(ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment())) }
-
             if (settingsHandler.usePasscode) {
                 updateState {
                     ConfirmationRejectedViewState(
@@ -142,7 +139,6 @@ class ConfirmRejectionViewModel
                         )
                     )
                 }
-                updateState { ConfirmationRejectedViewState(ViewAction.None) }
             }
         }
     }
