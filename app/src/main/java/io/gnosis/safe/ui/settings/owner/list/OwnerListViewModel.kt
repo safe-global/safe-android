@@ -29,7 +29,7 @@ class OwnerListViewModel
             updateState {
                 OwnerListState(viewAction = ViewAction.Loading(true))
             }
-            val owners = credentialsRepository.owners().map { OwnerViewData.LocalOwner(it.address, it.name) }
+            val owners = credentialsRepository.owners().map { OwnerViewData.LocalOwner(it.address, it.name) }.sortedBy { it.name }
             missingSigners?.let {
                 val acceptedOwners = owners.filter { localOwner ->
                     missingSigners.any {
@@ -57,7 +57,6 @@ class OwnerListViewModel
     fun selectKeyForSigning(owner: Solidity.Address, isConfirmation: Boolean) {
         safeLaunch {
             if (settingsHandler.usePasscode) {
-//                confirmationInProgress = true
                 updateState {
                     OwnerListState(
                         ViewAction.NavigateTo(
