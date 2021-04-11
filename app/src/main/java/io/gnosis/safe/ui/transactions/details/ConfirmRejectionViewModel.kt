@@ -127,11 +127,10 @@ class ConfirmRejectionViewModel
         val executionInfo = txDetails?.detailedExecutionInfo
         if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
             val allPossibleSigners = executionInfo.signers
-            val confirmations = executionInfo.confirmations
-
+            val rejectors = executionInfo.rejectors
             val missingSigners = allPossibleSigners.filter { possibleSigner ->
-                confirmations.any { confirmation ->
-                    confirmation.signer != possibleSigner
+                rejectors.all { address ->
+                    address != possibleSigner
                 }
             }
             safeLaunch {
