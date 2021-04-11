@@ -284,14 +284,16 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun `startConfirmationFlow should emit NavigateTo with SigningOwnerSelectionFragment`() = runBlockingTest {
+        val testObserver = TestLiveDataObserver<TransactionDetailsViewState>()
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         viewModel.txDetails = transactionDetails
+        viewModel.state.observeForever(testObserver)
 
         viewModel.startConfirmationFlow()
 
-        assertEquals(1, viewModel.state.test().values().size)
-        with(viewModel.state.test().values()) {
+        testObserver.assertValueCount(3)
+        with(testObserver.values()[1]) {
             assertEquals(
                 BaseStateViewModel.ViewAction.NavigateTo(
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
@@ -301,7 +303,7 @@ class TransactionDetailsViewModelTest {
                         ).toTypedArray(),
                         isConfirmation = true
                     )
-                ).toString(), this[0].viewAction.toString()
+                ).toString(), viewAction.toString()
             )
         }
     }

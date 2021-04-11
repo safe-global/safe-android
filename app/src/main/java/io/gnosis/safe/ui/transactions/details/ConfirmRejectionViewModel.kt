@@ -139,6 +139,7 @@ class ConfirmRejectionViewModel
                         )
                     )
                 }
+                updateState { ConfirmationRejectedViewState(ViewAction.None) }
             }
         }
     }

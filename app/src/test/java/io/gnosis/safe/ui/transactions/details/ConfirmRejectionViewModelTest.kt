@@ -12,8 +12,8 @@ import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
@@ -105,14 +105,16 @@ class ConfirmRejectionViewModelTest {
 
     @Test
     fun `selectSigningOwner () `() = runBlockingTest {
+        val testObserver = TestLiveDataObserver<ConfirmationRejectedViewState>()
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         viewModel.txDetails = transactionDetails
+        viewModel.state.observeForever(testObserver)
 
         viewModel.selectSigningOwner()
 
-        assert(viewModel.state.test().values().size == 1)
-        with(viewModel.state.test().values()) {
+        testObserver.assertValueCount(3)
+        with(testObserver.values()[1]) {
             assertEquals(
                 BaseStateViewModel.ViewAction.NavigateTo(
                     ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
@@ -122,7 +124,7 @@ class ConfirmRejectionViewModelTest {
                         ).toTypedArray(),
                         isConfirmation = false
                     )
-                ).toString(), this[0].viewAction.toString()
+                ).toString(), viewAction.toString()
             )
         }
     }
