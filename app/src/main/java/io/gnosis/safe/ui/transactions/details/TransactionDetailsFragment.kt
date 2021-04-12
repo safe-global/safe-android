@@ -18,16 +18,18 @@ import io.gnosis.safe.databinding.*
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.*
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -63,7 +65,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
             }
-
             refresh.setOnRefreshListener {
                 viewModel.loadDetails(txId)
             }
@@ -77,16 +78,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
                 is ConfirmConfirmation -> {
-                    showConfirmDialog(
-                        requireContext(),
-                        message = R.string.confirm_transaction_dialog_message,
-                        confirm = R.string.confirm,
-                        confirmColor = R.color.primary
-                    ) {
-                        binding.txConfirmButton.isEnabled = false
-                        viewModel.submitConfirmation(viewModel.txDetails!!)
-                    }
-
+                    binding.txConfirmButton.isEnabled = false
+                    viewModel.submitConfirmation(viewModel.txDetails!!, viewAction.owner)
                 }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
@@ -129,8 +122,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.flowInProgress()) {
-            viewModel.resumeFlow()
+        if (ownerSelected() != null) {
+            viewModel.resumeFlow(ownerSelected()!!)
+            resetOwnerSelected()
         } else {
             viewModel.loadDetails(txId)
         }
@@ -143,7 +137,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     }
 
     private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean) {
-        
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
@@ -171,6 +164,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
                     viewModel.startConfirmationFlow()
+                    binding.txConfirmButton.isEnabled = false
                 }
                 binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
                 binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()
@@ -446,6 +440,15 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.txButtonContainer.visible(false)
         binding.created.visible(false)
         binding.createdDivider.visible(false)
+    }
+
+    private fun ownerSelected(): Solidity.Address? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            ?.asEthereumAddress()
+    }
+
+    private fun resetOwnerSelected() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, null)
     }
 }
 

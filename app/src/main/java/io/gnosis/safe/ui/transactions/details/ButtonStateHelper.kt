@@ -37,7 +37,7 @@ class ButtonStateHelper(
                 true
             }
             !isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution -> {
-                true
+                false
             }
             else -> false
         }

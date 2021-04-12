@@ -9,10 +9,11 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
@@ -29,12 +30,13 @@ class ConfirmRejectionViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+    private val viewModel =
+        ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     @Test
-    fun `proposeRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
+    fun `submitRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val owner = Owner(
@@ -64,12 +66,11 @@ class ConfirmRejectionViewModelTest {
                 any()
             )
         } just Runs
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns listOf(owner)
+        coEvery { credentialsRepository.owner(owner.address) } returns owner
         coEvery { tracker.logTransactionRejected() } just Runs
         viewModel.txDetails = transactionDetails
 
-        viewModel.submitRejection()
+        viewModel.submitRejection(owner.address)
 
         with(viewModel.state.test().values()) {
             assertEquals(RejectionSubmitted, this[0].viewAction)
@@ -92,11 +93,40 @@ class ConfirmRejectionViewModelTest {
                 any()
             )
         }
-        coVerify(exactly = 1) { credentialsRepository.signWithOwner(owner, "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()) }
-        coVerify(exactly = 1) { credentialsRepository.ownerCount() }
-        coVerify(exactly = 1) { credentialsRepository.owners() }
+        coVerify(exactly = 1) {
+            credentialsRepository.signWithOwner(
+                owner,
+                "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()
+            )
+        }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionRejected() }
+    }
+
+    @Test
+    fun `selectSigningOwner () `() = runBlockingTest {
+        val testObserver = TestLiveDataObserver<ConfirmationRejectedViewState>()
+        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+        val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        viewModel.txDetails = transactionDetails
+        viewModel.state.observeForever(testObserver)
+
+        viewModel.selectSigningOwner()
+
+        testObserver.assertValueCount(3)
+        with(testObserver.values()[1]) {
+            assertEquals(
+                BaseStateViewModel.ViewAction.NavigateTo(
+                    ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
+                        missingSigners = listOf(
+                            "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
+                            "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
+                        ).toTypedArray(),
+                        isConfirmation = false
+                    )
+                ).toString(), viewAction.toString()
+            )
+        }
     }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {

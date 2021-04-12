@@ -12,8 +12,8 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
@@ -50,8 +50,6 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             backButton.setOnClickListener { findNavController().navigateUp() }
             importButton.setOnClickListener {
                 viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
-
-
              }
             ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
         }
@@ -63,7 +61,6 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
                 is NavigateTo -> {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
                     findNavController().navigate(viewAction.navDirections)
                 }
             }
