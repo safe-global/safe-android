@@ -166,6 +166,7 @@
     <string name="settings_app_light">Light</string>
     <string name="settings_app_import_owner_key">Import owner key</string>
     <string name="settings_app_imported_owner_key">Imported owner key</string>
+    <string name="settings_app_imported_owner_key_default_name">Key %1$s</string>
     <string name="settings_app_terms_of_use">Terms of use</string>
     <string name="settings_app_privacy_policy">Privacy policy</string>
     <string name="settings_app_licenses">Licenses</string>
