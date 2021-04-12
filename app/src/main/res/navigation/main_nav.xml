@@ -190,10 +190,6 @@
         <action
             android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
             app:destination="@id/ownerEditNameFragment" />
-
-        <action
-            android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
-            app:destination="@id/createPasscodeFragment" />
     </fragment>
 
     <fragment

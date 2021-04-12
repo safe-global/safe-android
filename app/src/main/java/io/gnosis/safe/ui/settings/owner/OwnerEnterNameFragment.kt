@@ -61,7 +61,6 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
                 is NavigateTo -> {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
                     findNavController().navigate(viewAction.navDirections)
                 }
             }
