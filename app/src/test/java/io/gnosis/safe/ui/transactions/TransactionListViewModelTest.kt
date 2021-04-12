@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transactions
 import androidx.paging.PagingData
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.TokenInfo
@@ -153,6 +154,7 @@ class TransactionListViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { safeRepository.getSafes() } returns listOf(safe)
         coEvery { credentialsRepository.ownerCount() } returns 0
+        coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { transactionRepository.getHistoryTransactions(any()) } throws throwable
         coEvery { transactionPagingProvider.getTransactionsStream(any(), TransactionPagingSource.Type.HISTORY) } throws throwable
         transactionListViewModel =
@@ -840,7 +842,11 @@ class TransactionListViewModelTest {
         )
 
         val transactionViewData = transactions.map {
-            transactionListViewModel.getTransactionView(it, listOf(safe), it.canBeSignedByOwner(ownerAddress))
+            transactionListViewModel.getTransactionView(
+                it,
+                listOf(safe),
+                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress, type = Owner.Type.LOCALLY_STORED)))
+            )
         }
 
         assertTrue(transactionViewData[0] is TransactionView.TransferQueued)

@@ -120,6 +120,27 @@
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>
 
+    <string name="error_client_UD_blockchain_provider_is_not_accessible_reason">Blockchain is down</string>
+    <string name="error_client_UD_blockchain_provider_is_not_accessible_fix">Check your internet connection</string>
+
+    <string name="error_client_UD_invalid_domain_reason">Invalid domain name</string>
+    <string name="error_client_UD_invalid_domain_fix">Please check the domain, it should end with .crypto or .zil</string>
+
+    <string name="error_client_UD_not_supported_currency_reason">The desirable currency is not supported by UD</string>
+    <string name="error_client_UD_not_supported_currency_fix">Contact UD to add more coin support</string>
+
+    <string name="error_client_UD_name_not_registered_reason">This domain is not registered with UD</string>
+    <string name="error_client_UD_name_not_registered_fix">Check if domain is correct</string>
+
+    <string name="error_client_UD_record_not_found_reason">Record you are looking is not attached to the domain</string>
+    <string name="error_client_UD_record_not_found_fix">Check the domain records</string>
+
+    <string name="error_client_UD_domain_not_configured_reason">Domain is not configured correctly</string>
+    <string name="error_client_UD_domain_not_configured_fix">Ask Domain owner to configure resolver contract</string>
+
+    <string name="error_client_UD_currency_not_found_reason">Domain don\'t have desirable asset attached</string>
+    <string name="error_client_UD_currency_not_found_fix">Contact domain owner</string>
+
     <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
     <string name="error_unknown_reason">an error occurred</string>
     <string name="error_unknown_fix">Please try again later</string>
@@ -136,6 +157,7 @@
     <string name="collectibles_view_on">View on %1$s</string>
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>
+    <string name="settings_app_owner_keys">Owner keys</string>
     <string name="settings_app_passcode">Passcode</string>
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
@@ -144,6 +166,7 @@
     <string name="settings_app_light">Light</string>
     <string name="settings_app_import_owner_key">Import owner key</string>
     <string name="settings_app_imported_owner_key">Imported owner key</string>
+    <string name="settings_app_imported_owner_key_default_name">Key %1$s</string>
     <string name="settings_app_terms_of_use">Terms of use</string>
     <string name="settings_app_privacy_policy">Privacy policy</string>
     <string name="settings_app_licenses">Licenses</string>
@@ -310,13 +333,26 @@
     <string name="signing_owner_dialog_cancel">Cancel</string>
     <string name="signing_owner_dialog_description">Removing the owner key only removes it from this app. It doesn’t delete any Safes from this app or from blockchain. For Safes controlled by this owner key, you will no longer be able to sign transactions in this app.</string>
     <string name="signing_owner_selection_title">Import owner key</string>
-    <string name="signing_owner_selection_import">Import</string>
     <string name="signing_owner_selection_select_key">Select key</string>
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="signing_owner_selection_more_derived_keys">Show more derived keys</string>
     <string name="signing_owner_selection_more">Show more</string>
     <string name="signing_owner_key_imported">Owner key successfully imported</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
+
+    <string name="signing_owner_import">Import</string>
+    <string name="signing_owner_name_title">Enter Key Name</string>
+    <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
+
+    <string name="signing_owner_name_edit_title">Edit owner name</string>
+    <string name="signing_owner_name_edit_remove">Remove owner key</string>
+
+    <string name="signing_owner_selection_list_title">Select owner keys</string>
+    <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
+    <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+
+    <string name="signing_owner_list_title">Owner keys</string>
+    <string name="signing_owner_list_empty">There are no imported owner keys</string>
 
     <string name="banner_owner_title">Import owner key</string>
     <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
@@ -358,6 +394,7 @@
     <string name="reject">Reject</string>
     <string name="save">Save</string>
     <string name="enter_ens_name">Enter ENS name</string>
+    <string name="enter_unstoppable_domain">Enter Unstoppable domain</string>
 
     <string name="empty">empty</string>
     <string name="array">array</string>
@@ -377,6 +414,7 @@
     <string name="import_owner_key_intro_seed_phrase_desc">Enter the private key or seed phrase of your owner key controlling your Safe. Your owner key will be imported into this app. You can then confirm proposed transactions on the go.</string>
     <string name="import_owner_key_intro_private_key_title">How secure is that?</string>
     <string name="import_owner_key_intro_private_key_desc">We only store your private key. We do not store your seed phrase in the app.</string>
+    <string name="import_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
     <string name="import_owner_key_intro_wallet_title">Is my wallet supported?</string>
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
@@ -400,6 +438,7 @@
     <string name="tx_list_rejection">On-chain rejection</string>
     <string name="tx_list_conflict_header_explainer">These transactions conflict as they use the same nonce. Executing one will automatically replace the other(s).</string>
     <string name="tx_list_conflict_header_learn_more">Learn more</string>
+    <string name="address_input_unstoppable_domain">Unstoppable domain</string>
     <string name="label_type_next">Next</string>
     <string name="label_type_queued">Queued</string>
 

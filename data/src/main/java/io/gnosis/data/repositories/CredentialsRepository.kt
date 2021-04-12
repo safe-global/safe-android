@@ -40,19 +40,22 @@ class CredentialsRepository(
         return ownerDao.loadAll()
     }
 
+    suspend fun owner(ownerAddress: Solidity.Address): Owner? {
+        return ownerDao.loadByAddress(ownerAddress)
+    }
+
     suspend fun saveOwner(
         address: Solidity.Address,
         key: BigInteger,
         name: String? = null
     ) {
-        encryptionManager.unlock()
+        val encryptedKey = encryptKey(key)
         val owner = Owner(
             address = address,
             name = name,
             type = Owner.Type.LOCALLY_STORED,
-            privateKey = EncryptedByteArray.create(encryptionManager, key.toByteArray())
+            privateKey = encryptedKey
         )
-        encryptionManager.lock()
         ownerDao.save(owner)
     }
 
@@ -62,6 +65,17 @@ class CredentialsRepository(
 
     suspend fun removeOwner(owner: Owner) {
         ownerDao.delete(owner)
+    }
+
+    suspend fun removeOwner(ownerAddress: Solidity.Address) {
+        ownerDao.deleteByAddress(ownerAddress)
+    }
+
+    fun encryptKey(key: BigInteger): EncryptedByteArray {
+        encryptionManager.unlock()
+        val encryptedKey = EncryptedByteArray.create(encryptionManager, key.toByteArray())
+        encryptionManager.lock()
+        return encryptedKey
     }
 
     fun signWithOwner(owner: Owner, data: ByteArray): String {

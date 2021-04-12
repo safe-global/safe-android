@@ -16,7 +16,9 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.gnosis.safe.utils.isCompleted
+import pm.gnosis.model.Solidity
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -30,8 +32,6 @@ class TransactionDetailsViewModel
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<TransactionDetailsViewState>(appDispatchers) {
-
-    private var confirmationInProgress = false
 
     override fun initialState() = TransactionDetailsViewState(ViewAction.Loading(true))
 
@@ -76,7 +76,7 @@ class TransactionDetailsViewModel
     ): Boolean =
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
                 owners.isNotEmpty() &&
-                owners[0].let { owner ->
+                owners.any { owner ->
                     executionInfo.signers.contains(owner.address) && !executionInfo.confirmations.map { it.signer }.contains(owner.address)
                 }
 
@@ -86,11 +86,12 @@ class TransactionDetailsViewModel
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         status: TransactionStatus,
         owners: List<Owner>
-    ): Boolean = !status.isCompleted() &&
-            owners.isNotEmpty() &&
-            owners.any { credentials ->
-                !executionInfo.rejectors.contains(credentials.address)
-            }
+    ): Boolean =
+        !status.isCompleted() &&
+                owners.isNotEmpty() &&
+                owners.any { credentials ->
+                    executionInfo.signers.contains(credentials.address)
+                }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun isOwner(
@@ -98,7 +99,7 @@ class TransactionDetailsViewModel
         owners: List<Owner>
     ): Boolean {
         return owners.isNotEmpty() &&
-                owners[0].let { owner ->
+                owners.any { owner ->
                     executionInfo.signers.contains(owner.address)
                 }
     }
@@ -107,70 +108,69 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-    fun flowInProgress(): Boolean {
-        return confirmationInProgress
-    }
-
-    fun resumeFlow() {
+    fun resumeFlow(selectedOwnerAddress: Solidity.Address) {
         safeLaunch {
-            if (confirmationInProgress) {
+            // update ui without reloading tx details
+            val safes = safeRepository.getSafes()
 
-                // update ui without reloading tx details
+            val executionInfo = txDetails?.detailedExecutionInfo
 
-                val safes = safeRepository.getSafes()
+            val owners = credentialsRepository.owners()
 
-                val executionInfo = txDetails?.detailedExecutionInfo
+            var awaitingConfirm = false
+            var rejectable = false
+            var safeOwner = false
+            if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
+                awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
+                rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                safeOwner = isOwner(executionInfo, owners)
+            }
 
-                val owners = credentialsRepository.owners()
-
-                var awaitingConfirm = false
-                var rejectable = false
-                var safeOwner = false
-                if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
-                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
-                    safeOwner = isOwner(executionInfo, owners)
-                }
-
-                updateState {
-                    TransactionDetailsViewState(
-                        UpdateDetails(
-                            txDetails?.toTransactionDetailsViewData(safes),
-                            awaitingConfirm,
-                            rejectable,
-                            safeOwner
-                        )
+            updateState {
+                TransactionDetailsViewState(
+                    UpdateDetails(
+                        txDetails?.toTransactionDetailsViewData(safes),
+                        awaitingConfirm,
+                        rejectable,
+                        safeOwner
                     )
-                }
+                )
+            }
 
-                if (credentialsRepository.credentialsUnlocked()) {
-                    submitConfirmation(txDetails!!)
-                }
-
-                confirmationInProgress = false
+            if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
+                submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
         }
     }
 
     fun startConfirmationFlow() {
         safeLaunch {
-            if (settingsHandler.usePasscode) {
-                confirmationInProgress = true
+            val executionInfo = txDetails?.detailedExecutionInfo
+            if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
+                val allPossibleSigners = executionInfo.signers
+                val confirmations = executionInfo.confirmations
+                val missingSigners = allPossibleSigners.filter { possibleSigner ->
+                    confirmations.all { confirmation ->
+                        confirmation.signer != possibleSigner
+                    }
+                }
                 updateState {
                     TransactionDetailsViewState(
                         ViewAction.NavigateTo(
-                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToEnterPasscodeFragment()
+                            TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
+                                missingSigners = missingSigners.map {
+                                    it.asEthereumAddressString()
+                                }.toTypedArray()
+                            )
                         )
                     )
                 }
                 updateState { TransactionDetailsViewState(ViewAction.None) }
-            } else {
-                updateState { TransactionDetailsViewState(ConfirmConfirmation) }
             }
         }
     }
 
-    fun submitConfirmation(transaction: TransactionDetails) {
+    fun submitConfirmation(transaction: TransactionDetails, selectedOwnerKey: Solidity.Address) {
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
 
@@ -180,12 +180,12 @@ class TransactionDetailsViewModel
             if (credentialsRepository.ownerCount() == 0) {
                 throw MissingOwnerCredential
             }
+            val selectedOwner = credentialsRepository.owner(selectedOwnerKey)
             val owners = credentialsRepository.owners()
-            //TODO: unlock with passcode if passcode is enabled
             kotlin.runCatching {
                 transactionRepository.submitConfirmation(
                     executionInfo.safeTxHash,
-                    credentialsRepository.signWithOwner(owners[0], executionInfo.safeTxHash.hexToByteArray())
+                    credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
                 txDetails = it
@@ -195,6 +195,7 @@ class TransactionDetailsViewModel
                 var awaitingConfirm = false
                 var rejectable = false
                 var safeOwner = false
+
                 if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                     awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
                     rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
@@ -248,7 +249,9 @@ data class ConfirmationSubmitted(
     var safeOwner: Boolean
 ) : BaseStateViewModel.ViewAction
 
-object ConfirmConfirmation : BaseStateViewModel.ViewAction
+data class ConfirmConfirmation(
+    val owner: Solidity.Address
+) : BaseStateViewModel.ViewAction
 
 class TxConfirmationFailed(override val cause: Throwable) : Throwable(cause)
 class TxRejectionFailed(override val cause: Throwable) : Throwable(cause)

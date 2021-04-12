@@ -15,12 +15,15 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.replaceDoubleNewlineWithParagraphLineSpacing
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
 
 class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectionBinding>() {
@@ -58,7 +61,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
             )
             confirmRejection.setOnClickListener {
                 confirmRejection.isEnabled = false
-                viewModel.startRejectionFlow()
+                viewModel.selectSigningOwner()
             }
         }
         binding.confirmRejection.isEnabled = false
@@ -68,7 +71,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                     findNavController().navigate(viewAction.navDirections)
                 }
                 is ConfirmRejection -> {
-                    viewModel.submitRejection()
+                    viewModel.startRejectionFlow(viewAction.owner)
                 }
                 is RejectionSubmitted -> {
                     Navigation.findNavController(view).navigate(
@@ -107,10 +110,21 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.flowInProgress()) {
-            viewModel.resumeFlow()
+        if (ownerSelected() != null) {
+            viewModel.resumeFlow(ownerSelected()!!)
+            resetOwnerSelected()
         }
     }
+
+    private fun ownerSelected(): Solidity.Address? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            ?.asEthereumAddress()
+    }
+
+    private fun resetOwnerSelected() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, null)
+    }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

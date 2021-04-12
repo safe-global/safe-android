@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_01">
+
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        style="@style/Toolbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toTopOf="@id/new_address_blockies"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="0"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            android:text="@string/back" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/ToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:text="@string/signing_owner_name_title" />
+
+        <TextView
+            android:id="@+id/import_button"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_weight="0"
+            android:enabled="false"
+            android:text="@string/signing_owner_import" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/new_address_blockies"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@id/new_address_hex"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <ImageView
+        android:id="@+id/valid_check_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:src="@drawable/ic_baseline_check_circle_outline_24"
+        app:layout_constraintBottom_toBottomOf="@id/new_address_hex"
+        app:layout_constraintEnd_toStartOf="@id/new_address_hex"
+        app:layout_constraintHorizontal_weight="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/new_address_hex"
+        app:layout_constraintVertical_bias="0" />
+
+    <TextView
+        android:id="@+id/new_address_hex"
+        style="@style/TextMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="56dp"
+        android:gravity="center"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toTopOf="@id/owner_name_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/valid_check_mark"
+        app:layout_constraintTop_toBottomOf="@id/new_address_blockies"
+        tools:text="0x01293891238912830192831092381238120938120398" />
+
+    <TextView
+        android:id="@+id/owner_name_description"
+        style="@style/TextDark.Bold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:gravity="center"
+        android:text="@string/signing_owner_name_description"
+        app:layout_constraintBottom_toTopOf="@id/owner_name_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/new_address_hex" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/owner_name_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        app:boxStrokeColor="@color/outline_box"
+        app:hintTextColor="@color/text_emphasis_low"
+        android:textColor="@color/text_emphasis_high"
+        android:hint="@string/enter_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/owner_name_description">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/owner_name_entry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/text_emphasis_high"
+            android:textSize="16sp"
+            tools:text="Local name" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

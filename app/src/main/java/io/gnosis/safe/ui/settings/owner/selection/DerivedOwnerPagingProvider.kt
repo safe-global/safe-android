@@ -1,4 +1,4 @@
-package io.gnosis.safe.ui.settings.owner.list
+package io.gnosis.safe.ui.settings.owner.selection
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -7,7 +7,7 @@ import io.gnosis.safe.utils.MnemonicAddressDerivator
 import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 
-class OwnerPagingProvider(
+class DerivedOwnerPagingProvider(
     private val derivator: MnemonicAddressDerivator
 ) {
 
@@ -22,7 +22,7 @@ class OwnerPagingProvider(
                 maxSize = PAGE_SIZE * MAX_PAGES
             ),
             pagingSourceFactory = {
-                OwnerPagingSource(derivator, MAX_PAGES)
+                DerivedOwnerPagingSource(derivator, MAX_PAGES)
             }
         ).flow
     }

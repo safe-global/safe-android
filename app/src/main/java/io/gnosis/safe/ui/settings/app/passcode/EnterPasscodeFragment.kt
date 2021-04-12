@@ -9,11 +9,13 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -25,6 +27,8 @@ import javax.inject.Inject
 class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.PASSCODE_ENTER
+    private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
+    private val selectedOwner by lazy { navArgs.selectedOwner }
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -60,7 +64,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    findNavController().navigateUp()
+                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                        selectedOwner
+                    )
                 }
             }
         })

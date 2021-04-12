@@ -11,6 +11,7 @@ import io.gnosis.safe.ui.assets.AssetsViewModel
 import io.gnosis.safe.ui.assets.coins.CoinsViewModel
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesViewModel
 import io.gnosis.safe.ui.dialogs.EnsInputViewModel
+import io.gnosis.safe.ui.dialogs.UnstoppableInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
@@ -19,8 +20,11 @@ import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerEditNameViewModel
+import io.gnosis.safe.ui.settings.owner.OwnerEnterNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
-import io.gnosis.safe.ui.settings.owner.list.OwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsViewModel
@@ -51,6 +55,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(UnstoppableInputViewModel::class)
+    abstract fun providesUnstoppableInputViewModel(viewModel: UnstoppableInputViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(AddSafeNameViewModel::class)
     abstract fun providesAddSafeNameViewModel(viewModel: AddSafeNameViewModel): ViewModel
 
@@ -78,6 +87,21 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(OwnerSelectionViewModel::class)
     abstract fun providesOwnerSelectionViewModel(viewModel: OwnerSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerEnterNameViewModel::class)
+    abstract fun providesOwnerEnterNameViewModel(viewModel: OwnerEnterNameViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerEditNameViewModel::class)
+    abstract fun providesOwnerEditNameViewModel(viewModel: OwnerEditNameViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OwnerListViewModel::class)
+    abstract fun providesOwnerListViewModel(viewModel: OwnerListViewModel): ViewModel
 
     @Binds
     @IntoMap

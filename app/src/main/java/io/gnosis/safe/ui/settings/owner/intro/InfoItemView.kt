@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import androidx.cardview.widget.CardView
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewInfoItemBinding
+import io.gnosis.safe.utils.appendLink
 import timber.log.Timber
 
 class InfoItemView  @JvmOverloads constructor(
@@ -40,6 +41,17 @@ class InfoItemView  @JvmOverloads constructor(
             introItemIcon.setImageResource(a.getResourceId(R.styleable.InfoItem_info_icon, -1))
             introItemTitle.text = a.getString(R.styleable.InfoItem_info_title)
             introItemText.text = a.getString(R.styleable.InfoItem_info_text)
+        }
+    }
+
+    fun addInfoLink(urlText: String, url: String) {
+        with(binding) {
+            introItemText.appendLink(
+                urlText = urlText,
+                url = url,
+                linkIcon = R.drawable.ic_external_link_green_16dp,
+                prefix = "\n"
+            )
         }
     }
 }

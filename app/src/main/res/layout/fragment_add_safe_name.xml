@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/surface_01">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
         style="@style/Toolbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:elevation="4dp"
+        android:elevation="4dp"
         app:layout_constraintBottom_toTopOf="@id/new_address_blockies"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

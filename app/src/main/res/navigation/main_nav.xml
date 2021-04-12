@@ -120,13 +120,9 @@
 
     <fragment
         android:id="@+id/ownerSelectionFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment"
         android:label="OwnerSelectionFragment"
         tools:layout="@layout/fragment_owner_selection">
-
-        <action
-            android:id="@+id/action_ownerSelectionFragment_to_createPasscodeFragment"
-            app:destination="@id/createPasscodeFragment" />
 
         <argument
             android:name="privateKey"
@@ -138,7 +134,62 @@
             app:argType="string"
             app:nullable="true" />
 
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerEnterNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
+        android:label="OwnerEnterNameFragment"
+        tools:layout="@layout/fragment_owner_name_enter">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerKey"
+            app:argType="string" />
+
+        <argument
+            android:name="fromSeedPhrase"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
+        <action
+            android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
+            app:destination="@id/createPasscodeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerEditNameFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment"
+        android:label="OwnerEditNameFragment"
+        tools:layout="@layout/fragment_owner_name_edit">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerListFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.list.OwnerListFragment"
+        android:label="OwnerListFragment"
+        tools:layout="@layout/fragment_owner_list">
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
     </fragment>
 
     <fragment
@@ -171,6 +222,7 @@
         <argument
             android:name="ownerImported"
             app:argType="boolean" />
+
     </fragment>
 
     <fragment
@@ -187,6 +239,10 @@
         android:label="EnterPasscodeFragment"
         tools:layout="@layout/fragment_passcode">
 
+        <argument
+            android:name="selectedOwner"
+            app:argType="string" />
+
     </fragment>
 
     <fragment
@@ -196,7 +252,7 @@
         tools:layout="@layout/fragment_passcode">
 
         <action
-            android:id="@+id/action_passcodeSettingsFragment_to_changeCreatePasscodeFragment"
+            android:id="@+id/action_changePasscodeFragment_to_changeCreatePasscodeFragment"
             app:destination="@id/changeCreatePasscodeFragment" />
 
     </fragment>
@@ -239,8 +295,6 @@
         android:label="SafeSettingsFragment"
         tools:layout="@layout/fragment_settings">
 
-        <!-- TODO: remove -->
-
         <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
             app:destination="@id/getInTouchFragment"
@@ -265,8 +319,8 @@
             app:destination="@id/safeSettingsEditNameFragment" />
 
         <action
-            android:id="@+id/action_settingsFragment_to_ownerInfoFragment"
-            app:destination="@id/ownerInfoFragment" />
+            android:id="@+id/action_settingsFragment_to_ownerListFragment"
+            app:destination="@+id/ownerListFragment" />
 
         <action
             android:id="@+id/action_settingsFragment_to_appFiatFragment"
@@ -314,6 +368,7 @@
         <action
             android:id="@+id/action_passcodeSettingsFragment_to_changePasscodeFragment"
             app:destination="@id/changePasscodeFragment" />
+
     </fragment>
 
     <fragment
@@ -375,14 +430,36 @@
             app:popUpTo="@id/transactionDetailsFragment" />
 
         <action
-            android:id="@+id/action_transactionDetailsFragment_to_enterPasscodeFragment"
-            app:destination="@id/enterPasscodeFragment"
+            android:id="@+id/action_transactionDetailsFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
             app:popUpTo="@id/transactionDetailsFragment" />
 
         <argument
             android:name="txId"
             app:argType="string" />
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/signingOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragment"
+        android:label="SigningOwnerSelectionFragment"
+        tools:layout="@layout/fragment_signing_owner_selection">
+
+        <action
+            android:id="@+id/action_signingOwnerSelectionFragment_to_enterPasscodeFragment"
+            app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/signingOwnerSelectionFragment" />
+
+        <argument
+            android:name="missingSigners"
+            app:argType="string[]"
+            app:nullable="true"/>
+
+        <argument
+            android:name="isConfirmation"
+            app:argType="boolean"
+            android:defaultValue="true"/>
     </fragment>
 
     <fragment
@@ -399,6 +476,11 @@
         <action
             android:id="@+id/action_confirmRejectionFragment_to_enterPasscodeFragment"
             app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/confirmRejectionFragment" />
+
+        <action
+            android:id="@+id/action_confirmRejectionFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment"
             app:popUpTo="@id/confirmRejectionFragment" />
 
         <argument
