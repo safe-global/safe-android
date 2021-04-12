@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
+import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -132,7 +133,11 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                 address = owner
-                name = if (localOwner.name.isNullOrBlank()) getString(R.string.settings_app_imported_owner_key) else localOwner.name
+                name = if (localOwner.name.isNullOrBlank())
+                    context.getString(
+                        R.string.settings_app_imported_owner_key_default_name,
+                        localOwner.address.shortChecksumString()
+                    ) else localOwner.name
                 showSeparator = true
             }
         } else {

@@ -97,7 +97,11 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
             val context = root.context
             blockies.setAddress(owner.address)
             ownerAddress.text = owner.address.shortChecksumString()
-            title.text = if (!owner.name.isNullOrBlank()) owner.name else context.getString(R.string.settings_app_imported_owner_key)
+            title.text = if (owner.name.isNullOrBlank())
+                context.getString(
+                    R.string.settings_app_imported_owner_key_default_name,
+                    owner.address.shortChecksumString()
+                ) else owner.name
             remove.setOnClickListener {
                 ownerListener.onOwnerRemove(owner.address, position)
             }
@@ -118,7 +122,11 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
             val context = root.context
             blockies.setAddress(owner.address)
             ownerAddress.text = owner.address.shortChecksumString()
-            title.text = if (!owner.name.isNullOrBlank()) owner.name else context.getString(R.string.settings_app_imported_owner_key)
+            title.text = if (owner.name.isNullOrBlank())
+                context.getString(
+                    R.string.settings_app_imported_owner_key_default_name,
+                    owner.address.shortChecksumString()
+                ) else owner.name
             remove.visible(false)
             edit.visible(false)
             root.setOnClickListener {
