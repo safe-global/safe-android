@@ -204,7 +204,8 @@
 
         <argument
             android:name="ownerImported"
-            app:argType="boolean" />
+            app:argType="boolean"
+            android:defaultValue="false" />
 
     </fragment>
 

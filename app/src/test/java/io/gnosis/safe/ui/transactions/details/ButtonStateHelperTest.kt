@@ -279,4 +279,26 @@ class ButtonStateHelperTest {
         assertFalse(buttonStateHelper.confirmButtonIsEnabled())
         assertFalse(buttonStateHelper.buttonContainerIsVisible())
     }
+
+    @Test
+    fun `(issue #1346) when (needsExecution & !canReject & !needsYourConfirmation) should hide both buttons`() {
+        val buttonStateHelper =
+            ButtonStateHelper(
+                isRejection = false,
+                needsYourConfirmation = false,
+                hasBeenRejected = true,
+                needsExecution = true,
+                canReject = false,
+                isOwner = true,
+                completed = false
+            )
+
+        assertFalse(buttonStateHelper.confirmButtonIsVisible())
+        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertFalse(buttonStateHelper.rejectButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
+        assertFalse(buttonStateHelper.spacerIsVisible())
+        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
+    }
+
 }

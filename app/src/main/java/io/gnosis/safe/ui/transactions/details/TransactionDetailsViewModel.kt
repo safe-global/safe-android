@@ -81,7 +81,6 @@ class TransactionDetailsViewModel
                 }
 
 
-    //TODO: remove when backend provides info about rejections
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun canBeRejectedFromDevice(
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
