@@ -98,6 +98,7 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
         showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
             viewModel.removeOwner(owner)
             adapter.removeItem(position)
+            adapter.notifyDataSetChanged()
             if (adapter.itemCount == 0) {
                 showEmptyState()
             }
