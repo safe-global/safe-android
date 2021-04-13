@@ -4,10 +4,10 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
-import com.unstoppabledomains.exceptions.ns.NSExceptionCode
-import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.unstoppabledomains.exceptions.ns.NSExceptionCode
+import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsResolutionError
@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.safe.add.SafeNotSupported
 import io.gnosis.safe.ui.safe.add.UsedSafeAddress
 import io.gnosis.safe.ui.settings.owner.InvalidPrivateKey
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
+import io.gnosis.safe.ui.settings.owner.KeyAlreadyImported
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -88,6 +89,7 @@ sealed class Error(
     object Error1108 : Error(1108, null, R.string.error_client_ens_invalid_reason, R.string.error_client_ens_invalid_fix)
     object Error1109 : Error(1109, null, R.string.error_client_safe_not_found_reason, R.string.error_client_safe_not_found_fix)
     object Error1110 : Error(1110, null, R.string.error_client_safe_name_invalid_reason, R.string.error_client_safe_name_invalid_fix)
+    object Error1111 : Error(1111, null, R.string.error_client_key_already_imported_reason, R.string.error_client_key_already_imported_fix)
 
     object ErrorUdUnsupportedDomain: Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
     object ErrorUdUnregistered: Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
@@ -120,6 +122,7 @@ fun Throwable.toError(): Error =
         this is InvalidAddressException -> Error.Error1102
         this is InvalidSeedPhrase -> Error.Error1103
         this is InvalidPrivateKey -> Error.Error1103
+        this is KeyAlreadyImported -> Error.Error1111
         this is MismatchingSafeTxHash -> Error.Error1104
         this is SafeNotSupported -> Error.Error1105
         this is EnsResolutionError -> Error.Error1106
