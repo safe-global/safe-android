@@ -41,8 +41,9 @@
 
     <ImageView
         android:id="@+id/remove"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_margin"
         android:visibility="visible"
