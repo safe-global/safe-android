@@ -50,7 +50,9 @@ class OwnerSeedPhraseViewModel
         } else {
 
             safeLaunch {
-                if (credentialsRepository.owner(Solidity.Address(KeyPair.fromPrivate(input.hexAsBigInteger()).address.asBigInteger())) == null) {
+                val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
+                val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
+                if (credentialsRepository.owner(ownerAddress) == null) {
                     updateState { ImportOwnerKeyState.ValidKeySubmitted(input) }
                 } else {
                     updateState { ImportOwnerKeyState.Error(KeyAlreadyImported) }
