@@ -75,7 +75,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             when (val viewAction = state.viewAction) {
                 is UpdateDetails -> {
                     viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.owners)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
                     }
                 }
                 is ConfirmConfirmation -> {
@@ -84,7 +84,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.owners)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
                     }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }

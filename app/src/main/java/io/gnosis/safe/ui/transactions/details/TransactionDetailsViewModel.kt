@@ -243,7 +243,7 @@ data class UpdateDetails(
     val awaitingConfirm: Boolean,
     val rejectable: Boolean,
     val safeOwner: Boolean,
-    val owners: List<Owner>
+    val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmationSubmitted(
@@ -251,7 +251,7 @@ data class ConfirmationSubmitted(
     val awaitingConfirm: Boolean,
     val rejectable: Boolean,
     val safeOwner: Boolean,
-    val owners: List<Owner>
+    val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmConfirmation(

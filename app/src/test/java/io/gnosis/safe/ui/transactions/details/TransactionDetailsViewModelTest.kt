@@ -267,7 +267,7 @@ class TransactionDetailsViewModelTest {
         viewModel.submitConfirmation(transactionDetails, someAddress)
 
         with(viewModel.state.test().values()) {
-            assertEquals(ConfirmationSubmitted(transactionDetails.toTransactionDetailsViewData(emptyList()), false, false, false), this[0].viewAction)
+            assertEquals(ConfirmationSubmitted(transactionDetails.toTransactionDetailsViewData(emptyList()), false, false, false, listOf(owner)), this[0].viewAction)
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) {
