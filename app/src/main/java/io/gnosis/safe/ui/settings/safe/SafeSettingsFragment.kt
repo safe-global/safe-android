@@ -79,6 +79,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 is ShowError -> {
                     hideLoading()
                     if (!didLoadOnce) {
+                        hideContent()
                         showContentNoData()
                     }
                     val error = viewAction.error.toError()
