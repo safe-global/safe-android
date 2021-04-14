@@ -139,7 +139,8 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 defaultOwnerSelection.visible(false)
                 defaultOwnerNumber.text = "#${position + 1}"
                 defaultOwnerImage.setAddress(ownerHolder.address)
-                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
+                ownerLabel.text = ownerHolder.name
                 derivedKeysExplanation.visible(itemCount > 1)
             }
         }

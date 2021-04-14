@@ -22,26 +22,24 @@
         android:id="@+id/owner_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        style="@style/TextDark"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
         android:ellipsize="end"
+        android:singleLine="true"
         android:maxWidth="220dp"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="2"
-        android:textColor="@color/text_emphasis_high"
-        android:textSize="16sp"
-        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/owner_short_address"
         app:layout_constraintStart_toEndOf="@+id/owner_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="16dp"
         app:layout_goneMarginRight="60dp"
-        tools:text="Fnord" />
+        tools:text="Fnord Fnord Fnord FnordFnord" />
 
     <TextView
         android:id="@+id/owner_short_address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
@@ -65,8 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_check_black_24dp"
-        app:tint="@color/primary"
-        tools:visibility="visible" />
+        app:tint="@color/primary" />
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/owner_image"

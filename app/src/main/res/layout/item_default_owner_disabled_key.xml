@@ -46,24 +46,40 @@
                 tools:visibility="visible" />
 
             <TextView
-                android:id="@+id/default_owner_address"
+                android:id="@+id/owner_label"
+                style="@style/TextDark"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
+                android:layout_marginTop="50dp"
+                android:ellipsize="end"
+                android:maxWidth="220dp"
+                android:singleLine="true"
+                app:layout_constraintBottom_toTopOf="@+id/owner_short_address"
+                app:layout_constraintStart_toEndOf="@+id/default_owner_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginLeft="16dp"
+                app:layout_goneMarginRight="60dp"
+                tools:text="Fnord Fnord Fnord FnordFnord" />
 
+            <TextView
+                android:id="@+id/owner_short_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginStart="12dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-medium"
                 android:maxLines="2"
                 android:textColor="@color/text_emphasis_low"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/default_owner_image"
-                app:layout_constraintEnd_toStartOf="@id/default_owner_selection"
-                app:layout_constraintHorizontal_bias="0"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/default_owner_image"
-                app:layout_constraintTop_toTopOf="@+id/default_owner_image"
-                app:layout_goneMarginLeft="@dimen/default_margin"
+                app:layout_goneMarginLeft="16dp"
                 app:layout_goneMarginRight="60dp"
-                tools:text="0x12345698892738912731982732913875734897348973498374128973892732837" />
+                tools:text="0x1234...5678" />
+
 
             <TextView
                 android:id="@+id/default_owner_number"
