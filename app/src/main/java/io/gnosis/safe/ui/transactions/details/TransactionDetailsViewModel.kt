@@ -183,29 +183,27 @@ class TransactionDetailsViewModel
             val selectedOwner = credentialsRepository.owner(selectedOwnerKey)
             val owners = credentialsRepository.owners()
             kotlin.runCatching {
-                transactionRepository.submitConfirmation(
-                    executionInfo.safeTxHash,
-                    credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
-                )
-            }.onSuccess {
-                txDetails = it
+                val signature = credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
+                transactionRepository.submitConfirmation(executionInfo.safeTxHash, signature)
+            }.onSuccess { transactionDetails ->
+                txDetails = transactionDetails
+                val updatedExecutionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+                    ?: throw MissingCorrectExecutionDetailsException
                 tracker.logTransactionConfirmed()
                 val safes = safeRepository.getSafes()
 
                 var awaitingConfirm = false
                 var rejectable = false
                 var safeOwner = false
+                awaitingConfirm = isAwaitingOwnerConfirmation(updatedExecutionInfo, txDetails!!.txStatus, owners)
+                rejectable = canBeRejectedFromDevice(updatedExecutionInfo, txDetails!!.txStatus, owners)
+                safeOwner = isOwner(updatedExecutionInfo, owners)
 
-                if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
-                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
-                    safeOwner = isOwner(executionInfo, owners)
-                }
 
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(
-                            it.toTransactionDetailsViewData(safes),
+                            transactionDetails.toTransactionDetailsViewData(safes),
                             awaitingConfirm,
                             rejectable,
                             safeOwner
