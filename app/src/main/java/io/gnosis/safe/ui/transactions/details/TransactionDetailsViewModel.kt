@@ -191,15 +191,10 @@ class TransactionDetailsViewModel
                     ?: throw MissingCorrectExecutionDetailsException
                 tracker.logTransactionConfirmed()
                 val safes = safeRepository.getSafes()
-
-                var awaitingConfirm = false
-                var rejectable = false
-                var safeOwner = false
-                awaitingConfirm = isAwaitingOwnerConfirmation(updatedExecutionInfo, txDetails!!.txStatus, owners)
-                rejectable = canBeRejectedFromDevice(updatedExecutionInfo, txDetails!!.txStatus, owners)
-                safeOwner = isOwner(updatedExecutionInfo, owners)
-
-
+                val awaitingConfirm = isAwaitingOwnerConfirmation(updatedExecutionInfo, txDetails!!.txStatus, owners)
+                val rejectable = canBeRejectedFromDevice(updatedExecutionInfo, txDetails!!.txStatus, owners)
+                val safeOwner = isOwner(updatedExecutionInfo, owners)
+                
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(
