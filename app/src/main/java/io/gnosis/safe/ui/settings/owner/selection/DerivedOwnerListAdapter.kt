@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.gnosis.safe.databinding.ItemDefaultOwnerDisabledKeyBinding
 import io.gnosis.safe.databinding.ItemDefaultOwnerKeyBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionDisabledOwnerBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
@@ -53,6 +54,13 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 false
             )
         )
+        AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal -> DisabledDefaultOwnerViewHolder(
+            ItemDefaultOwnerDisabledKeyBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
         else -> throw UnsupportedViewType(javaClass.name)
     }
 
@@ -76,7 +84,11 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
 
     override fun getItemViewType(position: Int): Int =
         if (position == 0) {
-            AccountItemViewType.DEFAULT_OWNER.ordinal
+            if (getItem(position)?.disabled == true) {
+                AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal
+            } else {
+                AccountItemViewType.DEFAULT_OWNER.ordinal
+            }
         } else {
             if (getItem(position)?.disabled == true) {
                 AccountItemViewType.DISABLED_OWNER.ordinal
@@ -95,6 +107,7 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
         DEFAULT_OWNER,
         OWNER,
         DISABLED_OWNER,
+        DISABLED_DEFAULT_OWNER
     }
 
     abstract class BaseOwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -106,9 +119,6 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
         @SuppressLint("SetTextI18n")
         override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
-//                root.setOnClickListener {
-//                    // ignore
-//                }
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)
                 ownerSelection.visible(selectedOwnerPosition == position)
@@ -116,6 +126,21 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 ownerShortAddress.text = ownerHolder.address.shortChecksumString()
 
                 root.alpha = OPACITY_HALF
+            }
+        }
+    }
+
+    inner class DisabledDefaultOwnerViewHolder(private val binding: ItemDefaultOwnerDisabledKeyBinding) : BaseOwnerViewHolder(binding.root) {
+
+        @SuppressLint("SetTextI18n")
+        override fun bind(ownerHolder: OwnerHolder, position: Int) {
+            with(binding) {
+                cardContainerLayout.alpha = OPACITY_HALF
+                defaultOwnerSelection.visible(false)
+                defaultOwnerNumber.text = "#${position + 1}"
+                defaultOwnerImage.setAddress(ownerHolder.address)
+                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                derivedKeysExplanation.visible(itemCount > 1)
             }
         }
     }
