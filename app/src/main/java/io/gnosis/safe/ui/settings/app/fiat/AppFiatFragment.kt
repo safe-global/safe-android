@@ -55,9 +55,11 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
     override fun onResume() {
         super.onResume()
         viewModel.state().observe(viewLifecycleOwner, Observer {
+            binding.contentNoData.root.visible(false)
             when (val viewAction = it.viewAction) {
                 is SelectFiat -> (binding.fiatList.adapter as FiatListAdapter).selectedItem = viewAction.fiatCode
                 is FiatList -> {
+                    binding.fiatList.visible(true)
                     binding.progress.visible(false)
                     binding.refresh.isRefreshing = false
                     adapter.setItems(viewAction.fiatCodes)
@@ -66,6 +68,11 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.progress.visible(false)
                     binding.refresh.isRefreshing = false
+
+                    if (adapter.itemCount == 0) {
+                        showContentNoData()
+                    }
+
                     with(viewAction.error) {
                         Timber.e(this)
                         val error = toError()
@@ -77,5 +84,10 @@ class AppFiatFragment : BaseViewBindingFragment<FragmentAppFiatBinding>() {
                 }
             }
         })
+    }
+
+    private fun showContentNoData() {
+        binding.fiatList.visible(false)
+        binding.contentNoData.root.visible(true)
     }
 }
