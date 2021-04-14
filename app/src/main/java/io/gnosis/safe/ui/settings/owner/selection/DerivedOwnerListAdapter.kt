@@ -97,7 +97,7 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
             }
         }
 
-    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long = selectedOwnerPosition.toLong()
+    fun getSelectedOwnerIndex(): Long = selectedOwnerPosition.toLong()
 
     interface OnOwnerItemClickedListener {
         fun onOwnerClicked(ownerIndex: Long)
@@ -153,7 +153,7 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
                 }
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)
@@ -172,7 +172,7 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerLis
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
                 }
                 defaultOwnerNumber.text = "#${position + 1}"
                 defaultOwnerImage.setAddress(ownerHolder.address)
