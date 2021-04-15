@@ -12,6 +12,7 @@ import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
+import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -30,6 +31,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     private val creator by lazy { navArgs.creator }
     private val creatorName by lazy { navArgs.creatorName }
     private val creatorLogoUri by lazy { navArgs.creatorLogoUri }
+    private val creatorLocal by lazy { navArgs.creatorLocal }
     private val implementation by lazy { navArgs.implementation }
     private val implementationName by lazy { navArgs.implementationName }
     private val implementationLogoUri by lazy { navArgs.implementationLogoUri }
@@ -70,8 +72,16 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             with(creatorItem) {
                 val creatorAddress = creator!!.asEthereumAddress()
                 address = creatorAddress
-                name = creatorName ?: getString(R.string.unknown_creator)
-                loadKnownAddressLogo(creatorLogoUri, creatorAddress)
+                if (creatorLocal) {
+                    name = if (creatorName.isNullOrBlank())
+                        context.getString(
+                            R.string.settings_app_imported_owner_key_default_name,
+                            creatorAddress?.shortChecksumString()
+                        ) else creatorName
+                } else {
+                    name = creatorName ?: getString(R.string.unknown_creator)
+                    loadKnownAddressLogo(creatorLogoUri, creatorAddress)
+                }
             }
 
             implementationTitle.text = getString(R.string.tx_details_creation_implementation_used)

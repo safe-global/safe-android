@@ -408,6 +408,21 @@ class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChang
 }
 
 private fun navigateToCreationDetails(view: View, details: TransactionView.CreationDetails) {
+
+    var creatorName: String? = null
+    var creatorLogoUri: String? = null
+    var creatorLocal = false
+    when (details.creatorInfo) {
+        is AddressInfoData.Local -> {
+            creatorName = details.creatorInfo.name
+            creatorLocal = true
+        }
+        is AddressInfoData.Remote -> {
+            creatorName = details.creatorInfo.name
+            creatorLogoUri = details.creatorInfo.addressLogoUri
+            creatorLocal = false
+        }
+    }
     Navigation.findNavController(view)
         .navigate(
             TransactionsFragmentDirections.actionTransactionsFragmentToTransactionCreationDetailsFragment(
@@ -421,8 +436,9 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
                 factoryName = details.factoryInfo.name,
                 factoryLogoUri = details.factoryInfo.addressLogoUri,
                 creator = details.creator,
-                creatorName = details.creatorInfo.name,
-                creatorLogoUri = details.creatorInfo.addressLogoUri,
+                creatorName =  creatorName,
+                creatorLogoUri = creatorLogoUri,
+                creatorLocal = creatorLocal,
                 transActionHash = details.transactionHash
             )
         )
