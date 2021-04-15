@@ -16,7 +16,7 @@
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginTop="@dimen/default_margin"
         android:ellipsize="end"
-        android:maxWidth="180dp"
+        android:maxWidth="200dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/status_long"
         app:layout_constraintEnd_toStartOf="@+id/app_label"
