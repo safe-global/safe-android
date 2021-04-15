@@ -83,7 +83,7 @@
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
-        android:maxWidth="200dp"
+        android:maxWidth="100dp"
         android:singleLine="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/address_name"
