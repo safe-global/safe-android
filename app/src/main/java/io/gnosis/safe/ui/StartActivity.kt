@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
@@ -30,6 +31,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     @Inject
     lateinit var safeRepository: SafeRepository
 
+    @Inject
+    lateinit var creadentialsRepository: CredentialsRepository
+
     private val toolbarBinding by lazy {
         ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
     }
@@ -48,6 +52,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkReadOnly()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -114,10 +123,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 id != R.id.shareSafeDialog
 
     override fun setSafeData(safe: Safe?) {
-        if (safe == null)
+        if (safe == null) {
             setNoSafe()
-        else
+        } else {
             setSafe(safe)
+            checkReadOnly()
+        }
     }
 
     private fun setNoSafe() {
@@ -150,6 +161,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             }
 
             safeSelection.visible(true)
+        }
+    }
+
+    private fun checkReadOnly() {
+        toolbarBinding.readOnly.visible(false)
+        lifecycleScope.launch {
+            val activeSafe = safeRepository.getActiveSafe()
+            activeSafe?.let {
+                val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
+                val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
+                toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty())
+            }
         }
     }
 
