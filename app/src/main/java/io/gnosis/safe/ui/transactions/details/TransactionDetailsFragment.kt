@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -74,7 +75,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             when (val viewAction = state.viewAction) {
                 is UpdateDetails -> {
                     viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
                     }
                 }
                 is ConfirmConfirmation -> {
@@ -83,7 +84,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 is ConfirmationSubmitted -> {
                     viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner)
+                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
                     }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
@@ -136,7 +137,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean) {
+    //FIXME: make needsYourConfirmation, canReject, isOwner, owners part of TransactionDetailsViewData
+    private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean, owners: List<Owner>) {
         var nonce: BigInteger? = null
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
@@ -182,7 +184,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
-                    executor = executionInfo.executor
+                    executor = executionInfo.executor,
+                    localOwners = owners
                 )
                 nonce = executionInfo.nonce
 
