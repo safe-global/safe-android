@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -24,7 +25,6 @@ import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -117,7 +117,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner.value, localOwners)) }
+            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner, localOwners)) }
             masterCopy.setAddress(safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUrl, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
@@ -125,15 +125,16 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun ownerView(owner: Solidity.Address, localOwners: List<Owner>): View {
+    private fun ownerView(owner: AddressInfoExtended, localOwners: List<Owner>): View {
 
-        val localOwner = localOwners.find { it.address == owner }
+        val localOwner = localOwners.find { it.address == owner.value }
 
         return if (localOwner != null) {
+            // use local owner name & identicon
             NamedAddressItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                address = owner
+                address = owner.value
                 name = if (localOwner.name.isNullOrBlank())
                     context.getString(
                         R.string.settings_app_imported_owner_key_default_name,
@@ -142,11 +143,23 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 showSeparator = true
             }
         } else {
-            AddressItem(requireContext()).apply {
-                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                address = owner
-                showSeparator = true
+            if (!owner.name.isNullOrBlank()) {
+                // use remote owner name & logo if available
+                NamedAddressItem(requireContext()).apply {
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                    address = owner.value
+                    name = owner.name
+                    showSeparator = true
+                    loadKnownAddressLogo(owner.logoUrl, owner.value)
+                }
+            } else {
+                AddressItem(requireContext()).apply {
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                    address = owner.value
+                    showSeparator = true
+                }
             }
         }
     }
