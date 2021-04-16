@@ -176,7 +176,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             safeName.post {
                 val readOnlySpace = readOnly.measuredWidth + readOnly.marginLeft + readOnly.marginRight
                 if (safeNameLength > safeAddress.measuredWidth - readOnlySpace) {
-                    safeName.width = safeNameLength - (safeName.marginLeft + safeName.marginRight) - readOnlySpace
+                    safeName.width = safeAddress.measuredWidth - readOnlySpace
                     safeName.ellipsize = TextUtils.TruncateAt.END
                 } else {
                     safeName.ellipsize = null
@@ -192,7 +192,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             activeSafe?.let {
                 val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
                 val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
-                toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty())
+                toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
             }
         }
     }
