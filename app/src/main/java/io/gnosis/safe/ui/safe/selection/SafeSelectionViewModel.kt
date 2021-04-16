@@ -50,8 +50,10 @@ class SafeSelectionViewModel @Inject constructor(
 
     private fun selectSafe(safe: Safe) {
         safeLaunch {
-            safeRepository.setActiveSafe(safe)
-            updateState { SafeSelectionState.SafeListState(items, safe, ViewAction.CloseScreen) }
+            if (safeRepository.getActiveSafe() != safe) {
+                safeRepository.setActiveSafe(safe)
+                updateState { SafeSelectionState.SafeListState(items, safe, ViewAction.CloseScreen) }
+            }
         }
     }
 
