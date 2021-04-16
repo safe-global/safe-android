@@ -64,7 +64,7 @@ class TransactionDetailsViewModelTest {
         viewModel.loadDetails("tx_details_id")
 
         with(viewModel.state.test().values()) {
-            assertEquals(UpdateDetails(expectedTransactionInfoViewData, false, false, false), this[0].viewAction)
+            assertEquals(UpdateDetails(txDetails = expectedTransactionInfoViewData, canSign = false, safeOwner = false), this[0].viewAction)
         }
         coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id") }
     }
@@ -267,7 +267,14 @@ class TransactionDetailsViewModelTest {
         viewModel.submitConfirmation(transactionDetails, someAddress)
 
         with(viewModel.state.test().values()) {
-            assertEquals(ConfirmationSubmitted(transactionDetails.toTransactionDetailsViewData(emptyList()), false, false, false, listOf(owner)), this[0].viewAction)
+            assertEquals(
+                ConfirmationSubmitted(
+                    txDetails = transactionDetails.toTransactionDetailsViewData(emptyList()),
+                    canSign = false,
+                    safeOwner = false,
+                    localOwners = listOf(owner)
+                ), this[0].viewAction
+            )
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) {

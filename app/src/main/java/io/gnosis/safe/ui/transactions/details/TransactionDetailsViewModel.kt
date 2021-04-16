@@ -15,7 +15,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
-import io.gnosis.safe.utils.isCompleted
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddressString
@@ -42,15 +41,12 @@ class TransactionDetailsViewModel
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo
-
             val owners = credentialsRepository.owners()
 
-            var awaitingConfirm = false
-            var rejectable = false
+            var canSign = false
             var safeOwner = false
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
-                rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                canSign = canBeSignedFromDevice(executionInfo, owners)
                 safeOwner = isOwner(executionInfo, owners)
             }
 
@@ -59,8 +55,7 @@ class TransactionDetailsViewModel
                 TransactionDetailsViewState(
                     UpdateDetails(
                         txDetails?.toTransactionDetailsViewData(safes),
-                        awaitingConfirm,
-                        rejectable,
+                        canSign,
                         safeOwner,
                         owners
                     )
@@ -81,18 +76,18 @@ class TransactionDetailsViewModel
                     executionInfo.signers.contains(owner.address) && !executionInfo.confirmations.map { it.signer }.contains(owner.address)
                 }
 
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    suspend fun canBeRejectedFromDevice(
+    suspend fun canBeSignedFromDevice(
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
-        status: TransactionStatus,
-        owners: List<Owner>
-    ): Boolean =
-        !status.isCompleted() &&
-                owners.isNotEmpty() &&
-                owners.any { credentials ->
-                    executionInfo.signers.contains(credentials.address)
+        localOwners: List<Owner>
+    ): Boolean {
+        val signedBy = executionInfo.confirmations.map { it.signer }
+        val possibleSigners = executionInfo.signers
+        return localOwners.isNotEmpty() &&
+                localOwners.any { owner ->
+                    possibleSigners.contains(owner.address) && !signedBy.contains(owner.address)
                 }
+    }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun isOwner(
@@ -118,12 +113,10 @@ class TransactionDetailsViewModel
 
             val owners = credentialsRepository.owners()
 
-            var awaitingConfirm = false
-            var rejectable = false
+            var canSign = false
             var safeOwner = false
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
-                rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
+                canSign = canBeSignedFromDevice(executionInfo, owners)
                 safeOwner = isOwner(executionInfo, owners)
             }
 
@@ -131,8 +124,7 @@ class TransactionDetailsViewModel
                 TransactionDetailsViewState(
                     UpdateDetails(
                         txDetails?.toTransactionDetailsViewData(safes),
-                        awaitingConfirm,
-                        rejectable,
+                        canSign,
                         safeOwner,
                         owners
                     )
@@ -191,25 +183,19 @@ class TransactionDetailsViewModel
                 )
             }.onSuccess {
                 txDetails = it
+                val newExecutionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
+                    ?: throw MissingCorrectExecutionDetailsException
                 tracker.logTransactionConfirmed()
                 val safes = safeRepository.getSafes()
 
-                var awaitingConfirm = false
-                var rejectable = false
-                var safeOwner = false
-
-                if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
-                    awaitingConfirm = isAwaitingOwnerConfirmation(executionInfo, txDetails!!.txStatus, owners)
-                    rejectable = canBeRejectedFromDevice(executionInfo, txDetails!!.txStatus, owners)
-                    safeOwner = isOwner(executionInfo, owners)
-                }
+                val canSign = canBeSignedFromDevice(newExecutionInfo, owners)
+                val safeOwner = isOwner(newExecutionInfo, owners)
 
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(
                             it.toTransactionDetailsViewData(safes),
-                            awaitingConfirm,
-                            rejectable,
+                            canSign,
                             safeOwner,
                             owners
                         )
@@ -240,16 +226,14 @@ open class TransactionDetailsViewState(
 
 data class UpdateDetails(
     val txDetails: TransactionDetailsViewData?,
-    val awaitingConfirm: Boolean,
-    val rejectable: Boolean,
+    val canSign: Boolean,
     val safeOwner: Boolean,
     val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmationSubmitted(
     val txDetails: TransactionDetailsViewData?,
-    val awaitingConfirm: Boolean,
-    val rejectable: Boolean,
+    val canSign: Boolean,
     val safeOwner: Boolean,
     val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
