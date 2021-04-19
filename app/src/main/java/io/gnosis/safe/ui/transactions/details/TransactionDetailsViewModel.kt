@@ -61,7 +61,8 @@ class TransactionDetailsViewModel
                         txDetails?.toTransactionDetailsViewData(safes),
                         awaitingConfirm,
                         rejectable,
-                        safeOwner
+                        safeOwner,
+                        owners
                     )
                 )
             }
@@ -132,7 +133,8 @@ class TransactionDetailsViewModel
                         txDetails?.toTransactionDetailsViewData(safes),
                         awaitingConfirm,
                         rejectable,
-                        safeOwner
+                        safeOwner,
+                        owners
                     )
                 )
             }
@@ -201,7 +203,8 @@ class TransactionDetailsViewModel
                             transactionDetails.toTransactionDetailsViewData(safes),
                             awaitingConfirm,
                             rejectable,
-                            safeOwner
+                            safeOwner,
+                            owners
                         )
                     )
                 }
@@ -230,16 +233,18 @@ open class TransactionDetailsViewState(
 
 data class UpdateDetails(
     val txDetails: TransactionDetailsViewData?,
-    var awaitingConfirm: Boolean,
-    var rejectable: Boolean,
-    var safeOwner: Boolean
+    val awaitingConfirm: Boolean,
+    val rejectable: Boolean,
+    val safeOwner: Boolean,
+    val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmationSubmitted(
     val txDetails: TransactionDetailsViewData?,
-    var awaitingConfirm: Boolean,
-    var rejectable: Boolean,
-    var safeOwner: Boolean
+    val awaitingConfirm: Boolean,
+    val rejectable: Boolean,
+    val safeOwner: Boolean,
+    val localOwners: List<Owner> = listOf()
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmConfirmation(

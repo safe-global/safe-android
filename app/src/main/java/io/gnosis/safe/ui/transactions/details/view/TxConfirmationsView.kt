@@ -11,14 +11,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxConfirmationsExecutionStepBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import timber.log.Timber
+
 
 class TxConfirmationsView @JvmOverloads constructor(
     context: Context,
@@ -39,7 +43,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         linePaint.color = context.getColorCompat(LINE_COLOR)
     }
 
-    fun setExecutionData(rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null) {
+    fun setExecutionData(rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null, localOwners: List<Owner> = listOf()) {
 
         clear()
 
@@ -49,9 +53,15 @@ class TxConfirmationsView @JvmOverloads constructor(
             addExecutionStep(TxExecutionStep.Type.CREATED)
         }
 
-        confirmations.forEach {
+        confirmations.forEach { confirmationAddress ->
             addExecutionStep(TxExecutionStep.Type.CONFIRMED)
-            addAddressItem(it)
+
+            val localOwner = localOwners.find { it.address == confirmationAddress }
+            if (localOwner != null) {
+                addNamedAddressItem(localOwner.address, localOwner.name)
+            } else {
+                addAddressItem(confirmationAddress)
+            }
         }
 
         when (status) {
@@ -64,8 +74,16 @@ class TxConfirmationsView @JvmOverloads constructor(
             }
             TransactionStatus.SUCCESS -> {
                 if (executor != null) {
+
                     addExecutionStep(TxExecutionStep.Type.EXECUTE_DONE)
-                    addAddressItem(executor)
+
+                    val localOwner = localOwners.find { it.address == executor }
+                    if (localOwner != null) {
+                        addNamedAddressItem(localOwner.address, localOwner.name)
+                    } else {
+                        addAddressItem(executor)
+                    }
+
                 } else {
                     // fail silently - this should never happen
                     Timber.e("${TxConfirmationsView::class.java.simpleName}: missing executor for successful transaction")
@@ -97,6 +115,21 @@ class TxConfirmationsView @JvmOverloads constructor(
         addressItem.layoutParams = layoutParams
         addressItem.address = address
         addView(addressItem)
+    }
+
+    private fun addNamedAddressItem(address: Solidity.Address, name: String?) {
+        val namedAddressItem = NamedAddressItem(context)
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
+        layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
+        namedAddressItem.layoutParams = layoutParams
+        namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_selectable_white)
+        namedAddressItem.address = address
+        namedAddressItem.name = if (name.isNullOrBlank())
+            resources.getString(
+                R.string.settings_app_imported_owner_key_default_name,
+                address.shortChecksumString()
+            ) else name
+        addView(namedAddressItem)
     }
 
     private fun addExecutionDescriptionItem() {

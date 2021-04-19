@@ -577,6 +577,11 @@
             app:nullable="true" />
 
         <argument
+            android:name="creatorLocal"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
             android:name="factory"
             android:defaultValue="@null"
             app:argType="string"

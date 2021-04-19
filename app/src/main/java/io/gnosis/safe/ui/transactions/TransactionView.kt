@@ -120,7 +120,7 @@ sealed class TransactionView(
         @ColorRes val statusColorRes: Int,
         val dateTimeText: String,
         val creator: String,
-        val creatorInfo: AddressInfoData.Remote,
+        val creatorInfo: AddressInfoData,
         val implementation: String?,
         val implementationInfo: AddressInfoData.Remote,
         val factory: String?,
@@ -160,7 +160,7 @@ sealed class TransactionView(
 sealed class AddressInfoData {
 
     data class Local(
-        val name: String,
+        val name: String?,
         val address: String
     ) : AddressInfoData()
 
