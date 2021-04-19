@@ -52,7 +52,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
                     snackbar(requireView(), R.string.passcode_disabled)
-                    findNavController().navigateUp()
+                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
