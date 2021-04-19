@@ -40,6 +40,8 @@ class PasscodeViewModel
         safeLaunch {
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
+                tracker.logKeyDeleted()
+                tracker.setNumKeysImported(credentialsRepository.ownerCount())
             }
             notificationRepository.unregisterOwners()
             // Make sure all owners are deleted at this point
