@@ -41,8 +41,9 @@ class PasscodeViewModel
             tracker.logPasscodeReset()
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
+                tracker.logKeyDeleted()
+                tracker.setNumKeysImported(credentialsRepository.ownerCount())
             }
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.unregisterOwners()
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {
