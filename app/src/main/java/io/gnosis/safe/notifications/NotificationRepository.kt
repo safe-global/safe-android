@@ -1,6 +1,7 @@
 package io.gnosis.safe.notifications
 
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
@@ -118,6 +119,7 @@ class NotificationRepository(
                 .onFailure {
                     Timber.d("notification service registration failure")
                     deviceUuid = null
+                    resetFirebaseToken()
                     registrationUpdateFailed = true
                 }
         }
@@ -153,6 +155,7 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                resetFirebaseToken()
             }
     }
 
@@ -188,6 +191,7 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                resetFirebaseToken()
             }
     }
 
@@ -224,7 +228,15 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                resetFirebaseToken()
             }
+    }
+
+    private suspend fun resetFirebaseToken() {
+        kotlin.runCatching {
+            FirebaseInstanceId.getInstance().deleteInstanceId()
+            FirebaseInstanceId.getInstance().deleteToken(getCloudMessagingToken()!!, INSTANCE_ID_SCOPE)
+        }
     }
 
     suspend fun unregister() {
@@ -260,7 +272,8 @@ class NotificationRepository(
     }
 
     private fun generateUUID(): String {
-        return UUID.randomUUID().toString().toLowerCase()
+        deviceUuid = UUID.randomUUID().toString().toLowerCase()
+        return deviceUuid!!
     }
 
     private fun Registration.addSignatures(owners: List<Owner>) {
