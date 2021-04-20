@@ -54,10 +54,7 @@ class TransactionDetailsViewModel
             updateState {
                 TransactionDetailsViewState(
                     UpdateDetails(
-                        txDetails?.toTransactionDetailsViewData(safes),
-                        canSign,
-                        safeOwner,
-                        owners
+                        txDetails?.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
                     )
                 )
             }
@@ -123,10 +120,7 @@ class TransactionDetailsViewModel
             updateState {
                 TransactionDetailsViewState(
                     UpdateDetails(
-                        txDetails?.toTransactionDetailsViewData(safes),
-                        canSign,
-                        safeOwner,
-                        owners
+                        txDetails?.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
                     )
                 )
             }
@@ -194,10 +188,7 @@ class TransactionDetailsViewModel
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(
-                            it.toTransactionDetailsViewData(safes),
-                            canSign,
-                            safeOwner,
-                            owners
+                            it.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
                         )
                     )
                 }
@@ -225,17 +216,11 @@ open class TransactionDetailsViewState(
 ) : BaseStateViewModel.State
 
 data class UpdateDetails(
-    val txDetails: TransactionDetailsViewData?,
-    val canSign: Boolean,
-    val safeOwner: Boolean,
-    val localOwners: List<Owner> = listOf()
+    val txDetails: TransactionDetailsViewData?
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmationSubmitted(
-    val txDetails: TransactionDetailsViewData?,
-    val canSign: Boolean,
-    val safeOwner: Boolean,
-    val localOwners: List<Owner> = listOf()
+    val txDetails: TransactionDetailsViewData?
 ) : BaseStateViewModel.ViewAction
 
 data class ConfirmConfirmation(
