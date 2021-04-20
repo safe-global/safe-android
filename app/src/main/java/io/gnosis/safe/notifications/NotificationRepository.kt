@@ -159,7 +159,7 @@ class NotificationRepository(
             }
     }
 
-    suspend fun registerOwner(ownerKey: BigInteger) {
+    suspend fun registerOwners() {
 
         kotlin.runCatching {
 
@@ -181,7 +181,7 @@ class NotificationRepository(
                 timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
-            registration.buildAndAddSignature(ownerKey.toByteArray())
+            registration.addSignatures(credentialsRepository.owners())
 
             notificationService.register(registration)
         }
