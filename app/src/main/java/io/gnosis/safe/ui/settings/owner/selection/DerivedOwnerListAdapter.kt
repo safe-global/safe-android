@@ -7,16 +7,21 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.gnosis.safe.databinding.ItemDefaultOwnerDisabledKeyBinding
 import io.gnosis.safe.databinding.ItemDefaultOwnerKeyBinding
+import io.gnosis.safe.databinding.ItemOwnerSelectionDisabledOwnerBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
+import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_FULL
+import io.gnosis.safe.ui.transactions.TransactionListViewModel.Companion.OPACITY_HALF
 import io.gnosis.safe.utils.formatEthAddress
+import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
-class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
+class DerivedOwnerListAdapter() : PagingDataAdapter<OwnerHolder, DerivedOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 0
     private var selectedOwnerPosition: Int = 0
@@ -42,6 +47,20 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
                 false
             )
         )
+        AccountItemViewType.DISABLED_OWNER.ordinal -> DisabledOwnerViewHolder(
+            ItemOwnerSelectionDisabledOwnerBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+        AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal -> DisabledDefaultOwnerViewHolder(
+            ItemDefaultOwnerDisabledKeyBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
         else -> throw UnsupportedViewType(javaClass.name)
     }
 
@@ -49,7 +68,7 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
         kotlin.runCatching {
             val uiModel = getItem(position)
             uiModel?.let {
-                holder.bind(it, position)
+                holder.bind(it, position) //TODO add disable info if already imported
             }
         }
     }
@@ -65,13 +84,20 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
 
     override fun getItemViewType(position: Int): Int =
         if (position == 0) {
-            AccountItemViewType.DEFAULT_OWNER.ordinal
+            if (getItem(position)?.disabled == true) {
+                AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal
+            } else {
+                AccountItemViewType.DEFAULT_OWNER.ordinal
+            }
         } else {
-            AccountItemViewType.OWNER.ordinal
+            if (getItem(position)?.disabled == true) {
+                AccountItemViewType.DISABLED_OWNER.ordinal
+            } else {
+                AccountItemViewType.OWNER.ordinal
+            }
         }
 
-
-    private fun getSelectedOwnerIndex(selectedOwnerPosition: Int): Long = selectedOwnerPosition.toLong()
+    fun getSelectedOwnerIndex(): Long = selectedOwnerPosition.toLong()
 
     interface OnOwnerItemClickedListener {
         fun onOwnerClicked(ownerIndex: Long)
@@ -79,26 +105,61 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
 
     enum class AccountItemViewType {
         DEFAULT_OWNER,
-        OWNER
+        OWNER,
+        DISABLED_OWNER,
+        DISABLED_DEFAULT_OWNER
     }
 
     abstract class BaseOwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(address: Solidity.Address, position: Int)
+        abstract fun bind(address: OwnerHolder, position: Int)
+    }
+
+    inner class DisabledOwnerViewHolder(private val binding: ItemOwnerSelectionDisabledOwnerBinding) : BaseOwnerViewHolder(binding.root) {
+
+        @SuppressLint("SetTextI18n")
+        override fun bind(ownerHolder: OwnerHolder, position: Int) {
+            with(binding) {
+                ownerNumber.text = "#${position + 1}"
+                ownerImage.setAddress(ownerHolder.address)
+                ownerSelection.visible(selectedOwnerPosition == position)
+                ownerLabel.text = ownerHolder.name
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
+
+                root.alpha = OPACITY_HALF
+            }
+        }
+    }
+
+    inner class DisabledDefaultOwnerViewHolder(private val binding: ItemDefaultOwnerDisabledKeyBinding) : BaseOwnerViewHolder(binding.root) {
+
+        @SuppressLint("SetTextI18n")
+        override fun bind(ownerHolder: OwnerHolder, position: Int) {
+            with(binding) {
+                cardContainerLayout.alpha = OPACITY_HALF
+                defaultOwnerSelection.visible(false)
+                defaultOwnerNumber.text = "#${position + 1}"
+                defaultOwnerImage.setAddress(ownerHolder.address)
+                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
+                ownerLabel.text = ownerHolder.name
+                derivedKeysExplanation.visible(itemCount > 1)
+            }
+        }
     }
 
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : BaseOwnerViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        override fun bind(address: Solidity.Address, position: Int) {
+        override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
                 }
                 ownerNumber.text = "#${position + 1}"
-                ownerImage.setAddress(address)
-                ownerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                ownerImage.setAddress(ownerHolder.address)
+                ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                root.alpha = OPACITY_FULL
                 ownerSelection.visible(selectedOwnerPosition == position)
             }
         }
@@ -107,16 +168,16 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
     inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : BaseOwnerViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        override fun bind(address: Solidity.Address, position: Int) {
+        override fun bind(ownerHolder: OwnerHolder, position: Int) {
             with(binding) {
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(selectedOwnerPosition))
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
                 }
                 defaultOwnerNumber.text = "#${position + 1}"
-                defaultOwnerImage.setAddress(address)
-                defaultOwnerAddress.text = address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                defaultOwnerImage.setAddress(ownerHolder.address)
+                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
                 defaultOwnerSelection.visibility = if (selectedOwnerPosition == position) View.VISIBLE else View.INVISIBLE
                 derivedKeysExplanation.visible(itemCount > 1)
             }
@@ -127,15 +188,17 @@ class DerivedOwnerListAdapter() : PagingDataAdapter<Solidity.Address, DerivedOwn
 
         private const val PAGE_SIZE = DerivedOwnerPagingProvider.PAGE_SIZE
 
-        private val COMPARATOR = object : DiffUtil.ItemCallback<Solidity.Address>() {
+        private val COMPARATOR = object : DiffUtil.ItemCallback<OwnerHolder>() {
 
-            override fun areItemsTheSame(oldItem: Solidity.Address, newItem: Solidity.Address): Boolean {
+            override fun areItemsTheSame(oldItem: OwnerHolder, newItem: OwnerHolder): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: Solidity.Address, newItem: Solidity.Address): Boolean {
+            override fun areContentsTheSame(oldItem: OwnerHolder, newItem: OwnerHolder): Boolean {
                 return oldItem == newItem
             }
         }
     }
 }
+
+data class OwnerHolder(val address: Solidity.Address, val name: String?, val disabled: Boolean)

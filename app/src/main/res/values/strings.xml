@@ -108,7 +108,9 @@
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
     <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
     <string name="error_client_seed_phrase_reason">this is not a valid seed phrase or private key for an Ethereum account</string>
+    <string name="error_client_key_already_imported_reason">This key has already been imported</string>
     <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase or private key</string>
+    <string name="error_client_key_already_imported_fix">Please import a different key</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
     <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
     <string name="error_client_unsupported_implementation_copy_reason">the master copy of your Safe is not supported by this app</string>

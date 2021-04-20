@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
@@ -30,6 +31,7 @@ class OwnerSelectionViewModelTest {
     private val derivator = mockk<MnemonicKeyAndAddressDerivator>()
 
     private lateinit var viewModel: OwnerSelectionViewModel
+    private val credentialsRepository = mockk<CredentialsRepository>()
 
     @Test
     fun `getOwnerData - should return owner address and key`() {
@@ -37,7 +39,7 @@ class OwnerSelectionViewModelTest {
         coEvery { derivator.keyForIndex(any()) } returns BigInteger.ONE
         coEvery { derivator.addressesForPage(any(), any()) } returns listOf(Solidity.Address(BigInteger.ZERO))
 
-        viewModel = OwnerSelectionViewModel(derivator, appDispatchers)
+        viewModel = OwnerSelectionViewModel(derivator, credentialsRepository, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerSelectionState>()
         viewModel.state.observeForever(testObserver)
 
