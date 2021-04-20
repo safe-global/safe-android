@@ -11,7 +11,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.Owner
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -74,8 +73,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
                 is UpdateDetails -> {
-                    viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
+                    viewAction.txDetails?.let { transactionDetailsViewData ->
+                        updateUi(transactionDetailsViewData)
                     }
                 }
                 is ConfirmConfirmation -> {
@@ -83,8 +82,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     viewModel.submitConfirmation(viewModel.txDetails!!, viewAction.owner)
                 }
                 is ConfirmationSubmitted -> {
-                    viewAction.txDetails?.let {
-                        updateUi(it, viewAction.awaitingConfirm, viewAction.rejectable, viewAction.safeOwner, viewAction.localOwners)
+                    viewAction.txDetails?.let { transactionDetailsViewData ->
+                        updateUi(transactionDetailsViewData)
                     }
                     snackbar(requireView(), R.string.confirmation_successfully_submitted)
                 }
@@ -137,24 +136,23 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         binding.refresh.isRefreshing = loading
     }
 
-    //FIXME: make needsYourConfirmation, canReject, isOwner, owners part of TransactionDetailsViewData
-    private fun updateUi(txDetails: TransactionDetailsViewData, needsYourConfirmation: Boolean, canReject: Boolean, isOwner: Boolean, owners: List<Owner>) {
+    private fun updateUi(txDetails: TransactionDetailsViewData) {
         var nonce: BigInteger? = null
+        val awaitingConfirmations = txDetails.txStatus == TransactionStatus.AWAITING_CONFIRMATIONS
         when (val executionInfo = txDetails.detailedExecutionInfo) {
             is DetailedExecutionInfo.MultisigExecutionDetails -> {
                 binding.txConfirmations.visible(true)
 
                 val hasBeenRejected = executionInfo.rejectors.isNotEmpty()
                 val isRejection = txDetails.txInfo is TransactionInfoViewData.Rejection
-                val needsExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
+                val awaitingExecution = txDetails.txStatus == TransactionStatus.AWAITING_EXECUTION
                 val buttonState = ButtonStateHelper(
                     hasBeenRejected = hasBeenRejected,
-                    needsYourConfirmation = needsYourConfirmation,
+                    awaitingConfirmations = awaitingConfirmations,
                     isRejection = isRejection,
-                    needsExecution = needsExecution,
-                    canReject = canReject,
-                    isOwner = isOwner,
-                    completed = txDetails.txStatus.isCompleted()
+                    awaitingExecution = awaitingExecution,
+                    canSign = txDetails.canSign,
+                    hasOwnerKey = txDetails.hasOwnerKey
                 )
 
                 if (buttonState.buttonContainerIsVisible()) {
@@ -162,14 +160,14 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 binding.txButtonContainer.visible(buttonState.buttonContainerIsVisible())
 
-                binding.txConfirmButton.visible(buttonState.confirmButtonIsVisible())
-                binding.txConfirmButton.isEnabled = buttonState.confirmButtonIsEnabled()
+                binding.txConfirmButton.visible(buttonState.confirmationButtonIsVisible())
+                binding.txConfirmButton.isEnabled = buttonState.confirmationButtonIsEnabled()
                 binding.txConfirmButton.setOnClickListener {
                     viewModel.startConfirmationFlow()
                     binding.txConfirmButton.isEnabled = false
                 }
-                binding.txRejectButton.visible(buttonState.rejectButtonIsVisible())
-                binding.txRejectButton.isEnabled = buttonState.rejectButtonIsEnabled()
+                binding.txRejectButton.visible(buttonState.rejectionButtonIsVisible())
+                binding.txRejectButton.isEnabled = buttonState.rejectionButtonIsEnabled()
                 binding.txRejectButton.setOnClickListener {
                     binding.txRejectButton.isEnabled = false
                     findNavController().navigate(
@@ -185,7 +183,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
                     threshold = executionInfo.confirmationsRequired,
                     executor = executionInfo.executor,
-                    localOwners = owners
+                    localOwners = txDetails.owners
                 )
                 nonce = executionInfo.nonce
 
@@ -291,7 +289,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txStatus.setStatus(
                         txType.titleRes,
                         txType.iconRes,
-                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         getColorForStatus(txDetails.txStatus)
                     )
                 }
@@ -307,7 +305,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txStatus.setStatus(
                         TxType.MODIFY_SETTINGS.titleRes,
                         TxType.MODIFY_SETTINGS.iconRes,
-                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         getColorForStatus(txDetails.txStatus)
                     )
                 }
@@ -371,7 +369,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         title = txInfo.statusTitle ?: resources.getString(TxType.CUSTOM.titleRes),
                         iconUrl = txInfo.statusIconUri,
                         defaultIconRes = TxType.CUSTOM.iconRes,
-                        statusTextRes = getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        statusTextRes = getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         statusColorRes = getColorForStatus(txDetails.txStatus),
                         safeApp = txInfo.safeApp
                     )
@@ -402,7 +400,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     txStatus.setStatus(
                         TxType.REJECTION.titleRes,
                         TxType.REJECTION.iconRes,
-                        getStringResForStatus(txDetails.txStatus, needsYourConfirmation),
+                        getStringResForStatus(txDetails.txStatus, txDetails.canSign && awaitingConfirmations),
                         getColorForStatus(txDetails.txStatus)
                     )
                 }

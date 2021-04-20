@@ -1,73 +1,64 @@
 package io.gnosis.safe.ui.transactions.details
 
 class ButtonStateHelper(
+    val canSign: Boolean,
+    val hasOwnerKey: Boolean,
     val hasBeenRejected: Boolean,
-    val needsYourConfirmation: Boolean,
     val isRejection: Boolean,
-    val needsExecution: Boolean,
-    val canReject: Boolean,
-    val isOwner: Boolean,
-    val completed: Boolean
+    val awaitingConfirmations: Boolean,
+    val awaitingExecution: Boolean
 ) {
-
-    fun rejectButtonIsVisible(): Boolean =
+    fun confirmationButtonIsVisible(): Boolean =
         when {
-            !isOwner || completed -> {
-                false
-            }
-            isRejection || !canReject -> {
-                false
-            }
-            !isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution -> {
-                false
-            }
-            else -> true
+            isRejection && awaitingConfirmations && canSign -> true
+            isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
 
-        }
+            !isRejection && awaitingConfirmations && canSign -> true
+            !isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> true
 
-    fun confirmButtonIsVisible(): Boolean =
-        when {
-            !isOwner || completed -> {
-                false
-            }
-            needsYourConfirmation -> {
-                true
-            }
-            !isRejection && !hasBeenRejected && !needsExecution -> {
-                true
-            }
-            needsExecution && !canReject && !needsYourConfirmation-> {
-                false
-            }
-            !isRejection && !needsYourConfirmation && hasBeenRejected && needsExecution -> {
-                false
-            }
+            !isRejection && awaitingExecution && hasOwnerKey && hasBeenRejected -> false
+
             else -> false
         }
 
-    fun rejectButtonIsEnabled(): Boolean =
-        when {
-            !rejectButtonIsVisible() -> {
-                false
-            }
-            !isRejection && needsYourConfirmation && hasBeenRejected && !needsExecution -> {
-                false
-            }
-            else -> true
-        }
+    fun confirmationButtonIsEnabled(): Boolean = when {
+        !confirmationButtonIsVisible() -> false
+        isRejection && awaitingConfirmations && canSign -> true
+        isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> false
 
-    fun confirmButtonIsEnabled(): Boolean = when {
-        !confirmButtonIsVisible() -> {
-            false
-        }
-        !needsYourConfirmation && !needsExecution -> {
-            false
-        }
-        else -> true
+        !isRejection && awaitingConfirmations && canSign -> true
+
+        else -> false
     }
 
-    fun spacerIsVisible(): Boolean = confirmButtonIsVisible() && rejectButtonIsVisible()
+    fun rejectionButtonIsVisible(): Boolean =
+        when {
+            isRejection && awaitingConfirmations && canSign -> false
+            isRejection && awaitingConfirmations && hasOwnerKey && !canSign -> false
 
-    fun buttonContainerIsVisible(): Boolean = confirmButtonIsVisible() || rejectButtonIsVisible()
+            !isRejection && awaitingConfirmations && hasOwnerKey && !hasBeenRejected -> true
+            !isRejection && awaitingConfirmations && hasOwnerKey && hasBeenRejected -> true
 
+            !isRejection && awaitingExecution && hasOwnerKey && !hasBeenRejected -> true
+            !isRejection && awaitingExecution && hasOwnerKey && hasBeenRejected -> false
+
+            else -> false
+        }
+
+
+    fun rejectionButtonIsEnabled(): Boolean =
+        when {
+            !rejectionButtonIsVisible() -> false
+
+            !isRejection && awaitingConfirmations && hasOwnerKey && !hasBeenRejected -> true
+            !isRejection && awaitingConfirmations && hasOwnerKey && hasBeenRejected -> false
+
+            !isRejection && awaitingExecution && hasOwnerKey && !hasBeenRejected -> true
+
+            else -> false
+        }
+
+    fun spacerIsVisible(): Boolean = confirmationButtonIsVisible() && rejectionButtonIsVisible()
+
+    fun buttonContainerIsVisible(): Boolean = confirmationButtonIsVisible() || rejectionButtonIsVisible()
 }
