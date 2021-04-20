@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transactions.details.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -45,7 +46,7 @@ class TxStatusView @JvmOverloads constructor(
             binding.statusLong.setText(statusTextRes)
             binding.statusLong.setTextColor(ContextCompat.getColor(context, statusColorRes))
             binding.statusLong.visible(true)
-            binding.status.visible(false)
+            binding.status.visible(false, View.INVISIBLE)
 
         } else {
             binding.status.setText(statusTextRes)
