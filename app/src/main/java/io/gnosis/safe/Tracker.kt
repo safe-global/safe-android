@@ -39,6 +39,10 @@ class Tracker private constructor(context: Context) {
         )
     }
 
+    fun logKeyDeleted() {
+        logEvent(name = Event.KEY_DELETED, attrs = null)
+    }
+
     fun logTransactionConfirmed() {
         logEvent(Event.TRANSACTION_CONFIRMED, null)
     }
@@ -112,6 +116,7 @@ class Tracker private constructor(context: Context) {
 
     object Event {
         val KEY_IMPORTED = "user_key_imported"
+        val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"

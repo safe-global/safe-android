@@ -13,7 +13,10 @@
         style="@style/TextDark.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="220dp"
         android:text="@string/settings_app_imported_owner_key"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@id/owner_address"
         app:layout_constraintEnd_toStartOf="@id/remove"
         app:layout_constraintHorizontal_bias="0"
@@ -41,8 +44,9 @@
 
     <ImageView
         android:id="@+id/remove"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="@dimen/default_small_margin"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_margin"
         android:visibility="visible"
