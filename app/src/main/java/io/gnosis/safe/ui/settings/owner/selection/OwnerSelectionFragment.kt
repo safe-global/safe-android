@@ -62,8 +62,9 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                 if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     binding.showMoreOwners.visible(false)
                 } else {
+
+                    binding.nextButton.isEnabled = adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L &&  adapter.peek(0)?.disabled == false
                     binding.progress.visible(false)
-                    binding.nextButton.isEnabled = true
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
             }
@@ -159,7 +160,10 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
     private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
-    override fun onOwnerClicked(ownerIndex: Long) = viewModel.setOwnerIndex(ownerIndex)
+    override fun onOwnerClicked(ownerIndex: Long) {
+        binding.nextButton.isEnabled = true
+        viewModel.setOwnerIndex(ownerIndex)
+    }
 
     companion object {
         private const val MAX_PAGES = DerivedOwnerPagingProvider.MAX_PAGES

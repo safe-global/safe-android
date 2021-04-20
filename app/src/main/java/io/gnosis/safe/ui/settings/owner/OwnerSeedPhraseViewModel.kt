@@ -1,15 +1,21 @@
 package io.gnosis.safe.ui.settings.owner
 
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.PublishViewModel
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
 
 class OwnerSeedPhraseViewModel
 @Inject constructor(
     private val bip39Generator: Bip39,
+    private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers
 ) : PublishViewModel<ImportOwnerKeyState>(appDispatchers) {
 
@@ -20,6 +26,7 @@ class OwnerSeedPhraseViewModel
             validateSeedPhrase(seedPhraseOrKey)
         }
     }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun isPrivateKey(seedPhraseOrKey: String): Boolean {
         val input = removeHexPrefix(seedPhraseOrKey)
@@ -31,6 +38,7 @@ class OwnerSeedPhraseViewModel
 
         return false
     }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
@@ -40,8 +48,15 @@ class OwnerSeedPhraseViewModel
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
             }
         } else {
+
             safeLaunch {
-                updateState { ImportOwnerKeyState.ValidKeySubmitted(input) }
+                val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
+                val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
+                if (credentialsRepository.owner(ownerAddress) == null) {
+                    updateState { ImportOwnerKeyState.ValidKeySubmitted(input) }
+                } else {
+                    updateState { ImportOwnerKeyState.Error(KeyAlreadyImported) }
+                }
             }
         }
     }
@@ -75,6 +90,7 @@ class OwnerSeedPhraseViewModel
 
 object InvalidSeedPhrase : Throwable()
 object InvalidPrivateKey : Throwable()
+object KeyAlreadyImported : Throwable()
 
 sealed class ImportOwnerKeyState(
     override var viewAction: BaseStateViewModel.ViewAction? = null
