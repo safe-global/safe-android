@@ -196,6 +196,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
+            }.onFailure {
+                tracker.logException(it)
             }
         }
     }
