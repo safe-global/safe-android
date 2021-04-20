@@ -59,12 +59,13 @@ class TransactionDetailsViewModelTest {
         coEvery { transactionRepository.getTransactionDetails(any()) } returns transactionDetails
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.owners() } returns listOf()
-        val expectedTransactionInfoViewData = transactionDetails.toTransactionDetailsViewData(emptyList())
+        val expectedTransactionInfoViewData =
+            transactionDetails.toTransactionDetailsViewData(emptyList(), canSign = false, hasOwnerKey = false, owners = emptyList())
 
         viewModel.loadDetails("tx_details_id")
 
         with(viewModel.state.test().values()) {
-            assertEquals(UpdateDetails(expectedTransactionInfoViewData, false, false, false), this[0].viewAction)
+            assertEquals(UpdateDetails(txDetails = expectedTransactionInfoViewData), this[0].viewAction)
         }
         coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id") }
     }
@@ -267,7 +268,16 @@ class TransactionDetailsViewModelTest {
         viewModel.submitConfirmation(transactionDetails, someAddress)
 
         with(viewModel.state.test().values()) {
-            assertEquals(ConfirmationSubmitted(transactionDetails.toTransactionDetailsViewData(emptyList()), false, false, false), this[0].viewAction)
+            assertEquals(
+                ConfirmationSubmitted(
+                    txDetails = transactionDetails.toTransactionDetailsViewData(
+                        safes = emptyList(),
+                        canSign = false,
+                        hasOwnerKey = false,
+                        owners = listOf(owner)
+                    )
+                ), this[0].viewAction
+            )
         }
         coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
         coVerify(exactly = 1) {

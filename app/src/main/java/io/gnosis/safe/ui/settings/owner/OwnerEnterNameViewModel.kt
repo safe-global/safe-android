@@ -27,7 +27,7 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(fromSeedPhrase)
-            tracker.setNumKeysImported(1)
+            tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.registerOwner(key)
 
             updateState {

@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
@@ -37,6 +36,7 @@ class OwnerEnterNameViewModelTest {
         val ownerName = "owner1"
 
         coEvery { credentialsRepository.saveOwner(any(), any(), any()) } just Runs
+        coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
@@ -61,6 +61,7 @@ class OwnerEnterNameViewModelTest {
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(any())
+            credentialsRepository.ownerCount()
             tracker.setNumKeysImported(any())
             notificationRepository.registerOwner(any())
             settingsHandler.usePasscode
@@ -74,6 +75,7 @@ class OwnerEnterNameViewModelTest {
         val ownerName = "owner1"
 
         coEvery { credentialsRepository.saveOwner(any(), any(), any()) } just Runs
+        coEvery { credentialsRepository.ownerCount() } returns 3
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
@@ -98,7 +100,8 @@ class OwnerEnterNameViewModelTest {
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(any())
-            tracker.setNumKeysImported(any())
+            credentialsRepository.ownerCount()
+            tracker.setNumKeysImported(3)
             notificationRepository.registerOwner(any())
             settingsHandler.usePasscode
         }

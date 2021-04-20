@@ -6,299 +6,213 @@ import org.junit.Test
 
 class ButtonStateHelperTest {
 
-    // Rejections For numbering, see: https://docs.google.com/document/d/1dlhVAv9WiD1EPi1LuZI6opk17ivD2lpMbwbWP4aArIY/edit
+    // For numbering, see: https://docs.google.com/document/d/13GirjSwieQaqUPz-8HXzJP_rfgmobSp7E4TpbnLlb0M/edit#
     @Test
-    fun `(1) when (isRejection, !needsYourConfirmation, hasBeenRejected, !needsExecution) should hide all buttons`() {
+    fun `(1_1) when (isRejection, awaitingConfirmations, canSign) should hide rejection and enable confirmation button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = true,
-                needsYourConfirmation = false,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = true,
                 hasBeenRejected = true,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
+                awaitingExecution = false
             )
 
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertTrue(buttonStateHelper.confirmationButtonIsVisible())
+        assertTrue(buttonStateHelper.confirmationButtonIsEnabled())
+        assertTrue(buttonStateHelper.buttonContainerIsVisible())
 
+        assertFalse(buttonStateHelper.rejectionButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsEnabled())
     }
 
     @Test
-    fun `(2) when (isRejection, needsYourConfirmation, hasBeenRejected, !needsExecution) should show enabled confirmation Button and hide rejection button `() {
-
+    fun `(1_2) when (isRejection && awaitingConfirmations && hasOwnerKey && !canSign) should disable confirmation button and hide rejection button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = true,
-                needsYourConfirmation = true,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = false,
                 hasBeenRejected = true,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
+                awaitingExecution = !awaitingConfirmations
             )
 
+        assertTrue(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsEnabled())
         assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
+
+        assertFalse(buttonStateHelper.rejectionButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsEnabled())
     }
 
-    @Test // Only possible with missing rejectors in backend
-    fun `when (isRejection, !needsYourConfirmation, !hasBeenRejected, !needsExecution) should show no buttons `() {
+    @Test
+    fun `(1_3) when (All other cases for rejection transaction) should hide both buttons`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = true,
-                needsYourConfirmation = false,
-                hasBeenRejected = false,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
-            )
-
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
-    }
-
-    // Non Rejections
-    @Test
-    fun `(3) when (!isRejection, needsYourConfirmation, !hasBeenRejected, !needsExecution) should show both Buttons enabled`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = true,
-                hasBeenRejected = false,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
-            )
-
-        assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsEnabled())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertTrue(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
-
-    }
-
-    @Test
-    fun `(4) when (!isRejection, !needsYourConfirmation, !hasBeenRejected, !needsExecution) should disable confirm button`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = false,
-                hasBeenRejected = false,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
-            )
-
-        assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsEnabled())
-        assertTrue(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
-
-    }
-
-    @Test
-    fun `(5) when (!isRejection, needsYourConfirmation, !hasBeenRejected, !needsExecution) should enable confirm button`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = true,
-                hasBeenRejected = false,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
-            )
-
-        assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsEnabled())
-        assertTrue(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
-    }
-
-    @Test
-    fun `(6) when (!isRejection, needsYourConfirmation, hasBeenRejected, !needsExecution) shoild diable reject button `() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = true,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = false,
+                canSign = false,
                 hasBeenRejected = true,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
+                awaitingExecution = !awaitingConfirmations
             )
 
+        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsVisible())
+    }
+
+    @Test
+    fun `(2_1) when (!isRejection && awaitingConfirmations && canSign) should enable confirmation `() {
+        val awaitingConfirmations = true
+        val buttonStateHelper =
+            ButtonStateHelper(
+                isRejection = false,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = true,
+                hasBeenRejected = false,
+                awaitingExecution = !awaitingConfirmations
+            )
+
+        assertTrue(buttonStateHelper.confirmationButtonIsVisible())
+        assertTrue(buttonStateHelper.confirmationButtonIsEnabled())
         assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertTrue(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
     }
 
     @Test
-    fun `(7) when (!isRejection, !needsYourConfirmation, !hasBeenRejected, !needsExecution) should enable reject button`() {
+    fun `(2_2) when (!isRejection && awaitingConfirmations && hasOwnerKey && !canSign && hasBeenRejected) should disable confirmation button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = false,
-                needsYourConfirmation = true,
-                hasBeenRejected = false,
-                needsExecution = false,
-                canReject = true,
-                isOwner = true,
-                completed = false
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = false,
+                hasBeenRejected = true,
+                awaitingExecution = !awaitingConfirmations
             )
 
+        assertTrue(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsEnabled())
         assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsEnabled())
-        assertTrue(buttonStateHelper.spacerIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsVisible())
-        assertTrue(buttonStateHelper.confirmButtonIsEnabled())
     }
 
     @Test
-    fun `(8) + (10) when (!isRejection, !needsYourConfirmation, !hasBeenRejected, needsExecution) should hide confirm button`() {
+    fun `(2_2b) when (!isRejection && awaitingConfirmations && hasOwnerKey && !canSign && !hasBeenRejected) should disable confirmation button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = false,
-                needsYourConfirmation = false,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = false,
                 hasBeenRejected = false,
-                needsExecution = true,
-                canReject = true,
-                isOwner = true,
-                completed = false
+                awaitingExecution = !awaitingConfirmations
             )
 
+        assertTrue(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsEnabled())
         assertTrue(buttonStateHelper.buttonContainerIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsVisible())
-        assertTrue(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
     }
 
     @Test
-    fun `(9) when (!isRejection, !needsYourConfirmation, hasBeenRejected, needsExecution) should hide reject and confirm button`() {
+    fun `(2_3) when (!isRejection && awaitingConfirmations && hasOwnerKey && !hasBeenRejected) should enable rejection button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = false,
-                needsYourConfirmation = false,
-                hasBeenRejected = true,
-                needsExecution = true,
-                canReject = true,
-                isOwner = true,
-                completed = false
-            )
-
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
-    }
-
-    @Test
-    fun `(11) when (!isRejection, !needsYourConfirmation, hasBeenRejected, needsExecution, !canReject, !isOwner) should hide both buttons`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = false,
-                hasBeenRejected = true,
-                needsExecution = true,
-                canReject = false,
-                isOwner = false,
-                completed = false
-            )
-
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
-    }
-
-    @Test
-    fun `(11b) when (!isOwner, !completed) should hide both buttons`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = false,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = false,
                 hasBeenRejected = false,
-                needsExecution = true,
-                canReject = false,
-                isOwner = false,
-                completed = false
+                awaitingExecution = !awaitingConfirmations
             )
 
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertTrue(buttonStateHelper.rejectionButtonIsVisible())
+        assertTrue(buttonStateHelper.rejectionButtonIsEnabled())
+        assertTrue(buttonStateHelper.buttonContainerIsVisible())
     }
 
     @Test
-    fun `(11c) when (completed) should hide both buttons`() {
+    fun `(2_4) when (!isRejection && awaitingConfirmations && hasOwnerKey && hasBeenRejected) should disable rejection button`() {
+        val awaitingConfirmations = true
         val buttonStateHelper =
             ButtonStateHelper(
                 isRejection = false,
-                needsYourConfirmation = false,
-                hasBeenRejected = false,
-                needsExecution = true,
-                canReject = false,
-                isOwner = true,
-                completed = false
-            )
-
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
-    }
-
-    @Test
-    fun `(issue #1346) when (needsExecution & !canReject & !needsYourConfirmation) should hide both buttons`() {
-        val buttonStateHelper =
-            ButtonStateHelper(
-                isRejection = false,
-                needsYourConfirmation = false,
+                awaitingConfirmations = awaitingConfirmations,
+                hasOwnerKey = true,
+                canSign = false,
                 hasBeenRejected = true,
-                needsExecution = true,
-                canReject = false,
-                isOwner = true,
-                completed = false
+                awaitingExecution = !awaitingConfirmations
             )
 
-        assertFalse(buttonStateHelper.confirmButtonIsVisible())
-        assertFalse(buttonStateHelper.buttonContainerIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsVisible())
-        assertFalse(buttonStateHelper.rejectButtonIsEnabled())
-        assertFalse(buttonStateHelper.spacerIsVisible())
-        assertFalse(buttonStateHelper.confirmButtonIsEnabled())
+        assertTrue(buttonStateHelper.rejectionButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsEnabled())
+        assertTrue(buttonStateHelper.buttonContainerIsVisible())
     }
 
+    @Test
+    fun `(3_1) when (!isRejection && awaitingExecution && hasOwnerKey && !hasBeenRejected) should enable rejection button full-width`() {
+        val awaitingExecution = true
+        val buttonStateHelper =
+            ButtonStateHelper(
+                isRejection = false,
+                awaitingConfirmations = !awaitingExecution,
+                hasOwnerKey = true,
+                canSign = false,
+                hasBeenRejected = false,
+                awaitingExecution = awaitingExecution
+            )
+
+        assertTrue(buttonStateHelper.rejectionButtonIsVisible())
+        assertTrue(buttonStateHelper.rejectionButtonIsEnabled())
+        assertTrue(buttonStateHelper.buttonContainerIsVisible())
+
+        assertFalse(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsEnabled())
+        assertFalse(buttonStateHelper.spacerIsVisible())
+
+    }
+
+    @Test
+    fun `(3_2) when (!isRejection && awaitingExecution && hasOwnerKey && hasBeenRejected) should hide both buttons`() {
+        val awaitingExecution = true
+        val buttonStateHelper =
+            ButtonStateHelper(
+                isRejection = false,
+                awaitingConfirmations = !awaitingExecution,
+                hasOwnerKey = true,
+                canSign = false,
+                hasBeenRejected = true,
+                awaitingExecution = awaitingExecution
+            )
+
+        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsVisible())
+    }
+
+    @Test
+    fun `(3_3a) when (awaitingExecution) should hide both buttons `() {
+        val awaitingExecution = true
+        val buttonStateHelper =
+            ButtonStateHelper(
+                isRejection = false,
+                awaitingConfirmations = !awaitingExecution,
+                hasOwnerKey = false,
+                canSign = false,
+                hasBeenRejected = true,
+                awaitingExecution = awaitingExecution
+            )
+
+        assertFalse(buttonStateHelper.buttonContainerIsVisible())
+        assertFalse(buttonStateHelper.confirmationButtonIsVisible())
+        assertFalse(buttonStateHelper.rejectionButtonIsVisible())
+    }
 }

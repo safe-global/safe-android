@@ -443,6 +443,7 @@
     <string name="address_input_unstoppable_domain">Unstoppable domain</string>
     <string name="label_type_next">Next</string>
     <string name="label_type_queued">Queued</string>
+    <string name="label_read_only">Read-only</string>
 
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>

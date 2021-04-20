@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details.viewdata
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
@@ -16,7 +17,11 @@ data class TransactionDetailsViewData(
     val txInfo: TransactionInfoViewData,
     val executedAt: Date?,
     val txData: TxData?,
-    val detailedExecutionInfo: DetailedExecutionInfo?
+    val detailedExecutionInfo: DetailedExecutionInfo?,
+    val canSign: Boolean,
+    val hasOwnerKey: Boolean,
+    val owners: List<Owner>
+
 )
 
 sealed class TransactionInfoViewData(
@@ -113,8 +118,23 @@ sealed class SettingsInfoViewData(
     ) : SettingsInfoViewData(SettingsInfoType.DISABLE_MODULE)
 }
 
-fun TransactionDetails.toTransactionDetailsViewData(safes: List<Safe>): TransactionDetailsViewData =
-    TransactionDetailsViewData(txHash, txStatus, txInfo.toTransactionInfoViewData(safes, safeAppInfo), executedAt, txData, detailedExecutionInfo)
+fun TransactionDetails.toTransactionDetailsViewData(
+    safes: List<Safe>,
+    canSign: Boolean,
+    owners: List<Owner>,
+    hasOwnerKey: Boolean
+): TransactionDetailsViewData =
+    TransactionDetailsViewData(
+        txHash,
+        txStatus,
+        txInfo.toTransactionInfoViewData(safes = safes, safeAppInfo = safeAppInfo),
+        executedAt = executedAt,
+        txData = txData,
+        detailedExecutionInfo = detailedExecutionInfo,
+        canSign = canSign,
+        hasOwnerKey = hasOwnerKey,
+        owners = owners
+    )
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): TransactionInfoViewData =

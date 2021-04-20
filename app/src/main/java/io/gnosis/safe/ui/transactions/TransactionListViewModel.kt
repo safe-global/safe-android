@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -69,7 +70,7 @@ class TransactionListViewModel
     private fun getTransactions(
         activeSafeAddress: Solidity.Address,
         safes: List<Safe>,
-        owner: List<Owner>,
+        owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
@@ -84,8 +85,9 @@ class TransactionListViewModel
                                     getTransactionView(
                                         transaction = txListEntry.transaction,
                                         safes = safes,
-                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owner),
-                                        isConflict = isConflict
+                                        needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
+                                        isConflict = isConflict,
+                                        localOwners = owners
                                     )
                                 if (isConflict) {
                                     TransactionView.Conflict(txView, txListEntry.conflictType)
@@ -108,7 +110,8 @@ class TransactionListViewModel
         transaction: Transaction,
         safes: List<Safe>,
         needsYourConfirmation: Boolean = false,
-        isConflict: Boolean = false
+        isConflict: Boolean = false,
+        localOwners: List<Owner> = listOf()
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
@@ -121,7 +124,10 @@ class TransactionListViewModel
                         toCustomTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
                     }
                 }
-                is TransactionInfo.Creation -> toHistoryCreation(txInfo)
+                is TransactionInfo.Creation -> {
+                    val owner = localOwners.find { it.address == txInfo.creator }
+                    toHistoryCreation(txInfo, owner)
+                }
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
         }
@@ -348,7 +354,7 @@ class TransactionListViewModel
         }
     }
 
-    private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation): TransactionView.Creation =
+    private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation, localCreator: Owner?): TransactionView.Creation =
         TransactionView.Creation(
             id = id,
             status = txStatus,
@@ -361,7 +367,12 @@ class TransactionListViewModel
                 statusColorRes = statusTextColor(txStatus),
                 dateTimeText = timestamp.formatBackendDateTime(),
                 creator = txInfo.creator.asEthereumAddressString(),
-                creatorInfo = AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString()),
+                creatorInfo =
+                    if (localCreator == null) {
+                        AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString())
+                    } else {
+                        AddressInfoData.Local(localCreator.name, localCreator.address.asEthereumAddressString())
+                    },
                 factory = txInfo.factory?.asEthereumAddressString(),
                 factoryInfo = AddressInfoData.Remote(
                     txInfo.factoryInfo?.name,
