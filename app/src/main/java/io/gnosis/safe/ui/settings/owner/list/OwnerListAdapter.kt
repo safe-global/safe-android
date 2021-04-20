@@ -23,7 +23,8 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
 
     fun removeItem(position: Int) {
         items.removeAt(position)
-        notifyItemRemoved(position)
+        // notifyItemRemoved(position) was not sufficient
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
