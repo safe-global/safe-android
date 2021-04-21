@@ -188,11 +188,16 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     private fun checkReadOnly() {
         lifecycleScope.launch {
-            val activeSafe = safeRepository.getActiveSafe()
-            activeSafe?.let {
-                val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
-                toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
+            // fail silently if safe info cannot be loaded
+            kotlin.runCatching {
+                val activeSafe = safeRepository.getActiveSafe()
+                activeSafe?.let {
+                    val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
+                    val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
+                    toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
+                }
+            }.onFailure {
+                tracker.logException(it)
             }
         }
     }
