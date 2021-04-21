@@ -11,12 +11,11 @@
     <TextView
         android:id="@+id/status_title"
         style="@style/TextDark"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginTop="@dimen/default_margin"
         android:ellipsize="end"
-        android:maxWidth="200dp"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/status_long"
         app:layout_constraintEnd_toStartOf="@+id/app_label"
@@ -34,7 +33,6 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/background_app_label"
         android:gravity="start"
-        android:minWidth="40dp"
         android:singleLine="true"
         android:text="@string/app"
         app:layout_constraintBottom_toBottomOf="@+id/status_title"
@@ -46,11 +44,10 @@
     <TextView
         android:id="@+id/status"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
-        android:minWidth="100dp"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="@+id/status_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +55,7 @@
         app:layout_constraintTop_toTopOf="@+id/status_title"
         app:layout_constraintVertical_bias="0.0"
         app:layout_goneMarginEnd="@dimen/default_margin"
-        tools:text="Failed"
+        tools:text="Success"
         tools:visibility="visible" />
 
     <TextView
