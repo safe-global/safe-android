@@ -27,19 +27,20 @@ class Videographer(context: Context, private val qrCodeDecoder: QRCodeDecoder) {
     private var previewHeight = 0
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+
         override fun onSurfaceTextureSizeChanged(
-            surface: SurfaceTexture?,
+            surface: SurfaceTexture,
             width: Int,
             height: Int
         ) {
         }
 
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {}
+        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
 
-        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?) = true
+        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture) = true
 
-        override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
-            surface?.let { openCamera(it) }
+        override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
+            openCamera(surface)
         }
     }
 
@@ -72,7 +73,7 @@ class Videographer(context: Context, private val qrCodeDecoder: QRCodeDecoder) {
         startBackgroundThread()
 
         if (view.isAvailable) {
-            openCamera(view.surfaceTexture)
+            openCamera(view.surfaceTexture!!)
         } else {
             view.surfaceTextureListener = surfaceTextureListener
         }
