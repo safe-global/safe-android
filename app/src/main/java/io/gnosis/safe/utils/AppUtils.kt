@@ -21,7 +21,7 @@ fun handleQrCodeActivityResult(
 ): Boolean {
     if (requestCode == QRCodeScanActivity.REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(QRCodeScanActivity.RESULT_EXTRA)) {
-            onQrCodeResult(data.getStringExtra(QRCodeScanActivity.RESULT_EXTRA))
+            onQrCodeResult(data.getStringExtra(QRCodeScanActivity.RESULT_EXTRA)!!)
         } else if (resultCode == Activity.RESULT_CANCELED) {
             onCancelledResult?.invoke()
         }

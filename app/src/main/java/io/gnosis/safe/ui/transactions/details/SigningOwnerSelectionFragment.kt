@@ -48,6 +48,8 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun onResume() {
         super.onResume()
         viewModel.loadOwners(missingSigners?.toList())
