@@ -242,8 +242,12 @@ class NotificationRepository(
 
     private suspend fun resetFirebaseToken() {
         kotlin.runCatching {
-            FirebaseInstanceId.getInstance().deleteInstanceId()
-            FirebaseInstanceId.getInstance().deleteToken(getCloudMessagingToken()!!, INSTANCE_ID_SCOPE)
+            with(FirebaseInstanceId.getInstance()) {
+                deleteInstanceId()
+                getCloudMessagingToken()?.let { token ->
+                    deleteToken(token, INSTANCE_ID_SCOPE)
+                }
+            }
         }
     }
 
