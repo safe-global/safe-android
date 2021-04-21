@@ -235,7 +235,7 @@ class NotificationRepository(
 
     private suspend fun handleCloudMessagingTokenIsLinkedToAnotherDeviceError(throwable: Throwable) {
         val error = throwable.toError()
-        if (error == Error.ErrorCloudMessagingTokenIsLinkedToAnotherDevice) {
+        if (error == Error.Error1113) {
             resetFirebaseToken()
         }
     }
