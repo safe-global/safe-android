@@ -9,8 +9,10 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.Error
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.notifications.models.Registration
+import io.gnosis.safe.toError
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -20,7 +22,6 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
-import java.math.BigInteger
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -119,7 +120,7 @@ class NotificationRepository(
                 .onFailure {
                     Timber.d("notification service registration failure")
                     deviceUuid = null
-                    resetFirebaseToken()
+                    handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
                     registrationUpdateFailed = true
                 }
         }
@@ -155,7 +156,7 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
-                resetFirebaseToken()
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
     }
 
@@ -191,7 +192,7 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
-                resetFirebaseToken()
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
     }
 
@@ -228,8 +229,15 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
-                resetFirebaseToken()
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
+    }
+
+    private suspend fun handleCloudMessagingTokenIsLinkedToAnotherDeviceError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error == Error.ErrorCloudMessagingTokenIsLinkedToAnotherDevice) {
+            resetFirebaseToken()
+        }
     }
 
     private suspend fun resetFirebaseToken() {
