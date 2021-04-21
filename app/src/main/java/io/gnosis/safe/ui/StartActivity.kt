@@ -198,6 +198,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 }
             }.onFailure {
                 tracker.logException(it)
+                toolbarBinding.readOnly.visible(false, View.INVISIBLE)
             }
         }
     }
