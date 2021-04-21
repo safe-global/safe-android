@@ -2,7 +2,7 @@
 <resources>
     <color name="primary">@color/teal_two</color>
     <color name="on_primary">@color/white_two</color>
-    <color name="primary_dark">@color/safe_green_dark</color>
+    <color name="primary_dark">@color/teal_two</color>
     <color name="secondary">@color/orangish</color>
     <color name="error">@color/tomato</color>
     <color name="accent">@color/text_emphasis_high</color>
@@ -28,7 +28,14 @@
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
-    <color name="disabled_button">#80008c73</color>
+
+    <color name="button_primary_disabled">#80008c73</color>
+    <color name="button_primary_pressed">@color/hold_two</color>
+    <color name="button_confirm_disabled">#80008c73</color>
+    <color name="button_confirm_pressed">@color/hold_two</color>
+    <color name="button_reject_disabled">#80f02525</color>
+    <color name="button_reject_pressed">@color/tomato_two</color>
+
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
@@ -57,6 +64,8 @@
     <color name="battleship_grey_light">#64707f</color>
     <color name="white_smoke">#e8e7e6</color>
     <color name="tomato">#f02525</color>
+    <color name="tomato_two">#c31717</color>
+    <color name="cherry_red">#e52325</color>
     <color name="coral">#ff453a</color>
     <color name="orangish">#ff8042</color>
     <color name="pale_red">#e8663d</color>
@@ -66,8 +75,8 @@
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
-    <color name="teal_two">#008c73</color>
     <color name="teal">#029f7f</color>
+    <color name="teal_two">#008c73</color>
     <color name="navy">#001428</color>
     <color name="slate_grey">#626269</color>
     <color name="blue_grey">#8d8d93</color>
@@ -80,6 +89,9 @@
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="black_six">#3b2c2c</color>
     <color name="light_pink">#ffe6ea</color>
+    <color name="hold">#008c73</color>
+    <color name="hold_two">#005546</color>
+    <color name="dark_aquamarine">#007661</color>
 
     <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
@@ -90,9 +102,9 @@
 
     <color name="link">@color/primary</color>
 
-    <color name="safe_green_dark">#005546</color>
     <color name="blue">#001e3b</color>
     <color name="divider">@color/pale_grey_four</color>
 
     <color name="rejection">@color/light_pink</color>
+
 </resources>

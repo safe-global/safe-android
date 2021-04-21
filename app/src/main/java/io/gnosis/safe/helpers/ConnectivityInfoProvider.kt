@@ -12,12 +12,12 @@ class ConnectivityInfoProvider(private val connectivityManager: ConnectivityMana
     var offline: Boolean = true
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network?) {
+        override fun onAvailable(network: Network) {
             super.onAvailable(network)
             offline = false
         }
 
-        override fun onLost(network: Network?) {
+        override fun onLost(network: Network) {
             super.onLost(network)
             offline = isOffline()
         }

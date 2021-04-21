@@ -37,6 +37,8 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     @Inject
     lateinit var viewModel: ConfirmRejectionViewModel
 
@@ -45,8 +47,6 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadDetails(txId)
-
         with(binding) {
             backButton.setOnClickListener {
                 findNavController().navigateUp()
@@ -106,6 +106,7 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
 
             }
         })
+        viewModel.loadDetails(txId)
     }
 
     override fun onResume() {
