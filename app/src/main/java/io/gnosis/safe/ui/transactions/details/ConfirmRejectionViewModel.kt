@@ -98,10 +98,12 @@ class ConfirmRejectionViewModel
     }
 
     fun loadDetails(txId: String) {
-        safeLaunch {
-            updateState { ConfirmationRejectedViewState(ViewAction.Loading(true)) }
-            txDetails = transactionRepository.getTransactionDetails(txId)
-            updateState { ConfirmationRejectedViewState(ViewAction.Loading(false)) }
+        if (txDetails == null) {
+            safeLaunch {
+                updateState { ConfirmationRejectedViewState(ViewAction.Loading(true)) }
+                txDetails = transactionRepository.getTransactionDetails(txId)
+                updateState { ConfirmationRejectedViewState(ViewAction.Loading(false)) }
+            }
         }
     }
 
