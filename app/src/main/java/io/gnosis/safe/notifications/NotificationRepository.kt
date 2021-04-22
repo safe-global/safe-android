@@ -1,6 +1,7 @@
 package io.gnosis.safe.notifications
 
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
@@ -8,8 +9,10 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.Error
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.notifications.models.Registration
+import io.gnosis.safe.toError
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -19,7 +22,6 @@ import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
-import java.math.BigInteger
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -118,6 +120,7 @@ class NotificationRepository(
                 .onFailure {
                     Timber.d("notification service registration failure")
                     deviceUuid = null
+                    handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
                     registrationUpdateFailed = true
                 }
         }
@@ -153,10 +156,11 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
     }
 
-    suspend fun registerOwner(ownerKey: BigInteger) {
+    suspend fun registerOwners() {
 
         kotlin.runCatching {
 
@@ -178,7 +182,7 @@ class NotificationRepository(
                 timestamp = (System.currentTimeMillis() / 1000).toString()
             )
 
-            registration.buildAndAddSignature(ownerKey.toByteArray())
+            registration.addSignatures(credentialsRepository.owners())
 
             notificationService.register(registration)
         }
@@ -188,6 +192,7 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
     }
 
@@ -224,7 +229,26 @@ class NotificationRepository(
             }
             .onFailure {
                 registrationUpdateFailed = true
+                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
+    }
+
+    private suspend fun handleCloudMessagingTokenIsLinkedToAnotherDeviceError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error == Error.Error1113) {
+            resetFirebaseToken()
+        }
+    }
+
+    private suspend fun resetFirebaseToken() {
+        kotlin.runCatching {
+            with(FirebaseInstanceId.getInstance()) {
+                deleteInstanceId()
+                getCloudMessagingToken()?.let { token ->
+                    deleteToken(token, INSTANCE_ID_SCOPE)
+                }
+            }
+        }
     }
 
     suspend fun unregister() {
@@ -260,7 +284,8 @@ class NotificationRepository(
     }
 
     private fun generateUUID(): String {
-        return UUID.randomUUID().toString().toLowerCase()
+        deviceUuid = UUID.randomUUID().toString().toLowerCase()
+        return deviceUuid!!
     }
 
     private fun Registration.addSignatures(owners: List<Owner>) {

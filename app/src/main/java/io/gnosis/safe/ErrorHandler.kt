@@ -91,13 +91,22 @@ sealed class Error(
     object Error1110 : Error(1110, null, R.string.error_client_safe_name_invalid_reason, R.string.error_client_safe_name_invalid_fix)
     object Error1111 : Error(1111, null, R.string.error_client_key_already_imported_reason, R.string.error_client_key_already_imported_fix)
 
-    object ErrorUdUnsupportedDomain: Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
-    object ErrorUdUnregistered: Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
-    object ErrorUdRecordNotFound: Error(6359, null, R.string.error_client_UD_record_not_found_reason, R.string.error_client_UD_record_not_found_fix)
-    object ErrorUdUnspecifiedResolver: Error(6360, null, R.string.error_client_UD_domain_not_configured_reason, R.string.error_client_UD_domain_not_configured_fix)
-    object ErrorUdBlockhainDown: Error(6361, null, R.string.error_client_UD_blockchain_provider_is_not_accessible_reason, R.string.error_client_UD_blockchain_provider_is_not_accessible_fix)
-    object ErrorUdUnknownCurrency: Error(6357, null, R.string.error_client_UD_currency_not_found_reason, R.string.error_client_UD_currency_not_found_fix)
+    object Error1113 : Error(1112, 400, R.string.error_network_request_reason, R.string.error_network_request_fix)
 
+    object Error6357 : Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
+    object Error6358 : Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
+
+    object Error6359 : Error(6359, null, R.string.error_client_UD_record_not_found_reason, R.string.error_client_UD_record_not_found_fix)
+    object Error6360 : Error(6360, null, R.string.error_client_UD_domain_not_configured_reason, R.string.error_client_UD_domain_not_configured_fix)
+
+    object Error6361 : Error(
+        6361,
+        null,
+        R.string.error_client_UD_blockchain_provider_is_not_accessible_reason,
+        R.string.error_client_UD_blockchain_provider_is_not_accessible_fix
+    )
+
+    object Error6362 : Error(6362, null, R.string.error_client_UD_currency_not_found_reason, R.string.error_client_UD_currency_not_found_fix)
 
     object ErrorUnknown : Error(-1, null, R.string.error_unknown_reason, R.string.error_unknown_fix) {
         override fun message(context: Context): String {
@@ -134,14 +143,19 @@ fun Throwable.toError(): Error =
         // Network-related errors
         this is HttpException -> {
             this.let {
+                val errorBodyString = it.response()?.errorBody()?.string()
                 when {
-                    this.code() == HttpCodes.BAD_REQUEST -> Error.Error400
+                    this.code() == HttpCodes.BAD_REQUEST -> return if (errorBodyString == "[\"Cloud messaging token is linked to another device\"]") {
+                        Error.Error1113
+                    } else {
+                        Error.Error400
+                    }
                     this.code() == HttpCodes.UNAUTHORIZED -> Error.Error401
                     this.code() == HttpCodes.FORBIDDEN -> Error.Error403
                     this.code() == HttpCodes.NOT_FOUND -> Error.Error404
                     this.code() == HttpCodes.SERVER_ERROR -> Error.Error500(500)
                     this.code() == 422 -> {
-                        val errorBodyString = it.response()?.errorBody()?.string()
+
                         val serverError = errorBodyString?.let {
                             if (errorBodyString.isNotEmpty()) {
                                 serverErrorAdapter.fromJson(errorBodyString)
@@ -171,12 +185,12 @@ fun Throwable.toError(): Error =
         this is NamingServiceException -> {
             this.let {
                 when (this.getCode()) {
-                    NSExceptionCode.UnregisteredDomain -> Error.ErrorUdUnregistered
-                    NSExceptionCode.UnsupportedDomain -> Error.ErrorUdUnsupportedDomain
-                    NSExceptionCode.RecordNotFound -> Error.ErrorUdRecordNotFound
-                    NSExceptionCode.BlockchainIsDown -> Error.ErrorUdBlockhainDown
-                    NSExceptionCode.UnspecifiedResolver -> Error.ErrorUdUnspecifiedResolver
-                    NSExceptionCode.UnknownCurrency -> Error.ErrorUdUnknownCurrency
+                    NSExceptionCode.UnregisteredDomain -> Error.Error6358
+                    NSExceptionCode.UnsupportedDomain -> Error.Error6357
+                    NSExceptionCode.RecordNotFound -> Error.Error6359
+                    NSExceptionCode.BlockchainIsDown -> Error.Error6361
+                    NSExceptionCode.UnspecifiedResolver -> Error.Error6360
+                    NSExceptionCode.UnknownCurrency -> Error.Error6362
                     else -> Error.ErrorUnknown
                 }
             }

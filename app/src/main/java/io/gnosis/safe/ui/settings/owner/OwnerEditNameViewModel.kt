@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -10,6 +11,7 @@ import javax.inject.Inject
 class OwnerEditNameViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
+    private val notificationRepository: NotificationRepository,
     private val tracker: Tracker,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerNameState>(appDispatchers) {
@@ -35,6 +37,7 @@ class OwnerEditNameViewModel
     fun removeOwner(address: Solidity.Address) {
         safeLaunch {
             credentialsRepository.removeOwner(address)
+            notificationRepository.unregisterOwners()
             tracker.logKeyDeleted()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
             updateState { OwnerNameState(null, ViewAction.CloseScreen) }

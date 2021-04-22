@@ -140,7 +140,7 @@
     <string name="error_client_UD_domain_not_configured_reason">Domain is not configured correctly</string>
     <string name="error_client_UD_domain_not_configured_fix">Ask Domain owner to configure resolver contract</string>
 
-    <string name="error_client_UD_currency_not_found_reason">Domain don\'t have desirable asset attached</string>
+    <string name="error_client_UD_currency_not_found_reason">Domain doesn\'t have desirable asset attached</string>
     <string name="error_client_UD_currency_not_found_fix">Contact domain owner</string>
 
     <string name="error_client_ens_invalid_fix">Please enter a valid ENS name</string>
