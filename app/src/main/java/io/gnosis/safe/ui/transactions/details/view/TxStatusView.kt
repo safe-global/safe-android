@@ -4,11 +4,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewTxStatusBinding
@@ -47,12 +51,54 @@ class TxStatusView @JvmOverloads constructor(
             binding.statusLong.setTextColor(ContextCompat.getColor(context, statusColorRes))
             binding.statusLong.visible(true)
             binding.status.visible(false, View.INVISIBLE)
-
+            adjustStatusTitleWidth(safeApp, true)
         } else {
             binding.status.setText(statusTextRes)
             binding.status.setTextColor(ContextCompat.getColor(context, statusColorRes))
             binding.status.visible(true)
             binding.statusLong.visible(false)
+            adjustStatusTitleWidth(safeApp, false)
+        }
+    }
+
+    private fun adjustStatusTitleWidth(appLabelVisible: Boolean, longStatusVisible: Boolean) {
+        with(binding) {
+            val bindingAsView = binding.root
+            val viewTreeObserver: ViewTreeObserver = bindingAsView.viewTreeObserver
+            if (viewTreeObserver.isAlive) {
+                viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        bindingAsView.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                        val viewWidth = bindingAsView.width
+                        val statusTitleTextBounds = android.graphics.Rect()
+                        statusTitle.paint.getTextBounds(statusTitle.text.toString(), 0, statusTitle.text.length, statusTitleTextBounds)
+                        val statusTitleWidth = statusTitleTextBounds.right - statusTitleTextBounds.left
+
+                        var statusWidth = 0
+                        if (!longStatusVisible) {
+                            val statusTextBounds = android.graphics.Rect()
+                            status.paint.getTextBounds(status.text.toString(), 0, status.text.length, statusTextBounds)
+                            val statusTextWidth = statusTextBounds.right - statusTextBounds.left
+                            statusWidth = statusTextWidth + status.marginStart + status.marginEnd
+                        }
+                        var appLabelWidth = 0
+                        if (appLabelVisible) {
+                            val appLabelTextBounds = android.graphics.Rect()
+                            appLabel.paint.getTextBounds(appLabel.text.toString(), 0, appLabel.text.length, appLabelTextBounds)
+                            appLabelWidth = appLabelTextBounds.right - appLabelTextBounds.left + appLabel.marginStart + appLabel.marginEnd
+                        }
+                        val typeIconWidth = typeIcon.width + typeIcon.marginStart + typeIcon.marginEnd + typeIcon.marginStart
+
+                        if (statusTitleWidth > viewWidth - appLabelWidth - statusWidth - typeIconWidth) {
+                            statusTitle.width = viewWidth - appLabelWidth - statusWidth - typeIconWidth
+                            statusTitle.ellipsize = android.text.TextUtils.TruncateAt.END
+                        } else {
+                            statusTitle.ellipsize = null
+                            statusTitle.width = statusTitleWidth
+                        }
+                    }
+                })
+            }
         }
     }
 
