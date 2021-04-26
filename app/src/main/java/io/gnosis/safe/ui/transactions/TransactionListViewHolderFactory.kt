@@ -4,8 +4,11 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.transaction.ConflictType
@@ -22,6 +25,7 @@ import io.gnosis.safe.utils.elapsedIntervalTo
 import io.gnosis.safe.utils.formatBackendDate
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -279,6 +283,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
                     appLabel.visible(false)
+                    adjustAddressNameWidth(false)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
@@ -287,13 +292,16 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                         R.drawable.ic_code_16dp
                     )
                     appLabel.visible(addressInfo.appInfo)
+                    adjustAddressNameWidth(addressInfo.appInfo)
                 }
                 is AddressInfoData.Default -> {
                     addressName.setText(addressInfo.nameResId)
                     addressLogo.setAddress(null)
                     addressLogo.setImageResource(addressInfo.logoResId)
                     appLabel.visible(false)
+                    adjustAddressNameWidth(false)
                 }
+                else -> adjustAddressNameWidth(false)
             }
 
             finalStatus.setText(viewTransfer.statusText)
@@ -315,7 +323,50 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             }
         }
     }
+
+    private fun adjustAddressNameWidth(appLabelVisible: Boolean) {
+        with(viewBinding) {
+            val bindingAsView = viewBinding.root
+            val viewTreeObserver: ViewTreeObserver = bindingAsView.viewTreeObserver
+            if (viewTreeObserver.isAlive) {
+                viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        bindingAsView.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                        val viewWidth = bindingAsView.width
+                        Timber.i("---> viewWidth: $viewWidth")
+                        val typeIconWidth = addressLogo.width + addressLogo.marginStart + addressLogo.marginEnd + addressLogo.marginStart
+                        val statusTitleTextBounds = android.graphics.Rect()
+                        addressName.paint.getTextBounds(addressName.text.toString(), 0, addressName.text.length, statusTitleTextBounds)
+                        val statusTitleWidth = statusTitleTextBounds.right - statusTitleTextBounds.left
+
+                        var appLabelWidth = 0
+                        if (appLabelVisible) {
+                            val appLabelTextBounds = android.graphics.Rect()
+                            appLabel.paint.getTextBounds(appLabel.text.toString(), 0, appLabel.text.length, appLabelTextBounds)
+                            appLabelWidth = appLabelTextBounds.right - appLabelTextBounds.left + appLabel.marginStart + appLabel.marginEnd
+                        }
+
+                        val actionTextBounds = android.graphics.Rect()
+                        action.paint.getTextBounds(action.text.toString(), 0, action.text.length, actionTextBounds)
+                        val actionWidth = actionTextBounds.right - actionTextBounds.left + action.marginStart + action.marginEnd
+
+                        val chevronWidth = chevron.width + chevron.marginStart + chevron.marginEnd + chevron.marginEnd
+                        bindingAsView.post {
+                            if (statusTitleWidth > viewWidth - appLabelWidth - typeIconWidth - actionWidth - chevronWidth) {
+                                addressName.width = viewWidth - appLabelWidth - typeIconWidth - actionWidth - chevronWidth
+                                addressName.ellipsize = android.text.TextUtils.TruncateAt.END
+                            } else {
+                                addressName.ellipsize = null
+                                addressName.width = statusTitleWidth
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
 }
+
 
 private fun Resources.getAction(methodName: String?, actionCount: Int?): String? =
     if (actionCount != null) {
@@ -436,7 +487,7 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
                 factoryName = details.factoryInfo.name,
                 factoryLogoUri = details.factoryInfo.addressLogoUri,
                 creator = details.creator,
-                creatorName =  creatorName,
+                creatorName = creatorName,
                 creatorLogoUri = creatorLogoUri,
                 creatorLocal = creatorLocal,
                 transActionHash = details.transactionHash
