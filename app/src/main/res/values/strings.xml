@@ -204,6 +204,12 @@
     <string name="tx_service">Transaction service</string>
     <string name="client_gateway_service">Client Gateway service</string>
 
+    <string name="tracking">TRACKING</string>
+    <string name="tracking_share_usage_data">Share Usage Data</string>
+    <string name="tracking_enable_description">By sharing usage data with Gnosis, you are helping us improve the app with anonymized app usage data</string>
+    <string name="tracking_text">\nWhat Data is shared?</string>
+    <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
+
     <string name="screenshots">SCREENSHOTS</string>
     <string name="enable_screenshots">Enable screenshots</string>
     <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
