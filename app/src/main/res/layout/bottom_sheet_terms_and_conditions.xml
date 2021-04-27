@@ -112,7 +112,7 @@
         android:layout_marginHorizontal="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_small_margin"
         android:gravity="center"
-        android:text="@string/no_thanks"
+        android:text="@string/agree_without_sharing_usage_data"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
