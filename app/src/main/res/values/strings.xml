@@ -210,6 +210,9 @@
     <string name="tracking_text">\nWhat Data is shared?</string>
     <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
 
+    <string name="debug">DEBUG</string>
+    <string name="crash_the_app">Crash the App</string>
+
     <string name="screenshots">SCREENSHOTS</string>
     <string name="enable_screenshots">Enable screenshots</string>
     <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>

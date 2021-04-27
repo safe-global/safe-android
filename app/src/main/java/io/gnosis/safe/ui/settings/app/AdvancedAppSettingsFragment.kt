@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.BuildConfig.CLIENT_GATEWAY_URL
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
@@ -16,6 +17,7 @@ import io.gnosis.safe.databinding.FragmentSettingsAppAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.appendLink
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppAdvancedBinding>() {
@@ -82,6 +84,13 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             trackingPermission.settingSwitch.setOnClickListener {
                 settingsHandler.trackingAllowed = trackingPermission.settingSwitch.isChecked
                 settingsHandler.allowTracking(requireContext(), trackingPermission.settingSwitch.isChecked)
+            }
+
+            if (CLIENT_GATEWAY_URL.contains("staging")) {
+                debugContainer.visible(true)
+                crashTheApp.setOnClickListener {
+                    throw  RuntimeException("Deliberate Crash")
+                }
             }
         }
     }
