@@ -6,7 +6,9 @@ import com.unstoppabledomains.resolution.TickerVersion
 import com.unstoppabledomains.resolution.dns.DnsRecord
 import com.unstoppabledomains.resolution.dns.DnsRecordsType
 import com.unstoppabledomains.resolution.naming.service.NamingServiceType
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 
+@ExcludeClassFromJacocoGeneratedReport
 class DummyDomainResolution :DomainResolution{
     override fun getOwner(domain: String?): String {
         TODO("Not yet implemented")
