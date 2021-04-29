@@ -10,12 +10,11 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
 import pm.gnosis.svalinn.common.PreferencesManager
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -51,20 +50,25 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun providesDomainResolutionLibrary(): DomainResolution {
-        val firstWord = BuildConfig.BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first();
-        val network = Network.valueOf(firstWord.toUpperCase());
-        return Resolution.builder()
+        val firstWord = BuildConfig.BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first()
+        val network = Network.valueOf(firstWord.toUpperCase())
+        return try {
+            Resolution.builder()
                 .chainId(NamingServiceType.CNS, network)
                 .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
                 .build()
+        } catch (throwable: Throwable) {
+            Timber.e(throwable, "Error initializing UnstoppableDomains")
+            DummyDomainResolution()
+        }
     }
 
     @Provides
     @Singleton
     fun providesUnstoppableRepository(
-            domainResolutionLibrary: DomainResolution
+        domainResolutionLibrary: DomainResolution
     ): UnstoppableDomainsRepository =
-            UnstoppableDomainsRepository(domainResolutionLibrary)
+        UnstoppableDomainsRepository(domainResolutionLibrary)
 
     @Provides
     @Singleton

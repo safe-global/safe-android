@@ -7,7 +7,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
 class UnstoppableDomainsRepository(
-        private val domainResolutionLibrary: DomainResolution
+    private val domainResolutionLibrary: DomainResolution
 ) {
 
     suspend fun resolve(domain: String): Solidity.Address {
