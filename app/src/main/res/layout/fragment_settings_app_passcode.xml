@@ -59,6 +59,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                style="@style/Header"
+                android:text="@string/settings_passcode_lock_method"
+                android:layout_height="@dimen/header_height" />
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/use_passcode"
                 android:layout_width="match_parent"
@@ -79,11 +84,49 @@
                 app:setting_openable="true"
                 />
 
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/use_biometrics"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="@string/settings_passcode_login_with_biometrics"
+                app:setting_openable="true"
+                app:setting_has_switch="true"
+                />
+
+            <TextView
+                style="@style/Header"
+                android:text="@string/settings_passcode_use_passcode_for"
+                android:layout_height="@dimen/header_height" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/require_to_open"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="@string/settings_passcode_require_to_open_app"
+                app:setting_openable="true"
+                app:setting_has_switch="true"
+                />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/require_for_confirmations"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="@string/settings_passcode_require_for_confirmations"
+                app:setting_openable="true"
+                app:setting_has_switch="true"
+                />
+
             <TextView
                 style="@style/Helptext"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/settings_passcode_is_needed_to_sign" />
+                android:text="@string/settings_passcode_at_least_one_option" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
