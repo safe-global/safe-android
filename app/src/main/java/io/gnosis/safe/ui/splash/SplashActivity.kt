@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.os.Bundle
 import android.os.Handler
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.ScreenId
@@ -28,6 +29,8 @@ class SplashActivity : BaseActivity() {
         setContentView(binding.root)
 
         viewComponent().inject(this)
+
+        settingsHandler.allowTracking(this, settingsHandler.trackingAllowed)
 
         viewModel.state.observe(this, Observer {
             when (val viewAction = it.viewAction) {
