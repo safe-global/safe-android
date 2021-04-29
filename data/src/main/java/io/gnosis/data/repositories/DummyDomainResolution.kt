@@ -9,7 +9,7 @@ import com.unstoppabledomains.resolution.naming.service.NamingServiceType
 import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 
 @ExcludeClassFromJacocoGeneratedReport
-class DummyDomainResolution :DomainResolution{
+class DummyDomainResolution : DomainResolution {
     override fun getOwner(domain: String?): String {
         TODO("Not yet implemented")
     }
@@ -39,6 +39,10 @@ class DummyDomainResolution :DomainResolution{
     }
 
     override fun ipfsHash(domain: String?): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun getRecord(domain: String?, recordKey: String?): String {
         TODO("Not yet implemented")
     }
 
