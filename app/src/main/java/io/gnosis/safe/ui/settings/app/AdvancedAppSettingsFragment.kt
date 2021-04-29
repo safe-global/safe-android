@@ -89,7 +89,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
             if (CLIENT_GATEWAY_URL.contains("staging")) {
                 debugContainer.visible(true)
                 crashTheApp.setOnClickListener {
-                    throw  RuntimeException("Deliberate Crash")
+                    throw RuntimeException("Deliberate Crash")
                 }
             }
         }
