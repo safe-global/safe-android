@@ -208,7 +208,6 @@
     <string name="tracking_share_usage_data">Share Usage Data</string>
     <string name="tracking_enable_description">By sharing usage data with Gnosis, you are helping us improve the app with anonymized app usage data</string>
     <string name="tracking_text">\nWhat Data is shared?</string>
-    <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
 
     <string name="debug">DEBUG</string>
     <string name="crash_the_app">Crash the App</string>
