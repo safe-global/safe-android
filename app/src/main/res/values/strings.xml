@@ -47,7 +47,7 @@
     <string name="terms_privacy_policy">Privacy Policy</string>
     <string name="terms_terms_of_use">Terms of Use</string>
     <string name="please_review_terms_and_privacy_policy">Please review our Terms of Use and Privacy Policy.</string>
-    <string name="no_thanks">No thanks</string>
+    <string name="agree_without_sharing_usage_data">Agree without Sharing Usage Data</string>
     <string name="agree">Agree</string>
     <string name="add_safe">Add Safe</string>
     <string name="switch_safes">Switch Safes</string>
@@ -203,6 +203,14 @@
     <string name="rpc_endpoint">RPC endpoint</string>
     <string name="tx_service">Transaction service</string>
     <string name="client_gateway_service">Client Gateway service</string>
+
+    <string name="tracking">TRACKING</string>
+    <string name="tracking_share_usage_data">Share Usage Data</string>
+    <string name="tracking_enable_description">By sharing usage data with Gnosis, you are helping us improve the app with anonymized app usage data</string>
+    <string name="tracking_text">\nWhat Data is shared?</string>
+
+    <string name="debug">DEBUG</string>
+    <string name="crash_the_app">Crash the App</string>
 
     <string name="screenshots">SCREENSHOTS</string>
     <string name="enable_screenshots">Enable screenshots</string>

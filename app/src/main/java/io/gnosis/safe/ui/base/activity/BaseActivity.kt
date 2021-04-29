@@ -25,6 +25,7 @@ abstract class BaseActivity : AppCompatActivity() {
         HeimdallApplication[this].inject(this)
         super.onCreate(savedInstanceState)
         settingsHandler.allowScreenShots(window, settingsHandler.screenshotsAllowed)
+        settingsHandler.allowTracking(this, settingsHandler.trackingAllowed)
         screenId()?.let {
             tracker.logScreen(it)
         }

@@ -1,13 +1,16 @@
 package io.gnosis.safe.ui.settings.app
 
+import android.content.Context
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.NightMode
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.gnosis.data.backend.GatewayApi
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,6 +46,18 @@ class SettingsHandler @Inject constructor(
         } else {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
+    }
+
+    var trackingAllowed: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_ALLOW_TRACKING, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_ALLOW_TRACKING, value)
+            }
+        }
+
+    fun allowTracking(context: Context, allow: Boolean) {
+        FirebaseAnalytics.getInstance(context).setAnalyticsCollectionEnabled(allow)
     }
 
     suspend fun loadSupportedFiatCodes(): List<String> = gatewayApi.loadSupportedCurrencies()
@@ -96,10 +111,10 @@ class SettingsHandler @Inject constructor(
         }
 
 
-
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
         internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
+        internal const val KEY_ALLOW_TRACKING = "prefs.boolean.allow_tracking"
         internal const val KEY_USER_DEFAULT_FIAT = "prefs.string.user_default_fiat"
         internal const val KEY_SHOW_OWNER_BANNER = "prefs.boolean.show_owner_banner"
         internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
