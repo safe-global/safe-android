@@ -38,17 +38,17 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             usePasscode.settingSwitch.setOnClickListener {
-
                 if (settingsHandler.usePasscode) {
+//                    settingsHandler.usePasscode = false
+                    updateUi()
                     findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
                 } else {
+                    settingsHandler.requireToOpen = true
+                    settingsHandler.requireForConfirmations = true
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(
-                            ownerImported = false
-                        )
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(ownerImported = false)
                     )
                 }
-
                 changePasscode.visible(settingsHandler.usePasscode)
             }
             changePasscode.visible(settingsHandler.usePasscode)
@@ -57,6 +57,51 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                     PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToChangePasscodeFragment()
                 )
             }
+
+            useBiometrics.visible(settingsHandler.usePasscode)
+            useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
+            useBiometrics.settingSwitch.setOnClickListener {
+                settingsHandler.useBiometrics = useBiometrics.settingSwitch.isChecked
+                //TODO de/activate biometric for app/confirmations
+            }
+
+            usePasscodeFor.visible(settingsHandler.usePasscode)
+
+            requireToOpen.visible(settingsHandler.usePasscode)
+            requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
+            requireToOpen.settingSwitch.setOnClickListener {
+                settingsHandler.requireToOpen = requireToOpen.settingSwitch.isChecked
+                // If both are disabled, disable passcode feature
+                if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
+                    settingsHandler.usePasscode = false
+                    updateUi()
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
+                }
+            }
+
+            requireForConfirmations.visible(settingsHandler.usePasscode)
+            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
+            requireForConfirmations.settingSwitch.setOnClickListener {
+                settingsHandler.requireForConfirmations = requireForConfirmations.settingSwitch.isChecked
+                // If both are disabled, disable passcode feature
+                if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
+                    settingsHandler.usePasscode = false
+                    updateUi()
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
+
+                }
+            }
+        }
+    }
+
+    private fun updateUi(usePasscode: Boolean = false) {
+        with(binding) {
+            changePasscode.visible(usePasscode)
+            useBiometrics.visible(usePasscode)
+            usePasscodeFor.visible(usePasscode)
+            requireToOpen.visible(usePasscode)
+            requireForConfirmations.visible(usePasscode)
+            usePasscodeFor.visible(usePasscode)
         }
     }
 

@@ -160,7 +160,7 @@
     <string name="settings_tab_safe">SAFE SETTINGS</string>
     <string name="settings_tab_app">APP SETTINGS</string>
     <string name="settings_app_owner_keys">Owner keys</string>
-    <string name="settings_app_passcode">Security</string>
+    <string name="settings_app_passcode">Passcode</string>
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
     <string name="settings_app_auto">Auto</string>
@@ -197,7 +197,7 @@
     <string name="settings_passcode_lock_method">LOCK METHOD</string>
     <string name="settings_passcode_use_passcode_for">USE PASSCODE FOR</string>
     <string name="settings_passcode_at_least_one_option">At least one option must be selected</string>
-    <string name="settings_passcode_login_with_biometrics">Login with Biometrics</string>
+    <string name="settings_passcode_login_with_biometrics">Login with biometrics</string>
     <string name="settings_passcode_require_to_open_app">Require to open app</string>
     <string name="settings_passcode_require_for_confirmations">Require for confirmations</string>
 
