@@ -49,7 +49,7 @@ ext {
             zxing                           : '3.3.1',
             play_core                       : '1.9.1',
             play_core_ktx                   : '1.8.1',
-            unstoppabledomains              : '1.13.1',
+            unstoppabledomains              : '1.13.2',
 
             // Test dependencies
             espresso                        : '3.1.1',
