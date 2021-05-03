@@ -121,8 +121,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/background_selectable_white"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
 
 
     <ImageView
@@ -133,8 +132,7 @@
         android:src="@drawable/ic_unstoppable_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_ens"
-        app:tint="@color/text_emphasis_medium"
-        android:visibility="gone" />
+        app:tint="@color/text_emphasis_medium" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_unstoppabledomains"
@@ -149,7 +147,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_address_input_unstoppabledomains_icon"
-        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens"
-        android:visibility="gone" />
+        app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
