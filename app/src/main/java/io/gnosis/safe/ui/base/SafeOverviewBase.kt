@@ -88,29 +88,11 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_CHANGED_RESULT, false)
     }
 
-    private fun requirePasscodeForAppSet() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_NOT_NEEDED_APP_RESULT, false)
-    }
-
-    private fun requirePasscodeForApp(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_NOT_NEEDED_APP_RESULT) == true
-    }
-
-    private fun requirePasscodeForConfiormationsSet() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(PASSCODE_NOT_NEEDED_FOR_CONFIRMATIONS_RESULT, false)
-    }
-
-    private fun requirePasscodeForConfiormations(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(PASSCODE_NOT_NEEDED_FOR_CONFIRMATIONS_RESULT) == true
-    }
-
     companion object {
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
         const val OWNER_SELECTED_RESULT = "args.boolean.owner_selected_result"
         const val PASSCODE_SET_RESULT = "args.boolean.passcode_set_result"
         const val PASSCODE_DISABLED_RESULT = "args.boolean.passcode_disabled_result"
-        const val PASSCODE_NOT_NEEDED_FOR_CONFIRMATIONS_RESULT = "args.boolean.passcode_not_needed_for_confirmations_result"
-        const val PASSCODE_NOT_NEEDED_APP_RESULT = "args.boolean.passcode_not_needed_for_app_result"
         const val PASSCODE_CHANGED_RESULT = "args.boolean.passcode_changed_result"
         const val REJECTION_CONFIRMATION_RESULT = "args.boolean.rejection_confirmation_result"
     }
