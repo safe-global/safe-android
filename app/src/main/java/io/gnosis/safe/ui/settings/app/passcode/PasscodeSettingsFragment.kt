@@ -62,8 +62,15 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             useBiometrics.visible(settingsHandler.usePasscode)
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
-                settingsHandler.useBiometrics = useBiometrics.settingSwitch.isChecked
-                //TODO de/activate biometric for app/confirmations
+                if (useBiometrics.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(BIOMETRICS_ENABLE)
+                    )
+                } else {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(BIOMETRICS_DISABLE)
+                    )
+                }
             }
 
             usePasscodeFor.visible(settingsHandler.usePasscode)
@@ -118,6 +125,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
             requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
+            useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
         }
     }
 }

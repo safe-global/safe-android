@@ -7,6 +7,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeViewModel.PasscodeState
 import javax.inject.Inject
 
@@ -27,30 +28,37 @@ class PasscodeViewModel
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
                 when (command) {
-                    PasscodeCommand.DISABLE -> {
+                    DISABLE -> {
                         settingsHandler.usePasscode = false
                         tracker.setPasscodeIsSet(false)
                         tracker.logPasscodeDisabled()
                         updateState { PasscodeState(PasscodeDisabled) }
                     }
-                    PasscodeCommand.APP_DISABLE -> {
+                    APP_DISABLE -> {
                         settingsHandler.requireToOpen = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
-                    PasscodeCommand.CONFIRMATION_DISABLE -> {
+                    CONFIRMATION_DISABLE -> {
                         settingsHandler.requireForConfirmations = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
-                    PasscodeCommand.CONFIRMATION_ENABLE -> {
+                    CONFIRMATION_ENABLE -> {
                         settingsHandler.requireForConfirmations = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
-                    PasscodeCommand.APP_ENABLE -> {
+                    APP_ENABLE -> {
                         settingsHandler.requireToOpen = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
+                    BIOMETRICS_ENABLE -> {
+                        settingsHandler.useBiometrics = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    BIOMETRICS_DISABLE -> {
+                        settingsHandler.useBiometrics = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
                 }
-
             } else {
                 updateState { PasscodeState(PasscodeWrong) }
             }
@@ -140,5 +148,7 @@ enum class PasscodeCommand {
     APP_DISABLE,
     CONFIRMATION_DISABLE,
     APP_ENABLE,
-    CONFIRMATION_ENABLE
+    CONFIRMATION_ENABLE,
+    BIOMETRICS_ENABLE,
+    BIOMETRICS_DISABLE
 }

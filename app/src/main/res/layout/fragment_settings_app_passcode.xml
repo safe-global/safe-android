@@ -91,7 +91,7 @@
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_passcode_login_with_biometrics"
-                app:setting_openable="true"
+                app:setting_openable="false"
                 app:setting_has_switch="true"
                 />
 
@@ -108,7 +108,7 @@
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_passcode_require_to_open_app"
-                app:setting_openable="true"
+                app:setting_openable="false"
                 app:setting_has_switch="true"
                 />
 
@@ -119,7 +119,7 @@
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_passcode_require_for_confirmations"
-                app:setting_openable="true"
+                app:setting_openable="false"
                 app:setting_has_switch="true"
                 />
 
