@@ -22,14 +22,35 @@ class PasscodeViewModel
 
     override fun initialState(): PasscodeState = PasscodeState(viewAction = null)
 
-    fun disablePasscode(passcode: String) {
+    fun disablePasscode(passcode: String, command: PasscodeCommand) {
         safeLaunch {
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
-                settingsHandler.usePasscode = false
-                tracker.setPasscodeIsSet(false)
-                tracker.logPasscodeDisabled()
-                updateState { PasscodeState(PasscodeDisabled) }
+                when (command) {
+                    PasscodeCommand.DISABLE -> {
+                        settingsHandler.usePasscode = false
+                        tracker.setPasscodeIsSet(false)
+                        tracker.logPasscodeDisabled()
+                        updateState { PasscodeState(PasscodeDisabled) }
+                    }
+                    PasscodeCommand.APP_DISABLE -> {
+                        settingsHandler.requireToOpen = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    PasscodeCommand.CONFIRMATION_DISABLE -> {
+                        settingsHandler.requireForConfirmations = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    PasscodeCommand.CONFIRMATION_ENABLE -> {
+                        settingsHandler.requireForConfirmations = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    PasscodeCommand.APP_ENABLE -> {
+                        settingsHandler.requireToOpen = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                }
+
             } else {
                 updateState { PasscodeState(PasscodeWrong) }
             }
@@ -106,10 +127,18 @@ class PasscodeViewModel
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : Throwable()
     object PasscodeDisabled : ViewAction
+    object PasscodeCommandExecuted : ViewAction
     object PasscodeWrong : ViewAction
     object PasscodeCorrect : ViewAction
     object PasscodeSetup : ViewAction
     object PasscodeSetupFailed : Throwable()
     object PasscodeChanged : ViewAction
+}
 
+enum class PasscodeCommand {
+    DISABLE,
+    APP_DISABLE,
+    CONFIRMATION_DISABLE,
+    APP_ENABLE,
+    CONFIRMATION_ENABLE
 }

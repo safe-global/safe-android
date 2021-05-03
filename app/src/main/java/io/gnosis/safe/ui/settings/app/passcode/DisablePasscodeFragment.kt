@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -27,6 +28,9 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
+    private val navArgs by navArgs<DisablePasscodeFragmentArgs>()
+    private val passcodeCommand by lazy { navArgs.passcodeCommand }
+
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -62,6 +66,9 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     findNavController().popBackStack(R.id.disablePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
+                is PasscodeViewModel.PasscodeCommandExecuted -> {
+                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                }
             }
         })
 
@@ -84,7 +91,16 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                viewModel.disablePasscode(digitsAsString)
+
+                viewModel.disablePasscode(digitsAsString, passcodeCommand)
+
+//                when (passcodeCommand) {
+//                    DISABLE ->  viewModel.disablePasscode(digitsAsString)
+//                    APP_DISABLE -> viewModel.disablePasscodeForApp(digitsAsString)
+//                    CONFIRMATION_DISABLE -> viewModel.disablePasscodeForConfirmations(digitsAsString)
+//                    APP_ENABLE -> TODO()
+//                    CONFIRMATION_ENABLE -> TODO()
+//                }
             })
 
             helpText.visible(false)

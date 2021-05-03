@@ -231,6 +231,9 @@
         android:label="DisablePasscodeFragment"
         tools:layout="@layout/fragment_passcode">
 
+        <argument
+            android:name="passcodeCommand"
+            app:argType="io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand" />
     </fragment>
 
     <fragment

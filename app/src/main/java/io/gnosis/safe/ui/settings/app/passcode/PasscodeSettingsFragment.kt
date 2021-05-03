@@ -12,6 +12,7 @@ import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -39,9 +40,9 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             usePasscode.settingSwitch.setOnClickListener {
                 if (settingsHandler.usePasscode) {
-//                    settingsHandler.usePasscode = false
-//                    updateUi()
-                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE)
+                    )
                 } else {
                     settingsHandler.requireToOpen = true
                     settingsHandler.requireForConfirmations = true
@@ -71,18 +72,19 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireToOpen.visible(settingsHandler.usePasscode)
             requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
             requireToOpen.settingSwitch.setOnClickListener {
-                // TODO Check Passcode
-
-
-
-                settingsHandler.requireToOpen = requireToOpen.settingSwitch.isChecked
-
-
                 // If both are disabled, disable passcode feature
-                if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
-                    settingsHandler.usePasscode = false
-//                    updateUi()
-                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
+                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE)
+                    )
+                } else if (requireToOpen.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(APP_ENABLE)
+                    )
+                } else {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(APP_DISABLE)
+                    )
                 }
             }
 
@@ -90,31 +92,19 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForConfirmations.visible(settingsHandler.usePasscode)
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
             requireForConfirmations.settingSwitch.setOnClickListener {
-
-                // TODO Check Passcode
-
-
-                settingsHandler.requireForConfirmations = requireForConfirmations.settingSwitch.isChecked
-
                 // If both are disabled, disable passcode feature
-                if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
-                    settingsHandler.usePasscode = false
-                    updateUi()
-                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
-
+                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE))
+                } else if (requireForConfirmations.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(CONFIRMATION_ENABLE)
+                    )
+                } else {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(CONFIRMATION_DISABLE)
+                    )
                 }
             }
-        }
-    }
-
-    private fun updateUi(usePasscode: Boolean = false) {
-        with(binding) {
-            changePasscode.visible(usePasscode)
-            useBiometrics.visible(usePasscode)
-            usePasscodeFor.visible(usePasscode)
-            requireToOpen.visible(usePasscode)
-            requireForConfirmations.visible(usePasscode)
-            usePasscodeFor.visible(usePasscode)
         }
     }
 
@@ -124,6 +114,10 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
     override fun onResume() {
         super.onResume()
-        binding.usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
+        with(binding) {
+            usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
+            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
+            requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
+        }
     }
 }

@@ -9,6 +9,8 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,10 +27,12 @@ import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
@@ -104,6 +108,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun setupNav() {
         val navController = Navigation.findNavController(this, R.id.nav_host)
         navBar.setupWithNavController(navController)
+        // Add debug logging
+        val navTracker = NavTrackerLogDebug()
+        navController.addOnDestinationChangedListener(NavTracker(applicationContext, navTracker))
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (isFullscreen(destination.id)) {
                 toolbar.visibility = View.GONE
@@ -239,4 +247,34 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
     }
+}
+
+interface NavTrackerLog {
+    fun log(destinationData: JSONObject)
+}
+
+class NavTrackerLogDebug : NavTrackerLog {
+    override fun log(destinationData: JSONObject) {
+        Timber.i( destinationData.toString())
+    }
+}
+
+class NavTracker(private val context: Context, private val navTrackerLog: NavTrackerLog) :
+    NavController.OnDestinationChangedListener {
+    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+        val res = context.resources
+        navTrackerLog.log(
+            JSONObject()
+                .put("destination", res.getResourceEntryName(destination.id))
+                .put("startDestination", res.getResourceEntryName(controller.graph.startDestination))
+                .put("bundleJsonData", bundleToJson(arguments ?: Bundle()))
+        )
+    }
+
+    private fun bundleToJson(bundle: Bundle) = JSONObject()
+        .apply {
+            bundle.keySet().forEach { key ->
+                put(key, JSONObject.wrap(bundle.get(key)))
+            }
+        }
 }
