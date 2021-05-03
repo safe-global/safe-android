@@ -37,7 +37,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun onResume() {
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
-        binding.input.delayedShowKeyboardForView()
+        binding.input.delayShowKeyboardForView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
