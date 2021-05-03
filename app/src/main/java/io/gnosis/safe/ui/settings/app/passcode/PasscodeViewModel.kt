@@ -23,7 +23,7 @@ class PasscodeViewModel
 
     override fun initialState(): PasscodeState = PasscodeState(viewAction = null)
 
-    fun disablePasscode(passcode: String, command: PasscodeCommand) {
+    fun configurePasscode(passcode: String, command: PasscodeCommand) {
         safeLaunch {
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {

@@ -114,7 +114,7 @@ interface ViewComponent {
 
     fun inject(fragment: RepeatPasscodeFragment)
 
-    fun inject(fragment: DisablePasscodeFragment)
+    fun inject(fragment: ConfigurePasscodeFragment)
 
     fun inject(fragment: ChangePasscodeFragment)
 

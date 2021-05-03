@@ -45,7 +45,7 @@ class PasscodeViewModelTest {
         val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.disablePasscode(examplePasscode)
+        viewModel.configurePasscode(examplePasscode)
 
         testObserver.assertValues(
             PasscodeState(null),
@@ -64,7 +64,7 @@ class PasscodeViewModelTest {
         val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.disablePasscode(examplePasscode)
+        viewModel.configurePasscode(examplePasscode)
 
         testObserver.assertValues(
             PasscodeState(null),

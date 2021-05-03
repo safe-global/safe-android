@@ -226,9 +226,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/disablePasscodeFragment"
-        android:name="io.gnosis.safe.ui.settings.app.passcode.DisablePasscodeFragment"
-        android:label="DisablePasscodeFragment"
+        android:id="@+id/configurePasscodeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.passcode.ConfigurePasscodeFragment"
+        android:label="ConfigurePasscodeFragment"
         tools:layout="@layout/fragment_passcode">
 
         <argument
@@ -365,8 +365,8 @@
             app:destination="@id/createPasscodeFragment" />
 
         <action
-            android:id="@+id/action_passcodeSettingsFragment_to_disablePasscodeFragment"
-            app:destination="@id/disablePasscodeFragment" />
+            android:id="@+id/action_passcodeSettingsFragment_to_configurePasscodeFragment"
+            app:destination="@id/configurePasscodeFragment" />
 
         <action
             android:id="@+id/action_passcodeSettingsFragment_to_changePasscodeFragment"

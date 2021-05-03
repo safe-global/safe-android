@@ -41,7 +41,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.setOnClickListener {
                 if (settingsHandler.usePasscode) {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE)
                     )
                 } else {
                     settingsHandler.requireToOpen = true
@@ -64,11 +64,11 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(BIOMETRICS_ENABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_ENABLE)
                     )
                 } else {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(BIOMETRICS_DISABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_DISABLE)
                     )
                 }
             }
@@ -82,15 +82,15 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 // If both are disabled, disable passcode feature
                 if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE)
                     )
                 } else if (requireToOpen.settingSwitch.isChecked) {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(APP_ENABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(APP_ENABLE)
                     )
                 } else {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(APP_DISABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(APP_DISABLE)
                     )
                 }
             }
@@ -101,14 +101,14 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForConfirmations.settingSwitch.setOnClickListener {
                 // If both are disabled, disable passcode feature
                 if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
-                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(DISABLE))
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE))
                 } else if (requireForConfirmations.settingSwitch.isChecked) {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(CONFIRMATION_ENABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(CONFIRMATION_ENABLE)
                     )
                 } else {
                     findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment(CONFIRMATION_DISABLE)
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(CONFIRMATION_DISABLE)
                     )
                 }
             }
