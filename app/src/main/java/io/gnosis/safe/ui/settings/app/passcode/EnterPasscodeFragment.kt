@@ -74,6 +74,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         })
 
         with(binding) {
+            title.setText(R.string.settings_passcode_enter_passcode)
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             helpText.visible(false)
 
