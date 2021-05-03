@@ -40,7 +40,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             usePasscode.settingSwitch.setOnClickListener {
                 if (settingsHandler.usePasscode) {
 //                    settingsHandler.usePasscode = false
-                    updateUi()
+//                    updateUi()
                     findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
                 } else {
                     settingsHandler.requireToOpen = true
@@ -67,22 +67,35 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             usePasscodeFor.visible(settingsHandler.usePasscode)
 
+            // REQUIRE TO OPEN APP
             requireToOpen.visible(settingsHandler.usePasscode)
             requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
             requireToOpen.settingSwitch.setOnClickListener {
+                // TODO Check Passcode
+
+
+
                 settingsHandler.requireToOpen = requireToOpen.settingSwitch.isChecked
+
+
                 // If both are disabled, disable passcode feature
                 if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
                     settingsHandler.usePasscode = false
-                    updateUi()
+//                    updateUi()
                     findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToDisablePasscodeFragment())
                 }
             }
 
+            // REQUIRE FOR CONFIRMATIONS
             requireForConfirmations.visible(settingsHandler.usePasscode)
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
             requireForConfirmations.settingSwitch.setOnClickListener {
+
+                // TODO Check Passcode
+
+
                 settingsHandler.requireForConfirmations = requireForConfirmations.settingSwitch.isChecked
+
                 // If both are disabled, disable passcode feature
                 if (!settingsHandler.requireForConfirmations && !settingsHandler.requireToOpen) {
                     settingsHandler.usePasscode = false
