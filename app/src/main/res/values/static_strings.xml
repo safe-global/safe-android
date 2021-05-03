@@ -6,6 +6,7 @@
     <string name="link_licenses">https://gnosis-safe.io/licenses/</string>
     <string name="link_help_center"> https://help.gnosis-safe.io</string>
     <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
+    <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
     <string name="id_telegram">GnosisSafe</string>
     <string name="id_twitter">gnosisSafe</string>
     <string name="id_discord">FPMRAwK</string>
