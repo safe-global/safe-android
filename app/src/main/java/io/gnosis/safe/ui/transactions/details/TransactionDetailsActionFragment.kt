@@ -122,12 +122,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getDataItem(name: String, value: String): TxDataView {
+    private fun getDataItem(name: String, value: String?): TxDataView {
         val item = TxDataView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(16), dpToPx(16), dpToPx(16), 0)
         item.layoutParams = layoutParams
-        item.setData(value, value.removeHexPrefix().length / 2, name)
+        val size = value?.let { value.removeHexPrefix().length / 2 } ?: 0
+        item.setData(value, size, name)
         return item
     }
 
