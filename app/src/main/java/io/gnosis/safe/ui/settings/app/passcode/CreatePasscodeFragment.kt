@@ -1,15 +1,11 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -43,7 +39,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun onResume() {
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
-        binding.input.showKeyboardForView()
+        binding.input.delayShowKeyboardForView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,31 +92,5 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         }
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
-    }
-}
-
-fun View.hideSoftKeyboard() {
-    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(windowToken, 0)
-}
-
-fun onSixDigitsHandler(
-    digits: List<ImageView>,
-    context: Context,
-    executeWithDigits: (digitsAsString: String) -> Unit
-): (CharSequence?, Int, Int, Int) -> Unit {
-    return { text, _, _, _ ->
-        text?.let {
-            if (text.length < 6) {
-                digits.forEach {
-                    it.background = ContextCompat.getDrawable(context, R.color.surface_01)
-                }
-                (1..text.length).forEach { i ->
-                    digits[i - 1].background = ContextCompat.getDrawable(context, R.drawable.ic_circle_passcode_filled_20dp)
-                }
-            } else {
-                digits[digits.size - 1].background = ContextCompat.getDrawable(context, R.drawable.ic_circle_passcode_filled_20dp)
-                executeWithDigits(text.toString())
-            }
-        }
     }
 }
