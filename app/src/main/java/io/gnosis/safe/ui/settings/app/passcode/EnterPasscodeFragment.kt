@@ -43,7 +43,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     override fun onResume() {
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
-        binding.input.showKeyboardForView()
+        binding.input.delayedShowKeyboardForView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,4 +112,10 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             }
         }
     }
+}
+
+fun View.delayedShowKeyboardForView() {
+    postDelayed({
+        showKeyboardForView()
+    }, 200)
 }
