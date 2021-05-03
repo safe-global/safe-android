@@ -17,7 +17,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -38,7 +37,7 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun onResume() {
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
-        binding.input.showKeyboardForView()
+        binding.input.delayShowKeyboardForView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
