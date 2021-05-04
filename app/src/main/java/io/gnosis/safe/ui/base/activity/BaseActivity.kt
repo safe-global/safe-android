@@ -30,6 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
             tracker.logScreen(it)
         }
         settingsHandler.applyNightMode(settingsHandler.nightMode)
+        settingsHandler.fetchRemoteConfig()
     }
 
     protected fun viewComponent(): ViewComponent =

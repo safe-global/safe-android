@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
     <entry>
-        <key>supported_min_version</key>
-        <value>0</value>
+        <key>newestVersion</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>deprecatedSoon</key>
+        <value></value>
+    </entry>
+    <entry>
+        <key>deprecated</key>
+        <value></value>
     </entry>
 </defaultsMap>
