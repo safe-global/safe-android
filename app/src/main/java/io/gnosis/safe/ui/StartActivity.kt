@@ -104,7 +104,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun setupNav() {
         val navController = Navigation.findNavController(this, R.id.nav_host)
         navBar.setupWithNavController(navController)
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (isFullscreen(destination.id)) {
                 toolbar.visibility = View.GONE
