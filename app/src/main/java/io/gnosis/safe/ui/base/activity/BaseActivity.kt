@@ -30,6 +30,8 @@ abstract class BaseActivity : AppCompatActivity() {
             tracker.logScreen(it)
         }
         settingsHandler.applyNightMode(settingsHandler.nightMode)
+        // in case app was updated in the background and restarted
+        settingsHandler.updateUpdateInfo()
         settingsHandler.fetchRemoteConfig()
     }
 

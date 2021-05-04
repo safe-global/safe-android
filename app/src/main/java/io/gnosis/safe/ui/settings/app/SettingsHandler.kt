@@ -24,11 +24,6 @@ class SettingsHandler @Inject constructor(
     private val remoteConfig: FirebaseRemoteConfig
 ) {
 
-    init {
-        // in case app was updated in the background and restarted
-        updateUpdateInfo()
-    }
-
     fun fetchRemoteConfig() {
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             if (it.isSuccessful) {
