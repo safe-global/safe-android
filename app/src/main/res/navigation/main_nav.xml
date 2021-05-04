@@ -41,6 +41,18 @@
         tools:layout="@layout/dialog_share_safe" />
 
     <fragment
+        android:id="@+id/updatesFragment"
+        android:name="io.gnosis.safe.ui.updates.UpdatesFragment"
+        android:label="UpdateFragment"
+        tools:layout="@layout/fragment_updates">
+
+        <argument
+            android:name="mode"
+            app:argType="io.gnosis.safe.ui.updates.UpdatesFragment.Mode" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/assetsFragment"
         android:name="io.gnosis.safe.ui.assets.AssetsFragment"
         android:label="AssetsFragment"
