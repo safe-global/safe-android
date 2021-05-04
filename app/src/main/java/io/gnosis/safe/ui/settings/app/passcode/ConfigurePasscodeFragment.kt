@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -21,12 +22,15 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
+class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.SETTINGS_APP_PASSCODE
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
+    private val navArgs by navArgs<ConfigurePasscodeFragmentArgs>()
+    private val passcodeCommand by lazy { navArgs.passcodeCommand }
+
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -46,7 +50,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                    findNavController().popBackStack(R.id.configurePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
@@ -59,8 +63,11 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeDisabled -> {
-                    findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                    findNavController().popBackStack(R.id.configurePasscodeFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_DISABLED_RESULT, true)
+                }
+                is PasscodeViewModel.PasscodeCommandExecuted -> {
+                    findNavController().popBackStack(R.id.configurePasscodeFragment, true)
                 }
             }
         })
@@ -72,7 +79,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
 
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             backButton.setOnClickListener {
-                findNavController().popBackStack(R.id.disablePasscodeFragment, true)
+                findNavController().popBackStack(R.id.configurePasscodeFragment, true)
             }
 
             val digits = listOf(digit1, digit2, digit3, digit4, digit5, digit6)
@@ -84,7 +91,7 @@ class DisablePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                viewModel.disablePasscode(digitsAsString)
+                viewModel.configurePasscode(digitsAsString, passcodeCommand)
             })
 
             helpText.visible(false)

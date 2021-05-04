@@ -194,6 +194,12 @@
     <string name="settings_passcode_disable_passcode">Disable passcode</string>
     <string name="settings_passcode_owner_removal_failed">Could not delete all owner keys</string>
     <string name="settings_passcode_setup_failed">Passcode setup failed</string>
+    <string name="settings_passcode_lock_method">LOCK METHOD</string>
+    <string name="settings_passcode_use_passcode_for">USE PASSCODE FOR</string>
+    <string name="settings_passcode_at_least_one_option">At least one option must be selected</string>
+    <string name="settings_passcode_login_with_biometrics">Login with biometrics</string>
+    <string name="settings_passcode_require_to_open_app">Require to open app</string>
+    <string name="settings_passcode_require_for_confirmations">Require for confirmations</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>

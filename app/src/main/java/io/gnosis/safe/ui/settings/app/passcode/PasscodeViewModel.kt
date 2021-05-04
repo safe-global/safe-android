@@ -7,6 +7,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeViewModel.PasscodeState
 import javax.inject.Inject
 
@@ -22,14 +23,42 @@ class PasscodeViewModel
 
     override fun initialState(): PasscodeState = PasscodeState(viewAction = null)
 
-    fun disablePasscode(passcode: String) {
+    fun configurePasscode(passcode: String, command: PasscodeCommand) {
         safeLaunch {
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
-                settingsHandler.usePasscode = false
-                tracker.setPasscodeIsSet(false)
-                tracker.logPasscodeDisabled()
-                updateState { PasscodeState(PasscodeDisabled) }
+                when (command) {
+                    DISABLE -> {
+                        settingsHandler.usePasscode = false
+                        tracker.setPasscodeIsSet(false)
+                        tracker.logPasscodeDisabled()
+                        updateState { PasscodeState(PasscodeDisabled) }
+                    }
+                    APP_DISABLE -> {
+                        settingsHandler.requireToOpen = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    CONFIRMATION_DISABLE -> {
+                        settingsHandler.requireForConfirmations = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    CONFIRMATION_ENABLE -> {
+                        settingsHandler.requireForConfirmations = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    APP_ENABLE -> {
+                        settingsHandler.requireToOpen = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    BIOMETRICS_ENABLE -> {
+                        settingsHandler.useBiometrics = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    BIOMETRICS_DISABLE -> {
+                        settingsHandler.useBiometrics = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                }
             } else {
                 updateState { PasscodeState(PasscodeWrong) }
             }
@@ -106,10 +135,20 @@ class PasscodeViewModel
     object AllOwnersRemoved : ViewAction
     object OwnerRemovalFailed : Throwable()
     object PasscodeDisabled : ViewAction
+    object PasscodeCommandExecuted : ViewAction
     object PasscodeWrong : ViewAction
     object PasscodeCorrect : ViewAction
     object PasscodeSetup : ViewAction
     object PasscodeSetupFailed : Throwable()
     object PasscodeChanged : ViewAction
+}
 
+enum class PasscodeCommand {
+    DISABLE,
+    APP_DISABLE,
+    CONFIRMATION_DISABLE,
+    APP_ENABLE,
+    CONFIRMATION_ENABLE,
+    BIOMETRICS_ENABLE,
+    BIOMETRICS_DISABLE
 }

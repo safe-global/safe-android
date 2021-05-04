@@ -10,7 +10,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import io.gnosis.data.backend.GatewayApi
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -110,6 +109,29 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var useBiometrics: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_USE_BIOMETRICS, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_USE_BIOMETRICS, value)
+            }
+        }
+
+    var requireToOpen: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_TO_OPEN_APP, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_REQUIRE_PASSCODE_TO_OPEN_APP, value)
+            }
+        }
+
+    var requireForConfirmations: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS, value)
+            }
+        }
 
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
@@ -120,6 +142,9 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_SHOW_OWNER_SCREEN = "prefs.boolean.show_owner_screen"
         internal const val KEY_APP_START_COUNT = "prefs.integer.app_start_count"
         internal const val KEY_USE_PASSCODE = "prefs.boolean.use_passcode"
+        internal const val KEY_USE_BIOMETRICS = "prefs.boolean.use_biometrics"
+        internal const val KEY_REQUIRE_PASSCODE_TO_OPEN_APP = "prefs.boolean.require_passcode_to_open_app"
+        internal const val KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS = "prefs.boolean.require_passcode_for_confirmations"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
     }
 }
