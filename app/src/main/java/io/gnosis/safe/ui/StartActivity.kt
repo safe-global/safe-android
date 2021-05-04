@@ -9,8 +9,6 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,12 +25,10 @@ import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
