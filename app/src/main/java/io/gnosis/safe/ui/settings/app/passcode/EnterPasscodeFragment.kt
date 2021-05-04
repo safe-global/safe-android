@@ -17,6 +17,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -32,6 +33,9 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -77,6 +81,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             title.setText(R.string.settings_passcode_enter_passcode)
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             helpText.visible(false)
+            fingerprint.visible(settingsHandler.useBiometrics)
 
             backButton.setOnClickListener {
                 findNavController().navigateUp()
