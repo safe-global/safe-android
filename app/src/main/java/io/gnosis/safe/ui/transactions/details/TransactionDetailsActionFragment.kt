@@ -69,8 +69,9 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 content.addView(getDivider())
             }
         }
-
-        binding.content.addView(getDataItem(getString(R.string.tx_details_data), data))
+        data?.let {
+            binding.content.addView(getDataItem(getString(R.string.tx_details_data), data!!))
+        }
 
         decodedDto?.let {
             with(binding) {
@@ -122,12 +123,12 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getDataItem(name: String, value: String?): TxDataView {
+    private fun getDataItem(name: String, value: String): TxDataView {
         val item = TxDataView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(dpToPx(16), dpToPx(16), dpToPx(16), 0)
         item.layoutParams = layoutParams
-        val size = value?.let { value.removeHexPrefix().length / 2 } ?: 0
+        val size = value.removeHexPrefix().length / 2
         item.setData(value, size, name)
         return item
     }
