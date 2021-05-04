@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
 import io.gnosis.safe.ui.transactions.TxPagerAdapter
+import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import kotlinx.coroutines.launch
@@ -57,6 +58,27 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (settingsHandler.showUpdateInfo) {
+            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                if(currentDestination?.id != R.id.updatesFragment) {
+                    navigate(R.id.updatesFragment, Bundle().apply {
+                        putSerializable(
+                            "mode",
+                            when {
+                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED
+                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON
+                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION
+                            }
+                        )
+                    })
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {

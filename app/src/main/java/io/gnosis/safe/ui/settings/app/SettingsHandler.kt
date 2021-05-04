@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate.NightMode
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.utils.SemVer
+import io.gnosis.safe.utils.isInside
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
@@ -21,16 +24,60 @@ class SettingsHandler @Inject constructor(
     private val remoteConfig: FirebaseRemoteConfig
 ) {
 
+    init {
+        // in case app was updated in the background and restarted
+        updateUpdateInfo()
+    }
+
     fun fetchRemoteConfig() {
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             if (it.isSuccessful) {
-                // do something here
+               updateUpdateInfo()
             }
         }
     }
 
-    val supportedMinVersion: Long
-        get() = remoteConfig.getLong(KEY_FIREBASE_SUPPORTED_MIN_VERSION)
+    private val newestVersion: String
+        get() = remoteConfig.getString(KEY_FIREBASE_NEWEST_VERSION)
+
+    private val deprecatedSoon: String
+        get() = remoteConfig.getString(KEY_FIREBASE_DEPRECATED_SOON)
+
+    private val deprecated: String
+        get() = remoteConfig.getString(KEY_FIREBASE_DEPRECATED)
+
+    var updateNewVersionShown: Boolean
+        get() {
+            val version = preferencesManager.prefs.getInt(KEY_UPDATE_SHOWN_FOR_VERSION, -1)
+            // show update dialog for every new version if needed
+            return version == BuildConfig.VERSION_CODE
+        }
+        set(value) {
+            preferencesManager.prefs.edit {
+                putInt(KEY_UPDATE_SHOWN_FOR_VERSION, if (value) BuildConfig.VERSION_CODE else -1)
+            }
+        }
+
+    var updateNewestVersion: Boolean = false
+        private set
+    var updateDeprecatedSoon: Boolean = false
+        private set
+    var updateDeprecated: Boolean = false
+        private set
+
+    val showUpdateInfo: Boolean =
+        updateNewVersionShown && !updateNewVersionShown || updateDeprecatedSoon || updateDeprecated
+
+    fun updateUpdateInfo() {
+
+        val current = SemVer.parse(BuildConfig.VERSION_NAME)
+        val newest = SemVer.parse(newestVersion)
+
+        updateNewestVersion = current < newest
+        updateDeprecatedSoon = current.isInside(deprecatedSoon)
+        updateDeprecated = current.isInside(deprecated)
+    }
+
 
     @NightMode
     var nightMode: Int
@@ -161,6 +208,9 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS = "prefs.boolean.require_passcode_for_confirmations"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
 
-        internal const val KEY_FIREBASE_SUPPORTED_MIN_VERSION = "supported_min_version"
+        internal const val KEY_UPDATE_SHOWN_FOR_VERSION = "prefs.integer.update_shown_for_version"
+        internal const val KEY_FIREBASE_NEWEST_VERSION = "newestVersion"
+        internal const val KEY_FIREBASE_DEPRECATED_SOON = "deprecatedSoon"
+        internal const val KEY_FIREBASE_DEPRECATED = "deprecated"
     }
 }
