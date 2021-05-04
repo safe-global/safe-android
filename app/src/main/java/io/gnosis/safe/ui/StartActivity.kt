@@ -108,9 +108,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private fun setupNav() {
         val navController = Navigation.findNavController(this, R.id.nav_host)
         navBar.setupWithNavController(navController)
-        // Add debug logging
-        val navTracker = NavTrackerLogDebug()
-        navController.addOnDestinationChangedListener(NavTracker(applicationContext, navTracker))
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (isFullscreen(destination.id)) {
@@ -247,34 +244,4 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
     }
-}
-
-interface NavTrackerLog {
-    fun log(destinationData: JSONObject)
-}
-
-class NavTrackerLogDebug : NavTrackerLog {
-    override fun log(destinationData: JSONObject) {
-        Timber.i( destinationData.toString())
-    }
-}
-
-class NavTracker(private val context: Context, private val navTrackerLog: NavTrackerLog) :
-    NavController.OnDestinationChangedListener {
-    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-        val res = context.resources
-        navTrackerLog.log(
-            JSONObject()
-                .put("destination", res.getResourceEntryName(destination.id))
-                .put("startDestination", res.getResourceEntryName(controller.graph.startDestination))
-                .put("bundleJsonData", bundleToJson(arguments ?: Bundle()))
-        )
-    }
-
-    private fun bundleToJson(bundle: Bundle) = JSONObject()
-        .apply {
-            bundle.keySet().forEach { key ->
-                put(key, JSONObject.wrap(bundle.get(key)))
-            }
-        }
 }
