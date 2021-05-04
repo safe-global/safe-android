@@ -202,5 +202,8 @@ enum class ScreenId(val value: String) {
     PASSCODE_CHANGE("screen_passcode_change"),
     PASSCODE_CHANGE_CREATE("screen_passcode_change_create"),
     PASSCODE_CHANGE_REPEAT("screen_passcode_change_repeat"),
-    PASSCODE_ENTER("screen_passcode_enter")
+    PASSCODE_ENTER("screen_passcode_enter"),
+    UPDATE_DEPRECATED("screen_update_deprecated"),
+    UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
+    UPDATE_NEW_VERSION("screen_update_new_version")
 }
