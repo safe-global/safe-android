@@ -70,7 +70,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
             }
         }
         data?.let {
-            binding.content.addView(getDataItem(getString(R.string.tx_details_data), data!!))
+            binding.content.addView(getDataItem(getString(R.string.tx_details_data), it))
         }
 
         decodedDto?.let {
