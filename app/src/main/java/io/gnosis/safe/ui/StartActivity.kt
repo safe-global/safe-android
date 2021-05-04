@@ -62,23 +62,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     override fun onResume() {
         super.onResume()
-
-        if (settingsHandler.showUpdateInfo) {
-            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
-                if(currentDestination?.id != R.id.updatesFragment) {
-                    navigate(R.id.updatesFragment, Bundle().apply {
-                        putSerializable(
-                            "mode",
-                            when {
-                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED
-                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON
-                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION
-                            }
-                        )
-                    })
-                }
-            }
-        }
+        checkUpdate()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -240,6 +224,25 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     settingsHandler.appStartCount = 0
                 }
 
+            }
+        }
+    }
+
+    private fun checkUpdate() {
+        if (settingsHandler.showUpdateInfo) {
+            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                if (currentDestination?.id != R.id.updatesFragment) {
+                    navigate(R.id.updatesFragment, Bundle().apply {
+                        putSerializable(
+                            "mode",
+                            when {
+                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED
+                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON
+                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION
+                            }
+                        )
+                    })
+                }
             }
         }
     }
