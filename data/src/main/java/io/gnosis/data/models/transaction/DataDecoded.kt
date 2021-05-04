@@ -22,7 +22,7 @@ data class ValueDecoded(
     @Json(name = "value")
     val value: BigInteger,
     @Json(name = "data")
-    val data: String,
+    val data: String?,
     @Json(name = "dataDecoded")
     val dataDecoded: DataDecoded?
 )
