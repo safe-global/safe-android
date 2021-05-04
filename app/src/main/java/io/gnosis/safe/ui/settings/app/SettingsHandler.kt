@@ -37,15 +37,6 @@ class SettingsHandler @Inject constructor(
         }
     }
 
-    private val newestVersion: String
-        get() = remoteConfig.getString(KEY_FIREBASE_NEWEST_VERSION)
-
-    private val deprecatedSoon: String
-        get() = remoteConfig.getString(KEY_FIREBASE_DEPRECATED_SOON)
-
-    private val deprecated: String
-        get() = remoteConfig.getString(KEY_FIREBASE_DEPRECATED)
-
     var updateNewVersionShown: Boolean
         get() {
             val version = preferencesManager.prefs.getInt(KEY_UPDATE_SHOWN_FOR_VERSION, -1)
@@ -71,11 +62,11 @@ class SettingsHandler @Inject constructor(
     fun updateUpdateInfo() {
 
         val current = SemVer.parse(BuildConfig.VERSION_NAME)
-        val newest = SemVer.parse(newestVersion)
+        val newest = SemVer.parse(remoteConfig.getString(KEY_FIREBASE_NEWEST_VERSION))
 
         updateNewestVersion = current < newest
-        updateDeprecatedSoon = current.isInside(deprecatedSoon)
-        updateDeprecated = current.isInside(deprecated)
+        updateDeprecatedSoon = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED_SOON))
+        updateDeprecated = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED))
     }
 
 

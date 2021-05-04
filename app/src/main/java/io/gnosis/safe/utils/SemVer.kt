@@ -60,7 +60,7 @@ fun parseSemVerRange(range: String): Pair<SemVer, SemVer?> {
 fun SemVer.isInside(rangesList: String): Boolean {
     var checkResult = false
     run loop@{
-        rangesList.split(",").forEach {
+        rangesList.split(",").filter { it.isNotEmpty() }.forEach {
             val range = parseSemVerRange(it)
             when {
                 range.second != null && this > range.second!! -> {

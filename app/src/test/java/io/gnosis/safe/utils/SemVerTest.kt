@@ -53,5 +53,8 @@ class SemVerTest {
         val rangeList3 = "2.11.0,2.12-2.13.0,2.14-2.16.0"
         assert(version1.isInside(rangeList3))
         assertFalse(version2.isInside(rangeList3))
+
+        val rangeList4 = ""
+        assertFalse(version1.isInside(rangeList4))
     }
 }
