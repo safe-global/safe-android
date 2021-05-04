@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -18,6 +19,7 @@ class PasscodeViewModel
     private val encryptionManager: HeimdallEncryptionManager,
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<PasscodeState>(appDispatchers) {
 
@@ -71,6 +73,13 @@ class PasscodeViewModel
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
             }
+            safeRepository.getSafes().forEach {
+                safeRepository.removeSafe(it)
+            }
+            settingsHandler.useBiometrics = false
+            settingsHandler.usePasscode = false
+            settingsHandler.requireToOpen = false
+            
             tracker.logKeyDeleted()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.unregisterOwners()

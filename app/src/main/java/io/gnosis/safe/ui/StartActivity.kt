@@ -37,7 +37,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     lateinit var safeRepository: SafeRepository
 
     @Inject
-    lateinit var creadentialsRepository: CredentialsRepository
+    lateinit var credentialsRepository: CredentialsRepository
 
     private val toolbarBinding by lazy {
         ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
@@ -57,6 +57,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
+
+        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
+            // TODO: Navigate to EnterPasscode
+            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+                putString("selectedOwner", "Fnord")
+                putBoolean("requirePasscodeToOpen", true)
+            })
+        }
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -193,7 +202,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                    val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
+                    val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
             }.onFailure {

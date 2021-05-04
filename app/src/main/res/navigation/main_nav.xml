@@ -246,6 +246,11 @@
             android:name="selectedOwner"
             app:argType="string" />
 
+        <argument
+            android:name="requirePasscodeToOpen"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
     </fragment>
 
     <fragment
@@ -463,6 +468,7 @@
             android:name="isConfirmation"
             app:argType="boolean"
             android:defaultValue="true"/>
+
     </fragment>
 
     <fragment

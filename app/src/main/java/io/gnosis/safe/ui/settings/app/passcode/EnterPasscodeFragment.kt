@@ -30,6 +30,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     override fun screenId() = ScreenId.PASSCODE_ENTER
     private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
     private val selectedOwner by lazy { navArgs.selectedOwner }
+    private val requirePasscodeToOpen by lazy { navArgs.requirePasscodeToOpen }
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -56,7 +57,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
                     snackbar(requireView(), R.string.passcode_disabled)
-                    findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                    if (requirePasscodeToOpen) {
+                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+                    } else {
+                        findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                    }
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
@@ -68,11 +73,16 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                        selectedOwner
-                    )
+                    if (requirePasscodeToOpen) {
+                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+                        binding.input.hideSoftKeyboard()
+                    } else {
+                        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                            selectedOwner
+                        )
+                    }
                 }
             }
         })
@@ -83,8 +93,12 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             helpText.visible(false)
             fingerprint.visible(settingsHandler.useBiometrics)
 
-            backButton.setOnClickListener {
-                findNavController().navigateUp()
+            if (!requirePasscodeToOpen) {
+                backButton.setOnClickListener {
+                    findNavController().navigateUp()
+                }
+            } else {
+                backButton.visible(false)
             }
 
             status.visibility = View.INVISIBLE

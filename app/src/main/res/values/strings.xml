@@ -190,7 +190,7 @@
     <string name="settings_passcode_enter_your_current_passcode">Enter your current passcode</string>
     <string name="settings_passcode_forgot_your_passcode">Forgot your passcode?</string>
     <string name="settings_passcode_reset_passcode">Reset passcode</string>
-    <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners from the app.</string>
+    <string name="settings_passcode_confirm_disable_passcode">You can disable your passcode. This will remove all imported owners and safes from the app.</string>
     <string name="settings_passcode_disable_passcode">Disable passcode</string>
     <string name="settings_passcode_owner_removal_failed">Could not delete all owner keys</string>
     <string name="settings_passcode_setup_failed">Passcode setup failed</string>
