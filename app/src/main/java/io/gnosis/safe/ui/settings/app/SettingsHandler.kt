@@ -52,7 +52,7 @@ class SettingsHandler @Inject constructor(
         private set
 
     val showUpdateInfo: Boolean =
-        updateNewVersionShown && !updateNewVersionShown || updateDeprecatedSoon || updateDeprecated
+        updateNewestVersion && !updateNewVersionShown || updateDeprecatedSoon || updateDeprecated
 
     fun updateUpdateInfo() {
 
