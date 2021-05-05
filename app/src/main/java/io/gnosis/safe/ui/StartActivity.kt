@@ -62,7 +62,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
     override fun onResume() {
         super.onResume()
-        checkUpdate()
+        // do not start rate flow and update screen together
+        when {
+            settingsHandler.showUpdateInfo -> askToUpdate()
+            settingsHandler.appStartCount >= 3 -> startRateFlow()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -100,9 +104,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 }
             } ?: run {
                 settingsHandler.appStartCount++
-                if (settingsHandler.appStartCount >= 3) {
-                    startRateFlow()
-                }
             }
         }
     }
@@ -228,21 +229,19 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         }
     }
 
-    private fun checkUpdate() {
-        if (settingsHandler.showUpdateInfo) {
-            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
-                if (currentDestination?.id != R.id.updatesFragment) {
-                    navigate(R.id.updatesFragment, Bundle().apply {
-                        putString(
-                            "mode",
-                            when {
-                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED.name
-                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON.name
-                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION.name
-                            }
-                        )
-                    })
-                }
+    private fun askToUpdate() {
+        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+            if (currentDestination?.id != R.id.updatesFragment) {
+                navigate(R.id.updatesFragment, Bundle().apply {
+                    putString(
+                        "mode",
+                        when {
+                            settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED.name
+                            settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON.name
+                            else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION.name
+                        }
+                    )
+                })
             }
         }
     }
