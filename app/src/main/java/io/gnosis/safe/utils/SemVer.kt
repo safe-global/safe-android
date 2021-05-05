@@ -44,7 +44,7 @@ data class SemVer(
         major > other.major -> 1
         major < other.major -> -1
         minor > other.minor -> 1
-        minor > other.minor -> -1
+        minor < other.minor -> -1
         patch > other.patch -> 1
         patch < other.patch -> -1
         preRelease == null && other.preRelease == null -> 0
