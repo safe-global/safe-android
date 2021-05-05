@@ -51,7 +51,7 @@ class AddressInputHelper(
                 }
                 bottomSheetAddressInputQrTouch.setOnClickListener {
                     QRCodeScanActivity.startForResult(fragment)
-                    (fragment.activity as? StartActivity)?.returnFromQrScanner = true
+                    (fragment.activity as? StartActivity)?.comingFromBackground = true
                     tracker.logScreen(ScreenId.SCANNER)
                     dismiss()
                 }

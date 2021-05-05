@@ -410,6 +410,11 @@
             android:defaultValue="0"
             app:argType="integer" />
 
+        <argument
+            android:name="requirePasscode"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
     </fragment>
 
     <fragment
@@ -445,6 +450,11 @@
         <argument
             android:name="txId"
             app:argType="string" />
+
+        <argument
+            android:name="requirePasscode"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
     </fragment>
 

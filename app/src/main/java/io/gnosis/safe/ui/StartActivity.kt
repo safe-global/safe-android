@@ -48,11 +48,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
 
-    var returnFromQrScanner = false
+    var comingFromBackground = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
+
+        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
+            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+                putString("selectedOwner", "Dummy")
+                putBoolean("requirePasscodeToOpen", true)
+            })
+        }
 
         viewComponent().inject(this)
 
@@ -78,7 +85,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {
-
                 lifecycleScope.launch {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
@@ -88,6 +94,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
                     if (txId == null) {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
+                            putBoolean("requirePasscode", settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground)
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
@@ -95,9 +102,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
                                 putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
                             })
 
-                            navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId))
+                            navigate(
+                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
+                                    txId,
+                                    settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground
+                                )
+                            )
                         }
                     }
+                    comingFromBackground = false
                 }
             } ?: run {
                 settingsHandler.appStartCount++
@@ -253,12 +266,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
 
     override fun appInBackground() {
         Timber.i("---> appInBackground()")
-
-        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
+        comingFromBackground = true
+        if (settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground) {
             Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putString("selectedOwner", "Fnord")
+                putString("selectedOwner", "Dummy")
                 putBoolean("requirePasscodeToOpen", true)
             })
+            comingFromBackground = false
         }
     }
 }
