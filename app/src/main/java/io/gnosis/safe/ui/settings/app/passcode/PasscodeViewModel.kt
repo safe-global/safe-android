@@ -76,6 +76,7 @@ class PasscodeViewModel
             safeRepository.getSafes().forEach {
                 safeRepository.removeSafe(it)
             }
+            safeRepository.clearActiveSafe()
             settingsHandler.useBiometrics = false
             settingsHandler.usePasscode = false
             settingsHandler.requireToOpen = false
