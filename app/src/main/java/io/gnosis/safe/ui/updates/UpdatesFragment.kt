@@ -28,7 +28,7 @@ class UpdatesFragment : BaseViewBindingFragment<FragmentUpdatesBinding>() {
     }
 
     private val navArgs by navArgs<UpdatesFragmentArgs>()
-    private val mode by lazy { navArgs.mode }
+    private val mode by lazy { Mode.valueOf(navArgs.mode) }
 
     @Inject
     lateinit var viewModel: UpdatesViewModel

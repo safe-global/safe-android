@@ -48,7 +48,7 @@
 
         <argument
             android:name="mode"
-            app:argType="io.gnosis.safe.ui.updates.UpdatesFragment.Mode" />
+            app:argType="string" />
 
     </fragment>
 

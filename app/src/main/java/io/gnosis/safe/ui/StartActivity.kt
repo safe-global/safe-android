@@ -233,12 +233,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
             with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
                 if (currentDestination?.id != R.id.updatesFragment) {
                     navigate(R.id.updatesFragment, Bundle().apply {
-                        putSerializable(
+                        putString(
                             "mode",
                             when {
-                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED
-                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON
-                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION
+                                settingsHandler.updateDeprecated -> UpdatesFragment.Mode.DEPRECATED.name
+                                settingsHandler.updateDeprecatedSoon -> UpdatesFragment.Mode.UPDATE_DEPRECATED_SOON.name
+                                else -> UpdatesFragment.Mode.UPDATE_NEW_VERSION.name
                             }
                         )
                     })
