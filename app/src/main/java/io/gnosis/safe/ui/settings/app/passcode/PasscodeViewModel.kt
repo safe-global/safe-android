@@ -77,10 +77,6 @@ class PasscodeViewModel
                 safeRepository.removeSafe(it)
             }
             safeRepository.clearActiveSafe()
-            settingsHandler.useBiometrics = false
-            settingsHandler.usePasscode = false
-            settingsHandler.requireToOpen = false
-            
             tracker.logKeyDeleted()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.unregisterOwners()
@@ -89,6 +85,9 @@ class PasscodeViewModel
                 encryptionManager.removePassword()
                 encryptionManager.lock()
                 settingsHandler.usePasscode = false
+                settingsHandler.useBiometrics = false
+                settingsHandler.requireToOpen = false
+                settingsHandler.requireForConfirmations = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
                 updateState { PasscodeState(AllOwnersRemoved) }
