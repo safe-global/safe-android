@@ -31,7 +31,6 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityChanged {
@@ -261,11 +260,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
     }
 
     override fun appInForeground() {
-        Timber.i("---> appInForeground()")
     }
 
     override fun appInBackground() {
-        Timber.i("---> appInBackground()")
         comingFromBackground = true
         if (settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground) {
             Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {

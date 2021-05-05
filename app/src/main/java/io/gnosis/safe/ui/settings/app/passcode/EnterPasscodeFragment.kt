@@ -23,7 +23,6 @@ import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -60,7 +59,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 is PasscodeViewModel.AllOwnersRemoved -> {
                     snackbar(requireView(), R.string.passcode_disabled)
                     if (requirePasscodeToOpen) {
-                        Timber.i("---> AllOwnersRemoved ->  popBackStack(R.id.enterPasscodeFragment, true)")
                         findNavController().popBackStack(R.id.enterPasscodeFragment, true)
                     } else {
                         findNavController().popBackStack(R.id.transactionDetailsFragment, false)
@@ -77,7 +75,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
                     if (requirePasscodeToOpen) {
-                        Timber.i("---> PasscodeCorrect -> popBackStack(R.id.enterPasscodeFragment, true)")
                         findNavController().popBackStack(R.id.enterPasscodeFragment, true)
                         binding.input.hideSoftKeyboard()
                     } else {
@@ -99,7 +96,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
             if (requirePasscodeToOpen) {
                 backButton.visible(false)
-                Timber.i("---> requirePasscodeToOpen -> show Keyboard on Back")
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
                         input.delayShowKeyboardForView()

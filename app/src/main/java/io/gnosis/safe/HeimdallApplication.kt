@@ -37,41 +37,33 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
             private var activeActivityCount = 0
 
             fun active() {
-                Timber.i("----> active()")
                 activityListeners.forEach {
                     it.appInForeground()
                 }
             }
 
             fun inactive() {
-                Timber.i("----> inactive()")
                 activityListeners.forEach {
                     it.appInBackground()
                 }
             }
 
             override fun onActivityCreated(activity: Activity, savedInstanceStateFoo: Bundle?) {
-                Timber.d("----> onActivityCreated(): $activity")
             }
 
             override fun onActivityDestroyed(activity: Activity) {
-                Timber.d("----> onActivityDestroyed(): $activity")
             }
 
             override fun onActivityPaused(activity: Activity) {
-                Timber.d("----> onActivityPaused(): $activity")
             }
 
             override fun onActivityResumed(activity: Activity) {
-                Timber.d("----> onActivityResumed(): $activity")
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-                Timber.d("----> onActivitySaveInstanceState(): $activity")
             }
 
             override fun onActivityStarted(activity: Activity) {
-                Timber.d("----> onActivityStarted(): $activity")
                 if (activeActivityCount == 0) {
                     // We had no active activities, so we just became active
                     active()
@@ -80,7 +72,6 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
             }
 
             override fun onActivityStopped(activity: Activity) {
-                Timber.d("----> onActivityStopped(): $activity")
                 activeActivityCount--
                 if (activeActivityCount == 0) {
                     // We have no more active activities, so we are inactive
