@@ -10,7 +10,7 @@ class UpdatesViewModel
 ) : ViewModel() {
 
     fun setUpdateShownForVersionFlag() {
-        settingsHandler.updateNewVersionShown = true
+        settingsHandler.updateNewestVersionShown = true
     }
 
     fun updateUpdateInfo() {

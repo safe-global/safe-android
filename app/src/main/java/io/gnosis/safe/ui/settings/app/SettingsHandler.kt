@@ -32,7 +32,7 @@ class SettingsHandler @Inject constructor(
         }
     }
 
-    var updateNewVersionShown: Boolean
+    var updateNewestVersionShown: Boolean
         get() {
             val version = preferencesManager.prefs.getInt(KEY_UPDATE_SHOWN_FOR_VERSION, -1)
             // show update dialog for every new version if needed
@@ -52,7 +52,7 @@ class SettingsHandler @Inject constructor(
         private set
 
     val showUpdateInfo: Boolean =
-        updateNewestVersion && !updateNewVersionShown || updateDeprecatedSoon || updateDeprecated
+        updateNewestVersion && !updateNewestVersionShown || updateDeprecatedSoon || updateDeprecated
 
     fun updateUpdateInfo() {
 
