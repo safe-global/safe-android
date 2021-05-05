@@ -11,7 +11,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.utils.SemVer
-import io.gnosis.safe.utils.isInside
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject

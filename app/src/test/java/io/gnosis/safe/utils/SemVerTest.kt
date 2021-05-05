@@ -24,14 +24,14 @@ class SemVerTest {
         val version2 = SemVer.parse("2.17.0")
 
         val rangeString1 = "2.15.0-2.17.0"
-        val range1 = parseSemVerRange(rangeString1)
+        val range1 = SemVer.parseRange(rangeString1)
         assert(range1.first != null)
         assert(range1.second != null)
         assertEquals(version1, range1.first)
         assertEquals(version2, range1.second)
 
         val rangeString2 = "2.15.0"
-        val range2 = parseSemVerRange(rangeString2)
+        val range2 = SemVer.parseRange(rangeString2)
         assert(range2.first != null)
         assert(range2.second == null)
         assertEquals(version1, range1.first)
