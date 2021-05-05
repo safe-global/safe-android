@@ -14,6 +14,32 @@ data class SemVer(
         if (preRelease != null) require(preRelease.matches(Regex("""[\dA-z\-]+(?:\.[\dA-z\-]+)*"""))) { "Pre-release version is not valid" }
     }
 
+    fun isInside(rangesList: String): Boolean {
+        var checkResult = false
+        run loop@{
+            rangesList.split(",").filter { it.isNotEmpty() }.forEach {
+                val range = parseRange(it)
+                when {
+                    range.second != null && this > range.second!! -> {
+                        return@forEach
+                    }
+                    range.second != null && range.second!! >= this && range.first <= this -> {
+                        checkResult = true
+                        return@loop
+                    }
+                    range.second == null && range.first == this -> {
+                        checkResult = true
+                        return@loop
+                    }
+                    else -> {
+                        return@forEach
+                    }
+                }
+            }
+        }
+        return checkResult
+    }
+
     override fun compareTo(other: SemVer): Int = when {
         major > other.major -> 1
         major < other.major -> -1
@@ -34,7 +60,7 @@ data class SemVer(
     private fun String.isNumeric(): Boolean = this.matches(Regex("""\d+"""))
 
     companion object {
-        @JvmStatic
+
         fun parse(version: String): SemVer {
             val pattern = Regex("""(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:-([\dA-z\-]+(?:\.[\dA-z\-]+)*))?""")
             val result = pattern.matchEntire(version) ?: throw IllegalArgumentException("Invalid version string [$version]")
@@ -45,40 +71,17 @@ data class SemVer(
                 preRelease = if (result.groupValues[4].isEmpty()) null else result.groupValues[4]
             )
         }
-    }
-}
 
-fun parseSemVerRange(range: String): Pair<SemVer, SemVer?> {
-    val pattern = Regex("""([\dA-z\.]+)(?:-)?([\dA-z\.]+)?""")
-    val result = pattern.matchEntire(range) ?: throw IllegalArgumentException("Invalid range version string [$range]")
-    return when {
-        result.groupValues[2].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
-        else -> Pair(SemVer.parse(result.groupValues[1]), SemVer.parse(result.groupValues[2]))
-    }
-}
-
-fun SemVer.isInside(rangesList: String): Boolean {
-    var checkResult = false
-    run loop@{
-        rangesList.split(",").filter { it.isNotEmpty() }.forEach {
-            val range = parseSemVerRange(it)
-            when {
-                range.second != null && this > range.second!! -> {
-                    return@forEach
-                }
-                range.second != null && range.second!! >= this && range.first <= this -> {
-                    checkResult = true
-                    return@loop
-                }
-                range.second == null && range.first == this -> {
-                    checkResult = true
-                    return@loop
-                }
-                else -> {
-                    return@forEach
-                }
+        fun parseRange(range: String): Pair<SemVer, SemVer?> {
+            val pattern = Regex("""([\dA-z\.]+)(?:-)?([\dA-z\.]+)?""")
+            val result = pattern.matchEntire(range) ?: throw IllegalArgumentException("Invalid range version string [$range]")
+            return when {
+                result.groupValues[2].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
+                else -> Pair(SemVer.parse(result.groupValues[1]), SemVer.parse(result.groupValues[2]))
             }
         }
     }
-    return checkResult
 }
+
+
+
