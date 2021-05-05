@@ -16,6 +16,8 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.HeimdallApplication
+import io.gnosis.safe.OnActivityChanged
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
@@ -29,9 +31,10 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityChanged {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -59,20 +62,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
-    }
 
-    override fun onResume() {
-        super.onResume()
-
-        if (settingsHandler.requireToOpen && settingsHandler.usePasscode && !returnFromQrScanner) {
-            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putString("selectedOwner", "Fnord")
-                putBoolean("requirePasscodeToOpen", true)
-            })
-        }
-        if (returnFromQrScanner) {
-            returnFromQrScanner = false
-        }
+        (application as? HeimdallApplication)?.registerForActivity(this)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -254,5 +245,20 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
+    }
+
+    override fun appInForeground() {
+        Timber.i("---> appInForeground()")
+    }
+
+    override fun appInBackground() {
+        Timber.i("---> appInBackground()")
+
+        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
+            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+                putString("selectedOwner", "Fnord")
+                putBoolean("requirePasscodeToOpen", true)
+            })
+        }
     }
 }
