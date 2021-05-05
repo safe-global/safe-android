@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -49,6 +50,14 @@ class UpdatesFragment : BaseViewBindingFragment<FragmentUpdatesBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mode != Mode.DEPRECATED) {
+                    findNavController().navigateUp()
+                }
+            }
+        })
+
         val appUpdateManager = AppUpdateManagerFactory.create(requireContext())
 
         with(binding) {
@@ -72,11 +81,13 @@ class UpdatesFragment : BaseViewBindingFragment<FragmentUpdatesBinding>() {
             }
             skip.visible(mode != Mode.DEPRECATED)
 
-            updateDescription.setText(when(mode) {
-                Mode.DEPRECATED -> R.string.update_desc_deprecated
-                Mode.UPDATE_DEPRECATED_SOON -> R.string.update_desc_deprecated_soon
-                Mode.UPDATE_NEW_VERSION -> R.string.update_desc_new_version
-            })
+            updateDescription.setText(
+                when (mode) {
+                    Mode.DEPRECATED -> R.string.update_desc_deprecated
+                    Mode.UPDATE_DEPRECATED_SOON -> R.string.update_desc_deprecated_soon
+                    Mode.UPDATE_NEW_VERSION -> R.string.update_desc_new_version
+                }
+            )
         }
 
         viewModel.setUpdateShownForVersionFlag()
