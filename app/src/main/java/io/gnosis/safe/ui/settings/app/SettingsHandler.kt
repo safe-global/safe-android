@@ -26,7 +26,7 @@ class SettingsHandler @Inject constructor(
     fun fetchRemoteConfig() {
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             if (it.isSuccessful) {
-               updateUpdateInfo()
+                updateUpdateInfo()
             }
         }
     }
@@ -50,8 +50,8 @@ class SettingsHandler @Inject constructor(
     var updateDeprecated: Boolean = false
         private set
 
-    val showUpdateInfo: Boolean =
-        updateNewestVersion && !updateNewestVersionShown || updateDeprecatedSoon || updateDeprecated
+    val showUpdateInfo: Boolean
+        get() = updateNewestVersion && !updateNewestVersionShown || updateDeprecatedSoon || updateDeprecated
 
     fun updateUpdateInfo() {
 
