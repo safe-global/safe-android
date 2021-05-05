@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,7 @@ import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -93,12 +95,17 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             helpText.visible(false)
             fingerprint.visible(settingsHandler.useBiometrics)
 
-            if (!requirePasscodeToOpen) {
+            if (requirePasscodeToOpen) {
+                backButton.visible(false)
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        input.delayShowKeyboardForView()
+                    }
+                })
+            } else {
                 backButton.setOnClickListener {
                     findNavController().navigateUp()
                 }
-            } else {
-                backButton.visible(false)
             }
 
             status.visibility = View.INVISIBLE

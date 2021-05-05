@@ -45,6 +45,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
 
+    var returnFromQrScanner = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
@@ -57,15 +59,20 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
+    }
 
-        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
-            // TODO: Navigate to EnterPasscode
+    override fun onResume() {
+        super.onResume()
+
+        if (settingsHandler.requireToOpen && settingsHandler.usePasscode && !returnFromQrScanner) {
             Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
                 putString("selectedOwner", "Fnord")
                 putBoolean("requirePasscodeToOpen", true)
             })
         }
-
+        if (returnFromQrScanner) {
+            returnFromQrScanner = false
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
