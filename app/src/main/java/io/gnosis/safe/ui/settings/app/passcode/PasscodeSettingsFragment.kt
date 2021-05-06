@@ -44,8 +44,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE)
                     )
                 } else {
-                    settingsHandler.requireToOpen = true
-                    settingsHandler.requireForConfirmations = true
+                    settingsHandler.requirePasscodeToOpen = true
+                    settingsHandler.requirePasscodeForConfirmations = true
                     settingsHandler.useBiometrics = false
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(ownerImported = false)
@@ -78,7 +78,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             // REQUIRE TO OPEN APP
             requireToOpen.visible(settingsHandler.usePasscode)
-            requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
+            requireToOpen.settingSwitch.isChecked = settingsHandler.requirePasscodeToOpen
             requireToOpen.settingSwitch.setOnClickListener {
                 // If both are disabled, disable passcode feature
                 if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
@@ -98,7 +98,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             // REQUIRE FOR CONFIRMATIONS
             requireForConfirmations.visible(settingsHandler.usePasscode)
-            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
+            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
             requireForConfirmations.settingSwitch.setOnClickListener {
                 // If both are disabled, disable passcode feature
                 if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
@@ -124,8 +124,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         super.onResume()
         with(binding) {
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
-            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requireForConfirmations
-            requireToOpen.settingSwitch.isChecked = settingsHandler.requireToOpen
+            requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
+            requireToOpen.settingSwitch.isChecked = settingsHandler.requirePasscodeToOpen
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
         }
     }

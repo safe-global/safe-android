@@ -163,7 +163,7 @@ class SettingsHandler @Inject constructor(
             }
         }
 
-    var requireToOpen: Boolean
+    var requirePasscodeToOpen: Boolean
         get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_TO_OPEN_APP, false)
         set(value) {
             preferencesManager.prefs.edit {
@@ -171,7 +171,7 @@ class SettingsHandler @Inject constructor(
             }
         }
 
-    var requireForConfirmations: Boolean
+    var requirePasscodeForConfirmations: Boolean
         get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS, false)
         set(value) {
             preferencesManager.prefs.edit {

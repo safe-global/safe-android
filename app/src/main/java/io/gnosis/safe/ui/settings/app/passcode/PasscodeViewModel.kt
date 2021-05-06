@@ -37,19 +37,19 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeDisabled) }
                     }
                     APP_DISABLE -> {
-                        settingsHandler.requireToOpen = false
+                        settingsHandler.requirePasscodeToOpen = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     CONFIRMATION_DISABLE -> {
-                        settingsHandler.requireForConfirmations = false
+                        settingsHandler.requirePasscodeForConfirmations = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     CONFIRMATION_ENABLE -> {
-                        settingsHandler.requireForConfirmations = true
+                        settingsHandler.requirePasscodeForConfirmations = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     APP_ENABLE -> {
-                        settingsHandler.requireToOpen = true
+                        settingsHandler.requirePasscodeToOpen = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
@@ -86,8 +86,8 @@ class PasscodeViewModel
                 encryptionManager.lock()
                 settingsHandler.usePasscode = false
                 settingsHandler.useBiometrics = false
-                settingsHandler.requireToOpen = false
-                settingsHandler.requireForConfirmations = false
+                settingsHandler.requirePasscodeToOpen = false
+                settingsHandler.requirePasscodeForConfirmations = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
                 updateState { PasscodeState(AllOwnersRemoved) }

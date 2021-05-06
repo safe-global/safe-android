@@ -17,7 +17,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.HeimdallApplication
-import io.gnosis.safe.OnActivityChanged
+import io.gnosis.safe.AppStateListener
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
@@ -34,7 +34,7 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityChanged {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -54,7 +54,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
 
-        if (settingsHandler.requireToOpen && settingsHandler.usePasscode) {
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
             Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
                 putString("selectedOwner", "Dummy")
                 putBoolean("requirePasscodeToOpen", true)
@@ -70,7 +70,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
 
         handleNotifications(intent)
 
-        (application as? HeimdallApplication)?.registerForActivity(this)
+        (application as? HeimdallApplication)?.registerForAppState(this)
     }
 
     override fun onResume() {
@@ -103,7 +103,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
                     if (txId == null) {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
-                            putBoolean("requirePasscode", settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground)
+                            putBoolean("requirePasscode", settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground)
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
@@ -114,7 +114,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
                             navigate(
                                 TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
                                     txId,
-                                    settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground
+                                    settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
                                 )
                             )
                         }
@@ -288,7 +288,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, OnActivityC
 
     override fun appInBackground() {
         comingFromBackground = true
-        if (settingsHandler.requireToOpen && settingsHandler.usePasscode && comingFromBackground) {
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
                 putString("selectedOwner", "Dummy")
                 putBoolean("requirePasscodeToOpen", true)
