@@ -286,7 +286,7 @@ class ApplicationModule(private val application: Application) {
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
             // increase the number of fetches available per hour during development.
-            minimumFetchIntervalInSeconds = if (CLIENT_GATEWAY_URL.contains("staging")) 0 else 3600
+            minimumFetchIntervalInSeconds = if (CLIENT_GATEWAY_URL.contains("staging")) 0 else 43200 // 12 hours
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         // Set default Remote Config parameter values. An app uses the in-app default values, and

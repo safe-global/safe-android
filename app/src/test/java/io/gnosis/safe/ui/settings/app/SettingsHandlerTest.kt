@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate.*
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.settings.app.SettingsHandler.Companion.KEY_USER_DEFAULT_FIAT
 import io.mockk.*
 import junit.framework.TestCase.*
