@@ -37,6 +37,7 @@ import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
+import io.gnosis.safe.ui.updates.UpdatesViewModel
 import java.lang.ref.WeakReference
 
 @Module
@@ -177,4 +178,8 @@ class ViewModule(
     @Provides
     @ForView
     fun providesAppFiatViewModel(provider: ViewModelProvider) = provider[AppFiatViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesUpdatesViewModel(provider: ViewModelProvider) = provider[UpdatesViewModel::class.java]
 }

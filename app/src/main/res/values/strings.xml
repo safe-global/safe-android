@@ -459,6 +459,11 @@
     <string name="label_type_queued">Queued</string>
     <string name="label_read_only">Read-only</string>
 
+    <string name="update_update_now">Update now</string>
+    <string name="update_desc_deprecated">Your version of the Safe app is not supported anymore since it is too old. Please update your app.</string>
+    <string name="update_desc_deprecated_soon">Your version of the Safe app will be deprecated soon. Please update your app.</string>
+    <string name="update_desc_new_version">There is an update of the Safe app available.</string>
+
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>
 </resources>
