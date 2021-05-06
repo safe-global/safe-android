@@ -110,8 +110,8 @@ class PasscodeViewModelTest {
         coVerify(exactly = 1) { safeRepository.clearActiveSafe() }
         verify(exactly = 1) { settingsHandler.usePasscode = false }
         verify(exactly = 1) { settingsHandler.useBiometrics = false }
-        verify(exactly = 1) { settingsHandler.requireToOpen = false }
-        verify(exactly = 1) { settingsHandler.requireForConfirmations = false }
+        verify(exactly = 1) { settingsHandler.requirePasscodeToOpen = false }
+        verify(exactly = 1) { settingsHandler.requirePasscodeForConfirmations = false }
         verify(exactly = 1) { tracker.setPasscodeIsSet(false) }
         verify(exactly = 1) { tracker.logPasscodeDisabled() }
     }
@@ -144,8 +144,8 @@ class PasscodeViewModelTest {
         verify(exactly = 0) { encryptionManager.lock() }
         verify(exactly = 0) { settingsHandler.usePasscode = false }
         verify(exactly = 0) { settingsHandler.useBiometrics = false }
-        verify(exactly = 0) { settingsHandler.requireToOpen = false }
-        verify(exactly = 0) { settingsHandler.requireForConfirmations = false }
+        verify(exactly = 0) { settingsHandler.requirePasscodeToOpen = false }
+        verify(exactly = 0) { settingsHandler.requirePasscodeForConfirmations = false }
         verify(exactly = 0) { tracker.setPasscodeIsSet(false) }
         verify(exactly = 0) { tracker.logPasscodeDisabled() }
     }
