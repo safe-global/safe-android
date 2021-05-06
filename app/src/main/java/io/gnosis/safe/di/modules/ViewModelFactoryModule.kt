@@ -33,6 +33,7 @@ import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
+import io.gnosis.safe.ui.updates.UpdatesViewModel
 import javax.inject.Singleton
 
 @Module
@@ -167,6 +168,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AppFiatViewModel::class)
     abstract fun providesAppFiatViewModel(viewModel: AppFiatViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UpdatesViewModel::class)
+    abstract fun providesUpdatesViewModel(viewModel: UpdatesViewModel): ViewModel
 
     @Binds
     @Singleton
