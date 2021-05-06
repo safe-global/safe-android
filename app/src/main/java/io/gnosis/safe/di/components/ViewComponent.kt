@@ -4,6 +4,7 @@ import dagger.Component
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.StartActivity
+import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.ui.assets.AssetsFragment
 import io.gnosis.safe.ui.assets.coins.CoinsFragment
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
@@ -125,6 +126,8 @@ interface ViewComponent {
     fun inject(fragment: EnterPasscodeFragment)
 
     fun inject(fragment: SigningOwnerSelectionFragment)
+
+    fun inject(fragment: UpdatesFragment)
 
     // Dialogs
     fun inject(dialog: EnsInputDialog)
