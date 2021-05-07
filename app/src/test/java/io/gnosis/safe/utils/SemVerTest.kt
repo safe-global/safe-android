@@ -19,7 +19,7 @@ class SemVerTest {
     }
 
     @Test
-    fun `parseSemVerRange (rangeString) should return pair of SemVer`() {
+    fun `parseRange (rangeString) should return pair of SemVer`() {
         val version1 = SemVer.parse("2.15.0")
         val version2 = SemVer.parse("2.17.0")
 
@@ -35,12 +35,29 @@ class SemVerTest {
         assert(range2.first != null)
         assert(range2.second == null)
         assertEquals(version1, range1.first)
+
+        val version3 = SemVer.parse("2.15.0-255-internal")
+        val version4 = SemVer.parse("2.17.0-300-internal")
+
+        val rangeString3 = "2.15.0-255-internal"
+        val range3 = SemVer.parseRange(rangeString3)
+        assert(range3.first != null)
+        assert(range3.second == null)
+        assertEquals(version3, range3.first)
+
+        val rangeString4 = "2.15.0-255-internal-2.17.0-300-internal"
+        val range4 = SemVer.parseRange(rangeString4)
+        assert(range4.first != null)
+        assert(range4.second != null)
+        assertEquals(version3, range4.first)
+        assertEquals(version4, range4.first)
     }
 
     @Test
     fun `isInside (rangeList) should return if SemVer is inside the range list`() {
         val version1 = SemVer.parse("2.15.0")
         val version2 = SemVer.parse("2.17.0")
+        val version3 = SemVer.parse("2.15.0-255-internal")
 
         val rangeList1 = "2.15.0"
         assert(version1.isInside(rangeList1))
@@ -56,5 +73,9 @@ class SemVerTest {
 
         val rangeList4 = ""
         assertFalse(version1.isInside(rangeList4))
+
+        val rangeList5 = "2.15.0-255-internal"
+        assertFalse(version1.isInside(rangeList5))
+        assert(version3.isInside(rangeList5))
     }
 }

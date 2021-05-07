@@ -11,7 +11,8 @@ data class SemVer(
         require(major >= 0) { "Major version must be a positive number" }
         require(minor >= 0) { "Minor version must be a positive number" }
         require(patch >= 0) { "Patch version must be a positive number" }
-        if (preRelease != null) require(preRelease.matches(Regex("""[\dA-z\-]+(?:\.[\dA-z\-]+)*"""))) { "Pre-release version is not valid" }
+       // if (preRelease != null) require(preRelease.matches(Regex("""[\dA-z\-]+(?:\.[\dA-z\-]+)*"""))) { "Pre-release version is not valid" }
+        if (preRelease != null) require(preRelease.matches(Regex("""(0|[1-9]\d*(?:rc)?-)?([A-z\_]+)*"""))) { "Pre-release version is not valid" }
     }
 
     fun isInside(rangesList: String): Boolean {
@@ -62,7 +63,8 @@ data class SemVer(
     companion object {
 
         fun parse(version: String): SemVer {
-            val pattern = Regex("""(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:-([\dA-z\-]+(?:\.[\dA-z\-]+)*))?""")
+            //val pattern = Regex("""(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:-([\dA-z\-]+(?:\.[\dA-z\-]+)*))?""")
+            val pattern = Regex("""(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:\.)?(0|[1-9]\d*)?(?:-((0|[1-9]\d*(?:rc)?-)?([A-z\_]+)*))?""")
             val result = pattern.matchEntire(version) ?: throw IllegalArgumentException("Invalid version string [$version]")
             return SemVer(
                 major = if (result.groupValues[1].isEmpty()) 0 else result.groupValues[1].toInt(),
@@ -73,12 +75,28 @@ data class SemVer(
         }
 
         fun parseRange(range: String): Pair<SemVer, SemVer?> {
-            val pattern = Regex("""([\dA-z\.]+)(?:-)?([\dA-z\.]+)?""")
-            val result = pattern.matchEntire(range) ?: throw IllegalArgumentException("Invalid range version string [$range]")
-            return when {
-                result.groupValues[2].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
-                else -> Pair(SemVer.parse(result.groupValues[1]), SemVer.parse(result.groupValues[2]))
+           // val pattern = Regex("""([\dA-z\.]+)(?:-)?([\dA-z\.]+)?""")
+            val flavorPatter = Regex("""([\d\.]+)(-)(-[A-z]*)?""")
+            val flavorResult = flavorPatter.matchEntire(range)
+            val flavor = flavorResult?.let { it.groupValues[2] }
+            if (flavor != null && flavor.isNotEmpty()) {
+                val lastFlavorIndex = range.lastIndexOf(flavor)
+                val restOfRange = range.substring(lastFlavorIndex, range.length)
+                return if (restOfRange.startsWith("-")) {
+                    Pair(SemVer.parse(range.substring(0, range.indexOf(flavor))), SemVer.parse(restOfRange.substring(1, restOfRange.length)))
+                } else {
+                    Pair(SemVer.parse(range), null)
+                }
+            } else {
+                val pattern = Regex("""([\dA-z\.]+)(?:-)?([\dA-z\.]+)?""")
+                val result = pattern.matchEntire(range) ?: throw IllegalArgumentException("Invalid range version string [$range]")
+                return when {
+                    result.groupValues[2].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
+                    else -> Pair(SemVer.parse(result.groupValues[1]), SemVer.parse(result.groupValues[2]))
+                }
             }
+
+
         }
     }
 }
