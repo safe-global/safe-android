@@ -16,8 +16,8 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.AppStateListener
+import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
@@ -55,10 +55,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         setContentView(R.layout.activity_start)
 
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
-            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putString("selectedOwner", "Dummy")
-                putBoolean("requirePasscodeToOpen", true)
-            })
+            askForPasscode()
         }
 
         viewComponent().inject(this)
@@ -243,7 +240,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     // matter the result, we continue our app flow and reset the counter
                     settingsHandler.appStartCount = 0
                 }
-
             }
         }
     }
@@ -289,11 +285,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     override fun appInBackground() {
         comingFromBackground = true
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
-            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putString("selectedOwner", "Dummy")
-                putBoolean("requirePasscodeToOpen", true)
-            })
+            askForPasscode()
             comingFromBackground = false
         }
+    }
+
+    private fun askForPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+            putString("selectedOwner", "Dummy")
+            putBoolean("requirePasscodeToOpen", true)
+        })
     }
 }
