@@ -60,10 +60,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         handleNotifications(intent)
 
         if (settingsHandler.appStartCount <= 1) {
-            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
-                putBoolean("ownerImported", false)
-            })
+            setupPasscode()
         }
+    }
+
+    private fun setupPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+            putBoolean("ownerImported", false)
+        })
     }
 
     override fun onResume() {
