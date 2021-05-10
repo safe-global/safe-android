@@ -65,7 +65,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
         setupNav()
 
-        handleNotifications(intent)
+        handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
 
@@ -92,16 +92,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        handleNotifications(intent)
+        handleIntent(intent)
     }
 
-    // Workaround in order to change active safe when push notification for unselected safe is received
-    private fun handleNotifications(intent: Intent?) {
+
+    private fun handleIntent(intent: Intent?) {
         intent?.let {
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {
+                // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
@@ -130,10 +131,22 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             )
                         }
                     }
+
+                    if (settingsHandler.showUpdateInfo) {
+                        askToUpdate()
+                    }
                     comingFromBackground = false
                 }
             } ?: run {
-                settingsHandler.appStartCount++
+                if (!settingsHandler.showUpdateInfo) {
+                    settingsHandler.appStartCount++
+                }
+                // do not start rate flow and update screen together
+                when {
+                    settingsHandler.showUpdateInfo -> askToUpdate()
+                    settingsHandler.askForPasscodeSetupOnFirstLaunch -> setupPasscode()
+                    settingsHandler.appStartCount >= 3 -> startRateFlow()
+                }
             }
         }
     }

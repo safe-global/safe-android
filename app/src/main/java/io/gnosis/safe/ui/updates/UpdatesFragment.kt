@@ -100,6 +100,7 @@ class UpdatesFragment : BaseViewBindingFragment<FragmentUpdatesBinding>() {
                 Timber.d("Update flow failed! Result code: $resultCode")
             } else {
                 viewModel.updateUpdateInfo()
+                viewModel.resetAppStartCount()
                 findNavController().navigateUp()
             }
         }

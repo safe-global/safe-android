@@ -16,4 +16,8 @@ class UpdatesViewModel
     fun updateUpdateInfo() {
         settingsHandler.updateUpdateInfo()
     }
+
+    fun resetAppStartCount() {
+        settingsHandler.appStartCount = 0
+    }
 }
