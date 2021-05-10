@@ -73,10 +73,7 @@ class PasscodeViewModel
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
             }
-            safeRepository.getSafes().forEach {
-                safeRepository.removeSafe(it)
-            }
-            safeRepository.clearActiveSafe()
+            safeRepository.clearUserData()
             tracker.logKeyDeleted()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.unregisterOwners()

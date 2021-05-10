@@ -93,6 +93,7 @@
                 app:setting_name="@string/settings_passcode_login_with_biometrics"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
+                android:visibility="gone"
                 />
 
             <TextView

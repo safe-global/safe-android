@@ -64,10 +64,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (requirePasscode && !passcodeShown) {
-            Navigation.findNavController(requireActivity(), R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putString("selectedOwner", "Dummy")
-                putBoolean("requirePasscodeToOpen", true)
-            })
+            enterPasscode()
             passcodeShown = true
         }
         with(binding) {
@@ -126,6 +123,13 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
             }
+        })
+    }
+
+    private fun enterPasscode() {
+        findNavController().navigate(R.id.enterPasscodeFragment, Bundle().apply {
+            putString("selectedOwner", "Dummy")
+            putBoolean("requirePasscodeToOpen", true)
         })
     }
 
