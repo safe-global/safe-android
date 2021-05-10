@@ -59,6 +59,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         if (!settingsHandler.updateDeprecated) {
             handleIntent(intent)
+        } else {
+            askToUpdate()
         }
     }
 
