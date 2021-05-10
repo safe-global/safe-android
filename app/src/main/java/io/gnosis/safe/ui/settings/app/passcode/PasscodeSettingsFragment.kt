@@ -60,7 +60,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 )
             }
 
-            useBiometrics.visible(settingsHandler.usePasscode)
+            useBiometrics.visible(false)
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
