@@ -306,7 +306,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun askForPasscode() {
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-            putString("selectedOwner", "Dummy")
             putBoolean("requirePasscodeToOpen", true)
         })
     }

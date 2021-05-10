@@ -256,7 +256,8 @@
 
         <argument
             android:name="selectedOwner"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="Dummy" />
 
         <argument
             android:name="requirePasscodeToOpen"

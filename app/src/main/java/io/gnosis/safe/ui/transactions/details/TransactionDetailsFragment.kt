@@ -128,7 +128,6 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private fun enterPasscode() {
         findNavController().navigate(R.id.enterPasscodeFragment, Bundle().apply {
-            putString("selectedOwner", "Dummy")
             putBoolean("requirePasscodeToOpen", true)
         })
     }
