@@ -1,6 +1,8 @@
 package io.gnosis.safe
 
+import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -24,9 +26,14 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
 
     override fun get(): ApplicationComponent = component
 
+    val activityListeners = mutableListOf<AppStateListener>()
+    fun registerForAppState(listener: AppStateListener) {
+        activityListeners.add(listener)
+    }
+
     override fun onCreate() {
         super.onCreate()
-
+        registerActivityLifecycleCallbacks(activityLifecycleCallbacks())
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         } else {
@@ -43,11 +50,64 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         Security.insertProviderAt(BouncyCastleProvider(), 1)
     }
 
+    private fun activityLifecycleCallbacks() = object : ActivityLifecycleCallbacks {
+        private var activeActivityCount = 0
+
+        fun active() {
+            activityListeners.forEach {
+                it.appInForeground()
+            }
+        }
+
+        fun inactive() {
+            activityListeners.forEach {
+                it.appInBackground()
+            }
+        }
+
+        override fun onActivityCreated(activity: Activity, savedInstanceStateFoo: Bundle?) {
+        }
+
+        override fun onActivityDestroyed(activity: Activity) {
+        }
+
+        override fun onActivityPaused(activity: Activity) {
+        }
+
+        override fun onActivityResumed(activity: Activity) {
+        }
+
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        }
+
+        override fun onActivityStarted(activity: Activity) {
+            if (activeActivityCount == 0) {
+                // We had no active activities, so we just became active
+                active()
+            }
+            activeActivityCount++
+        }
+
+        override fun onActivityStopped(activity: Activity) {
+            activeActivityCount--
+            if (activeActivityCount == 0) {
+                // We have no more active activities, so we are inactive
+                inactive()
+            }
+
+        }
+    }
+
     companion object Companion {
         operator fun get(context: Context): ApplicationComponent {
             return (context.applicationContext as ComponentProvider).get()
         }
     }
+}
+
+interface AppStateListener {
+    fun appInForeground()
+    fun appInBackground()
 }
 
 private class ExceptionReportingTree : Timber.Tree() {

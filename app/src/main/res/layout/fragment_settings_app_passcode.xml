@@ -92,8 +92,7 @@
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_passcode_login_with_biometrics"
                 app:setting_openable="false"
-                app:setting_has_switch="true"
-                />
+                app:setting_has_switch="true" />
 
             <TextView
                 android:id="@+id/use_passcode_for"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -29,9 +31,13 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     override fun screenId() = ScreenId.PASSCODE_ENTER
     private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
     private val selectedOwner by lazy { navArgs.selectedOwner }
+    private val requirePasscodeToOpen by lazy { navArgs.requirePasscodeToOpen }
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
+
+    @Inject
+    lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -52,7 +58,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             when (val viewAction = it.viewAction) {
                 is PasscodeViewModel.AllOwnersRemoved -> {
                     snackbar(requireView(), R.string.passcode_disabled)
-                    findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                    if (requirePasscodeToOpen) {
+                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+                    } else {
+                        findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                    }
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
@@ -64,11 +74,16 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                        selectedOwner
-                    )
+                    if (requirePasscodeToOpen) {
+                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+                        binding.input.hideSoftKeyboard()
+                    } else {
+                        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+                        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                            selectedOwner
+                        )
+                    }
                 }
             }
         })
@@ -77,9 +92,19 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             title.setText(R.string.settings_passcode_enter_passcode)
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             helpText.visible(false)
+            fingerprint.visible(settingsHandler.useBiometrics)
 
-            backButton.setOnClickListener {
-                findNavController().navigateUp()
+            if (requirePasscodeToOpen) {
+                backButton.visible(false)
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        input.delayShowKeyboardForView()
+                    }
+                })
+            } else {
+                backButton.setOnClickListener {
+                    findNavController().navigateUp()
+                }
             }
 
             status.visibility = View.INVISIBLE

@@ -16,6 +16,8 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.safe.AppStateListener
+import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
@@ -32,7 +34,7 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -46,9 +48,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
 
+    var comingFromBackground = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
+
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
+            askForPasscode()
+        }
 
         viewComponent().inject(this)
 
@@ -58,6 +66,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleIntent(intent)
+
+        (application as? HeimdallApplication)?.registerForAppState(this)
+    }
+
+    private fun setupPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+            putBoolean("ownerImported", false)
+        })
+        settingsHandler.askForPasscodeSetupOnFirstLaunch = false
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -82,6 +99,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     if (txId == null) {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
+                            putBoolean(
+                                "requirePasscode",
+                                settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
+                            )
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
@@ -89,13 +110,19 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                                 putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
                             })
 
-                            navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId))
+                            navigate(
+                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
+                                    txId,
+                                    settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
+                                )
+                            )
                         }
                     }
 
                     if (settingsHandler.showUpdateInfo) {
                         askToUpdate()
                     }
+                    comingFromBackground = false
                 }
             } ?: run {
                 if (!settingsHandler.showUpdateInfo) {
@@ -176,13 +203,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         }
     }
 
-    private fun setupPasscode() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
-            putBoolean("ownerImported", false)
-        })
-        settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-    }
-
     private fun adjustSafeNameWidth() {
         with(toolbarBinding) {
             val bounds = Rect()
@@ -234,7 +254,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     // matter the result, we continue our app flow and reset the counter
                     settingsHandler.appStartCount = 0
                 }
-
             }
         }
     }
@@ -272,5 +291,22 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
+    }
+
+    override fun appInForeground() {
+    }
+
+    override fun appInBackground() {
+        comingFromBackground = true
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
+            askForPasscode()
+            comingFromBackground = false
+        }
+    }
+
+    private fun askForPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+            putBoolean("requirePasscodeToOpen", true)
+        })
     }
 }

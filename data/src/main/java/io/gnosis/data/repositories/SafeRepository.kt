@@ -92,6 +92,13 @@ class SafeRepository(
     suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
         gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString())
 
+    suspend fun clearUserData() {
+        getSafes().forEach {
+            removeSafe(it)
+        }
+        clearActiveSafe()
+    }
+
     companion object {
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"

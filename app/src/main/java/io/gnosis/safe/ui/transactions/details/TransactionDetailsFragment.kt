@@ -39,6 +39,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
     private val txId by lazy { navArgs.txId }
+    private val requirePasscode by lazy { navArgs.requirePasscode }
 
     @Inject
     lateinit var viewModel: TransactionDetailsViewModel
@@ -48,6 +49,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
+
+    private var passcodeShown = false
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -60,7 +63,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (requirePasscode && !passcodeShown) {
+            enterPasscode()
+            passcodeShown = true
+        }
         with(binding) {
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
@@ -117,6 +123,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     }
                 }
             }
+        })
+    }
+
+    private fun enterPasscode() {
+        findNavController().navigate(R.id.enterPasscodeFragment, Bundle().apply {
+            putBoolean("requirePasscodeToOpen", true)
         })
     }
 

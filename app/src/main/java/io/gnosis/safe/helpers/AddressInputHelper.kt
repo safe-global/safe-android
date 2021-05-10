@@ -9,6 +9,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
+import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.dialogs.UnstoppableInputDialog

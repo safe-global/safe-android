@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -18,6 +19,7 @@ class PasscodeViewModel
     private val encryptionManager: HeimdallEncryptionManager,
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<PasscodeState>(appDispatchers) {
 
@@ -35,19 +37,19 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeDisabled) }
                     }
                     APP_DISABLE -> {
-                        settingsHandler.requireToOpen = false
+                        settingsHandler.requirePasscodeToOpen = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     CONFIRMATION_DISABLE -> {
-                        settingsHandler.requireForConfirmations = false
+                        settingsHandler.requirePasscodeForConfirmations = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     CONFIRMATION_ENABLE -> {
-                        settingsHandler.requireForConfirmations = true
+                        settingsHandler.requirePasscodeForConfirmations = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     APP_ENABLE -> {
-                        settingsHandler.requireToOpen = true
+                        settingsHandler.requirePasscodeToOpen = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
@@ -71,6 +73,7 @@ class PasscodeViewModel
             credentialsRepository.owners().forEach {
                 credentialsRepository.removeOwner(it)
             }
+            safeRepository.clearUserData()
             tracker.logKeyDeleted()
             tracker.setNumKeysImported(credentialsRepository.ownerCount())
             notificationRepository.unregisterOwners()
@@ -79,6 +82,9 @@ class PasscodeViewModel
                 encryptionManager.removePassword()
                 encryptionManager.lock()
                 settingsHandler.usePasscode = false
+                settingsHandler.useBiometrics = false
+                settingsHandler.requirePasscodeToOpen = false
+                settingsHandler.requirePasscodeForConfirmations = false
                 tracker.setPasscodeIsSet(false)
                 tracker.logPasscodeDisabled()
                 updateState { PasscodeState(AllOwnersRemoved) }
@@ -97,8 +103,8 @@ class PasscodeViewModel
             if (success) {
                 settingsHandler.usePasscode = true
                 settingsHandler.showPasscodeBanner = false
-                settingsHandler.requireForConfirmations = true
-                settingsHandler.requireToOpen = true
+                settingsHandler.requirePasscodeForConfirmations = true
+                settingsHandler.requirePasscodeToOpen = true
                 settingsHandler.askForPasscodeSetupOnFirstLaunch = false
 
                 tracker.setPasscodeIsSet(true)

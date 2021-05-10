@@ -256,7 +256,13 @@
 
         <argument
             android:name="selectedOwner"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="Dummy" />
+
+        <argument
+            android:name="requirePasscodeToOpen"
+            app:argType="boolean"
+            android:defaultValue="false" />
 
     </fragment>
 
@@ -417,6 +423,11 @@
             android:defaultValue="0"
             app:argType="integer" />
 
+        <argument
+            android:name="requirePasscode"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
     </fragment>
 
     <fragment
@@ -453,6 +464,11 @@
             android:name="txId"
             app:argType="string" />
 
+        <argument
+            android:name="requirePasscode"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
     </fragment>
 
     <fragment
@@ -475,6 +491,7 @@
             android:name="isConfirmation"
             app:argType="boolean"
             android:defaultValue="true"/>
+
     </fragment>
 
     <fragment

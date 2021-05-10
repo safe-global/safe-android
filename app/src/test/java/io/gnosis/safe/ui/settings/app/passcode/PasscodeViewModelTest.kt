@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.app.passcode
 
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
@@ -27,6 +28,7 @@ class PasscodeViewModelTest {
     private val encryptionManager = mockk<HeimdallEncryptionManager>(relaxed = true)
     private val notificationRepository = mockk<NotificationRepository>(relaxed = true)
     private val settingsHandler = mockk<SettingsHandler>(relaxed = true)
+    private val safeRepository = mockk<SafeRepository>(relaxed = true)
     private val tracker = mockk<Tracker>(relaxed = true)
 
     private lateinit var viewModel: PasscodeViewModel
@@ -36,7 +38,15 @@ class PasscodeViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = PasscodeViewModel(credentialsRepository, notificationRepository, encryptionManager, settingsHandler, tracker, appDispatchers)
+        viewModel = PasscodeViewModel(
+            credentialsRepository,
+            notificationRepository,
+            encryptionManager,
+            settingsHandler,
+            tracker,
+            safeRepository,
+            appDispatchers
+        )
     }
 
     @Test
@@ -79,6 +89,8 @@ class PasscodeViewModelTest {
     fun `onForgotPasscode - (successful owner deletion) should remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 0
+        coEvery { safeRepository.clearActiveSafe() } just Runs
+        coEvery { safeRepository.getSafes() } returns emptyList()
         val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
         testObserver.assertValues(
@@ -95,15 +107,21 @@ class PasscodeViewModelTest {
         coVerify(exactly = 1) { notificationRepository.unregisterOwners() }
         verify(exactly = 1) { encryptionManager.removePassword() }
         verify(exactly = 1) { encryptionManager.lock() }
+        coVerify(exactly = 1) { safeRepository.clearUserData() }
         verify(exactly = 1) { settingsHandler.usePasscode = false }
+        verify(exactly = 1) { settingsHandler.useBiometrics = false }
+        verify(exactly = 1) { settingsHandler.requirePasscodeToOpen = false }
+        verify(exactly = 1) { settingsHandler.requirePasscodeForConfirmations = false }
         verify(exactly = 1) { tracker.setPasscodeIsSet(false) }
         verify(exactly = 1) { tracker.logPasscodeDisabled() }
     }
 
     @Test
-    fun `onForgotPasscode - (owner deletion failed) should remove passcode and delete owner data `() {
+    fun `onForgotPasscode - (owner deletion failed) should not remove passcode and delete owner data `() {
         coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
         coEvery { credentialsRepository.ownerCount() } returns 1
+        coEvery { safeRepository.clearActiveSafe() } just Runs
+        coEvery { safeRepository.getSafes() } returns emptyList()
         val testObserver = TestLiveDataObserver<PasscodeState>()
         viewModel.state.observeForever(testObserver)
         testObserver.assertValues(
@@ -125,6 +143,9 @@ class PasscodeViewModelTest {
         verify(exactly = 0) { encryptionManager.removePassword() }
         verify(exactly = 0) { encryptionManager.lock() }
         verify(exactly = 0) { settingsHandler.usePasscode = false }
+        verify(exactly = 0) { settingsHandler.useBiometrics = false }
+        verify(exactly = 0) { settingsHandler.requirePasscodeToOpen = false }
+        verify(exactly = 0) { settingsHandler.requirePasscodeForConfirmations = false }
         verify(exactly = 0) { tracker.setPasscodeIsSet(false) }
         verify(exactly = 0) { tracker.logPasscodeDisabled() }
     }
