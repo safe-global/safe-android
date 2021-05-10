@@ -38,7 +38,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     lateinit var safeRepository: SafeRepository
 
     @Inject
-    lateinit var creadentialsRepository: CredentialsRepository
+    lateinit var credentialsRepository: CredentialsRepository
 
     private val toolbarBinding by lazy {
         ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
@@ -59,8 +59,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         handleNotifications(intent)
 
-        if (settingsHandler.appStartCount <= 1) {
+        if (settingsHandler.showPasscodeBanner) {
             setupPasscode()
+            settingsHandler.showPasscodeBanner = false
         }
     }
 
@@ -210,7 +211,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                    val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
+                    val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
             }.onFailure {
