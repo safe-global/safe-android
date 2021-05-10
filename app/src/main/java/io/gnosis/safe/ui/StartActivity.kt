@@ -59,9 +59,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
         handleNotifications(intent)
 
-        if (settingsHandler.showPasscodeBanner) {
+        if (settingsHandler.askForPasscodeSetupOnFirstLaunch) {
             setupPasscode()
-            settingsHandler.showPasscodeBanner = false
+            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
         }
     }
 
