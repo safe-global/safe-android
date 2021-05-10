@@ -177,10 +177,10 @@
 
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>
-    <string name="settings_passcode_is_needed_to_sign">The passcode is needed to sign transactions.</string>
+    <string name="settings_passcode_is_needed_to_sign">The passcode is needed to open the app and sign transactions.</string>
     <string name="settings_passcode_create_passcode">Create passcode</string>
     <string name="settings_passcode_enter_passcode">Enter passcode</string>
-    <string name="settings_passcode_will_be_needed_to_sign">The passcode will be needed to sign transactions.</string>
+    <string name="settings_passcode_will_be_needed_to_sign">The passcode will be needed to open the app and sign transactions.</string>
     <string name="settings_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
     <string name="settings_passcode_create_a_new_6_digit_passcode">Create a new 6-digit passcode</string>
     <string name="settings_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
@@ -375,7 +375,7 @@
     <string name="banner_owner_action">Import owner key now</string>
 
     <string name="banner_passcode_title">Create passcode</string>
-    <string name="banner_passcode_text">Secure your owner keys by setting up a passcode. The passcode will be needed to sign transactions.</string>
+    <string name="banner_passcode_text">Secure your owner keys by setting up a passcode. The passcode will be needed to open the app and sign transactions.</string>
     <string name="banner_passcode_action">Create passcode now</string>
 
     <string name="push_safe_name">Safe %1$s</string>
