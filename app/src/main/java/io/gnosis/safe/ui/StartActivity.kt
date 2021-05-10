@@ -38,7 +38,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
     lateinit var safeRepository: SafeRepository
 
     @Inject
-    lateinit var creadentialsRepository: CredentialsRepository
+    lateinit var credentialsRepository: CredentialsRepository
 
     private val toolbarBinding by lazy {
         ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
@@ -58,6 +58,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         setupNav()
 
         handleNotifications(intent)
+
+        if (settingsHandler.askForPasscodeSetupOnFirstLaunch) {
+            setupPasscode()
+            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
+        }
+    }
+
+    private fun setupPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+            putBoolean("ownerImported", false)
+        })
     }
 
     override fun onResume() {
@@ -200,7 +211,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                    val localOwners = creadentialsRepository.owners().map { it.address }.toSet()
+                    val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
             }.onFailure {
