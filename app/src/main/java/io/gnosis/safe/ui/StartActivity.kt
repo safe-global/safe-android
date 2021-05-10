@@ -67,13 +67,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         handleIntent(intent)
     }
 
-    // Workaround in order to change active safe when push notification for unselected safe is received
+
     private fun handleIntent(intent: Intent?) {
         intent?.let {
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {
+                // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
