@@ -68,6 +68,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleNotifications(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
+
+        if (settingsHandler.askForPasscodeSetupOnFirstLaunch) {
+            setupPasscode()
+            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
+        }
+    }
+
+    private fun setupPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+            putBoolean("ownerImported", false)
+        })
     }
 
     override fun onResume() {
@@ -100,7 +111,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (txId == null) {
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
-                            putBoolean("requirePasscode", settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground)
+                            putBoolean(
+                                "requirePasscode",
+                                settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
+                            )
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {

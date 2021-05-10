@@ -103,6 +103,8 @@ class PasscodeViewModel
             if (success) {
                 settingsHandler.usePasscode = true
                 settingsHandler.showPasscodeBanner = false
+                settingsHandler.requireForConfirmations = true
+                settingsHandler.requireToOpen = true
 
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()

@@ -179,6 +179,14 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var askForPasscodeSetupOnFirstLaunch: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH, value)
+            }
+        }
+
     companion object {
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
         internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
@@ -192,6 +200,7 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_REQUIRE_PASSCODE_TO_OPEN_APP = "prefs.boolean.require_passcode_to_open_app"
         internal const val KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS = "prefs.boolean.require_passcode_for_confirmations"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
+        internal const val KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH = "prefs.boolean.ask_for_passcode_setup_on_first_launch"
 
         internal const val KEY_UPDATE_SHOWN_FOR_VERSION = "prefs.integer.update_shown_for_version"
         internal const val KEY_FIREBASE_NEWEST_VERSION = "newestVersion"
