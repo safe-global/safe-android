@@ -232,6 +232,24 @@ class SafeRepositoryTest {
         coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
     }
 
+    @Test
+    fun `clearUserData - (Safe) should succeed`() = runBlocking {
+        val safes = listOf(
+            Safe(Solidity.Address(BigInteger.ZERO), "zero"),
+            Safe(Solidity.Address(BigInteger.ONE), "one"),
+            Safe(Solidity.Address(BigInteger.TEN), "ten")
+        )
+        coEvery { safeDao.loadAll() } returns safes
+        coEvery { safeDao.delete(any()) } just Runs
+
+        safeRepository.clearUserData()
+
+        coVerify(exactly = 1) { safeDao.delete(safes[0]) }
+        coVerify(exactly = 1) { safeDao.delete(safes[1]) }
+        coVerify(exactly = 1) { safeDao.delete(safes[2]) }
+        coVerify(exactly = 1) { preferences.remove(ACTIVE_SAFE) }
+    }
+
     companion object {
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
     }
