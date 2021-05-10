@@ -104,8 +104,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                 // do not start rate flow and update screen together
                 when {
                     settingsHandler.showUpdateInfo -> askToUpdate()
-                    settingsHandler.appStartCount >= 3 -> startRateFlow()
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> setupPasscode()
+                    settingsHandler.appStartCount >= 3 -> startRateFlow()
                 }
             }
         }
