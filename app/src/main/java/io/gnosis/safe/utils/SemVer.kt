@@ -67,7 +67,7 @@ data class SemVer(
 
         fun parse(version: String): SemVer {
             val pattern = Regex(REGEX_SEM_VER)
-            val result = pattern.matchEntire(version) ?: throw IllegalArgumentException("Invalid version string [$version]")
+            val result = pattern.matchEntire(version.trim()) ?: throw IllegalArgumentException("Invalid version string [$version]")
             return SemVer(
                 major = if (result.groupValues[1].isEmpty()) 0 else result.groupValues[1].toInt(),
                 minor = if (result.groupValues[2].isEmpty()) 0 else result.groupValues[2].toInt(),
@@ -78,7 +78,7 @@ data class SemVer(
 
         fun parseRange(range: String): Pair<SemVer, SemVer?> {
             val pattern = Regex(REGEX_SEM_VER_RANGE)
-            val result = pattern.matchEntire(range) ?: throw IllegalArgumentException("Invalid range version string [$range]")
+            val result = pattern.matchEntire(range.trim()) ?: throw IllegalArgumentException("Invalid range version string [$range]")
             return when {
                 result.groupValues[7].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
                 else -> Pair(parse(result.groupValues[1]), SemVer.parse(result.groupValues[7]))

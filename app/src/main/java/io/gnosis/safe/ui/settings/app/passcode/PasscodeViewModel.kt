@@ -99,6 +99,7 @@ class PasscodeViewModel
                 settingsHandler.showPasscodeBanner = false
                 settingsHandler.requireForConfirmations = true
                 settingsHandler.requireToOpen = true
+                settingsHandler.askForPasscodeSetupOnFirstLaunch = false
 
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()

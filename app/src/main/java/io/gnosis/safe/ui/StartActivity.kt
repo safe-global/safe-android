@@ -57,42 +57,22 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         }
         setupNav()
 
-        handleNotifications(intent)
-
-        if (settingsHandler.askForPasscodeSetupOnFirstLaunch) {
-            setupPasscode()
-            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-        }
-    }
-
-    private fun setupPasscode() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
-            putBoolean("ownerImported", false)
-        })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // do not start rate flow and update screen together
-        when {
-            settingsHandler.showUpdateInfo -> askToUpdate()
-            settingsHandler.appStartCount >= 3 -> startRateFlow()
-        }
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        handleNotifications(intent)
+        handleIntent(intent)
     }
 
-    // Workaround in order to change active safe when push notification for unselected safe is received
-    private fun handleNotifications(intent: Intent?) {
+
+    private fun handleIntent(intent: Intent?) {
         intent?.let {
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {
-
+                // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
@@ -112,9 +92,21 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                             navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId))
                         }
                     }
+
+                    if (settingsHandler.showUpdateInfo) {
+                        askToUpdate()
+                    }
                 }
             } ?: run {
-                settingsHandler.appStartCount++
+                if (!settingsHandler.showUpdateInfo) {
+                    settingsHandler.appStartCount++
+                }
+                // do not start rate flow and update screen together
+                when {
+                    settingsHandler.showUpdateInfo -> askToUpdate()
+                    settingsHandler.askForPasscodeSetupOnFirstLaunch -> setupPasscode()
+                    settingsHandler.appStartCount >= 3 -> startRateFlow()
+                }
             }
         }
     }
@@ -182,6 +174,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
 
             safeSelection.visible(true)
         }
+    }
+
+    private fun setupPasscode() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+            putBoolean("ownerImported", false)
+        })
+        settingsHandler.askForPasscodeSetupOnFirstLaunch = false
     }
 
     private fun adjustSafeNameWidth() {
