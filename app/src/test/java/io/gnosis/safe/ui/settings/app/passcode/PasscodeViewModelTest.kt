@@ -107,7 +107,7 @@ class PasscodeViewModelTest {
         coVerify(exactly = 1) { notificationRepository.unregisterOwners() }
         verify(exactly = 1) { encryptionManager.removePassword() }
         verify(exactly = 1) { encryptionManager.lock() }
-        coVerify(exactly = 1) { safeRepository.clearActiveSafe() }
+        coVerify(exactly = 1) { safeRepository.clearUserData() }
         verify(exactly = 1) { settingsHandler.usePasscode = false }
         verify(exactly = 1) { settingsHandler.useBiometrics = false }
         verify(exactly = 1) { settingsHandler.requirePasscodeToOpen = false }

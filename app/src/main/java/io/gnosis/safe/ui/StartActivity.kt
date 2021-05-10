@@ -81,15 +81,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        // do not start rate flow and update screen together
-        when {
-            settingsHandler.showUpdateInfo -> askToUpdate()
-            settingsHandler.appStartCount >= 3 -> startRateFlow()
-        }
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleIntent(intent)
