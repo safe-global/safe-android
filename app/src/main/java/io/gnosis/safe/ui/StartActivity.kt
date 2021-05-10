@@ -57,11 +57,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
         }
         setupNav()
 
-        if (!settingsHandler.updateDeprecated) {
-            handleIntent(intent)
-        } else {
-            askToUpdate()
-        }
+        handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -102,7 +98,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler {
                     }
                 }
             } ?: run {
-                settingsHandler.appStartCount++
+                if (!settingsHandler.showUpdateInfo) {
+                    settingsHandler.appStartCount++
+                }
                 // do not start rate flow and update screen together
                 when {
                     settingsHandler.showUpdateInfo -> askToUpdate()
