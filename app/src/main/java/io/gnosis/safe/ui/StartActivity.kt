@@ -68,17 +68,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
-
-        if (settingsHandler.askForPasscodeSetupOnFirstLaunch) {
-            setupPasscode()
-            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-        }
     }
 
     private fun setupPasscode() {
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
             putBoolean("ownerImported", false)
         })
+        settingsHandler.askForPasscodeSetupOnFirstLaunch = false
     }
 
     override fun onNewIntent(intent: Intent?) {
