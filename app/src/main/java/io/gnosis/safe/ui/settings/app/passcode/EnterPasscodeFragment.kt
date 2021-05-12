@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,7 @@ import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -50,6 +52,16 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.delayShowKeyboardForView()
+        if (settingsHandler.useBiometrics) {
+            val biometricPrompt: BiometricPrompt = BiometricPromptUtils.createBiometricPrompt(
+                fragment = this@EnterPasscodeFragment,
+                processSuccess = ::onBiometricsSuccess,
+                authFailed = ::onBiometricsAuthFailed,
+                usePasscode = ::onUsePasscode
+            )
+            val promptInfo = BiometricPromptUtils.createPromptInfo(requireContext())
+            biometricPrompt.authenticate(promptInfo)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,16 +86,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    if (requirePasscodeToOpen) {
-                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
-                        binding.input.hideSoftKeyboard()
-                    } else {
-                        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                            selectedOwner
-                        )
-                    }
+                    handlePasscodeCorrect()
                 }
             }
         })
@@ -137,5 +140,34 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 }
             }
         }
+    }
+
+    private fun handlePasscodeCorrect() {
+        if (requirePasscodeToOpen) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+        } else {
+            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                selectedOwner
+            )
+        }
+    }
+
+    private fun onUsePasscode() {
+        Timber.i("onUsePasscode: Implemented. showing keyboard")
+        binding.input.showKeyboardForView()
+    }
+
+    private fun onBiometricsAuthFailed() {
+        Timber.i("onBiometricsAuthFailed: Not yet implemented")
+        binding.input.showKeyboardForView()
+
+    }
+
+    private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
+        Timber.i("onBiometricsSuccess: implemented")
+        handlePasscodeCorrect()
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.biometric.BiometricManager
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
@@ -60,7 +61,9 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 )
             }
 
-            useBiometrics.visible(false)
+            useBiometrics.visible(
+                settingsHandler.usePasscode && BiometricManager.from(requireContext()).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+            )
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
