@@ -283,7 +283,7 @@ class SafeSettingsViewModelTest {
         safeSettingsViewModel.removeSafe()
 
         with(stateObserver.values()[0] as SafeSettingsState) {
-            assert(safe == null && viewAction is BaseStateViewModel.ViewAction.Loading)
+            assertTrue(safe == null && viewAction is BaseStateViewModel.ViewAction.Loading)
         }
 
         with(stateObserver.values()[1] as SafeSettingsState) {
@@ -339,11 +339,11 @@ class SafeSettingsViewModelTest {
         safeSettingsViewModel.removeSafe()
 
         with(stateObserver.values()[0] as SafeSettingsState) {
-            assert(safe == SAFE_2 && viewAction is BaseStateViewModel.ViewAction.Loading)
+            assertTrue(safe == SAFE_2 && viewAction is BaseStateViewModel.ViewAction.Loading)
         }
 
         with(stateObserver.values()[1] as SafeSettingsState) {
-            assert(safe == SAFE_1 && viewAction is SafeRemoved)
+            assertTrue(safe == SAFE_1 && viewAction is SafeRemoved)
         }
 
         coVerifySequence {
