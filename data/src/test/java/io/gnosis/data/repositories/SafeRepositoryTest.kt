@@ -10,6 +10,7 @@ import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -48,7 +49,7 @@ class SafeRepositoryTest {
 
         val actual = safeRepository.getSafes()
 
-        assert(actual == safes)
+        assertTrue(actual == safes)
         coVerify(exactly = 1) { safeDao.loadAll() }
     }
 

@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.gnosis.data.models.Safe
 import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,7 +66,7 @@ class HeimdallDatabaseTest {
                     put(Safe.COL_LOCAL_NAME, safe.localName)
                 })
 
-            assert(rowId >= 0)
+            assertTrue(rowId >= 0)
 
             close()
         }
@@ -97,7 +98,7 @@ class HeimdallDatabaseTest {
                     put(Safe.COL_LOCAL_NAME, safe.localName)
                 })
 
-            assert(rowId >= 0)
+            assertTrue(rowId >= 0)
 
             close()
         }

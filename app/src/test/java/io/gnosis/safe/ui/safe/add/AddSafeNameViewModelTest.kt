@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -66,8 +67,8 @@ class AddSafeNameViewModelTest {
 
         val actual = viewModel.state.test().values()
 
-        assert(actual.size == 1)
-        assert(
+        assertTrue(actual.size == 1)
+        assertTrue(
             actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
                     (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error == throwable
         )
@@ -83,8 +84,8 @@ class AddSafeNameViewModelTest {
 
         val actual = viewModel.state.test().values()
 
-        assert(actual.size == 1)
-        assert(
+        assertTrue(actual.size == 1)
+        assertTrue(
             actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
                     (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
         )
@@ -100,8 +101,8 @@ class AddSafeNameViewModelTest {
 
         val actual = viewModel.state.test().values()
 
-        assert(actual.size == 1)
-        assert(
+        assertTrue(actual.size == 1)
+        assertTrue(
             actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
                     (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidName
         )

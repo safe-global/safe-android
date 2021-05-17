@@ -14,6 +14,7 @@ import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -50,13 +51,13 @@ class SafeSettingsEditNameViewModelTest {
         viewModel.state.observeForever(stateObserver)
 
         with(stateObserver.values()[0] as EditNameState) {
-            assert(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.None)
+            assertTrue(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.None)
         }
 
         viewModel.saveLocalName("safe2")
 
         with(stateObserver.values()[1] as EditNameState) {
-            assert(name == "safe2" && viewAction is BaseStateViewModel.ViewAction.CloseScreen)
+            assertTrue(name == "safe2" && viewAction is BaseStateViewModel.ViewAction.CloseScreen)
         }
     }
 
@@ -80,13 +81,13 @@ class SafeSettingsEditNameViewModelTest {
         viewModel.state.observeForever(stateObserver)
 
         with(stateObserver.values()[0] as EditNameState) {
-            assert(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.None)
+            assertTrue(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.None)
         }
 
         viewModel.saveLocalName("safe2")
 
         with(stateObserver.values()[1] as EditNameState) {
-            assert(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.ShowError)
+            assertTrue(name == "safe1" && viewAction is BaseStateViewModel.ViewAction.ShowError)
         }
     }
 

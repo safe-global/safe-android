@@ -1,20 +1,17 @@
 package io.gnosis.data.repositories
 
-import com.unstoppabledomains.config.network.model.Network
 import com.unstoppabledomains.exceptions.ns.NSExceptionCode
 import com.unstoppabledomains.exceptions.ns.NSExceptionParams
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.unstoppabledomains.resolution.DomainResolution
-import com.unstoppabledomains.resolution.Resolution
-import com.unstoppabledomains.resolution.naming.service.NamingServiceType
-import io.gnosis.data.models.Safe
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import java.math.BigInteger
 
 class UnstoppableRepositoryTest {
 
@@ -39,7 +36,7 @@ class UnstoppableRepositoryTest {
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
-        assert(addr == SUCCESS_ADDR);
+        assertTrue(addr == SUCCESS_ADDR);
     }
 
 
@@ -51,7 +48,7 @@ class UnstoppableRepositoryTest {
 
         try { repository.resolve(FAIL_DOMAIN); }
         catch(err: NamingServiceException) {
-            assert(err.code == NSExceptionCode.UnregisteredDomain)
+            assertTrue(err.code == NSExceptionCode.UnregisteredDomain)
         }
         coVerify { resolutionLib.getAddress(FAIL_DOMAIN, "eth") }
     }
