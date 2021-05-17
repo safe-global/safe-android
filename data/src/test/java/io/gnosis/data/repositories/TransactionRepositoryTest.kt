@@ -101,7 +101,7 @@ class TransactionRepositoryTest {
         val actual = runCatching { transactionRepository.getHistoryTransactions(defaultSafeAddress) }
 
         with(actual) {
-            assert(isFailure)
+            assertTrue(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
         coVerify(exactly = 1) { gatewayApi.loadTransactionsHistory(defaultSafeAddress.asEthereumAddressChecksumString()) }
@@ -261,8 +261,8 @@ class TransactionRepositoryTest {
 
         val actual = runCatching { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
 
-        assert(actual.isFailure)
-        assert(actual.exceptionOrNull() == throwable)
+        assertTrue(actual.isFailure)
+        assertTrue(actual.exceptionOrNull() == throwable)
         coVerify { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
     }
 
@@ -275,8 +275,8 @@ class TransactionRepositoryTest {
 
         val actual = runCatching { transactionRepository.submitConfirmation("0x0", "0x0") }
 
-        assert(actual.isSuccess)
-        assert(actual.getOrNull() == expected)
+        assertTrue(actual.isSuccess)
+        assertTrue(actual.getOrNull() == expected)
         coVerify { gatewayApi.submitConfirmation("0x0", TransactionConfirmationRequest("0x0")) }
     }
 

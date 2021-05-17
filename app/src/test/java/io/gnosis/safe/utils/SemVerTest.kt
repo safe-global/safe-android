@@ -144,23 +144,23 @@ class SemVerTest {
         assertFalse(version2.isInside(rangeList1, true))
 
         val rangeList2 = "2.15.0...2.17.0"
-        assert(version1.isInside(rangeList2, true))
-        assert(version2.isInside(rangeList2, true))
+        assertTrue(version1.isInside(rangeList2, true))
+        assertTrue(version2.isInside(rangeList2, true))
 
         val rangeList3 = "2.11.0,2.12...2.13.0,2.14...2.16.0"
-        assert(version1.isInside(rangeList3, true))
+        assertTrue(version1.isInside(rangeList3, true))
         assertFalse(version2.isInside(rangeList3, true))
 
         val rangeList4 = ""
         assertFalse(version1.isInside(rangeList4, true))
 
         val rangeList5 = "2.15.0-255-internal"
-        assert(version1.isInside(rangeList5, true))
-        assert(version3.isInside(rangeList5, true))
+        assertTrue(version1.isInside(rangeList5, true))
+        assertTrue(version3.isInside(rangeList5, true))
 
         val rangeList6 = "2.15.0-255-internal...2.15.0-258-internal"
-        assert(version1.isInside(rangeList5, true))
-        assert(version3.isInside(rangeList5, true))
-        assert(version4.isInside(rangeList6, true))
+        assertTrue(version1.isInside(rangeList5, true))
+        assertTrue(version3.isInside(rangeList5, true))
+        assertTrue(version4.isInside(rangeList6, true))
     }
 }

@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.ethereum.Block
@@ -33,8 +34,8 @@ class EnsRepositoryTest {
         val actual = runCatching { repository.resolve(address) }
 
         with(actual) {
-            assert(isFailure)
-            assert(exceptionOrNull() is IllegalArgumentException)
+            assertTrue(isFailure)
+            assertTrue(exceptionOrNull() is IllegalArgumentException)
         }
 
         coVerify(exactly = 1) { normalizerMock.normalize(address) }
@@ -50,8 +51,8 @@ class EnsRepositoryTest {
         val actual = runCatching { repository.resolve(address) }
 
         with(actual) {
-            assert(isFailure)
-            assert(exceptionOrNull() is UnknownHostException)
+            assertTrue(isFailure)
+            assertTrue(exceptionOrNull() is UnknownHostException)
         }
         coVerifySequence {
             normalizerMock.normalize(address)
@@ -84,8 +85,8 @@ class EnsRepositoryTest {
         val actual = runCatching { repository.resolve(address) }
 
         with(actual) {
-            assert(isFailure)
-            assert(exceptionOrNull() is UnknownHostException)
+            assertTrue(isFailure)
+            assertTrue(exceptionOrNull() is UnknownHostException)
         }
 
         coVerifySequence {
@@ -137,8 +138,8 @@ class EnsRepositoryTest {
         val actual = runCatching { repository.resolve(address) }
 
         with(actual) {
-            assert(isSuccess)
-            assert(getOrNull() == TEST_SAFE)
+            assertTrue(isSuccess)
+            assertTrue(getOrNull() == TEST_SAFE)
         }
 
         coVerifySequence {
@@ -188,8 +189,8 @@ class EnsRepositoryTest {
         val actual = runCatching { repository.reverseResolve(TEST_SAFE) }
         
         with(actual) {
-            assert(isSuccess)
-            assert(getOrNull() == "liltestsafe.eth")
+            assertTrue(isSuccess)
+            assertTrue(getOrNull() == "liltestsafe.eth")
         }
 
         coVerifySequence {

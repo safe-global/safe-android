@@ -13,7 +13,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.mockk.*
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,7 +55,7 @@ class SplashViewModelTest {
 
         with(viewModel.state.test().values()) {
             assertEquals(1, size)
-            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
         }
         coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
     }
@@ -83,7 +83,7 @@ class SplashViewModelTest {
 
         with(viewModel.state.test().values()) {
             assertEquals(1, size)
-            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
         }
         coVerify(exactly = 1) { termsChecker.setTermsAgreed(true) }
     }
@@ -98,7 +98,7 @@ class SplashViewModelTest {
 
         with(viewModel.state.test().values()) {
             assertEquals(1, size)
-            assert(this[0].viewAction is SplashViewModel.ShowButton)
+            assertTrue(this[0].viewAction is SplashViewModel.ShowButton)
         }
         coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
     }
@@ -113,7 +113,7 @@ class SplashViewModelTest {
 
         with(viewModel.state.test().values()) {
             assertEquals(1, size)
-            assert(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
+            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.StartActivity)
         }
         coVerify(exactly = 1) { termsChecker.getTermsAgreed() }
     }

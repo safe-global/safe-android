@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,7 +70,7 @@ class AddSafeViewModelTest {
 
         viewModel.state.observeForever(stateObserver)
         with(stateObserver.values()[0]) {
-            assert(
+            assertTrue(
                 viewAction is BaseStateViewModel.ViewAction.ShowError &&
                         (viewAction as BaseStateViewModel.ViewAction.ShowError).error is InvalidSafeAddress
             )
