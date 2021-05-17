@@ -24,7 +24,6 @@ import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -156,17 +155,14 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     }
 
     private fun onUsePasscode() {
-        Timber.i("onUsePasscode: Implemented. showing keyboard")
         binding.input.delayShowKeyboardForView()
     }
 
     private fun onBiometricsAuthFailed() {
-        Timber.i("onBiometricsAuthFailed: Not yet implemented")
         binding.input.delayShowKeyboardForView()
     }
 
     private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
-        Timber.i("onBiometricsSuccess: implemented")
         if (requirePasscodeToOpen) {
             findNavController().popBackStack(R.id.enterPasscodeFragment, true)
             binding.input.hideSoftKeyboard()

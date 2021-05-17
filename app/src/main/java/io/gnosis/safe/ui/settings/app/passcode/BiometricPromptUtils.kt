@@ -6,7 +6,6 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.R
-import timber.log.Timber
 
 object BiometricPromptUtils {
     fun createBiometricPrompt(
@@ -21,22 +20,18 @@ object BiometricPromptUtils {
 
             override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errCode, errString)
-                Timber.i("errCode is $errCode and errString is: $errString")
                 if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    Timber.i("NegativeButton was pressed")
                     usePasscode()
                 }
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                Timber.i("User biometric rejected.")
                 authFailed()
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Timber.i("Authentication was successful")
                 processSuccess(result)
             }
         }
