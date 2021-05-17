@@ -12,6 +12,7 @@ import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -41,7 +42,7 @@ class TokenRepositoryTest {
         val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
-            assert(isFailure)
+            assertTrue(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
         coVerify(exactly = 1) { gatewayApi.loadBalances(address.asEthereumAddressChecksumString(), "USD") }
@@ -73,7 +74,7 @@ class TokenRepositoryTest {
         val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
-            assert(isSuccess)
+            assertTrue(isSuccess)
             assertEquals(
                 CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
                 getOrNull()
@@ -94,7 +95,7 @@ class TokenRepositoryTest {
         val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
         with(actual) {
-            assert(isSuccess)
+            assertTrue(isSuccess)
             assertEquals(
                 CoinBalances(BigDecimal.ZERO, listOf(balanceExpected)),
                 getOrNull()
