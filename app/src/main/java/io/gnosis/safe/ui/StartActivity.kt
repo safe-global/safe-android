@@ -131,7 +131,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 // do not start rate flow and update screen together
                 when {
                     settingsHandler.showUpdateInfo -> askToUpdate()
-                    settingsHandler.askForPasscodeSetupOnFirstLaunch -> setupPasscode()
+                    settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
+                        if (!settingsHandler.usePasscode) {
+                            setupPasscode()
+                        } else {
+                            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
+                            settingsHandler.requirePasscodeToOpen = true
+                            askForPasscode()
+                        }
+                    }
                     settingsHandler.appStartCount >= 3 -> startRateFlow()
                 }
             }
