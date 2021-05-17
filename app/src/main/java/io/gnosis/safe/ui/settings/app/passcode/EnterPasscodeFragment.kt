@@ -157,13 +157,12 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     private fun onUsePasscode() {
         Timber.i("onUsePasscode: Implemented. showing keyboard")
-        binding.input.showKeyboardForView()
+        binding.input.delayShowKeyboardForView()
     }
 
     private fun onBiometricsAuthFailed() {
         Timber.i("onBiometricsAuthFailed: Not yet implemented")
-        binding.input.showKeyboardForView()
-
+        binding.input.delayShowKeyboardForView()
     }
 
     private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
