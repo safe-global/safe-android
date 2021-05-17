@@ -127,6 +127,13 @@ class PasscodeViewModel
         }
     }
 
+    fun unlock() {
+        safeLaunch {
+            encryptionManager.unlock()
+            updateState { PasscodeState(PasscodeCorrect) }
+        }
+    }
+
     fun disableAndSetNewPasscode(newPasscode: String, oldPasscode: String) {
         safeLaunch {
             val success = encryptionManager.setupPassword(newPasscode = newPasscode.toByteArray(), oldPasscode = oldPasscode.toByteArray())

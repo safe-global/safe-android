@@ -64,7 +64,7 @@ class HeimdallEncryptionManager(
 
 
     @Synchronized
-    override fun unlockWithPassword(passcode: ByteArray): Boolean {
+    override fun  unlockWithPassword(passcode: ByteArray): Boolean {
         // If we have no passcode set (no checksum stored, we cannot unlockWithPasscode
         val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSCODE_CHECKSUM, null) ?: return false
         buildPasscodeKeyIfValid(passcode, checksum) ?: return false
@@ -131,9 +131,9 @@ class HeimdallEncryptionManager(
     private fun keyChecksum(key: ByteArray) =
         Sha3Utils.sha3String(key).substring(0, 6).toByteArray()
 
-    private fun buildPasscodeKeyIfValid(key: ByteArray?, checksum: String): ByteArray? {
-        key ?: return null
-        val hashedKey = deriveKeyFromPasscode(key)
+    private fun buildPasscodeKeyIfValid(passcode: ByteArray?, checksum: String): ByteArray? {
+        passcode ?: return null
+        val hashedKey = deriveKeyFromPasscode(passcode)
         val decryptedChecksum = nullOnThrow { decrypt(hashedKey, EncryptionManager.CryptoData.fromString(checksum)).toHexString() }
         if (keyChecksum(hashedKey).toHexString() == decryptedChecksum) {
             return hashedKey

@@ -167,6 +167,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
         Timber.i("onBiometricsSuccess: implemented")
-        handlePasscodeCorrect()
+        if (requirePasscodeToOpen) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+        } else {
+            viewModel.unlock()
+        }
     }
 }
