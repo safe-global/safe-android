@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -7,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.StringRes
 import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -52,13 +56,33 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.delayShowKeyboardForView()
         if (settingsHandler.useBiometrics) {
-            val biometricPrompt: BiometricPrompt = BiometricPromptUtils.createBiometricPrompt(
+            val biometricPrompt: BiometricPrompt = createBiometricPrompt(
                 fragment = this@EnterPasscodeFragment,
-                processSuccess = ::onBiometricsSuccess,
-                authFailed = ::onBiometricsAuthFailed,
-                usePasscode = ::onUsePasscode
+                authCallback = object : BiometricPrompt.AuthenticationCallback() {
+
+                    override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
+                        super.onAuthenticationError(errCode, errString)
+                        if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                            onUsePasscode()
+                        }
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        onBiometricsAuthFailed()
+                    }
+
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        onBiometricsSuccess(result)
+                    }
+                }
             )
-            val promptInfo = BiometricPromptUtils.createPromptInfo(requireContext())
+            val promptInfo = if (requirePasscodeToOpen) {
+                createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_login)
+            } else {
+                createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_sign)
+            }
             biometricPrompt.authenticate(promptInfo)
         }
     }
@@ -169,4 +193,20 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             viewModel.unlock()
         }
     }
+
+    private fun createBiometricPrompt(
+        fragment: Fragment,
+        authCallback: BiometricPrompt.AuthenticationCallback
+    ): BiometricPrompt {
+        val executor = ContextCompat.getMainExecutor(fragment.requireContext())
+        return BiometricPrompt(fragment, executor, authCallback)
+    }
+
+    private fun createPromptInfo(context: Context, @StringRes subtitle: Int): BiometricPrompt.PromptInfo =
+        BiometricPrompt.PromptInfo.Builder().apply {
+            setTitle(context.getString(R.string.biometric_prompt_info_title))
+            setSubtitle(context.getString(subtitle))
+            setConfirmationRequired(true)
+            setNegativeButtonText(context.getString(R.string.biometric_prompt_info_use_app_password))
+        }.build()
 }

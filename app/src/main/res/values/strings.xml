@@ -467,8 +467,9 @@
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>
 
-    <string name="biometric_prompt_info_title">Gnosis Safe App</string>
-    <string name="biometric_prompt_info_subtitle">Subtitle</string>
-    <string name="biometric_prompt_info_description">Description</string>
+
+    <string name="biometric_prompt_info_title">Safe Multisig</string>
+    <string name="biometric_prompt_info_subtitle_login">Use biometrics to login</string>
+    <string name="biometric_prompt_info_subtitle_sign">Use biometrics to sign</string>
     <string name="biometric_prompt_info_use_app_password">Use passcode</string>
 </resources>
