@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.*
 import org.junit.Test
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -24,7 +25,7 @@ class EnsInputViewModelTest {
         val actual = runCatching { viewModel.processEnsInput("") }
 
         with(actual) {
-            assert(isFailure)
+            assertTrue(isFailure)
         }
         coVerify(exactly = 1) { ensRepository.resolve("") }
     }
@@ -36,8 +37,8 @@ class EnsInputViewModelTest {
         val actual = runCatching { viewModel.processEnsInput("") }
 
         with(actual) {
-            assert(isFailure)
-            assert(exceptionOrNull() is EnsResolutionError)
+            assertTrue(isFailure)
+            assertTrue(exceptionOrNull() is EnsResolutionError)
         }
         coVerify(exactly = 1) { ensRepository.resolve("") }
     }
@@ -50,8 +51,8 @@ class EnsInputViewModelTest {
         val actual = runCatching { viewModel.processEnsInput("safe.eth") }
 
         with(actual) {
-            assert(isSuccess)
-            assert(getOrNull() == address)
+            assertTrue(isSuccess)
+            assertTrue(getOrNull() == address)
         }
         coVerify(exactly = 1) { ensRepository.resolve("safe.eth") }
     }
@@ -63,7 +64,7 @@ class EnsInputViewModelTest {
         val actual = runCatching { viewModel.processEnsInput("") }
 
         with(actual) {
-            assert(isFailure)
+            assertTrue(isFailure)
         }
         coVerify(exactly = 1) { ensRepository.resolve("") }
     }

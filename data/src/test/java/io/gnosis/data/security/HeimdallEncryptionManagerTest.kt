@@ -35,7 +35,7 @@ class HeimdallEncryptionManagerTest {
 
     @Test
     fun initialized() {
-        assert(encryptionManager.initialized())
+        assertTrue(encryptionManager.initialized())
     }
 
     @Test
@@ -51,11 +51,11 @@ class HeimdallEncryptionManagerTest {
         preferences.remove(PREF_KEY_PASSCODE_CHECKSUM)
 
         // Setup with "test"
-        assert(encryptionManager.setupPassword("test".toByteArray()))
+        assertTrue(encryptionManager.setupPassword("test".toByteArray()))
         verify { keyStorage.store(any()) }
 
         // Check that it is unlocked
-        assert(encryptionManager.unlocked())
+        assertTrue(encryptionManager.unlocked())
 
         // Check that data can be en- and decrypted
         val encryptedData = encryptionManager.encrypt("Hello World".toByteArray())
@@ -65,7 +65,7 @@ class HeimdallEncryptionManagerTest {
         assertFalse(encryptionManager.setupPassword("test2".toByteArray()))
 
         // Check that password can be changed with old password
-        assert(encryptionManager.setupPassword("test2".toByteArray(), "test".toByteArray()))
+        assertTrue(encryptionManager.setupPassword("test2".toByteArray(), "test".toByteArray()))
 
         // Check that encryption manager can be locked
         encryptionManager.lock()
@@ -75,7 +75,7 @@ class HeimdallEncryptionManagerTest {
         assertFalse(encryptionManager.unlockWithPassword(("invalid".toByteArray())))
 
         // Check that encryption manager can be unlocked with old password
-        assert(encryptionManager.unlockWithPassword(("test2".toByteArray())))
+        assertTrue(encryptionManager.unlockWithPassword(("test2".toByteArray())))
 
         // Check that data encrypted with old password can still be decrypted
         assertEquals("Hello World", String(encryptionManager.decrypt(encryptedData)))

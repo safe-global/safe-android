@@ -55,12 +55,12 @@ class SettingsHandler @Inject constructor(
 
     fun updateUpdateInfo() {
         kotlin.runCatching {
-            val current = SemVer.parse(BuildConfig.VERSION_NAME)
-            val newest = SemVer.parse(remoteConfig.getString(KEY_FIREBASE_NEWEST_VERSION))
+            val current = SemVer.parse(BuildConfig.VERSION_NAME, true)
+            val newest = SemVer.parse(remoteConfig.getString(KEY_FIREBASE_NEWEST_VERSION), true)
 
             updateNewestVersion = current < newest
-            updateDeprecatedSoon = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED_SOON))
-            updateDeprecated = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED))
+            updateDeprecatedSoon = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED_SOON), true)
+            updateDeprecated = current.isInside(remoteConfig.getString(KEY_FIREBASE_DEPRECATED), true)
         }.onFailure {
             // fail silently
             updateNewestVersion = false
