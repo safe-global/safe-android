@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextUtils
 import android.view.View
 import androidx.core.view.marginLeft
@@ -47,6 +48,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
+
+    private val handler = Handler()
 
     var comingFromBackground = false
 
@@ -97,6 +100,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         setSafeData(it)
                     }
                     if (txId == null) {
+
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                             putBoolean(
@@ -294,19 +298,21 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     override fun appInForeground() {
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
+            askForPasscode()
+        }
+        comingFromBackground = false
     }
 
     override fun appInBackground() {
         comingFromBackground = true
-        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
-            askForPasscode()
-            comingFromBackground = false
-        }
     }
 
     private fun askForPasscode() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-            putBoolean("requirePasscodeToOpen", true)
-        })
+        handler.postDelayed({
+            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+                putBoolean("requirePasscodeToOpen", true)
+            })
+        }, 600)
     }
 }
