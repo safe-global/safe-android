@@ -1,13 +1,19 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
+import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -62,14 +68,22 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             }
 
             useBiometrics.visible(
-                settingsHandler.usePasscode && BiometricManager.from(requireContext()).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS
+                settingsHandler.usePasscode &&
+                        (canAuthenticate() == BIOMETRIC_SUCCESS ||
+                                canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED)
             )
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
-                    findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_ENABLE)
-                    )
+                    if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+                        startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        Toast.makeText(requireContext(), getString(R.string.biometric_prompt_please_enroll_biometric_attribute), Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+                        findNavController().navigate(
+                            PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_ENABLE)
+                        )
+                    }
                 } else {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_DISABLE)
@@ -118,6 +132,9 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             }
         }
     }
+
+    private fun canAuthenticate() = BiometricManager.from(requireContext())
+        .canAuthenticate()
 
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now
