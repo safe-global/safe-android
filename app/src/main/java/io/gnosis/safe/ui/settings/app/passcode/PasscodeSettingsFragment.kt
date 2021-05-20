@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPasscodeBinding>() {
@@ -68,7 +70,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             }
 
             useBiometrics.visible(
-                settingsHandler.usePasscode &&
+                settingsHandler.usePasscode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                         (canAuthenticate() == BIOMETRIC_SUCCESS ||
                                 canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED)
             )
@@ -76,7 +78,12 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
                     if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
-                        startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        } else {
+                            startActivityForResult(Intent(Settings.ACTION_FINGERPRINT_ENROLL), 1 /* REQUESTCODE_FINGERPRINT_ENROLLMENT */)
+                        }
+
                         Toast.makeText(requireContext(), getString(R.string.biometric_prompt_please_enroll_biometric_attribute), Toast.LENGTH_LONG)
                             .show()
                     } else {
@@ -131,6 +138,12 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //TODO: What could we do here?
+        Timber.i("---> Handle result from Security setting: $requestCode, $resultCode, $data")
     }
 
     private fun canAuthenticate() = BiometricManager.from(requireContext())
