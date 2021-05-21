@@ -122,10 +122,18 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             binding.input.hideSoftKeyboard()
         } else {
             val encryptedPasscode = cm.getCiphertextWrapperFromSharedPrefs(requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
-            val cipher = authenticationResult.cryptoObject!!.cipher!!
-            val passcode = cm.decryptData(encryptedPasscode!!.ciphertext, cipher)
-
-            viewModel.unlockWithPasscode(passcode)
+            try {
+                encryptedPasscode?.let { cipherTestWrapper ->
+                     authenticationResult.cryptoObject?.cipher?.let { cipher ->
+                        val passcode = cm.decryptData(cipherTestWrapper.ciphertext, cipher)
+                        viewModel.unlockWithPasscode(passcode)
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "cannot decrypt passcode")
+                settingsHandler.useBiometrics = false
+            }
+            binding.input.delayShowKeyboardForView()
         }
     }
 
