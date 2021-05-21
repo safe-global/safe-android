@@ -155,6 +155,9 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
     override fun onResume() {
         super.onResume()
+        if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+            settingsHandler.useBiometrics = false
+        }
         with(binding) {
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
