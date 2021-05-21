@@ -91,6 +91,8 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 crashTheApp.setOnClickListener {
                     throw RuntimeException("Deliberate Crash")
                 }
+            } else {
+                debugContainer.visible(false)
             }
         }
     }

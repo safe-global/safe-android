@@ -14,20 +14,21 @@ data class SemVer(
         if (preRelease != null) require(preRelease.matches(Regex("""(0|[1-9]\d*(?:rc)?-)?([A-z\_]+)*"""))) { "Pre-release version is not valid" }
     }
 
-    fun isInside(rangesList: String): Boolean {
+    fun isInside(rangesList: String, ignoreExtensions: Boolean = false): Boolean {
+        val version = if (ignoreExtensions) this.copy(preRelease = null) else this
         var checkResult = false
         run loop@{
             rangesList.split(",").filter { it.isNotEmpty() }.forEach {
-                val range = parseRange(it)
+                val range = parseRange(it, ignoreExtensions)
                 when {
-                    range.second != null && this > range.second!! -> {
+                    range.second != null && version > range.second!! -> {
                         return@forEach
                     }
-                    range.second != null && range.second!! >= this && range.first <= this -> {
+                    range.second != null && range.second!! >= version && range.first <= version -> {
                         checkResult = true
                         return@loop
                     }
-                    range.second == null && range.first == this -> {
+                    range.second == null && range.first == version -> {
                         checkResult = true
                         return@loop
                     }
@@ -65,23 +66,23 @@ data class SemVer(
         private const val REGEX_SEM_VER = "(0|[1-9]\\d*)?(?:\\.)?(0|[1-9]\\d*)?(?:\\.)?(0|[1-9]\\d*)?(?:-$REGEX_PRE_RELEASE)?"
         private const val REGEX_SEM_VER_RANGE = "(${REGEX_SEM_VER})(?:\\.\\.\\.)?(?:(${REGEX_SEM_VER}))?"
 
-        fun parse(version: String): SemVer {
+        fun parse(version: String, ignoreExtensions: Boolean = false): SemVer {
             val pattern = Regex(REGEX_SEM_VER)
             val result = pattern.matchEntire(version.trim()) ?: throw IllegalArgumentException("Invalid version string [$version]")
             return SemVer(
                 major = if (result.groupValues[1].isEmpty()) 0 else result.groupValues[1].toInt(),
                 minor = if (result.groupValues[2].isEmpty()) 0 else result.groupValues[2].toInt(),
                 patch = if (result.groupValues[3].isEmpty()) 0 else result.groupValues[3].toInt(),
-                preRelease = if (result.groupValues[5].isEmpty()) null else "${result.groupValues[4]}${result.groupValues[5]}"
+                preRelease = if (ignoreExtensions || result.groupValues[5].isEmpty()) null else "${result.groupValues[4]}${result.groupValues[5]}"
             )
         }
 
-        fun parseRange(range: String): Pair<SemVer, SemVer?> {
+        fun parseRange(range: String, ignoreExtensions: Boolean = false): Pair<SemVer, SemVer?> {
             val pattern = Regex(REGEX_SEM_VER_RANGE)
             val result = pattern.matchEntire(range.trim()) ?: throw IllegalArgumentException("Invalid range version string [$range]")
             return when {
-                result.groupValues[7].isEmpty() -> Pair(SemVer.parse(result.groupValues[1]), null)
-                else -> Pair(parse(result.groupValues[1]), SemVer.parse(result.groupValues[7]))
+                result.groupValues[7].isEmpty() -> Pair(parse(result.groupValues[1], ignoreExtensions), null)
+                else -> Pair(parse(result.groupValues[1], ignoreExtensions), parse(result.groupValues[7], ignoreExtensions))
             }
         }
     }

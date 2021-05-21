@@ -12,7 +12,7 @@ import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -65,8 +65,8 @@ class ShareSafeViewModelTest {
 
         testObserver.assertValueCount(2)
         with(testObserver.values()[1]) {
-            assert(viewAction is BaseStateViewModel.ViewAction.ShowError)
-            assert((viewAction as BaseStateViewModel.ViewAction.ShowError).error is IllegalStateException)
+            assertTrue(viewAction is BaseStateViewModel.ViewAction.ShowError)
+            assertTrue((viewAction as BaseStateViewModel.ViewAction.ShowError).error is IllegalStateException)
         }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         coVerify {
@@ -87,7 +87,7 @@ class ShareSafeViewModelTest {
 
         testObserver.assertValueCount(2)
         with(testObserver.values()[1]) {
-            assert(viewAction is BaseStateViewModel.ViewAction.ShowError)
+            assertTrue(viewAction is BaseStateViewModel.ViewAction.ShowError)
             assertEquals(throwable, (viewAction as BaseStateViewModel.ViewAction.ShowError).error)
         }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
@@ -113,7 +113,7 @@ class ShareSafeViewModelTest {
 
         testObserver.assertValueCount(2)
         with(testObserver.values()[1].viewAction) {
-            assert(this is ShowSafeDetails)
+            assertTrue(this is ShowSafeDetails)
             val safeDetails = (this as ShowSafeDetails).safeDetails
             assertEquals(safe, safeDetails.safe)
             assertEquals(null, safeDetails.ensName)
@@ -144,7 +144,7 @@ class ShareSafeViewModelTest {
 
         testObserver.assertValueCount(2)
         with(testObserver.values()[1].viewAction) {
-            assert(this is ShowSafeDetails)
+            assertTrue(this is ShowSafeDetails)
             val safeDetails = (this as ShowSafeDetails).safeDetails
             assertEquals(safe, safeDetails.safe)
             assertEquals(ensName, safeDetails.ensName)

@@ -76,7 +76,12 @@ class LabeledArrayItem @JvmOverloads constructor(
                 if (value is List<*>) {
                     if (nestingLevel < NESTING_LEVEL_THRESHOLD) {
                         nestingLevel++
-                        addArrayItem(arrayItem.container, value as List<Any>, paramType, typeValues)
+                        if (paramType == ParamType.MIXED) {
+                            val valueType = typeValues.split(",")[index]
+                            addArrayItem(arrayItem.container, value as List<Any>, getParamItemType(valueType), valueType)
+                        } else {
+                            addArrayItem(arrayItem.container, value as List<Any>, paramType, typeValues)
+                        }
                     } else {
                         addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE)
                     }
