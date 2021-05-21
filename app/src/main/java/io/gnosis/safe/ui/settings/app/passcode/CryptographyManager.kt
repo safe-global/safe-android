@@ -9,12 +9,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import java.nio.charset.Charset
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import java.security.KeyStore
 import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
-
 
 interface CryptographyManager {
 
@@ -44,8 +43,8 @@ interface CryptographyManager {
     ): CiphertextWrapper?
 
     companion object {
-        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name"
-        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name"
+        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name4"
+        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name2"
     }
 }
 
@@ -53,18 +52,22 @@ fun CryptographyManager(): CryptographyManager = CryptographyManagerImpl()
 
 private class CryptographyManagerImpl : CryptographyManager {
 
-    private val KEY_SIZE = 256
+    private val KEY_SIZE = 1024
+
     private val ANDROID_KEYSTORE = "AndroidKeyStore"
-    private val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
-    private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
-    private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
+    private val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_ECB
+    private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1
+    private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
     private val moshi = Moshi.Builder().build()
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getInitializedCipherForEncryption(keyName: String): Cipher {
         val cipher = getCipher()
-        val secretKey = getOrCreateSecretKey(keyName)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+
+
+
+        val publicKey = getOrCreateKeyPair(keyName).public
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
         return cipher
     }
 
@@ -74,7 +77,7 @@ private class CryptographyManagerImpl : CryptographyManager {
         initializationVector: ByteArray
     ): Cipher {
         val cipher = getCipher()
-        val secretKey = getOrCreateSecretKey(keyName)
+        val secretKey = getOrCreateKeyPair(keyName).private
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, initializationVector))
         return cipher
     }
@@ -101,13 +104,13 @@ private class CryptographyManagerImpl : CryptographyManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun getOrCreateSecretKey(keyName: String): SecretKey {
+    private fun getOrCreateKeyPair(keyName: String): KeyPair {
         // If Secretkey was previously created for that keyName, then grab and return it.
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
         keyStore.load(null) // Keystore must be loaded before it can be accessed
-        keyStore.getKey(keyName, null)?.let { return it as SecretKey }
+        keyStore.getKey(keyName, null)?.let { return it as KeyPair }
 
-        // if you reach here, then a new SecretKey must be generated for that keyName
+        // if you reach here, then a new PrivateKey must be generated for that keyName
         val paramsBuilder = KeyGenParameterSpec.Builder(
             keyName,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
@@ -126,14 +129,13 @@ private class CryptographyManagerImpl : CryptographyManager {
         }
 
         val keyGenParams = paramsBuilder.build()
-        val keyGenerator = KeyGenerator.getInstance(
-            KeyProperties.KEY_ALGORITHM_AES,
+        val keyPairGenerator = KeyPairGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_RSA,
             ANDROID_KEYSTORE
         )
-        keyGenerator.init(keyGenParams)
-        return keyGenerator.generateKey()
+        keyPairGenerator.initialize(keyGenParams)
+        return keyPairGenerator.genKeyPair()
     }
-
 
     override fun persistCiphertextWrapperToSharedPrefs(
         ciphertextWrapper: CiphertextWrapper,
