@@ -9,17 +9,14 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import java.nio.charset.Charset
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.KeyStore
+import java.security.*
 import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
 
 interface CryptographyManager {
 
     fun getInitializedCipherForEncryption(keyName: String): Cipher
 
-    fun getInitializedCipherForDecryption(keyName: String, initializationVector: ByteArray): Cipher
+    fun getInitializedCipherForDecryption(keyName: String): Cipher
 
     fun deleteKey(keyName: String)
 
@@ -43,8 +40,8 @@ interface CryptographyManager {
     ): CiphertextWrapper?
 
     companion object {
-        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name4"
-        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name2"
+        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name611"
+        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name711"
     }
 }
 
@@ -55,30 +52,26 @@ private class CryptographyManagerImpl : CryptographyManager {
     private val KEY_SIZE = 1024
 
     private val ANDROID_KEYSTORE = "AndroidKeyStore"
+    private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
     private val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_ECB
     private val ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1
-    private val ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
     private val moshi = Moshi.Builder().build()
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getInitializedCipherForEncryption(keyName: String): Cipher {
         val cipher = getCipher()
-
-
-
-        val publicKey = getOrCreateKeyPair(keyName).public
+        val publicKey = getOrCreateKey(keyName, true) as PublicKey
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
         return cipher
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getInitializedCipherForDecryption(
-        keyName: String,
-        initializationVector: ByteArray
+        keyName: String
     ): Cipher {
         val cipher = getCipher()
-        val secretKey = getOrCreateKeyPair(keyName).private
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, initializationVector))
+        val privateKey = getOrCreateKey(keyName) as PrivateKey
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
         return cipher
     }
 
@@ -90,7 +83,7 @@ private class CryptographyManagerImpl : CryptographyManager {
 
     override fun encryptData(plaintext: String, cipher: Cipher): CiphertextWrapper {
         val ciphertext = cipher.doFinal(plaintext.toByteArray(Charset.forName("UTF-8")))
-        return CiphertextWrapper(ciphertext, cipher.iv)
+        return CiphertextWrapper(ciphertext)
     }
 
     override fun decryptData(ciphertext: ByteArray, cipher: Cipher): String {
@@ -104,11 +97,14 @@ private class CryptographyManagerImpl : CryptographyManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun getOrCreateKeyPair(keyName: String): KeyPair {
+    private fun getOrCreateKey(keyName: String, pubKey: Boolean = false): Key {
         // If Secretkey was previously created for that keyName, then grab and return it.
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
         keyStore.load(null) // Keystore must be loaded before it can be accessed
-        keyStore.getKey(keyName, null)?.let { return it as KeyPair }
+        if (pubKey) {
+            keyStore.getCertificate(keyName)?.let { return it.publicKey as PublicKey }
+        }
+        keyStore.getKey(keyName, null)?.let { return it as PrivateKey }
 
         // if you reach here, then a new PrivateKey must be generated for that keyName
         val paramsBuilder = KeyGenParameterSpec.Builder(
@@ -134,7 +130,12 @@ private class CryptographyManagerImpl : CryptographyManager {
             ANDROID_KEYSTORE
         )
         keyPairGenerator.initialize(keyGenParams)
-        return keyPairGenerator.genKeyPair()
+        val keyPair = keyPairGenerator.genKeyPair()
+        return if (pubKey) {
+            keyPair.public
+        } else {
+            keyPair.private
+        }
     }
 
     override fun persistCiphertextWrapperToSharedPrefs(
@@ -163,24 +164,17 @@ private class CryptographyManagerImpl : CryptographyManager {
 
 @JsonClass(generateAdapter = true)
 data class CiphertextWrapper(
-    @Json(name = "ciphertext") val ciphertext: ByteArray,
-    @Json(name = "initializationVector") val initializationVector: ByteArray
+    @Json(name = "ciphertext") val ciphertext: ByteArray
 ) {
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CiphertextWrapper
-
-        if (!ciphertext.contentEquals(other.ciphertext)) return false
-        if (!initializationVector.contentEquals(other.initializationVector)) return false
-
-        return true
+        return super.equals(other)
     }
 
     override fun hashCode(): Int {
-        var result = ciphertext.contentHashCode()
-        result = 31 * result + initializationVector.contentHashCode()
-        return result
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
     }
 }
