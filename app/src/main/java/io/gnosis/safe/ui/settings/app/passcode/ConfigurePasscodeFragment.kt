@@ -94,48 +94,11 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-
-//                if (passcodeCommand == PasscodeCommand.BIOMETRICS_ENABLE) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                        val biometricPrompt: BiometricPrompt = createBiometricPrompt(
-//                            fragment = this@ConfigurePasscodeFragment,
-//                            authCallback = object : BiometricPrompt.AuthenticationCallback() {
-//
-//                                override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
-//                                    super.onAuthenticationError(errCode, errString)
-//                                    if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-//                                        onCancel()
-//                                    }
-//                                }
-//
-//                                override fun onAuthenticationFailed() {
-//                                    super.onAuthenticationFailed()
-//                                    onBiometricsAuthFailed()
-//                                }
-//
-//                                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-//                                    super.onAuthenticationSucceeded(result)
-//                                    onBiometricsSuccess(result, digitsAsString)
-//                                }
-//                            }
-//                        )
-//                        val promptInfo = createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_enable)
-//
-//                        try {
-//                            val cipher = cm.getInitializedCipherForEncryption(KEY_NAME)
-//                            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-//                        } catch (e: KeyPermanentlyInvalidatedException) {
-//                            cm.deleteKey(KEY_NAME)
-//                        }
-//                    }
-//                } else {
-
                 val cipher = cm.getInitializedCipherForEncryption(KEY_NAME)
                 val encrypted = cm.encryptData(digitsAsString, cipher)
                 cm.persistCiphertextWrapperToSharedPrefs(encrypted, requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
 
                 viewModel.configurePasscode(digitsAsString, passcodeCommand)
-//                }
             })
 
             helpText.visible(false)
@@ -156,35 +119,4 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
             }
         }
     }
-
-//    private fun onBiometricsSuccess(result: BiometricPrompt.AuthenticationResult, passcode: String) {
-//        val encrypted = cm.encryptData(passcode, result.cryptoObject?.cipher!!)
-//        cm.persistCiphertextWrapperToSharedPrefs(encrypted, requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
-//
-//        viewModel.configurePasscode(passcode, PasscodeCommand.BIOMETRICS_ENABLE)
-//    }
-//
-//    private fun onBiometricsAuthFailed() {
-//        findNavController().popBackStack(R.id.configurePasscodeFragment, true)
-//    }
-//
-//    private fun onCancel() {
-//        findNavController().popBackStack(R.id.configurePasscodeFragment, true)
-//    }
-//
-//    private fun createBiometricPrompt(
-//        fragment: Fragment,
-//        authCallback: BiometricPrompt.AuthenticationCallback
-//    ): BiometricPrompt {
-//        val executor = ContextCompat.getMainExecutor(fragment.requireContext())
-//        return BiometricPrompt(fragment, executor, authCallback)
-//    }
-//
-//    private fun createPromptInfo(context: Context, @StringRes subtitle: Int): BiometricPrompt.PromptInfo =
-//        BiometricPrompt.PromptInfo.Builder().apply {
-//            setTitle(context.getString(R.string.biometric_prompt_info_title))
-//            setSubtitle(context.getString(subtitle))
-//            setConfirmationRequired(true)
-//            setNegativeButtonText(context.getString(R.string.biometric_prompt_info_cancel))
-//        }.build()
 }

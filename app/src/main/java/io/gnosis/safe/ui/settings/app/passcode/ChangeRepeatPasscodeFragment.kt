@@ -85,7 +85,13 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                     val cm = CryptographyManager()
                     val cipher = cm.getInitializedCipherForEncryption(CryptographyManager.KEY_NAME)
                     val encrypted = cm.encryptData(digitsAsString, cipher)
-                    cm.persistCiphertextWrapperToSharedPrefs(encrypted, requireContext(), CryptographyManager.FILE_NAME, Context.MODE_PRIVATE, CryptographyManager.KEY_NAME)
+                    cm.persistCiphertextWrapperToSharedPrefs(
+                        encrypted,
+                        requireContext(),
+                        CryptographyManager.FILE_NAME,
+                        Context.MODE_PRIVATE,
+                        CryptographyManager.KEY_NAME
+                    )
                 } else {
                     errorMessage.visible(true)
                     input.setText("")

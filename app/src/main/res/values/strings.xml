@@ -471,8 +471,6 @@
     <string name="biometric_prompt_info_title">Safe Multisig</string>
     <string name="biometric_prompt_info_subtitle_login">Use biometrics to login</string>
     <string name="biometric_prompt_info_subtitle_sign">Use biometrics to sign</string>
-    <string name="biometric_prompt_info_subtitle_enable">Enable biometrics</string>
     <string name="biometric_prompt_info_use_app_password">Use passcode</string>
-    <string name="biometric_prompt_info_cancel">Cancel</string>
     <string name="biometric_prompt_please_enroll_biometric_attribute">Please enroll at least one biometric attribute</string>
 </resources>

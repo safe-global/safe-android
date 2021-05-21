@@ -40,8 +40,8 @@ interface CryptographyManager {
     ): CiphertextWrapper?
 
     companion object {
-        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name611"
-        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name711"
+        internal const val KEY_NAME = "prefs.string.passcode.biometrics.key_name"
+        internal const val FILE_NAME = "prefs.string.passcode.biometrics.file_name"
     }
 }
 
@@ -60,8 +60,13 @@ private class CryptographyManagerImpl : CryptographyManager {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun getInitializedCipherForEncryption(keyName: String): Cipher {
         val cipher = getCipher()
-        val publicKey = getOrCreateKey(keyName, true) as PublicKey
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        try {
+            val publicKey = getOrCreateKey(keyName, true) as PublicKey
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+
+        } catch (e: java.lang.ClassCastException) {
+            deleteKey(keyName)
+        }
         return cipher
     }
 

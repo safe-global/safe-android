@@ -93,7 +93,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 }
 
                 try {
-                    val ciphertextWrapper = cm.getCiphertextWrapperFromSharedPrefs(requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
+//                    val ciphertextWrapper = cm.getCiphertextWrapperFromSharedPrefs(requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
                     val cipher = cm.getInitializedCipherForDecryption(KEY_NAME)
                     biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
                 } catch (e: KeyPermanentlyInvalidatedException) {
