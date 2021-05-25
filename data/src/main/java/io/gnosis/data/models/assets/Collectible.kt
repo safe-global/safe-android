@@ -2,8 +2,10 @@ package io.gnosis.data.models.assets
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
+@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class Collectible(
     @Json(name = "id") val id: String,

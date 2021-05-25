@@ -2,7 +2,9 @@ package io.gnosis.data.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 
+@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class Page<T>(
     @Json(name = "count") val count: Int?,

@@ -4,8 +4,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.gnosis.data.models.Safe.Companion.TABLE_NAME
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
+@ExcludeClassFromJacocoGeneratedReport
 @Entity(tableName = TABLE_NAME)
 data class Safe(
     @PrimaryKey

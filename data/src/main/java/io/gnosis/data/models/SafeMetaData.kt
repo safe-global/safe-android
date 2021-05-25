@@ -1,6 +1,10 @@
 package io.gnosis.data.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
 @Entity(
@@ -17,6 +21,7 @@ import pm.gnosis.model.Solidity
         )
     ]
 )
+@ExcludeClassFromJacocoGeneratedReport
 data class SafeMetaData(
     @PrimaryKey
     @ColumnInfo(name = COL_ADDRESS)

@@ -2,9 +2,11 @@ package io.gnosis.data.models
 
 import androidx.room.*
 import io.gnosis.data.models.Owner.Companion.TABLE_NAME
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 
+@ExcludeClassFromJacocoGeneratedReport
 @Entity(
     tableName = TABLE_NAME
 )
@@ -29,7 +31,7 @@ data class Owner(
         LOCALLY_STORED(0);
 
         companion object {
-            fun get(value: Int) = when(value) {
+            fun get(value: Int) = when (value) {
                 0 -> LOCALLY_STORED
                 else -> LOCALLY_STORED
             }
@@ -46,6 +48,7 @@ data class Owner(
     }
 }
 
+@ExcludeClassFromJacocoGeneratedReport
 class OwnerTypeConverter {
 
     @TypeConverter
