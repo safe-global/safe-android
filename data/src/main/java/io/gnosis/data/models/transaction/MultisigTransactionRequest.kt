@@ -2,11 +2,9 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class MultisigTransactionRequest(
     @Json(name = "to") val to: Solidity.Address,

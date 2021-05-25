@@ -3,18 +3,15 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
-@ExcludeClassFromJacocoGeneratedReport
 enum class TransferType {
     @Json(name = "ERC20") ERC20,
     @Json(name = "ERC721") ERC721,
     @Json(name = "ETHER") ETHER
 }
 
-@ExcludeClassFromJacocoGeneratedReport
 sealed class TransferInfo(
     @Json(name = "type") val type: TransferType
 ) {

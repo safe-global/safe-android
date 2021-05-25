@@ -3,11 +3,9 @@ package io.gnosis.data.db.daos
 import androidx.room.*
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
 @Dao
-@ExcludeClassFromJacocoGeneratedReport
 interface SafeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

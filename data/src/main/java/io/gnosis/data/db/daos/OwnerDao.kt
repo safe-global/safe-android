@@ -2,11 +2,9 @@ package io.gnosis.data.db.daos
 
 import androidx.room.*
 import io.gnosis.data.models.Owner
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
 @Dao
-@ExcludeClassFromJacocoGeneratedReport
 interface OwnerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

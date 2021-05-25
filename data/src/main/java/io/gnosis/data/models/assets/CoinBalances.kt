@@ -2,21 +2,18 @@ package io.gnosis.data.models.assets
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.common.adapters.moshi.BigDecimalNumber
 import pm.gnosis.common.adapters.moshi.DecimalNumber
 import pm.gnosis.model.Solidity
 import java.math.BigDecimal
 import java.math.BigInteger
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class CoinBalances(
     @field:BigDecimalNumber val fiatTotal: BigDecimal,
     val items: List<Balance>
 )
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class Balance(
     @Json(name = "tokenInfo") val tokenInfo: TokenInfo,
@@ -24,7 +21,6 @@ data class Balance(
     @Json(name = "fiatBalance") @field:BigDecimalNumber val fiatBalance: BigDecimal
 )
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class TokenInfo(
     @Json(name = "type") val tokenType: TokenType,
