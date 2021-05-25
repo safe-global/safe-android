@@ -2,7 +2,10 @@ package io.gnosis.data.security
 
 
 import android.app.Application
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +33,7 @@ class HeimdallEncryptionManagerTest {
 
         every { keyStorage.store(any()) } returnsArgument  0
         every { keyStorage.retrieve(any()) } returnsArgument  0
-        encryptionManager = HeimdallEncryptionManager(preferencesManager, keyStorage)
+        encryptionManager = HeimdallEncryptionManager(preferencesManager = preferencesManager, keyStorage = keyStorage, context = application)
     }
 
     @Test
