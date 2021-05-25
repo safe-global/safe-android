@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import org.bouncycastle.crypto.engines.AESEngine
 import org.bouncycastle.crypto.generators.SCrypt
 import org.bouncycastle.crypto.modes.CBCBlockCipher
@@ -32,11 +33,13 @@ import javax.crypto.Cipher
  * @param passcodeIterations Number of iterations the passcode is hashed to prevent brute force attacks.
  *                           Will be disabled when set to 0 else has to be larger than 1, a power of 2 and less than <code>2^128</code>.
  */
+@ExcludeClassFromJacocoGeneratedReport
 class HeimdallEncryptionManager(
     private val preferencesManager: PreferencesManager,
     private val keyStorage: KeyStorage,
     private val passcodeIterations: Int = SCRYPT_ITERATIONS,
-    private val context: Context
+    private val context: Context,
+    private val provider: String = "AndroidKeystore"
 ) : EncryptionManager, BiometricPasscodeManager {
 
     private val secureRandom = SecureRandom()
@@ -44,7 +47,6 @@ class HeimdallEncryptionManager(
 
     // For BiometricPasscodeManager
     private val RSA_KEY_SIZE = 1024
-    private val ANDROID_KEYSTORE = "AndroidKeystore"
     private val ASYMMETRIC_ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
     private val ASYMMETRIC_ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_ECB
     private val ASYMMETRIC_ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1
@@ -227,7 +229,7 @@ class HeimdallEncryptionManager(
     }
 
     override fun deleteKey(keyName: String) {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+        val keyStore = KeyStore.getInstance(provider)
         keyStore.load(null)
         keyStore.deleteEntry(keyName)
     }
@@ -250,7 +252,7 @@ class HeimdallEncryptionManager(
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getOrCreateKey(keyName: String, pubKey: Boolean = false): Key {
         // If Secretkey was previously created for that keyName, then grab and return it.
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+        val keyStore = KeyStore.getInstance(provider)
         keyStore.load(null) // Keystore must be loaded before it can be accessed
         if (pubKey) {
             keyStore.getCertificate(keyName)?.let { return it.publicKey as PublicKey }
@@ -278,7 +280,7 @@ class HeimdallEncryptionManager(
         val keyGenParams = paramsBuilder.build()
         val keyPairGenerator = KeyPairGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_RSA,
-            ANDROID_KEYSTORE
+            provider
         )
         keyPairGenerator.initialize(keyGenParams)
         val keyPair = keyPairGenerator.genKeyPair()

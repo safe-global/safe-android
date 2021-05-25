@@ -12,6 +12,7 @@ import org.junit.Test
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.KeyStorage
 import pm.gnosis.tests.utils.TestPreferences
+import java.security.KeyStore
 
 
 class HeimdallEncryptionManagerTest {
@@ -23,6 +24,8 @@ class HeimdallEncryptionManagerTest {
 
     private lateinit var encryptionManager: HeimdallEncryptionManager
 
+    private lateinit var biometricPasscodeManager: BiometricPasscodeManager
+
     @Before
     fun setup() {
         preferences = spyk()
@@ -31,9 +34,11 @@ class HeimdallEncryptionManagerTest {
         }
         preferencesManager = PreferencesManager(application)
 
-        every { keyStorage.store(any()) } returnsArgument  0
-        every { keyStorage.retrieve(any()) } returnsArgument  0
-        encryptionManager = HeimdallEncryptionManager(preferencesManager = preferencesManager, keyStorage = keyStorage, context = application)
+        every { keyStorage.store(any()) } returnsArgument 0
+        every { keyStorage.retrieve(any()) } returnsArgument 0
+        encryptionManager =
+            HeimdallEncryptionManager(preferencesManager = preferencesManager, keyStorage = keyStorage, context = application, provider = KeyStore.getDefaultType())
+        biometricPasscodeManager = encryptionManager
     }
 
     @Test
