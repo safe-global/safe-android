@@ -2,10 +2,8 @@ package io.gnosis.data.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import java.math.BigInteger
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class SafeInfo(
     @Json(name = "address") val address: AddressInfoExtended,

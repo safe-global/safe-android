@@ -2,12 +2,10 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 import java.util.*
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class Transaction(
     @Json(name = "id")
@@ -24,7 +22,6 @@ data class Transaction(
     val safeAppInfo: SafeAppInfo?
 )
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class SafeAppInfo(
     @Json(name = "name")
@@ -35,7 +32,6 @@ data class SafeAppInfo(
     val logoUrl: String
 )
 
-@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class ExecutionInfo(
     @Json(name = "nonce")
@@ -48,7 +44,6 @@ data class ExecutionInfo(
     val missingSigners: List<Solidity.Address>?
 )
 
-@ExcludeClassFromJacocoGeneratedReport
 enum class TransactionType {
     @Json(name = "Transfer")
     Transfer,
@@ -66,7 +61,6 @@ enum class TransactionType {
     Unknown
 }
 
-@ExcludeClassFromJacocoGeneratedReport
 enum class TransactionStatus {
     @Json(name = "AWAITING_CONFIRMATIONS")
     AWAITING_CONFIRMATIONS,

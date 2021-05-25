@@ -3,11 +3,9 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.AddressInfo
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
-@ExcludeClassFromJacocoGeneratedReport
 sealed class TransactionInfo(
     @Json(name = "type") val type: TransactionType
 ) {

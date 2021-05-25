@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import org.bouncycastle.crypto.engines.AESEngine
 import org.bouncycastle.crypto.generators.SCrypt
 import org.bouncycastle.crypto.modes.CBCBlockCipher
@@ -33,7 +32,6 @@ import javax.crypto.Cipher
  * @param passcodeIterations Number of iterations the passcode is hashed to prevent brute force attacks.
  *                           Will be disabled when set to 0 else has to be larger than 1, a power of 2 and less than <code>2^128</code>.
  */
-@ExcludeClassFromJacocoGeneratedReport
 class HeimdallEncryptionManager(
     private val preferencesManager: PreferencesManager,
     private val keyStorage: KeyStorage,

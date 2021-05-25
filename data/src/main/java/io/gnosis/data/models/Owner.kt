@@ -2,11 +2,9 @@ package io.gnosis.data.models
 
 import androidx.room.*
 import io.gnosis.data.models.Owner.Companion.TABLE_NAME
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 
-@ExcludeClassFromJacocoGeneratedReport
 @Entity(
     tableName = TABLE_NAME
 )
@@ -48,7 +46,6 @@ data class Owner(
     }
 }
 
-@ExcludeClassFromJacocoGeneratedReport
 class OwnerTypeConverter {
 
     @TypeConverter
