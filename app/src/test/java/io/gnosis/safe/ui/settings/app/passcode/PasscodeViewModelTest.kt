@@ -9,6 +9,7 @@ import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.BiometricPasscodeManager
 import io.gnosis.data.security.HeimdallEncryptionManager
+import io.gnosis.data.security.PasscodeCiphertextWrapper
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -313,5 +314,30 @@ class PasscodeViewModelTest {
         verify(exactly = 1) { biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME) }
         verify(exactly = 1) { settingsHandler.useBiometrics = false }
         verify(exactly = 1) { biometricPasscodeManager.deleteKey(BiometricPasscodeManager.KEY_NAME) }
+    }
+
+    @Test
+    fun `decryptPasscode - () should call decryptData and unlock with passcode`() {
+        val encryptedPasscode = mockk<PasscodeCiphertextWrapper>(relaxed = true)
+        every { biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(any(), any(), any()) } returns encryptedPasscode
+        val cipher = mockk<Cipher>(relaxed = true)
+        val authenticationResult: BiometricPrompt.AuthenticationResult = mockk(relaxed = true)
+        every { authenticationResult.cryptoObject?.cipher } returns cipher
+        val ciphertext = ByteArray(1)
+        every { encryptedPasscode.ciphertext } returns ciphertext
+        val passcode = "123456"
+        every { biometricPasscodeManager.decryptData(any(), any()) } returns passcode
+
+        viewModel.decryptPasscode(authenticationResult)
+
+        verify(exactly = 1) {
+            biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+        verify(exactly = 1) { biometricPasscodeManager.decryptData(ciphertext, cipher) }
+        verify(exactly = 1) { viewModel.unlockWithPasscode("123456") }
     }
 }
