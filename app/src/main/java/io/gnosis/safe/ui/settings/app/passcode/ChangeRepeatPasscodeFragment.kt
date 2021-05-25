@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -81,17 +80,8 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             }
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (digitsAsString == passcodeArg) {
+                    viewModel.encryptPasscodeWithBiometricKey(digitsAsString)
                     viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
-                    val cm = CryptographyManager()
-                    val cipher = cm.getInitializedCipherForEncryption(CryptographyManager.KEY_NAME)
-                    val encrypted = cm.encryptData(digitsAsString, cipher)
-                    cm.persistCiphertextWrapperToSharedPrefs(
-                        encrypted,
-                        requireContext(),
-                        CryptographyManager.FILE_NAME,
-                        Context.MODE_PRIVATE,
-                        CryptographyManager.KEY_NAME
-                    )
                 } else {
                     errorMessage.visible(true)
                     input.setText("")

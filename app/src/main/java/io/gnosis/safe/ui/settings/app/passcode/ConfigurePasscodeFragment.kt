@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -18,8 +17,6 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.app.passcode.CryptographyManager.Companion.FILE_NAME
-import io.gnosis.safe.ui.settings.app.passcode.CryptographyManager.Companion.KEY_NAME
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
@@ -33,7 +30,6 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
     lateinit var viewModel: PasscodeViewModel
     private val navArgs by navArgs<ConfigurePasscodeFragmentArgs>()
     private val passcodeCommand by lazy { navArgs.passcodeCommand }
-    private val cm = CryptographyManager()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -94,10 +90,6 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
             }
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
-                val cipher = cm.getInitializedCipherForEncryption(KEY_NAME)
-                val encrypted = cm.encryptData(digitsAsString, cipher)
-                cm.persistCiphertextWrapperToSharedPrefs(encrypted, requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
-
                 viewModel.configurePasscode(digitsAsString, passcodeCommand)
             })
 

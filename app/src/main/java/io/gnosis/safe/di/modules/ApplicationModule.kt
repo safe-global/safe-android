@@ -18,6 +18,7 @@ import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.repositories.*
+import io.gnosis.data.security.BiometricPasscodeManager
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
@@ -226,10 +227,21 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesEncryptionManager(
         preferencesManager: PreferencesManager,
-        keyStorage: KeyStorage
+        keyStorage: KeyStorage,
+        @ApplicationContext context: Context
     ): HeimdallEncryptionManager =
         // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
-        HeimdallEncryptionManager(preferencesManager, keyStorage, 4096)
+        HeimdallEncryptionManager(preferencesManager, keyStorage, 4096, context)
+
+    @Provides
+    @Singleton
+    fun providesBiometricPasscodeManager(
+        preferencesManager: PreferencesManager,
+        keyStorage: KeyStorage,
+        @ApplicationContext context: Context
+    ): BiometricPasscodeManager =
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        HeimdallEncryptionManager(preferencesManager, keyStorage, 4096, context)
 
     //TODO: remove
     @Provides

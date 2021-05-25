@@ -1,10 +1,8 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Build
 import android.os.Bundle
-import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -27,13 +25,10 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.ui.settings.app.passcode.CryptographyManager.Companion.FILE_NAME
-import io.gnosis.safe.ui.settings.app.passcode.CryptographyManager.Companion.KEY_NAME
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -43,7 +38,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
     private val selectedOwner by lazy { navArgs.selectedOwner }
     private val requirePasscodeToOpen by lazy { navArgs.requirePasscodeToOpen }
-    private val cm = CryptographyManager()
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -91,19 +85,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 } else {
                     createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_sign)
                 }
-
-                try {
-//                    val ciphertextWrapper = cm.getCiphertextWrapperFromSharedPrefs(requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
-                    val cipher = cm.getInitializedCipherForDecryption(KEY_NAME)
-                    biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-                } catch (e: KeyPermanentlyInvalidatedException) {
-                    // This happens when the user enrolls new fingerprints
-                    settingsHandler.useBiometrics = false
-                    cm.deleteKey(KEY_NAME)
-                } catch (e: Throwable) {
-                    settingsHandler.useBiometrics = false
-                    Timber.e(e, "Biometric passcode")
-                }
+                viewModel.biometricAuthentication(biometricPrompt, promptInfo)
             }
         }
     }
@@ -121,18 +103,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             findNavController().popBackStack(R.id.enterPasscodeFragment, true)
             binding.input.hideSoftKeyboard()
         } else {
-            val encryptedPasscode = cm.getCiphertextWrapperFromSharedPrefs(requireContext(), FILE_NAME, MODE_PRIVATE, KEY_NAME)
-            try {
-                encryptedPasscode?.let { cipherTestWrapper ->
-                     authenticationResult.cryptoObject?.cipher?.let { cipher ->
-                        val passcode = cm.decryptData(cipherTestWrapper.ciphertext, cipher)
-                        viewModel.unlockWithPasscode(passcode)
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "cannot decrypt passcode")
-                settingsHandler.useBiometrics = false
-            }
+            viewModel.decryptPasscode(authenticationResult)
             binding.input.delayShowKeyboardForView()
         }
     }

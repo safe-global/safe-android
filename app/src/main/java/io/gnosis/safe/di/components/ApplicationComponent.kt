@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Component
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.security.BiometricPasscodeManager
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.di.ApplicationContext
@@ -64,6 +65,8 @@ interface ApplicationComponent {
     fun notificationRepo(): NotificationRepository
 
     fun encryptionManager(): HeimdallEncryptionManager
+
+    fun biometricPasscodeManager(): BiometricPasscodeManager
 
     fun credentialsRepository(): CredentialsRepository
 

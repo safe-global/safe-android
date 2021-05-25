@@ -1,7 +1,13 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Context
+import android.os.Build
+import android.security.keystore.KeyPermanentlyInvalidatedException
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.security.BiometricPasscodeManager
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -10,6 +16,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeViewModel.PasscodeState
+import timber.log.Timber
 import javax.inject.Inject
 
 class PasscodeViewModel
@@ -20,6 +27,7 @@ class PasscodeViewModel
     private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     private val safeRepository: SafeRepository,
+    private val biometricPasscodeManager: BiometricPasscodeManager,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<PasscodeState>(appDispatchers) {
 
@@ -27,6 +35,14 @@ class PasscodeViewModel
 
     fun configurePasscode(passcode: String, command: PasscodeCommand) {
         safeLaunch {
+            val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
+            val encrypted = biometricPasscodeManager.encryptData(passcode, cipher)
+            biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(encrypted,
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
                 when (command) {
@@ -139,6 +155,52 @@ class PasscodeViewModel
             }
         }
     }
+
+    fun encryptPasscodeWithBiometricKey(digitsAsString: String) {
+        val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
+        val encrypted = biometricPasscodeManager.encryptData(digitsAsString, cipher)
+        biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
+            encrypted,
+            BiometricPasscodeManager.FILE_NAME,
+            Context.MODE_PRIVATE,
+            BiometricPasscodeManager.KEY_NAME
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun biometricAuthentication(biometricPrompt: BiometricPrompt, promptInfo: BiometricPrompt.PromptInfo) {
+        try {
+            val cipher = biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME)
+            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+        } catch (e: KeyPermanentlyInvalidatedException) {
+            // This happens when the user enrolls new fingerprints
+            settingsHandler.useBiometrics = false
+            biometricPasscodeManager.deleteKey(BiometricPasscodeManager.KEY_NAME)
+        } catch (e: Throwable) {
+            settingsHandler.useBiometrics = false
+            Timber.e(e, "Biometric passcode")
+        }
+    }
+
+    fun decryptPasscode(authenticationResult: BiometricPrompt.AuthenticationResult) {
+        val encryptedPasscode = biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(
+            BiometricPasscodeManager.FILE_NAME,
+            Context.MODE_PRIVATE,
+            BiometricPasscodeManager.KEY_NAME
+        )
+        try {
+            encryptedPasscode?.let { cipherTestWrapper ->
+                authenticationResult.cryptoObject?.cipher?.let { cipher ->
+                    val passcode = biometricPasscodeManager.decryptData(cipherTestWrapper.ciphertext, cipher)
+                    unlockWithPasscode(passcode)
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "cannot decrypt passcode")
+            settingsHandler.useBiometrics = false
+        }
+    }
+
 
     data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction

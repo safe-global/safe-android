@@ -1,5 +1,13 @@
 package io.gnosis.data.security
 
+import android.content.Context
+import android.os.Build
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import androidx.annotation.RequiresApi
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
 import org.bouncycastle.crypto.engines.AESEngine
 import org.bouncycastle.crypto.generators.SCrypt
 import org.bouncycastle.crypto.modes.CBCBlockCipher
@@ -16,7 +24,9 @@ import pm.gnosis.svalinn.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
-import java.security.SecureRandom
+import java.nio.charset.Charset
+import java.security.*
+import javax.crypto.Cipher
 
 /**
  * @param passcodeIterations Number of iterations the passcode is hashed to prevent brute force attacks.
@@ -25,11 +35,20 @@ import java.security.SecureRandom
 class HeimdallEncryptionManager(
     private val preferencesManager: PreferencesManager,
     private val keyStorage: KeyStorage,
-    private val passcodeIterations: Int = SCRYPT_ITERATIONS
-) : EncryptionManager {
+    private val passcodeIterations: Int = SCRYPT_ITERATIONS,
+    private val context: Context
+) : EncryptionManager, BiometricPasscodeManager {
 
     private val secureRandom = SecureRandom()
     private var key: ByteArray? = null
+
+    // For BiometricPasscodeManager
+    private val RSA_KEY_SIZE = 1024
+    private val ANDROID_KEYSTORE = "AndroidKeystore"
+    private val ASYMMETRIC_ENCRYPTION_ALGORITHM = KeyProperties.KEY_ALGORITHM_RSA
+    private val ASYMMETRIC_ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_ECB
+    private val ASYMMETRIC_ENCRYPTION_PADDING = KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1
+    private val moshi = Moshi.Builder().build()
 
     init {
         if (preferencesManager.prefs.getString(PREF_KEY_ENCRYPTED_APP_KEY, null) == null) {
@@ -64,7 +83,7 @@ class HeimdallEncryptionManager(
 
 
     @Synchronized
-    override fun  unlockWithPassword(passcode: ByteArray): Boolean {
+    override fun unlockWithPassword(passcode: ByteArray): Boolean {
         // If we have no passcode set (no checksum stored, we cannot unlockWithPasscode
         val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSCODE_CHECKSUM, null) ?: return false
         buildPasscodeKeyIfValid(passcode, checksum) ?: return false
@@ -101,7 +120,7 @@ class HeimdallEncryptionManager(
         val key = this.key?.let {
             nullOnThrow { keyStorage.retrieve(it) } ?: it // Fallback if app was setup before storage existed
         } ?: throw DeviceIsLockedException()
-        
+
         return encrypt(key, data)
     }
 
@@ -181,5 +200,161 @@ class HeimdallEncryptionManager(
         private const val SCRYPT_KEY_LENGTH = 32
         private const val PREF_KEY_ENCRYPTED_APP_KEY = "encryption_manager.string.encrypted_app_key"
         private const val PREF_KEY_PASSCODE_CHECKSUM = "encryption_manager.string.password_checksum"
+    }
+
+    // For BiometricPasscodeManager
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun getInitializedRSACipherForEncryption(keyName: String): Cipher {
+        val cipher = getCipher()
+        try {
+            val publicKey = getOrCreateKey(keyName, true) as PublicKey
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+
+        } catch (e: java.lang.ClassCastException) {
+            deleteKey(keyName)
+        }
+        return cipher
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun getInitializedRSACipherForDecryption(
+        keyName: String
+    ): Cipher {
+        val cipher = getCipher()
+        val privateKey = getOrCreateKey(keyName) as PrivateKey
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
+        return cipher
+    }
+
+    override fun deleteKey(keyName: String) {
+        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+        keyStore.load(null)
+        keyStore.deleteEntry(keyName)
+    }
+
+    override fun encryptData(plaintext: String, cipher: Cipher): PasscodeCiphertextWrapper {
+        val ciphertext = cipher.doFinal(plaintext.toByteArray(Charset.forName("UTF-8")))
+        return PasscodeCiphertextWrapper(ciphertext)
+    }
+
+    override fun decryptData(ciphertext: ByteArray, cipher: Cipher): String {
+        val plaintext = cipher.doFinal(ciphertext)
+        return String(plaintext, Charset.forName("UTF-8"))
+    }
+
+    private fun getCipher(): Cipher {
+        val transformation = "$ASYMMETRIC_ENCRYPTION_ALGORITHM/$ASYMMETRIC_ENCRYPTION_BLOCK_MODE/$ASYMMETRIC_ENCRYPTION_PADDING"
+        return Cipher.getInstance(transformation)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun getOrCreateKey(keyName: String, pubKey: Boolean = false): Key {
+        // If Secretkey was previously created for that keyName, then grab and return it.
+        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+        keyStore.load(null) // Keystore must be loaded before it can be accessed
+        if (pubKey) {
+            keyStore.getCertificate(keyName)?.let { return it.publicKey as PublicKey }
+        }
+        keyStore.getKey(keyName, null)?.let { return it as PrivateKey }
+
+        // if you reach here, then a new PrivateKey must be generated for that keyName
+        val paramsBuilder = KeyGenParameterSpec.Builder(
+            keyName,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+        paramsBuilder.apply {
+            setBlockModes(ASYMMETRIC_ENCRYPTION_BLOCK_MODE)
+            setEncryptionPaddings(ASYMMETRIC_ENCRYPTION_PADDING)
+            setKeySize(RSA_KEY_SIZE)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setUserAuthenticationRequired(true)
+            }
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                setInvalidatedByBiometricEnrollment(true)
+            }
+            setUserAuthenticationValidityDurationSeconds(-1)
+        }
+
+        val keyGenParams = paramsBuilder.build()
+        val keyPairGenerator = KeyPairGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_RSA,
+            ANDROID_KEYSTORE
+        )
+        keyPairGenerator.initialize(keyGenParams)
+        val keyPair = keyPairGenerator.genKeyPair()
+        return if (pubKey) {
+            keyPair.public
+        } else {
+            keyPair.private
+        }
+    }
+
+    override fun persistEncryptedPasscodeToSharedPrefs(
+        passcodeCiphertextWrapper: PasscodeCiphertextWrapper,
+        filename: String,
+        mode: Int,
+        prefKey: String
+    ) {
+        val jsonAdapter = moshi.adapter(PasscodeCiphertextWrapper::class.java)
+        val json = jsonAdapter.toJson(passcodeCiphertextWrapper)
+        context.getSharedPreferences(filename, mode).edit().putString(prefKey, json).apply()
+    }
+
+    override fun retrieveEncryptedPasscodeFromSharedPrefs(
+        filename: String,
+        mode: Int,
+        prefKey: String
+    ): PasscodeCiphertextWrapper? {
+        val jsonAdapter = moshi.adapter<PasscodeCiphertextWrapper>(PasscodeCiphertextWrapper::class.java)
+        val json = context.getSharedPreferences(filename, mode).getString(prefKey, null)
+        return jsonAdapter.fromJson(json)
+    }
+}
+
+interface BiometricPasscodeManager {
+
+    fun getInitializedRSACipherForEncryption(keyName: String): Cipher
+
+    fun getInitializedRSACipherForDecryption(keyName: String): Cipher
+
+    fun deleteKey(keyName: String)
+
+    fun encryptData(plaintext: String, cipher: Cipher): PasscodeCiphertextWrapper
+
+    fun decryptData(ciphertext: ByteArray, cipher: Cipher): String
+
+    fun persistEncryptedPasscodeToSharedPrefs(
+        passcodeCiphertextWrapper: PasscodeCiphertextWrapper,
+        filename: String,
+        mode: Int,
+        prefKey: String
+    )
+
+    fun retrieveEncryptedPasscodeFromSharedPrefs(
+        filename: String,
+        mode: Int,
+        prefKey: String
+    ): PasscodeCiphertextWrapper?
+
+    companion object {
+        const val KEY_NAME = "prefs.string.passcode.biometrics.key_name"
+        const val FILE_NAME = "prefs.string.passcode.biometrics.file_name"
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class PasscodeCiphertextWrapper(
+    @Json(name = "ciphertext") val ciphertext: ByteArray
+) {
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
     }
 }
