@@ -2,11 +2,13 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import java.util.*
 
+@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class TransactionDetails(
     @Json(name = "txHash")
@@ -25,6 +27,7 @@ data class TransactionDetails(
     val safeAppInfo: SafeAppInfo?
 )
 
+@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class TxData(
     @Json(name = "hexData")
@@ -39,6 +42,7 @@ data class TxData(
     val operation: Operation
 )
 
+@ExcludeClassFromJacocoGeneratedReport
 enum class DetailedExecutionInfoType {
     @Json(name = "MULTISIG")
     MULTISIG,
@@ -46,6 +50,7 @@ enum class DetailedExecutionInfoType {
     MODULE
 }
 
+@ExcludeClassFromJacocoGeneratedReport
 sealed class DetailedExecutionInfo(
     @Json(name = "type") val type: DetailedExecutionInfoType
 ) {
@@ -84,6 +89,7 @@ sealed class DetailedExecutionInfo(
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MODULE)
 }
 
+@ExcludeClassFromJacocoGeneratedReport
 @JsonClass(generateAdapter = true)
 data class Confirmations(
     @Json(name = "signer")

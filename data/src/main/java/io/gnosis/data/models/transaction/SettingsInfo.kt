@@ -3,8 +3,10 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 
+@ExcludeClassFromJacocoGeneratedReport
 enum class SettingsInfoType {
     @Json(name = "SET_FALLBACK_HANDLER")
     SET_FALLBACK_HANDLER,
@@ -24,6 +26,7 @@ enum class SettingsInfoType {
     DISABLE_MODULE
 }
 
+@ExcludeClassFromJacocoGeneratedReport
 sealed class SettingsInfo(
     @Json(name = "type") val type: SettingsInfoType
 ) {
