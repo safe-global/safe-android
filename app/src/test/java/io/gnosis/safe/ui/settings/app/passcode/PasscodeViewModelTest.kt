@@ -26,6 +26,7 @@ class PasscodeViewModelTest {
 
     private val credentialsRepository = mockk<CredentialsRepository>(relaxed = true)
     private val encryptionManager = mockk<HeimdallEncryptionManager>(relaxed = true)
+    private val biometricPasscodeManager = mockk<HeimdallEncryptionManager>(relaxed = true)
     private val notificationRepository = mockk<NotificationRepository>(relaxed = true)
     private val settingsHandler = mockk<SettingsHandler>(relaxed = true)
     private val safeRepository = mockk<SafeRepository>(relaxed = true)
@@ -45,6 +46,7 @@ class PasscodeViewModelTest {
             settingsHandler,
             tracker,
             safeRepository,
+            biometricPasscodeManager,
             appDispatchers
         )
     }

@@ -56,56 +56,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.delayShowKeyboardForView()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (settingsHandler.useBiometrics) {
-                val biometricPrompt: BiometricPrompt = createBiometricPrompt(
-                    fragment = this@EnterPasscodeFragment,
-                    authCallback = object : BiometricPrompt.AuthenticationCallback() {
-
-                        override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
-                            super.onAuthenticationError(errCode, errString)
-                            if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                                onUsePasscode()
-                            }
-                        }
-
-                        override fun onAuthenticationFailed() {
-                            super.onAuthenticationFailed()
-                            onBiometricsAuthFailed()
-                        }
-
-                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                            super.onAuthenticationSucceeded(result)
-                            onBiometricsSuccess(result)
-                        }
-                    }
-                )
-                val promptInfo = if (requirePasscodeToOpen) {
-                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_login)
-                } else {
-                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_sign)
-                }
-                viewModel.biometricAuthentication(biometricPrompt, promptInfo)
-            }
-        }
-    }
-
-    private fun onUsePasscode() {
-        binding.input.delayShowKeyboardForView()
-    }
-
-    private fun onBiometricsAuthFailed() {
-        binding.input.delayShowKeyboardForView()
-    }
-
-    private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
-        if (requirePasscodeToOpen) {
-            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
-            binding.input.hideSoftKeyboard()
-        } else {
-            viewModel.decryptPasscode(authenticationResult)
-            binding.input.delayShowKeyboardForView()
-        }
+        authenticateWithBiometrics()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -195,6 +146,59 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
                 selectedOwner
             )
+        }
+    }
+
+    private fun authenticateWithBiometrics() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (settingsHandler.useBiometrics) {
+                val biometricPrompt: BiometricPrompt = createBiometricPrompt(
+                    fragment = this@EnterPasscodeFragment,
+                    authCallback = object : BiometricPrompt.AuthenticationCallback() {
+
+                        override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
+                            super.onAuthenticationError(errCode, errString)
+                            if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                onUsePasscode()
+                            }
+                        }
+
+                        override fun onAuthenticationFailed() {
+                            super.onAuthenticationFailed()
+                            onBiometricsAuthFailed()
+                        }
+
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+                            onBiometricsSuccess(result)
+                        }
+                    }
+                )
+                val promptInfo = if (requirePasscodeToOpen) {
+                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_login)
+                } else {
+                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_sign)
+                }
+                viewModel.biometricAuthentication(biometricPrompt, promptInfo)
+            }
+        }
+    }
+
+    private fun onUsePasscode() {
+        binding.input.delayShowKeyboardForView()
+    }
+
+    private fun onBiometricsAuthFailed() {
+        binding.input.delayShowKeyboardForView()
+    }
+
+    private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
+        if (requirePasscodeToOpen) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+        } else {
+            viewModel.decryptPasscode(authenticationResult)
+            binding.input.delayShowKeyboardForView()
         }
     }
 
