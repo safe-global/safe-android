@@ -300,7 +300,6 @@ class PasscodeViewModelTest {
         verify(exactly = 1) { biometricPrompt.authenticate(promptInfo, any()) }
     }
 
-
     @Test
     fun `biometricAuthentication - () should delete key when key permanently invalid KeyPermanentlyInvalidatedException`() {
         val cipher = mockk<Cipher>(relaxed = true)
@@ -317,7 +316,7 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `decryptPasscode - () should call decryptData and unlock with passcode`() {
+    fun `decryptPasscode - (succeeds) should call decryptData and unlock with passcode`() {
         val encryptedPasscode = mockk<PasscodeCiphertextWrapper>(relaxed = true)
         every { biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(any(), any(), any()) } returns encryptedPasscode
         val cipher = mockk<Cipher>(relaxed = true)
@@ -339,5 +338,31 @@ class PasscodeViewModelTest {
         }
         verify(exactly = 1) { biometricPasscodeManager.decryptData(ciphertext, cipher) }
         verify(exactly = 1) { viewModel.unlockWithPasscode("123456") }
+    }
+
+    @Test
+    fun `decryptPasscode - (fails) should disable biometrics`() {
+        val encryptedPasscode = mockk<PasscodeCiphertextWrapper>(relaxed = true)
+        every { biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(any(), any(), any()) } returns encryptedPasscode
+        every { encryptionManager.unlockWithPassword(any()) } returns false
+        val cipher = mockk<Cipher>(relaxed = true)
+        val authenticationResult: BiometricPrompt.AuthenticationResult = mockk(relaxed = true)
+        every { authenticationResult.cryptoObject?.cipher } returns cipher
+        val ciphertext = ByteArray(1)
+        every { encryptedPasscode.ciphertext } returns ciphertext
+        every { biometricPasscodeManager.decryptData(any(), any()) } throws Exception()
+
+        viewModel.decryptPasscode(authenticationResult)
+
+        verify(exactly = 1) {
+            biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+        verify(exactly = 1) { biometricPasscodeManager.decryptData(ciphertext, cipher) }
+        verify(exactly = 1) { settingsHandler.useBiometrics = false }
+        coVerify(exactly = 0) { encryptionManager.unlockWithPassword(any()) }
     }
 }
