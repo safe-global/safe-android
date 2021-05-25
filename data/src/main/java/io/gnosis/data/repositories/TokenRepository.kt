@@ -6,10 +6,12 @@ import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
+@ExcludeClassFromJacocoGeneratedReport
 class TokenRepository(private val gatewayApi: GatewayApi) {
 
     suspend fun loadBalanceOf(safe: Solidity.Address, fiatCode: String): CoinBalances {

@@ -3,6 +3,7 @@ package io.gnosis.data.repositories
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.transaction.*
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.data.utils.toSignatureString
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -12,6 +13,7 @@ import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 
+@ExcludeClassFromJacocoGeneratedReport
 class TransactionRepository(
     private val gatewayApi: GatewayApi
 ) {

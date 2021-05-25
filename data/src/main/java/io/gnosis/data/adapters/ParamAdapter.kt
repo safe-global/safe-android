@@ -3,10 +3,12 @@ package io.gnosis.data.adapters
 import com.squareup.moshi.*
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ValueDecoded
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 
+@ExcludeClassFromJacocoGeneratedReport
 class ParamAdapter {
 
     @ToJson

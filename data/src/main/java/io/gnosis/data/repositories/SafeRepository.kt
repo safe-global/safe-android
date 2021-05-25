@@ -7,6 +7,7 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.SafeMetaData
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -16,6 +17,7 @@ import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
+@ExcludeClassFromJacocoGeneratedReport
 class SafeRepository(
     private val safeDao: SafeDao,
     private val preferencesManager: PreferencesManager,
