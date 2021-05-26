@@ -318,7 +318,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     override fun appInForeground() {
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
-            // do not reset comingFromBackground here because this method id called before
+            // do not reset comingFromBackground here because this method is called before
             // onNewIntent() is called and we need to distinguish between push notifications
             // that were opened in the foreground and the background.
         }
