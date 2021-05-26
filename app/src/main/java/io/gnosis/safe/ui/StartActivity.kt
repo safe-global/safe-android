@@ -92,7 +92,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeAddress?.let {
                 // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
-
                     handlingPushNotification = true
 
                     val safe = safeRepository.getSafeBy(safeAddress)
@@ -120,7 +119,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (settingsHandler.showUpdateInfo) {
                         askToUpdate()
                     }
-                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen) {
+                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
                         askForPasscode()
                     }
                     handlingPushNotification = false
