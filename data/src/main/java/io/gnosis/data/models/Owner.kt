@@ -21,17 +21,22 @@ data class Owner(
     val type: Type,
 
     @ColumnInfo(name = COL_PRIVATE_KEY)
-    val privateKey: EncryptedByteArray? = null
+    val privateKey: EncryptedByteArray? = null,
+
+    @ColumnInfo(name = COL_SEED_PHRASE)
+    val seedPhrase: String? = null
 ) {
 
     enum class Type(val value: Int) {
         // add types here
-        LOCALLY_STORED(0);
+        IMPORTED(0),
+        GENERATED(1);
 
         companion object {
-            fun get(value: Int) = when (value) {
-                0 -> LOCALLY_STORED
-                else -> LOCALLY_STORED
+            fun get(value: Int) = when(value) {
+                0 -> IMPORTED
+                1 -> GENERATED
+                else -> IMPORTED
             }
         }
     }
@@ -43,6 +48,7 @@ data class Owner(
         const val COL_NAME = "name"
         const val COL_TYPE = "type"
         const val COL_PRIVATE_KEY = "private_key"
+        const val COL_SEED_PHRASE = "seed_phrase"
     }
 }
 

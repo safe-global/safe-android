@@ -29,7 +29,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "safe_db"
-        const val LATEST_DB_VERSION = 3
+        const val LATEST_DB_VERSION = 4
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -43,6 +43,14 @@ abstract class HeimdallDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
                     """CREATE TABLE IF NOT EXISTS `${Owner.TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `private_key` TEXT, PRIMARY KEY(`address`))"""
+                )
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """ALTER TABLE `${Owner.TABLE_NAME}` ADD COLUMN `${Owner.COL_SEED_PHRASE}` TEXT"""
                 )
             }
         }

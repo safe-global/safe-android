@@ -7,6 +7,8 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.models.Safe
 import org.junit.Assert
 import org.junit.Assert.assertTrue
@@ -23,6 +25,7 @@ import java.math.BigInteger
 class HeimdallDatabaseTest {
 
     private val addressConverter = SolidityAddressConverter()
+    private val ownerTypeConverter = OwnerTypeConverter()
 
     @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
@@ -38,7 +41,7 @@ class HeimdallDatabaseTest {
         helper.createDatabase(TEST_DB, 1).apply {
             close()
         }
-        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2, HeimdallDatabase.MIGRATION_2_3)
+        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2, HeimdallDatabase.MIGRATION_2_3, HeimdallDatabase.MIGRATION_3_4)
 
         // Open latest version of the database. Room will validate the schema
         // once all migrations execute.
@@ -114,7 +117,41 @@ class HeimdallDatabaseTest {
 
             close()
         }
+    }
 
+    @Test
+    @Throws(IOException::class)
+    fun migrate3To4() {
+
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED)
+
+        helper.createDatabase(TEST_DB, 3).apply {
+
+            val rowId = insert(
+                Owner.TABLE_NAME, OnConflictStrategy.REPLACE,
+                ContentValues().apply {
+                    put(Owner.COL_ADDRESS, addressConverter.toHexString(owner.address))
+                    put(Owner.COL_NAME, owner.name)
+                    put(Owner.COL_TYPE, ownerTypeConverter.toValue(owner.type))
+                })
+
+            assertTrue(rowId >= 0)
+
+            close()
+        }
+
+        helper.runMigrationsAndValidate(TEST_DB, 4, true, HeimdallDatabase.MIGRATION_3_4).apply {
+
+            with(query("SELECT * FROM ${Owner.TABLE_NAME}")) {
+                Assert.assertEquals(1, count)
+                moveToFirst()
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_ADDRESS)), owner.address.asEthereumAddressString())
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_NAME)), owner.name)
+                Assert.assertEquals(getInt(getColumnIndex(Owner.COL_TYPE)), ownerTypeConverter.toValue(owner.type))
+            }
+
+            close()
+        }
     }
 
     companion object {

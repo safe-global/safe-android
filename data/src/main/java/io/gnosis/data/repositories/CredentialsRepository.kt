@@ -53,7 +53,7 @@ class CredentialsRepository(
         val owner = Owner(
             address = address,
             name = name,
-            type = Owner.Type.LOCALLY_STORED,
+            type = Owner.Type.IMPORTED,
             privateKey = encryptedKey
         )
         ownerDao.save(owner)

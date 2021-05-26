@@ -42,7 +42,7 @@ class ConfirmRejectionViewModelTest {
         val owner = Owner(
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             null,
-            Owner.Type.LOCALLY_STORED,
+            Owner.Type.IMPORTED,
             null
         )
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")

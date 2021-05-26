@@ -267,7 +267,7 @@ class OwnerSeedPhraseViewModelTest {
 
     @Test
     fun `validatePrivateKey (good key already imported ) should fail`() {
-        coEvery { credentialsRepository.owner(any()) } returns Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED)
+        coEvery { credentialsRepository.owner(any()) } returns Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
