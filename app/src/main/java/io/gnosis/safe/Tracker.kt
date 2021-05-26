@@ -166,6 +166,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
+    OWNER_HOW_TO_ADD(" screen_owner_options"),
     OWNER_INFO("screen_owner_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     OWNER_ENTER_NAME("screen_owner_enter_name"),
