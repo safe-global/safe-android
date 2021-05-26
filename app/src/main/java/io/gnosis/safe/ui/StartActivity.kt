@@ -53,7 +53,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = false
-    var handlingPushNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,8 +91,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeAddress?.let {
                 // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
-                    handlingPushNotification = true
-
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
@@ -121,8 +118,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     }
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
                         askForPasscode()
+                        comingFromBackground = false
                     }
-                    handlingPushNotification = false
                 }
             } ?: run {
                 if (!settingsHandler.showUpdateInfo) {
@@ -132,7 +129,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 when {
                     settingsHandler.showUpdateInfo -> {
                         askToUpdate()
-
                         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && !settingsHandler.updateDeprecated) {
                             askForPasscode()
                         }
@@ -196,7 +192,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeImage.setImageResource(R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
             readOnly.visible(false, View.INVISIBLE)
-            safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
+            safeAddress.text = getString(R.string.no_safes_loaded)
             safeSelection.visible(false)
         }
     }
@@ -315,10 +311,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     override fun appInForeground() {
-        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground && !handlingPushNotification) {
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
         }
-        comingFromBackground = false
     }
 
     override fun appInBackground() {
