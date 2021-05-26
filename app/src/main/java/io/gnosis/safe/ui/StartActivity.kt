@@ -326,7 +326,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun askForPasscode() {
-        RuntimeException("askForPasscode").printStackTrace()
         handler.post {
             navigateToPasscodePrompt()
         }
