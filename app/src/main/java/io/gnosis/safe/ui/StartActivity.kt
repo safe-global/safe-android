@@ -311,7 +311,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     /*
-     * appInForeground() is triggered when the whole app is resumed from background not ony one activity.
+     * appInForeground() is triggered when the whole app is resumed from background not only one activity.
      * As it happens when we return from the QR code activity. We want to lock the screen when the app
      * is resumed from background but not when the user returns from the QR code scanner activity.
      */
@@ -319,7 +319,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
             // do not reset comingFromBackground here because this method id called before
-            // onNewIntent is called and we need to distinguish between push notifications
+            // onNewIntent() is called and we need to distinguish between push notifications
             // that were opened in the foreground and the background.
         }
     }
