@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.view.View
 import androidx.core.view.marginLeft
@@ -49,17 +50,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = false
+    var handlingPushNotification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
-
-        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
-            askForPasscode()
-        }
 
         viewComponent().inject(this)
 
@@ -94,6 +92,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeAddress?.let {
                 // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
+
+                    handlingPushNotification = true
+
                     val safe = safeRepository.getSafeBy(safeAddress)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
@@ -103,10 +104,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
-                            putBoolean(
-                                "requirePasscode",
-                                settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
-                            )
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
@@ -115,10 +112,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             })
 
                             navigate(
-                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
-                                    txId,
-                                    settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
-                                )
+                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId)
                             )
                         }
                     }
@@ -126,7 +120,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (settingsHandler.showUpdateInfo) {
                         askToUpdate()
                     }
-                    comingFromBackground = false
+                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen) {
+                        askForPasscode()
+                    }
+                    handlingPushNotification = false
                 }
             } ?: run {
                 if (!settingsHandler.showUpdateInfo) {
@@ -134,18 +131,26 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 }
                 // do not start rate flow and update screen together
                 when {
-                    settingsHandler.showUpdateInfo -> askToUpdate()
+                    settingsHandler.showUpdateInfo -> {
+                        askToUpdate()
+
+                        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && !settingsHandler.updateDeprecated) {
+                            askForPasscode()
+                        }
+                    }
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
-                        if (!settingsHandler.usePasscode) {
-                            setupPasscode()
-                        } else {
+                        if (settingsHandler.usePasscode) {
                             settingsHandler.askForPasscodeSetupOnFirstLaunch = false
                             settingsHandler.requirePasscodeToOpen = true
                             settingsHandler.requirePasscodeForConfirmations = true
                             askForPasscode()
+                        } else {
+                            setupPasscode()
                         }
                     }
-                    settingsHandler.appStartCount >= 3 -> startRateFlow()
+                    else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
+                        askForPasscode()
+                    }
                 }
             }
         }
@@ -155,6 +160,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         val navController = Navigation.findNavController(this, R.id.nav_host)
         navBar.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
+                startRateFlow()
+            }
             if (isFullscreen(destination.id)) {
                 toolbar.visibility = View.GONE
                 navBar.visibility = View.GONE
@@ -307,7 +316,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     override fun appInForeground() {
-        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
+        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground && !handlingPushNotification) {
             askForPasscode()
         }
         comingFromBackground = false
@@ -318,10 +327,15 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun askForPasscode() {
-        handler.postDelayed({
-            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-                putBoolean("requirePasscodeToOpen", true)
-            })
-        }, 600)
+        RuntimeException("askForPasscode").printStackTrace()
+        handler.post {
+            navigateToPasscodePrompt()
+        }
+    }
+
+    private fun navigateToPasscodePrompt() {
+        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
+            putBoolean("requirePasscodeToOpen", true)
+        })
     }
 }
