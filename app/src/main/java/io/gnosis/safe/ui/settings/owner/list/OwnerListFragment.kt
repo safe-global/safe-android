@@ -17,9 +17,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -110,9 +108,7 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
-        context?.copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
-            snackbar(view = binding.root, textId = R.string.copied_success)
-        }
+        //TODO: open Owner Key Details screen
     }
 
     private fun showList() {

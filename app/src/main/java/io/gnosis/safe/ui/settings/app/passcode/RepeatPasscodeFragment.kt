@@ -68,7 +68,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
                     if (ownerImported) {
-                        findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                        findNavController().popBackStack(R.id.ownerHowToAddFragment, true)
                     } else {
                         findNavController().popBackStack(R.id.createPasscodeFragment, true)
                     }
@@ -127,7 +127,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         tracker.logPasscodeSkipped()
 
         if (ownerImported) {
-            findNavController().popBackStack(R.id.ownerInfoFragment, true)
+            findNavController().popBackStack(R.id.ownerHowToAddFragment, true)
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
