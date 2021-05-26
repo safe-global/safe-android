@@ -845,7 +845,7 @@ class TransactionListViewModelTest {
             transactionListViewModel.getTransactionView(
                 it,
                 listOf(safe),
-                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress, type = Owner.Type.LOCALLY_STORED)))
+                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress, type = Owner.Type.IMPORTED)))
             )
         }
 

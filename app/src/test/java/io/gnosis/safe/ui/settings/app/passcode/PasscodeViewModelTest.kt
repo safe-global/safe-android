@@ -96,7 +96,7 @@ class PasscodeViewModelTest {
 
     @Test
     fun `onForgotPasscode - (successful owner deletion) should remove passcode and delete owner data `() {
-        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
+        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED))
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { safeRepository.clearActiveSafe() } just Runs
         coEvery { safeRepository.getSafes() } returns emptyList()
@@ -127,7 +127,7 @@ class PasscodeViewModelTest {
 
     @Test
     fun `onForgotPasscode - (owner deletion failed) should not remove passcode and delete owner data `() {
-        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.LOCALLY_STORED))
+        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED))
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { safeRepository.clearActiveSafe() } just Runs
         coEvery { safeRepository.getSafes() } returns emptyList()
