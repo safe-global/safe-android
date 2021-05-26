@@ -25,7 +25,6 @@ class TransactionsFragment : SafeOverviewBaseFragment<FragmentTransactionsBindin
 
     private val navArgs by navArgs<TransactionsFragmentArgs>()
     private val activeTab by lazy { navArgs.activeTab }
-    private val requirePasscode by lazy { navArgs.requirePasscode }
 
     @Inject
     lateinit var viewModel: TransactionsViewModel

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.view.View
 import androidx.core.view.marginLeft
@@ -48,15 +50,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
     private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
 
+    private val handler = Handler(Looper.getMainLooper())
+
     var comingFromBackground = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
-
-        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
-            askForPasscode()
-        }
 
         viewComponent().inject(this)
 
@@ -97,12 +97,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         setSafeData(it)
                     }
                     if (txId == null) {
+
                         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
                             putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
-                            putBoolean(
-                                "requirePasscode",
-                                settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
-                            )
                         })
                     } else {
                         with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
@@ -111,10 +108,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             })
 
                             navigate(
-                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
-                                    txId,
-                                    settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground
-                                )
+                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId)
                             )
                         }
                     }
@@ -122,7 +116,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (settingsHandler.showUpdateInfo) {
                         askToUpdate()
                     }
-                    comingFromBackground = false
+                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
+                        askForPasscode()
+                        comingFromBackground = false
+                    }
                 }
             } ?: run {
                 if (!settingsHandler.showUpdateInfo) {
@@ -130,18 +127,25 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 }
                 // do not start rate flow and update screen together
                 when {
-                    settingsHandler.showUpdateInfo -> askToUpdate()
+                    settingsHandler.showUpdateInfo -> {
+                        askToUpdate()
+                        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && !settingsHandler.updateDeprecated) {
+                            askForPasscode()
+                        }
+                    }
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
-                        if (!settingsHandler.usePasscode) {
-                            setupPasscode()
-                        } else {
+                        if (settingsHandler.usePasscode) {
                             settingsHandler.askForPasscodeSetupOnFirstLaunch = false
                             settingsHandler.requirePasscodeToOpen = true
                             settingsHandler.requirePasscodeForConfirmations = true
                             askForPasscode()
+                        } else {
+                            setupPasscode()
                         }
                     }
-                    settingsHandler.appStartCount >= 3 -> startRateFlow()
+                    else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
+                        askForPasscode()
+                    }
                 }
             }
         }
@@ -151,6 +155,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         val navController = Navigation.findNavController(this, R.id.nav_host)
         navBar.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
+                startRateFlow()
+            }
             if (isFullscreen(destination.id)) {
                 toolbar.visibility = View.GONE
                 navBar.visibility = View.GONE
@@ -184,7 +192,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeImage.setImageResource(R.drawable.ic_no_safe_loaded_36dp)
             safeName.visible(false)
             readOnly.visible(false, View.INVISIBLE)
-            safeAddress.text = getString(io.gnosis.safe.R.string.no_safes_loaded)
+            safeAddress.text = getString(R.string.no_safes_loaded)
             safeSelection.visible(false)
         }
     }
@@ -302,18 +310,34 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             }
     }
 
+    /*
+     * appInForeground() is triggered when the whole app is resumed from background not only one activity.
+     * As it happens when we return from the QR code activity. We want to lock the screen when the app
+     * is resumed from background but not when the user returns from the QR code scanner activity.
+     */
     override fun appInForeground() {
-    }
-
-    override fun appInBackground() {
-        comingFromBackground = true
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
-            comingFromBackground = false
+            // do not reset comingFromBackground here because this method is called before
+            // onNewIntent() is called and we need to distinguish between push notifications
+            // that were opened in the foreground and the background.
         }
+    }
+    /*
+     * appInBackground() is triggered when the last activity is going into onActivityStopped().
+     * See HeimdallApplication.activityLifecycleCallbacks()
+     */
+    override fun appInBackground() {
+        comingFromBackground = true
     }
 
     private fun askForPasscode() {
+        handler.post {
+            navigateToPasscodePrompt()
+        }
+    }
+
+    private fun navigateToPasscodePrompt() {
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
             putBoolean("requirePasscodeToOpen", true)
         })

@@ -2,13 +2,17 @@ package io.gnosis.data.security
 
 
 import android.app.Application
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.KeyStorage
 import pm.gnosis.tests.utils.TestPreferences
+import java.security.KeyStore
 
 
 class HeimdallEncryptionManagerTest {
@@ -20,6 +24,8 @@ class HeimdallEncryptionManagerTest {
 
     private lateinit var encryptionManager: HeimdallEncryptionManager
 
+    private lateinit var biometricPasscodeManager: BiometricPasscodeManager
+
     @Before
     fun setup() {
         preferences = spyk()
@@ -28,9 +34,11 @@ class HeimdallEncryptionManagerTest {
         }
         preferencesManager = PreferencesManager(application)
 
-        every { keyStorage.store(any()) } returnsArgument  0
-        every { keyStorage.retrieve(any()) } returnsArgument  0
-        encryptionManager = HeimdallEncryptionManager(preferencesManager, keyStorage)
+        every { keyStorage.store(any()) } returnsArgument 0
+        every { keyStorage.retrieve(any()) } returnsArgument 0
+        encryptionManager =
+            HeimdallEncryptionManager(preferencesManager = preferencesManager, keyStorage = keyStorage, context = application, provider = KeyStore.getDefaultType())
+        biometricPasscodeManager = encryptionManager
     }
 
     @Test

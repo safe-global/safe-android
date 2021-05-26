@@ -80,6 +80,7 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             }
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (digitsAsString == passcodeArg) {
+                    viewModel.encryptPasscodeWithBiometricKey(digitsAsString)
                     viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
                 } else {
                     errorMessage.visible(true)

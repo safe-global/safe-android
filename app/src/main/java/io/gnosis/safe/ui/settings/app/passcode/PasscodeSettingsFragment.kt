@@ -1,12 +1,20 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
+import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
@@ -14,6 +22,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.app.passcode.PasscodeCommand.*
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 
 class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPasscodeBinding>() {
@@ -60,13 +69,28 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 )
             }
 
-            useBiometrics.visible(false)
+            useBiometrics.visible(
+                settingsHandler.usePasscode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                        (canAuthenticate() == BIOMETRIC_SUCCESS ||
+                                canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED)
+            )
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
-                    findNavController().navigate(
-                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_ENABLE)
-                    )
+                    if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        } else {
+                            startActivityForResult(Intent(Settings.ACTION_FINGERPRINT_ENROLL), 1 /* REQUESTCODE_FINGERPRINT_ENROLLMENT */)
+                        }
+
+                        Toast.makeText(requireContext(), getString(R.string.biometric_prompt_please_enroll_biometric_attribute), Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+                        findNavController().navigate(
+                            PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_ENABLE)
+                        )
+                    }
                 } else {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(BIOMETRICS_DISABLE)
@@ -116,12 +140,24 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //TODO: What could we do here?
+        Timber.i("---> Handle result from Security setting: $requestCode, $resultCode, $data")
+    }
+
+    private fun canAuthenticate() = BiometricManager.from(requireContext())
+        .canAuthenticate()
+
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now
     }
 
     override fun onResume() {
         super.onResume()
+        if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+            settingsHandler.useBiometrics = false
+        }
         with(binding) {
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations

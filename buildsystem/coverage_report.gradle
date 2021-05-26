@@ -89,7 +89,7 @@ def setupAndroidReporting() {
                 '**/Dagger*Component*.class', // covers component implementations
                 '**/Dagger*Component*$Builder.class', // covers component builders
                 '**/*_*Factory*.class',
-                '**/*_*Impl*.class',
+                '**/*_*Impl*.class'
         ]
         def debugTree = fileTree(
                 dir: "$buildDir/tmp/kotlin-classes/debug",
@@ -177,7 +177,8 @@ project.ext {
             '**/*JsonAdapter.*',
             '**/di/**',
             '**/*Dagger.*',
-            '**/*Binding*.*'
+            '**/*Binding*.*',
+            'io/gnosis/data/models/**'
     ]
 }
 

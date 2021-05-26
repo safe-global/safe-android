@@ -31,7 +31,6 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
     private val navArgs by navArgs<ConfigurePasscodeFragmentArgs>()
     private val passcodeCommand by lazy { navArgs.passcodeCommand }
 
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
 

@@ -29,7 +29,7 @@ data class Owner(
         LOCALLY_STORED(0);
 
         companion object {
-            fun get(value: Int) = when(value) {
+            fun get(value: Int) = when (value) {
                 0 -> LOCALLY_STORED
                 else -> LOCALLY_STORED
             }

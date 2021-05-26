@@ -1,9 +1,15 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Context
+import android.security.keystore.KeyPermanentlyInvalidatedException
+import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.PromptInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.security.BiometricPasscodeManager
 import io.gnosis.data.security.HeimdallEncryptionManager
+import io.gnosis.data.security.PasscodeCiphertextWrapper
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -14,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
+import javax.crypto.Cipher
 
 class PasscodeViewModelTest {
 
@@ -26,6 +33,7 @@ class PasscodeViewModelTest {
 
     private val credentialsRepository = mockk<CredentialsRepository>(relaxed = true)
     private val encryptionManager = mockk<HeimdallEncryptionManager>(relaxed = true)
+    private val biometricPasscodeManager = mockk<HeimdallEncryptionManager>(relaxed = true)
     private val notificationRepository = mockk<NotificationRepository>(relaxed = true)
     private val settingsHandler = mockk<SettingsHandler>(relaxed = true)
     private val safeRepository = mockk<SafeRepository>(relaxed = true)
@@ -45,6 +53,7 @@ class PasscodeViewModelTest {
             settingsHandler,
             tracker,
             safeRepository,
+            biometricPasscodeManager,
             appDispatchers
         )
     }
@@ -256,5 +265,104 @@ class PasscodeViewModelTest {
         )
         verify(exactly = 1) { encryptionManager.setupPassword(examplePasscode.toByteArray(), exampleOldPasscode.toByteArray()) }
         verify(exactly = 1) { tracker.setPasscodeIsSet(true) }
+    }
+
+    @Test
+    fun `encryptPasscodeWithBiometricKey - (passcode) should store encrypted key`() {
+        every { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) } returns mockk(relaxed = true)
+        every { biometricPasscodeManager.encryptData(any(), any()) } returns mockk(relaxed = true)
+
+        viewModel.encryptPasscodeWithBiometricKey(examplePasscode)
+
+        verify(exactly = 1) { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) }
+        verify(exactly = 1) { biometricPasscodeManager.encryptData(examplePasscode, any()) }
+        verify(exactly = 1) {
+            biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
+                any(),
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+    }
+
+    @Test
+    fun `biometricAuthentication - () should authenticate`() {
+        val cipher = mockk<Cipher>(relaxed = true)
+        every { biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME) } returns cipher
+        val biometricPrompt = mockk<BiometricPrompt>(relaxed = true)
+        val promptInfo = mockk<PromptInfo>(relaxed = true)
+        every { biometricPrompt.authenticate(any(), any()) } just Runs
+
+        viewModel.biometricAuthentication(biometricPrompt, promptInfo)
+
+        verify(exactly = 1) { biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME) }
+        verify(exactly = 1) { biometricPrompt.authenticate(promptInfo, any()) }
+    }
+
+    @Test
+    fun `biometricAuthentication - () should delete key when key permanently invalid KeyPermanentlyInvalidatedException`() {
+        val cipher = mockk<Cipher>(relaxed = true)
+        every { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) } returns cipher
+        val biometricPrompt = mockk<BiometricPrompt>(relaxed = true)
+        every { biometricPrompt.authenticate(any(), any()) } throws KeyPermanentlyInvalidatedException()
+        val promptInfo = mockk<PromptInfo>(relaxed = true)
+
+        viewModel.biometricAuthentication(biometricPrompt, promptInfo)
+
+        verify(exactly = 1) { biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME) }
+        verify(exactly = 1) { settingsHandler.useBiometrics = false }
+        verify(exactly = 1) { biometricPasscodeManager.deleteKey(BiometricPasscodeManager.KEY_NAME) }
+    }
+
+    @Test
+    fun `decryptPasscode - (succeeds) should call decryptData and unlock with passcode`() {
+        val encryptedPasscode = mockk<PasscodeCiphertextWrapper>(relaxed = true)
+        every { biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(any(), any(), any()) } returns encryptedPasscode
+        val cipher = mockk<Cipher>(relaxed = true)
+        val authenticationResult: BiometricPrompt.AuthenticationResult = mockk(relaxed = true)
+        every { authenticationResult.cryptoObject?.cipher } returns cipher
+        val ciphertext = ByteArray(1)
+        every { encryptedPasscode.ciphertext } returns ciphertext
+        val passcode = "123456"
+        every { biometricPasscodeManager.decryptData(any(), any()) } returns passcode
+
+        viewModel.decryptPasscode(authenticationResult)
+
+        verify(exactly = 1) {
+            biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+        verify(exactly = 1) { biometricPasscodeManager.decryptData(ciphertext, cipher) }
+        verify(exactly = 1) { viewModel.unlockWithPasscode("123456") }
+    }
+
+    @Test
+    fun `decryptPasscode - (fails) should disable biometrics`() {
+        val encryptedPasscode = mockk<PasscodeCiphertextWrapper>(relaxed = true)
+        every { biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(any(), any(), any()) } returns encryptedPasscode
+        every { encryptionManager.unlockWithPassword(any()) } returns false
+        val cipher = mockk<Cipher>(relaxed = true)
+        val authenticationResult: BiometricPrompt.AuthenticationResult = mockk(relaxed = true)
+        every { authenticationResult.cryptoObject?.cipher } returns cipher
+        val ciphertext = ByteArray(1)
+        every { encryptedPasscode.ciphertext } returns ciphertext
+        every { biometricPasscodeManager.decryptData(any(), any()) } throws Exception()
+
+        viewModel.decryptPasscode(authenticationResult)
+
+        verify(exactly = 1) {
+            biometricPasscodeManager.retrieveEncryptedPasscodeFromSharedPrefs(
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+        verify(exactly = 1) { biometricPasscodeManager.decryptData(ciphertext, cipher) }
+        verify(exactly = 1) { settingsHandler.useBiometrics = false }
+        coVerify(exactly = 0) { encryptionManager.unlockWithPassword(any()) }
     }
 }

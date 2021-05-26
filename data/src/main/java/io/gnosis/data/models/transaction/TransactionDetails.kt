@@ -25,6 +25,7 @@ data class TransactionDetails(
     val safeAppInfo: SafeAppInfo?
 )
 
+
 @JsonClass(generateAdapter = true)
 data class TxData(
     @Json(name = "hexData")
@@ -39,12 +40,14 @@ data class TxData(
     val operation: Operation
 )
 
+
 enum class DetailedExecutionInfoType {
     @Json(name = "MULTISIG")
     MULTISIG,
     @Json(name = "MODULE")
     MODULE
 }
+
 
 sealed class DetailedExecutionInfo(
     @Json(name = "type") val type: DetailedExecutionInfoType

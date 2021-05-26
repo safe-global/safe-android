@@ -274,6 +274,8 @@ dependencies {
 
     profileImplementation "com.squareup.leakcanary:leakcanary-android:$versions.leak_canary"
 
+    implementation "androidx.biometric:biometric:$versions.androidx_biometrics"
+
 }
 
 

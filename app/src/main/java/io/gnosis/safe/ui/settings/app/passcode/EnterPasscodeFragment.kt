@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -7,7 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.StringRes
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -50,6 +56,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         super.onResume()
         binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.delayShowKeyboardForView()
+        authenticateWithBiometrics()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,16 +81,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     binding.input.setText("")
                 }
                 is PasscodeViewModel.PasscodeCorrect -> {
-                    if (requirePasscodeToOpen) {
-                        findNavController().popBackStack(R.id.enterPasscodeFragment, true)
-                        binding.input.hideSoftKeyboard()
-                    } else {
-                        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                            selectedOwner
-                        )
-                    }
+                    handlePasscodeCorrect()
                 }
             }
         })
@@ -92,7 +90,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             title.setText(R.string.settings_passcode_enter_passcode)
             createPasscode.setText(R.string.settings_passcode_enter_your_current_passcode)
             helpText.visible(false)
-            fingerprint.visible(settingsHandler.useBiometrics)
 
             if (requirePasscodeToOpen) {
                 backButton.visible(false)
@@ -138,4 +135,86 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             }
         }
     }
+
+    private fun handlePasscodeCorrect() {
+        if (requirePasscodeToOpen) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+        } else {
+            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                selectedOwner
+            )
+        }
+    }
+
+    private fun authenticateWithBiometrics() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (settingsHandler.useBiometrics) {
+                val biometricPrompt: BiometricPrompt = createBiometricPrompt(
+                    fragment = this@EnterPasscodeFragment,
+                    authCallback = object : BiometricPrompt.AuthenticationCallback() {
+
+                        override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
+                            super.onAuthenticationError(errCode, errString)
+                            if (errCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                onUsePasscode()
+                            }
+                        }
+
+                        override fun onAuthenticationFailed() {
+                            super.onAuthenticationFailed()
+                            onBiometricsAuthFailed()
+                        }
+
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            super.onAuthenticationSucceeded(result)
+                            onBiometricsSuccess(result)
+                        }
+                    }
+                )
+                val promptInfo = if (requirePasscodeToOpen) {
+                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_login)
+                } else {
+                    createPromptInfo(requireContext(), R.string.biometric_prompt_info_subtitle_sign)
+                }
+                viewModel.biometricAuthentication(biometricPrompt, promptInfo)
+            }
+        }
+    }
+
+    private fun onUsePasscode() {
+        binding.input.delayShowKeyboardForView()
+    }
+
+    private fun onBiometricsAuthFailed() {
+        binding.input.delayShowKeyboardForView()
+    }
+
+    private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
+        if (requirePasscodeToOpen) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+        } else {
+            viewModel.decryptPasscode(authenticationResult)
+            binding.input.delayShowKeyboardForView()
+        }
+    }
+
+    private fun createBiometricPrompt(
+        fragment: Fragment,
+        authCallback: BiometricPrompt.AuthenticationCallback
+    ): BiometricPrompt {
+        val executor = ContextCompat.getMainExecutor(fragment.requireContext())
+        return BiometricPrompt(fragment, executor, authCallback)
+    }
+
+    private fun createPromptInfo(context: Context, @StringRes subtitle: Int): BiometricPrompt.PromptInfo =
+        BiometricPrompt.PromptInfo.Builder().apply {
+            setTitle(context.getString(R.string.biometric_prompt_info_title))
+            setSubtitle(context.getString(subtitle))
+            setConfirmationRequired(true)
+            setNegativeButtonText(context.getString(R.string.biometric_prompt_info_use_app_password))
+        }.build()
 }

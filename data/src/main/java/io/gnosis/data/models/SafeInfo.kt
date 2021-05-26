@@ -2,7 +2,6 @@ package io.gnosis.data.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 @JsonClass(generateAdapter = true)
