@@ -123,7 +123,6 @@ class HeimdallDatabaseTest {
     @Throws(IOException::class)
     fun migrate3To4() {
 
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe_local_name")
         val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED)
 
         helper.createDatabase(TEST_DB, 3).apply {
