@@ -33,7 +33,7 @@ class OwnerHowToAddFragment : BaseViewBindingFragment<FragmentOwnerHowToAddBindi
                 findNavController().navigate(OwnerHowToAddFragmentDirections.actionOwnerHowToAddFragmentToOwnerInfoFragment())
             }
             itemCreateNew.setOnClickListener {
-
+                findNavController().navigate(OwnerHowToAddFragmentDirections.actionOwnerHowToAddFragmentToOwnerInfoGenerateFragment())
             }
         }
     }

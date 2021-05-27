@@ -116,6 +116,20 @@
             android:id="@+id/action_ownerHowToAddFragment_to_ownerInfoFragment"
             app:destination="@id/ownerInfoFragment" />
 
+        <action
+            android:id="@+id/action_ownerHowToAddFragment_to_ownerInfoGenerateFragment"
+            app:destination="@id/ownerInfoGenerateFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoGenerateFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment"
+        android:label="OwnerInfoGenerateFragment"
+        tools:layout="@layout/fragment_owner_info_generate">
+
+        <!--TODO: add action here to key generation fragment-->
+
     </fragment>
 
     <fragment

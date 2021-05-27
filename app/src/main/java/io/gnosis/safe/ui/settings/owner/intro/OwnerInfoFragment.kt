@@ -31,7 +31,7 @@ class OwnerInfoFragment : BaseViewBindingFragment<FragmentOwnerInfoBinding>() {
             backButton.setOnClickListener { findNavController().navigateUp() }
             infoPrivateKey.addInfoLink(
                 getString(R.string.import_owner_key_intro_private_key_help),
-                getString(R.string.import_owner_key_intro_private_key_url)
+                getString(R.string.owner_key_intro_private_key_url)
             )
         }
     }
