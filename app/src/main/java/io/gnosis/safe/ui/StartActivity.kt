@@ -136,7 +136,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
                         if (settingsHandler.usePasscode) {
                             settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-                            settingsHandler.requirePasscodeToOpen = true
+                            settingsHandler.requirePasscodeToOpen = false
                             settingsHandler.requirePasscodeForConfirmations = true
                             askForPasscode()
                         } else {
@@ -338,6 +338,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToPasscodePrompt() {
+
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
             putBoolean("requirePasscodeToOpen", true)
         })

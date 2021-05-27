@@ -31,13 +31,14 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-
 class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.PASSCODE_ENTER
     private val navArgs by navArgs<EnterPasscodeFragmentArgs>()
     private val selectedOwner by lazy { navArgs.selectedOwner }
     private val requirePasscodeToOpen by lazy { navArgs.requirePasscodeToOpen }
+
+    private var alreadyStarted: Boolean = false
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -54,9 +55,15 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     override fun onResume() {
         super.onResume()
-        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
-        binding.input.delayShowKeyboardForView()
-        authenticateWithBiometrics()
+        if (alreadyStarted) {
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            binding.input.hideSoftKeyboard()
+            alreadyStarted = false
+        } else {
+            alreadyStarted = true
+            binding.input.delayShowKeyboardForView()
+            authenticateWithBiometrics()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +77,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     } else {
                         findNavController().popBackStack(R.id.transactionDetailsFragment, false)
                     }
+                    alreadyStarted = false
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
                     binding.errorMessage.setText(R.string.settings_passcode_owner_removal_failed)
@@ -147,6 +155,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 selectedOwner
             )
         }
+        alreadyStarted = false
     }
 
     private fun authenticateWithBiometrics() {
@@ -196,6 +205,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         if (requirePasscodeToOpen) {
             findNavController().popBackStack(R.id.enterPasscodeFragment, true)
             binding.input.hideSoftKeyboard()
+            alreadyStarted = false
         } else {
             viewModel.decryptPasscode(authenticationResult)
             binding.input.delayShowKeyboardForView()
