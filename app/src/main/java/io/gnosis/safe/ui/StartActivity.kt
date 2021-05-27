@@ -136,7 +136,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
                         if (settingsHandler.usePasscode) {
                             settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-                            settingsHandler.requirePasscodeToOpen = true
+                            settingsHandler.requirePasscodeToOpen = false
                             settingsHandler.requirePasscodeForConfirmations = true
                             askForPasscode()
                         } else {
