@@ -103,12 +103,6 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString()
                 ) else owner.name
-            remove.setOnClickListener {
-                ownerListener.onOwnerRemove(owner.address, position)
-            }
-            edit.setOnClickListener {
-                ownerListener.onOwnerEdit(owner.address)
-            }
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)
             }
@@ -128,8 +122,6 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString()
                 ) else owner.name
-            remove.visible(false)
-            edit.visible(false)
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)
             }

@@ -46,6 +46,13 @@ class SettingItem @JvmOverloads constructor(
             field = value
         }
 
+    var description: CharSequence? = null
+        set(value) {
+            binding.description.visible(!value.isNullOrBlank())
+            binding.description.text = value
+            field = value
+        }
+
     var value: CharSequence? = null
         set(value) {
             binding.value.text = value
@@ -71,6 +78,7 @@ class SettingItem @JvmOverloads constructor(
         hasSwitch = a.getBoolean(R.styleable.SettingItem_setting_has_switch, false)
         openable = a.getBoolean(R.styleable.SettingItem_setting_openable, true)
         name = a.getString(R.styleable.SettingItem_setting_name)
+        description = a.getString(R.styleable.SettingItem_setting_description)
         value = a.getString(R.styleable.SettingItem_setting_value)
         val imageResId = a.getResourceId(R.styleable.SettingItem_setting_image, -1)
         if (imageResId > 0) {

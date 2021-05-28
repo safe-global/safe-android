@@ -56,7 +56,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when(val viewAction = it.viewAction) {
                 is CloseScreen -> {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
+                    findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
                     //TODO: handle case when owner was added from owner list screen
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }

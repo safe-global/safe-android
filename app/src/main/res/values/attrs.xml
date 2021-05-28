@@ -6,6 +6,7 @@
         <attr name="setting_has_switch" format="boolean" />
         <attr name="setting_checked" format="boolean" />
         <attr name="setting_name" format="string" />
+        <attr name="setting_description" format="string" />
         <attr name="setting_value" format="string" />
         <attr name="setting_image" format="reference" />
     </declare-styleable>
