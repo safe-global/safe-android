@@ -27,6 +27,7 @@ import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment
 import io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
+import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
@@ -90,6 +91,8 @@ interface ViewComponent {
     fun inject(fragment: OwnerEditNameFragment)
 
     fun inject(fragment: OwnerListFragment)
+
+    fun inject(fragment: OwnerDetailsFragment)
 
     fun inject(fragment: AppSettingsFragment)
 

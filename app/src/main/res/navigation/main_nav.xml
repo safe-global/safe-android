@@ -228,6 +228,23 @@
         <action
             android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
             app:destination="@id/ownerEditNameFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerDetailsFragment"
+            app:destination="@id/ownerDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerDetailsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment"
+        android:label="OwnerDetailsFragment"
+        tools:layout="@layout/fragment_owner_details">
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
     </fragment>
 
     <fragment
