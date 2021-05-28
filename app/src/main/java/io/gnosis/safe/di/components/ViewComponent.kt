@@ -25,7 +25,7 @@ import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
 import io.gnosis.safe.ui.settings.app.passcode.*
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment
-import io.gnosis.safe.ui.settings.owner.OwnerHowToAddFragment
+import io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
@@ -75,7 +75,7 @@ interface ViewComponent {
 
     fun inject(fragment: SettingsFragment)
 
-    fun inject(fragment: OwnerHowToAddFragment)
+    fun inject(fragment: OwnerAddOptionsFragment)
 
     fun inject(fragment: OwnerInfoFragment)
 

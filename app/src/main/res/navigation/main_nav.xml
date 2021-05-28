@@ -107,17 +107,17 @@
     </fragment>
 
     <fragment
-        android:id="@+id/ownerHowToAddFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.OwnerHowToAddFragment"
-        android:label="OwnerHowToAddFragment"
-        tools:layout="@layout/fragment_owner_how_to_add">
+        android:id="@+id/ownerAddOptionsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment"
+        android:label="ownerAddOptionsFragment"
+        tools:layout="@layout/fragment_owner_add_options">
 
         <action
-            android:id="@+id/action_ownerHowToAddFragment_to_ownerInfoFragment"
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoFragment"
             app:destination="@id/ownerInfoFragment" />
 
         <action
-            android:id="@+id/action_ownerHowToAddFragment_to_ownerInfoGenerateFragment"
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoGenerateFragment"
             app:destination="@id/ownerInfoGenerateFragment" />
 
     </fragment>
@@ -222,8 +222,8 @@
         tools:layout="@layout/fragment_owner_list">
 
         <action
-            android:id="@+id/action_ownerListFragment_to_ownerHowToAddFragment"
-            app:destination="@id/ownerHowToAddFragment" />
+            android:id="@+id/action_ownerListFragment_to_ownerAddOptionsFragment"
+            app:destination="@id/ownerAddOptionsFragment" />
 
         <action
             android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"

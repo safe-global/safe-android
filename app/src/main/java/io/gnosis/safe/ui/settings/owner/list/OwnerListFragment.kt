@@ -48,7 +48,7 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
                 findNavController().navigateUp()
             }
             importButton.setOnClickListener {
-                findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerHowToAddFragment())
+                findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerAddOptionsFragment())
             }
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
