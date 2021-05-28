@@ -122,7 +122,6 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString()
                 ) else owner.name
-            arrow.visible(false)
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)
             }
