@@ -52,7 +52,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     override fun onResume() {
         super.onResume()
-        binding.input.delayShowKeyboardForView()
+        binding.input.delayShowKeyboardForView(600)
         authenticateWithBiometrics()
     }
 
@@ -92,7 +92,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 backButton.visible(false)
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        input.delayShowKeyboardForView()
+                        input.delayShowKeyboardForView(600)
                     }
                 })
             } else {
@@ -129,6 +129,12 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     viewModel.onForgotPasscode()
                     input.hideSoftKeyboard()
                 }
+            }
+            contentView.setOnClickListener {
+                input.showKeyboardForView()
+            }
+            showKeyboard.setOnClickListener {
+                input.showKeyboardForView()
             }
         }
     }
@@ -182,11 +188,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     }
 
     private fun onUsePasscode() {
-        binding.input.delayShowKeyboardForView()
+        binding.input.delayShowKeyboardForView(600)
     }
 
     private fun onBiometricsAuthFailed() {
-        binding.input.delayShowKeyboardForView()
+        binding.input.delayShowKeyboardForView(600)
     }
 
     private fun onBiometricsSuccess(authenticationResult: BiometricPrompt.AuthenticationResult) {
