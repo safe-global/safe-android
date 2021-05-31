@@ -133,9 +133,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             contentView.setOnClickListener {
                 input.showKeyboardForView()
             }
-            showKeyboard.setOnClickListener {
-                input.showKeyboardForView()
-            }
         }
     }
 
