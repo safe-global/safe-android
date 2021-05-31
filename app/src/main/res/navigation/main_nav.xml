@@ -241,6 +241,10 @@
         android:label="OwnerDetailsFragment"
         tools:layout="@layout/fragment_owner_details">
 
+        <action
+            android:id="@+id/action_ownerDetailsFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
+
         <argument
             android:name="ownerAddress"
             app:argType="string" />

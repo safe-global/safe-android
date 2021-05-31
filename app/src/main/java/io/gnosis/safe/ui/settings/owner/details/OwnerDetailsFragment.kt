@@ -23,6 +23,7 @@ import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding>() {
@@ -51,6 +52,9 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             }
             exportButton.setOnClickListener {
                 //TODO: navigate to export screen
+            }
+            ownerName.setOnClickListener {
+                findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
             }
             content.alpha = 0f
             ownerBlockie.setAddress(owner)

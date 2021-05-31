@@ -80,6 +80,8 @@
             android:layout_marginTop="18dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:drawablePadding="11dp"
+            android:drawableRight="@drawable/ic_edit_green_24dp"
             app:layout_constraintBottom_toTopOf="@id/owner_address"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
