@@ -8,6 +8,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.None
 import io.mockk.*
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -61,12 +62,14 @@ class OwnerDetailsViewModelTest {
     fun `removeOwner (ownerAddress) - should remove and unregister owner`() {
 
         val ownerAddress = Solidity.Address(BigInteger.ZERO)
+        val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
 
-        coEvery { credentialsRepository.removeOwner(ownerAddress) } just Runs
+        coEvery { credentialsRepository.owner(any()) } returns owner
+        coEvery { credentialsRepository.removeOwner(owner) } just Runs
         coEvery { notificationRepository.unregisterOwners() } just Runs
         coEvery { tracker.logKeyDeleted() } just Runs
+        coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 0
         coEvery { tracker.setNumKeysImported(any()) } just Runs
-        coEvery { credentialsRepository.ownerCount() } returns 1
 
         viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, tracker, qrCodeGenerator, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerDetailsState>()
@@ -80,10 +83,11 @@ class OwnerDetailsViewModelTest {
         )
 
         coVerifySequence {
-            credentialsRepository.removeOwner(ownerAddress)
+            credentialsRepository.owner(ownerAddress)
+            credentialsRepository.removeOwner(owner)
             notificationRepository.unregisterOwners()
             tracker.logKeyDeleted()
-            credentialsRepository.ownerCount()
+            credentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(any())
         }
     }
