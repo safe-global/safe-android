@@ -24,6 +24,7 @@ data class Owner(
     val type: Type,
 
     @ColumnInfo(name = COL_PRIVATE_KEY)
+    @TypeConverters(EncryptedByteArray.NullableConverter::class)
     val privateKey: EncryptedByteArray? = null,
 
     @ColumnInfo(name = COL_SEED_PHRASE)
