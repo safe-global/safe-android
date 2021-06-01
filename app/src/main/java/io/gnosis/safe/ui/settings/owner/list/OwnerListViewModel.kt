@@ -46,15 +46,6 @@ class OwnerListViewModel
         }
     }
 
-    fun removeOwner(owner: Solidity.Address) {
-        safeLaunch {
-            credentialsRepository.removeOwner(owner)
-            tracker.logKeyDeleted()
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
-            notificationRepository.unregisterOwners()
-        }
-    }
-
     fun selectKeyForSigning(owner: Solidity.Address, isConfirmation: Boolean) {
         safeLaunch {
             if (settingsHandler.usePasscode) {
