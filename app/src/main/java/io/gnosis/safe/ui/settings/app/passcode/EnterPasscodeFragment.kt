@@ -130,7 +130,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     input.hideSoftKeyboard()
                 }
             }
-            contentView.setOnClickListener {
+            rootView.setOnClickListener {
                 input.showKeyboardForView()
             }
         }
