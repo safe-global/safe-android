@@ -9,6 +9,7 @@ import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.*
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.svalinn.security.db.EncryptedString
 
 @Database(
     entities = [
@@ -17,7 +18,7 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
         Owner::class
     ], version = HeimdallDatabase.LATEST_DB_VERSION
 )
-@TypeConverters(SolidityAddressConverter::class, OwnerTypeConverter::class, EncryptedByteArray.Converter::class, EncryptedString.Converter::class)
+@TypeConverters(SolidityAddressConverter::class, OwnerTypeConverter::class, EncryptedByteArray.Converter::class, EncryptedString.NullableConverter::class)
 abstract class HeimdallDatabase : RoomDatabase() {
 
     abstract fun safeDao(): SafeDao

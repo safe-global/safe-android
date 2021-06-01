@@ -1,7 +1,6 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.data.db.daos.OwnerDao
-import io.gnosis.data.models.EncryptedString
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.security.HeimdallEncryptionManager
@@ -11,6 +10,7 @@ import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.svalinn.security.db.EncryptedString
 import java.math.BigInteger
 
 class CredentialsRepository(
