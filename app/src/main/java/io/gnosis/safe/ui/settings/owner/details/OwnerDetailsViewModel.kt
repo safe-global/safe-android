@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner.details
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -47,10 +48,14 @@ class OwnerDetailsViewModel
 
     fun removeOwner(address: Solidity.Address) {
         safeLaunch {
-            credentialsRepository.removeOwner(address)
+            val owner = credentialsRepository.owner(address)!!
+            credentialsRepository.removeOwner(owner)
             notificationRepository.unregisterOwners()
             tracker.logKeyDeleted()
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
+            when(owner.type) {
+                Owner.Type.IMPORTED -> tracker.setNumKeysImported(credentialsRepository.ownerCount(owner.type))
+                Owner.Type.GENERATED -> tracker.setNumKeysGenerated(credentialsRepository.ownerCount(owner.type))
+            }
             updateState { OwnerDetailsState(ViewAction.CloseScreen) }
         }
     }
