@@ -7,10 +7,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
-import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerTypeConverter
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeMetaData
+import io.gnosis.data.models.*
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 
 @Database(
@@ -20,7 +17,7 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
         Owner::class
     ], version = HeimdallDatabase.LATEST_DB_VERSION
 )
-@TypeConverters(SolidityAddressConverter::class, OwnerTypeConverter::class, EncryptedByteArray.Converter::class)
+@TypeConverters(SolidityAddressConverter::class, OwnerTypeConverter::class, EncryptedByteArray.Converter::class, EncryptedString.Converter::class)
 abstract class HeimdallDatabase : RoomDatabase() {
 
     abstract fun safeDao(): SafeDao
