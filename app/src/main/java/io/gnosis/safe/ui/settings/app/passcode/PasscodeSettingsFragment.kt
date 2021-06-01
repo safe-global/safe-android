@@ -78,7 +78,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
                     if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
                             startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS));
                         } else {
                             startActivityForResult(Intent(Settings.ACTION_FINGERPRINT_ENROLL), 1 /* REQUESTCODE_FINGERPRINT_ENROLLMENT */)
