@@ -128,7 +128,9 @@
         android:label="OwnerInfoGenerateFragment"
         tools:layout="@layout/fragment_owner_info_generate">
 
-        <!--TODO: add action here to key generation fragment-->
+        <action
+            android:id="@+id/action_ownerInfoGenerateFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
 
     </fragment>
 
@@ -196,6 +198,12 @@
             android:name="fromSeedPhrase"
             app:argType="boolean"
             android:defaultValue="false" />
+
+        <argument
+            android:name="ownerSeedPhrase"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
 
         <action
             android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
