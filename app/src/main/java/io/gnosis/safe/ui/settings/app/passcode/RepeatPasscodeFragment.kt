@@ -79,23 +79,14 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             title = R.string.settings_passcode_enable_biometry_title,
                             dismissCallback = DialogInterface.OnDismissListener {
                                 // This is also called when the dialog is canceled and after confirmCallback
-                                if (ownerImported) {
-                                    findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                                } else {
-                                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                                }
-
-                                binding.input.hideSoftKeyboard()
-                                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                    SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                                    true
-                                )
+                                dismissCreatePasscodeFragment()
                             },
                             confirmCallback = {
                                 viewModel.enableBiometry()
                             }
                         )
+                    } else {
+                        dismissCreatePasscodeFragment()
                     }
                 }
             }
@@ -135,6 +126,21 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 skipPasscodeSetup()
             }
         }
+    }
+
+    private fun dismissCreatePasscodeFragment() {
+        if (ownerImported) {
+            findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+        } else {
+            findNavController().popBackStack(R.id.createPasscodeFragment, true)
+        }
+
+        binding.input.hideSoftKeyboard()
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+            true
+        )
     }
 
     private fun FragmentPasscodeBinding.skipPasscodeSetup() {
