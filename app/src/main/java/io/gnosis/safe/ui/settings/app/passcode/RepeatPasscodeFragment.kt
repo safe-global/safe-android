@@ -70,10 +70,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     }
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
-
-                    // Show dialog:
-                    // Would you like to enable biometry for passcode?
-
                     if (BiometricManager.from(requireContext()).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
                         showConfirmDialog(
                             requireContext(),
