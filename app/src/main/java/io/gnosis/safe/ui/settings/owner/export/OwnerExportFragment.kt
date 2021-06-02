@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -38,6 +39,10 @@ class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+
+            backButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
 
             pager = OwnerExportPageAdapter(this@OwnerExportFragment, ownerKey, ownerSeed)
             content.adapter = pager
