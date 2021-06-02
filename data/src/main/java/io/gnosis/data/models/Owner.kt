@@ -5,6 +5,7 @@ import io.gnosis.data.models.Owner.Companion.TABLE_NAME
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.svalinn.security.db.EncryptedString
 import pm.gnosis.utils.utf8String
 
 @Entity(
@@ -23,10 +24,11 @@ data class Owner(
     val type: Type,
 
     @ColumnInfo(name = COL_PRIVATE_KEY)
+    @TypeConverters(EncryptedByteArray.NullableConverter::class)
     val privateKey: EncryptedByteArray? = null,
 
     @ColumnInfo(name = COL_SEED_PHRASE)
-    @TypeConverters(EncryptedString.Converter::class)
+    @TypeConverters(EncryptedString.NullableConverter::class)
     val seedPhrase: EncryptedString? = null
 ) {
 
@@ -65,31 +67,5 @@ class OwnerTypeConverter {
     @TypeConverter
     fun toValue(type: Owner.Type): Int {
         return type.value
-    }
-}
-
-//TODO: update svalinn and allow nullable types in converter; remove this class and use EncryptedString from svalinn
-class EncryptedString private constructor(private val encryptedValue: String) {
-
-    fun value(encryptionManager: EncryptionManager): String {
-        return encryptionManager.decrypt(EncryptionManager.CryptoData.fromString(encryptedValue)).utf8String()
-    }
-
-    companion object {
-        fun create(encryptionManager: EncryptionManager, value: String): EncryptedString {
-            return EncryptedString(encryptionManager.encrypt(value.toByteArray()).toString())
-        }
-    }
-
-    class Converter {
-        @TypeConverter
-        fun toType(wrapper: EncryptedString?): String? {
-            return wrapper?.encryptedValue
-        }
-
-        @TypeConverter
-        fun toValue(value: String?): EncryptedString? {
-            return value?.let { EncryptedString(it) }
-        }
     }
 }
