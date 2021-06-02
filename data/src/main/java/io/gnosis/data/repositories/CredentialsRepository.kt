@@ -11,6 +11,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.svalinn.security.db.EncryptedString
+import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
 
 class CredentialsRepository(
@@ -76,7 +77,7 @@ class CredentialsRepository(
         name: String? = null
     ) {
         val encryptedKey = encryptKey(key)
-        val encryptedSeedPhrase = encryptString(seedPhrase)
+        val encryptedSeedPhrase = encryptSeed(seedPhrase)
         val owner = Owner(
             address = address,
             name = name,
@@ -106,11 +107,24 @@ class CredentialsRepository(
         return encryptedKey
     }
 
-    fun encryptString(data: String): EncryptedString {
+    fun decryptKey(encryptedKey: EncryptedByteArray): BigInteger {
+        encryptionManager.unlock()
+        val key = encryptedKey.value(encryptionManager).asBigInteger()
+        return key
+    }
+
+    fun encryptSeed(data: String): EncryptedString {
         encryptionManager.unlock()
         val encryptedData = EncryptedString.create(encryptionManager, data)
         encryptionManager.lock()
         return encryptedData
+    }
+
+    fun decryptSeed(encryptedData: EncryptedString): String {
+        encryptionManager.unlock()
+        val data = encryptedData.value(encryptionManager)
+        encryptionManager.lock()
+        return data
     }
 
     fun signWithOwner(owner: Owner, data: ByteArray): String {

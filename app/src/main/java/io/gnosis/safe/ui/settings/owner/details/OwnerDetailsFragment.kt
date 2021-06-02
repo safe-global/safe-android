@@ -11,9 +11,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
 import io.gnosis.safe.utils.formatEthAddress
@@ -51,7 +49,8 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 findNavController().navigateUp()
             }
             exportButton.setOnClickListener {
-                //TODO: navigate to export screen
+                val exportData = viewModel.ownerExportData()
+                findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerExportFragment(exportData.key, exportData.seed))
             }
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
@@ -90,6 +89,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
 
                         ownerQrCode.setImageBitmap(viewAction.ownerDetails.qrCode)
                         content.animate().alpha(1f).setDuration(1000)
+                        exportButton.isEnabled = viewAction.ownerDetails.exportable
                     }
                 }
             }
