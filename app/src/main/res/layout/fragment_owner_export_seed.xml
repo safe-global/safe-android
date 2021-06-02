@@ -1,8 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface_04">
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:seed_number="1"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_3"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:seed_number="2"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:seed_number="3"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_1"
+        app:seed_number="4"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_6"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_4"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_1"
+        app:seed_number="5"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_5"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_1"
+        app:seed_number="6"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_4"
+        app:seed_number="7"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_9"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_4"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_4"
+        app:seed_number="8"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_9"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_8"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_4"
+        app:seed_number="9"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_10"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_7"
+        app:seed_number="10"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_11"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@id/seed_word_12"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_10"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_7"
+        app:seed_number="11"
+        app:seed_word="moon" />
+
+    <io.gnosis.safe.ui.settings.view.SeedItem
+        android:id="@+id/seed_word_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seed_word_11"
+        app:layout_constraintTop_toBottomOf="@id/seed_word_7"
+        app:seed_number="12"
+        app:seed_word="moon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,6 +25,21 @@ class OwnerExportSeedFragment : BaseViewBindingFragment<FragmentOwnerExportSeedB
         super.onViewCreated(view, savedInstanceState)
 
         val seed = requireArguments()[ARGS_SEED] as String
+        val seedWords = seed.split(" ")
+        with(binding) {
+            seedWord1.word = seedWords[0]
+            seedWord2.word = seedWords[1]
+            seedWord3.word = seedWords[2]
+            seedWord4.word = seedWords[3]
+            seedWord5.word = seedWords[4]
+            seedWord6.word = seedWords[5]
+            seedWord7.word = seedWords[6]
+            seedWord8.word = seedWords[7]
+            seedWord9.word = seedWords[8]
+            seedWord10.word = seedWords[9]
+            seedWord11.word = seedWords[10]
+            seedWord12.word = seedWords[11]
+        }
     }
 
     companion object {
