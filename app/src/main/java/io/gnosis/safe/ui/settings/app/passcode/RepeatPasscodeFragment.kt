@@ -75,7 +75,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                             requireContext(),
                             message = R.string.settings_passcode_enable_biometry,
                             confirm = R.string.settings_passcode_enable_biometry_enable,
-                            confirmColor = R.color.error,
+                            confirmColor = R.color.primary,
                             title = R.string.settings_passcode_enable_biometry_title,
                             dismissCallback = DialogInterface.OnDismissListener {
                                 // This is also called when the dialog is canceled and after confirmCallback
