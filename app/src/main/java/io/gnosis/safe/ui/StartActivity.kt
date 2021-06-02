@@ -11,6 +11,7 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -136,7 +137,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
                         if (settingsHandler.usePasscode) {
                             settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-                            settingsHandler.requirePasscodeToOpen = true
+                            settingsHandler.requirePasscodeToOpen = false
                             settingsHandler.requirePasscodeForConfirmations = true
                             askForPasscode()
                         } else {
@@ -323,6 +324,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             // that were opened in the foreground and the background.
         }
     }
+
     /*
      * appInBackground() is triggered when the last activity is going into onActivityStopped().
      * See HeimdallApplication.activityLifecycleCallbacks()
@@ -340,6 +342,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private fun navigateToPasscodePrompt() {
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
             putBoolean("requirePasscodeToOpen", true)
-        })
+        }, NavOptions.Builder().setLaunchSingleTop(true).build())
     }
 }

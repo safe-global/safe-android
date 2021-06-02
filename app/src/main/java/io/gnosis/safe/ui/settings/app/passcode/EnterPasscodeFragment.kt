@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.app.passcode
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-
 class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
 
     override fun screenId() = ScreenId.PASSCODE_ENTER
@@ -54,7 +52,6 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     override fun onResume() {
         super.onResume()
-        binding.input.setRawInputType(InputType.TYPE_CLASS_NUMBER)
         binding.input.delayShowKeyboardForView()
         authenticateWithBiometrics()
     }
@@ -132,6 +129,9 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     viewModel.onForgotPasscode()
                     input.hideSoftKeyboard()
                 }
+            }
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
             }
         }
     }

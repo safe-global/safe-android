@@ -200,6 +200,7 @@
     <string name="settings_passcode_login_with_biometrics">Login with biometrics</string>
     <string name="settings_passcode_require_to_open_app">Require to open app</string>
     <string name="settings_passcode_require_for_confirmations">Require for confirmations</string>
+    <string name="settings_passcode_show_keyboard">Show keyboard</string>
 
     <string name="settings_app_network">Network</string>
     <string name="settings_app_advanced">Advanced</string>
