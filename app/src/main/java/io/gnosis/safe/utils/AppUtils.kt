@@ -64,8 +64,7 @@ fun showConfirmDialog(
     @StringRes message: Int,
     @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
     @ColorRes confirmColor: Int = R.color.error,
-    cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
-    dismissCallback: DialogInterface.OnDismissListener = DialogInterface.OnDismissListener { dialog -> dialog.dismiss() },
+    dismissCallback: DialogInterface.OnDismissListener = DialogInterface.OnDismissListener { },
     confirmCallback: () -> Unit
 ) {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
@@ -76,7 +75,6 @@ fun showConfirmDialog(
             confirmCallback()
             dialog.dismiss()
         },
-        cancelCallback = cancelCallback,
         dismissCallback = dismissCallback,
         contentView = dialogBinding.root,
         confirmRes = confirm,
