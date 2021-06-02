@@ -204,6 +204,9 @@ class PasscodeViewModel
         }
     }
 
+    fun enableBiometry() {
+        settingsHandler.useBiometrics = true
+    }
 
     data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction

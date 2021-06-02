@@ -146,8 +146,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         Timber.d("---> Handle result from Security setting: $requestCode, $resultCode, $data")
     }
 
-    private fun canAuthenticate() = BiometricManager.from(requireContext())
-        .canAuthenticate()
+    private fun canAuthenticate() = BiometricManager.from(requireContext()).canAuthenticate()
 
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now

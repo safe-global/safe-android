@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
+import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -71,56 +71,36 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
 
-                    // TODO: Ask to setup Biometric auth
-
                     // Show dialog:
-                    // Activate Biometry?
-                    //
                     // Would you like to enable biometry for passcode?
-                    showConfirmDialog(
-                        requireContext(),
-                        message = R.string.settings_passcode_enable_biometry,
-                        confirm = R.string.settings_passcode_enable_biometry_enable,
-                        confirmColor = R.color.error,
-                        title = R.string.settings_passcode_enable_biometry_title,
-                        cancelCallback = {
-                            if (ownerImported) {
-                                findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                            } else {
-                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+
+                    if (BiometricManager.from(requireContext()).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+                        showConfirmDialog(
+                            requireContext(),
+                            message = R.string.settings_passcode_enable_biometry,
+                            confirm = R.string.settings_passcode_enable_biometry_enable,
+                            confirmColor = R.color.error,
+                            title = R.string.settings_passcode_enable_biometry_title,
+                            dismissCallback = DialogInterface.OnDismissListener {
+                                // This is also called when the dialog is canceled and after confirmCallback
+                                if (ownerImported) {
+                                    findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+                                } else {
+                                    findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                                }
+
+                                binding.input.hideSoftKeyboard()
+                                findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                    SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+                                    true
+                                )
+                            },
+                            confirmCallback = {
+                                viewModel.enableBiometry()
                             }
-
-                            binding.input.hideSoftKeyboard()
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                                true
-                            )
-                        },
-                        dismissCallback = DialogInterface.OnDismissListener {
-                            if (ownerImported) {
-                                findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                            } else {
-                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                            }
-
-                            binding.input.hideSoftKeyboard()
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                                true
-                            )
-                        },
-                        confirmCallback = {
-
-                            Toast.makeText(requireContext(), "Enabling biometry", Toast.LENGTH_SHORT).show()
-
-//                            viewModel.setupBiometry()
-//                            findNavController().navigate(
-//                                PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(PasscodeCommand.BIOMETRICS_ENABLE)
-//                            )
-                        }
-                    )
+                        )
+                    }
                 }
             }
         })
