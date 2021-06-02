@@ -15,13 +15,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
+import io.gnosis.safe.databinding.DialogEnableBiometryBinding
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
-import io.gnosis.safe.utils.showConfirmDialog
+import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -71,20 +72,23 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
                     if (BiometricManager.from(requireContext()).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-                        showConfirmDialog(
-                            requireContext(),
-                            message = R.string.settings_passcode_enable_biometry,
-                            confirm = R.string.settings_passcode_enable_biometry_enable,
-                            confirmColor = R.color.primary,
-                            title = R.string.settings_passcode_enable_biometry_title,
+                        val dialogBinding = DialogEnableBiometryBinding.inflate(LayoutInflater.from(context), null, false)
+                        dialogBinding.message.setText(R.string.settings_passcode_enable_biometry)
+                        CustomAlertDialogBuilder.build(
+                            context = requireContext(),
+                            contentView = dialogBinding.root,
+                            title = requireContext().resources.getString(R.string.settings_passcode_enable_biometry_title),
                             dismissCallback = DialogInterface.OnDismissListener {
                                 // This is also called when the dialog is canceled and after confirmCallback
                                 dismissCreatePasscodeFragment()
                             },
-                            confirmCallback = {
+                            confirmCallback = { dialog ->
                                 viewModel.enableBiometry()
-                            }
-                        )
+                                dialog.dismiss()
+                            },
+                            confirmColor = R.color.primary,
+                            confirmRes = R.string.settings_passcode_enable_biometry_enable
+                        ).show()
                     } else {
                         dismissCreatePasscodeFragment()
                     }
