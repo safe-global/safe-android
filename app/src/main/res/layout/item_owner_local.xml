@@ -18,7 +18,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@id/owner_address"
-        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintEnd_toStartOf="@id/arrow"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@id/owner_address"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +34,7 @@
         android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintEnd_toStartOf="@id/arrow"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/blockies"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -43,28 +43,13 @@
         tools:text="0x123456..1235" />
 
     <ImageView
-        android:id="@+id/remove"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="@dimen/default_small_margin"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/edit"
-        app:layout_constraintStart_toEndOf="@id/owner_address"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_remove" />
-
-    <ImageView
-        android:id="@+id/edit"
+        android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_edit_green_24dp" />
+        app:srcCompat="@drawable/ic_settings_arrow" />
 
     <pm.gnosis.blockies.BlockiesImageView
         android:id="@+id/blockies"

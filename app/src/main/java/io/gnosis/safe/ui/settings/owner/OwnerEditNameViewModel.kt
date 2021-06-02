@@ -33,16 +33,6 @@ class OwnerEditNameViewModel
             }
         }
     }
-
-    fun removeOwner(address: Solidity.Address) {
-        safeLaunch {
-            credentialsRepository.removeOwner(address)
-            notificationRepository.unregisterOwners()
-            tracker.logKeyDeleted()
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
-            updateState { OwnerNameState(null, ViewAction.CloseScreen) }
-        }
-    }
 }
 
 data class OwnerNameState(

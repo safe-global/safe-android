@@ -107,6 +107,34 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ownerAddOptionsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment"
+        android:label="ownerAddOptionsFragment"
+        tools:layout="@layout/fragment_owner_add_options">
+
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoFragment"
+            app:destination="@id/ownerInfoFragment" />
+
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoGenerateFragment"
+            app:destination="@id/ownerInfoGenerateFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoGenerateFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment"
+        android:label="OwnerInfoGenerateFragment"
+        tools:layout="@layout/fragment_owner_info_generate">
+
+        <action
+            android:id="@+id/action_ownerInfoGenerateFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ownerInfoFragment"
         android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment"
         android:label="OwnerInfoFragment"
@@ -171,6 +199,12 @@
             app:argType="boolean"
             android:defaultValue="false" />
 
+        <argument
+            android:name="ownerSeedPhrase"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
         <action
             android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
             app:destination="@id/createPasscodeFragment" />
@@ -196,12 +230,33 @@
         tools:layout="@layout/fragment_owner_list">
 
         <action
-            android:id="@+id/action_ownerListFragment_to_ownerInfoFragment"
-            app:destination="@id/ownerInfoFragment" />
+            android:id="@+id/action_ownerListFragment_to_ownerAddOptionsFragment"
+            app:destination="@id/ownerAddOptionsFragment" />
 
         <action
             android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
             app:destination="@id/ownerEditNameFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerDetailsFragment"
+            app:destination="@id/ownerDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerDetailsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment"
+        android:label="OwnerDetailsFragment"
+        tools:layout="@layout/fragment_owner_details">
+
+        <action
+            android:id="@+id/action_ownerDetailsFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

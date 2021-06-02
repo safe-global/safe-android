@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -27,7 +28,28 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(fromSeedPhrase)
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
+            tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
+            notificationRepository.registerOwners()
+
+            updateState {
+                OwnerEnterNameState(
+                    if (settingsHandler.usePasscode) {
+                        ViewAction.CloseScreen
+                    } else {
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true))
+                    }
+                )
+            }
+        }
+    }
+
+    fun importGeneratedOwner(address: Solidity.Address, name: String, key: BigInteger, seedPhrase: String) {
+        safeLaunch {
+            credentialsRepository.saveOwnerGenerated(seedPhrase, address, key, name)
+            settingsHandler.showOwnerBanner = false
+            settingsHandler.showOwnerScreen = false
+            tracker.logKeyGenerated()
+            tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
             notificationRepository.registerOwners()
 
             updateState {

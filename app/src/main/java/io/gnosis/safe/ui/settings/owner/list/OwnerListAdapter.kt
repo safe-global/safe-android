@@ -8,7 +8,6 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
 import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.visible
 
 class OwnerListAdapter(private val ownerListener: OwnerListener, private val forSigningOnly: Boolean = false) :
     RecyclerView.Adapter<BaseOwnerViewHolder>() {
@@ -80,8 +79,6 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
     }
 
     interface OwnerListener {
-        fun onOwnerRemove(owner: Solidity.Address, position: Int)
-        fun onOwnerEdit(owner: Solidity.Address)
         fun onOwnerClick(owner: Solidity.Address)
     }
 }
@@ -103,12 +100,6 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString()
                 ) else owner.name
-            remove.setOnClickListener {
-                ownerListener.onOwnerRemove(owner.address, position)
-            }
-            edit.setOnClickListener {
-                ownerListener.onOwnerEdit(owner.address)
-            }
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)
             }
@@ -128,8 +119,6 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     R.string.settings_app_imported_owner_key_default_name,
                     owner.address.shortChecksumString()
                 ) else owner.name
-            remove.visible(false)
-            edit.visible(false)
             root.setOnClickListener {
                 ownerListener.onOwnerClick(owner.address)
             }

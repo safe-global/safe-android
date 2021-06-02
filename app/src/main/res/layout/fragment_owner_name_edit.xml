@@ -85,18 +85,4 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/remove_button"
-        style="@style/TextDark.Bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/signing_owner_name_edit_remove"
-        android:textColor="@color/error"
-        android:drawableLeft="@drawable/ic_remove"
-        android:drawablePadding="9dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/owner_name_layout" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,11 +15,10 @@ import io.gnosis.safe.databinding.FragmentOwnerListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.showConfirmDialog
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
@@ -49,8 +48,8 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
-            importButton.setOnClickListener {
-                findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerInfoFragment())
+            addButton.setOnClickListener {
+                findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerAddOptionsFragment())
             }
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
@@ -92,27 +91,21 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
     override fun onResume() {
         super.onResume()
         viewModel.loadOwners()
-    }
 
-    override fun onOwnerRemove(owner: Solidity.Address, position: Int) {
-        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
-            viewModel.removeOwner(owner)
-            adapter.removeItem(position)
-            if (adapter.itemCount == 0) {
-                showEmptyState()
-            }
+        //FIXME: find better way to pass results in nav graph
+        //TODO: add extension functions for handling back stack entries
+        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
         }
-    }
-
-    override fun onOwnerEdit(owner: Solidity.Address) {
-        findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
+        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        }
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
-        context?.copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
-            snackbar(view = binding.root, textId = R.string.copied_success)
-        }
+        findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerDetailsFragment(owner.asEthereumAddressString()))
     }
 
     private fun showList() {

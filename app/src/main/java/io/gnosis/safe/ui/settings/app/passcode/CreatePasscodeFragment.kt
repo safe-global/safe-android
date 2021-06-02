@@ -86,7 +86,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         tracker.logPasscodeSkipped()
 
         if (ownerImported) {
-            findNavController().popBackStack(R.id.ownerInfoFragment, true)
+            findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }

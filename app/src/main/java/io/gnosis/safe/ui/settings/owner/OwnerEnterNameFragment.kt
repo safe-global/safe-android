@@ -30,6 +30,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val ownerAddress by lazy { navArgs.ownerAddress.asEthereumAddress()!! }
     private val ownerKey by lazy { navArgs.ownerKey.hexAsBigInteger() }
     private val fromSeedPhrase by lazy { navArgs.fromSeedPhrase }
+    private val ownerSeedPhrase by lazy { navArgs.ownerSeedPhrase }
 
     override fun screenId() = ScreenId.OWNER_ENTER_NAME
 
@@ -49,15 +50,18 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
             importButton.setOnClickListener {
-                viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+                if (ownerSeedPhrase != null) {
+                    viewModel.importGeneratedOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, ownerSeedPhrase!!)
+                } else {
+                    viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+                }
              }
             ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when(val viewAction = it.viewAction) {
                 is CloseScreen -> {
-                    findNavController().popBackStack(R.id.ownerInfoFragment, true)
-                    //TODO: handle case when owner was added from owner list screen
+                    findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                 }
                 is NavigateTo -> {

@@ -346,6 +346,12 @@
     <string name="tx_confirmations_executed">Executed</string>
     <string name="tx_confirmations_rejection_created">On-chain rejection created</string>
 
+    <string name="signing_owner_add_key">Add Owner Key</string>
+    <string name="signing_owner_import_existing_title">Import existing key</string>
+    <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
+    <string name="signing_owner_create_new_title">Create new key</string>
+    <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Gnosis Safe</string>
+
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
     <string name="signing_owner_dialog_description">Removing the owner key only removes it from this app. It doesn’t delete any Safes from this app or from blockchain. For Safes controlled by this owner key, you will no longer be able to sign transactions in this app.</string>
@@ -358,6 +364,11 @@
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
     <string name="signing_owner_import">Import</string>
+    <string name="signing_owner_export">Export</string>
+
+    <string name="signing_owner_details_title">Owner Key</string>
+    <string name="signing_owner_details_key_address">Key address</string>
+
     <string name="signing_owner_name_title">Enter Key Name</string>
     <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
 
@@ -368,8 +379,9 @@
     <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
     <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
 
+    <string name="signing_owner_list_add">Add</string>
     <string name="signing_owner_list_title">Owner keys</string>
-    <string name="signing_owner_list_empty">There are no imported owner keys</string>
+    <string name="signing_owner_list_empty">There are no added owner keys</string>
 
     <string name="banner_owner_title">Import owner key</string>
     <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
@@ -436,6 +448,15 @@
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="import_owner_key_default">Default</string>
+
+    <string name="generate_owner_key_title">Create Owner Key</string>
+    <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
+    <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Gnosis Safe, you can create a key and add it as an owner of your Safe. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
+    <string name="generate_owner_key_intro_private_key_title">How secure is that?</string>
+    <string name="generate_owner_key_intro_private_key_desc">The owner key and the seed phrase are securely stored.</string>
+    <string name="generate_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
+    <string name="generate_owner_key_intro_export_title">How to export?</string>
+    <string name="generate_owner_key_intro_export_desc">To export your owner key or seed phrase, navigate to the key details.</string>
 
     <string name="confirm_transaction_dialog_message">You are about to confirm the transaction with your currently imported owner key. This confirmation is off-chain. The transaction should be executed separately in the web interface.</string>
     <string name="confirmation_successfully_submitted">Confirmation successfully submitted</string>

@@ -27,6 +27,8 @@ import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
+import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsViewModel
+import io.gnosis.safe.ui.settings.owner.intro.OwnerGenerateViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
@@ -113,7 +115,7 @@ class ViewModule(
 
     @Provides
     @ForView
-    fun providesAccountSelectionViewModel(provider: ViewModelProvider) = provider[OwnerSelectionViewModel::class.java]
+    fun providesOwnerSelectionViewModel(provider: ViewModelProvider) = provider[OwnerSelectionViewModel::class.java]
 
     @Provides
     @ForView
@@ -122,6 +124,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesImportOwnerKeyViewModel(provider: ViewModelProvider) = provider[OwnerSeedPhraseViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesOwnerGenerateViewModel(provider: ViewModelProvider) = provider[OwnerGenerateViewModel::class.java]
 
     @Provides
     @ForView
@@ -134,6 +140,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesOwnerListViewModel(provider: ViewModelProvider) = provider[OwnerListViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesOwnerDetailsViewModel(provider: ViewModelProvider) = provider[OwnerDetailsViewModel::class.java]
 
     @Provides
     @ForView
