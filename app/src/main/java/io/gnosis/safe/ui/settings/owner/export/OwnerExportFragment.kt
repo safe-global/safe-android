@@ -14,12 +14,14 @@ import io.gnosis.safe.databinding.FragmentOwnerExportBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.export.OwnerExportPageAdapter.Tabs
+import pm.gnosis.svalinn.common.utils.shareExternalText
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.removeHexPrefix
 
 class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>() {
 
     private val navArgs by navArgs<OwnerExportFragmentArgs>()
-    private val ownerKey by lazy { navArgs.ownerKey }
+    private val ownerKey by lazy { navArgs.ownerKey.removeHexPrefix() }
     private val ownerSeed by lazy { navArgs.ownerSeed }
 
     override fun screenId() = null
@@ -39,7 +41,7 @@ class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>(
 
             pager = OwnerExportPageAdapter(this@OwnerExportFragment, ownerKey, ownerSeed)
             content.adapter = pager
-            if(ownerSeed != null) {
+            if (ownerSeed != null) {
                 tabBar.visible(true)
                 TabLayoutMediator(tabBar, content, true) { tab, position ->
                     when (Tabs.values()[position]) {
@@ -58,12 +60,12 @@ class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>(
             }
 
             shareButton.setOnClickListener {
-                when(Tabs.values()[content.currentItem]) {
+                when (pager.tabForPosition(content.currentItem)) {
                     Tabs.SEED -> {
-
+                        requireContext().shareExternalText(ownerSeed!!)
                     }
                     Tabs.KEY -> {
-
+                        requireContext().shareExternalText(ownerKey)
                     }
                 }
             }
@@ -79,7 +81,7 @@ class OwnerExportPageAdapter(
 
     enum class Tabs { SEED, KEY }
 
-    override fun getItemCount(): Int = if(seed != null) 2 else 1
+    override fun getItemCount(): Int = if (seed != null) 2 else 1
 
     override fun createFragment(position: Int): Fragment =
         if (seed != null) {
@@ -90,4 +92,6 @@ class OwnerExportPageAdapter(
         } else {
             OwnerExportKeyFragment.newInstance(key, true)
         }
+
+    fun tabForPosition(position: Int) = if (seed != null) Tabs.values()[position] else Tabs.KEY
 }
