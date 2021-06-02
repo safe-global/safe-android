@@ -30,7 +30,7 @@ import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener as O
 
 class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwnerSelectionBinding>(), OwnerListener1 {
 
-    override fun screenId(): ScreenId? = ScreenId.OWNER_LIST
+    override fun screenId() = ScreenId.OWNER_LIST
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
     private val isConfirmation by lazy { navArgs.isConfirmation }
@@ -121,14 +121,6 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
 
             }
         })
-    }
-
-    override fun onOwnerRemove(owner: Solidity.Address, position: Int) {
-        // ignored
-    }
-
-    override fun onOwnerEdit(owner: Solidity.Address) {
-        //ignored
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {

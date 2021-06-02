@@ -2,6 +2,7 @@ package io.gnosis.data.db.daos
 
 import androidx.room.*
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import pm.gnosis.model.Solidity
 
 @Dao
@@ -18,6 +19,9 @@ interface OwnerDao {
 
     @Query("SELECT COUNT(*) FROM ${Owner.TABLE_NAME}")
     suspend fun ownerCount(): Int
+
+    @Query("SELECT COUNT(*) FROM ${Owner.TABLE_NAME} WHERE type = :type")
+    suspend fun ownerCountForType(type: Int): Int
 
     @Query("SELECT * FROM ${Owner.TABLE_NAME}")
     suspend fun loadAll(): List<Owner>

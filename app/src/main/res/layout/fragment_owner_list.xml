@@ -42,13 +42,13 @@
                 android:text="@string/signing_owner_list_title" />
 
             <TextView
-                android:id="@+id/import_button"
+                android:id="@+id/add_button"
                 style="@style/ToolbarButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:layout_weight="0"
-                android:text="@string/signing_owner_import" />
+                android:text="@string/signing_owner_list_add" />
 
         </LinearLayout>
 

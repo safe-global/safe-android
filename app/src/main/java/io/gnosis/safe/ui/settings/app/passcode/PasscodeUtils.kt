@@ -9,7 +9,7 @@ import io.gnosis.safe.R
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 
 
-fun View.delayShowKeyboardForView(delay: Long = 200) {
+fun View.delayShowKeyboardForView(delay: Long = 600) {
     postDelayed({
         showKeyboardForView()
     }, delay)

@@ -128,7 +128,9 @@
         android:label="OwnerInfoGenerateFragment"
         tools:layout="@layout/fragment_owner_info_generate">
 
-        <!--TODO: add action here to key generation fragment-->
+        <action
+            android:id="@+id/action_ownerInfoGenerateFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
 
     </fragment>
 
@@ -197,6 +199,12 @@
             app:argType="boolean"
             android:defaultValue="false" />
 
+        <argument
+            android:name="ownerSeedPhrase"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
         <action
             android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
             app:destination="@id/createPasscodeFragment" />
@@ -228,6 +236,27 @@
         <action
             android:id="@+id/action_ownerListFragment_to_ownerEditNameFragment"
             app:destination="@id/ownerEditNameFragment" />
+
+        <action
+            android:id="@+id/action_ownerListFragment_to_ownerDetailsFragment"
+            app:destination="@id/ownerDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerDetailsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment"
+        android:label="OwnerDetailsFragment"
+        tools:layout="@layout/fragment_owner_details">
+
+        <action
+            android:id="@+id/action_ownerDetailsFragment_to_ownerEditNameFragment"
+            app:destination="@id/ownerEditNameFragment" />
+
+        <argument
+            android:name="ownerAddress"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

@@ -3,7 +3,10 @@ package io.gnosis.data.models
 import androidx.room.*
 import io.gnosis.data.models.Owner.Companion.TABLE_NAME
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.svalinn.security.db.EncryptedString
+import pm.gnosis.utils.utf8String
 
 @Entity(
     tableName = TABLE_NAME
@@ -21,10 +24,12 @@ data class Owner(
     val type: Type,
 
     @ColumnInfo(name = COL_PRIVATE_KEY)
+    @TypeConverters(EncryptedByteArray.NullableConverter::class)
     val privateKey: EncryptedByteArray? = null,
 
     @ColumnInfo(name = COL_SEED_PHRASE)
-    val seedPhrase: String? = null
+    @TypeConverters(EncryptedString.NullableConverter::class)
+    val seedPhrase: EncryptedString? = null
 ) {
 
     enum class Type(val value: Int) {
@@ -33,7 +38,7 @@ data class Owner(
         GENERATED(1);
 
         companion object {
-            fun get(value: Int) = when(value) {
+            fun get(value: Int) = when (value) {
                 0 -> IMPORTED
                 1 -> GENERATED
                 else -> IMPORTED

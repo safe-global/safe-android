@@ -93,7 +93,8 @@ class PasscodeViewModel
             }
             safeRepository.clearUserData()
             tracker.logKeyDeleted()
-            tracker.setNumKeysImported(credentialsRepository.ownerCount())
+            tracker.setNumKeysImported(0)
+            tracker.setNumKeysGenerated(0)
             notificationRepository.unregisterOwners()
             // Make sure all owners are deleted at this point
             if (credentialsRepository.ownerCount() == 0) {

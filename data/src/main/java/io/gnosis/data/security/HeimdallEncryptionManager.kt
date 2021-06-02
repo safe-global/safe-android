@@ -37,7 +37,7 @@ class HeimdallEncryptionManager(
     private val keyStorage: KeyStorage,
     private val passcodeIterations: Int = SCRYPT_ITERATIONS,
     private val context: Context,
-    private val provider: String = "AndroidKeystore"
+    private val provider: String = "AndroidKeyStore"
 ) : EncryptionManager, BiometricPasscodeManager {
 
     private val secureRandom = SecureRandom()
@@ -254,9 +254,9 @@ class HeimdallEncryptionManager(
         keyStore.load(null) // Keystore must be loaded before it can be accessed
         if (pubKey) {
             keyStore.getCertificate(keyName)?.let { return it.publicKey as PublicKey }
+        } else {
+            keyStore.getKey(keyName, null)?.let { return it as PrivateKey }
         }
-        keyStore.getKey(keyName, null)?.let { return it as PrivateKey }
-
         // if you reach here, then a new PrivateKey must be generated for that keyName
         val paramsBuilder = KeyGenParameterSpec.Builder(
             keyName,

@@ -15,6 +15,10 @@ class Tracker private constructor(context: Context) {
         firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
     }
 
+    fun setNumKeysGenerated(numKeysGenerated: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_GENERATED, numKeysGenerated.toString())
+    }
+
     fun setNumKeysImported(numKeysImported: Int) {
         firebaseAnalytics.setUserProperty(Param.NUM_KEYS_IMPORTED, numKeysImported.toString())
     }
@@ -29,6 +33,10 @@ class Tracker private constructor(context: Context) {
 
     fun logScreen(screenId: ScreenId) {
         logEvent(screenId.value, null)
+    }
+
+    fun logKeyGenerated() {
+        logEvent(Event.KEY_GENERATED, null)
     }
 
     fun logKeyImported(usingSeedPhrase: Boolean) {
@@ -115,6 +123,7 @@ class Tracker private constructor(context: Context) {
     }
 
     object Event {
+        val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
@@ -135,6 +144,7 @@ class Tracker private constructor(context: Context) {
     object Param {
         val NUM_SAFES = "num_safes"
         val PUSH_INFO = "push_info"
+        val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
@@ -173,6 +183,7 @@ enum class ScreenId(val value: String) {
     OWNER_ENTER_NAME("screen_owner_enter_name"),
     OWNER_EDIT_NAME("screen_owner_edit_name"),
     OWNER_LIST("screen_owner_list"),
+    OWNER_DETAILS("screen_owner_details"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),
