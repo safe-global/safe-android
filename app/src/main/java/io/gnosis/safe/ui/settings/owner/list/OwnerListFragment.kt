@@ -93,7 +93,7 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
     }
 
     override fun onOwnerRemove(owner: Solidity.Address, position: Int) {
-        showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
+        showConfirmDialog(context = requireContext(), message = R.string.signing_owner_dialog_description) {
             viewModel.removeOwner(owner)
             adapter.removeItem(position)
             if (adapter.itemCount == 0) {

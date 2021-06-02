@@ -488,4 +488,7 @@
     <string name="biometric_prompt_info_subtitle_sign">Use biometrics to sign</string>
     <string name="biometric_prompt_info_use_app_password">Use passcode</string>
     <string name="biometric_prompt_please_enroll_biometric_attribute">Please enroll at least one biometric attribute</string>
+    <string name="settings_passcode_enable_biometry">Would you like to enable biometry for passcode?</string>
+    <string name="settings_passcode_enable_biometry_title">Activate Biometry?</string>
+    <string name="settings_passcode_enable_biometry_enable">Enable</string>
 </resources>

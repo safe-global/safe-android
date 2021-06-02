@@ -52,7 +52,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSafeSettingsEditNameFragment())
             }
             remove.setOnClickListener {
-                showConfirmDialog(requireContext(), R.string.safe_settings_dialog_description) {
+                showConfirmDialog(context = requireContext(), message = R.string.safe_settings_dialog_description) {
                     viewModel.removeSafe()
                 }
             }
@@ -147,7 +147,8 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 // use remote owner name & logo if available
                 NamedAddressItem(requireContext()).apply {
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                    layoutParams =
+                        LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     address = owner.value
                     name = owner.name
                     showSeparator = true
@@ -156,7 +157,8 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             } else {
                 AddressItem(requireContext()).apply {
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
+                    layoutParams =
+                        LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     address = owner.value
                     showSeparator = true
                 }

@@ -2,6 +2,7 @@ package io.gnosis.safe.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -59,9 +60,12 @@ fun dpToPx(dp: Int): Int {
 
 fun showConfirmDialog(
     context: Context,
+    title: Int? = null,
     @StringRes message: Int,
     @StringRes confirm: Int = R.string.safe_settings_dialog_remove,
     @ColorRes confirmColor: Int = R.color.error,
+    cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
+    dismissCallback: DialogInterface.OnDismissListener = DialogInterface.OnDismissListener { dialog -> dialog.dismiss() },
     confirmCallback: () -> Unit
 ) {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
@@ -72,10 +76,13 @@ fun showConfirmDialog(
             confirmCallback()
             dialog.dismiss()
         },
+        cancelCallback = cancelCallback,
+        dismissCallback = dismissCallback,
         contentView = dialogBinding.root,
         confirmRes = confirm,
         cancelRes = R.string.safe_settings_dialog_cancel,
         confirmColor = confirmColor,
-        cancelColor = R.color.primary
+        cancelColor = R.color.primary,
+        title = if (title == null) null else context.resources.getString(title)
     ).show()
 }

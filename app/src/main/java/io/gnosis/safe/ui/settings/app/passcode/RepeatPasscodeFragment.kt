@@ -1,11 +1,13 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -19,6 +21,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -67,17 +70,56 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     }
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
-                    if (ownerImported) {
-                        findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                    } else {
-                        findNavController().popBackStack(R.id.createPasscodeFragment, true)
-                    }
 
-                    binding.input.hideSoftKeyboard()
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                        true
+                    // TODO: Ask to setup Biometric auth
+
+                    // Show dialog:
+                    // Activate Biometry?
+                    //
+                    // Would you like to enable biometry for passcode?
+                    showConfirmDialog(
+                        requireContext(),
+                        message = R.string.settings_passcode_enable_biometry,
+                        confirm = R.string.settings_passcode_enable_biometry_enable,
+                        confirmColor = R.color.error,
+                        title = R.string.settings_passcode_enable_biometry_title,
+                        cancelCallback = {
+                            if (ownerImported) {
+                                findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+                            } else {
+                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                            }
+
+                            binding.input.hideSoftKeyboard()
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+                                true
+                            )
+                        },
+                        dismissCallback = DialogInterface.OnDismissListener {
+                            if (ownerImported) {
+                                findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+                            } else {
+                                findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                            }
+
+                            binding.input.hideSoftKeyboard()
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                                SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+                                true
+                            )
+                        },
+                        confirmCallback = {
+
+                            Toast.makeText(requireContext(), "Enabling biometry", Toast.LENGTH_SHORT).show()
+
+//                            viewModel.setupBiometry()
+//                            findNavController().navigate(
+//                                PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(PasscodeCommand.BIOMETRICS_ENABLE)
+//                            )
+                        }
                     )
                 }
             }
