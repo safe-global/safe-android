@@ -14,6 +14,7 @@ import io.gnosis.safe.databinding.FragmentOwnerExportBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.export.OwnerExportPageAdapter.Tabs
+import pm.gnosis.svalinn.common.utils.visible
 
 class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>() {
 
@@ -38,18 +39,23 @@ class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>(
 
             pager = OwnerExportPageAdapter(this@OwnerExportFragment, ownerKey, ownerSeed)
             content.adapter = pager
-            TabLayoutMediator(tabBar, content, true) { tab, position ->
-                when (Tabs.values()[position]) {
-                    Tabs.SEED -> {
-                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_notepad_24dp)
-                        tab.text = getString(R.string.signing_owner_export_tab_seed)
+            if(ownerSeed != null) {
+                tabBar.visible(true)
+                TabLayoutMediator(tabBar, content, true) { tab, position ->
+                    when (Tabs.values()[position]) {
+                        Tabs.SEED -> {
+                            tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_notepad_24dp)
+                            tab.text = getString(R.string.signing_owner_export_tab_seed)
+                        }
+                        Tabs.KEY -> {
+                            tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_locked_green_24dp)
+                            tab.text = getString(R.string.signing_owner_export_tab_key)
+                        }
                     }
-                    Tabs.KEY -> {
-                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_locked_green_24dp)
-                        tab.text = getString(R.string.signing_owner_export_tab_key)
-                    }
-                }
-            }.attach()
+                }.attach()
+            } else {
+                tabBar.visible(false)
+            }
 
             shareButton.setOnClickListener {
                 when(Tabs.values()[content.currentItem]) {
@@ -73,17 +79,15 @@ class OwnerExportPageAdapter(
 
     enum class Tabs { SEED, KEY }
 
-    override fun getItemCount(): Int = if(hasSeed) 2 else 1
+    override fun getItemCount(): Int = if(seed != null) 2 else 1
 
     override fun createFragment(position: Int): Fragment =
-        if (hasSeed) {
+        if (seed != null) {
             when (Tabs.values()[position]) {
-                Tabs.SEED -> OwnerExportSeedFragment.newInstance(seed!!)
-                Tabs.KEY -> OwnerExportKeyFragment.newInstance(key)
+                Tabs.SEED -> OwnerExportSeedFragment.newInstance(seed)
+                Tabs.KEY -> OwnerExportKeyFragment.newInstance(key, false)
             }
         } else {
-            OwnerExportKeyFragment.newInstance(key)
+            OwnerExportKeyFragment.newInstance(key, true)
         }
-
-    private val hasSeed = seed != null
 }
