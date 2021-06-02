@@ -8,6 +8,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerExportKeyBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.withArgs
 
 class OwnerExportKeyFragment : BaseViewBindingFragment<FragmentOwnerExportKeyBinding>() {
 
@@ -22,12 +23,18 @@ class OwnerExportKeyFragment : BaseViewBindingFragment<FragmentOwnerExportKeyBin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val key = requireArguments()[ARGS_KEY] as String
     }
 
     companion object {
 
-        fun newInstance(): OwnerExportKeyFragment {
-            return OwnerExportKeyFragment()
+        private const val ARGS_KEY = "args.string.key"
+
+        fun newInstance(key: String): OwnerExportKeyFragment {
+            return OwnerExportKeyFragment().withArgs(Bundle().apply {
+                putString(ARGS_KEY, key)
+            }) as OwnerExportKeyFragment
         }
     }
 }

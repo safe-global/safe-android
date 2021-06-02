@@ -8,6 +8,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerExportSeedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import pm.gnosis.svalinn.common.utils.withArgs
 
 class OwnerExportSeedFragment : BaseViewBindingFragment<FragmentOwnerExportSeedBinding>() {
 
@@ -22,12 +23,18 @@ class OwnerExportSeedFragment : BaseViewBindingFragment<FragmentOwnerExportSeedB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val seed = requireArguments()[ARGS_SEED] as String
     }
 
     companion object {
 
-        fun newInstance(): OwnerExportSeedFragment {
-            return OwnerExportSeedFragment()
+        private const val ARGS_SEED = "args.string.seed"
+
+        fun newInstance(seed: String): OwnerExportSeedFragment {
+            return OwnerExportSeedFragment().withArgs(Bundle().apply {
+                putString(ARGS_SEED, seed)
+            }) as OwnerExportSeedFragment
         }
     }
 }

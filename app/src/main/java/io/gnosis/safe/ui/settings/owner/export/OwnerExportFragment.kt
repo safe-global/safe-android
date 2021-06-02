@@ -13,6 +13,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.FragmentOwnerExportBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.export.OwnerExportPageAdapter.Tabs
 
 class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>() {
 
@@ -34,45 +35,55 @@ class OwnerExportFragment : BaseViewBindingFragment<FragmentOwnerExportBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            pager = OwnerExportPageAdapter(this@OwnerExportFragment)
-            pager.hasSeedPhrase = ownerSeed != null
+
+            pager = OwnerExportPageAdapter(this@OwnerExportFragment, ownerKey, ownerSeed)
             content.adapter = pager
             TabLayoutMediator(tabBar, content, true) { tab, position ->
-                when (OwnerExportPageAdapter.Tabs.values()[position]) {
-                    OwnerExportPageAdapter.Tabs.SEED -> {
+                when (Tabs.values()[position]) {
+                    Tabs.SEED -> {
                         tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_notepad_24dp)
                         tab.text = getString(R.string.signing_owner_export_tab_seed)
                     }
-                    OwnerExportPageAdapter.Tabs.KEY -> {
+                    Tabs.KEY -> {
                         tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_locked_green_24dp)
                         tab.text = getString(R.string.signing_owner_export_tab_key)
                     }
                 }
             }.attach()
+
+            shareButton.setOnClickListener {
+                when(Tabs.values()[content.currentItem]) {
+                    Tabs.SEED -> {
+
+                    }
+                    Tabs.KEY -> {
+
+                    }
+                }
+            }
         }
     }
-
 }
 
-class OwnerExportPageAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class OwnerExportPageAdapter(
+    fragment: Fragment,
+    private val key: String,
+    private val seed: String?
+) : FragmentStateAdapter(fragment) {
 
     enum class Tabs { SEED, KEY }
 
-    var hasSeedPhrase: Boolean = true
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
-
-    override fun getItemCount(): Int = if(hasSeedPhrase) 2 else 1
+    override fun getItemCount(): Int = if(hasSeed) 2 else 1
 
     override fun createFragment(position: Int): Fragment =
-        if (!hasSeedPhrase) {
-            OwnerExportKeyFragment.newInstance()
-        } else {
+        if (hasSeed) {
             when (Tabs.values()[position]) {
-                Tabs.SEED -> OwnerExportSeedFragment.newInstance()
-                Tabs.KEY -> OwnerExportKeyFragment.newInstance()
+                Tabs.SEED -> OwnerExportSeedFragment.newInstance(seed!!)
+                Tabs.KEY -> OwnerExportKeyFragment.newInstance(key)
             }
+        } else {
+            OwnerExportKeyFragment.newInstance(key)
         }
+
+    private val hasSeed = seed != null
 }
