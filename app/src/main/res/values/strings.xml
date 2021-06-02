@@ -365,6 +365,8 @@
 
     <string name="signing_owner_import">Import</string>
     <string name="signing_owner_export">Export</string>
+    <string name="signing_owner_export_tab_seed">Seed Phrase</string>
+    <string name="signing_owner_export_tab_key">Private Key</string>
 
     <string name="signing_owner_details_title">Owner Key</string>
     <string name="signing_owner_details_key_address">Key address</string>
