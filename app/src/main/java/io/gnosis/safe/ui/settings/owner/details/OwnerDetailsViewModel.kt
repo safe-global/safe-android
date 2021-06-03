@@ -53,7 +53,7 @@ class OwnerDetailsViewModel
 
     fun startExportFlow() {
         safeLaunch {
-            if (settingsHandler.requirePasscodeToExportKeys) {
+            if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToExportKeys) {
                 updateState {
                     OwnerDetailsState(ViewAction.NavigateTo(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToEnterPasscodeFragment()))
                 }

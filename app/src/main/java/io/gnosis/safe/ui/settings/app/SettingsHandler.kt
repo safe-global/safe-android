@@ -185,7 +185,7 @@ class SettingsHandler @Inject constructor(
         }
 
     var requirePasscodeToExportKeys: Boolean
-        get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, false)
+        get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, true)
         set(value) {
             preferencesManager.prefs.edit {
                 putBoolean(KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, value)
