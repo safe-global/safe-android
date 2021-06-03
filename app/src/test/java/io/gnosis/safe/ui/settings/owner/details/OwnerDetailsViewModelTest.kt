@@ -7,8 +7,8 @@ import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.None
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
-import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -26,6 +26,7 @@ class OwnerDetailsViewModelTest {
 
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val notificationRepository = mockk<NotificationRepository>()
+    private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
     private val qrCodeGenerator = mockk<QrCodeGenerator>()
 
@@ -41,7 +42,7 @@ class OwnerDetailsViewModelTest {
         coEvery { credentialsRepository.owner(ownerAddress) } returns Owner(ownerAddress, "owner1", Owner.Type.IMPORTED)
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns qrCode
 
-        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, tracker, qrCodeGenerator, appDispatchers)
+        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerDetailsState>()
         viewModel.state.observeForever(testObserver)
 
@@ -71,7 +72,7 @@ class OwnerDetailsViewModelTest {
         coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 0
         coEvery { tracker.setNumKeysImported(any()) } just Runs
 
-        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, tracker, qrCodeGenerator, appDispatchers)
+        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerDetailsState>()
         viewModel.state.observeForever(testObserver)
 

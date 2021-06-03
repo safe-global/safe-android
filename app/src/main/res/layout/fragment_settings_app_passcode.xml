@@ -122,6 +122,17 @@
                 app:setting_has_switch="true"
                 />
 
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/require_for_export"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_setting_openable_height"
+                android:layout_marginTop="@dimen/item_setting_margin"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="@string/settings_passcode_require_for_exporting_keys"
+                app:setting_openable="false"
+                app:setting_has_switch="true"
+                />
+
             <TextView
                 style="@style/Helptext"
                 android:layout_width="match_parent"

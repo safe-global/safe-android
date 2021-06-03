@@ -102,6 +102,10 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
             findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         }
+        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_created))
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
+        }
     }
 
     override fun onOwnerClick(owner: Solidity.Address) {
