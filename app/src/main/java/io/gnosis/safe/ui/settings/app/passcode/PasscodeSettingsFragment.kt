@@ -55,6 +55,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 } else {
                     settingsHandler.requirePasscodeToOpen = true
                     settingsHandler.requirePasscodeForConfirmations = true
+                    settingsHandler.requirePasscodeToExportKeys = true
                     settingsHandler.useBiometrics = false
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(ownerImported = false)
