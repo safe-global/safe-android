@@ -143,7 +143,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForExport.visible(settingsHandler.usePasscode)
             requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
             requireForExport.settingSwitch.setOnClickListener {
-                if(requireForExport.settingSwitch.isChecked) {
+                if (requireForExport.settingSwitch.isChecked) {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_ENABLE)
                     )
@@ -162,7 +162,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         Timber.d("---> Handle result from Security setting: $requestCode, $resultCode, $data")
     }
 
-    private fun canAuthenticate() = BiometricManager.from(requireContext()).canAuthenticate()
+    private fun canAuthenticate() = BiometricManager.from(requireContext())
+        .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK)
 
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now
