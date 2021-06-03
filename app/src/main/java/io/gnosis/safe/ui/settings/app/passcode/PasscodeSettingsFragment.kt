@@ -137,6 +137,21 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                     )
                 }
             }
+
+            //  REQUIRE FOR EXPORTING KEYS
+            requireForExport.visible(settingsHandler.usePasscode)
+            requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
+            requireForExport.settingSwitch.setOnClickListener {
+                if(requireForExport.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_ENABLE)
+                    )
+                } else {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_DISABLE)
+                    )
+                }
+            }
         }
     }
 

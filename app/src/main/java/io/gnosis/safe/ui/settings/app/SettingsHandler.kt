@@ -184,6 +184,14 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var requirePasscodeToExportKeys: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, value)
+            }
+        }
+
     var askForPasscodeSetupOnFirstLaunch: Boolean
         get() = preferencesManager.prefs.getBoolean(KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH, true)
         set(value) {
@@ -204,6 +212,7 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_USE_BIOMETRICS = "prefs.boolean.use_biometrics"
         internal const val KEY_REQUIRE_PASSCODE_TO_OPEN_APP = "prefs.boolean.require_passcode_to_open_app"
         internal const val KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS = "prefs.boolean.require_passcode_for_confirmations"
+        internal const val KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS = "prefs.boolean.require_passcode_to_export_keys"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
         internal const val KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH = "prefs.boolean.ask_for_passcode_setup_on_first_launch"
 
