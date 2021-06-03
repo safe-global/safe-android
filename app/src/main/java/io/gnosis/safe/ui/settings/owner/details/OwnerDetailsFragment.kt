@@ -49,7 +49,8 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 findNavController().navigateUp()
             }
             exportButton.setOnClickListener {
-                //TODO: navigate to export screen
+                val exportData = viewModel.ownerExportData()
+                findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerExportFragment(exportData.key, exportData.seed))
             }
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
@@ -88,6 +89,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
 
                         ownerQrCode.setImageBitmap(viewAction.ownerDetails.qrCode)
                         content.animate().alpha(1f).setDuration(1000)
+                        exportButton.isEnabled = viewAction.ownerDetails.exportable
                     }
                 }
             }

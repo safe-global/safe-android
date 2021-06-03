@@ -184,6 +184,8 @@ enum class ScreenId(val value: String) {
     OWNER_EDIT_NAME("screen_owner_edit_name"),
     OWNER_LIST("screen_owner_list"),
     OWNER_DETAILS("screen_owner_details"),
+    OWNER_EXPORT_SEED("screen_owner_export_seed"),
+    OWNER_EXPORT_KEY("screen_owner_export_key"),
     SAFE_RECEIVE("screen_safe_receive"),
     SAFE_SELECT("screen_safe_switch"),
     SAFE_ADD_ADDRESS("screen_safe_add_address"),

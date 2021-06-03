@@ -11,6 +11,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,12 +24,14 @@ class OwnerDetailsViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerDetailsState>(appDispatchers) {
 
+    private lateinit var owner: Owner
+
     override fun initialState() = OwnerDetailsState(ViewAction.None)
 
     fun loadOwnerDetails(address: Solidity.Address) {
         safeLaunch {
 
-            val ownerName = credentialsRepository.owner(address)!!.name
+            owner = credentialsRepository.owner(address)!!
 
             val qrCode = runCatching {
                 qrCodeGenerator.generateQrCode(
@@ -41,9 +44,18 @@ class OwnerDetailsViewModel
                 .getOrNull()
 
             updateState {
-                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(ownerName, qrCode)))
+                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(owner.name, qrCode, owner.privateKey != null)))
             }
         }
+    }
+
+    fun ownerExportData(): OwnerExportData {
+        val seed = owner.seedPhrase?.let {
+            credentialsRepository.decryptSeed(it)
+        }
+
+        val key = credentialsRepository.decryptKey(owner.privateKey!!)
+        return OwnerExportData(seed, key.toHexString())
     }
 
     fun removeOwner(address: Solidity.Address) {
@@ -67,9 +79,15 @@ data class OwnerDetailsState(
 
 data class OwnerDetails(
     val name: String?,
-    val qrCode: Bitmap?
+    val qrCode: Bitmap?,
+    val exportable: Boolean
 )
 
 data class ShowOwnerDetails(
     val ownerDetails: OwnerDetails
 ) : BaseStateViewModel.ViewAction
+
+data class OwnerExportData(
+    val seed: String?,
+    val key: String
+)

@@ -253,9 +253,31 @@
             android:id="@+id/action_ownerDetailsFragment_to_ownerEditNameFragment"
             app:destination="@id/ownerEditNameFragment" />
 
+        <action
+            android:id="@+id/action_ownerDetailsFragment_to_ownerExportFragment"
+            app:destination="@id/ownerExportFragment" />
+
         <argument
             android:name="ownerAddress"
             app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerExportFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.export.OwnerExportFragment"
+        android:label="OwnerExportFragment"
+        tools:layout="@layout/fragment_owner_export">
+
+        <argument
+            android:name="ownerKey"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerSeed"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
 
     </fragment>
 
