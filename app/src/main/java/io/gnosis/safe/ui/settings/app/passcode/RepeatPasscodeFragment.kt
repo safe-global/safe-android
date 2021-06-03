@@ -71,9 +71,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     }
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
-                    if (BiometricManager.from(requireContext())
-                            .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS
-                    ) {
+                    if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_SUCCESS && !settingsHandler.useBiometrics) {
                         val dialogBinding = DialogEnableBiometryBinding.inflate(LayoutInflater.from(context), null, false)
                         dialogBinding.message.setText(R.string.settings_passcode_enable_biometry)
                         CustomAlertDialogBuilder.build(
