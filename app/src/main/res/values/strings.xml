@@ -200,6 +200,7 @@
     <string name="settings_passcode_login_with_biometrics">Login with biometrics</string>
     <string name="settings_passcode_require_to_open_app">Require to open app</string>
     <string name="settings_passcode_require_for_confirmations">Require for confirmations</string>
+    <string name="settings_passcode_require_for_exporting_keys">Require for exporting keys</string>
     <string name="settings_passcode_show_keyboard">Show keyboard</string>
 
     <string name="settings_app_network">Network</string>
@@ -360,7 +361,8 @@
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="signing_owner_selection_more_derived_keys">Show more derived keys</string>
     <string name="signing_owner_selection_more">Show more</string>
-    <string name="signing_owner_key_imported">Owner key successfully imported</string>
+    <string name="signing_owner_key_imported">Owner key successfully imported.</string>
+    <string name="signing_owner_key_created">Owner key successfully created. Add it to a Safe on desktop and then restart the mobile app.</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
     <string name="signing_owner_import">Import</string>

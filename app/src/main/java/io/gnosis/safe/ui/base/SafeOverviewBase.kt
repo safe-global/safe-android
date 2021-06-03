@@ -28,6 +28,10 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
             resetOwnerImported()
         }
+        if (ownerCreated()) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_created))
+            resetOwnerCreated()
+        }
         if (rejectionConfirmed()) {
             resetRejectionConfirmed()
             snackbar(requireView(), R.string.rejection_successfully_submitted)
@@ -52,8 +56,16 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_IMPORT_RESULT) == true
     }
 
+    private fun ownerCreated(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OWNER_CREATE_RESULT) == true
+    }
+
     private fun resetOwnerImported() {
         findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_IMPORT_RESULT, false)
+    }
+
+    private fun resetOwnerCreated() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(OWNER_CREATE_RESULT, false)
     }
 
     private fun rejectionConfirmed(): Boolean {
@@ -90,6 +102,7 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
 
     companion object {
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
+        const val OWNER_CREATE_RESULT = "args.boolean.owner_create_result"
         const val OWNER_SELECTED_RESULT = "args.string.owner_selected_result"
         const val PASSCODE_SET_RESULT = "args.boolean.passcode_set_result"
         const val PASSCODE_DISABLED_RESULT = "args.boolean.passcode_disabled_result"

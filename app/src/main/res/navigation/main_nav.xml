@@ -257,6 +257,12 @@
             android:id="@+id/action_ownerDetailsFragment_to_ownerExportFragment"
             app:destination="@id/ownerExportFragment" />
 
+
+        <action
+            android:id="@+id/action_ownerDetailsFragment_to_enterPasscodeFragment"
+            app:destination="@id/enterPasscodeFragment"
+            app:popUpTo="@id/ownerDetailsFragment" />
+
         <argument
             android:name="ownerAddress"
             app:argType="string" />
@@ -334,7 +340,8 @@
         <argument
             android:name="selectedOwner"
             app:argType="string"
-            android:defaultValue="Dummy" />
+            app:nullable="true"
+            android:defaultValue="@null" />
 
         <argument
             android:name="requirePasscodeToOpen"

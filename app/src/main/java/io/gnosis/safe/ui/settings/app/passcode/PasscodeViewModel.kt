@@ -71,11 +71,26 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
+                        val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
+                        val encrypted = biometricPasscodeManager.encryptData(passcode, cipher)
+                        biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(encrypted,
+                            BiometricPasscodeManager.FILE_NAME,
+                            Context.MODE_PRIVATE,
+                            BiometricPasscodeManager.KEY_NAME
+                        )
                         settingsHandler.useBiometrics = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_DISABLE -> {
                         settingsHandler.useBiometrics = false
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    EXPORT_ENABLE -> {
+                        settingsHandler.requirePasscodeToExportKeys = true
+                        updateState { PasscodeState(PasscodeCommandExecuted) }
+                    }
+                    EXPORT_DISABLE -> {
+                        settingsHandler.requirePasscodeToExportKeys = false
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                 }
@@ -227,5 +242,7 @@ enum class PasscodeCommand {
     APP_ENABLE,
     CONFIRMATION_ENABLE,
     BIOMETRICS_ENABLE,
-    BIOMETRICS_DISABLE
+    BIOMETRICS_DISABLE,
+    EXPORT_ENABLE,
+    EXPORT_DISABLE
 }

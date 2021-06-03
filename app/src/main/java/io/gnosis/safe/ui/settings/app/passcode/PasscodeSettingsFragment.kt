@@ -55,6 +55,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                 } else {
                     settingsHandler.requirePasscodeToOpen = true
                     settingsHandler.requirePasscodeForConfirmations = true
+                    settingsHandler.requirePasscodeToExportKeys = true
                     settingsHandler.useBiometrics = false
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToCreatePasscodeFragment(ownerImported = false)
@@ -137,6 +138,21 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
                     )
                 }
             }
+
+            //  REQUIRE FOR EXPORTING KEYS
+            requireForExport.visible(settingsHandler.usePasscode)
+            requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
+            requireForExport.settingSwitch.setOnClickListener {
+                if(requireForExport.settingSwitch.isChecked) {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_ENABLE)
+                    )
+                } else {
+                    findNavController().navigate(
+                        PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_DISABLE)
+                    )
+                }
+            }
         }
     }
 
@@ -160,6 +176,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         with(binding) {
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
+            requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
             requireToOpen.settingSwitch.isChecked = settingsHandler.requirePasscodeToOpen
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
         }

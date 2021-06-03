@@ -24,6 +24,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -64,8 +65,10 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     snackbar(requireView(), R.string.passcode_disabled)
                     if (requirePasscodeToOpen) {
                         findNavController().popBackStack(R.id.enterPasscodeFragment, true)
-                    } else {
+                    } else if (!selectedOwner.isNullOrBlank()) {
                         findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                    } else {
+                        findNavController().popBackStack(R.id.ownerDetailsFragment, true)
                     }
                 }
                 is BaseStateViewModel.ViewAction.ShowError -> {
@@ -140,12 +143,20 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
         if (requirePasscodeToOpen) {
             findNavController().popBackStack(R.id.enterPasscodeFragment, true)
             binding.input.hideSoftKeyboard()
-        } else {
+        } else if (!selectedOwner.isNullOrBlank()) {
             findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
             findNavController().currentBackStackEntry?.savedStateHandle?.set(
                 SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
                 selectedOwner
             )
+        } else {
+            // passcode for export
+            findNavController().popBackStack(R.id.enterPasscodeFragment, true)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                OwnerDetailsFragment.RESULT_PASSCODE_UNLOCKED,
+                true
+            )
+            binding.input.hideSoftKeyboard()
         }
     }
 

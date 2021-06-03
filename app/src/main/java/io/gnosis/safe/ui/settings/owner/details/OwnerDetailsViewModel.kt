@@ -8,6 +8,7 @@ import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
@@ -19,6 +20,7 @@ class OwnerDetailsViewModel
 @Inject constructor(
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
+    private val settingsHandler: SettingsHandler,
     private val tracker: Tracker,
     private val qrCodeGenerator: QrCodeGenerator,
     appDispatchers: AppDispatchers
@@ -49,13 +51,35 @@ class OwnerDetailsViewModel
         }
     }
 
-    fun ownerExportData(): OwnerExportData {
-        val seed = owner.seedPhrase?.let {
-            credentialsRepository.decryptSeed(it)
-        }
+    fun startExportFlow() {
+        safeLaunch {
+            if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToExportKeys) {
+                updateState {
+                    OwnerDetailsState(ViewAction.NavigateTo(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToEnterPasscodeFragment()))
+                }
+                updateState {
+                    OwnerDetailsState(ViewAction.None)
+                }
 
-        val key = credentialsRepository.decryptKey(owner.privateKey!!)
-        return OwnerExportData(seed, key.toHexString())
+            } else {
+                showExportData()
+            }
+        }
+    }
+
+    fun showExportData() {
+        safeLaunch {
+            val seed = owner.seedPhrase?.let {
+                credentialsRepository.decryptSeed(it)
+            }
+            val key = credentialsRepository.decryptKey(owner.privateKey!!).toHexString()
+            updateState {
+                OwnerDetailsState(ViewAction.NavigateTo(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerExportFragment(key, seed)))
+            }
+            updateState {
+                OwnerDetailsState(ViewAction.None)
+            }
+        }
     }
 
     fun removeOwner(address: Solidity.Address) {
@@ -86,8 +110,3 @@ data class OwnerDetails(
 data class ShowOwnerDetails(
     val ownerDetails: OwnerDetails
 ) : BaseStateViewModel.ViewAction
-
-data class OwnerExportData(
-    val seed: String?,
-    val key: String
-)
