@@ -41,4 +41,9 @@
         <attr name="step_connector_margin" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="SeedItem">
+        <attr name="seed_word" format="string" />
+        <attr name="seed_number" format="integer" />
+    </declare-styleable>
+
 </resources>

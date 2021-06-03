@@ -24,6 +24,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import javax.inject.Singleton
 
 @Singleton
@@ -59,6 +60,8 @@ interface ApplicationComponent {
     fun settingsHandler(): SettingsHandler
 
     fun tracker(): Tracker
+
+    fun qrCodeGenerator(): QrCodeGenerator
 
     fun notificationManager(): NotificationManager
 
