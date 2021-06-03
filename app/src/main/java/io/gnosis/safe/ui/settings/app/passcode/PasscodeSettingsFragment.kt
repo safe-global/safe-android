@@ -177,6 +177,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         with(binding) {
             usePasscode.settingSwitch.isChecked = settingsHandler.usePasscode
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
+            requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
             requireToOpen.settingSwitch.isChecked = settingsHandler.requirePasscodeToOpen
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
         }
