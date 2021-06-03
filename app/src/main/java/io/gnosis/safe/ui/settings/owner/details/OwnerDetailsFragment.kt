@@ -12,6 +12,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
 import io.gnosis.safe.utils.formatEthAddress
@@ -49,8 +50,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 findNavController().navigateUp()
             }
             exportButton.setOnClickListener {
-                val exportData = viewModel.ownerExportData()
-                findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerExportFragment(exportData.key, exportData.seed))
+                viewModel.startExportFlow()
             }
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
@@ -92,12 +92,36 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                         exportButton.isEnabled = viewAction.ownerDetails.exportable
                     }
                 }
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
+                }
             }
         })
         viewModel.loadOwnerDetails(owner)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (passcodeUnlocked()) {
+            resetPasscodeUnlocked()
+            resumeExportFlow()
+        }
+    }
+
+    private fun resumeExportFlow() {
+        viewModel.showExportData()
+    }
+
+    private fun passcodeUnlocked(): Boolean {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(RESULT_PASSCODE_UNLOCKED) == true
+    }
+
+    private fun resetPasscodeUnlocked() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(RESULT_PASSCODE_UNLOCKED, null)
+    }
+
     companion object {
         const val ARGS_RESULT_OWNER_REMOVED = "args.boolean.owner_removed_result"
+        const val RESULT_PASSCODE_UNLOCKED = "result.boolean.passcode_unlocked"
     }
 }
