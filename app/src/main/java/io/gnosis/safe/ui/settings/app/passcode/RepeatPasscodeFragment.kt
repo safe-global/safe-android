@@ -1,11 +1,13 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -13,12 +15,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
+import io.gnosis.safe.databinding.DialogEnableBiometryBinding
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -67,18 +71,27 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     }
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
-                    if (ownerImported) {
-                        findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+                    if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_SUCCESS && !settingsHandler.useBiometrics) {
+                        val dialogBinding = DialogEnableBiometryBinding.inflate(LayoutInflater.from(context), null, false)
+                        dialogBinding.message.setText(R.string.settings_passcode_enable_biometry)
+                        CustomAlertDialogBuilder.build(
+                            context = requireContext(),
+                            contentView = dialogBinding.root,
+                            title = requireContext().resources.getString(R.string.settings_passcode_enable_biometry_title),
+                            dismissCallback = DialogInterface.OnDismissListener {
+                                // This is also called when the dialog is canceled and after confirmCallback
+                                dismissCreatePasscodeFragment()
+                            },
+                            confirmCallback = { dialog ->
+                                viewModel.enableBiometry()
+                                dialog.dismiss()
+                            },
+                            confirmColor = R.color.primary,
+                            confirmRes = R.string.settings_passcode_enable_biometry_enable
+                        ).show()
                     } else {
-                        findNavController().popBackStack(R.id.createPasscodeFragment, true)
+                        dismissCreatePasscodeFragment()
                     }
-
-                    binding.input.hideSoftKeyboard()
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                        SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
-                        true
-                    )
                 }
             }
         })
@@ -117,6 +130,21 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                 skipPasscodeSetup()
             }
         }
+    }
+
+    private fun dismissCreatePasscodeFragment() {
+        if (ownerImported) {
+            findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+        } else {
+            findNavController().popBackStack(R.id.createPasscodeFragment, true)
+        }
+
+        binding.input.hideSoftKeyboard()
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
+            true
+        )
     }
 
     private fun FragmentPasscodeBinding.skipPasscodeSetup() {

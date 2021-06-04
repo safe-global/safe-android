@@ -35,7 +35,6 @@ class PasscodeViewModel
 
     fun configurePasscode(passcode: String, command: PasscodeCommand) {
         safeLaunch {
-
             val success = encryptionManager.unlockWithPassword(passcode.toByteArray())
             if (success) {
                 when (command) {
@@ -165,9 +164,9 @@ class PasscodeViewModel
         }
     }
 
-    fun encryptPasscodeWithBiometricKey(digitsAsString: String) {
+    fun encryptPasscodeWithBiometricKey(newPasscode: String) {
         val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
-        val encrypted = biometricPasscodeManager.encryptData(digitsAsString, cipher)
+        val encrypted = biometricPasscodeManager.encryptData(newPasscode, cipher)
         biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
             encrypted,
             BiometricPasscodeManager.FILE_NAME,
@@ -210,6 +209,9 @@ class PasscodeViewModel
         }
     }
 
+    fun enableBiometry() {
+        settingsHandler.useBiometrics = true
+    }
 
     data class PasscodeState(override var viewAction: ViewAction?) : State
     object AllOwnersRemoved : ViewAction
