@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
 import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.navigation.Navigation
@@ -72,13 +71,13 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
             useBiometrics.visible(
                 settingsHandler.usePasscode && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                        (canAuthenticate() == BIOMETRIC_SUCCESS ||
-                                canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED)
+                        (requireContext().canAuthenticateUsingBiometrics() == BIOMETRIC_SUCCESS ||
+                                requireContext().canAuthenticateUsingBiometrics() == BIOMETRIC_ERROR_NONE_ENROLLED)
             )
             useBiometrics.settingSwitch.isChecked = settingsHandler.useBiometrics
             useBiometrics.settingSwitch.setOnClickListener {
                 if (useBiometrics.settingSwitch.isChecked) {
-                    if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+                    if (requireContext().canAuthenticateUsingBiometrics() == BIOMETRIC_ERROR_NONE_ENROLLED) {
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
                             startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
                         } else {
@@ -143,7 +142,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForExport.visible(settingsHandler.usePasscode)
             requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
             requireForExport.settingSwitch.setOnClickListener {
-                if(requireForExport.settingSwitch.isChecked) {
+                if (requireForExport.settingSwitch.isChecked) {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_ENABLE)
                     )
@@ -162,8 +161,6 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
         Timber.d("---> Handle result from Security setting: $requestCode, $resultCode, $data")
     }
 
-    private fun canAuthenticate() = BiometricManager.from(requireContext())
-        .canAuthenticate()
 
     override fun handleActiveSafe(safe: Safe?) {
         // ignored for now
@@ -171,7 +168,7 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
 
     override fun onResume() {
         super.onResume()
-        if (canAuthenticate() == BIOMETRIC_ERROR_NONE_ENROLLED) {
+        if (requireContext().canAuthenticateUsingBiometrics() == BIOMETRIC_ERROR_NONE_ENROLLED) {
             settingsHandler.useBiometrics = false
         }
         with(binding) {

@@ -91,7 +91,6 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
     override fun onResume() {
         super.onResume()
         viewModel.loadOwners()
-
         //FIXME: find better way to pass results in nav graph
         //TODO: add extension functions for handling back stack entries
         if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {

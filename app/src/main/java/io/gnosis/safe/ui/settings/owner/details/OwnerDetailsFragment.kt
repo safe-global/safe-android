@@ -81,7 +81,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                             )
                         }
                         removeButton.setOnClickListener {
-                            showConfirmDialog(requireContext(), R.string.signing_owner_dialog_description) {
+                            showConfirmDialog(context = requireContext(), message = R.string.signing_owner_dialog_description) {
                                 viewModel.removeOwner(owner)
                                 findNavController().previousBackStackEntry?.savedStateHandle?.set(ARGS_RESULT_OWNER_REMOVED, true)
                             }
