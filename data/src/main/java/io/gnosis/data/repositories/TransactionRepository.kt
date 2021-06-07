@@ -4,7 +4,6 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.utils.toSignatureString
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -68,7 +67,7 @@ class TransactionRepository(
     }
 
     fun sign(ownerKey: BigInteger, safeTxHash: String): String =
-        KeyPair.fromPrivate(ownerKey.toByteArray())
+        CheckedKeyPair.fromPrivate(ownerKey.toByteArray())
             .sign(safeTxHash.hexToByteArray())
             .toSignatureString()
 }

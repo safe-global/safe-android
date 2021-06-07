@@ -6,7 +6,6 @@ import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.data.utils.toSignatureString
 import kotlinx.coroutines.runBlocking
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
@@ -133,7 +132,7 @@ class CredentialsRepository(
         encryptionManager.unlock()
         val key = encryptionManager.decrypt(cryptoData)
         encryptionManager.lock()
-        val keyPair = KeyPair.fromPrivate(key)
+        val keyPair = CheckedKeyPair.fromPrivate(key)
         return keyPair
             .sign(data)
             .toSignatureString()

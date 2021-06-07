@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
+import io.gnosis.data.repositories.CheckedKeyPair
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
@@ -13,7 +14,6 @@ import io.gnosis.safe.Error
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.toError
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -306,7 +306,7 @@ class NotificationRepository(
 
 fun Registration.buildAndAddSignature(key: ByteArray) {
     val signature =
-        KeyPair
+        CheckedKeyPair
             .fromPrivate(key)
             .sign(hash().hexToByteArray())
             .toSignatureString()

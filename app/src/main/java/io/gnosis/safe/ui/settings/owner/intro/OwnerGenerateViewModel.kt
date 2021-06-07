@@ -29,9 +29,11 @@ class OwnerGenerateViewModel
         viewModelScope.launch {
             val mnemonic = bip39.generateMnemonic(languageId = R.id.english)
             derivator.initialize(mnemonic)
-            val key = derivator.keyForIndex(0).toHexString()
-            val address = derivator.addressesForPage(0, 1)[0].asEthereumAddressString()
-            ownerData = GeneratedOwnerData(mnemonic, address, key)
+            for(i in 0L..100L) {
+                val key = derivator.keyForIndex(i).toHexString()
+                val address = derivator.addressesForPage(i, 1)[0].asEthereumAddressString()
+                ownerData = GeneratedOwnerData(mnemonic, address, key)
+            }
         }
     }
 }

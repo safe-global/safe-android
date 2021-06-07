@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import io.gnosis.data.repositories.CheckedKeyPair
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -31,7 +32,7 @@ class OwnerSelectionViewModel
 
     fun loadSingleOwner(privateKey: String) {
         safeLaunch {
-            val keyPair = KeyPair.fromPrivate(privateKey.hexAsBigInteger())
+            val keyPair = CheckedKeyPair.fromPrivate(privateKey.hexAsBigInteger())
             updateState {
                 OwnerSelectionState(SingleOwner(Solidity.Address(keyPair.address.asBigInteger()), false))
             }
