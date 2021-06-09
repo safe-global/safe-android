@@ -10,6 +10,8 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexToByteArray
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerSeedPhraseViewModel
@@ -47,8 +49,11 @@ class OwnerSeedPhraseViewModel
             safeLaunch {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
             }
+        } else if (!keyCanBeUsedForSigning(input.hexAsBigInteger())) {
+            safeLaunch {
+                updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
+            }
         } else {
-
             safeLaunch {
                 val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
                 val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
@@ -58,6 +63,15 @@ class OwnerSeedPhraseViewModel
                     updateState { ImportOwnerKeyState.Error(KeyAlreadyImported) }
                 }
             }
+        }
+    }
+
+    private fun keyCanBeUsedForSigning(key: BigInteger): Boolean {
+        try {
+            KeyPair.fromPrivate(key).sign("0x1234567890".hexToByteArray())
+            return true
+        } catch (e: Exception) {
+            return false
         }
     }
 
