@@ -613,6 +613,11 @@
             android:name="decodedValues"
             app:argType="string" />
 
+        <argument
+            android:name="addressInfoIndex"
+            app:argType="string"
+            app:nullable="true" />
+
     </fragment>
 
     <fragment
@@ -644,6 +649,12 @@
 
         <argument
             android:name="amount"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="addressInfoIndex"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

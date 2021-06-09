@@ -3,16 +3,19 @@ package io.gnosis.safe.ui.transactions.details.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.data.models.transaction.getParamItemType
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewLabeledArrayArrayItemBinding
 import io.gnosis.safe.databinding.ViewLabeledArrayItemBinding
 import io.gnosis.safe.ui.settings.view.AddressItem
+import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
@@ -36,7 +39,7 @@ class LabeledArrayItem @JvmOverloads constructor(
             field = value
         }
 
-    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String) {
+    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
         binding.arrayItemValues.removeAllViews()
         val typeValues = if (paramType == ParamType.MIXED) {
             paramValue.replace("[]", "").removeSurrounding("(", ")")
@@ -52,9 +55,9 @@ class LabeledArrayItem @JvmOverloads constructor(
                 } else {
                     if (paramType == ParamType.MIXED) {
                         val valueType = typeValues.split(",")[index]
-                        addValueItem(binding.arrayItemValues, value, getParamItemType(valueType))
+                        addValueItem(binding.arrayItemValues, value, getParamItemType(valueType), addressInfoIndex?.get(value))
                     } else {
-                        addValueItem(binding.arrayItemValues, value, paramType)
+                        addValueItem(binding.arrayItemValues, value, paramType, addressInfoIndex?.get(value))
                     }
                 }
             }
@@ -63,7 +66,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         }
     }
 
-    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String) {
+    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
         val arrayItem = ArrayItem(context)
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(6), 0, 0)
@@ -88,9 +91,9 @@ class LabeledArrayItem @JvmOverloads constructor(
                 } else {
                     if (paramType == ParamType.MIXED) {
                         val valueType = typeValues.split(",")[index]
-                        addValueItem(arrayItem.container, value, getParamItemType(valueType))
+                        addValueItem(arrayItem.container, value, getParamItemType(valueType), addressInfoIndex?.get(value))
                     } else {
-                        addValueItem(arrayItem.container, value, paramType)
+                        addValueItem(arrayItem.container, value, paramType, addressInfoIndex?.get(value))
                     }
                 }
             }
@@ -99,14 +102,23 @@ class LabeledArrayItem @JvmOverloads constructor(
         container.addView(arrayItem)
     }
 
-    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType) {
+    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType, addressInfo: AddressInfo? = null) {
         when (paramType) {
             ParamType.ADDRESS -> {
-                val addressItem = AddressItem(context)
+                val addressItem: View
+                if (addressInfo != null) {
+                    addressItem = NamedAddressItem(context)
+                    val address = (value as String).asEthereumAddress()
+                    addressItem.address = address
+                    addressItem.name = addressInfo.name
+                    addressItem.loadKnownAddressLogo(addressInfo.logoUri, address)
+                } else {
+                    addressItem = AddressItem(context)
+                    addressItem.address = (value as String).asEthereumAddress()
+                }
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(dpToPx(-16), dpToPx(8), dpToPx(-16), 0)
                 addressItem.layoutParams = layoutParams
-                addressItem.address = (value as String).asEthereumAddress()
                 container.addView(addressItem)
             }
             ParamType.BYTES -> {

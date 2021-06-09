@@ -340,7 +340,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
                                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
-                                                paramSerializer.serializeDecodedValues(it.valueDecoded!!)
+                                                paramSerializer.serializeDecodedValues(it.valueDecoded!!),
+                                                paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                             )
                                         )
                                     }
