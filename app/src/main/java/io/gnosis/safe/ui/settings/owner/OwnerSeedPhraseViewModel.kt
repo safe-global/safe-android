@@ -67,11 +67,11 @@ class OwnerSeedPhraseViewModel
     }
 
     private fun keyCanBeUsedForSigning(key: BigInteger): Boolean {
-        try {
+        return try {
             KeyPair.fromPrivate(key).sign("0x1234567890".hexToByteArray())
-            return true
+            true
         } catch (e: Exception) {
-            return false
+            false
         }
     }
 
