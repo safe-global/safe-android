@@ -75,7 +75,7 @@ class CheckedKeyPair(
 ) : Serializable {
     init {
         priv?.let {
-            RuntimeException("init").printStackTrace()
+//            RuntimeException("init").printStackTrace()
             println("----> priv: ${priv.toHexString()}")
             ECPrivateKeyParameters(priv, SECP256K1)
         }
