@@ -3,18 +3,22 @@ package io.gnosis.safe.utils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.ValueDecoded
+import pm.gnosis.model.Solidity
 
 class ParamSerializer(
     moshi: Moshi
 ) {
     private val decodedDataAdapter: JsonAdapter<DataDecoded>
     private val decodedValuesAdapter: JsonAdapter<List<ValueDecoded>>
+    private val addressInfoIndexAdapter: JsonAdapter<Map<String, AddressInfo>>
 
     init {
         decodedDataAdapter = moshi.adapter(DataDecoded::class.java)
         decodedValuesAdapter = moshi.adapter(Types.newParameterizedType(List::class.java, ValueDecoded::class.java))
+        addressInfoIndexAdapter = moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, AddressInfo::class.java))
     }
 
     fun serializeDecodedData(decodedData: DataDecoded): String {
@@ -31,5 +35,13 @@ class ParamSerializer(
 
     fun deserializeDecodedValues(decodedValuesString: String): List<ValueDecoded>? {
         return decodedValuesAdapter.fromJson(decodedValuesString)
+    }
+
+    fun serializeAddressInfoIndex(addressInfoIndex: Map<String, AddressInfo>?): String? {
+        return addressInfoIndex?.let { addressInfoIndexAdapter.toJson(it) }
+    }
+
+    fun deserializeAddressInfoIndex(addressInfoIndexString: String?): Map<String, AddressInfo>? {
+        return addressInfoIndexString?.let { addressInfoIndexAdapter.fromJson(it) }
     }
 }
