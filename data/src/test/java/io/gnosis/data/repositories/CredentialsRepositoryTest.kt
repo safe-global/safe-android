@@ -9,6 +9,7 @@ import org.junit.Test
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
 
 class CredentialsRepositoryTest {
@@ -34,6 +35,52 @@ class CredentialsRepositoryTest {
 
         credentialsRepository = CredentialsRepository(ownerDao, encryptionManager, ownerCredentialsVault)
         credentialsRepository.signWithOwner(owner, "data".toByteArray())
+
+        coVerifySequence {
+            encryptionManager.unlock()
+            encryptionManager.decrypt(keyCryptoData)
+            encryptionManager.lock()
+        }
+    }
+
+    @Test
+    fun `encryptKey`() = runBlocking {
+
+        val key = "decrypted".toByteArray()
+        val keyEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
+        val keyCryptoData =  EncryptionManager.CryptoData.fromString(keyEncryptedString)
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
+
+        coEvery { ownerCredentialsVault.hasCredentials() } returns false
+        coEvery { encryptionManager.unlock() } just Runs
+        coEvery { encryptionManager.lock() } just Runs
+        coEvery { encryptionManager.encrypt(any()) } returns keyCryptoData
+
+        credentialsRepository = CredentialsRepository(ownerDao, encryptionManager, ownerCredentialsVault)
+        credentialsRepository.encryptKey(key.asBigInteger())
+
+        coVerifySequence {
+            encryptionManager.unlock()
+            encryptionManager.encrypt(key)
+            encryptionManager.lock()
+        }
+    }
+
+    @Test
+    fun `decryptKey`() = runBlocking {
+
+        val key = "decrypted".toByteArray()
+        val keyEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
+        val keyCryptoData =  EncryptionManager.CryptoData.fromString(keyEncryptedString)
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
+
+        coEvery { ownerCredentialsVault.hasCredentials() } returns false
+        coEvery { encryptionManager.unlock() } just Runs
+        coEvery { encryptionManager.lock() } just Runs
+        coEvery { encryptionManager.decrypt(any()) } returns key
+
+        credentialsRepository = CredentialsRepository(ownerDao, encryptionManager, ownerCredentialsVault)
+        credentialsRepository.decryptKey(owner.privateKey!!)
 
         coVerifySequence {
             encryptionManager.unlock()
