@@ -10,6 +10,8 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexToByteArray
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerSeedPhraseViewModel
@@ -42,14 +44,12 @@ class OwnerSeedPhraseViewModel
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
-
-        if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
-            safeLaunch {
+        safeLaunch {
+            if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
-            }
-        } else {
-
-            safeLaunch {
+            } else if (!keyCanBeUsedForSigning(input.hexAsBigInteger())) {
+                updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
+            } else {
                 val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
                 val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
                 if (credentialsRepository.owner(ownerAddress) == null) {
@@ -58,6 +58,17 @@ class OwnerSeedPhraseViewModel
                     updateState { ImportOwnerKeyState.Error(KeyAlreadyImported) }
                 }
             }
+        }
+    }
+
+    // Some keys fail additional checks. This makes sure a key can be used for signing without throwing an Exception.
+    // See: https://github.com/gnosis/safe-android/issues/1431
+    private fun keyCanBeUsedForSigning(key: BigInteger): Boolean {
+        return try {
+            KeyPair.fromPrivate(key).sign("0x1234567890".hexToByteArray())
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 
