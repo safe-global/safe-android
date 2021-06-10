@@ -44,17 +44,12 @@ class OwnerSeedPhraseViewModel
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun validatePrivateKey(key: String) {
         val input = removeHexPrefix(key)
-
-        if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
-            safeLaunch {
+        safeLaunch {
+            if (input == "0000000000000000000000000000000000000000000000000000000000000000") {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
-            }
-        } else if (!keyCanBeUsedForSigning(input.hexAsBigInteger())) {
-            safeLaunch {
+            } else if (!keyCanBeUsedForSigning(input.hexAsBigInteger())) {
                 updateState { ImportOwnerKeyState.Error(InvalidPrivateKey) }
-            }
-        } else {
-            safeLaunch {
+            } else {
                 val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
                 val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
                 if (credentialsRepository.owner(ownerAddress) == null) {
