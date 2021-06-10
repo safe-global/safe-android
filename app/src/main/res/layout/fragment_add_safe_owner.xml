@@ -133,13 +133,13 @@
         app:layout_constraintTop_toBottomOf="@id/safe_address" />
 
     <Button
-        android:id="@+id/import_button"
+        android:id="@+id/add_owner_button"
         style="@style/PrimaryButton"
         android:layout_width="0dp"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="32dp"
-        android:text="@string/add_safe_owner_import"
+        android:text="@string/add_safe_owner_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/read_only_description" />
@@ -154,6 +154,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/import_button" />
+        app:layout_constraintTop_toBottomOf="@id/add_owner_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

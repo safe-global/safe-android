@@ -49,20 +49,28 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             newAddressBlockies.setAddress(ownerAddress)
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             backButton.setOnClickListener { findNavController().navigateUp() }
-            importButton.setOnClickListener {
-                if (ownerSeedPhrase != null) {
+            if (ownerSeedPhrase != null) {
+                nextButton.text = getString(R.string.signing_owner_save)
+                nextButton.setOnClickListener {
                     viewModel.importGeneratedOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, ownerSeedPhrase!!)
-                } else {
+                }
+            } else {
+                nextButton.text = getString(R.string.signing_owner_import)
+                nextButton.setOnClickListener {
                     viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
                 }
-             }
-            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.importButton.isEnabled = !text.isNullOrBlank() }
+            }
+            ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            when(val viewAction = it.viewAction) {
+            when (val viewAction = it.viewAction) {
                 is CloseScreen -> {
                     findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                    findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
+                    if (ownerSeedPhrase != null) {
+                        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, true)
+                    } else {
+                        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
+                    }
                 }
                 is NavigateTo -> {
                     findNavController().navigate(viewAction.navDirections)
