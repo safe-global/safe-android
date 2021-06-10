@@ -18,7 +18,7 @@ sealed class CoinsViewData {
         val type: Type
     ) : CoinsViewData() {
         enum class Type {
-            IMPORT_OWNER_KEY,
+            ADD_OWNER_KEY,
             PASSCODE,
             NONE
         }

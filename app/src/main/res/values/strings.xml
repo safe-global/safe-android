@@ -28,8 +28,9 @@
     <string name="add_safe_label_link">https://gnosis-safe.io</string>
     <string name="back">Back</string>
 
-    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to import owner key for this Safe to confirm transactions?</string>
+    <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe to confirm transactions?</string>
     <string name="add_safe_owner_import">Import owner key</string>
+    <string name="add_safe_owner_add">Add owner key</string>
     <string name="add_safe_owner_skip">Skip</string>
     <string name="choose_input_method">Choose input method</string>
     <string name="address_input_ens">ENS name</string>
@@ -388,9 +389,9 @@
     <string name="signing_owner_list_title">Owner keys</string>
     <string name="signing_owner_list_empty">There are no added owner keys</string>
 
-    <string name="banner_owner_title">Import owner key</string>
-    <string name="banner_owner_text">We added signing support to the app! Now you can import your owner key and sign transactions on the go.</string>
-    <string name="banner_owner_action">Import owner key now</string>
+    <string name="banner_owner_title">Add owner key</string>
+    <string name="banner_owner_text">We added signing support to the app! Now you can add your owner key and sign transactions on the go.</string>
+    <string name="banner_owner_action">Add owner key now</string>
 
     <string name="banner_passcode_title">Create passcode</string>
     <string name="banner_passcode_text">Secure your owner keys by setting up a passcode. The passcode will be needed to open the app and sign transactions.</string>

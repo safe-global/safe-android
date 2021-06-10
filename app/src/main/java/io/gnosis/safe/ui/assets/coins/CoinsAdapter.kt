@@ -125,7 +125,7 @@ class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsVi
         val context = viewBinding.root.context
         with(viewBinding) {
             when(type) {
-                Banner.Type.IMPORT_OWNER_KEY -> {
+                Banner.Type.ADD_OWNER_KEY -> {
                     bannerTitle.text = context.getString(R.string.banner_owner_title)
                     bannerText.text = context.getString(R.string.banner_owner_text)
                     bannerAction.text = context.getString(R.string.banner_owner_action)
@@ -143,8 +143,8 @@ class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsVi
             bannerAction.setOnClickListener {
                 bannerListener.get()?.onBannerActionTriggered(type)
                 when(type) {
-                    Banner.Type.IMPORT_OWNER_KEY -> {
-                        Navigation.findNavController(it).navigate(R.id.action_to_import_owner)
+                    Banner.Type.ADD_OWNER_KEY -> {
+                        Navigation.findNavController(it).navigate(R.id.action_to_add_owner)
                     }
                     Banner.Type.PASSCODE -> {
                         Navigation.findNavController(it).navigate(R.id.action_to_passcode_setup)
