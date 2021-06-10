@@ -365,6 +365,7 @@
     <string name="signing_owner_key_created">Owner key successfully created. Add it to a Safe on desktop and then restart the mobile app.</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
+    <string name="signing_owner_save">Save</string>
     <string name="signing_owner_import">Import</string>
     <string name="signing_owner_export">Export</string>
     <string name="signing_owner_export_tab_seed">Seed Phrase</string>
