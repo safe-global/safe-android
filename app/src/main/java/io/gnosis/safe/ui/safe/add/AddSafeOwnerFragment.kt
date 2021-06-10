@@ -61,10 +61,10 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
             }
             blockie.setAddress(address)
             readOnlyDescription.text = getString(R.string.add_safe_owner_read_only_notice, name)
-            importButton.setOnClickListener {
+            addOwnerButton.setOnClickListener {
                 tracker.logOnboardingOwnerImport()
                 finishAddSafeFlow()
-                findNavController().navigate(R.id.action_to_import_owner)
+                findNavController().navigate(R.id.action_to_add_owner)
             }
             skip.setOnClickListener {
                 tracker.logOnboardingOwnerSkipped()
