@@ -66,6 +66,8 @@ class OwnerSeedPhraseViewModel
         }
     }
 
+    // Some keys fail additional checks. This makes sure a key can be used for signing without throwing an Exception.
+    // See: https://github.com/gnosis/safe-android/issues/1431
     private fun keyCanBeUsedForSigning(key: BigInteger): Boolean {
         return try {
             KeyPair.fromPrivate(key).sign("0x1234567890".hexToByteArray())
