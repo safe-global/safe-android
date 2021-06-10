@@ -50,7 +50,7 @@ class CoinsViewModel
                 val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
 
                 val banner = when {
-                    settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() == 0 -> Banner.Type.IMPORT_OWNER_KEY
+                    settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() == 0 -> Banner.Type.ADD_OWNER_KEY
                     settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE
                     else -> Banner.Type.NONE
                 }
@@ -69,8 +69,8 @@ class CoinsViewModel
         val result = mutableListOf<CoinsViewData>()
 
         when (banner) {
-            Banner.Type.IMPORT_OWNER_KEY -> {
-                result.add(Banner(Banner.Type.IMPORT_OWNER_KEY))
+            Banner.Type.ADD_OWNER_KEY -> {
+                result.add(Banner(Banner.Type.ADD_OWNER_KEY))
             }
             Banner.Type.PASSCODE -> {
                 result.add(Banner(Banner.Type.PASSCODE))
@@ -104,7 +104,7 @@ class CoinsViewModel
 
     override fun onBannerDismissed(type: Banner.Type) {
         when (type) {
-            Banner.Type.IMPORT_OWNER_KEY -> {
+            Banner.Type.ADD_OWNER_KEY -> {
                 settingsHandler.showOwnerBanner = false
                 tracker.logBannerOwnerSkip()
             }
@@ -120,7 +120,7 @@ class CoinsViewModel
 
     override fun onBannerActionTriggered(type: Banner.Type) {
         when (type) {
-            Banner.Type.IMPORT_OWNER_KEY -> {
+            Banner.Type.ADD_OWNER_KEY -> {
                 settingsHandler.showOwnerBanner = false
                 tracker.logBannerOwnerImport()
             }

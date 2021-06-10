@@ -108,9 +108,12 @@ class CredentialsRepository(
     }
 
     fun decryptKey(encryptedKey: EncryptedByteArray): BigInteger {
+        val converter = EncryptedByteArray.Converter()
+        val cryptoData = EncryptionManager.CryptoData.fromString(converter.toStorage(encryptedKey))
         encryptionManager.unlock()
-        val key = encryptedKey.value(encryptionManager).asBigInteger()
-        return key
+        val key = encryptionManager.decrypt(cryptoData)
+        encryptionManager.lock()
+        return key.asBigInteger()
     }
 
     fun encryptSeed(data: String): EncryptedString {

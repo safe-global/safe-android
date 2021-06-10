@@ -104,8 +104,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireToOpen.visible(settingsHandler.usePasscode)
             requireToOpen.settingSwitch.isChecked = settingsHandler.requirePasscodeToOpen
             requireToOpen.settingSwitch.setOnClickListener {
-                // If both are disabled, disable passcode feature
-                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
+                // If all are disabled, disable passcode feature
+                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked && !requireForExport.settingSwitch.isChecked) {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE)
                     )
@@ -124,8 +124,8 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForConfirmations.visible(settingsHandler.usePasscode)
             requireForConfirmations.settingSwitch.isChecked = settingsHandler.requirePasscodeForConfirmations
             requireForConfirmations.settingSwitch.setOnClickListener {
-                // If both are disabled, disable passcode feature
-                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked) {
+                // If all are disabled, disable passcode feature
+                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked && !requireForExport.settingSwitch.isChecked) {
                     findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE))
                 } else if (requireForConfirmations.settingSwitch.isChecked) {
                     findNavController().navigate(
@@ -142,7 +142,10 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
             requireForExport.visible(settingsHandler.usePasscode)
             requireForExport.settingSwitch.isChecked = settingsHandler.requirePasscodeToExportKeys
             requireForExport.settingSwitch.setOnClickListener {
-                if (requireForExport.settingSwitch.isChecked) {
+                // If all are disabled, disable passcode feature
+                if (!requireForConfirmations.settingSwitch.isChecked && !requireToOpen.settingSwitch.isChecked && !requireForExport.settingSwitch.isChecked) {
+                    findNavController().navigate(PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(DISABLE))
+                } else if (requireForExport.settingSwitch.isChecked) {
                     findNavController().navigate(
                         PasscodeSettingsFragmentDirections.actionPasscodeSettingsFragmentToConfigurePasscodeFragment(EXPORT_ENABLE)
                     )
