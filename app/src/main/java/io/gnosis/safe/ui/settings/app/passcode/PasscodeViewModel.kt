@@ -61,13 +61,6 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
-                        val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
-                        val encrypted = biometricPasscodeManager.encryptData(passcode, cipher)
-                        biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(encrypted,
-                            BiometricPasscodeManager.FILE_NAME,
-                            Context.MODE_PRIVATE,
-                            BiometricPasscodeManager.KEY_NAME
-                        )
                         settingsHandler.useBiometrics = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
@@ -181,7 +174,7 @@ class PasscodeViewModel
             val cipher = biometricPasscodeManager.getInitializedRSACipherForDecryption(BiometricPasscodeManager.KEY_NAME)
             biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
         } catch (e: KeyPermanentlyInvalidatedException) {
-            // This happens when the user enrolls new fingerprints
+            // This happens when the user enrolled new fingerprints
             settingsHandler.useBiometrics = false
             biometricPasscodeManager.deleteKey(BiometricPasscodeManager.KEY_NAME)
         } catch (e: Throwable) {

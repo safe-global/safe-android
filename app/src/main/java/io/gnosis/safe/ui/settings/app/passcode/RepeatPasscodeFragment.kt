@@ -115,6 +115,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (passcodeArg == digitsAsString) {
                     viewModel.setupPasscode(digitsAsString)
+                    viewModel.encryptPasscodeWithBiometricKey(digitsAsString)
                 } else {
                     errorMessage.visible(true)
                     input.setText("")
