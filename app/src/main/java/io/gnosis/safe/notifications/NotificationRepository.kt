@@ -131,10 +131,13 @@ class NotificationRepository(
         kotlin.runCatching {
 
             val token = getCloudMessagingToken()!!
+            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
+                it.address.asEthereumAddressChecksumString()
+            }
 
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
-                safes = listOf(safe.address.asEthereumAddressChecksumString()),
+                safes = safes,
                 cloudMessagingToken = token,
                 bundle = BuildConfig.APPLICATION_ID,
                 deviceType = "ANDROID",
