@@ -126,7 +126,7 @@ class NotificationRepository(
         }
     }
 
-    suspend fun registerSafe(safe: Safe) {
+    suspend fun registerOwners(notifySafe: Safe? = null) {
 
         kotlin.runCatching {
 
@@ -152,45 +152,10 @@ class NotificationRepository(
         }
             .onSuccess {
                 deviceUuid = it.uuid
-                safeRepository.saveSafeMeta(SafeMetaData(safe.address, true))
-                registrationUpdateFailed = false
-
-                notificationManager.updateNotificationChannelGroupForSafe(safe)
-            }
-            .onFailure {
-                registrationUpdateFailed = true
-                handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
-            }
-    }
-
-    suspend fun registerOwners() {
-
-        kotlin.runCatching {
-
-            val token = getCloudMessagingToken()!!
-
-            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
-                it.address.asEthereumAddressChecksumString()
-            }
-
-            val registration = Registration(
-                uuid = deviceUuid ?: generateUUID(),
-                // safes are always added and never removed on the registration request
-                safes = safes,
-                cloudMessagingToken = token,
-                bundle = BuildConfig.APPLICATION_ID,
-                deviceType = "ANDROID",
-                version = appVersion,
-                buildNumber = BuildConfig.VERSION_CODE.toString(),
-                timestamp = (System.currentTimeMillis() / 1000).toString()
-            )
-
-            registration.addSignatures(credentialsRepository.owners())
-
-            notificationService.register(registration)
-        }
-            .onSuccess {
-                deviceUuid = it.uuid
+                notifySafe?.let {
+                    safeRepository.saveSafeMeta(SafeMetaData(notifySafe.address, true))
+                    notificationManager.updateNotificationChannelGroupForSafe(notifySafe)
+                }
                 registrationUpdateFailed = false
             }
             .onFailure {

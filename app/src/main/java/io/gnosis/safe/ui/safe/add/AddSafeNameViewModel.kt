@@ -33,7 +33,7 @@ class AddSafeNameViewModel
             runCatching {
                 val safe = Safe(address, localName.trim())
                 safeRepository.saveSafe(safe)
-                notificationRepository.registerSafe(safe)
+                notificationRepository.registerOwners(safe)
                 notificationManager.createNotificationChannelGroup(safe)
                 safeRepository.setActiveSafe(safe)
             }.onFailure {
