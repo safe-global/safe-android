@@ -61,6 +61,7 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
+                        encryptPasscodeWithBiometricKey(passcode)
                         settingsHandler.useBiometrics = true
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
