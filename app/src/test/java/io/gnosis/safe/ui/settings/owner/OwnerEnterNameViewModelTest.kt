@@ -40,7 +40,7 @@ class OwnerEnterNameViewModelTest {
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
-        coEvery { notificationRepository.registerOwners() } just Runs
+        coEvery { notificationRepository.registerSafes() } just Runs
 
         coEvery { settingsHandler.usePasscode } returns false
 
@@ -62,7 +62,7 @@ class OwnerEnterNameViewModelTest {
             tracker.logKeyImported(any())
             credentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(any())
-            notificationRepository.registerOwners()
+            notificationRepository.registerSafes()
             settingsHandler.usePasscode
         }
     }
@@ -79,7 +79,7 @@ class OwnerEnterNameViewModelTest {
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
         coEvery { tracker.setNumKeysImported(any()) } just Runs
-        coEvery { notificationRepository.registerOwners() } just Runs
+        coEvery { notificationRepository.registerSafes() } just Runs
 
         coEvery { settingsHandler.usePasscode } returns true
 
@@ -101,7 +101,7 @@ class OwnerEnterNameViewModelTest {
             tracker.logKeyImported(any())
             credentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(3)
-            notificationRepository.registerOwners()
+            notificationRepository.registerSafes()
             settingsHandler.usePasscode
         }
     }

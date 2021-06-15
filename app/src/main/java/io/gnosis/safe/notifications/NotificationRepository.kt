@@ -4,7 +4,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.utils.toSignatureString
@@ -19,7 +18,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.addHexPrefix
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
 import java.util.*
@@ -88,9 +86,7 @@ class NotificationRepository(
 
     suspend fun register(token: String) {
 
-        val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
-            it.address.asEthereumAddressChecksumString()
-        }
+        val safes = getSafeStrings()
 
         val registration = Registration(
             uuid = deviceUuid ?: generateUUID(),
@@ -112,9 +108,6 @@ class NotificationRepository(
                 .onSuccess {
                     Timber.d("notification service registration success")
                     deviceUuid = it.uuid
-                    it.safes.forEach { safeAddressString ->
-                        safeRepository.saveSafeMeta(SafeMetaData(safeAddressString.asEthereumAddress()!!, true))
-                    }
                     registrationUpdateFailed = false
                 }
                 .onFailure {
@@ -126,14 +119,12 @@ class NotificationRepository(
         }
     }
 
-    suspend fun registerOwners(notifySafe: Safe? = null) {
+    suspend fun registerSafes(notifySafe: Safe? = null) {
 
         kotlin.runCatching {
 
             val token = getCloudMessagingToken()!!
-            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
-                it.address.asEthereumAddressChecksumString()
-            }
+            val safes = getSafeStrings()
 
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
@@ -153,7 +144,6 @@ class NotificationRepository(
             .onSuccess {
                 deviceUuid = it.uuid
                 notifySafe?.let {
-                    safeRepository.saveSafeMeta(SafeMetaData(notifySafe.address, true))
                     notificationManager.updateNotificationChannelGroupForSafe(notifySafe)
                 }
                 registrationUpdateFailed = false
@@ -169,10 +159,7 @@ class NotificationRepository(
         kotlin.runCatching {
 
             val token = getCloudMessagingToken()!!
-
-            val safes = safeRepository.getSafes().sortedBy { it.address.value }.map {
-                it.address.asEthereumAddressChecksumString()
-            }
+            val safes = getSafeStrings()
 
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
@@ -199,6 +186,10 @@ class NotificationRepository(
                 registrationUpdateFailed = true
                 handleCloudMessagingTokenIsLinkedToAnotherDeviceError(it)
             }
+    }
+
+    private suspend fun getSafeStrings() = safeRepository.getSafes().sortedBy { it.address.value }.map {
+        it.address.asEthereumAddressChecksumString()
     }
 
     private suspend fun handleCloudMessagingTokenIsLinkedToAnotherDeviceError(throwable: Throwable) {
