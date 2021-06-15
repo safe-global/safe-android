@@ -354,9 +354,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 txDetails.txData.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                            it.dataDecoded?.method ?: "",
-                                            it.hexData ?: "",
-                                            it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                            action =it.dataDecoded?.method ?: "",
+                                            data = it.hexData ?: "",
+                                            decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
+                                            addressInfoIndex = paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                         )
                                     )
                                 }
