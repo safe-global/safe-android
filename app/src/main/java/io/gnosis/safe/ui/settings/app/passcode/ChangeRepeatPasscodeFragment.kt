@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -80,7 +81,9 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             }
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 if (digitsAsString == passcodeArg) {
-                    viewModel.encryptPasscodeWithBiometricKey(digitsAsString)
+                    if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_SUCCESS) {
+                        viewModel.encryptPasscodeWithBiometricKey(digitsAsString)
+                    }
                     viewModel.disableAndSetNewPasscode(newPasscode = passcodeArg, oldPasscode = oldPasscode)
                 } else {
                     errorMessage.visible(true)
