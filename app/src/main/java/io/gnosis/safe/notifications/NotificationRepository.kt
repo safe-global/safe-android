@@ -296,7 +296,7 @@ class NotificationRepository(
                     val signature = credentialsRepository.signWithOwner(it, registrationHash).addHexPrefix()
                     addSignature(signature)
                 } catch (e: Exception) {
-                    Timber.w(e, "Exception while signing")
+                    Timber.e(e, "Exception while signing")
                 }
             }
         }
