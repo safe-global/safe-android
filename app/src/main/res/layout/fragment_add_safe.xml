@@ -38,7 +38,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="@string/load_safe_multisig" />
+            android:text="@string/load_gnosis_safe" />
 
         <TextView
             android:id="@+id/next_button"
