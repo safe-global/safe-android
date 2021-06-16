@@ -2,6 +2,8 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -37,7 +39,11 @@ data class TxData(
     @Json(name = "value")
     val value: BigInteger?,
     @Json(name = "operation")
-    val operation: Operation
+    val operation: Operation,
+
+    //FIXME: suboptimal backend response structure
+    @Json(name = "addressInfoIndex")
+    val addressInfoIndex: Map<String, AddressInfo>? = null
 )
 
 
