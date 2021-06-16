@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="@string/load_safe_multisig" />
+            android:text="@string/load_gnosis_safe" />
 
         <TextView
             android:id="@+id/next_button"
