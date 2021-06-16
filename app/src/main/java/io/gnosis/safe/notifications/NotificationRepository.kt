@@ -251,8 +251,12 @@ class NotificationRepository(
         if (owners.isNotEmpty()) {
             val registrationHash = hash().hexToByteArray()
             owners.forEach {
-                val signature = credentialsRepository.signWithOwner(it, registrationHash).addHexPrefix()
-                addSignature(signature)
+                try {
+                    val signature = credentialsRepository.signWithOwner(it, registrationHash).addHexPrefix()
+                    addSignature(signature)
+                } catch (e: Exception) {
+                    Timber.e(e, "Exception while signing")
+                }
             }
         }
     }
