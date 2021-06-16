@@ -10,6 +10,7 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ParamType
@@ -21,6 +22,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
@@ -37,6 +39,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     private val decodedData by lazy { navArgs.decodedData?.let { paramSerializer.deserializeDecodedData(it) } }
     private val address by lazy { navArgs.address?.asEthereumAddress() }
     private val amount by lazy { navArgs.amount }
+    private val addressInfoIndex by lazy { paramSerializer.deserializeAddressInfoIndex(navArgs.addressInfoIndex) }
 
     @Inject
     lateinit var paramSerializer: ParamSerializer
@@ -56,16 +59,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 findNavController().navigateUp()
             }
         }
-        updateUi(decodedData, address, amount)
+        updateUi(decodedData, address, amount, addressInfoIndex)
     }
 
-    private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null) {
+    private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null, addressInfoIndex: Map<String, AddressInfo>? = null) {
 
         binding.content.removeAllViews()
 
         address?.let {
             with(binding) {
-                content.addView(getTransferItem(it, amount ?: ""))
+                content.addView(getTransferItem(it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
                 content.addView(getDivider())
             }
         }
@@ -83,7 +86,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 it.parameters?.forEach {
                     when (it) {
                         is Param.Address -> {
-                            content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value))
+                            content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
                         }
                         is Param.Array -> {
                             content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type))
@@ -104,12 +107,19 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         }
     }
 
-    private fun getTransferItem(address: Solidity.Address, amount: String): TxTransferActionView {
+    private fun getTransferItem(address: Solidity.Address, amount: String, addressInfo: AddressInfo?): TxTransferActionView {
         val item = TxTransferActionView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
         item.layoutParams = layoutParams
-        item.setActionInfo(true, amount, "local::native_currency", address)
+        item.setActionInfo(
+            outgoing = true,
+            amount = amount,
+            logoUri = "local::native_currency",
+            address = address,
+            addressName = addressInfo?.name,
+            addressUri = addressInfo?.logoUri
+        )
         return item
     }
 
@@ -133,13 +143,22 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getLabeledAddressItem(name: String, value: Solidity.Address): LabeledAddressItem {
-        val item = LabeledAddressItem(requireContext())
+    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
+        var item: View
+        if (addressInfo == null) {
+            item = LabeledAddressItem(requireContext())
+            item.label = name
+            item.address = value
+        } else {
+            item = LabeledNamedAddressItem(requireContext())
+            item.label = name
+            item.address = value
+            item.name = addressInfo.name
+            item.loadKnownAddressLogo(addressInfo.logoUri, value)
+        }
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
-        item.label = name
-        item.address = value
         return item
     }
 
