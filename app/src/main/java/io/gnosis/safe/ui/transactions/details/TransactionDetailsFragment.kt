@@ -340,7 +340,8 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
                                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
-                                                paramSerializer.serializeDecodedValues(it.valueDecoded!!)
+                                                paramSerializer.serializeDecodedValues(it.valueDecoded!!),
+                                                paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                             )
                                         )
                                     }
@@ -353,9 +354,10 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 txDetails.txData.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
-                                            it.dataDecoded?.method ?: "",
-                                            it.hexData ?: "",
-                                            it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) }
+                                            action =it.dataDecoded?.method ?: "",
+                                            data = it.hexData ?: "",
+                                            decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
+                                            addressInfoIndex = paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                         )
                                     )
                                 }

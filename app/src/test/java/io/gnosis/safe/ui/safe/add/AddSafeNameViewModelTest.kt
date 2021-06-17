@@ -113,7 +113,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { notificationRepository.registerSafe(any()) } just Runs
+        coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
@@ -127,7 +127,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafeCount()
@@ -140,7 +140,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { notificationRepository.registerSafe(any()) } just Runs
+        coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
@@ -154,7 +154,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafeCount()
@@ -167,7 +167,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name, should notify about importing owner) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { notificationRepository.registerSafe(any()) } just Runs
+        coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
@@ -181,7 +181,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
             safeRepository.getSafeCount()

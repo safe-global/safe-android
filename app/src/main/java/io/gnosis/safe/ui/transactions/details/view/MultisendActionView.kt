@@ -8,6 +8,7 @@ import io.gnosis.safe.databinding.ViewMultisendActionBinding
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 
 class MultisendActionView @JvmOverloads constructor(
     context: Context,
@@ -17,11 +18,21 @@ class MultisendActionView @JvmOverloads constructor(
 
     private val binding by lazy { ViewMultisendActionBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setData(address: Solidity.Address, method: String, txType: TxType? = null) {
+    fun setData(address: Solidity.Address, method: String, name: String? = null) {
         with(binding) {
             addressImage.setAddress(address)
             addressLabel.text = address.asEthereumAddressChecksumString().abbreviateEthAddress()
             methodLabel.text = method
+            if (!name.isNullOrBlank()) {
+                nameLabel.visible(true)
+                nameLabel.text = name
+            } else {
+                nameLabel.visible(false)
+            }
         }
+    }
+
+    fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address?) {
+        binding.addressImage.loadKnownAddressLogo(addressUri, address)
     }
 }

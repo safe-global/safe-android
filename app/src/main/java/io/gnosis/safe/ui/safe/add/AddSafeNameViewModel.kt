@@ -33,14 +33,14 @@ class AddSafeNameViewModel
             runCatching {
                 val safe = Safe(address, localName.trim())
                 safeRepository.saveSafe(safe)
-                notificationRepository.registerSafe(safe)
+                notificationRepository.registerSafes(safe)
                 notificationManager.createNotificationChannelGroup(safe)
                 safeRepository.setActiveSafe(safe)
             }.onFailure {
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
                 tracker.setNumSafes(safeRepository.getSafeCount())
-                if(settingsHandler.showOwnerScreen && credentialsRepository.ownerCount() == 0) {
+                if (settingsHandler.showOwnerScreen && credentialsRepository.ownerCount() == 0) {
                     updateState { AddSafeNameState(ImportOwner) }
                 } else {
                     updateState { AddSafeNameState(ViewAction.CloseScreen) }

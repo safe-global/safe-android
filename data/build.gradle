@@ -16,9 +16,6 @@ android {
         }
         buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_SYMBOL", asString(getKey("NATIVE_CURRENCY_SYMBOL", "ETH"))
         buildConfigField javaTypes.STRING, "NATIVE_CURRENCY_NAME", asString(getKey("NATIVE_CURRENCY_NAME", "Ether"))
-        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
-
     }
 
     buildTypes {

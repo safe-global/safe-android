@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.MultisendActionView
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
@@ -26,6 +27,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
 
     private val navArgs by navArgs<TransactionDetailsActionMultisendFragmentArgs>()
     private val decodedValues by lazy { paramSerializer.deserializeDecodedValues(navArgs.decodedValues) }
+    private val addressInfoIndex by lazy { paramSerializer.deserializeAddressInfoIndex(navArgs.addressInfoIndex) }
 
     @Inject
     lateinit var balanceFormatter: BalanceFormatter
@@ -68,7 +70,8 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
                                 value.data,
                                 value.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
                                 value.to.asEthereumAddressString(),
-                                balanceFormatter.formatAmount(value.value, false)
+                                balanceFormatter.formatAmount(value.value, false),
+                                paramSerializer.serializeAddressInfoIndex(addressInfoIndex)
                             )
                         )
                     }
@@ -78,12 +81,22 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         }
     }
 
+
+
     private fun getMultisendActionItem(address: Solidity.Address, method: String): MultisendActionView {
         val item = MultisendActionView(requireContext())
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
-        item.setData(address, method)
+
+        val addressInfo = addressInfoIndex?.get(address.asEthereumAddressChecksumString())
+        if (addressInfo != null) {
+            item.setData(address, method, addressInfo.name)
+            item.loadKnownAddressLogo(addressInfo.logoUri, address)
+        } else {
+            item.setData(address, method)
+        }
+
         return item
     }
 }

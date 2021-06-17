@@ -29,7 +29,7 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(fromSeedPhrase)
             tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
-            notificationRepository.registerOwners()
+            notificationRepository.registerSafes()
 
             updateState {
                 OwnerEnterNameState(
@@ -50,7 +50,7 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerScreen = false
             tracker.logKeyGenerated()
             tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
-            notificationRepository.registerOwners()
+            notificationRepository.registerSafes()
 
             updateState {
                 OwnerEnterNameState(
