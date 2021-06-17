@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.showConfirmDialog
+import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -102,6 +103,9 @@ class ChangePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     viewModel.onForgotPasscode()
                     input.hideSoftKeyboard()
                 }
+            }
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
             }
         }
     }

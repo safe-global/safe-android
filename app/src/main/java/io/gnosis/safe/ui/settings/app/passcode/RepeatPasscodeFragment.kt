@@ -131,6 +131,9 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             actionButton.setOnClickListener {
                 skipPasscodeSetup()
             }
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
+            }
         }
     }
 
