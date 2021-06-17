@@ -184,6 +184,6 @@ class PasscodeSettingsFragment : SafeOverviewBaseFragment<FragmentSettingsAppPas
     }
 
     companion object {
-        private const val REQUESTCODE_FINGERPRINT_ENROLLMENT = 0
+        const val REQUESTCODE_FINGERPRINT_ENROLLMENT = 0
     }
 }

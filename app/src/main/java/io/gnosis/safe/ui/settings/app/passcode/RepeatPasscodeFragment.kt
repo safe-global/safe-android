@@ -1,12 +1,16 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
 import android.content.DialogInterface
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
@@ -71,7 +75,9 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     }
                 }
                 is PasscodeViewModel.PasscodeSetup -> {
-                    if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_SUCCESS && !settingsHandler.useBiometrics) {
+                    if ((requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_SUCCESS || requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
+                        && !settingsHandler.useBiometrics
+                    ) {
                         val dialogBinding = DialogEnableBiometryBinding.inflate(LayoutInflater.from(context), null, false)
                         dialogBinding.message.setText(R.string.settings_passcode_enable_biometry)
                         CustomAlertDialogBuilder.build(
@@ -83,7 +89,26 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-                                viewModel.enableBiometry()
+
+                                //TODO: add round trip for adding fingerprints
+                                if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                                        startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                                    } else {
+                                        startActivityForResult(
+                                            Intent(Settings.ACTION_FINGERPRINT_ENROLL),
+                                            PasscodeSettingsFragment.REQUESTCODE_FINGERPRINT_ENROLLMENT
+                                        )
+                                    }
+
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.biometric_prompt_please_enroll_biometric_attribute),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else {
+                                    viewModel.enableBiometry()
+                                }
                                 dialog.dismiss()
                             },
                             confirmColor = R.color.primary,
