@@ -112,10 +112,10 @@ class PasscodeViewModel
         }
     }
 
-    fun setupPasscode(password: String) {
+    fun setupPasscode(passcode: String) {
         safeLaunch {
             encryptionManager.removePassword()
-            val success = encryptionManager.setupPassword(password.toByteArray())
+            val success = encryptionManager.setupPassword(passcode.toByteArray())
             encryptionManager.lock()
 
             if (success) {
@@ -128,7 +128,7 @@ class PasscodeViewModel
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()
 
-                updateState { PasscodeState(PasscodeSetup) }
+                updateState { PasscodeState(PasscodeSetup(passcode)) }
             } else {
                 throw PasscodeSetupFailed
             }
@@ -216,7 +216,7 @@ class PasscodeViewModel
     object PasscodeCommandExecuted : ViewAction
     object PasscodeWrong : ViewAction
     object PasscodeCorrect : ViewAction
-    object PasscodeSetup : ViewAction
+    data class PasscodeSetup(val passcode: String) : ViewAction
     object PasscodeSetupFailed : Throwable()
     object PasscodeChanged : ViewAction
 }

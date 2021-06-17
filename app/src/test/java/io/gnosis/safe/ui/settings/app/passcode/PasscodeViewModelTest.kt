@@ -193,7 +193,7 @@ class PasscodeViewModelTest {
 
         testObserver.assertValues(
             PasscodeState(null),
-            PasscodeState(PasscodeSetup)
+            PasscodeState(PasscodeSetup(examplePasscode))
         )
         verify(exactly = 1) { encryptionManager.removePassword() }
         verify(exactly = 1) { encryptionManager.setupPassword(examplePasscode.toByteArray()) }
