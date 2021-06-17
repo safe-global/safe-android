@@ -75,6 +75,9 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             actionButton.setOnClickListener {
                 skipPasscodeSetup()
             }
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
+            }
         }
     }
 

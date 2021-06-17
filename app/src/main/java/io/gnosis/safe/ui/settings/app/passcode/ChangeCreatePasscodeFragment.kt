@@ -81,6 +81,9 @@ class ChangeCreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
             })
             // Skip Button
             actionButton.visible(false)
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
+            }
         }
     }
 

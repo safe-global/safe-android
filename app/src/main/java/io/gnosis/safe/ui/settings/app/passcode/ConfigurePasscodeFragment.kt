@@ -109,6 +109,9 @@ class ConfigurePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBindin
                     input.hideSoftKeyboard()
                 }
             }
+            rootView.setOnClickListener {
+                input.showKeyboardForView()
+            }
         }
     }
 }
