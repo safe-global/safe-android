@@ -89,7 +89,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-
                                 //TODO: add round trip for adding fingerprints
                                 if (requireContext().canAuthenticateUsingBiometrics() == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
@@ -108,6 +107,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                     ).show()
                                 } else {
                                     viewModel.enableBiometry()
+                                    viewModel.encryptPasscodeWithBiometricKey(viewAction.passcode)
                                 }
                                 dialog.dismiss()
                             },

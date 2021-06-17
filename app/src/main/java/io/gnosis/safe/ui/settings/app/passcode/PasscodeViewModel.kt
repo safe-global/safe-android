@@ -61,8 +61,8 @@ class PasscodeViewModel
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_ENABLE -> {
-                        encryptPasscodeWithBiometricKey(passcode)
                         settingsHandler.useBiometrics = true
+                        encryptPasscodeWithBiometricKey(passcode)
                         updateState { PasscodeState(PasscodeCommandExecuted) }
                     }
                     BIOMETRICS_DISABLE -> {
@@ -112,10 +112,10 @@ class PasscodeViewModel
         }
     }
 
-    fun setupPasscode(password: String) {
+    fun setupPasscode(passcode: String) {
         safeLaunch {
             encryptionManager.removePassword()
-            val success = encryptionManager.setupPassword(password.toByteArray())
+            val success = encryptionManager.setupPassword(passcode.toByteArray())
             encryptionManager.lock()
 
             if (success) {
@@ -128,7 +128,7 @@ class PasscodeViewModel
                 tracker.setPasscodeIsSet(true)
                 tracker.logPasscodeEnabled()
 
-                updateState { PasscodeState(PasscodeSetup) }
+                updateState { PasscodeState(PasscodeSetup(passcode)) }
             } else {
                 throw PasscodeSetupFailed
             }
@@ -159,14 +159,16 @@ class PasscodeViewModel
     }
 
     fun encryptPasscodeWithBiometricKey(newPasscode: String) {
-        val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
-        val encrypted = biometricPasscodeManager.encryptData(newPasscode, cipher)
-        biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
-            encrypted,
-            BiometricPasscodeManager.FILE_NAME,
-            Context.MODE_PRIVATE,
-            BiometricPasscodeManager.KEY_NAME
-        )
+        if (settingsHandler.useBiometrics) {
+            val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
+            val encrypted = biometricPasscodeManager.encryptData(newPasscode, cipher)
+            biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
+                encrypted,
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -214,7 +216,7 @@ class PasscodeViewModel
     object PasscodeCommandExecuted : ViewAction
     object PasscodeWrong : ViewAction
     object PasscodeCorrect : ViewAction
-    object PasscodeSetup : ViewAction
+    data class PasscodeSetup(val passcode: String) : ViewAction
     object PasscodeSetupFailed : Throwable()
     object PasscodeChanged : ViewAction
 }

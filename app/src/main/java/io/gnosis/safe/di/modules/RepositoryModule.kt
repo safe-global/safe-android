@@ -6,10 +6,11 @@ import com.unstoppabledomains.resolution.Resolution
 import com.unstoppabledomains.resolution.naming.service.NamingServiceType
 import dagger.Module
 import dagger.Provides
-import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
+import io.gnosis.safe.BuildConfig.BLOCKCHAIN_NET_URL
+import io.gnosis.safe.BuildConfig.INFURA_API_KEY
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
@@ -50,12 +51,12 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun providesDomainResolutionLibrary(): DomainResolution {
-        val firstWord = BuildConfig.BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first()
+        val firstWord = BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first()
         val network = Network.valueOf(firstWord.toUpperCase())
         return try {
             Resolution.builder()
                 .chainId(NamingServiceType.CNS, network)
-                .infura(NamingServiceType.CNS, BuildConfig.INFURA_API_KEY)
+                .infura(NamingServiceType.CNS, INFURA_API_KEY)
                 .build()
         } catch (throwable: Throwable) {
             Timber.e(throwable, "Error initializing UnstoppableDomains")

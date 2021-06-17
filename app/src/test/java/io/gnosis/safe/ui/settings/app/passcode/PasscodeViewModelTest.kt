@@ -193,7 +193,7 @@ class PasscodeViewModelTest {
 
         testObserver.assertValues(
             PasscodeState(null),
-            PasscodeState(PasscodeSetup)
+            PasscodeState(PasscodeSetup(examplePasscode))
         )
         verify(exactly = 1) { encryptionManager.removePassword() }
         verify(exactly = 1) { encryptionManager.setupPassword(examplePasscode.toByteArray()) }
@@ -268,7 +268,8 @@ class PasscodeViewModelTest {
     }
 
     @Test
-    fun `encryptPasscodeWithBiometricKey - (passcode) should store encrypted key`() {
+    fun `encryptPasscodeWithBiometricKey - (passcode) should store encrypted key if bio enabled`() {
+        every { settingsHandler.useBiometrics } returns true
         every { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) } returns mockk(relaxed = true)
         every { biometricPasscodeManager.encryptData(any(), any()) } returns mockk(relaxed = true)
 
@@ -277,6 +278,26 @@ class PasscodeViewModelTest {
         verify(exactly = 1) { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) }
         verify(exactly = 1) { biometricPasscodeManager.encryptData(examplePasscode, any()) }
         verify(exactly = 1) {
+            biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
+                any(),
+                BiometricPasscodeManager.FILE_NAME,
+                Context.MODE_PRIVATE,
+                BiometricPasscodeManager.KEY_NAME
+            )
+        }
+    }
+
+    @Test
+    fun `encryptPasscodeWithBiometricKey - (passcode) should not store encrypted key if no bio enabled`() {
+        every { settingsHandler.useBiometrics } returns false
+        every { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) } returns mockk(relaxed = true)
+        every { biometricPasscodeManager.encryptData(any(), any()) } returns mockk(relaxed = true)
+
+        viewModel.encryptPasscodeWithBiometricKey(examplePasscode)
+
+        verify(exactly = 0) { biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME) }
+        verify(exactly = 0) { biometricPasscodeManager.encryptData(examplePasscode, any()) }
+        verify(exactly = 0) {
             biometricPasscodeManager.persistEncryptedPasscodeToSharedPrefs(
                 any(),
                 BiometricPasscodeManager.FILE_NAME,
