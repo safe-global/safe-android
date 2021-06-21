@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.ValueDecoded
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionMultisendBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.MultisendActionView
 import io.gnosis.safe.utils.BalanceFormatter
@@ -35,6 +38,9 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
     @Inject
     lateinit var paramSerializer: ParamSerializer
 
+    @Inject
+    lateinit var viewModel: TransactionDetailsActionViewModel
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -50,10 +56,20 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
                 findNavController().navigateUp()
             }
         }
-        updateUi(decodedValues)
+
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when(val viewAction = it.viewAction) {
+                is BaseStateViewModel.ViewAction.Loading -> {
+                    if (!viewAction.isLoading) {
+                        updateUi(decodedValues, addressInfoIndex)
+                    }
+                }
+            }
+        })
+        viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
     }
 
-    private fun updateUi(decodedValues: List<ValueDecoded>?) {
+    private fun updateUi(decodedValues: List<ValueDecoded>?, addressInfoIndex: Map<String, AddressInfo>? = null) {
 
         with(binding) {
 
@@ -62,7 +78,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
             decodedValues?.let {
                 it.forEachIndexed { index, value ->
                     val action = value.dataDecoded?.method ?: getString(R.string.tx_multisend_action, index + 1)
-                    val item = getMultisendActionItem(value.to, action)
+                    val item = getMultisendActionItem(value.to, action, addressInfoIndex)
                     item.setOnClickListener {
                         findNavController().navigate(
                             TransactionDetailsActionMultisendFragmentDirections.actionTransactionDetailsActionMultisendFragmentToTransactionDetailsActionFragment(
@@ -83,7 +99,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
 
 
 
-    private fun getMultisendActionItem(address: Solidity.Address, method: String): MultisendActionView {
+    private fun getMultisendActionItem(address: Solidity.Address, method: String, addressInfoIndex: Map<String, AddressInfo>? = null): MultisendActionView {
         val item = MultisendActionView(requireContext())
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
