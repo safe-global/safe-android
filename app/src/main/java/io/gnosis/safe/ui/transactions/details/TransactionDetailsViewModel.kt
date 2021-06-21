@@ -125,7 +125,7 @@ class TransactionDetailsViewModel
                 )
             }
 
-            if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
+            if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
                 submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
         }

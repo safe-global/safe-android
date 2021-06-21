@@ -48,7 +48,7 @@ class OwnerListViewModel
 
     fun selectKeyForSigning(owner: Solidity.Address, isConfirmation: Boolean) {
         safeLaunch {
-            if (settingsHandler.usePasscode) {
+            if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
                 updateState {
                     OwnerListState(
                         ViewAction.NavigateTo(
