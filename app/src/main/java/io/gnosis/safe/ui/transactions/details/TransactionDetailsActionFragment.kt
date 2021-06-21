@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
@@ -18,10 +19,12 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -44,6 +47,9 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     @Inject
     lateinit var paramSerializer: ParamSerializer
 
+    @Inject
+    lateinit var viewModel: TransactionDetailsActionViewModel
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -59,7 +65,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 findNavController().navigateUp()
             }
         }
-        updateUi(decodedData, address, amount, addressInfoIndex)
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            when(val viewAction = it.viewAction) {
+                is Loading -> {
+                    if (!viewAction.isLoading) {
+                        updateUi(decodedData, address, amount, it.addressInfoIndex)
+                    }
+                }
+            }
+        })
+        viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
     }
 
     private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null, addressInfoIndex: Map<String, AddressInfo>? = null) {
@@ -153,8 +168,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
             item = LabeledNamedAddressItem(requireContext())
             item.label = name
             item.address = value
-            item.name = addressInfo.name
-            item.loadKnownAddressLogo(addressInfo.logoUri, value)
+            // only old imported owner keys could have empty names
+            item.name = if (addressInfo.name.isNullOrBlank()) {
+                getString(R.string.settings_app_imported_owner_key_default_name, value.shortChecksumString())
+            } else {
+                addressInfo.name
+            }
+            addressInfo.logoUri?.let { item.loadKnownAddressLogo(it, value)  }
         }
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
