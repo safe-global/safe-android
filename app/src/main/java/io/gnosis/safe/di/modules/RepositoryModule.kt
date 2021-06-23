@@ -7,6 +7,7 @@ import com.unstoppabledomains.resolution.naming.service.NamingServiceType
 import dagger.Module
 import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
 import io.gnosis.safe.BuildConfig.BLOCKCHAIN_NET_URL
@@ -34,10 +35,10 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideChainRepository(
-        safeDao: SafeDao,
+        chainDao: ChainDao,
         gatewayApi: GatewayApi
     ): ChainInfoRepository {
-        return ChainInfoRepository(safeDao, gatewayApi)
+        return ChainInfoRepository(chainDao, gatewayApi)
     }
 
     @Provides

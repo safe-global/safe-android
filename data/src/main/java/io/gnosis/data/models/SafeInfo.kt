@@ -11,7 +11,7 @@ data class SafeInfo(
     @Json(name = "threshold") val threshold: Int,
     @Json(name = "owners") val owners: List<AddressInfoExtended>,
     @Json(name = "implementation") val implementation: AddressInfoExtended,
-    @Json(name = "modules") val modules: List<AddressInfoExtended>,
+    @Json(name = "modules") val modules: List<AddressInfoExtended>?,
     @Json(name = "fallbackHandler") val fallbackHandler: AddressInfoExtended?,
     @Json(name = "version") val version: String
 )
