@@ -97,7 +97,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             )
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
-            safeInfo.modules.takeUnless { it.isEmpty() }?.let {
+            safeInfo.modules.takeUnless { it.isNullOrEmpty() }?.let {
                 moduleLabel.visible(true)
                 it.forEach { module ->
                     modulesContainer.addView(labeledAddress(module.value, module.name ?: getString(R.string.unknown_module), module.logoUrl))
