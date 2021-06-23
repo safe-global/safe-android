@@ -22,15 +22,15 @@
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_shadow_size"
-            android:background="@drawable/toolbar_dropshadow"
-            android:visibility="gone"/>
+            android:background="@drawable/toolbar_dropshadow" />
 
         <TextView
             android:id="@+id/chain_ribbon"
             style="@style/ChainRibbon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/chain_ribbon_size"
-            tools:text="Mainnet" />
+            tools:text="Mainnet"
+            android:visibility="gone" />
 
     </LinearLayout>
 

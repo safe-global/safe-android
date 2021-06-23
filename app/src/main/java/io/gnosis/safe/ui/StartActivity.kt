@@ -200,7 +200,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeSelection.visible(false)
         }
 
-        binding.chainRibbon.visible(false)
+        with(binding) {
+            toolbarShadow.visible(true)
+            chainRibbon.visible(false)
+        }
     }
 
     private fun setSafe(safe: Safe) {
@@ -225,9 +228,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeSelection.visible(true)
         }
 
-        //TODO: get chain name and ribbon color from safe data
-        binding.chainRibbon.visible(true)
-        binding.chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+        with(binding) {
+            toolbarShadow.visible(false)
+            chainRibbon.visible(true)
+            //TODO: get chain name and ribbon color from safe data
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+        }
     }
 
     private fun adjustSafeNameWidth() {
