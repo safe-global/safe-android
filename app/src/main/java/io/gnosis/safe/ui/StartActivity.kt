@@ -17,7 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
-import io.gnosis.data.repositories.ChainRepository
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
@@ -45,7 +45,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     lateinit var safeRepository: SafeRepository
 
     @Inject
-    lateinit var chainRepository: ChainRepository
+    lateinit var chainInfoRepository: ChainInfoRepository
 
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
@@ -74,6 +74,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
+
+        // REMOVE ME: This is just 
+        lifecycleScope.launch {
+            kotlin.runCatching {
+                val chains = chainInfoRepository.getChainInfo()
+                chains.forEach { chainInfo ->
+                    Timber.i("----> chain: $chainInfo")
+                }
+            }.onFailure {
+                tracker.logException(it)
+            }
+        }
     }
 
     private fun setupPasscode() {
@@ -253,18 +265,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                    val chains = chainRepository.getChainInfo()
-                    Timber.i("----> chains: $chains")
-
-                    chains.forEach { chainInfo ->
-                        Timber.i("----> chain: $chainInfo")
-                    }
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
             }.onFailure {
                 tracker.logException(it)
-                it.printStackTrace()
                 toolbarBinding.readOnly.visible(false, View.INVISIBLE)
             }
         }

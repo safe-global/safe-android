@@ -36,8 +36,8 @@ class RepositoryModule {
     fun provideChainRepository(
         safeDao: SafeDao,
         gatewayApi: GatewayApi
-    ): ChainRepository {
-        return ChainRepository(safeDao, gatewayApi)
+    ): ChainInfoRepository {
+        return ChainInfoRepository(safeDao, gatewayApi)
     }
 
     @Provides
