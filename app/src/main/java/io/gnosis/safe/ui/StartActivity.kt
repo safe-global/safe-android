@@ -35,6 +35,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
@@ -248,11 +249,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
+                    val chains = safeRepository.getChainInfo()
+                    Timber.i("----> chains: $chains")
+
+                    chains.forEach { chainInfo ->
+                        Timber.i("----> chain: $chainInfo")
+                    }
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }
             }.onFailure {
                 tracker.logException(it)
+                it.printStackTrace()
                 toolbarBinding.readOnly.visible(false, View.INVISIBLE)
             }
         }

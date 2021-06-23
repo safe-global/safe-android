@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.models.ChainInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.SafeMetaData
@@ -123,6 +124,10 @@ class SafeRepository(
         const val METHOD_DISABLE_MODULE = "disableModule"
 
     }
+
+
+    suspend fun getChainInfo(): List<ChainInfo> = gatewayApi.loadChainInfo().results
+
 }
 
 enum class SafeStatus {
