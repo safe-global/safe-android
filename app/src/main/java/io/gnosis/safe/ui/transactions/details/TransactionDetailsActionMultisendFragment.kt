@@ -61,7 +61,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
             when(val viewAction = it.viewAction) {
                 is BaseStateViewModel.ViewAction.Loading -> {
                     if (!viewAction.isLoading) {
-                        updateUi(decodedValues, addressInfoIndex)
+                        updateUi(decodedValues, it.addressInfoIndex)
                     }
                 }
             }
