@@ -157,18 +157,19 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun setupNav() {
         val navController = Navigation.findNavController(this, R.id.nav_host)
-        binding.navBar.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-
-            if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
-                startRateFlow()
-            }
-            if (isFullscreen(destination.id)) {
-                binding.toolbar.visibility = View.GONE
-                binding.navBar.visibility = View.GONE
-            } else {
-                binding.toolbar.visibility = View.VISIBLE
-                binding.navBar.visibility = View.VISIBLE
+        with(binding) {
+            navBar.setupWithNavController(navController)
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
+                    startRateFlow()
+                }
+                if (isFullscreen(destination.id)) {
+                    toolbar.visible(false)
+                    navBar.visible(false)
+                } else {
+                    toolbar.visible(true)
+                    navBar.visible(true)
+                }
             }
         }
     }
