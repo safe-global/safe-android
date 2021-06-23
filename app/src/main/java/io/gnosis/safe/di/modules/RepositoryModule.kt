@@ -33,6 +33,15 @@ class RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideChainRepository(
+        safeDao: SafeDao,
+        gatewayApi: GatewayApi
+    ): ChainRepository {
+        return ChainRepository(safeDao, gatewayApi)
+    }
+
+    @Provides
+    @Singleton
     fun providesEthereumRepository(ethereumRpcConnector: EthereumRpcConnector): EthereumRepository =
         RpcEthereumRepository(ethereumRpcConnector)
 

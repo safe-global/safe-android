@@ -17,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.ChainRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
@@ -42,6 +43,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     @Inject
     lateinit var safeRepository: SafeRepository
+
+    @Inject
+    lateinit var chainRepository: ChainRepository
 
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
@@ -249,7 +253,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
                     val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
-                    val chains = safeRepository.getChainInfo()
+                    val chains = chainRepository.getChainInfo()
                     Timber.i("----> chains: $chains")
 
                     chains.forEach { chainInfo ->

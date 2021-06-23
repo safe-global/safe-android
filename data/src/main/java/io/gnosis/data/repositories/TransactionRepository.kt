@@ -17,19 +17,19 @@ class TransactionRepository(
 ) {
 
     suspend fun getQueuedTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
-        gatewayApi.loadTransactionsQueue(safeAddress.asEthereumAddressChecksumString())
+        gatewayApi.loadTransactionsQueue(address = safeAddress.asEthereumAddressChecksumString())
 
     suspend fun getHistoryTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
-        gatewayApi.loadTransactionsHistory(safeAddress.asEthereumAddressChecksumString())
+        gatewayApi.loadTransactionsHistory(address = safeAddress.asEthereumAddressChecksumString())
 
     suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
         gatewayApi.loadTransactionsPage(pageLink)
 
     suspend fun getTransactionDetails(txId: String): TransactionDetails =
-        gatewayApi.loadTransactionDetails(txId)
+        gatewayApi.loadTransactionDetails(transactionId = txId)
 
     suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String): TransactionDetails =
-        gatewayApi.submitConfirmation(safeTxHash, TransactionConfirmationRequest(signedSafeTxHash))
+        gatewayApi.submitConfirmation(safeTxHash = safeTxHash, txConfirmationRequest = TransactionConfirmationRequest(signedSafeTxHash))
 
     suspend fun proposeTransaction(
         safeAddress: Solidity.Address,
@@ -48,7 +48,8 @@ class TransactionRepository(
         origin: Solidity.Address? = null
     ) {
         gatewayApi.proposeTransaction(
-            safeAddress.asEthereumAddressChecksumString(), MultisigTransactionRequest(
+            safeAddress = safeAddress.asEthereumAddressChecksumString(),
+            multisigTransactionRequest = MultisigTransactionRequest(
                 to = safeAddress,
                 value = value.toString(),
                 data = data,
