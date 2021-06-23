@@ -11,6 +11,11 @@ class ChainInfoRepository(
 ) {
     suspend fun getChainInfo(): List<ChainInfo> {
 
+
+        chainDao.loadAll().forEach {
+            println("----> name: ${it.chainId}, ${it.name}")
+        }
+
         val result = gatewayApi.loadChainInfo().results
         result.forEach {
             val chain = Chain(it.chainId, it.chainName)
