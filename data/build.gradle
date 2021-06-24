@@ -25,7 +25,7 @@ android {
 
         debug {
             buildConfigField ("String", "TRANSACTION_SERVICE_URL", '"https://safe-transaction.staging.gnosisdev.com/api/"')
-            buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.gnosisdev.com/foo"')
+            buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.gnosisdev.com/"')
             buildConfigField ("int", "CHAIN_ID", "4")
         }
 

@@ -9,6 +9,7 @@ import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
+import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.*
 import io.gnosis.safe.BuildConfig.BLOCKCHAIN_NET_URL
 import io.gnosis.safe.BuildConfig.INFURA_API_KEY
@@ -36,9 +37,10 @@ class RepositoryModule {
     @Singleton
     fun provideChainRepository(
         chainDao: ChainDao,
-        gatewayApi: GatewayApi
+        gatewayApi: GatewayApi,
+        safeRepository: SafeRepository
     ): ChainInfoRepository {
-        return ChainInfoRepository(chainDao, gatewayApi)
+        return ChainInfoRepository(chainDao, gatewayApi, safeRepository)
     }
 
     @Provides
