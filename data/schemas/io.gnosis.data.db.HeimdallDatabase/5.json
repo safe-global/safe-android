@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "ae0a206b8049b438da0e46532d3f4339",
+    "identityHash": "f18bdf7a2f2436b00709b2df76731e6b",
     "entities": [
       {
         "tableName": "safes",
@@ -120,7 +120,7 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -131,6 +131,18 @@
           {
             "fieldPath": "name",
             "columnName": "chain_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textColor",
+            "columnName": "text_color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "background_color",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -148,7 +160,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ae0a206b8049b438da0e46532d3f4339')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f18bdf7a2f2436b00709b2df76731e6b')"
     ]
   }
 }

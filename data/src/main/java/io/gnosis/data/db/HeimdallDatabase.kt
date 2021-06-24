@@ -49,7 +49,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${Owner.TABLE_NAME}` (`${Owner.COL_ADDRESS}` TEXT NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `private_key` TEXT, PRIMARY KEY(`${Owner.COL_ADDRESS}`))"""
+                    """CREATE TABLE IF NOT EXISTS `${Owner.TABLE_NAME}` (`${Owner.COL_ADDRESS}` TEXT NOT NULL, `${Owner.COL_NAME}` TEXT, `type` INTEGER NOT NULL, `private_key` TEXT, PRIMARY KEY(`${Owner.COL_ADDRESS}`))"""
                 )
             }
         }
@@ -65,7 +65,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_NAME}` TEXT NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `chain_id` INTEGER, PRIMARY KEY(`${Chain.COL_NAME}`))"""
+                    """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_CHAIN_ID}` INTEGER NOT NULL, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
                 )
                 database.execSQL(
                     """ALTER TABLE `${Safe.TABLE_NAME}` ADD COLUMN `${Safe.COL_CHAIN_ID}` INTEGER"""

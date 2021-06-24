@@ -7,7 +7,7 @@ import io.gnosis.data.models.Chain
 interface ChainDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(chain: Chain)
+    suspend fun save(chain: Chain)
 
     @Delete
     suspend fun delete(chain: Chain)
@@ -18,7 +18,7 @@ interface ChainDao {
     @Query("SELECT * FROM ${Chain.TABLE_NAME}")
     suspend fun loadAll(): List<Chain>
 
-    @Query("SELECT * FROM ${Chain.TABLE_NAME} WHERE ${Chain.COL_NAME} = :name")
+    @Query("SELECT * FROM ${Chain.TABLE_NAME} WHERE ${Chain.COL_CHAIN_NAME} = :name")
     suspend fun loadByName(name: String): Chain?
 
     @Query("SELECT * FROM ${Chain.TABLE_NAME} WHERE ${Chain.COL_CHAIN_ID} = :id")
