@@ -31,7 +31,7 @@ android {
 
         profile {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.staging.gnosisdev.com/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.gnosisdev.com/"))
             buildConfigField ("int", "CHAIN_ID", "4")
         }
 
@@ -43,17 +43,15 @@ android {
 
         internal {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.staging.gnosisdev.com/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.gnosisdev.com/"))
             buildConfigField ("int", "CHAIN_ID", "4")
 
         }
 
         rinkeby {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.rinkeby.gnosis.io/api/"))
-            buildConfigField ("string", "CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.gnosis.io/")
-//            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.gnosis.io/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.gnosis.io/"))
             buildConfigField ("int", "CHAIN_ID", "4")
-
         }
 
         mainnet_staging {
