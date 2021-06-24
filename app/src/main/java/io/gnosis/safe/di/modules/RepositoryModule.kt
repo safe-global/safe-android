@@ -9,8 +9,15 @@ import dagger.Provides
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
-import io.gnosis.data.models.Safe
-import io.gnosis.data.repositories.*
+import io.gnosis.data.repositories.ChainInfoRepository
+import io.gnosis.data.repositories.DummyDomainResolution
+import io.gnosis.data.repositories.EnsNormalizer
+import io.gnosis.data.repositories.EnsRepository
+import io.gnosis.data.repositories.IDNEnsNormalizer
+import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.BuildConfig.BLOCKCHAIN_NET_URL
 import io.gnosis.safe.BuildConfig.INFURA_API_KEY
 import pm.gnosis.ethereum.EthereumRepository
@@ -37,10 +44,9 @@ class RepositoryModule {
     @Singleton
     fun provideChainRepository(
         chainDao: ChainDao,
-        gatewayApi: GatewayApi,
-        safeRepository: SafeRepository
+        gatewayApi: GatewayApi
     ): ChainInfoRepository {
-        return ChainInfoRepository(chainDao, gatewayApi, safeRepository)
+        return ChainInfoRepository(chainDao, gatewayApi)
     }
 
     @Provides
@@ -87,7 +93,6 @@ class RepositoryModule {
     @Singleton
     fun providesTokenRepository(gatewayApi: GatewayApi): TokenRepository =
         TokenRepository(gatewayApi)
-
 
     @Provides
     @Singleton

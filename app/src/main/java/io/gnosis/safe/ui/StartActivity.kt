@@ -15,6 +15,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
@@ -78,12 +79,22 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
         (application as? HeimdallApplication)?.registerForAppState(this)
 
-        // REMOVE ME: This is just an example for debugging, how to fetch chainInfo data
+        updateChainInfo()
+    }
+
+    private fun updateChainInfo() {
         lifecycleScope.launch {
             kotlin.runCatching {
                 val chains = chainInfoRepository.getChainInfo()
-                chains.forEach { chainInfo ->
-                    Timber.i("----> chain: $chainInfo")
+                val safes = safeRepository.getSafes()
+
+                safes.forEach { safe ->
+                    chains.forEach { chainInfo ->
+                        if (safe.chainId == chainInfo.chainId) {
+                            val chain = Chain(chainInfo.chainId, chainInfo.chainName, chainInfo.theme.textColor, chainInfo.theme.backgroundColor)
+                            chainInfoRepository.save(chain)
+                        }
+                    }
                 }
             }.onFailure {
                 tracker.logException(it)
