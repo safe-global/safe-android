@@ -14,14 +14,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
+import io.gnosis.safe.databinding.ActivityStartBinding
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
@@ -45,11 +46,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
 
-    private val toolbarBinding by lazy {
-        ToolbarSafeOverviewBinding.bind(findViewById(R.id.toolbar_container))
+    private val binding by lazy {
+        ActivityStartBinding.inflate(layoutInflater)
     }
-    private val toolbar by lazy { findViewById<View>(R.id.toolbar) }
-    private val navBar by lazy { findViewById<BottomNavigationView>(R.id.nav_bar) }
+
+    private val toolbarBinding by lazy {
+        ToolbarSafeOverviewBinding.bind(binding.toolbarContainer.root)
+    }
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -57,7 +60,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_start)
+        setContentView(binding.root)
 
         viewComponent().inject(this)
 
@@ -154,18 +157,19 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun setupNav() {
         val navController = Navigation.findNavController(this, R.id.nav_host)
-        navBar.setupWithNavController(navController)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-
-            if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
-                startRateFlow()
-            }
-            if (isFullscreen(destination.id)) {
-                toolbar.visibility = View.GONE
-                navBar.visibility = View.GONE
-            } else {
-                toolbar.visibility = View.VISIBLE
-                navBar.visibility = View.VISIBLE
+        with(binding) {
+            navBar.setupWithNavController(navController)
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
+                    startRateFlow()
+                }
+                if (isFullscreen(destination.id)) {
+                    toolbar.visible(false)
+                    navBar.visible(false)
+                } else {
+                    toolbar.visible(true)
+                    navBar.visible(true)
+                }
             }
         }
     }
@@ -196,6 +200,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeAddress.text = getString(R.string.no_safes_loaded)
             safeSelection.visible(false)
         }
+
+        with(binding) {
+            toolbarShadow.visible(true)
+            chainRibbon.visible(false)
+        }
     }
 
     private fun setSafe(safe: Safe) {
@@ -218,6 +227,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             }
 
             safeSelection.visible(true)
+        }
+
+        with(binding) {
+            toolbarShadow.visible(false)
+            chainRibbon.visible(true)
+            //TODO: get chain name and ribbon color from safe data
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
     }
 
