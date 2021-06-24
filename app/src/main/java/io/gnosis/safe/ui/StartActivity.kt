@@ -15,7 +15,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
-import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
@@ -38,7 +37,6 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
@@ -85,17 +83,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private fun updateChainInfo() {
         lifecycleScope.launch {
             kotlin.runCatching {
-                val chains = chainInfoRepository.getChainInfo()
+                val chainInfos = chainInfoRepository.getChainInfo()
                 val safes = safeRepository.getSafes()
 
-                safes.forEach { safe ->
-                    chains.forEach { chainInfo ->
-                        if (safe.chainId == chainInfo.chainId) {
-                            val chain = Chain(chainInfo.chainId, chainInfo.chainName, chainInfo.theme.textColor, chainInfo.theme.backgroundColor)
-                            chainInfoRepository.save(chain)
-                        }
-                    }
-                }
+                chainInfoRepository.updateChainInfo(chainInfos, safes)
+
             }.onFailure {
                 tracker.logException(it)
             }
