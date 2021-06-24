@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
@@ -68,7 +69,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_CHAIN_ID}` INTEGER NOT NULL, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
                 )
                 database.execSQL(
-                    """ALTER TABLE `${Safe.TABLE_NAME}` ADD COLUMN `${Safe.COL_CHAIN_ID}` INTEGER"""
+                    """ALTER TABLE `${Safe.TABLE_NAME}` ADD COLUMN `${Safe.COL_CHAIN_ID}` INTEGER NOT NULL DEFAULT ${BuildConfig.CHAIN_ID}"""
                 )
             }
         }
