@@ -104,7 +104,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                             content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
                         }
                         is Param.Array -> {
-                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type))
+                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
                         }
                         is Param.Bytes -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
@@ -138,13 +138,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String): LabeledArrayItem {
+    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
         val item = LabeledArrayItem(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
         item.label = name
-        item.showArray(value, paramType, paramTypeValue)
+        item.showArray(value, paramType, paramTypeValue, addressInfoIndex)
         return item
     }
 
