@@ -36,7 +36,7 @@ class ConfirmRejectionViewModel
     override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
 
     fun resumeFlow(owner: Solidity.Address) {
-        if (!settingsHandler.usePasscode || (settingsHandler.usePasscode && credentialsRepository.credentialsUnlocked())) {
+        if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
             submitRejection(owner)
         }
     }
