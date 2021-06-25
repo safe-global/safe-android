@@ -65,6 +65,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
+
                 database.execSQL(
                     """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_CHAIN_ID}` INTEGER NOT NULL, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
                 )
