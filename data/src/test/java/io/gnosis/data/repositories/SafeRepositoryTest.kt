@@ -130,26 +130,26 @@ class SafeRepositoryTest {
             "v1"
         )
 
-        coEvery { gatewayApi.getSafeInfo(any()) } returns safeInfo
+        coEvery { gatewayApi.getSafeInfo(address = any()) } returns safeInfo
 
         val actual = safeRepository.getSafeStatus(safeAddress)
 
         assertEquals(SafeStatus.VALID, actual)
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
     fun `isValidSafe - invalid safe`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { gatewayApi.getSafeInfo(any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(address = any()) } throws throwable
 
         kotlin.runCatching {
             safeRepository.getSafeStatus(safeAddress)
             Assert.fail()
         }
 
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
@@ -193,7 +193,7 @@ class SafeRepositoryTest {
     fun `getSafeInfo - (transaction service failure) should throw`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { gatewayApi.getSafeInfo(any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(address = any()) } throws throwable
 
         val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
 
@@ -201,7 +201,7 @@ class SafeRepositoryTest {
             assertEquals(true, isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressString()) }
     }
 
     @Test
@@ -219,7 +219,7 @@ class SafeRepositoryTest {
             AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
-        coEvery { gatewayApi.getSafeInfo(any()) } returns safeInfo
+        coEvery { gatewayApi.getSafeInfo(address = any()) } returns safeInfo
 
         val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
 
@@ -230,7 +230,7 @@ class SafeRepositoryTest {
             assertEquals(safeInfo.nonce, result?.nonce)
             assertEquals(safeInfo.threshold, result?.threshold)
         }
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressString()) }
     }
 
     @Test

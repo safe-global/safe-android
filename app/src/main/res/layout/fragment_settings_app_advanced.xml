@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+           <!-- <TextView
                 style="@style/Header"
                 android:text="@string/ens_resolver_address"
                 android:layout_height="@dimen/header_height" />
@@ -105,7 +105,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
+                android:background="@color/separator"/>-->
 
             <TextView
                 style="@style/Header"

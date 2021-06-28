@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModelProvider
 import dagger.Component
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.BiometricPasscodeManager
@@ -75,6 +76,8 @@ interface ApplicationComponent {
 
     //TODO: remove
     fun safeRepository(): SafeRepository
+
+    fun chainRepository(): ChainInfoRepository
 
     // Base injects
     fun inject(activity: BaseActivity)

@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.app
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -38,7 +37,8 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            ens.address = ENS_REGISTRY
+            //FIXME: reuse commented code when implementing network details screen; then clean up
+            /*ens.address = ENS_REGISTRY
             with(rpcEndpoint) {
                 value = RPC_ENDPOINT
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
@@ -63,7 +63,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                         .toString()
                 }
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
-            }
+            }*/
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }

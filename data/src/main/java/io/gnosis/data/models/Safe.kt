@@ -13,12 +13,16 @@ data class Safe(
     val address: Solidity.Address,
 
     @ColumnInfo(name = COL_LOCAL_NAME)
-    val localName: String
+    val localName: String,
+
+    @ColumnInfo(name = COL_CHAIN_ID)
+    val chainId: Int = 4
 ) {
     companion object {
         const val TABLE_NAME = "safes"
 
         const val COL_ADDRESS = "address"
         const val COL_LOCAL_NAME = "local_name"
+        const val COL_CHAIN_ID = "chain_id"
     }
 }

@@ -157,6 +157,15 @@
         <item name="android:textColor">@color/text_emphasis_medium</item>
     </style>
 
+    <style name="ChainRibbon">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@color/white_two</item>
+        <item name="android:background">#29b6af</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="SafeOverviewToolbar">
         <item name="theme">?attr/actionBarTheme</item>
         <item name="android:background">@color/surface_04</item>
