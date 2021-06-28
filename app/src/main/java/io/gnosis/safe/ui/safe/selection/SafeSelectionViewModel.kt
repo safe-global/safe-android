@@ -4,12 +4,13 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import javax.inject.Inject
 
 sealed class SafeSelectionState : BaseStateViewModel.State {
 
     data class SafeListState(
-        val listItems: List<Any>,
+        val listItems: List<SafeSelectionViewData>,
         val activeSafe: Safe?,
         override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeSelectionState()
@@ -25,7 +26,7 @@ class SafeSelectionViewModel @Inject constructor(
 ) : BaseStateViewModel<SafeSelectionState>(appDispatchers),
     SafeSelectionAdapter.OnSafeSelectionItemClickedListener {
 
-    private val items: MutableList<Any> = mutableListOf()
+    private val items: MutableList<SafeSelectionViewData> = mutableListOf()
     private var activeSafe: Safe? = null
 
     override fun initialState(): SafeSelectionState =
@@ -37,11 +38,17 @@ class SafeSelectionViewModel @Inject constructor(
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()
 
+            //TODO: add chain headers and group by chains
             with(items) {
                 clear()
                 add(AddSafeHeader)
-                activeSafe?.let(::add)
-                addAll(safeRepository.getSafes().filter { it != activeSafe }.reversed())
+                activeSafe?.let {
+                    //TODO: chain of the active safe
+                    add(ChainHeader("Mainnet", "#029f7f"))
+                    add(SafeItem(it))
+                    //TODO: add all other safes from this chain
+                }
+                addAll(safeRepository.getSafes().filter { it != activeSafe }.reversed().map { SafeItem(it) })
             }
 
             updateState { SafeSelectionState.SafeListState(items, activeSafe, null) }

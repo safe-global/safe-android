@@ -55,9 +55,9 @@ class SafeSelectionDialog : BaseBottomSheetDialogFragment<DialogSafeSelectionBin
 
         with(binding) {
             list.layoutManager = LinearLayoutManager(context)
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-            dividerItemDecoration.setDrawable(getDrawable(requireContext(), R.drawable.divider)!!)
-            list.addItemDecoration(dividerItemDecoration)
+           // val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+           // dividerItemDecoration.setDrawable(getDrawable(requireContext(), R.drawable.divider)!!)
+           // list.addItemDecoration(dividerItemDecoration)
             list.adapter = adapter
         }
 
