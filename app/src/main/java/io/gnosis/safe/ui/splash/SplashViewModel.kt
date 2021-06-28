@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.splash
 import android.content.Context
 import android.content.Intent
 import io.gnosis.data.models.Owner
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
@@ -19,6 +20,7 @@ class SplashViewModel
 constructor(
     private val notificationRepository: NotificationRepository,
     private val safeRepository: SafeRepository,
+    private val chainInfoRepository: ChainInfoRepository,
     private val tracker: Tracker,
     private val termsChecker: TermsChecker,
     private val credentialsRepository: CredentialsRepository,
@@ -40,6 +42,14 @@ constructor(
         tracker.setNumSafes(numSafes)
         tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
         tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
+
+        kotlin.runCatching {
+            val chainInfos = chainInfoRepository.getChainInfo()
+            val safes = safeRepository.getSafes()
+            chainInfoRepository.updateChainInfo(chainInfos, safes)
+        }.onFailure {
+            tracker.logException(it)
+        }
     }
 
     fun onStartClicked() {
