@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.safe.share
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -71,6 +73,11 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
         with(binding) {
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
+
+            //TODO: get chain name from safe
+            //chainName.text = ""
+            //chainCircle.setColorFilter(Color.parseColor(someColorString), PorterDuff.Mode.SRC_IN)
+
             safeDetails.safe.address.let { address ->
                 safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
                 safeAddress.setOnClickListener {
