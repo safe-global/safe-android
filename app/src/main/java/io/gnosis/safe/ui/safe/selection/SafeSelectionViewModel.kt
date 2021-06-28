@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.selection
 
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -22,6 +23,7 @@ sealed class SafeSelectionState : BaseStateViewModel.State {
 
 class SafeSelectionViewModel @Inject constructor(
     private val safeRepository: SafeRepository,
+    private val chainInfoRepository: ChainInfoRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeSelectionState>(appDispatchers),
     SafeSelectionAdapter.OnSafeSelectionItemClickedListener {
@@ -38,17 +40,22 @@ class SafeSelectionViewModel @Inject constructor(
         safeLaunch {
             activeSafe = safeRepository.getActiveSafe()
 
-            //TODO: add chain headers and group by chains
             with(items) {
                 clear()
                 add(AddSafeHeader)
                 activeSafe?.let {
-                    //TODO: chain of the active safe
-                    add(ChainHeader("Mainnet", "#029f7f"))
+                    add(ChainHeader(it.chain?.name, it.chain?.backgroundColor))
                     add(SafeItem(it))
-                    //TODO: add all other safes from this chain
+                    val otherSafesFromChain = safeRepository.getSafesForChain(it.chainId)
+                    addAll(otherSafesFromChain.filter { it != activeSafe }.reversed().map { SafeItem(it) })
                 }
-                addAll(safeRepository.getSafes().filter { it != activeSafe }.reversed().map { SafeItem(it) })
+
+                val chains = chainInfoRepository.getChains().filter { it.chainId != activeSafe?.chainId }.sortedBy { it.chainId }
+                chains.forEach {
+                    val safesForChain = safeRepository.getSafesForChain(it.chainId)
+                    add(ChainHeader(it.name, it.backgroundColor))
+                    addAll(safesForChain.reversed().map { SafeItem(it) })
+                }
             }
 
             updateState { SafeSelectionState.SafeListState(items, activeSafe, null) }
