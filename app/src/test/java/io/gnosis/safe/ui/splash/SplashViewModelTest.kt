@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.splash
 import android.app.Application
 import android.content.Context
 import io.gnosis.data.models.Owner
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
@@ -26,6 +27,7 @@ class SplashViewModelTest {
     private val tracker: Tracker = mockk()
     private val notificationRepository = mockk<NotificationRepository>()
     private val safeRepository = mockk<SafeRepository>()
+    private val chainInfoRepository = mockk<ChainInfoRepository>()
     private val ownerCredentialsRepository = mockk<CredentialsRepository>()
     private lateinit var preferences: TestPreferences
     private lateinit var preferencesManager: PreferencesManager
@@ -50,7 +52,7 @@ class SplashViewModelTest {
     fun `onStartClicked (terms already agreed) should emit StartActivity`() {
         coEvery { termsChecker.getTermsAgreed() } returns true
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onStartClicked()
 
@@ -65,7 +67,7 @@ class SplashViewModelTest {
     fun `onStartClicked (terms not agreed previously) should emit ShowTerms`() {
         coEvery { termsChecker.getTermsAgreed() } returns false
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onStartClicked()
 
@@ -78,7 +80,7 @@ class SplashViewModelTest {
     @Test
     fun `handleAgreeClicked (user clicks agree) should emit StartActivity`() {
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.handleAgreeClicked()
 
@@ -93,7 +95,7 @@ class SplashViewModelTest {
     fun `skipSplashScreen (terms not agreed previously) should make get started button visible`() {
         coEvery { termsChecker.getTermsAgreed() } returns false
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.skipGetStartedButtonWhenTermsAgreed()
 
@@ -108,7 +110,7 @@ class SplashViewModelTest {
     fun `skipSplashScreen (terms agreed previously) should emit StartActivity`() {
         coEvery { termsChecker.getTermsAgreed() } returns true
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.skipGetStartedButtonWhenTermsAgreed()
 
@@ -130,11 +132,16 @@ class SplashViewModelTest {
         coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { tracker.setNumKeysGenerated(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
+
+        coEvery { chainInfoRepository.updateChainInfo(any(), any()) } just Runs
+        coEvery { chainInfoRepository.getChainInfo() } returns listOf()
+        coEvery { safeRepository.getSafes() } returns listOf()
+
         coEvery { ownerCredentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 1
         coEvery { ownerCredentialsRepository.ownerCount(Owner.Type.GENERATED) } returns 0
 
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onAppStart()
 
@@ -162,10 +169,15 @@ class SplashViewModelTest {
         coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { tracker.setNumKeysGenerated(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
+
+        coEvery { chainInfoRepository.updateChainInfo(any(), any()) } just Runs
+        coEvery { chainInfoRepository.getChainInfo() } returns listOf()
+        coEvery { safeRepository.getSafes() } returns listOf()
+
         coEvery { ownerCredentialsRepository.ownerCount(any()) } returns 0
 
         val viewModel =
-            SplashViewModel(notificationRepository, safeRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
+            SplashViewModel(notificationRepository, safeRepository, chainInfoRepository, tracker, termsChecker, ownerCredentialsRepository, appDispatchers, context)
 
         viewModel.onAppStart()
 
