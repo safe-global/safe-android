@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogEnsInputBinding
@@ -57,6 +58,8 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             backButton.setOnClickListener { dismiss() }
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
+            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
     }
 

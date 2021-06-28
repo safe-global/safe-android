@@ -8,6 +8,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
@@ -51,6 +52,8 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                 viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString())
             }
             addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
+            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

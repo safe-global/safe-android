@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
@@ -51,6 +52,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             addSafeAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
+            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

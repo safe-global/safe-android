@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogUnstoppableInputBinding
@@ -58,6 +59,8 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
             backButton.setOnClickListener { dismiss() }
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogUnstoppableInputDomain.showKeyboardForView()
+            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
     }
 

@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeOwnerBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
@@ -70,6 +70,8 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 tracker.logOnboardingOwnerSkipped()
                 finishAddSafeFlow()
             }
+            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
+            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
