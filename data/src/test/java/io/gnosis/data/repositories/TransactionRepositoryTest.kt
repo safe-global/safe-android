@@ -44,8 +44,8 @@ class TransactionRepositoryTransferTest(
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoEther())),
             buildGateTransaction(txInfo = buildTransferTxInfo(direction = direction, transferInfo = buildTransferInfoERC721()))
         )
-        coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
-        coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsQueue(address = any()) } returns Page(1, null, null, emptyList())
+        coEvery { gatewayApi.loadTransactionsHistory(address = any()) } returns Page(1, null, null, pagedResult)
 
         val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
@@ -96,7 +96,7 @@ class TransactionRepositoryTest {
     @Test
     fun `getHistoryTransactions (api failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
-        coEvery { gatewayApi.loadTransactionsHistory(any()) } throws throwable
+        coEvery { gatewayApi.loadTransactionsHistory(address = any()) } throws throwable
 
         val actual = runCatching { transactionRepository.getHistoryTransactions(defaultSafeAddress) }
 
@@ -104,7 +104,7 @@ class TransactionRepositoryTest {
             assertTrue(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.loadTransactionsHistory(defaultSafeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.loadTransactionsHistory(address = defaultSafeAddress.asEthereumAddressChecksumString()) }
     }
 
     @Test
@@ -116,8 +116,8 @@ class TransactionRepositoryTest {
             buildGateTransaction(txInfo = buildCreationTxInfo())
 
         )
-        coEvery { gatewayApi.loadTransactionsHistory(any()) } returns Page(1, null, null, pagedResult)
-        coEvery { gatewayApi.loadTransactionsQueue(any()) } returns Page(1, null, null, emptyList())
+        coEvery { gatewayApi.loadTransactionsHistory(address = any()) } returns Page(1, null, null, pagedResult)
+        coEvery { gatewayApi.loadTransactionsQueue(address = any()) } returns Page(1, null, null, emptyList())
 
         val actual = transactionRepository.getHistoryTransactions(defaultSafeAddress)
 
@@ -257,27 +257,27 @@ class TransactionRepositoryTest {
     fun `submitConfirmation (API failure) should throw`() = runBlockingTest {
         val throwable = Throwable()
         val confirmationRequest = TransactionConfirmationRequest("0x0")
-        coEvery { gatewayApi.submitConfirmation(any(), any()) } throws throwable
+        coEvery { gatewayApi.submitConfirmation(safeTxHash = any(), txConfirmationRequest = any()) } throws throwable
 
-        val actual = runCatching { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
+        val actual = runCatching { gatewayApi.submitConfirmation(safeTxHash = "0x0", txConfirmationRequest = confirmationRequest) }
 
         assertTrue(actual.isFailure)
         assertTrue(actual.exceptionOrNull() == throwable)
-        coVerify { gatewayApi.submitConfirmation("0x0", confirmationRequest) }
+        coVerify { gatewayApi.submitConfirmation(safeTxHash = "0x0", txConfirmationRequest = confirmationRequest) }
     }
 
     @Test
     fun `submitConfirmation (successful) should return TransactionDetails`() = runBlockingTest {
         val transactionDetailsDto = moshiAdapter.readJsonFrom("tx_details_transfer.json")
-        coEvery { gatewayApi.submitConfirmation(any(), any()) } returns transactionDetailsDto
-        coEvery { gatewayApi.loadTransactionDetails(any()) } returns transactionDetailsDto
+        coEvery { gatewayApi.submitConfirmation(safeTxHash = any(), txConfirmationRequest = any()) } returns transactionDetailsDto
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns transactionDetailsDto
         val expected = transactionRepository.getTransactionDetails("txId")
 
         val actual = runCatching { transactionRepository.submitConfirmation("0x0", "0x0") }
 
         assertTrue(actual.isSuccess)
         assertTrue(actual.getOrNull() == expected)
-        coVerify { gatewayApi.submitConfirmation("0x0", TransactionConfirmationRequest("0x0")) }
+        coVerify { gatewayApi.submitConfirmation(safeTxHash = "0x0", txConfirmationRequest = TransactionConfirmationRequest("0x0")) }
     }
 
     @Test

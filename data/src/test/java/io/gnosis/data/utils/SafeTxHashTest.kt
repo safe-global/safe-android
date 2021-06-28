@@ -27,7 +27,7 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, customTx) should return same value as in customTx`() = runBlocking {
         val txCustomDto = txDtoAdapter.readJsonFrom("tx_details_custom.json")
-        coEvery { gatewayApi.loadTransactionDetails(any()) } returns txCustomDto
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txCustomDto
         val txCustom = transactionRepository.getTransactionDetails("id")
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
@@ -44,7 +44,7 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, transferTx) should return same value as in transferTx`() = runBlocking {
         val txTransferDto = txDtoAdapter.readJsonFrom("tx_details_transfer.json")
-        coEvery { gatewayApi.loadTransactionDetails(any()) } returns txTransferDto
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txTransferDto
         val txTransfer = transactionRepository.getTransactionDetails("id")
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
@@ -61,7 +61,7 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
         val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_settings_change.json")
-        coEvery { gatewayApi.loadTransactionDetails(any()) } returns txSettingsChangeDto
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txSettingsChangeDto
         val txSettingsChange = transactionRepository.getTransactionDetails("id")
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 

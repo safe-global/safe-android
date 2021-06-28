@@ -13,7 +13,7 @@ import java.math.BigInteger
 class TokenRepository(private val gatewayApi: GatewayApi) {
 
     suspend fun loadBalanceOf(safe: Solidity.Address, fiatCode: String): CoinBalances {
-        val response = gatewayApi.loadBalances(safe.asEthereumAddressChecksumString(), fiatCode)
+        val response = gatewayApi.loadBalances(address = safe.asEthereumAddressChecksumString(), fiat = fiatCode)
         return CoinBalances(response.fiatTotal, response.items.map {
             if (it.tokenInfo.address == ZERO_ADDRESS)
                 it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::native_currency"))
@@ -23,7 +23,7 @@ class TokenRepository(private val gatewayApi: GatewayApi) {
     }
 
     suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
-        gatewayApi.loadCollectibles(safe.asEthereumAddressChecksumString())
+        gatewayApi.loadCollectibles(safeAddress = safe.asEthereumAddressChecksumString())
             .asSequence()
             .groupBy {
                 it.address

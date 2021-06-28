@@ -319,7 +319,7 @@ class TransactionDetailsViewModelTest {
     }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
-        val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(any()) } returns transactionDetailsDto }
+        val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(transactionId = any()) } returns transactionDetailsDto }
         return TransactionRepository(mockGatewayApi).getTransactionDetails("txId")
     }
 }

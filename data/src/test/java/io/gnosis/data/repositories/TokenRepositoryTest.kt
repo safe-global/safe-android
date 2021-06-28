@@ -37,7 +37,7 @@ class TokenRepositoryTest {
     fun `loadBalancesOf (transactionApi failure) should throw`() = runBlocking {
         val address = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { gatewayApi.loadBalances(any(), any()) } throws throwable
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } throws throwable
 
         val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
@@ -45,7 +45,7 @@ class TokenRepositoryTest {
             assertTrue(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.loadBalances(address.asEthereumAddressChecksumString(), "USD") }
+        coVerify(exactly = 1) { gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD") }
     }
 
     @Test
@@ -53,7 +53,7 @@ class TokenRepositoryTest {
         val address = Solidity.Address(BigInteger.ONE)
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = NATIVE_CURRENCY_INFO) }
-        coEvery { gatewayApi.loadBalances(any(), any()) } returns
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } returns
                 CoinBalances(
                     BigDecimal.ZERO,
                     listOf(
@@ -81,7 +81,7 @@ class TokenRepositoryTest {
             )
         }
         coVerifySequence {
-            gatewayApi.loadBalances(address.asEthereumAddressChecksumString(), "USD")
+            gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD")
         }
     }
 
@@ -90,7 +90,7 @@ class TokenRepositoryTest {
         val address = Solidity.Address(BigInteger.ONE)
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1)
-        coEvery { gatewayApi.loadBalances(any(), any()) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
 
         val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
 
@@ -102,7 +102,7 @@ class TokenRepositoryTest {
             )
         }
         coVerifySequence {
-            gatewayApi.loadBalances(address.asEthereumAddressChecksumString(), "USD")
+            gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD")
         }
     }
 
@@ -131,7 +131,7 @@ class TokenRepositoryTest {
         val jsonString: String = readResource("load_collectibles.json")
         val collectibleDtos = collectiblesAdapter.fromJson(jsonString)!!
 
-        coEvery { gatewayApi.loadCollectibles(any()) } returns collectibleDtos
+        coEvery { gatewayApi.loadCollectibles(safeAddress = any()) } returns collectibleDtos
 
         val collectibles = tokenRepository.loadCollectiblesOf(address)
 
@@ -166,7 +166,7 @@ class TokenRepositoryTest {
         assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[6].address)
 
         coVerify {
-            gatewayApi.loadCollectibles(address.asEthereumAddressChecksumString())
+            gatewayApi.loadCollectibles(safeAddress = address.asEthereumAddressChecksumString())
         }
     }
 

@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "ccf400f586453539b3451f3411924a10",
+    "version": 5,
+    "identityHash": "f18bdf7a2f2436b00709b2df76731e6b",
     "entities": [
       {
         "tableName": "safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -18,6 +18,12 @@
             "fieldPath": "localName",
             "columnName": "local_name",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chainId",
+            "columnName": "chain_id",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -111,12 +117,50 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "chains",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
+        "fields": [
+          {
+            "fieldPath": "chainId",
+            "columnName": "chain_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "chain_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textColor",
+            "columnName": "text_color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "background_color",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "chain_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ccf400f586453539b3451f3411924a10')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f18bdf7a2f2436b00709b2df76731e6b')"
     ]
   }
 }

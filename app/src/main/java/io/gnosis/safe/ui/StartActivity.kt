@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
@@ -42,6 +43,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     @Inject
     lateinit var safeRepository: SafeRepository
+
+    @Inject
+    lateinit var chainInfoRepository: ChainInfoRepository
 
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
@@ -72,6 +76,22 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
+
+        updateChainInfo()
+    }
+
+    private fun updateChainInfo() {
+        lifecycleScope.launch {
+            kotlin.runCatching {
+                val chainInfos = chainInfoRepository.getChainInfo()
+                val safes = safeRepository.getSafes()
+
+                chainInfoRepository.updateChainInfo(chainInfos, safes)
+
+            }.onFailure {
+                tracker.logException(it)
+            }
+        }
     }
 
     private fun setupPasscode() {
