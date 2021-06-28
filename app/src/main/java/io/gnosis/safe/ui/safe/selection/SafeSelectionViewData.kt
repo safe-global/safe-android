@@ -7,8 +7,8 @@ sealed class SafeSelectionViewData {
     object AddSafeHeader : SafeSelectionViewData()
 
     data class ChainHeader(
-        val name: String,
-        val color: String
+        val name: String?,
+        val color: String?
     ) : SafeSelectionViewData()
 
     data class SafeItem(

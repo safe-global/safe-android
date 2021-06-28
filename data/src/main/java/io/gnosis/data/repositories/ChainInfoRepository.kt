@@ -22,5 +22,7 @@ class ChainInfoRepository(
             }
         }
     }
+
+    suspend fun getChains(): List<Chain> = chainDao.loadAll()
 }
 
