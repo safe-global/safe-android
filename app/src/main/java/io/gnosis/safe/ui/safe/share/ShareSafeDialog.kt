@@ -16,10 +16,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -74,9 +71,14 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
 
-            //TODO: get chain name from safe
-            //chainName.text = ""
-            //chainCircle.setColorFilter(Color.parseColor(someColorString), PorterDuff.Mode.SRC_IN)
+            chainName.text = safeDetails.safe.chain?.name
+            val color = kotlin.runCatching {
+                Color.parseColor(safeDetails.safe.chain?.backgroundColor)
+            }.onSuccess {
+                chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }.onFailure {
+                chainCircle.setColorFilter(requireContext().getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+            }
 
             safeDetails.safe.address.let { address ->
                 safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
