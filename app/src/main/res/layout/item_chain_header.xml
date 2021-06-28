@@ -45,17 +45,27 @@
 
     </View>
 
-
     <ImageView
         android:id="@+id/chain_circle"
         android:layout_width="@dimen/chain_circle_size"
         android:layout_height="@dimen/chain_circle_size"
         android:layout_marginStart="14dp"
-        android:src="@drawable/circle"
         app:layout_constraintBottom_toBottomOf="@+id/chain_name"
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/chain_name"
-        app:tint="@color/blue" />
+        app:tint="@color/blue">
+
+        <aapt:attr name="android:background">
+
+            <shape android:shape="oval">
+
+                <solid android:color="@color/primary" />
+
+            </shape>
+
+        </aapt:attr>
+
+    </ImageView>
 
     <TextView
         android:id="@+id/chain_name"

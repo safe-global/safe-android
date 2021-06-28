@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -26,14 +27,25 @@
                 android:id="@+id/chain_circle"
                 android:layout_width="@dimen/chain_circle_size"
                 android:layout_height="@dimen/chain_circle_size"
-                android:src="@drawable/circle"
                 app:layout_constraintBottom_toBottomOf="@+id/chain_name"
                 app:layout_constraintEnd_toStartOf="@+id/chain_name"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/chain_name"
-                app:tint="@color/blue" />
+                app:tint="@color/blue">
+
+                <aapt:attr name="android:background">
+
+                    <shape android:shape="oval">
+
+                        <solid android:color="@color/primary" />
+
+                    </shape>
+
+                </aapt:attr>
+
+            </ImageView>
 
             <ImageView
                 android:id="@+id/link"
@@ -45,19 +57,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/safe_address"
                 app:layout_constraintTop_toTopOf="@id/safe_address" />
-
-            <ImageView
-                android:id="@+id/safe_qr_code_outline"
-                android:layout_width="124dp"
-                android:layout_height="124dp"
-                android:layout_marginTop="20dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/background_rounded_rectangle"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
-                app:layout_goneMarginTop="16dp" />
 
             <ProgressBar
                 android:id="@+id/progress"
@@ -151,6 +150,19 @@
                 app:layout_goneMarginTop="16dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
                 tools:src="@color/text_emphasis_medium" />
+
+            <ImageView
+                android:id="@+id/safe_qr_code_outline"
+                android:layout_width="124dp"
+                android:layout_height="124dp"
+                android:layout_marginTop="20dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/background_rounded_rectangle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
+                app:layout_goneMarginTop="16dp" />
 
             <pm.gnosis.blockies.BlockiesImageView
                 android:id="@+id/blockies"
