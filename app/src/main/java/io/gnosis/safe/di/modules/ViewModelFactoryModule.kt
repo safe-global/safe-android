@@ -20,6 +20,7 @@ import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
+import io.gnosis.safe.ui.settings.chain.ChainSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
@@ -41,6 +42,11 @@ import javax.inject.Singleton
 
 @Module
 abstract class ViewModelFactoryModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChainSelectionViewModel::class)
+    abstract fun bindsChainSelectionViewModel(viewModel: ChainSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap

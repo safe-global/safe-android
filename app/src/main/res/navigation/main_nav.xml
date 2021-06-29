@@ -8,7 +8,7 @@
 
     <action
         android:id="@+id/action_to_add_safe"
-        app:destination="@id/addSafeFragment"
+        app:destination="@id/selectChainFragment"
         app:launchSingleTop="true" />
 
     <action
@@ -27,9 +27,9 @@
 
         <action
             android:id="@+id/action_safeSelectionDialog_to_add_safe"
-            app:destination="@id/addSafeFragment"
+            app:destination="@id/selectChainFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/addSafeFragment"
+            app:popUpTo="@id/selectChainFragment"
             app:popUpToInclusive="true" />
 
     </dialog>
@@ -773,6 +773,18 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectChainFragment"
+        android:name="io.gnosis.safe.ui.settings.chain.ChainSelectionFragment"
+        android:label="ChainSelectionFragment"
+        tools:layout="@layout/fragment_chain_selection">
+
+        <argument
+            android:name="mode"
+            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
 
     </fragment>
 

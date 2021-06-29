@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings_arrow" />
+
+    <ImageView
+        android:id="@+id/circle"
+        android:layout_width="@dimen/chain_circle_size"
+        android:layout_height="@dimen/chain_circle_size"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/circle"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        app:tint="@color/blue">
+
+        <aapt:attr name="android:background">
+
+            <shape android:shape="oval">
+
+                <solid android:color="@color/primary" />
+
+            </shape>
+
+        </aapt:attr>
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/TextDark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/arrow"
+        app:layout_constraintStart_toEndOf="@+id/circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_goneMarginBottom="16dp"
+        app:layout_goneMarginLeft="16dp"
+        tools:text="Mainnet" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

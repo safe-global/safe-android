@@ -504,4 +504,6 @@
     <string name="settings_passcode_enable_biometry">Would you like to enable biometry for passcode?</string>
     <string name="settings_passcode_enable_biometry_title">Activate Biometry?</string>
     <string name="settings_passcode_enable_biometry_enable">Enable</string>
+
+    <string name="chain_select_network">Select network on which your Safe was created:</string>
 </resources>
