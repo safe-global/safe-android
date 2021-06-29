@@ -37,7 +37,17 @@ class SafeRepository(
 
     suspend fun isSafeAddressUsed(address: Solidity.Address): Boolean = safeDao.loadByAddress(address) != null
 
-    suspend fun getSafes(): List<Safe> = safeDao.loadAll()
+    suspend fun getSafes(): List<Safe> = safeDao.loadAllWithChainData().map {
+        val safe = it.safe
+        safe.chain = it.chain
+        safe
+    }
+
+    suspend fun getSafesForChain(chainId: Int): List<Safe> = safeDao.loadAllByChain(chainId).map {
+        val safe = it.safe
+        safe.chain = it.chain
+        safe
+    }
 
     suspend fun getSafeCount(): Int = safeDao.safeCount()
 
@@ -64,7 +74,14 @@ class SafeRepository(
                 getSafeBy(address)
             }
 
-    suspend fun getSafeBy(address: Solidity.Address): Safe? = safeDao.loadByAddress(address)
+    suspend fun getSafeBy(address: Solidity.Address): Safe? {
+        val safeWithChainData = safeDao.loadByAddressWithChainData(address)
+        val safe = safeWithChainData?.safe
+        safe?.let {
+            it.chain = safeWithChainData.chain
+        }
+        return safe
+    }
 
     suspend fun getSafeMetas(): List<SafeMetaData> = safeDao.getMetas()
 

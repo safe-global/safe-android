@@ -1,5 +1,6 @@
 package io.gnosis.safe.di.modules
 
+import androidx.work.WorkManager
 import com.unstoppabledomains.config.network.model.Network
 import com.unstoppabledomains.resolution.DomainResolution
 import com.unstoppabledomains.resolution.Resolution
@@ -20,6 +21,7 @@ import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.BuildConfig.BLOCKCHAIN_NET_URL
 import io.gnosis.safe.BuildConfig.INFURA_API_KEY
+import io.gnosis.safe.workers.WorkRepository
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
@@ -98,4 +100,9 @@ class RepositoryModule {
     @Singleton
     fun providesTransactionRepository(gatewayApi: GatewayApi): TransactionRepository =
         TransactionRepository(gatewayApi)
+
+    @Provides
+    @Singleton
+    fun providesWorkRepository(workManager: WorkManager): WorkRepository =
+        WorkRepository(workManager)
 }

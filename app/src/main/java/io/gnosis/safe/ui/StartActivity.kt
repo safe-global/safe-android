@@ -2,6 +2,7 @@ package io.gnosis.safe.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -34,6 +35,7 @@ import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -43,9 +45,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     @Inject
     lateinit var safeRepository: SafeRepository
-
-    @Inject
-    lateinit var chainInfoRepository: ChainInfoRepository
 
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
@@ -76,22 +75,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
-
-        updateChainInfo()
-    }
-
-    private fun updateChainInfo() {
-        lifecycleScope.launch {
-            kotlin.runCatching {
-                val chainInfos = chainInfoRepository.getChainInfo()
-                val safes = safeRepository.getSafes()
-
-                chainInfoRepository.updateChainInfo(chainInfos, safes)
-
-            }.onFailure {
-                tracker.logException(it)
-            }
-        }
     }
 
     private fun setupPasscode() {
@@ -252,8 +235,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         with(binding) {
             toolbarShadow.visible(false)
             chainRibbon.visible(true)
-            //TODO: get chain name and ribbon color from safe data
-            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+            safe.chain?.let {
+                chainRibbon.text = it.name
+                chainRibbon.setTextColor(Color.parseColor(it.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(it.backgroundColor))
+            } ?: run {
+                chainRibbon.text = ""
+                chainRibbon.setBackgroundColor(getColorCompat(R.color.primary))
+            }
         }
     }
 

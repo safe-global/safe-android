@@ -248,6 +248,8 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$versions.picasso"
 
 
+    implementation "androidx.work:work-runtime-ktx:$versions.work"
+
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"

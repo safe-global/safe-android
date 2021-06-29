@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.safe.share
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,10 +16,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -71,6 +70,16 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
         with(binding) {
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
+
+            chainName.text = safeDetails.safe.chain?.name
+            val color = kotlin.runCatching {
+                Color.parseColor(safeDetails.safe.chain?.backgroundColor)
+            }.onSuccess {
+                chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }.onFailure {
+                chainCircle.setColorFilter(requireContext().getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+            }
+
             safeDetails.safe.address.let { address ->
                 safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
                 safeAddress.setOnClickListener {
