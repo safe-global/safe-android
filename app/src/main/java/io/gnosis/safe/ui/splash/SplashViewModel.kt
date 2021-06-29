@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.splash
 import android.content.Context
 import android.content.Intent
 import io.gnosis.data.models.Owner
-import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
@@ -13,6 +12,7 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
+import io.gnosis.safe.workers.WorkRepository
 import javax.inject.Inject
 
 class SplashViewModel
@@ -20,10 +20,10 @@ class SplashViewModel
 constructor(
     private val notificationRepository: NotificationRepository,
     private val safeRepository: SafeRepository,
-    private val chainInfoRepository: ChainInfoRepository,
     private val tracker: Tracker,
     private val termsChecker: TermsChecker,
     private val credentialsRepository: CredentialsRepository,
+    private val workRepository: WorkRepository,
     appDispatchers: AppDispatchers,
     @ApplicationContext private val appContext: Context
 ) : BaseStateViewModel<SplashViewModel.TermsAgreed>(appDispatchers) {
@@ -43,13 +43,7 @@ constructor(
         tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
         tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
 
-        kotlin.runCatching {
-            val chainInfos = chainInfoRepository.getChainInfo()
-            val safes = safeRepository.getSafes()
-            chainInfoRepository.updateChainInfo(chainInfos, safes)
-        }.onFailure {
-            tracker.logException(it)
-        }
+        workRepository.updateChainInfo()
     }
 
     fun onStartClicked() {

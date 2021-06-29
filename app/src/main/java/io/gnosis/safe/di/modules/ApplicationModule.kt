@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.os.Build
+import androidx.work.WorkManager
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -34,6 +35,7 @@ import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.workers.HeimdallWorkerFactory
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -306,5 +308,22 @@ class ApplicationModule(private val application: Application) {
         // want to change in the Firebase console.
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         return remoteConfig
+    }
+
+    @Provides
+    @Singleton
+    fun providesWorkerManager(
+        @ApplicationContext context: Context,
+        safeRepository: SafeRepository,
+        chainInfoRepository: ChainInfoRepository,
+        tracker: Tracker
+    ): WorkManager {
+        WorkManager.initialize(
+            context,
+            androidx.work.Configuration.Builder()
+                .setWorkerFactory(HeimdallWorkerFactory(safeRepository, chainInfoRepository, tracker))
+                .build()
+        )
+        return WorkManager.getInstance(context)
     }
 }
