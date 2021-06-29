@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.safe.selection
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
 import io.gnosis.safe.databinding.ItemAddSafeBinding
+import io.gnosis.safe.databinding.ItemChainHeaderBinding
 import io.gnosis.safe.databinding.ItemSafeBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
+import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -18,7 +22,7 @@ class SafeSelectionAdapter(
     private val clickListener: WeakReference<OnSafeSelectionItemClickedListener>
 ) : RecyclerView.Adapter<BaseSafeSelectionViewHolder>() {
 
-    private val items = mutableListOf<Any>()
+    private val items = mutableListOf<SafeSelectionViewData>()
 
     var activeSafe: Safe? = null
         set(value) {
@@ -26,7 +30,7 @@ class SafeSelectionAdapter(
             notifyAllChanged()
         }
 
-    fun setItems(items: List<Any>, activeSafe: Safe?) {
+    fun setItems(items: List<SafeSelectionViewData>, activeSafe: Safe?) {
         this.activeSafe = activeSafe
         this.items.clear()
         this.items.addAll(items)
@@ -36,9 +40,13 @@ class SafeSelectionAdapter(
     override fun onBindViewHolder(holder: BaseSafeSelectionViewHolder, position: Int) {
         when (holder) {
             is AddSafeHeaderViewHolder -> holder.bind()
+            is ChainHeaderViewHolder -> {
+                val chainHeader = items[position] as ChainHeader
+                holder.bind(chainHeader)
+            }
             is SafeItemViewHolder -> {
-                val safe = items[position] as Safe
-                holder.bind(safe, safe == activeSafe)
+                val safeItem = items[position] as SafeItem
+                holder.bind(safeItem.safe, safeItem.safe == activeSafe)
             }
         }
     }
@@ -52,6 +60,13 @@ class SafeSelectionAdapter(
                     false
                 ), clickListener
             )
+            SafeSelectionViewTypes.HEADER_СHAIN -> ChainHeaderViewHolder(
+                ItemChainHeaderBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
             SafeSelectionViewTypes.SAFE -> SafeItemViewHolder(
                 ItemSafeBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 clickListener
@@ -63,7 +78,8 @@ class SafeSelectionAdapter(
         val item = items[position]
         return when (item) {
             is AddSafeHeader -> SafeSelectionViewTypes.HEADER_ADD_SAFE.ordinal
-            is Safe -> SafeSelectionViewTypes.SAFE.ordinal
+            is ChainHeader -> SafeSelectionViewTypes.HEADER_СHAIN.ordinal
+            is SafeItem -> SafeSelectionViewTypes.SAFE.ordinal
             else -> throw UnsupportedViewType(item.toString())
         }
     }
@@ -76,6 +92,7 @@ class SafeSelectionAdapter(
 
     enum class SafeSelectionViewTypes {
         HEADER_ADD_SAFE,
+        HEADER_СHAIN,
         SAFE
     }
 
@@ -89,7 +106,6 @@ abstract class BaseSafeSelectionViewHolder(
     viewBinding: ViewBinding
 ) : RecyclerView.ViewHolder(viewBinding.root)
 
-object AddSafeHeader
 
 class AddSafeHeaderViewHolder(
     private val binding: ItemAddSafeBinding,
@@ -103,18 +119,32 @@ class AddSafeHeaderViewHolder(
     }
 }
 
+class ChainHeaderViewHolder(
+    private val binding: ItemChainHeaderBinding
+) : BaseSafeSelectionViewHolder(binding) {
+
+    fun bind(chainHeader: ChainHeader) {
+        with(binding) {
+            chainCircle.setColorFilter(Color.parseColor(chainHeader.color), PorterDuff.Mode.SRC_IN)
+            chainName.text = chainHeader.name
+        }
+    }
+}
+
 class SafeItemViewHolder(
     private val binding: ItemSafeBinding,
     private val clickListener: WeakReference<SafeSelectionAdapter.OnSafeSelectionItemClickedListener>
 ) : BaseSafeSelectionViewHolder(binding) {
 
     fun bind(safe: Safe, selected: Boolean) {
-        binding.safeName.text = safe.localName
-        binding.safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
-        binding.safeImage.setAddress(safe.address)
-        binding.safeSelection.visible(selected, View.INVISIBLE)
-        binding.root.setOnClickListener {
-            clickListener.get()?.onSafeClicked(safe)
+        with(binding) {
+            safeName.text = safe.localName
+            safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeImage.setAddress(safe.address)
+            safeSelection.visible(selected, View.INVISIBLE)
+            root.setOnClickListener {
+                clickListener.get()?.onSafeClicked(safe)
+            }
         }
     }
 }

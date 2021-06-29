@@ -74,7 +74,6 @@ interface ApplicationComponent {
 
     fun credentialsRepository(): CredentialsRepository
 
-    //TODO: remove
     fun safeRepository(): SafeRepository
 
     fun chainRepository(): ChainInfoRepository

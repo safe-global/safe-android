@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.terms.TermsChecker
+import io.gnosis.safe.workers.WorkRepository
 import javax.inject.Inject
 
 class SplashViewModel
@@ -22,6 +23,7 @@ constructor(
     private val tracker: Tracker,
     private val termsChecker: TermsChecker,
     private val credentialsRepository: CredentialsRepository,
+    private val workRepository: WorkRepository,
     appDispatchers: AppDispatchers,
     @ApplicationContext private val appContext: Context
 ) : BaseStateViewModel<SplashViewModel.TermsAgreed>(appDispatchers) {
@@ -40,6 +42,8 @@ constructor(
         tracker.setNumSafes(numSafes)
         tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
         tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
+
+        workRepository.updateChainInfo()
     }
 
     fun onStartClicked() {

@@ -1,8 +1,7 @@
 package io.gnosis.data.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Safe.Companion.TABLE_NAME
 import pm.gnosis.model.Solidity
 
@@ -16,8 +15,12 @@ data class Safe(
     val localName: String,
 
     @ColumnInfo(name = COL_CHAIN_ID)
-    val chainId: Int = 4
+    val chainId: Int = BuildConfig.CHAIN_ID
 ) {
+
+    @Ignore
+    var chain: Chain? = null
+
     companion object {
         const val TABLE_NAME = "safes"
 
@@ -26,3 +29,10 @@ data class Safe(
         const val COL_CHAIN_ID = "chain_id"
     }
 }
+
+data class SafeWithChainData(
+    @Embedded
+    val safe: Safe,
+    @Relation(parentColumn = Safe.COL_CHAIN_ID, entityColumn = Chain.COL_CHAIN_ID)
+    val chain: Chain?
+)

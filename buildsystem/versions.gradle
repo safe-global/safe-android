@@ -48,6 +48,7 @@ ext {
             zxing                           : '3.3.1',
             play_core                       : '1.9.1',
             play_core_ktx                   : '1.8.1',
+            work                            : '2.5.0',
             unstoppabledomains              : '1.13.2',
 
             // Test dependencies

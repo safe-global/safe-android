@@ -3,9 +3,7 @@ package io.gnosis.data.repositories
 import android.app.Application
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
-import io.gnosis.data.models.AddressInfoExtended
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.*
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -45,12 +43,13 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        coEvery { safeDao.loadAll() } returns safes
+        val chain = Chain(1, "chain", "", "")
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, chain) }
 
         val actual = safeRepository.getSafes()
 
         assertTrue(actual == safes)
-        coVerify(exactly = 1) { safeDao.loadAll() }
+        coVerify(exactly = 1) { safeDao.loadAllWithChainData() }
     }
 
     @Test
@@ -101,7 +100,8 @@ class SafeRepositoryTest {
     @Test
     fun `getActiveSafe - (with active safe) should return safe`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
-        coEvery { safeDao.loadByAddress(any()) } returns safe
+        val chain = Chain(1, "chain", "", "")
+        coEvery { safeDao.loadByAddressWithChainData(any()) } returns SafeWithChainData(safe, chain)
 
         safeRepository.setActiveSafe(safe)
         val actual = safeRepository.getActiveSafe()
@@ -110,7 +110,7 @@ class SafeRepositoryTest {
         coVerify(ordering = Ordering.ORDERED) {
             preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
             preferences.getString(ACTIVE_SAFE, null)
-            safeDao.loadByAddress(safe.address)
+            safeDao.loadByAddressWithChainData(safe.address)
         }
     }
 
@@ -240,7 +240,8 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        coEvery { safeDao.loadAll() } returns safes
+        val chain = Chain(1, "chain", "", "")
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, chain) }
         coEvery { safeDao.delete(any()) } just Runs
 
         safeRepository.clearUserData()
