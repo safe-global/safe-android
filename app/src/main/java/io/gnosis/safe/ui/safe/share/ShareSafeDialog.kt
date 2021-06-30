@@ -72,7 +72,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             safeLocalName.text = safeDetails.safe.localName
 
             chainName.text = safeDetails.safe.chain?.name
-            val color = kotlin.runCatching {
+            kotlin.runCatching {
                 Color.parseColor(safeDetails.safe.chain?.backgroundColor)
             }.onSuccess {
                 chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)

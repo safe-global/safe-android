@@ -3,6 +3,7 @@ package io.gnosis.safe.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -233,13 +234,16 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         with(binding) {
             toolbarShadow.visible(false)
             chainRibbon.visible(true)
-            safe.chain?.let {
+            safe.chain!!.let {
                 chainRibbon.text = it.name
-                chainRibbon.setTextColor(Color.parseColor(it.textColor))
-                chainRibbon.setBackgroundColor(Color.parseColor(it.backgroundColor))
-            } ?: run {
-                chainRibbon.text = ""
-                chainRibbon.setBackgroundColor(getColorCompat(R.color.primary))
+                try {
+                    chainRibbon.setTextColor(Color.parseColor(it.textColor))
+                    chainRibbon.setBackgroundColor(Color.parseColor(it.backgroundColor))
+                } catch (e: Exception) {
+                    tracker.logException(e)
+                    chainRibbon.setTextColor(getColorCompat(R.color.white))
+                    chainRibbon.setBackgroundColor(getColorCompat(R.color.primary))
+                }
             }
         }
     }
