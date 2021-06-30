@@ -782,6 +782,10 @@
         android:label="ChainSelectionFragment"
         tools:layout="@layout/fragment_chain_selection">
 
+        <action
+            android:id="@+id/action_selectChainFragment_to_addSafeFragment"
+            app:destination="@id/addSafeFragment" />
+
         <argument
             android:name="mode"
             app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
@@ -797,6 +801,10 @@
         <action
             android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
             app:destination="@id/addSafeNameFragment" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
     </fragment>
 

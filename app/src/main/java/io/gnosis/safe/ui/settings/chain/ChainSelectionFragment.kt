@@ -33,7 +33,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
     private val navArgs by navArgs<ChainSelectionFragmentArgs>()
     private val mode by lazy { navArgs.mode }
 
-    private val adapter by lazy { ChainSelectionAdapter() }
+    private val adapter by lazy { ChainSelectionAdapter(mode) }
 
     @Inject
     lateinit var viewModel: ChainSelectionViewModel

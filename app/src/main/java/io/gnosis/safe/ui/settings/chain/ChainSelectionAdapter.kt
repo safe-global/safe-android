@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,14 +13,16 @@ import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemChainBinding
 import pm.gnosis.svalinn.common.utils.getColorCompat
 
-class ChainSelectionAdapter : PagingDataAdapter<Chain, ChainItemViewHolder>(COMPARATOR) {
+class ChainSelectionAdapter(
+    val mode: ChainSelectionMode
+) : PagingDataAdapter<Chain, ChainItemViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ChainItemViewHolder(ItemChainBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: ChainItemViewHolder, position: Int) {
         val item = getItem(position)!!
-        holder.bind(item)
+        holder.bind(item, mode)
     }
 
     companion object {
@@ -39,7 +42,7 @@ class ChainSelectionAdapter : PagingDataAdapter<Chain, ChainItemViewHolder>(COMP
 
 class ChainItemViewHolder(private val binding: ItemChainBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(chain: Chain) {
+    fun bind(chain: Chain, mode: ChainSelectionMode) {
         with(binding) {
             name.text = chain.name
             kotlin.runCatching {
@@ -50,8 +53,18 @@ class ChainItemViewHolder(private val binding: ItemChainBinding) : RecyclerView.
                 // this should never happen
                 circle.setColorFilter(circle.context.getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
             }
-            root.setOnClickListener {
-                //TODO: navigate to add safe screen
+            when(mode) {
+                ChainSelectionMode.ADD_SAFE -> {
+                    root.setOnClickListener {
+                        // navigate to add safe screen
+                        Navigation.findNavController(it).navigate(
+                            ChainSelectionFragmentDirections.actionSelectChainFragmentToAddSafeFragment(chain)
+                        )
+                    }
+                }
+                ChainSelectionMode.CHAIN_DETAILS -> {
+
+                }
             }
         }
     }
