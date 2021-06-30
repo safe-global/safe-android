@@ -61,7 +61,7 @@ class SafeSelectionViewModelTest {
 
         // check updated state
         val selectionItemsList = mutableListOf<Any>(AddSafeHeader)
-        selectionItemsList.add(ChainHeader(null, null))
+        selectionItemsList.add(ChainHeader("test", "#000000"))
         selectionItemsList.add(SafeItem(ACTIVE_SAFE))
         selectionItemsList.addAll(SAFES.filter { it != ACTIVE_SAFE }.map { SafeItem(it) })
         with(stateObserver.values()[1] as SafeSelectionState.SafeListState) {
@@ -69,7 +69,7 @@ class SafeSelectionViewModelTest {
             assertEquals(activeSafe, ACTIVE_SAFE)
             //check ordering
             assertEquals(listItems[0], AddSafeHeader)
-            assertEquals(listItems[1], ChainHeader(null, null))
+            assertEquals(listItems[1], ChainHeader("test", "#000000"))
             assertEquals(listItems[2], SafeItem(ACTIVE_SAFE))
         }
 
