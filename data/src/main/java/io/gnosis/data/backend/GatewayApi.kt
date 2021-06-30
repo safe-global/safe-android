@@ -80,6 +80,9 @@ interface GatewayApi {
     @GET("v1/chains")
     suspend fun loadChainInfo(): Page<ChainInfo>
 
+    @GET
+    suspend fun loadChainInfoPage(@Url pageLink: String): Page<ChainInfo>
+
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL
     }

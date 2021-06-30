@@ -54,7 +54,7 @@ class ChainInfoRepositoryTest {
     @Test
     fun getChainInfo() = runBlocking {
 
-        val result = chainInfoRepository.getChainInfo()
+        val result = chainInfoRepository.getChainInfo().results
 
         assertEquals(result, pagedResult)
     }

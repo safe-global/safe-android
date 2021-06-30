@@ -17,11 +17,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
 import io.gnosis.data.models.Safe
-import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.AppStateListener
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ActivityStartBinding

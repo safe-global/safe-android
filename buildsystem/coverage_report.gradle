@@ -175,6 +175,8 @@ project.ext {
             '**/*ViewHolder.*',
             '**/*ViewGroup.*',
             '**/*JsonAdapter.*',
+            '**/*PagingSource.*',
+            '**/*PagingProvider.*',
             '**/di/**',
             '**/*Dagger.*',
             '**/*Binding*.*',

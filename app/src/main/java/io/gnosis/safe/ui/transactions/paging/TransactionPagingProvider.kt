@@ -26,6 +26,4 @@ class TransactionPagingProvider(
     companion object {
         private const val NETWORK_PAGE_SIZE = 50
     }
-
-
 }
