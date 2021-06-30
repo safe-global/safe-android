@@ -8,7 +8,7 @@
 
     <action
         android:id="@+id/action_to_add_safe"
-        app:destination="@id/addSafeFragment"
+        app:destination="@id/selectChainFragment"
         app:launchSingleTop="true" />
 
     <action
@@ -27,9 +27,9 @@
 
         <action
             android:id="@+id/action_safeSelectionDialog_to_add_safe"
-            app:destination="@id/addSafeFragment"
+            app:destination="@id/selectChainFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/addSafeFragment"
+            app:popUpTo="@id/selectChainFragment"
             app:popUpToInclusive="true" />
 
     </dialog>
@@ -777,6 +777,22 @@
     </fragment>
 
     <fragment
+        android:id="@+id/selectChainFragment"
+        android:name="io.gnosis.safe.ui.settings.chain.ChainSelectionFragment"
+        android:label="ChainSelectionFragment"
+        tools:layout="@layout/fragment_chain_selection">
+
+        <action
+            android:id="@+id/action_selectChainFragment_to_addSafeFragment"
+            app:destination="@id/addSafeFragment" />
+
+        <argument
+            android:name="mode"
+            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/addSafeFragment"
         android:name="io.gnosis.safe.ui.safe.add.AddSafeFragment"
         android:label="AddSafeFragment"
@@ -785,6 +801,10 @@
         <action
             android:id="@+id/action_addSafeFragment_to_addSafeNameFragment"
             app:destination="@id/addSafeNameFragment" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
     </fragment>
 

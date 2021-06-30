@@ -55,7 +55,7 @@
         app:layout_constraintTop_toTopOf="@+id/chain_name"
         app:tint="@color/blue">
 
-        <aapt:attr name="android:background">
+        <aapt:attr name="android:src">
 
             <shape android:shape="oval">
 

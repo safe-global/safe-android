@@ -24,6 +24,7 @@ import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
 import io.gnosis.safe.ui.settings.app.GetInTouchViewModel
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatViewModel
+import io.gnosis.safe.ui.settings.chain.ChainSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
@@ -77,6 +78,10 @@ class ViewModule(
     @ForView
     fun providesCoinsAdapter(coinsViewModel: CoinsViewModel) =
         CoinsAdapter(WeakReference(coinsViewModel))
+
+    @Provides
+    @ForView
+    fun providesChainSelectionViewModel(provider: ViewModelProvider) = provider[ChainSelectionViewModel::class.java]
 
     @Provides
     @ForView

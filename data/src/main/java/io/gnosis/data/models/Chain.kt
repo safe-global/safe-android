@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.gnosis.data.models.Chain.Companion.TABLE_NAME
+import java.io.Serializable
 
 @Entity(tableName = TABLE_NAME)
 data class Chain(
@@ -19,7 +20,7 @@ data class Chain(
 
     @ColumnInfo(name = COL_BACKGROUND_COLOR)
     val backgroundColor: String
-) {
+) : Serializable {
     companion object {
         const val TABLE_NAME = "chains"
 

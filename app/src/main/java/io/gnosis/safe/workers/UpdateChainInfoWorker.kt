@@ -17,7 +17,8 @@ class UpdateChainInfoWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            val chains = chainInfoRepository.getChainInfo()
+            //TODO: get chains for local safes
+            val chains = chainInfoRepository.getChainInfo().results
             val safes = safeRepository.getSafes()
             chainInfoRepository.updateChainInfo(chains, safes)
             Result.success()
