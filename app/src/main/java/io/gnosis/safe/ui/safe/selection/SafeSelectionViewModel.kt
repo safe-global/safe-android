@@ -6,6 +6,7 @@ import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
+import io.gnosis.safe.ui.settings.chain.ChainSelectionMode
 import javax.inject.Inject
 
 sealed class SafeSelectionState : BaseStateViewModel.State {
@@ -75,7 +76,7 @@ class SafeSelectionViewModel @Inject constructor(
             updateState {
                 SafeSelectionState.AddSafeState(
                     ViewAction.NavigateTo(
-                        SafeSelectionDialogDirections.actionSafeSelectionDialogToAddSafe()
+                        SafeSelectionDialogDirections.actionSafeSelectionDialogToAddSafe(ChainSelectionMode.ADD_SAFE)
                     )
                 )
             }

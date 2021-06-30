@@ -1,78 +1,58 @@
 package io.gnosis.safe.ui.settings.chain
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Chain
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemChainBinding
-import io.gnosis.safe.databinding.ItemChainTitleBinding
-import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
-class ChainSelectionAdapter : PagingDataAdapter<ChainsViewData, BaseItemViewHolder>(COMPARATOR) {
+class ChainSelectionAdapter : PagingDataAdapter<Chain, ChainItemViewHolder>(COMPARATOR) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseItemViewHolder {
-        return when (ItemViewType.values()[viewType]) {
-            ItemViewType.TITLE -> TitleItemViewHolder(ItemChainTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ItemViewType.CHAIN -> ChainItemViewHolder(ItemChainBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ChainItemViewHolder(ItemChainBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-    override fun onBindViewHolder(holder: BaseItemViewHolder, position: Int) {
-        val item = getItem(position)
-        when (holder) {
-            is ChainItemViewHolder -> {
-                val chainItem = item as ChainsViewData.ChainItem
-                holder.bind(chainItem.chain)
-            }
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        val item = getItem(position)
-        return when (item) {
-            is ChainsViewData.TitleItem -> ItemViewType.TITLE
-            is ChainsViewData.ChainItem -> ItemViewType.CHAIN
-            else -> throw UnsupportedViewType()
-        }.ordinal
-    }
-
-    enum class ItemViewType {
-        TITLE,
-        CHAIN
+    override fun onBindViewHolder(holder: ChainItemViewHolder, position: Int) {
+        val item = getItem(position)!!
+        holder.bind(item)
     }
 
     companion object {
 
-        private val COMPARATOR = object : DiffUtil.ItemCallback<ChainsViewData>() {
+        private val COMPARATOR = object : DiffUtil.ItemCallback<Chain>() {
 
-            override fun areItemsTheSame(oldItem: ChainsViewData, newItem: ChainsViewData): Boolean {
+            override fun areItemsTheSame(oldItem: Chain, newItem: Chain): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: ChainsViewData, newItem: ChainsViewData): Boolean {
+            override fun areContentsTheSame(oldItem: Chain, newItem: Chain): Boolean {
                 return oldItem == newItem
             }
         }
     }
 }
 
-abstract class BaseItemViewHolder(
-    viewBinding: ViewBinding
-) : RecyclerView.ViewHolder(viewBinding.root)
-
-class ChainItemViewHolder(private val binding: ItemChainBinding) : BaseItemViewHolder(binding) {
+class ChainItemViewHolder(private val binding: ItemChainBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(chain: Chain) {
         with(binding) {
             name.text = chain.name
+            kotlin.runCatching {
+                Color.parseColor(chain.backgroundColor)
+            }.onSuccess {
+                circle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }.onFailure {
+                // this should never happen
+                circle.setColorFilter(circle.context.getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+            }
             root.setOnClickListener {
-
+                //TODO: navigate to add safe screen
             }
         }
     }
 }
-
-class TitleItemViewHolder(binding: ItemChainTitleBinding) : BaseItemViewHolder(binding)

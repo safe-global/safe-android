@@ -5,17 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentChainSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -24,7 +33,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
     private val navArgs by navArgs<ChainSelectionFragmentArgs>()
     private val mode by lazy { navArgs.mode }
 
-    private lateinit var adapter: ChainSelectionAdapter
+    private val adapter by lazy { ChainSelectionAdapter() }
 
     @Inject
     lateinit var viewModel: ChainSelectionViewModel
@@ -40,7 +49,38 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = ChainSelectionAdapter()
+
+        adapter.addLoadStateListener { loadState ->
+
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
+                binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
+
+                loadState.refresh.let {
+                    if (it is LoadState.Error) {
+                        if (adapter.itemCount == 0) {
+                            binding.contentNoData.root.visible(true)
+                        }
+                        handleError(it.error)
+                    }
+                }
+                loadState.append.let {
+                    if (it is LoadState.Error) handleError(it.error)
+                }
+                loadState.prepend.let {
+                    if (it is LoadState.Error) handleError(it.error)
+                }
+
+                if (viewModel.state.value?.viewAction is ShowChains && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                    binding.selectChainTitle.visible(false)
+                    binding.contentNoData.root.visible(true)
+                } else {
+                    binding.selectChainTitle.visible(mode == ChainSelectionMode.ADD_SAFE)
+                }
+            }
+        }
+
         with(binding) {
             backButton.setOnClickListener {
                 findNavController().navigateUp()
@@ -54,33 +94,38 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
             chainList.addItemDecoration(dividerItemDecoration)
             chainList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val action = state.viewAction) {
-                is Loading -> {
-                   showLoading()
-                }
                 is ShowChains -> {
-                    binding.contentNoData.root.visible(false)
-                    hideLoading()
+                    loadChains(action.chains)
                 }
                 is ShowError -> {
                     hideLoading()
                     if (adapter.itemCount == 0) {
                         binding.contentNoData.root.visible(true)
                     }
+                    handleError(action.error)
                 }
             }
         })
-    }
 
-    override fun onResume() {
-        super.onResume()
         viewModel.loadChains()
     }
 
-    private fun showLoading() {
-        binding.progress.visible(true)
-        binding.refresh.isRefreshing = true
+    private fun loadChains(newChains: PagingData<Chain>) {
+        lifecycleScope.launch {
+            adapter.submitData(newChains)
+        }
+    }
+
+    private fun handleError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error.trackingRequired) {
+            tracker.logException(throwable)
+        }
+        //TODO: add string for chain list description
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
     }
 
     private fun hideLoading() {

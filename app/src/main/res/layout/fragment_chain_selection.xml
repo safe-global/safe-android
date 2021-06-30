@@ -68,7 +68,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/select_chain_title"
                     style="@style/TextDark.Bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,7 +76,9 @@
                     android:layout_marginHorizontal="72dp"
                     android:layout_marginTop="24dp"
                     android:layout_marginBottom="16dp"
-                    android:text="@string/chain_select_network"/>
+                    android:text="@string/chain_select_network"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/chain_list"
