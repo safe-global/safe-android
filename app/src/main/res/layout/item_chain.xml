@@ -22,13 +22,12 @@
         android:layout_width="@dimen/chain_circle_size"
         android:layout_height="@dimen/chain_circle_size"
         android:layout_marginStart="24dp"
-        android:src="@drawable/circle"
         app:layout_constraintBottom_toBottomOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/name"
         app:tint="@color/blue">
 
-        <aapt:attr name="android:background">
+        <aapt:attr name="android:src">
 
             <shape android:shape="oval">
 
