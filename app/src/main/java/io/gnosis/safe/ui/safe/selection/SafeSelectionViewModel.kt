@@ -45,7 +45,7 @@ class SafeSelectionViewModel @Inject constructor(
                 clear()
                 add(AddSafeHeader)
                 activeSafe?.let {
-                    add(ChainHeader(it.chain?.name, it.chain?.backgroundColor))
+                    add(ChainHeader(it.chain!!.name, it.chain!!.backgroundColor))
                     add(SafeItem(it))
                     val otherSafesFromChain = safeRepository.getSafesForChain(it.chainId)
                     addAll(otherSafesFromChain.filter { it != activeSafe }.reversed().map { SafeItem(it) })

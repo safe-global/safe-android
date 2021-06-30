@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Safe
+import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemAddSafeBinding
 import io.gnosis.safe.databinding.ItemChainHeaderBinding
 import io.gnosis.safe.databinding.ItemSafeBinding
@@ -15,6 +16,7 @@ import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
 
@@ -125,7 +127,14 @@ class ChainHeaderViewHolder(
 
     fun bind(chainHeader: ChainHeader) {
         with(binding) {
-            chainCircle.setColorFilter(Color.parseColor(chainHeader.color), PorterDuff.Mode.SRC_IN)
+            kotlin.runCatching {
+                Color.parseColor(chainHeader.color)
+            }.onSuccess {
+                chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }.onFailure {
+                // this should never happen
+                chainCircle.setColorFilter(chainCircle.context.getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+            }
             chainName.text = chainHeader.name
         }
     }
