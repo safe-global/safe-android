@@ -23,8 +23,8 @@ class TokenRepository(private val gatewayApi: GatewayApi) {
         })
     }
 
-    suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
-        gatewayApi.loadCollectibles(safeAddress = safe.asEthereumAddressChecksumString())
+    suspend fun loadCollectiblesOf(safe: Safe): List<Collectible> =
+        gatewayApi.loadCollectibles(chainId = safe.chainId, safeAddress = safe.address.asEthereumAddressChecksumString())
             .asSequence()
             .groupBy {
                 it.address

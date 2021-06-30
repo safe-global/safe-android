@@ -37,7 +37,7 @@ class TransactionDetailsViewModel
     fun loadDetails(txId: String) {
         safeLaunch {
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            txDetails = transactionRepository.getTransactionDetails(txId)
+            txDetails = transactionRepository.getTransactionDetails(txId, safeRepository.getActiveSafe()!!.chainId)
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo
@@ -172,8 +172,9 @@ class TransactionDetailsViewModel
             val owners = credentialsRepository.owners()
             kotlin.runCatching {
                 transactionRepository.submitConfirmation(
-                    executionInfo.safeTxHash,
-                    credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
+                    chainId = safeRepository.getActiveSafe()!!.chainId,
+                    safeTxHash = executionInfo.safeTxHash,
+                    signedSafeTxHash = credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
                 txDetails = it

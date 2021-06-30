@@ -270,7 +270,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             kotlin.runCatching {
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
-                    val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
+                    val safeOwners = safeRepository.getSafeInfo(it).owners.map { it.value }.toSet()
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }

@@ -18,7 +18,7 @@ class AdvancedSafeSettingsViewModel
     fun load() {
         safeLaunch {
             safeRepository.getActiveSafe()?.let { safe ->
-                val safeInfo = safeRepository.getSafeInfo(safe.address)
+                val safeInfo = safeRepository.getSafeInfo(safe)
                 updateState {
                     AdvancedSafeSettingsState(
                         isLoading = false,

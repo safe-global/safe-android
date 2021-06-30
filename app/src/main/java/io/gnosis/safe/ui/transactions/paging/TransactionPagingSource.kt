@@ -1,13 +1,13 @@
 package io.gnosis.safe.ui.transactions.paging
 
 import androidx.paging.PagingSource
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.TxListEntry
 import io.gnosis.data.repositories.TransactionRepository
-import pm.gnosis.model.Solidity
 import timber.log.Timber
 
 class TransactionPagingSource(
-    private val safe: Solidity.Address,
+    private val safe: Safe,
     private val txRepo: TransactionRepository,
     private val type: Type
 ) : PagingSource<String, TxListEntry>() {

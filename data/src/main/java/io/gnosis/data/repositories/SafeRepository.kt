@@ -107,8 +107,8 @@ class SafeRepository(
         }
     }
 
-    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
-        gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString())
+    suspend fun getSafeInfo(safe: Safe): SafeInfo =
+        gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
 
     suspend fun clearUserData() {
         getSafes().forEach {
