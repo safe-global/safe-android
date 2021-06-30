@@ -18,11 +18,13 @@ class ChainSelectionViewModel
 
     override fun initialState() = ChainSelectionState(ViewAction.Loading(true))
 
-    fun loadChains() {
+    fun loadChains(reload: Boolean = false) {
         safeLaunch {
 
-            updateState {
-                ChainSelectionState(ViewAction.Loading(true))
+            if (reload) {
+                updateState {
+                    ChainSelectionState(ViewAction.Loading(true))
+                }
             }
 
             chainPager.getChainsStream().cachedIn(viewModelScope).collectLatest {

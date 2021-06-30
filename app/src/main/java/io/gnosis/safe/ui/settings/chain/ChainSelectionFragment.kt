@@ -87,7 +87,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
                 findNavController().navigateUp()
             }
             refresh.setOnRefreshListener {
-                viewModel.loadChains()
+                viewModel.loadChains(true)
             }
             chainList.adapter = adapter
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
