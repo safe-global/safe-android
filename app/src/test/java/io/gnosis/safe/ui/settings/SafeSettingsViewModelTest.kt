@@ -112,9 +112,9 @@ class SafeSettingsViewModelTest {
         }
         coVerifySequence {
             safeRepository.activeSafeFlow()
-            safeRepository.getSafeInfo(safe1.address)
+            safeRepository.getSafeInfo(safe1)
             ensRepository.reverseResolve(safe1.address)
-            safeRepository.getSafeInfo(safe2.address)
+            safeRepository.getSafeInfo(safe2)
             ensRepository.reverseResolve(safe2.address)
         }
     }
@@ -182,7 +182,7 @@ class SafeSettingsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address)
+            safeRepository.getSafeInfo(safe)
             ensRepository.reverseResolve(safe.address)
         }
     }
@@ -224,7 +224,7 @@ class SafeSettingsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address)
+            safeRepository.getSafeInfo(safe)
             ensRepository.reverseResolve(safe.address)
             Timber.e(throwable)
         }
@@ -254,7 +254,7 @@ class SafeSettingsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe.address)
+            safeRepository.getSafeInfo(safe)
             ensRepository wasNot Called
         }
     }
@@ -348,7 +348,7 @@ class SafeSettingsViewModelTest {
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
-            safeRepository.getSafeInfo(SAFE_2.address)
+            safeRepository.getSafeInfo(SAFE_2)
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)
             safeRepository.getSafes()

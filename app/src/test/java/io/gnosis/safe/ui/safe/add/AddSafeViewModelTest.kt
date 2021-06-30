@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.safe.TestLifecycleRule
@@ -24,6 +25,7 @@ class AddSafeViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
+    private val mainnet = Chain(1, "Mainnet", "", "")
 
     private lateinit var viewModel: AddSafeViewModel
 
@@ -42,11 +44,11 @@ class AddSafeViewModelTest {
     fun `submitAddress (address safeRepository failure) should ShowError`() {
         val address = VALID_SAFE_ADDRESS
         val exception = IllegalStateException()
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
-        coEvery { safeRepository.getSafeStatus(address) } throws exception
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns false
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } throws exception
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver
@@ -54,19 +56,19 @@ class AddSafeViewModelTest {
                 AddSafeState(BaseStateViewModel.ViewAction.ShowError(exception))
             )
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
-            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS, mainnet)
+            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS, mainnet)
         }
     }
 
     @Test
     fun `submitAddress (invalid address safeRepository works) should ShowError InvalidSafeAddress`() {
         val address = "0x0".asEthereumAddress()!!
-        coEvery { safeRepository.getSafeStatus(address) } returns SafeStatus.INVALID
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } returns SafeStatus.INVALID
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         with(stateObserver.values()[0]) {
@@ -76,80 +78,80 @@ class AddSafeViewModelTest {
             )
         }
         coVerify {
-            safeRepository.isSafeAddressUsed(address)
-            safeRepository.getSafeStatus(address)
+            safeRepository.isSafeAddressUsed(address, mainnet)
+            safeRepository.getSafeStatus(address, mainnet)
         }
     }
 
     @Test
     fun `submitAddress (valid unused address) should NavigateTo`() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.getSafeStatus(address) } returns SafeStatus.VALID
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } returns SafeStatus.VALID
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(ShowValidSafe(address)))
 
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
-            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS, mainnet)
+            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS, mainnet)
         }
     }
 
     @Test
     fun `submitAddress (valid used address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.getSafeStatus(address) } returns SafeStatus.VALID
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns true
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } returns SafeStatus.VALID
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns true
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
 
         coVerifySequence {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
-            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS) wasNot Called
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS, mainnet)
+            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS, mainnet) wasNot Called
         }
     }
 
     @Test
     fun `validate (valid used address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.getSafeStatus(address) } returns SafeStatus.VALID
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns true
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } returns SafeStatus.VALID
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns true
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(UsedSafeAddress)))
 
         coVerify {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
-            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS) wasNot Called
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS, mainnet)
+            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS, mainnet) wasNot Called
         }
     }
 
     @Test
     fun `validate (invalid address) should ShowError UsedSafeAddress `() {
         val address = VALID_SAFE_ADDRESS
-        coEvery { safeRepository.getSafeStatus(address) } returns SafeStatus.INVALID
-        coEvery { safeRepository.isSafeAddressUsed(address) } returns false
+        coEvery { safeRepository.getSafeStatus(address, mainnet) } returns SafeStatus.INVALID
+        coEvery { safeRepository.isSafeAddressUsed(address, mainnet) } returns false
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
 
-        viewModel.validate(address)
+        viewModel.validate(address, mainnet)
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(AddSafeState(BaseStateViewModel.ViewAction.ShowError(InvalidSafeAddress)))
 
         coVerify {
-            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS)
-            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS)
+            safeRepository.isSafeAddressUsed(VALID_SAFE_ADDRESS, mainnet)
+            safeRepository.getSafeStatus(VALID_SAFE_ADDRESS, mainnet)
         }
     }
 

@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.assets.collectibles
 
-import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
@@ -47,9 +47,9 @@ class CollectiblesViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe1.address)
+            tokenRepository.loadCollectiblesOf(safe1)
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe10.address)
+            tokenRepository.loadCollectiblesOf(safe10)
         }
     }
 
@@ -95,7 +95,7 @@ class CollectiblesViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe.address)
+            tokenRepository.loadCollectiblesOf(safe)
         }
     }
 

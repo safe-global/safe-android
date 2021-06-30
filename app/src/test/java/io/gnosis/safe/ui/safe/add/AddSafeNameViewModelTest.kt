@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -38,6 +39,8 @@ class AddSafeNameViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: AddSafeNameViewModel
+    private val mainnet = Chain(1, "Mainnet", "", "")
+    private val rinkeby = Chain(4, "Rinkeby", "", "")
 
     @Before
     fun setup() {
@@ -63,7 +66,7 @@ class AddSafeNameViewModelTest {
         val throwable = IllegalStateException()
         coEvery { safeRepository.saveSafe(any()) } throws throwable
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name", rinkeby)
 
         val actual = viewModel.state.test().values()
 
@@ -72,7 +75,7 @@ class AddSafeNameViewModelTest {
             actual[0].viewAction is BaseStateViewModel.ViewAction.ShowError &&
                     (actual[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error == throwable
         )
-        coVerify(exactly = 1) { safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name")) }
+        coVerify(exactly = 1) { safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId)) }
     }
 
     @Test
@@ -80,7 +83,7 @@ class AddSafeNameViewModelTest {
         val throwable = IllegalStateException()
         coEvery { safeRepository.saveSafe(any()) } throws throwable
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "", mainnet)
 
         val actual = viewModel.state.test().values()
 
@@ -97,7 +100,7 @@ class AddSafeNameViewModelTest {
         val throwable = IllegalStateException()
         coEvery { safeRepository.saveSafe(any()) } throws throwable
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "    ")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "    ", mainnet)
 
         val actual = viewModel.state.test().values()
 
@@ -119,17 +122,17 @@ class AddSafeNameViewModelTest {
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "          Name          ")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "          Name          ", rinkeby)
 
         viewModel.state.test()
             .assertValues(
                 AddSafeNameState(BaseStateViewModel.ViewAction.CloseScreen)
             )
         coVerifySequence {
-            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
-            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
@@ -146,17 +149,17 @@ class AddSafeNameViewModelTest {
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name", rinkeby)
 
         viewModel.state.test()
             .assertValues(
                 AddSafeNameState(BaseStateViewModel.ViewAction.CloseScreen)
             )
         coVerifySequence {
-            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
-            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
@@ -173,17 +176,17 @@ class AddSafeNameViewModelTest {
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns true
 
-        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name")
+        viewModel.submitAddressAndName(VALID_SAFE_ADDRESS, "Name", rinkeby)
 
         viewModel.state.test()
             .assertValues(
                 AddSafeNameState(ImportOwner)
             )
         coVerifySequence {
-            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name"))
-            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name"))
-            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name"))
+            safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen

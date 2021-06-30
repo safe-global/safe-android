@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
+import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Owner
@@ -42,23 +43,29 @@ class TransactionDetailsViewModelTest {
     @Test
     fun `loadDetails (transactionRepository failure) should emit error`() = runBlockingTest {
         val throwable = Throwable()
-        coEvery { transactionRepository.getTransactionDetails(any()) } throws throwable
+        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+
+        coEvery { transactionRepository.getTransactionDetails(any(), any()) } throws throwable
+        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
 
         viewModel.loadDetails("tx_details_id")
 
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(throwable))
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id") }
+        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id", CHAIN_ID) }
     }
 
     @Test
     fun `loadDetails (successful) should emit txDetails`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        coEvery { transactionRepository.getTransactionDetails(any()) } returns transactionDetails
+        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+
+        coEvery { transactionRepository.getTransactionDetails(any(), any()) } returns transactionDetails
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.owners() } returns listOf()
+        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
         val expectedTransactionInfoViewData =
             transactionDetails.toTransactionDetailsViewData(emptyList(), canSign = false, hasOwnerKey = false, owners = emptyList())
 
@@ -67,7 +74,7 @@ class TransactionDetailsViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(UpdateDetails(txDetails = expectedTransactionInfoViewData), this[0].viewAction)
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id") }
+        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id", CHAIN_ID) }
     }
 
     @Test
@@ -161,7 +168,7 @@ class TransactionDetailsViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MismatchingSafeTxHash))
         }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
+        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
     }
 
     @Test
@@ -178,7 +185,7 @@ class TransactionDetailsViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MissingOwnerCredential))
         }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
+        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
         coVerify(exactly = 1) { credentialsRepository.ownerCount() }
         coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
@@ -192,7 +199,7 @@ class TransactionDetailsViewModelTest {
         val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
         coEvery { credentialsRepository.signWithOwner(any(), any()) } throws throwable
-        coEvery { transactionRepository.submitConfirmation(any(), any()) } throws throwable
+        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns listOf(owner)
         coEvery { credentialsRepository.owner(someAddress) } returns owner
@@ -204,7 +211,7 @@ class TransactionDetailsViewModelTest {
             assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
             assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
         }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any()) }
+        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
         coVerify(exactly = 1) {
             credentialsRepository.signWithOwner(
                 owner,
@@ -212,7 +219,7 @@ class TransactionDetailsViewModelTest {
             )
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
     }
 
 
@@ -225,7 +232,7 @@ class TransactionDetailsViewModelTest {
         val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
         coEvery { safeRepository.getActiveSafe() } returns Safe(ownerAddress, "safe_name")
         coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
-        coEvery { transactionRepository.submitConfirmation(any(), any()) } throws throwable
+        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns listOf(owner)
         coEvery { credentialsRepository.owner(ownerAddress) } returns owner
@@ -237,7 +244,7 @@ class TransactionDetailsViewModelTest {
             assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
             assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
         }
-        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
+        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
         coVerify(exactly = 1) {
             credentialsRepository.signWithOwner(
                 owner,
@@ -246,7 +253,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 1) { credentialsRepository.owner(ownerAddress) }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
     }
 
     @Test
@@ -258,7 +265,7 @@ class TransactionDetailsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
-        coEvery { transactionRepository.submitConfirmation(any(), any()) } returns transactionDetails
+        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } returns transactionDetails
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns listOf(owner)
         coEvery { credentialsRepository.owner(someAddress) } returns owner
@@ -279,7 +286,7 @@ class TransactionDetailsViewModelTest {
                 ), this[0].viewAction
             )
         }
-        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any()) }
+        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
         coVerify(exactly = 1) {
             credentialsRepository.signWithOwner(
                 owner,
@@ -287,7 +294,7 @@ class TransactionDetailsViewModelTest {
             )
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionConfirmed() }
     }
 
@@ -319,7 +326,9 @@ class TransactionDetailsViewModelTest {
     }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
-        val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(transactionId = any()) } returns transactionDetailsDto }
-        return TransactionRepository(mockGatewayApi).getTransactionDetails("txId")
+        val mockGatewayApi = mockk<GatewayApi>().apply {
+            coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
+        }
+        return TransactionRepository(mockGatewayApi).getTransactionDetails("txId", 1)
     }
 }
