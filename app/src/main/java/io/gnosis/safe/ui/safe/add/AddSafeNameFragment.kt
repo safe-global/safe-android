@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeNameBinding
@@ -29,6 +29,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
 
     private val navArgs by navArgs<AddSafeNameFragmentArgs>()
     private val newAddress by lazy { navArgs.newAddress.asEthereumAddress()!! }
+    private val selectedChain by lazy { navArgs.chain }
 
     override fun screenId() = ScreenId.SAFE_ADD_NAME
 
@@ -49,11 +50,13 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener {
                 addSafeNameLayout.isErrorEnabled = false
-                viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString())
+                viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString(), selectedChain)
             }
             addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
-            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
-            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -63,11 +66,11 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                         when (action) {
                             is CloseScreen -> {
                                 requireActivity().hideSoftKeyboard()
-                                findNavController().popBackStack(R.id.addSafeFragment, true)
+                                findNavController().popBackStack(R.id.selectChainFragment, true)
                             }
                             is ImportOwner -> {
                                 requireActivity().hideSoftKeyboard()
-                                findNavController().navigate(AddSafeNameFragmentDirections.actionAddSafeNameFragmentToAddSafeOwnerFragment(binding.addSafeNameEntry.text.toString(), navArgs.newAddress))
+                                findNavController().navigate(AddSafeNameFragmentDirections.actionAddSafeNameFragmentToAddSafeOwnerFragment(binding.addSafeNameEntry.text.toString(), navArgs.newAddress, selectedChain))
                             }
                             is Loading -> {}
                             is ShowError -> {

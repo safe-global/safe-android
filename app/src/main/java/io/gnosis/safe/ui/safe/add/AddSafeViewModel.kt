@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -17,12 +18,12 @@ class AddSafeViewModel
 
     override fun initialState(): State = AddSafeState(ViewAction.Loading(false))
 
-    fun validate(address: Solidity.Address) {
+    fun validate(address: Solidity.Address, chain: Chain) {
         safeLaunch {
             updateState { AddSafeState(ViewAction.Loading(true)) }
-            takeUnless { safeRepository.isSafeAddressUsed(address) } ?: throw UsedSafeAddress
+            takeUnless { safeRepository.isSafeAddressUsed(address, chain) } ?: throw UsedSafeAddress
             kotlin.runCatching {
-                when (safeRepository.getSafeStatus(address)) {
+                when (safeRepository.getSafeStatus(address, chain)) {
                     SafeStatus.VALID -> updateState { AddSafeState(ShowValidSafe(address)) }
                     SafeStatus.NOT_SUPPORTED -> throw SafeNotSupported
                     SafeStatus.INVALID -> throw InvalidSafeAddress

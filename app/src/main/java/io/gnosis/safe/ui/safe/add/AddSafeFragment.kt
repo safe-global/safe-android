@@ -1,13 +1,14 @@
 package io.gnosis.safe.ui.safe.add
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.safe.BuildConfig
+import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
@@ -23,6 +24,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
+
+    private val navArgs by navArgs<AddSafeFragmentArgs>()
+    private val selectedChain by lazy { navArgs.chain }
 
     @Inject
     lateinit var viewModel: AddSafeViewModel
@@ -46,14 +50,15 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                addSafeAddressInputLayout.address?.let { viewModel.validate(it) }
+                addSafeAddressInputLayout.address?.let { viewModel.validate(it, selectedChain) }
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
             addSafeAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
-            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
-            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -95,7 +100,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             nextButton.isEnabled = false
             addSafeAddressInputLayout.setNewAddress(address)
         }
-        viewModel.validate(address)
+        viewModel.validate(address, selectedChain)
     }
 
     private fun handleValid(address: Solidity.Address) {
@@ -103,7 +108,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             progress.visible(false)
             binding.nextButton.setOnClickListener {
                 findNavController().navigate(
-                    AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address.asEthereumAddressChecksumString())
+                    AddSafeFragmentDirections.actionAddSafeFragmentToAddSafeNameFragment(address.asEthereumAddressChecksumString(), selectedChain)
                 )
             }
             nextButton.isEnabled = true

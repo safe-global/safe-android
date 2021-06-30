@@ -21,8 +21,8 @@ interface SafeDao {
     @Query("SELECT * FROM ${Safe.TABLE_NAME}")
     suspend fun loadAll(): List<Safe>
 
-    @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_ADDRESS} = :address")
-    suspend fun loadByAddress(address: Solidity.Address): Safe?
+    @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_ADDRESS} = :address AND ${Safe.COL_CHAIN_ID} = :chainId")
+    suspend fun loadByAddressAndChainId(address: Solidity.Address, chainId: Int): Safe?
 
     @Query("SELECT * FROM ${SafeMetaData.TABLE_NAME}")
     suspend fun getMetas(): List<SafeMetaData>

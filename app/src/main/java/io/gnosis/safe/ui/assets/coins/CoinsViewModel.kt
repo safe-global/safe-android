@@ -47,7 +47,7 @@ class CoinsViewModel
                         viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
                     )
                 }
-                val balanceInfo = tokenRepository.loadBalanceOf(safe.address, userDefaultFiat)
+                val balanceInfo = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
 
                 val banner = when {
                     settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() == 0 -> Banner.Type.ADD_OWNER_KEY

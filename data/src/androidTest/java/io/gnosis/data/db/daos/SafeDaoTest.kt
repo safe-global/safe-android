@@ -148,7 +148,7 @@ class SafeDaoTest {
         safeDao.insert(testSafe2)
         safeDao.insert(testSafe3)
 
-        val actual = safeDao.loadByAddress(testSafe2.address)
+        val actual = safeDao.loadByAddressAndChainId(testSafe2.address)
 
         Assert.assertEquals(testSafe2, actual)
     }
@@ -165,7 +165,7 @@ class SafeDaoTest {
         safeDao.insert(testSafe2)
         safeDao.insert(testSafe3)
 
-        val actual = safeDao.loadByAddress(testSafe4.address)
+        val actual = safeDao.loadByAddressAndChainId(testSafe4.address)
 
         Assert.assertEquals(null, actual)
     }

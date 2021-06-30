@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -23,7 +24,7 @@ class AddSafeNameViewModel
     private val tracker: Tracker
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
-    fun submitAddressAndName(address: Solidity.Address, localName: String) {
+    fun submitAddressAndName(address: Solidity.Address, localName: String, chain: Chain) {
         safeLaunch {
             localName.takeUnless { it.isBlank() } ?: run {
                 updateState { AddSafeNameState(ViewAction.ShowError(InvalidName())) }
@@ -31,7 +32,7 @@ class AddSafeNameViewModel
             }
             updateState { AddSafeNameState(ViewAction.Loading(true)) }
             runCatching {
-                val safe = Safe(address, localName.trim())
+                val safe = Safe(address, localName.trim(), chain.chainId)
                 safeRepository.saveSafe(safe)
                 notificationRepository.registerSafes(safe)
                 notificationManager.createNotificationChannelGroup(safe)

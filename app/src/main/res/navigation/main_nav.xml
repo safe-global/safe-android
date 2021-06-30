@@ -822,6 +822,10 @@
             android:name="newAddress"
             app:argType="string" />
 
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
     </fragment>
 
     <fragment
@@ -837,6 +841,11 @@
         <argument
             android:name="safeAddress"
             app:argType="string" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
 
     </fragment>
 

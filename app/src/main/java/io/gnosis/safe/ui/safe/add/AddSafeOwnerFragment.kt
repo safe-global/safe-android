@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
     private val navArgs by navArgs<AddSafeOwnerFragmentArgs>()
     private val name by lazy { navArgs.safeName }
     private val address by lazy { navArgs.safeAddress.asEthereumAddress()!! }
+    private val selectedChain by lazy { navArgs.chain }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -70,8 +72,9 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 tracker.logOnboardingOwnerSkipped()
                 finishAddSafeFlow()
             }
-            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
-            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
