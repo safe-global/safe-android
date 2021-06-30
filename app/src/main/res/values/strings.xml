@@ -62,6 +62,7 @@
     <string name="remove_safe">Remove safe</string>
     <string name="error_data_cannot_be_loaded">Data cannot be loaded</string>
     <string name="error_id">Error %1$d</string>
+    <string name="error_description_chain_list">Failed to load chains</string>
     <string name="error_description_safe_add">Can\'t add safe</string>
     <string name="error_description_safe_address">Can\'t use this address</string>
     <string name="error_description_safe_name">Can\'t use this name</string>

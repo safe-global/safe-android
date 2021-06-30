@@ -38,6 +38,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
     @Inject
     lateinit var viewModel: ChainSelectionViewModel
 
+    //TODO: set correct screen id
     override fun screenId() = ScreenId.ASSETS_COINS
 
     override fun inject(component: ViewComponent) {
@@ -124,8 +125,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
         if (error.trackingRequired) {
             tracker.logException(throwable)
         }
-        //TODO: add string for chain list description
-        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_chain_list))
     }
 
     private fun hideLoading() {
