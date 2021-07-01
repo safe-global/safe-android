@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeOwnerBinding
@@ -18,6 +17,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
@@ -73,8 +73,14 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 finishAddSafeFlow()
             }
             chainRibbon.text = selectedChain.name
-            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+            try {
+                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            } catch (e: Exception) {
+                tracker.logException(e)
+                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
+                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {

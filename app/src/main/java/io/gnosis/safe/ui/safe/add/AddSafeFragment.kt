@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.Safe
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeBinding
@@ -19,6 +20,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
@@ -50,20 +52,26 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                addSafeAddressInputLayout.address?.let { viewModel.validate(it, selectedChain) }
+                addSafeAddressInputLayout.address?.let { viewModel.validate(Safe(it, "", selectedChain.chainId )) }
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
             addSafeAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
             chainRibbon.text = selectedChain.name
-            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+            try {
+                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            } catch (e: Exception) {
+                tracker.logException(e)
+                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
+                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val action = state.viewAction) {
-                is ShowValidSafe -> handleValid(action.address)
+                is ShowValidSafe -> handleValid(action.safe.address)
                 is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                 is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
             }
@@ -100,7 +108,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             nextButton.isEnabled = false
             addSafeAddressInputLayout.setNewAddress(address)
         }
-        viewModel.validate(address, selectedChain)
+        viewModel.validate(Safe(address, "", selectedChain.chainId))
     }
 
     private fun handleValid(address: Solidity.Address) {

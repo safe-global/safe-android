@@ -17,6 +17,7 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
@@ -55,8 +56,14 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
             addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
 
             chainRibbon.text = selectedChain.name
-            chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+            try {
+                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            } catch (e: Exception) {
+                tracker.logException(e)
+                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
+                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

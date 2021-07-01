@@ -135,7 +135,7 @@ class SafeRepositoryTest {
 
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo
 
-        val actual = safeRepository.getSafeStatus(safeAddress, defaultChain)
+        val actual = safeRepository.getSafeStatus(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(SafeStatus.VALID, actual)
         coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString(), chainId = CHAIN_ID) }
@@ -148,7 +148,7 @@ class SafeRepositoryTest {
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } throws throwable
 
         kotlin.runCatching {
-            safeRepository.getSafeStatus(safeAddress, defaultChain)
+            safeRepository.getSafeStatus(Safe(safeAddress, "", defaultChain.chainId))
             Assert.fail()
         }
 
@@ -160,7 +160,7 @@ class SafeRepositoryTest {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
         coEvery { safeDao.loadByAddressAndChainId(any(), any()) } returns Safe(safeAddress, "safe_name")
 
-        val actual = safeRepository.isSafeAddressUsed(safeAddress, defaultChain)
+        val actual = safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(true, actual)
         coVerify(exactly = 1) { safeDao.loadByAddressAndChainId(safeAddress, CHAIN_ID) }
@@ -171,7 +171,7 @@ class SafeRepositoryTest {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
         coEvery { safeDao.loadByAddressAndChainId(any(), any()) } returns null
 
-        val actual = safeRepository.isSafeAddressUsed(safeAddress, defaultChain)
+        val actual = safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(false, actual)
         coVerify(exactly = 1) { safeDao.loadByAddressAndChainId(safeAddress, CHAIN_ID) }
@@ -183,7 +183,7 @@ class SafeRepositoryTest {
         val throwable = Throwable()
         coEvery { safeDao.loadByAddressAndChainId(any(), any()) } throws throwable
 
-        val actual = runCatching { safeRepository.isSafeAddressUsed(safeAddress, defaultChain) }
+        val actual = runCatching { safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId)) }
 
         with(actual) {
             assertEquals(true, isFailure)
