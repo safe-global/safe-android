@@ -47,11 +47,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
         super.onCreate(savedInstanceState)
 
         if (arguments != null) {
-            val chainId = requireArguments().getInt(CHAIN_ID)
-            val chainName = requireArguments().getString(CHAIN_NAME)!!
-            val textColor = requireArguments().getString(CHAIN_TEXT_COLOR)!!
-            val bgColor = requireArguments().getString(CHAIN_BACKGROUND_COLOR)!!
-            selectedChain = Chain(chainId, chainName, textColor, bgColor)
+            selectedChain = requireArguments().getSerializable(ARGS_CHAIN) as Chain
         }
     }
 
@@ -155,18 +151,10 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
     companion object {
         fun create(chain: Chain): EnsInputDialog {
             val dialog = EnsInputDialog()
-            dialog.arguments = bundleOf(
-                CHAIN_NAME to chain.name,
-                CHAIN_ID to chain.chainId,
-                CHAIN_BACKGROUND_COLOR to chain.backgroundColor,
-                CHAIN_TEXT_COLOR to chain.textColor
-            )
+            dialog.arguments = bundleOf(ARGS_CHAIN to chain)
             return dialog
         }
 
-        private const val CHAIN_NAME = "chain_name"
-        private const val CHAIN_ID = "chain_id"
-        private const val CHAIN_BACKGROUND_COLOR = "background_color"
-        private const val CHAIN_TEXT_COLOR = "text_color"
+        private const val ARGS_CHAIN = "args.serializable.chain"
     }
 }

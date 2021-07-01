@@ -36,7 +36,7 @@ class AddSafeNameViewModel
             runCatching {
                 val safe = Safe(address, localName.trim(), chain.chainId)
                 safeRepository.saveSafe(safe)
-                chainInfoRepository.update(chain)
+                chainInfoRepository.save(chain)
                 notificationRepository.registerSafes(safe)
                 notificationManager.createNotificationChannelGroup(safe)
                 safeRepository.setActiveSafe(safe)

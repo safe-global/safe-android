@@ -47,7 +47,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            selectedChain = requireArguments().getSerializable(CHAIN) as Chain
+            selectedChain = requireArguments().getSerializable(ARGS_CHAIN) as Chain
         }
     }
 
@@ -156,10 +156,10 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     companion object {
         fun create(chain: Chain): UnstoppableInputDialog {
             val dialog = UnstoppableInputDialog()
-            dialog.arguments = bundleOf(CHAIN to chain)
+            dialog.arguments = bundleOf(ARGS_CHAIN to chain)
             return dialog
         }
 
-        private const val CHAIN = "chain"
+        private const val ARGS_CHAIN = "args.serializable.chain"
     }
 }

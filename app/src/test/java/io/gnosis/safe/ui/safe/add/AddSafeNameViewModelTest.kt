@@ -119,7 +119,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { chainInfoRepository.update(any()) } just Runs
+        coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -134,7 +134,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
-            chainInfoRepository.update(rinkeby)
+            chainInfoRepository.save(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
@@ -148,7 +148,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { chainInfoRepository.update(any()) } just Runs
+        coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -163,7 +163,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
-            chainInfoRepository.update(rinkeby)
+            chainInfoRepository.save(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
@@ -177,7 +177,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name, should notify about importing owner) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
-        coEvery { chainInfoRepository.update(any()) } just Runs
+        coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -192,7 +192,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
-            chainInfoRepository.update(rinkeby)
+            chainInfoRepository.save(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
