@@ -45,13 +45,13 @@ class AddSafeNameViewModelTest {
     @Before
     fun setup() {
         viewModel = AddSafeNameViewModel(
-            safeRepository,
-            notificationRepository,
+            safeRepository,,
             credentialsRepository,
             settingsHandler,
             notificationManager,
             appDispatchers,
-            tracker
+            tracker,
+            notificationRepository
         )
         Dispatchers.setMain(TestCoroutineDispatcher())
     }

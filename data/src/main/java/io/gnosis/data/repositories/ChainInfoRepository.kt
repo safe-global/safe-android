@@ -28,6 +28,8 @@ class ChainInfoRepository(
         }
     }
 
+    suspend fun update(chain: Chain) = chainDao.save(chain)
+
     suspend fun getChains(): List<Chain> = chainDao.loadAll()
 }
 

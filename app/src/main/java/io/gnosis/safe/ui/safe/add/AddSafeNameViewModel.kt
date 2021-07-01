@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
@@ -16,12 +17,13 @@ import javax.inject.Inject
 class AddSafeNameViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
-    private val notificationRepository: NotificationRepository,
+    private val chainInfoRepository: ChainInfoRepository,
     private val credentialsRepository: CredentialsRepository,
     private val settingsHandler: SettingsHandler,
     private val notificationManager: NotificationManager,
     appDispatchers: AppDispatchers,
-    private val tracker: Tracker
+    private val tracker: Tracker,
+    private val notificationRepository: NotificationRepository
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
     fun submitAddressAndName(address: Solidity.Address, localName: String, chain: Chain) {
@@ -34,6 +36,7 @@ class AddSafeNameViewModel
             runCatching {
                 val safe = Safe(address, localName.trim(), chain.chainId)
                 safeRepository.saveSafe(safe)
+                chainInfoRepository.update(chain)
                 notificationRepository.registerSafes(safe)
                 notificationManager.createNotificationChannelGroup(safe)
                 safeRepository.setActiveSafe(safe)
