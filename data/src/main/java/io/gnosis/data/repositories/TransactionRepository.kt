@@ -26,7 +26,7 @@ class TransactionRepository(
     suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
         gatewayApi.loadTransactionsPage(pageLink)
 
-    suspend fun getTransactionDetails(txId: String, chainId: Int): TransactionDetails =
+    suspend fun getTransactionDetails(chainId: Int, txId: String): TransactionDetails =
         gatewayApi.loadTransactionDetails(transactionId = txId, chainId = chainId)
 
     suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String, chainId: Int): TransactionDetails =

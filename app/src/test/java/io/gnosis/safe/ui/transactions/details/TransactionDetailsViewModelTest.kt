@@ -53,7 +53,7 @@ class TransactionDetailsViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(throwable))
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id", CHAIN_ID) }
+        coVerify(exactly = 1) { transactionRepository.getTransactionDetails(CHAIN_ID, "tx_details_id") }
     }
 
     @Test
@@ -74,7 +74,7 @@ class TransactionDetailsViewModelTest {
         with(viewModel.state.test().values()) {
             assertEquals(UpdateDetails(txDetails = expectedTransactionInfoViewData), this[0].viewAction)
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails("tx_details_id", CHAIN_ID) }
+        coVerify(exactly = 1) { transactionRepository.getTransactionDetails(CHAIN_ID, "tx_details_id") }
     }
 
     @Test
@@ -329,6 +329,6 @@ class TransactionDetailsViewModelTest {
         val mockGatewayApi = mockk<GatewayApi>().apply {
             coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
         }
-        return TransactionRepository(mockGatewayApi).getTransactionDetails("txId", 1)
+        return TransactionRepository(mockGatewayApi).getTransactionDetails(1, "txId")
     }
 }

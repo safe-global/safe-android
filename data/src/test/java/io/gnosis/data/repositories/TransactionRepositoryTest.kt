@@ -281,7 +281,7 @@ class TransactionRepositoryTest {
         val transactionDetailsDto = moshiAdapter.readJsonFrom("tx_details_transfer.json")
         coEvery { gatewayApi.submitConfirmation(safeTxHash = any(), txConfirmationRequest = any(), chainId = CHAIN_ID) } returns transactionDetailsDto
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
-        val expected = transactionRepository.getTransactionDetails("txId", chainId = CHAIN_ID)
+        val expected = transactionRepository.getTransactionDetails(chainId = CHAIN_ID, txId = "txId")
 
         val actual = runCatching { transactionRepository.submitConfirmation("0x0", "0x0", CHAIN_ID) }
 

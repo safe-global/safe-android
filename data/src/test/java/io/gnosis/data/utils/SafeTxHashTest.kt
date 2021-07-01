@@ -29,7 +29,7 @@ class SafeTxHashTest {
     fun `calculateSafeTxHash (safe, customTx) should return same value as in customTx`() = runBlocking {
         val txCustomDto = txDtoAdapter.readJsonFrom("tx_details_custom.json")
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txCustomDto
-        val txCustom = transactionRepository.getTransactionDetails("id", CHAIN_ID)
+        val txCustom = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
@@ -46,7 +46,7 @@ class SafeTxHashTest {
     fun `calculateSafeTxHash (safe, transferTx) should return same value as in transferTx`() = runBlocking {
         val txTransferDto = txDtoAdapter.readJsonFrom("tx_details_transfer.json")
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txTransferDto
-        val txTransfer = transactionRepository.getTransactionDetails("id", CHAIN_ID)
+        val txTransfer = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
@@ -63,7 +63,7 @@ class SafeTxHashTest {
     fun `calculateSafeTxHash (safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
         val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_settings_change.json")
         coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txSettingsChangeDto
-        val txSettingsChange = transactionRepository.getTransactionDetails("id", CHAIN_ID)
+        val txSettingsChange = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash

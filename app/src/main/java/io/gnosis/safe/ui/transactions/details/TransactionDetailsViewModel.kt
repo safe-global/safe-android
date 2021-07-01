@@ -37,7 +37,7 @@ class TransactionDetailsViewModel
     fun loadDetails(txId: String) {
         safeLaunch {
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
-            txDetails = transactionRepository.getTransactionDetails(txId, safeRepository.getActiveSafe()!!.chainId)
+            txDetails = transactionRepository.getTransactionDetails(safeRepository.getActiveSafe()!!.chainId, txId)
             val safes = safeRepository.getSafes()
 
             val executionInfo = txDetails?.detailedExecutionInfo

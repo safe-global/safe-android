@@ -102,7 +102,7 @@ class ConfirmRejectionViewModel
         if (txDetails == null) {
             safeLaunch {
                 updateState { ConfirmationRejectedViewState(ViewAction.Loading(true)) }
-                txDetails = transactionRepository.getTransactionDetails(txId, safeRepository.getActiveSafe()!!.chainId)
+                txDetails = transactionRepository.getTransactionDetails(safeRepository.getActiveSafe()!!.chainId, txId)
                 updateState { ConfirmationRejectedViewState(ViewAction.Loading(false)) }
             }
         }
