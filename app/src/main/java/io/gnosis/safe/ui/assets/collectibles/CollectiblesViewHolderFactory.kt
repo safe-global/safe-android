@@ -81,6 +81,7 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
             root.setOnClickListener {
                 Navigation.findNavController(it).navigate(
                     AssetsFragmentDirections.actionAssetsFragmentToCollectiblesDetailsFragment(
+                        data.chain,
                         data.collectible.address.asEthereumAddressString(),
                         data.collectible.name,
                         data.collectible.id,
