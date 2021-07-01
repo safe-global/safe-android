@@ -1,13 +1,14 @@
 package io.gnosis.safe.ui.dialogs
 
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import io.gnosis.safe.BuildConfig
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogEnsInputBinding
@@ -23,11 +24,12 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
+class EnsInputDialog(private val selectedChain: Chain) : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
@@ -58,8 +60,15 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             backButton.setOnClickListener { dismiss() }
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
-            //TODO: Replace with network name selected for safe addition (& set colors accordingly)
-            chainRibbon.text = BuildConfig.BLOCKCHAIN_NAME
+            chainRibbon.text = selectedChain.name
+            try {
+                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
+            } catch (e: Exception) {
+                tracker.logException(e)
+                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
+                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
+            }
         }
     }
 
@@ -140,6 +149,6 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
     }
 
     companion object {
-        fun create() = EnsInputDialog()
+        fun create(chain: Chain) = EnsInputDialog(chain)
     }
 }

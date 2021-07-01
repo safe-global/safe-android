@@ -4,12 +4,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.BottomSheetAddressInputBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
-import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.fragment.BaseFragment
 import io.gnosis.safe.ui.dialogs.EnsInputDialog
 import io.gnosis.safe.ui.dialogs.UnstoppableInputDialog
@@ -24,7 +24,8 @@ class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: (Throwable, String?) -> Unit
+    private val errorCallback: (Throwable, String?) -> Unit,
+    private val selectedChain: Chain
 ) {
 
     private val dialog =
@@ -35,7 +36,7 @@ class AddressInputHelper(
                 setContentView(root)
 
                 bottomSheetAddressInputUnstoppabledomains.setOnClickListener {
-                    UnstoppableInputDialog.create().apply {
+                    UnstoppableInputDialog.create(selectedChain).apply {
                         callback = addressCallback
                         show(fragment.childFragmentManager, null)
                     }
@@ -43,7 +44,7 @@ class AddressInputHelper(
                 }
 
                 bottomSheetAddressInputEnsTouch.setOnClickListener {
-                    EnsInputDialog.create().apply {
+                    EnsInputDialog.create(selectedChain).apply {
                         callback = addressCallback
                         show(fragment.childFragmentManager, null)
                     }
