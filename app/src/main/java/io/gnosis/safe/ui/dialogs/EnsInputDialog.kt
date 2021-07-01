@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.data.models.Chain
@@ -29,7 +30,9 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class EnsInputDialog(private val selectedChain: Chain) : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
+class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
+
+    lateinit var selectedChain: Chain
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
@@ -43,6 +46,14 @@ class EnsInputDialog(private val selectedChain: Chain) : BaseViewBindingDialogFr
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
+
+        if (arguments != null) {
+            val chainId = requireArguments().getInt(CHAIN_ID)
+            val chainName = requireArguments().getString(CHAIN_NAME)!!
+            val textColor = requireArguments().getString(CHAIN_TEXT_COLOR)!!
+            val bgColor = requireArguments().getString(CHAIN_BACKGROUND_COLOR)!!
+            selectedChain = Chain(chainId, chainName, textColor, bgColor)
+        }
     }
 
     override fun inject(component: ViewComponent) {
@@ -149,6 +160,20 @@ class EnsInputDialog(private val selectedChain: Chain) : BaseViewBindingDialogFr
     }
 
     companion object {
-        fun create(chain: Chain) = EnsInputDialog(chain)
+        fun create(chain: Chain): EnsInputDialog {
+            val dialog = EnsInputDialog()
+            dialog.arguments = bundleOf(
+                CHAIN_NAME to chain.name,
+                CHAIN_ID to chain.chainId,
+                CHAIN_BACKGROUND_COLOR to chain.backgroundColor,
+                CHAIN_TEXT_COLOR to chain.textColor
+            )
+            return dialog
+        }
+
+        private const val CHAIN_NAME = "chain_name"
+        private const val CHAIN_ID = "chain_id"
+        private const val CHAIN_BACKGROUND_COLOR = "background_color"
+        private const val CHAIN_TEXT_COLOR = "text_color"
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
@@ -30,7 +31,9 @@ import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
-class UnstoppableInputDialog(private val selectedChain: Chain) : BaseViewBindingDialogFragment<DialogUnstoppableInputBinding>() {
+class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableInputBinding>() {
+
+    lateinit var selectedChain: Chain
 
     @Inject
     lateinit var viewModel: UnstoppableInputViewModel
@@ -44,6 +47,13 @@ class UnstoppableInputDialog(private val selectedChain: Chain) : BaseViewBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            val chainId = requireArguments().getInt(CHAIN_ID)
+            val chainName = requireArguments().getString(CHAIN_NAME)!!
+            val textColor = requireArguments().getString(CHAIN_TEXT_COLOR)!!
+            val bgColor = requireArguments().getString(CHAIN_BACKGROUND_COLOR)!!
+            selectedChain = Chain(chainId, chainName, textColor, bgColor)
+        }
     }
 
     override fun inject(component: ViewComponent) {
@@ -155,6 +165,20 @@ class UnstoppableInputDialog(private val selectedChain: Chain) : BaseViewBinding
     }
 
     companion object {
-        fun create(chain: Chain) = UnstoppableInputDialog(chain)
+        fun create(chain: Chain): UnstoppableInputDialog {
+            val dialog = UnstoppableInputDialog()
+            dialog.arguments = bundleOf(
+                CHAIN_NAME to chain.name,
+                CHAIN_ID to chain.chainId,
+                CHAIN_BACKGROUND_COLOR to chain.backgroundColor,
+                CHAIN_TEXT_COLOR to chain.textColor
+            )
+            return dialog
+        }
+
+        private const val CHAIN_NAME = "chain_name"
+        private const val CHAIN_ID = "chain_id"
+        private const val CHAIN_BACKGROUND_COLOR = "background_color"
+        private const val CHAIN_TEXT_COLOR = "text_color"
     }
 }
