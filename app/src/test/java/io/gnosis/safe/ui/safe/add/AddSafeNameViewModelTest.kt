@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
@@ -35,6 +36,7 @@ class AddSafeNameViewModelTest {
         coEvery { createNotificationChannelGroup(any()) } just Runs
     }
     private val safeRepository = mockk<SafeRepository>()
+    private val chainInfoRepository = mockk<ChainInfoRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
 
@@ -45,7 +47,8 @@ class AddSafeNameViewModelTest {
     @Before
     fun setup() {
         viewModel = AddSafeNameViewModel(
-            safeRepository,,
+            safeRepository,
+            chainInfoRepository,
             credentialsRepository,
             settingsHandler,
             notificationManager,
@@ -116,6 +119,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name with additional whitespace) should trim and succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
+        coEvery { chainInfoRepository.update(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -130,6 +134,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            chainInfoRepository.update(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
@@ -143,6 +148,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
+        coEvery { chainInfoRepository.update(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -157,6 +163,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            chainInfoRepository.update(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
@@ -170,6 +177,7 @@ class AddSafeNameViewModelTest {
     fun `submitAddressAndName (name, should notify about importing owner) should succeed`() {
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.saveSafe(any()) } just Runs
+        coEvery { chainInfoRepository.update(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
@@ -184,6 +192,7 @@ class AddSafeNameViewModelTest {
             )
         coVerifySequence {
             safeRepository.saveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            chainInfoRepository.update(rinkeby)
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
