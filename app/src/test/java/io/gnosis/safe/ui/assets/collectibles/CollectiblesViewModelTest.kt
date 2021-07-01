@@ -1,7 +1,9 @@
 package io.gnosis.safe.ui.assets.collectibles
 
-import io.gnosis.data.models.Safe
+import io.gnosis.data.BuildConfig
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.assets.Collectible
+import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
@@ -56,8 +58,16 @@ class CollectiblesViewModelTest {
     @Test
     fun `load - should emit collectibles view data list`() {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+        val chain = Chain(
+            BuildConfig.CHAIN_ID,
+            BuildConfig.BLOCKCHAIN_NAME,
+            BuildConfig.CHAIN_TEXT_COLOR,
+            BuildConfig.CHAIN_BACKGROUND_COLOR
+        )
         val collectibles = buildCollectibleList()
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1").apply {
+            this.chain = chain
+        }
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(safe)
         }
@@ -71,10 +81,12 @@ class CollectiblesViewModelTest {
                 true
             ),
             CollectibleViewData.CollectibleItem(
-                collectibles[0]
+                collectibles[0],
+                chain
             ),
             CollectibleViewData.CollectibleItem(
-                collectibles[1]
+                collectibles[1],
+                chain
             ),
             CollectibleViewData.NftHeader(
                 "tokenName2",
@@ -82,7 +94,8 @@ class CollectiblesViewModelTest {
                 false
             ),
             CollectibleViewData.CollectibleItem(
-                collectibles[2]
+                collectibles[2],
+                chain
             )
         )
 

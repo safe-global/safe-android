@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.assets.collectibles
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.assets.Collectible
 
 sealed class CollectibleViewData {
@@ -11,6 +12,7 @@ sealed class CollectibleViewData {
     ) : CollectibleViewData()
 
     data class CollectibleItem(
-        val collectible: Collectible
+        val collectible: Collectible,
+        val chain: Chain
     ) : CollectibleViewData()
 }

@@ -71,6 +71,10 @@
         tools:layout="@layout/fragment_collectibles_details">
 
         <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
             android:name="contract"
             app:argType="string" />
 

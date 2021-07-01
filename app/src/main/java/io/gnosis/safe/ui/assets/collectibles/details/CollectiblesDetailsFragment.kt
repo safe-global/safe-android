@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.assets.collectibles.details
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import io.gnosis.safe.databinding.FragmentCollectiblesDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.dpToPx
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 
@@ -25,6 +27,7 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     override fun screenId() = ScreenId.ASSETS_COLLECTIBLES_DETAILS
 
     private val navArgs by navArgs<CollectiblesDetailsFragmentArgs>()
+    private val chain by lazy { navArgs.chain }
     private val contract by lazy { navArgs.contract }
     private val name by lazy { navArgs.name }
     private val id by lazy { navArgs.id }
@@ -42,6 +45,17 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+
+            chainRibbon.text = chain.name
+            try {
+                chainRibbon.setTextColor(Color.parseColor(chain.textColor))
+                chainRibbon.setBackgroundColor(Color.parseColor(chain.backgroundColor))
+            } catch (e: Exception) {
+                tracker.logException(e)
+                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
+                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
+            }
+
             val width = resources.displayMetrics.widthPixels - dpToPx(32)
             collectibleImageContainer.layoutParams.width = width
             collectibleImageContainer.layoutParams.height = width
