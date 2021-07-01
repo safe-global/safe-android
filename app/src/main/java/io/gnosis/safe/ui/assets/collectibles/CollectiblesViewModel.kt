@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.assets.collectibles
 
+import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -35,7 +36,7 @@ class CollectiblesViewModel
                         viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
                     )
                 }
-                val collectibles = getCollectibles(safe.address)
+                val collectibles = getCollectibles(safe)
                 updateState {
                     CollectiblesState(
                         loading = false,
@@ -51,10 +52,10 @@ class CollectiblesViewModel
         return (state.value as CollectiblesState).loading
     }
 
-    private suspend fun getCollectibles(safe: Solidity.Address): List<CollectibleViewData> {
+    private suspend fun getCollectibles(safe: Safe): List<CollectibleViewData> {
 
         val collectiblesViewData = mutableListOf<CollectibleViewData>()
-        val collectibles = tokenRepository.loadCollectiblesOf(safe)
+        val collectibles = tokenRepository.loadCollectiblesOf(safe.address)
 
         var currentNft: Solidity.Address? = null
 
@@ -72,7 +73,7 @@ class CollectiblesViewModel
             }
 
             collectiblesViewData.add(
-                CollectibleViewData.CollectibleItem(it)
+                CollectibleViewData.CollectibleItem(it, safe.chain!!)
             )
         }
 
