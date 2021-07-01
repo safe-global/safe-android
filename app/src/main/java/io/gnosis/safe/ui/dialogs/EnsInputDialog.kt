@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
-    lateinit var selectedChain: Chain
+    private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
@@ -45,10 +45,6 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
-
-        if (arguments != null) {
-            selectedChain = requireArguments().getSerializable(ARGS_CHAIN) as Chain
-        }
     }
 
     override fun inject(component: ViewComponent) {
