@@ -1,5 +1,7 @@
 package io.gnosis.safe.ui.safe
 
+import io.gnosis.data.BuildConfig
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -61,7 +63,7 @@ class SafeSelectionViewModelTest {
 
         // check updated state
         val selectionItemsList = mutableListOf<Any>(AddSafeHeader)
-        selectionItemsList.add(ChainHeader(null, null))
+        selectionItemsList.add(ChainHeader(BuildConfig.BLOCKCHAIN_NAME, BuildConfig.CHAIN_BACKGROUND_COLOR))
         selectionItemsList.add(SafeItem(ACTIVE_SAFE))
         selectionItemsList.addAll(SAFES.filter { it != ACTIVE_SAFE }.map { SafeItem(it) })
         with(stateObserver.values()[1] as SafeSelectionState.SafeListState) {
@@ -69,7 +71,7 @@ class SafeSelectionViewModelTest {
             assertEquals(activeSafe, ACTIVE_SAFE)
             //check ordering
             assertEquals(listItems[0], AddSafeHeader)
-            assertEquals(listItems[1], ChainHeader(null, null))
+            assertEquals(listItems[1], ChainHeader(BuildConfig.BLOCKCHAIN_NAME, BuildConfig.CHAIN_BACKGROUND_COLOR))
             assertEquals(listItems[2], SafeItem(ACTIVE_SAFE))
         }
 
@@ -79,8 +81,22 @@ class SafeSelectionViewModelTest {
     }
 
     companion object {
-        private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
-        private val SAFE_2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
+        private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1").apply {
+            chain = Chain(
+                BuildConfig.CHAIN_ID,
+                BuildConfig.BLOCKCHAIN_NAME,
+                BuildConfig.CHAIN_TEXT_COLOR,
+                BuildConfig.CHAIN_BACKGROUND_COLOR
+            )
+        }
+        private val SAFE_2 = Safe(Solidity.Address(BigInteger.ONE), "safe2").apply {
+            chain = Chain(
+                BuildConfig.CHAIN_ID,
+                BuildConfig.BLOCKCHAIN_NAME,
+                BuildConfig.CHAIN_TEXT_COLOR,
+                BuildConfig.CHAIN_BACKGROUND_COLOR
+            )
+        }
         private val SAFES = listOf(SAFE_1, SAFE_2)
         private val ACTIVE_SAFE = SAFE_2
     }

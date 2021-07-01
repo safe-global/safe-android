@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
+import io.gnosis.data.BuildConfig as DataBuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
@@ -41,6 +42,12 @@ class SafeRepository(
     suspend fun getSafes(): List<Safe> = safeDao.loadAllWithChainData().map {
         val safe = it.safe
         safe.chain = it.chain
+            ?: Chain(
+                DataBuildConfig.CHAIN_ID,
+                DataBuildConfig.BLOCKCHAIN_NAME,
+                DataBuildConfig.CHAIN_TEXT_COLOR,
+                DataBuildConfig.CHAIN_BACKGROUND_COLOR
+            )
         safe
     }
 
@@ -80,6 +87,12 @@ class SafeRepository(
         val safe = safeWithChainData?.safe
         safe?.let {
             it.chain = safeWithChainData.chain
+                ?: Chain(
+                    DataBuildConfig.CHAIN_ID,
+                    DataBuildConfig.BLOCKCHAIN_NAME,
+                    DataBuildConfig.CHAIN_TEXT_COLOR,
+                    DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                )
         }
         return safe
     }
