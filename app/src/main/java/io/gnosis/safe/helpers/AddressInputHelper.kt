@@ -23,9 +23,9 @@ import timber.log.Timber
 class AddressInputHelper(
     fragment: BaseFragment,
     tracker: Tracker,
+    private val selectedChain: Chain,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: (Throwable, String?) -> Unit,
-    private val selectedChain: Chain
+    private val errorCallback: (Throwable, String?) -> Unit
 ) {
 
     private val dialog =

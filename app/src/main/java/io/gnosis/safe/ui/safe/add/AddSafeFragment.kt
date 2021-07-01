@@ -34,7 +34,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     lateinit var viewModel: AddSafeViewModel
 
     private val addressInputHelper by lazy {
-        AddressInputHelper(this, tracker, ::updateAddress, errorCallback = ::handleError, selectedChain = selectedChain)
+        AddressInputHelper(this, tracker, selectedChain = selectedChain, addressCallback = ::updateAddress, errorCallback = ::handleError)
     }
 
     override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
