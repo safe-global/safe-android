@@ -5,13 +5,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
 import android.view.LayoutInflater
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import io.gnosis.safe.R
+import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.DialogRemoveBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 fun handleQrCodeActivityResult(
     requestCode: Int,
@@ -84,3 +87,13 @@ fun showConfirmDialog(
         title = if (title == null) null else context.resources.getString(title)
     ).show()
 }
+
+fun String.safeParseColorWithDefault(context: Context, defaultColor: Int, tracker: Tracker? = null): Int {
+    return try {
+        Color.parseColor(this)
+    } catch (e: Exception) {
+        tracker?.logException(e)
+        context.getColorCompat(defaultColor)
+    }
+}
+

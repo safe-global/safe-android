@@ -2,8 +2,6 @@ package io.gnosis.safe.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -32,9 +30,9 @@ import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.safeParseColorWithDefault
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -236,14 +234,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             chainRibbon.visible(true)
             safe.chain!!.let {
                 chainRibbon.text = it.name
-                try {
-                    chainRibbon.setTextColor(Color.parseColor(it.textColor))
-                    chainRibbon.setBackgroundColor(Color.parseColor(it.backgroundColor))
-                } catch (e: Exception) {
-                    tracker.logException(e)
-                    chainRibbon.setTextColor(getColorCompat(R.color.white))
-                    chainRibbon.setBackgroundColor(getColorCompat(R.color.primary))
-                }
+                chainRibbon.setTextColor(it.textColor.safeParseColorWithDefault(applicationContext, R.color.white, tracker))
+                chainRibbon.setBackgroundColor(it.backgroundColor.safeParseColorWithDefault(applicationContext, R.color.primary, tracker))
             }
         }
     }

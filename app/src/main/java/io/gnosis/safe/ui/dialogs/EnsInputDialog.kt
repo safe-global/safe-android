@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.dialogs
 
 import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +17,7 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
+import io.gnosis.safe.utils.safeParseColorWithDefault
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -72,14 +71,8 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
             chainRibbon.text = selectedChain.name
-            try {
-                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
-                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            } catch (e: Exception) {
-                tracker.logException(e)
-                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
-                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
-            }
+            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
         }
     }
 

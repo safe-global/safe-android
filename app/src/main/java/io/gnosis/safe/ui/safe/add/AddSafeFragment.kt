@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.safe.add
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +17,9 @@ import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.safeParseColorWithDefault
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
@@ -59,14 +58,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
                 addressInputHelper.showDialog()
             }
             chainRibbon.text = selectedChain.name
-            try {
-                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
-                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            } catch (e: Exception) {
-                tracker.logException(e)
-                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
-                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
-            }
+            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

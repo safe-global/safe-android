@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.safe.add
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,7 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
-import pm.gnosis.svalinn.common.utils.getColorCompat
+import io.gnosis.safe.utils.safeParseColorWithDefault
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
@@ -56,14 +55,8 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
             addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
 
             chainRibbon.text = selectedChain.name
-            try {
-                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
-                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            } catch (e: Exception) {
-                tracker.logException(e)
-                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
-                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
-            }
+            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->

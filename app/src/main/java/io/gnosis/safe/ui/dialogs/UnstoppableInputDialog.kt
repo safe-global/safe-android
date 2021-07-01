@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.dialogs
 
 import android.content.DialogInterface
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +18,7 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
+import io.gnosis.safe.utils.safeParseColorWithDefault
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -48,11 +47,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            val chainId = requireArguments().getInt(CHAIN_ID)
-            val chainName = requireArguments().getString(CHAIN_NAME)!!
-            val textColor = requireArguments().getString(CHAIN_TEXT_COLOR)!!
-            val bgColor = requireArguments().getString(CHAIN_BACKGROUND_COLOR)!!
-            selectedChain = Chain(chainId, chainName, textColor, bgColor)
+            selectedChain = requireArguments().getSerializable(CHAIN) as Chain
         }
     }
 
@@ -72,14 +67,8 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogUnstoppableInputDomain.showKeyboardForView()
             chainRibbon.text = selectedChain.name
-            try {
-                chainRibbon.setTextColor(Color.parseColor(selectedChain.textColor))
-                chainRibbon.setBackgroundColor(Color.parseColor(selectedChain.backgroundColor))
-            } catch (e: Exception) {
-                tracker.logException(e)
-                chainRibbon.setTextColor(requireContext().getColorCompat(R.color.white))
-                chainRibbon.setBackgroundColor(requireContext().getColorCompat(R.color.primary))
-            }
+            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
         }
     }
 
@@ -167,18 +156,10 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     companion object {
         fun create(chain: Chain): UnstoppableInputDialog {
             val dialog = UnstoppableInputDialog()
-            dialog.arguments = bundleOf(
-                CHAIN_NAME to chain.name,
-                CHAIN_ID to chain.chainId,
-                CHAIN_BACKGROUND_COLOR to chain.backgroundColor,
-                CHAIN_TEXT_COLOR to chain.textColor
-            )
+            dialog.arguments = bundleOf(CHAIN to chain)
             return dialog
         }
 
-        private const val CHAIN_NAME = "chain_name"
-        private const val CHAIN_ID = "chain_id"
-        private const val CHAIN_BACKGROUND_COLOR = "background_color"
-        private const val CHAIN_TEXT_COLOR = "text_color"
+        private const val CHAIN = "chain"
     }
 }
