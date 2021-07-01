@@ -30,7 +30,7 @@ import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
-import io.gnosis.safe.utils.safeParseColorWithDefault
+import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -234,8 +234,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             chainRibbon.visible(true)
             safe.chain!!.let {
                 chainRibbon.text = it.name
-                chainRibbon.setTextColor(it.textColor.safeParseColorWithDefault(applicationContext, R.color.white, tracker))
-                chainRibbon.setBackgroundColor(it.backgroundColor.safeParseColorWithDefault(applicationContext, R.color.primary, tracker))
+                chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
+                chainRibbon.setBackgroundColor(it.backgroundColor.toColor(applicationContext, R.color.primary))
             }
         }
     }

@@ -10,11 +10,11 @@ import android.view.LayoutInflater
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import io.gnosis.safe.R
-import io.gnosis.safe.Tracker
 import io.gnosis.safe.databinding.DialogRemoveBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.getColorCompat
+import timber.log.Timber
 
 fun handleQrCodeActivityResult(
     requestCode: Int,
@@ -88,12 +88,12 @@ fun showConfirmDialog(
     ).show()
 }
 
-fun String.safeParseColorWithDefault(context: Context, defaultColor: Int, tracker: Tracker? = null): Int {
+fun String.toColor(context: Context, failsafeColor: Int = R.color.white): Int {
     return try {
         Color.parseColor(this)
     } catch (e: Exception) {
-        tracker?.logException(e)
-        context.getColorCompat(defaultColor)
+        Timber.e(e)
+        context.getColorCompat(failsafeColor)
     }
 }
 

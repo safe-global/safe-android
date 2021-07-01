@@ -14,7 +14,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
-import io.gnosis.safe.utils.safeParseColorWithDefault
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
@@ -72,8 +72,8 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 finishAddSafeFlow()
             }
             chainRibbon.text = selectedChain.name
-            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
-            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {

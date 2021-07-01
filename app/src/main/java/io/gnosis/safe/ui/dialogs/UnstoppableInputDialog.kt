@@ -18,7 +18,7 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
-import io.gnosis.safe.utils.safeParseColorWithDefault
+import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -41,7 +41,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     lateinit var addressHelper: AddressHelper
 
     var callback: ((Solidity.Address) -> Unit)? = null
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
         super.onCreate(savedInstanceState)
@@ -63,8 +63,8 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogUnstoppableInputDomain.showKeyboardForView()
             chainRibbon.text = selectedChain.name
-            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
-            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
     }
 

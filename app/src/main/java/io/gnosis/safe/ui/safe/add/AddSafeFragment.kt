@@ -17,7 +17,7 @@ import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.safeParseColorWithDefault
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -58,8 +58,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
                 addressInputHelper.showDialog()
             }
             chainRibbon.text = selectedChain.name
-            chainRibbon.setTextColor(selectedChain.textColor.safeParseColorWithDefault(requireContext(), R.color.white, tracker))
-            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.safeParseColorWithDefault(requireContext(), R.color.primary, tracker))
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
