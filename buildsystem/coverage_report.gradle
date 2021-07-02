@@ -170,6 +170,7 @@ project.ext {
             '**/*Application.*',
             '**/*Activity.*',
             '**/*Fragment.*',
+            '**/*Dialog.*',
             '**/*View.*',
             '**/*ViewHolderFactory.*',
             '**/*ViewHolder.*',
