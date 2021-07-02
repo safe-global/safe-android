@@ -85,36 +85,40 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
         lifecycleScope.launch {
             runCatching { viewModel.processInput(string) }
                 .onSuccess { address ->
-                    binding.dialogEnsInputProgress.visible(false)
-                    binding.confirmButton.isEnabled = true
-                    binding.successViews.visible(true)
-                    binding.dialogUnstoppableDomainLayout.isErrorEnabled = false
-                    onNewAddress.offer(address)
-                    addressHelper.populateAddressInfo(
-                        binding.dialogUnstoppableInputAddress,
-                        binding.dialogEnsInputAddressImage,
-                        address
-                    )
+                    with(binding) {
+                        dialogEnsInputProgress.visible(false)
+                        confirmButton.isEnabled = true
+                        successViews.visible(true)
+                        dialogUnstoppableDomainLayout.isErrorEnabled = false
+                        onNewAddress.offer(address)
+                        addressHelper.populateAddressInfo(
+                            dialogUnstoppableInputAddress,
+                            dialogEnsInputAddressImage,
+                            address
+                        )
+                    }
                 }
                 .onFailure {
-                    binding.dialogEnsInputProgress.visible(false)
-                    binding.confirmButton.isEnabled = false
-                    binding.successViews.visible(false)
+                    with(binding) {
+                        dialogEnsInputProgress.visible(false)
+                        confirmButton.isEnabled = false
+                        successViews.visible(false)
 
-                    val error = when (it.cause) {
-                        is NamingServiceException -> it.cause!!.toError()
-                        else -> it.toError();
+                        val error = when (it.cause) {
+                            is NamingServiceException -> it.cause!!.toError()
+                            else -> it.toError();
+                        }
+
+                        dialogUnstoppableDomainLayout.error =
+                            error.message(
+                                requireContext(),
+                                R.string.error_description_ens_name
+                            )
+
+                        dialogUnstoppableDomainLayout.isErrorEnabled = true
+
+                        onNewAddress.offer(null)
                     }
-
-                    binding.dialogUnstoppableDomainLayout.error =
-                        error.message(
-                            requireContext(),
-                            R.string.error_description_ens_name
-                        )
-
-                    binding.dialogUnstoppableDomainLayout.isErrorEnabled = true
-
-                    onNewAddress.offer(null)
                 }
         }
     }
