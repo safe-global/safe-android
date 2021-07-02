@@ -792,7 +792,8 @@
 
         <argument
             android:name="mode"
-            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
+            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode"
+            android:defaultValue="ADD_SAFE"/>
 
     </fragment>
 

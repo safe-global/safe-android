@@ -86,6 +86,6 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
     }
 
     private fun finishAddSafeFlow() {
-        findNavController().popBackStack(R.id.addSafeFragment, true)
+        findNavController().popBackStack(R.id.selectChainFragment, true)
     }
 }

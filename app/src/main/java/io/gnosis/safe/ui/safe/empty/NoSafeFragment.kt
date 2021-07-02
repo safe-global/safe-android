@@ -44,9 +44,9 @@ class NoSafeFragment : BaseViewBindingFragment<FragmentNoSafesBinding>() {
         private const val ARGS_POSITION = "args.serializable.position"
 
         fun newInstance(position: Position): NoSafeFragment {
-           return NoSafeFragment().withArgs(Bundle().apply {
-               putSerializable(ARGS_POSITION, position)
-           }) as NoSafeFragment
+            return NoSafeFragment().withArgs(Bundle().apply {
+                putSerializable(ARGS_POSITION, position)
+            }) as NoSafeFragment
         }
     }
 }
