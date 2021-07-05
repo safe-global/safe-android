@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
-class UnstoppableDomainsRepository {
+class UnstoppableDomainsRepository(private val resolution: DomainResolution = DummyDomainResolution()) {
 
     suspend fun resolve(domain: String, chainId: Int): Solidity.Address {
         val address = withContext(Dispatchers.IO) {
@@ -23,18 +23,22 @@ class UnstoppableDomainsRepository {
     fun canResolve(chain: Chain): Boolean = providesDomainResolutionLibrary(chain.chainId) != null
 
     private fun providesDomainResolutionLibrary(chainId: Int): DomainResolution? {
-        if (chainId != 1 && chainId != 4 ) {
+        if (chainId != 1 && chainId != 4) {
             return null
         }
-        val network = Network.getNetwork(chainId)
-        return try {
-            Resolution.builder()
-                .chainId(NamingServiceType.CNS, network)
-                .infura(NamingServiceType.CNS, INFURA_API_KEY)
-                .build()
-        } catch (throwable: Throwable) {
-            //Timber.e(throwable, "Error initializing UnstoppableDomains")
-            DummyDomainResolution()
+        return if (resolution is DummyDomainResolution) {
+            val network = Network.getNetwork(chainId)
+            try {
+                Resolution.builder()
+                    .chainId(NamingServiceType.CNS, network)
+                    .infura(NamingServiceType.CNS, INFURA_API_KEY)
+                    .build()
+            } catch (throwable: Throwable) {
+                //Timber.e(throwable, "Error initializing UnstoppableDomains")
+                DummyDomainResolution()
+            }
+        } else {
+            resolution
         }
     }
 }

@@ -21,7 +21,7 @@ class UnstoppableRepositoryTest {
     @Before
     fun setup() {
         resolutionLib = mockk();
-        repository = UnstoppableDomainsRepository()
+        repository = UnstoppableDomainsRepository(resolutionLib)
     }
 
     @Test
