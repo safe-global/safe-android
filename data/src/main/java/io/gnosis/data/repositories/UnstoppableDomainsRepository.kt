@@ -34,7 +34,6 @@ class UnstoppableDomainsRepository(private val resolution: DomainResolution = Du
                     .infura(NamingServiceType.CNS, INFURA_API_KEY)
                     .build()
             } catch (throwable: Throwable) {
-                //Timber.e(throwable, "Error initializing UnstoppableDomains")
                 DummyDomainResolution()
             }
         } else {
