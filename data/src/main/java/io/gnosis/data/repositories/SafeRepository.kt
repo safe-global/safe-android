@@ -16,6 +16,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.nullOnThrow
 import io.gnosis.data.BuildConfig as DataBuildConfig
 
 class SafeRepository(
@@ -71,19 +72,36 @@ class SafeRepository(
 
     suspend fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
-            putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
+            putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
         }
     }
 
-    suspend fun getActiveSafe(): Safe? =
-        preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")?.get(0)
-            ?.asEthereumAddress()
-            ?.let { address ->
-                getSafeBy(address)
-            }
+    suspend fun getActiveSafe(): Safe? {
+        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
+        val address = activeSafeData?.get(0)?.asEthereumAddress()
+        return address?.let {
+            val chainId = nullOnThrow { activeSafeData[2].toInt() } ?: DataBuildConfig.CHAIN_ID
+            getSafeBy(it, chainId)
+        }
+    }
 
     suspend fun getSafeBy(address: Solidity.Address): Safe? {
         val safeWithChainData = safeDao.loadByAddressWithChainData(address)
+        val safe = safeWithChainData?.safe
+        safe?.let {
+            it.chain = safeWithChainData.chain
+                ?: Chain(
+                    DataBuildConfig.CHAIN_ID,
+                    DataBuildConfig.BLOCKCHAIN_NAME,
+                    DataBuildConfig.CHAIN_TEXT_COLOR,
+                    DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                )
+        }
+        return safe
+    }
+
+    suspend fun getSafeBy(address: Solidity.Address, chainId: Int): Safe? {
+        val safeWithChainData = safeDao.loadByAddressWithChainData(address, chainId)
         val safe = safeWithChainData?.safe
         safe?.let {
             it.chain = safeWithChainData.chain

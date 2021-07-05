@@ -42,6 +42,10 @@ interface SafeDao {
     suspend fun loadByAddressWithChainData(address: Solidity.Address): SafeWithChainData?
 
     @Transaction
+    @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_ADDRESS} = :address AND ${Safe.COL_CHAIN_ID} = :chainId")
+    suspend fun loadByAddressWithChainData(address: Solidity.Address, chainId: Int): SafeWithChainData?
+
+    @Transaction
     @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_CHAIN_ID} = :chainId")
     suspend fun loadAllByChain(chainId: Int): List<SafeWithChainData>
 }

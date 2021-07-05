@@ -2,12 +2,16 @@ package io.gnosis.data.models
 
 import androidx.room.*
 import io.gnosis.data.BuildConfig
+import io.gnosis.data.models.Safe.Companion.COL_ADDRESS
+import io.gnosis.data.models.Safe.Companion.COL_CHAIN_ID
 import io.gnosis.data.models.Safe.Companion.TABLE_NAME
 import pm.gnosis.model.Solidity
 
-@Entity(tableName = TABLE_NAME)
+@Entity(
+    tableName = TABLE_NAME,
+    primaryKeys = [COL_ADDRESS, COL_CHAIN_ID]
+)
 data class Safe(
-    @PrimaryKey
     @ColumnInfo(name = COL_ADDRESS)
     val address: Solidity.Address,
 

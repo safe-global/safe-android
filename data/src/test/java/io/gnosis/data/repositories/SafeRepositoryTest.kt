@@ -81,7 +81,7 @@ class SafeRepositoryTest {
 
         safeRepository.setActiveSafe(safe)
 
-        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}") }
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}") }
     }
 
     @Test
@@ -104,16 +104,16 @@ class SafeRepositoryTest {
     fun `getActiveSafe - (with active safe) should return safe`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         val chain = Chain(1, "chain", "", "")
-        coEvery { safeDao.loadByAddressWithChainData(any()) } returns SafeWithChainData(safe, chain)
+        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, chain)
 
         safeRepository.setActiveSafe(safe)
         val actual = safeRepository.getActiveSafe()
 
         assertEquals(safe, actual)
         coVerify(ordering = Ordering.ORDERED) {
-            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
+            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
             preferences.getString(ACTIVE_SAFE, null)
-            safeDao.loadByAddressWithChainData(safe.address)
+            safeDao.loadByAddressWithChainData(safe.address, safe.chainId)
         }
     }
 
