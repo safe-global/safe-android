@@ -53,22 +53,6 @@ class RepositoryModule {
     ): EnsRepository =
         EnsRepository(ensNormalizer, ethereumRepository)
 
-//    @Provides
-//    @Singleton
-//    fun providesDomainResolutionLibrary(): DomainResolution {
-//        val firstWord = BLOCKCHAIN_NET_URL.removePrefix("https://").split(".").first()
-//        val network = Network.valueOf(firstWord.toUpperCase())
-//        return try {
-//            Resolution.builder()
-//                .chainId(NamingServiceType.CNS, network)
-//                .infura(NamingServiceType.CNS, INFURA_API_KEY)
-//                .build()
-//        } catch (throwable: Throwable) {
-//            Timber.e(throwable, "Error initializing UnstoppableDomains")
-//            DummyDomainResolution()
-//        }
-//    }
-
     @Provides
     @Singleton
     fun providesUnstoppableRepository(): UnstoppableDomainsRepository =

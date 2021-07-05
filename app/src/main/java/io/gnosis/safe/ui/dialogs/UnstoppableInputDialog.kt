@@ -83,7 +83,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     private fun onUrlAvailable(string: String) {
         lifecycleScope.launch {
-            runCatching { viewModel.processInput(string) }
+            runCatching { viewModel.processInput(string, selectedChain) }
                 .onSuccess { address ->
                     with(binding) {
                         dialogEnsInputProgress.visible(false)
