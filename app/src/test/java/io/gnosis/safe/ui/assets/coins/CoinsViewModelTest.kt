@@ -58,9 +58,9 @@ class CoinsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe1.address, any())
+            tokenRepository.loadBalanceOf(safe1, any())
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe10.address, any())
+            tokenRepository.loadBalanceOf(safe10, any())
         }
     }
 
@@ -83,7 +83,7 @@ class CoinsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe.address, any())
+            tokenRepository.loadBalanceOf(safe, any())
         }
     }
 
@@ -131,7 +131,7 @@ class CoinsViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadBalanceOf(safe.address, "USD")
+            tokenRepository.loadBalanceOf(safe, "USD")
         }
     }
 

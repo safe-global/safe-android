@@ -55,7 +55,7 @@ class CollectiblesViewModel
     private suspend fun getCollectibles(safe: Safe): List<CollectibleViewData> {
 
         val collectiblesViewData = mutableListOf<CollectibleViewData>()
-        val collectibles = tokenRepository.loadCollectiblesOf(safe.address)
+        val collectibles = tokenRepository.loadCollectiblesOf(safe)
 
         var currentNft: Solidity.Address? = null
 

@@ -2,7 +2,6 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
-import io.gnosis.data.BuildConfig as DataBuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
@@ -17,6 +16,8 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.nullOnThrow
+import io.gnosis.data.BuildConfig as DataBuildConfig
 
 class SafeRepository(
     private val safeDao: SafeDao,
@@ -37,7 +38,7 @@ class SafeRepository(
             .map { getActiveSafe() }
             .conflate()
 
-    suspend fun isSafeAddressUsed(address: Solidity.Address): Boolean = safeDao.loadByAddress(address) != null
+    suspend fun isSafeAddressUsed(safe: Safe): Boolean = safeDao.loadByAddressAndChainId(safe.address, safe.chainId) != null
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAllWithChainData().map {
         val safe = it.safe
@@ -71,19 +72,36 @@ class SafeRepository(
 
     suspend fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
-            putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
+            putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
         }
     }
 
-    suspend fun getActiveSafe(): Safe? =
-        preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")?.get(0)
-            ?.asEthereumAddress()
-            ?.let { address ->
-                getSafeBy(address)
-            }
+    suspend fun getActiveSafe(): Safe? {
+        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
+        val address = activeSafeData?.get(0)?.asEthereumAddress()
+        return address?.let {
+            val chainId = nullOnThrow { activeSafeData[2].toInt() } ?: DataBuildConfig.CHAIN_ID
+            getSafeBy(it, chainId)
+        }
+    }
 
     suspend fun getSafeBy(address: Solidity.Address): Safe? {
         val safeWithChainData = safeDao.loadByAddressWithChainData(address)
+        val safe = safeWithChainData?.safe
+        safe?.let {
+            it.chain = safeWithChainData.chain
+                ?: Chain(
+                    DataBuildConfig.CHAIN_ID,
+                    DataBuildConfig.BLOCKCHAIN_NAME,
+                    DataBuildConfig.CHAIN_TEXT_COLOR,
+                    DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                )
+        }
+        return safe
+    }
+
+    suspend fun getSafeBy(address: Solidity.Address, chainId: Int): Safe? {
+        val safeWithChainData = safeDao.loadByAddressWithChainData(address, chainId)
         val safe = safeWithChainData?.safe
         safe?.let {
             it.chain = safeWithChainData.chain
@@ -103,9 +121,9 @@ class SafeRepository(
 
     suspend fun saveSafeMeta(safeMeta: SafeMetaData) = safeDao.saveMeta(safeMeta)
 
-    suspend fun getSafeStatus(safeAddress: Solidity.Address): SafeStatus {
+    suspend fun getSafeStatus(safe: Safe): SafeStatus {
 
-        val safeInfo = gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString())
+        val safeInfo = gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
 
         val supportedContracts = setOf(
             SAFE_IMPLEMENTATION_1_0_0,
@@ -120,8 +138,8 @@ class SafeRepository(
         }
     }
 
-    suspend fun getSafeInfo(safeAddress: Solidity.Address): SafeInfo =
-        gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString())
+    suspend fun getSafeInfo(safe: Safe): SafeInfo =
+        gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
 
     suspend fun clearUserData() {
         getSafes().forEach {

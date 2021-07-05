@@ -51,7 +51,7 @@ class SafeSettingsViewModel @Inject constructor(
 
         updateState { SafeSettingsState(null, null, null, listOf(), ViewAction.Loading(true)) }
 
-        val safeInfo = safe?.let { safeRepository.getSafeInfo(it.address) }
+        val safeInfo = safe?.let { safeRepository.getSafeInfo(it) }
 
         val localOwners = credentialsRepository.owners()
 

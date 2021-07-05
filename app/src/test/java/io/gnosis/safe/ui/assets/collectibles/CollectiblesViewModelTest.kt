@@ -49,9 +49,9 @@ class CollectiblesViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe1.address)
+            tokenRepository.loadCollectiblesOf(safe1)
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe10.address)
+            tokenRepository.loadCollectiblesOf(safe10)
         }
     }
 
@@ -108,7 +108,7 @@ class CollectiblesViewModelTest {
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe.address)
+            tokenRepository.loadCollectiblesOf(safe)
         }
     }
 

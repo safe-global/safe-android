@@ -63,16 +63,16 @@ class ConfirmRejectionViewModel
             ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
-            val activeSafeAddress = safeRepository.getActiveSafe()!!.address
+            val activeSafe = safeRepository.getActiveSafe()!!
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(to = activeSafeAddress),
+                txInfo = TransactionInfo.Custom(to = activeSafe.address),
                 detailedExecutionInfo = rejectionExecutionInfo,
                 safeAppInfo = null
             )
             val safeTxHash =
                 calculateSafeTxHash(
-                    safeAddress = activeSafeAddress,
+                    safeAddress = activeSafe.address,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
                 )!!.toHexString()
@@ -81,7 +81,8 @@ class ConfirmRejectionViewModel
             val selectedOwner = credentialsRepository.owner(owner) ?: throw MissingOwnerCredential
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
-                    safeAddress = activeSafeAddress,
+                    chainId = activeSafe.chainId,
+                    safeAddress = activeSafe.address,
                     nonce = rejectionExecutionInfo.nonce,
                     signature = credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
@@ -101,7 +102,7 @@ class ConfirmRejectionViewModel
         if (txDetails == null) {
             safeLaunch {
                 updateState { ConfirmationRejectedViewState(ViewAction.Loading(true)) }
-                txDetails = transactionRepository.getTransactionDetails(txId)
+                txDetails = transactionRepository.getTransactionDetails(safeRepository.getActiveSafe()!!.chainId, txId)
                 updateState { ConfirmationRejectedViewState(ViewAction.Loading(false)) }
             }
         }

@@ -792,7 +792,8 @@
 
         <argument
             android:name="mode"
-            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
+            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode"
+            android:defaultValue="ADD_SAFE"/>
 
     </fragment>
 
@@ -826,6 +827,10 @@
             android:name="newAddress"
             app:argType="string" />
 
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
     </fragment>
 
     <fragment
@@ -841,6 +846,11 @@
         <argument
             android:name="safeAddress"
             app:argType="string" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
 
     </fragment>
 

@@ -1,6 +1,7 @@
 package io.gnosis.data.repositories
 
 import android.app.Application
+import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.*
@@ -25,6 +26,8 @@ class SafeRepositoryTest {
 
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
+
+    private var defaultChain = Chain(CHAIN_ID, "Name", "", "")
 
     @Before
     fun setup() {
@@ -78,7 +81,7 @@ class SafeRepositoryTest {
 
         safeRepository.setActiveSafe(safe)
 
-        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}") }
+        coVerify(exactly = 1) { preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}") }
     }
 
     @Test
@@ -101,16 +104,16 @@ class SafeRepositoryTest {
     fun `getActiveSafe - (with active safe) should return safe`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         val chain = Chain(1, "chain", "", "")
-        coEvery { safeDao.loadByAddressWithChainData(any()) } returns SafeWithChainData(safe, chain)
+        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, chain)
 
         safeRepository.setActiveSafe(safe)
         val actual = safeRepository.getActiveSafe()
 
         assertEquals(safe, actual)
         coVerify(ordering = Ordering.ORDERED) {
-            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName}")
+            preferences.putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
             preferences.getString(ACTIVE_SAFE, null)
-            safeDao.loadByAddressWithChainData(safe.address)
+            safeDao.loadByAddressWithChainData(safe.address, safe.chainId)
         }
     }
 
@@ -130,83 +133,83 @@ class SafeRepositoryTest {
             "v1"
         )
 
-        coEvery { gatewayApi.getSafeInfo(address = any()) } returns safeInfo
+        coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo
 
-        val actual = safeRepository.getSafeStatus(safeAddress)
+        val actual = safeRepository.getSafeStatus(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(SafeStatus.VALID, actual)
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString(), chainId = CHAIN_ID) }
     }
 
     @Test
     fun `isValidSafe - invalid safe`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val throwable = Throwable()
-        coEvery { gatewayApi.getSafeInfo(address = any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } throws throwable
 
         kotlin.runCatching {
-            safeRepository.getSafeStatus(safeAddress)
+            safeRepository.getSafeStatus(Safe(safeAddress, "", defaultChain.chainId))
             Assert.fail()
         }
 
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressChecksumString(), chainId = CHAIN_ID) }
     }
 
     @Test
     fun `isSafeAddressUsed - (contained address) should return true`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        coEvery { safeDao.loadByAddress(any()) } returns Safe(safeAddress, "safe_name")
+        coEvery { safeDao.loadByAddressAndChainId(any(), any()) } returns Safe(safeAddress, "safe_name")
 
-        val actual = safeRepository.isSafeAddressUsed(safeAddress)
+        val actual = safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(true, actual)
-        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+        coVerify(exactly = 1) { safeDao.loadByAddressAndChainId(safeAddress, CHAIN_ID) }
     }
 
     @Test
     fun `isSafeAddressUsed - (new address) should return false`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
-        coEvery { safeDao.loadByAddress(any()) } returns null
+        coEvery { safeDao.loadByAddressAndChainId(any(), any()) } returns null
 
-        val actual = safeRepository.isSafeAddressUsed(safeAddress)
+        val actual = safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId))
 
         assertEquals(false, actual)
-        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+        coVerify(exactly = 1) { safeDao.loadByAddressAndChainId(safeAddress, CHAIN_ID) }
     }
 
     @Test
     fun `isSafeAddressUsed - (DAO failure) should throw`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ZERO)
         val throwable = Throwable()
-        coEvery { safeDao.loadByAddress(any()) } throws throwable
+        coEvery { safeDao.loadByAddressAndChainId(any(), any()) } throws throwable
 
-        val actual = runCatching { safeRepository.isSafeAddressUsed(safeAddress) }
+        val actual = runCatching { safeRepository.isSafeAddressUsed(Safe(safeAddress, "", defaultChain.chainId)) }
 
         with(actual) {
             assertEquals(true, isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { safeDao.loadByAddress(safeAddress) }
+        coVerify(exactly = 1) { safeDao.loadByAddressAndChainId(safeAddress, CHAIN_ID) }
     }
 
     @Test
     fun `getSafeInfo - (transaction service failure) should throw`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val throwable = Throwable()
-        coEvery { gatewayApi.getSafeInfo(address = any()) } throws throwable
+        coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } throws throwable
 
-        val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
+        val actual = runCatching { safeRepository.getSafeInfo(safe) }
 
         with(actual) {
             assertEquals(true, isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressString(), chainId = CHAIN_ID) }
     }
 
     @Test
     fun `getSafeInfo - (valid address) should return safeInfo`() = runBlocking {
-        val safeAddress = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val safeInfo = SafeInfo(
             AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
@@ -219,9 +222,9 @@ class SafeRepositoryTest {
             AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
-        coEvery { gatewayApi.getSafeInfo(address = any()) } returns safeInfo
+        coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo
 
-        val actual = runCatching { safeRepository.getSafeInfo(safeAddress) }
+        val actual = runCatching { safeRepository.getSafeInfo(safe) }
 
         with(actual) {
             assertEquals(true, isSuccess)
@@ -230,7 +233,7 @@ class SafeRepositoryTest {
             assertEquals(safeInfo.nonce, result?.nonce)
             assertEquals(safeInfo.threshold, result?.threshold)
         }
-        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safeAddress.asEthereumAddressString()) }
+        coVerify(exactly = 1) { gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressString(), chainId = CHAIN_ID) }
     }
 
     @Test

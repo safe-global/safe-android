@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogUnstoppableInputBinding
@@ -16,6 +18,7 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
+import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -29,6 +32,8 @@ import javax.inject.Inject
 
 class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableInputBinding>() {
 
+    private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
+
     @Inject
     lateinit var viewModel: UnstoppableInputViewModel
 
@@ -36,7 +41,6 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     lateinit var addressHelper: AddressHelper
 
     var callback: ((Solidity.Address) -> Unit)? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_FRAME, R.style.DayNightFullscreenDialog)
@@ -48,7 +52,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogUnstoppableInputBinding =
-            DialogUnstoppableInputBinding.inflate(inflater, container, false)
+        DialogUnstoppableInputBinding.inflate(inflater, container, false)
 
     override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
 
@@ -58,6 +62,9 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
             backButton.setOnClickListener { dismiss() }
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogUnstoppableInputDomain.showKeyboardForView()
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
     }
 
@@ -77,38 +84,42 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     private fun onUrlAvailable(string: String) {
         lifecycleScope.launch {
             runCatching { viewModel.processInput(string) }
-                    .onSuccess { address ->
-                        binding.dialogEnsInputProgress.visible(false)
-                        binding.confirmButton.isEnabled = true
-                        binding.successViews.visible(true)
-                        binding.dialogUnstoppableDomainLayout.isErrorEnabled = false
+                .onSuccess { address ->
+                    with(binding) {
+                        dialogEnsInputProgress.visible(false)
+                        confirmButton.isEnabled = true
+                        successViews.visible(true)
+                        dialogUnstoppableDomainLayout.isErrorEnabled = false
                         onNewAddress.offer(address)
                         addressHelper.populateAddressInfo(
-                                binding.dialogUnstoppableInputAddress,
-                                binding.dialogEnsInputAddressImage,
-                                address
+                            dialogUnstoppableInputAddress,
+                            dialogEnsInputAddressImage,
+                            address
                         )
                     }
-                    .onFailure {
-                        binding.dialogEnsInputProgress.visible(false)
-                        binding.confirmButton.isEnabled = false
-                        binding.successViews.visible(false)
+                }
+                .onFailure {
+                    with(binding) {
+                        dialogEnsInputProgress.visible(false)
+                        confirmButton.isEnabled = false
+                        successViews.visible(false)
 
-                        val error = when(it.cause) {
+                        val error = when (it.cause) {
                             is NamingServiceException -> it.cause!!.toError()
                             else -> it.toError();
                         }
 
-                        binding.dialogUnstoppableDomainLayout.error =
-                                error.message(
-                                        requireContext(),
-                                        R.string.error_description_ens_name
-                                )
+                        dialogUnstoppableDomainLayout.error =
+                            error.message(
+                                requireContext(),
+                                R.string.error_description_ens_name
+                            )
 
-                        binding.dialogUnstoppableDomainLayout.isErrorEnabled = true
+                        dialogUnstoppableDomainLayout.isErrorEnabled = true
 
                         onNewAddress.offer(null)
                     }
+                }
         }
     }
 
@@ -143,6 +154,12 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
     }
 
     companion object {
-        fun create() = UnstoppableInputDialog()
+        fun create(chain: Chain): UnstoppableInputDialog {
+            val dialog = UnstoppableInputDialog()
+            dialog.arguments = bundleOf(ARGS_CHAIN to chain)
+            return dialog
+        }
+
+        private const val ARGS_CHAIN = "args.serializable.chain"
     }
 }

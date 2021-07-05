@@ -11,10 +11,10 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAddSafeOwnerBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.assets.AssetsFragmentDirections
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.formatEthAddress
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
@@ -27,6 +27,7 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
     private val navArgs by navArgs<AddSafeOwnerFragmentArgs>()
     private val name by lazy { navArgs.safeName }
     private val address by lazy { navArgs.safeAddress.asEthereumAddress()!! }
+    private val selectedChain by lazy { navArgs.chain }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -70,6 +71,9 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 tracker.logOnboardingOwnerSkipped()
                 finishAddSafeFlow()
             }
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -82,6 +86,6 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
     }
 
     private fun finishAddSafeFlow() {
-        findNavController().popBackStack(R.id.addSafeFragment, true)
+        findNavController().popBackStack(R.id.selectChainFragment, true)
     }
 }

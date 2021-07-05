@@ -2,8 +2,6 @@ package io.gnosis.safe.ui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -32,9 +30,9 @@ import io.gnosis.safe.ui.transactions.TxPagerAdapter
 import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -236,14 +234,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             chainRibbon.visible(true)
             safe.chain!!.let {
                 chainRibbon.text = it.name
-                try {
-                    chainRibbon.setTextColor(Color.parseColor(it.textColor))
-                    chainRibbon.setBackgroundColor(Color.parseColor(it.backgroundColor))
-                } catch (e: Exception) {
-                    tracker.logException(e)
-                    chainRibbon.setTextColor(getColorCompat(R.color.white))
-                    chainRibbon.setBackgroundColor(getColorCompat(R.color.primary))
-                }
+                chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
+                chainRibbon.setBackgroundColor(it.backgroundColor.toColor(applicationContext, R.color.primary))
             }
         }
     }
@@ -274,7 +266,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             kotlin.runCatching {
                 val activeSafe = safeRepository.getActiveSafe()
                 activeSafe?.let {
-                    val safeOwners = safeRepository.getSafeInfo(it.address).owners.map { it.value }.toSet()
+                    val safeOwners = safeRepository.getSafeInfo(it).owners.map { it.value }.toSet()
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
                     toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
                 }

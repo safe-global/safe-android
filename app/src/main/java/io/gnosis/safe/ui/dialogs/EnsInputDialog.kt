@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogEnsInputBinding
@@ -15,6 +17,7 @@ import io.gnosis.safe.helpers.AddressHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.debounce
+import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -27,6 +30,8 @@ import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
+
+    private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
@@ -57,6 +62,9 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             backButton.setOnClickListener { dismiss() }
             confirmButton.setOnClickListener { onClick.offer(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
     }
 
@@ -137,6 +145,12 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
     }
 
     companion object {
-        fun create() = EnsInputDialog()
+        fun create(chain: Chain): EnsInputDialog {
+            val dialog = EnsInputDialog()
+            dialog.arguments = bundleOf(ARGS_CHAIN to chain)
+            return dialog
+        }
+
+        private const val ARGS_CHAIN = "args.serializable.chain"
     }
 }

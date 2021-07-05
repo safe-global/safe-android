@@ -130,7 +130,7 @@ class ConfirmRejectionViewModelTest {
     }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
-        val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(transactionId = any()) } returns transactionDetailsDto }
-        return TransactionRepository(mockGatewayApi).getTransactionDetails("txId")
+        val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto }
+        return TransactionRepository(mockGatewayApi).getTransactionDetails(1, "txId")
     }
 }

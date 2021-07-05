@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Page
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.utils.toSignatureString
 import pm.gnosis.crypto.KeyPair
@@ -16,22 +17,23 @@ class TransactionRepository(
     private val gatewayApi: GatewayApi
 ) {
 
-    suspend fun getQueuedTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
-        gatewayApi.loadTransactionsQueue(address = safeAddress.asEthereumAddressChecksumString())
+    suspend fun getQueuedTransactions(safe: Safe): Page<TxListEntry> =
+        gatewayApi.loadTransactionsQueue(chainId = safe.chainId, address = safe.address.asEthereumAddressChecksumString())
 
-    suspend fun getHistoryTransactions(safeAddress: Solidity.Address): Page<TxListEntry> =
-        gatewayApi.loadTransactionsHistory(address = safeAddress.asEthereumAddressChecksumString())
+    suspend fun getHistoryTransactions(safe: Safe): Page<TxListEntry> =
+        gatewayApi.loadTransactionsHistory(chainId = safe.chainId, address = safe.address.asEthereumAddressChecksumString())
 
     suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
         gatewayApi.loadTransactionsPage(pageLink)
 
-    suspend fun getTransactionDetails(txId: String): TransactionDetails =
-        gatewayApi.loadTransactionDetails(transactionId = txId)
+    suspend fun getTransactionDetails(chainId: Int, txId: String): TransactionDetails =
+        gatewayApi.loadTransactionDetails(transactionId = txId, chainId = chainId)
 
-    suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String): TransactionDetails =
-        gatewayApi.submitConfirmation(safeTxHash = safeTxHash, txConfirmationRequest = TransactionConfirmationRequest(signedSafeTxHash))
+    suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String, chainId: Int): TransactionDetails =
+        gatewayApi.submitConfirmation(safeTxHash = safeTxHash, txConfirmationRequest = TransactionConfirmationRequest(signedSafeTxHash), chainId = chainId)
 
     suspend fun proposeTransaction(
+        chainId: Int,
         safeAddress: Solidity.Address,
         value: BigInteger = BigInteger.ZERO,
         data: String? = null,
@@ -48,6 +50,7 @@ class TransactionRepository(
         origin: Solidity.Address? = null
     ) {
         gatewayApi.proposeTransaction(
+            chainId  = chainId,
             safeAddress = safeAddress.asEthereumAddressChecksumString(),
             multisigTransactionRequest = MultisigTransactionRequest(
                 to = safeAddress,

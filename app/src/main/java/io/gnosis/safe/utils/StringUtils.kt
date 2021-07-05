@@ -2,6 +2,7 @@ package io.gnosis.safe.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -25,6 +26,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import timber.log.Timber
 import java.util.regex.Pattern
 
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
@@ -185,4 +187,14 @@ fun TextView.setLink(
 ) {
     text = null
     appendLink(url, urlText, linkIcon, textColor, prefix, underline)
+}
+
+fun String.toColor(context: Context, failsafeColor: Int = R.color.white): Int {
+    return try {
+        Color.parseColor(this)
+    } catch (e: Exception) {
+        Timber.e(e)
+        e.printStackTrace()
+        context.getColorCompat(failsafeColor)
+    }
 }

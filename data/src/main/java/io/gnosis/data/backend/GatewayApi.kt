@@ -22,54 +22,54 @@ interface GatewayApi {
 
     @GET("/{chainId}/v1/safes/{address}")
     suspend fun getSafeInfo(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("address") address: String
     ): SafeInfo
 
     @GET("/{chainId}/v1/safes/{address}/balances/{fiat}")
     suspend fun loadBalances(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Path("fiat") fiat: String = "usd"
     ): CoinBalances
 
     @GET("{chainId}/v1/transactions/{transactionId}")
     suspend fun loadTransactionDetails(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("transactionId") transactionId: String
     ): TransactionDetails
 
     @POST("{chainId}/v1/transactions/{safeTxHash}/confirmations")
     suspend fun submitConfirmation(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("safeTxHash") safeTxHash: String,
         @Body txConfirmationRequest: TransactionConfirmationRequest
     ): TransactionDetails
 
     @POST("{chainId}/v1/transactions/{safeAddress}/propose")
     suspend fun proposeTransaction(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String,
         @Body multisigTransactionRequest: MultisigTransactionRequest
     )
 
     @GET("{chainId}/v1/safes/{safeAddress}/collectibles")
     suspend fun loadCollectibles(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String
     ): List<Collectible>
 
     // Unified endpoints
     @GET("{chainId}/v1/safes/{address}/transactions/history")
     suspend fun loadTransactionsHistory(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
     ): Page<TxListEntry>
 
     @GET("{chainId}/v1/safes/{address}/transactions/queued")
     suspend fun loadTransactionsQueue(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID,
+        @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
     ): Page<TxListEntry>

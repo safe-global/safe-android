@@ -168,8 +168,10 @@ project.ext {
     jacocoThresholdFileFilter = [
             '**/*App.*',
             '**/*Application.*',
+            '**/*Database.*',
             '**/*Activity.*',
             '**/*Fragment.*',
+            '**/*Dialog.*',
             '**/*View.*',
             '**/*ViewHolderFactory.*',
             '**/*ViewHolder.*',

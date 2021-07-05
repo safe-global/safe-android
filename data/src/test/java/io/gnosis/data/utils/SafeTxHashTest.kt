@@ -1,5 +1,6 @@
 package io.gnosis.data.utils
 
+import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -27,8 +28,8 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, customTx) should return same value as in customTx`() = runBlocking {
         val txCustomDto = txDtoAdapter.readJsonFrom("tx_details_custom.json")
-        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txCustomDto
-        val txCustom = transactionRepository.getTransactionDetails("id")
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txCustomDto
+        val txCustom = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txCustom.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
@@ -44,8 +45,8 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, transferTx) should return same value as in transferTx`() = runBlocking {
         val txTransferDto = txDtoAdapter.readJsonFrom("tx_details_transfer.json")
-        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txTransferDto
-        val txTransfer = transactionRepository.getTransactionDetails("id")
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txTransferDto
+        val txTransfer = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txTransfer.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
@@ -61,8 +62,8 @@ class SafeTxHashTest {
     @Test
     fun `calculateSafeTxHash (safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
         val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_settings_change.json")
-        coEvery { gatewayApi.loadTransactionDetails(transactionId = any()) } returns txSettingsChangeDto
-        val txSettingsChange = transactionRepository.getTransactionDetails("id")
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txSettingsChangeDto
+        val txSettingsChange = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
         val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
         val txCustomSafeTxHash = executionInfo.safeTxHash

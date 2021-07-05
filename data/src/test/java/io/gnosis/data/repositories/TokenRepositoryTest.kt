@@ -2,8 +2,10 @@ package io.gnosis.data.repositories
 
 import com.squareup.moshi.Types
 import io.gnosis.data.BuildConfig
+import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.*
 import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.mockk.coEvery
@@ -35,25 +37,25 @@ class TokenRepositoryTest {
 
     @Test
     fun `loadBalancesOf (transactionApi failure) should throw`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val throwable = Throwable()
-        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } throws throwable
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any(), chainId = CHAIN_ID) } throws throwable
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
+        val actual = runCatching { tokenRepository.loadBalanceOf(safe, "USD") }
 
         with(actual) {
             assertTrue(isFailure)
             assertEquals(throwable, exceptionOrNull())
         }
-        coVerify(exactly = 1) { gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD") }
+        coVerify(exactly = 1) { gatewayApi.loadBalances(address = safe.address.asEthereumAddressChecksumString(), fiat = "USD", chainId = CHAIN_ID) }
     }
 
     @Test
     fun `loadBalancesOf (zero token address) should use ETH_TOKEN_INFO`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1).let { it.copy(tokenInfo = NATIVE_CURRENCY_INFO) }
-        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } returns
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any(), chainId = CHAIN_ID) } returns
                 CoinBalances(
                     BigDecimal.ZERO,
                     listOf(
@@ -71,7 +73,7 @@ class TokenRepositoryTest {
                     )
                 )
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
+        val actual = runCatching { tokenRepository.loadBalanceOf(safe, "USD") }
 
         with(actual) {
             assertTrue(isSuccess)
@@ -81,18 +83,18 @@ class TokenRepositoryTest {
             )
         }
         coVerifySequence {
-            gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD")
+            gatewayApi.loadBalances(address = safe.address.asEthereumAddressChecksumString(), fiat = "USD", chainId = CHAIN_ID)
         }
     }
 
     @Test
     fun `loadBalancesOf (address) should succeed`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val balance = buildBalance(1)
         val balanceExpected = buildBalance(1)
-        coEvery { gatewayApi.loadBalances(address = any(), fiat = any()) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
+        coEvery { gatewayApi.loadBalances(address = any(), fiat = any(), chainId = CHAIN_ID) } returns CoinBalances(BigDecimal.ZERO, listOf(balance))
 
-        val actual = runCatching { tokenRepository.loadBalanceOf(address, "USD") }
+        val actual = runCatching { tokenRepository.loadBalanceOf(safe, "USD") }
 
         with(actual) {
             assertTrue(isSuccess)
@@ -102,7 +104,7 @@ class TokenRepositoryTest {
             )
         }
         coVerifySequence {
-            gatewayApi.loadBalances(address = address.asEthereumAddressChecksumString(), fiat = "USD")
+            gatewayApi.loadBalances(address = safe.address.asEthereumAddressChecksumString(), fiat = "USD", chainId = CHAIN_ID)
         }
     }
 
@@ -127,13 +129,13 @@ class TokenRepositoryTest {
 
     @Test
     fun `loadCollectiblesOf (address) should return grouped list of collectibles`() = runBlocking {
-        val address = Solidity.Address(BigInteger.ONE)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val jsonString: String = readResource("load_collectibles.json")
         val collectibleDtos = collectiblesAdapter.fromJson(jsonString)!!
 
-        coEvery { gatewayApi.loadCollectibles(safeAddress = any()) } returns collectibleDtos
+        coEvery { gatewayApi.loadCollectibles(safeAddress = any(), chainId = CHAIN_ID) } returns collectibleDtos
 
-        val collectibles = tokenRepository.loadCollectiblesOf(address)
+        val collectibles = tokenRepository.loadCollectiblesOf(safe)
 
         assertEquals(7, collectibles.size)
 
@@ -166,7 +168,7 @@ class TokenRepositoryTest {
         assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[6].address)
 
         coVerify {
-            gatewayApi.loadCollectibles(safeAddress = address.asEthereumAddressChecksumString())
+            gatewayApi.loadCollectibles(safeAddress = safe.address.asEthereumAddressChecksumString(), chainId = CHAIN_ID)
         }
     }
 

@@ -171,7 +171,7 @@ class TransactionListViewModelTest {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
             safeRepository.getSafes()
-            safeRepository.getSafeInfo(safe.address) wasNot Called
+            safeRepository.getSafeInfo(safe) wasNot Called
         }
     }
 

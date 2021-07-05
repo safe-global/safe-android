@@ -60,6 +60,15 @@
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
+        android:id="@+id/chain_ribbon"
+        style="@style/ChainRibbon"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/chain_ribbon_size"
+        tools:text="Mainnet"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"/>
+
+    <TextView
         android:id="@+id/add_safe_label_top"
         style="@style/TextDark.Bold"
         android:layout_width="0dp"
@@ -69,10 +78,9 @@
         android:paddingTop="28dp"
         android:paddingBottom="22dp"
         android:text="@string/add_safe_label_top"
-        app:layout_constraintBottom_toTopOf="@id/add_safe_address_input_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+        app:layout_constraintTop_toBottomOf="@id/chain_ribbon"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <io.gnosis.safe.ui.safe.add.SafeInputView
@@ -81,7 +89,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/add_safe_label_bottom_line1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_label_top"
@@ -97,7 +104,6 @@
         android:paddingTop="16dp"
         android:text="@string/add_safe_label_bottom"
         android:textColor="@color/text_emphasis_high"
-        app:layout_constraintBottom_toTopOf="@id/add_safe_label_bottom_line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_address_input_layout"
@@ -113,7 +119,6 @@
         android:drawablePadding="4dp"
         android:gravity="center"
         android:text="@string/add_safe_label_link"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_safe_label_bottom_line1"

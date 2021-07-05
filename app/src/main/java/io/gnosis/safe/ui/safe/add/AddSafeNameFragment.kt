@@ -16,6 +16,7 @@ import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
@@ -28,6 +29,7 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
 
     private val navArgs by navArgs<AddSafeNameFragmentArgs>()
     private val newAddress by lazy { navArgs.newAddress.asEthereumAddress()!! }
+    private val selectedChain by lazy { navArgs.chain }
 
     override fun screenId() = ScreenId.SAFE_ADD_NAME
 
@@ -48,9 +50,13 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
             backButton.setOnClickListener { findNavController().navigateUp() }
             nextButton.setOnClickListener {
                 addSafeNameLayout.isErrorEnabled = false
-                viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString())
+                viewModel.submitAddressAndName(newAddress, addSafeNameEntry.text.toString(), selectedChain)
             }
             addSafeNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
+
+            chainRibbon.text = selectedChain.name
+            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -60,11 +66,11 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
                         when (action) {
                             is CloseScreen -> {
                                 requireActivity().hideSoftKeyboard()
-                                findNavController().popBackStack(R.id.addSafeFragment, true)
+                                findNavController().popBackStack(R.id.selectChainFragment, true)
                             }
                             is ImportOwner -> {
                                 requireActivity().hideSoftKeyboard()
-                                findNavController().navigate(AddSafeNameFragmentDirections.actionAddSafeNameFragmentToAddSafeOwnerFragment(binding.addSafeNameEntry.text.toString(), navArgs.newAddress))
+                                findNavController().navigate(AddSafeNameFragmentDirections.actionAddSafeNameFragmentToAddSafeOwnerFragment(binding.addSafeNameEntry.text.toString(), navArgs.newAddress, selectedChain))
                             }
                             is Loading -> {}
                             is ShowError -> {

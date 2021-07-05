@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.db.HeimdallDatabase
 import io.gnosis.data.models.Safe
 import kotlinx.coroutines.runBlocking
@@ -148,7 +149,7 @@ class SafeDaoTest {
         safeDao.insert(testSafe2)
         safeDao.insert(testSafe3)
 
-        val actual = safeDao.loadByAddress(testSafe2.address)
+        val actual = safeDao.loadByAddressAndChainId(testSafe2.address, CHAIN_ID)
 
         Assert.assertEquals(testSafe2, actual)
     }
@@ -165,7 +166,7 @@ class SafeDaoTest {
         safeDao.insert(testSafe2)
         safeDao.insert(testSafe3)
 
-        val actual = safeDao.loadByAddress(testSafe4.address)
+        val actual = safeDao.loadByAddressAndChainId(testSafe4.address, CHAIN_ID)
 
         Assert.assertEquals(null, actual)
     }

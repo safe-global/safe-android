@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.assets.TokenInfo
@@ -12,8 +13,8 @@ import java.math.BigInteger
 
 class TokenRepository(private val gatewayApi: GatewayApi) {
 
-    suspend fun loadBalanceOf(safe: Solidity.Address, fiatCode: String): CoinBalances {
-        val response = gatewayApi.loadBalances(address = safe.asEthereumAddressChecksumString(), fiat = fiatCode)
+    suspend fun loadBalanceOf(safe: Safe, fiatCode: String): CoinBalances {
+        val response = gatewayApi.loadBalances(address = safe.address.asEthereumAddressChecksumString(), fiat = fiatCode, chainId = safe.chainId)
         return CoinBalances(response.fiatTotal, response.items.map {
             if (it.tokenInfo.address == ZERO_ADDRESS)
                 it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::native_currency"))
@@ -22,8 +23,8 @@ class TokenRepository(private val gatewayApi: GatewayApi) {
         })
     }
 
-    suspend fun loadCollectiblesOf(safe: Solidity.Address): List<Collectible> =
-        gatewayApi.loadCollectibles(safeAddress = safe.asEthereumAddressChecksumString())
+    suspend fun loadCollectiblesOf(safe: Safe): List<Collectible> =
+        gatewayApi.loadCollectibles(chainId = safe.chainId, safeAddress = safe.address.asEthereumAddressChecksumString())
             .asSequence()
             .groupBy {
                 it.address

@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -53,7 +52,7 @@ class TransactionListViewModel
             val safes = safeRepository.getSafes()
             if (activeSafe != null) {
                 val owners = credentialsRepository.owners()
-                getTransactions(activeSafe.address, safes, owners, type).collectLatest {
+                getTransactions(activeSafe, safes, owners, type).collectLatest {
                     updateState {
                         TransactionsViewState(
                             isLoading = false,
@@ -68,13 +67,13 @@ class TransactionListViewModel
     }
 
     private fun getTransactions(
-        activeSafeAddress: Solidity.Address,
+        safe: Safe,
         safes: List<Safe>,
         owners: List<Owner>,
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
-        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(activeSafeAddress, type)
+        val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
                     .map { txListEntry ->
