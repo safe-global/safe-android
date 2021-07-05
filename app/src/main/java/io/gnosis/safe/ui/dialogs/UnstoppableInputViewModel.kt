@@ -12,7 +12,7 @@ class UnstoppableInputViewModel
 
     suspend fun processInput(input: CharSequence): Solidity.Address {
         return kotlin.runCatching {
-            unstoppableRepository.resolve(input.toString())
+            unstoppableRepository.resolve(input.toString() ,4)
         }
                 .onSuccess {
                     it

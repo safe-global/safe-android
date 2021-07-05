@@ -1,19 +1,40 @@
 package io.gnosis.data.repositories
 
+import com.unstoppabledomains.config.network.model.Network
 import com.unstoppabledomains.resolution.DomainResolution
+import com.unstoppabledomains.resolution.Resolution
+import com.unstoppabledomains.resolution.naming.service.NamingServiceType
+import io.gnosis.data.BuildConfig.INFURA_API_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
-class UnstoppableDomainsRepository(
-    private val domainResolutionLibrary: DomainResolution
-) {
+class UnstoppableDomainsRepository {
 
-    suspend fun resolve(domain: String): Solidity.Address {
+    suspend fun resolve(domain: String, chainId: Int): Solidity.Address {
         val address = withContext(Dispatchers.IO) {
-            domainResolutionLibrary.getAddress(domain, "eth")
-        };
-        return address.asEthereumAddress()!!;
+            providesDomainResolutionLibrary(1)?.getAddress(domain, "eth")
+        }
+        return address?.asEthereumAddress()!!
+    }
+
+    fun canResolve(chainId: Int): Boolean = providesDomainResolutionLibrary(chainId) != null
+
+
+    fun providesDomainResolutionLibrary(chainId: Int): DomainResolution? {
+        if (chainId != 1 && chainId != 4 ) {
+            return null
+        }
+        val network = Network.getNetwork(chainId)
+        return try {
+            Resolution.builder()
+                .chainId(NamingServiceType.CNS, network)
+                .infura(NamingServiceType.CNS, INFURA_API_KEY)
+                .build()
+        } catch (throwable: Throwable) {
+            //Timber.e(throwable, "Error initializing UnstoppableDomains")
+            DummyDomainResolution()
+        }
     }
 }

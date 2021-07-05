@@ -21,7 +21,7 @@ class UnstoppableRepositoryTest {
     @Before
     fun setup() {
         resolutionLib = mockk();
-        repository = UnstoppableDomainsRepository(resolutionLib);
+        repository = UnstoppableDomainsRepository()
     }
 
     @Test
@@ -32,7 +32,7 @@ class UnstoppableRepositoryTest {
 
 
         val addr = runBlocking {
-            repository.resolve(SUCCESS_DOMAIN)
+            repository.resolve(SUCCESS_DOMAIN, 4)
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
@@ -46,7 +46,7 @@ class UnstoppableRepositoryTest {
             resolutionLib.getAddress(FAIL_DOMAIN, "eth")
         } throws NamingServiceException(NSExceptionCode.UnregisteredDomain, NSExceptionParams("d", FAIL_DOMAIN))
 
-        try { repository.resolve(FAIL_DOMAIN); }
+        try { repository.resolve(FAIL_DOMAIN, 4) }
         catch(err: NamingServiceException) {
             assertTrue(err.code == NSExceptionCode.UnregisteredDomain)
         }

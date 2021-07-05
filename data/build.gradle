@@ -22,6 +22,8 @@ android {
         buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8E7E6"))
         buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Mainnet"))
 
+        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
+
     }
 
     buildTypes {
