@@ -67,7 +67,7 @@ android {
 
         rinkeby {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.rinkeby.gnosis.io/api/"))
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.rinkeby.gnosis.io/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.gnosis.io/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
@@ -76,7 +76,7 @@ android {
 
         mainnet_staging {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.mainnet.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.mainnet.staging.gnosisdev.com/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.gnosisdev.com/"))
         }
 
         xdai {
@@ -87,7 +87,7 @@ android {
         }
         release {
             buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.gnosis.io/api/"))
-            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.mainnet.gnosis.io/"))
+            buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.gnosis.io/"))
         }
     }
 
