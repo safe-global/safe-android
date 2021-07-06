@@ -12,14 +12,16 @@ sealed class PushNotification(
 
     data class ConfirmationRequest(
         override val safe: Solidity.Address,
-        val safeTxHash: String
+        val safeTxHash: String,
+        val chainId: Int
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "CONFIRMATION_REQUEST"
             fun fromMap(params: Map<String, String>) =
                 ConfirmationRequest(
                     params.getOrThrow("address").asEthereumAddress()!!,
-                    params.getOrThrow("safeTxHash")
+                    params.getOrThrow("safeTxHash"),
+                    params.getOrThrow("chainId").toInt()
                 )
         }
     }
@@ -27,7 +29,8 @@ sealed class PushNotification(
     data class ExecutedTransaction(
         override val safe: Solidity.Address,
         val safeTxHash: String,
-        val failed: Boolean
+        val failed: Boolean,
+        val chainId: Int
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
@@ -35,7 +38,8 @@ sealed class PushNotification(
                 ExecutedTransaction(
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("safeTxHash"),
-                    params.getOrThrow("failed").toBoolean()
+                    params.getOrThrow("failed").toBoolean(),
+                    params.getOrThrow("chainId").toInt()
                 )
         }
     }
@@ -45,7 +49,8 @@ sealed class PushNotification(
         val txHash: String,
         val tokenAddress: Solidity.Address,
         val value: BigInteger? = null, // null for ERC721 tokens
-        val tokenId: String? = null    // null for ERC20 tokens
+        val tokenId: String? = null,    // null for ERC20 tokens
+        val chainId: Int
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "INCOMING_TOKEN"
@@ -55,7 +60,8 @@ sealed class PushNotification(
                     params.getOrThrow("txHash"),
                     params.getOrThrow("tokenAddress").asEthereumAddress()!!,
                     params["value"]?.toBigInteger(),
-                    params["tokenId"]
+                    params["tokenId"],
+                    params.getOrThrow("chainId").toInt()
                 )
         }
     }
@@ -63,7 +69,8 @@ sealed class PushNotification(
     data class IncomingEther(
         override val safe: Solidity.Address,
         val txHash: String,
-        val value: BigInteger
+        val value: BigInteger,
+        val chainId: Int
     ) : PushNotification(TYPE) {
         companion object {
             const val TYPE = "INCOMING_ETHER"
@@ -71,7 +78,8 @@ sealed class PushNotification(
                 IncomingEther(
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("txHash"),
-                    params.getOrThrow("value").toBigInteger()
+                    params.getOrThrow("value").toBigInteger(),
+                    params.getOrThrow("chainId").toInt()
                 )
         }
     }
