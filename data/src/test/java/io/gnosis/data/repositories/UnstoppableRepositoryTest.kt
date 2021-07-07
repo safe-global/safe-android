@@ -17,12 +17,12 @@ import pm.gnosis.utils.asEthereumAddress
 
 class UnstoppableRepositoryTest {
 
-    private lateinit var repository: UnstoppableDomainsRepository;
-    private lateinit var resolutionLib: DomainResolution;
+    private lateinit var repository: UnstoppableDomainsRepository
+    private lateinit var resolutionLib: DomainResolution
 
     @Before
     fun setup() {
-        resolutionLib = mockk();
+        resolutionLib = mockk()
         repository = UnstoppableDomainsRepository(resolutionLib)
     }
 
@@ -30,7 +30,7 @@ class UnstoppableRepositoryTest {
     fun `resolve - (domain) should succeed`() = run {
         coEvery {
             resolutionLib.getAddress(SUCCESS_DOMAIN, "eth")
-        } returns "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A";
+        } returns "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A"
 
 
         val addr = runBlocking {
@@ -38,7 +38,7 @@ class UnstoppableRepositoryTest {
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
-        assertTrue(addr == SUCCESS_ADDR);
+        assertTrue(addr == SUCCESS_ADDR)
     }
 
 
@@ -59,7 +59,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (1) should succeed for Mainnet`() {
 
-        val result = repository.canResolve(Chain(1, "Mainnet", "", ""))
+        val result = repository.canResolve(Chain(1, "Mainnet", "", "", null))
 
         assertTrue(result)
     }
@@ -68,7 +68,7 @@ class UnstoppableRepositoryTest {
     fun `canResolve - (4) should succeed for Rinkeby`() {
         repository = UnstoppableDomainsRepository()
 
-        val result = repository.canResolve(Chain(4, "Rinkeby", "", ""))
+        val result = repository.canResolve(Chain(4, "Rinkeby", "", "", null))
 
         assertTrue(result)
     }
@@ -76,15 +76,15 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (17) should fail for unsupported_chain`() {
 
-        val result = repository.canResolve(Chain(17, "Unknown", "", ""))
+        val result = repository.canResolve(Chain(17, "Unknown", "", "", null))
 
         assertFalse(result)
     }
 
     companion object {
         private val SUCCESS_ADDR = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
-        private val SUCCESS_DOMAIN = "udtestdev-creek.crypto"
-        private val FAIL_DOMAIN = "brad.crypto"
+        private const val SUCCESS_DOMAIN = "udtestdev-creek.crypto"
+        private const val FAIL_DOMAIN = "brad.crypto"
 
     }
 }

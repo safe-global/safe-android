@@ -2,8 +2,8 @@ package io.gnosis.safe.ui.assets.collectibles
 
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Chain
-import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.MainCoroutineScopeRule
@@ -62,7 +62,8 @@ class CollectiblesViewModelTest {
             BuildConfig.CHAIN_ID,
             BuildConfig.BLOCKCHAIN_NAME,
             BuildConfig.CHAIN_TEXT_COLOR,
-            BuildConfig.CHAIN_BACKGROUND_COLOR
+            BuildConfig.CHAIN_BACKGROUND_COLOR,
+            null
         )
         val collectibles = buildCollectibleList()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1").apply {

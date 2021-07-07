@@ -1,5 +1,6 @@
 package io.gnosis.data.repositories
 
+import io.gnosis.data.models.Chain
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue
@@ -20,10 +21,12 @@ class EnsRepositoryTest {
 
     private val normalizerMock = mockk<EnsNormalizer>()
     private val ethereumRepository = mockk<EthereumRepository>()
+    private val defaultChain = Chain(1, "Mainnet", "", "", "1234abc")
 
     @Before
     fun setup() {
         repository = EnsRepository(normalizerMock, ethereumRepository)
+
     }
 
     @Test
@@ -31,7 +34,7 @@ class EnsRepositoryTest {
         every { normalizerMock.normalize(any()) } throws IllegalArgumentException()
         val address = ""
 
-        val actual = runCatching { repository.resolve(address) }
+        val actual = runCatching { repository.resolve(address, defaultChain) }
 
         with(actual) {
             assertTrue(isFailure)
@@ -48,7 +51,7 @@ class EnsRepositoryTest {
         every { normalizerMock.normalize(any()) } returns ""
         val address = ""
 
-        val actual = runCatching { repository.resolve(address) }
+        val actual = runCatching { repository.resolve(address, defaultChain) }
 
         with(actual) {
             assertTrue(isFailure)
@@ -56,11 +59,13 @@ class EnsRepositoryTest {
         }
         coVerifySequence {
             normalizerMock.normalize(address)
+
             ethereumRepository.request(
                 EthCall(
                     transaction = Transaction(
-                        ENS_ADDRESS,
-                        data = GET_RESOLVER + "0000000000000000000000000000000000000000000000000000000000000000"
+                        "1234abc".asEthereumAddress()!!,
+                        data = GET_RESOLVER + "0000000000000000000000000000000000000000000000000000000000000000",
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -82,7 +87,7 @@ class EnsRepositoryTest {
                 } andThenThrows UnknownHostException()
         every { normalizerMock.normalize(any()) } returns address
 
-        val actual = runCatching { repository.resolve(address) }
+        val actual = runCatching { repository.resolve(address, defaultChain) }
 
         with(actual) {
             assertTrue(isFailure)
@@ -135,7 +140,7 @@ class EnsRepositoryTest {
 
         every { normalizerMock.normalize(any()) } returns address
 
-        val actual = runCatching { repository.resolve(address) }
+        val actual = runCatching { repository.resolve(address, defaultChain) }
 
         with(actual) {
             assertTrue(isSuccess)
@@ -187,7 +192,7 @@ class EnsRepositoryTest {
                 }
 
         val actual = runCatching { repository.reverseResolve(TEST_SAFE) }
-        
+
         with(actual) {
             assertTrue(isSuccess)
             assertTrue(getOrNull() == "liltestsafe.eth")
