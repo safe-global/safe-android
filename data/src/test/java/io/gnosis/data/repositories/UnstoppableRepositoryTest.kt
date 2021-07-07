@@ -66,6 +66,7 @@ class UnstoppableRepositoryTest {
 
     @Test
     fun `canResolve - (4) should succeed for Rinkeby`() {
+        repository = UnstoppableDomainsRepository()
 
         val result = repository.canResolve(Chain(4, "Rinkeby", "", ""))
 
