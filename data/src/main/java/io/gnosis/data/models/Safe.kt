@@ -1,6 +1,7 @@
 package io.gnosis.data.models
 
 import androidx.room.*
+import io.gnosis.contracts.BuildConfig.ENS_REGISTRY
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Safe.Companion.COL_ADDRESS
 import io.gnosis.data.models.Safe.Companion.COL_CHAIN_ID
@@ -27,7 +28,8 @@ data class Safe(
         BuildConfig.CHAIN_ID,
         BuildConfig.BLOCKCHAIN_NAME,
         BuildConfig.CHAIN_TEXT_COLOR,
-        BuildConfig.CHAIN_BACKGROUND_COLOR
+        BuildConfig.CHAIN_BACKGROUND_COLOR,
+        ENS_REGISTRY
     )
 
     companion object {

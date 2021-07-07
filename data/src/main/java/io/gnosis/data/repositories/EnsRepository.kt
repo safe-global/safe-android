@@ -1,6 +1,7 @@
 package io.gnosis.data.repositories
 
 import io.gnosis.contracts.BuildConfig
+import io.gnosis.data.models.Chain
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.ethereum.Block
 import pm.gnosis.ethereum.EthCall
@@ -19,14 +20,16 @@ class EnsRepository(
     private val ethereumRepository: EthereumRepository
 ) {
 
-    suspend fun resolve(url: String): Solidity.Address {
+    fun canResolve(chain: Chain): Boolean = chain.ensRegistryAddress != null
+
+    suspend fun resolve(url: String, chain: Chain): Solidity.Address {
         val node = ensNormalizer.normalize(url).nameHash()
 
         val resolverAddressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
                 transaction = Transaction(
-                    address = ENS_ADDRESS,
+                    address = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString()
                 )
             )

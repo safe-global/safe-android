@@ -8,6 +8,7 @@ import com.squareup.moshi.JsonClass
 data class ChainInfo(
     @Json(name = "chainId") val chainId: Int,
     @Json(name = "chainName") val chainName: String,
+    @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUrl") val rpcUrl: String,
     @Json(name = "blockExplorerUrl") val blockExplorerUrl: String,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,

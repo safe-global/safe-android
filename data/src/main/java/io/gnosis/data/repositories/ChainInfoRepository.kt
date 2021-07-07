@@ -22,7 +22,7 @@ class ChainInfoRepository(
         safes.map { it.chainId }.toSet().forEach { chainId ->
             val chainInfo = chains.find { it.chainId == chainId }
             chainInfo?.let {
-                val chain = Chain(it.chainId, it.chainName, it.theme.textColor, it.theme.backgroundColor)
+                val chain = Chain(it.chainId, it.chainName, it.theme.textColor, it.theme.backgroundColor, it.ensRegistryAddress)
                 chainDao.save(chain)
             }
         }

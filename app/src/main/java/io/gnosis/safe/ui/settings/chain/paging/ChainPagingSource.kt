@@ -19,7 +19,7 @@ class ChainPagingSource(
         }.onSuccess { page ->
             return LoadResult.Page(
                 data = page.results.map {
-                    Chain(it.chainId, it.chainName, it.theme.textColor, it.theme.backgroundColor)
+                    Chain(it.chainId, it.chainName, it.theme.textColor, it.theme.backgroundColor, it.ensRegistryAddress)
                 },
                 prevKey = page.previous,
                 nextKey = page.next

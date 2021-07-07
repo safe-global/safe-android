@@ -2,6 +2,7 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
+import io.gnosis.contracts.BuildConfig.ENS_REGISTRY
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
@@ -47,7 +48,8 @@ class SafeRepository(
                 DataBuildConfig.CHAIN_ID,
                 DataBuildConfig.BLOCKCHAIN_NAME,
                 DataBuildConfig.CHAIN_TEXT_COLOR,
-                DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                DataBuildConfig.CHAIN_BACKGROUND_COLOR,
+                ENS_REGISTRY
             )
         safe
     }
@@ -94,7 +96,8 @@ class SafeRepository(
                     DataBuildConfig.CHAIN_ID,
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
-                    DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                    DataBuildConfig.CHAIN_BACKGROUND_COLOR,
+                    ENS_REGISTRY
                 )
         }
         return safe
@@ -109,7 +112,8 @@ class SafeRepository(
                     DataBuildConfig.CHAIN_ID,
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
-                    DataBuildConfig.CHAIN_BACKGROUND_COLOR
+                    DataBuildConfig.CHAIN_BACKGROUND_COLOR,
+                    ENS_REGISTRY
                 )
         }
         return safe

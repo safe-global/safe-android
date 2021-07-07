@@ -83,7 +83,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     private fun onUrlAvailable(string: String) {
         lifecycleScope.launch {
-            runCatching { viewModel.processEnsInput(string) }
+            runCatching { viewModel.processEnsInput(string, selectedChain) }
                 .onSuccess { address ->
                     binding.dialogEnsInputProgress.visible(false)
                     binding.confirmButton.isEnabled = true

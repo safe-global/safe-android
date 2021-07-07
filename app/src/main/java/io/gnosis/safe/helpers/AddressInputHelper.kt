@@ -27,7 +27,9 @@ class AddressInputHelper(
     private val selectedChain: Chain,
     private val addressCallback: (Solidity.Address) -> Unit,
     private val errorCallback: (Throwable, String?) -> Unit,
-    private val enableUD: Boolean
+    private val enableUD: Boolean,
+    private val enableENS: Boolean
+
 ) {
 
     private val dialog =
@@ -51,13 +53,20 @@ class AddressInputHelper(
                     bottomSheetAddressInputUnstoppabledomainsTouch.visible(false)
                 }
 
-                bottomSheetAddressInputEnsTouch.setOnClickListener {
-                    EnsInputDialog.create(selectedChain).apply {
-                        callback = addressCallback
-                        show(fragment.childFragmentManager, null)
+                if (enableENS) {
+                    bottomSheetAddressInputEnsTouch.setOnClickListener {
+                        EnsInputDialog.create(selectedChain).apply {
+                            callback = addressCallback
+                            show(fragment.childFragmentManager, null)
+                        }
+                        dismiss()
                     }
-                    dismiss()
+                } else {
+                    bottomSheetAddressInputEns.visible(false)
+                    bottomSheetAddressInputEnsIcon.visible(false)
+                    bottomSheetAddressInputEnsTouch.visible(false)
                 }
+
                 bottomSheetAddressInputQrTouch.setOnClickListener {
                     QRCodeScanActivity.startForResult(fragment)
                     tracker.logScreen(ScreenId.SCANNER)
