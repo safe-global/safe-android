@@ -15,10 +15,8 @@ import java.util.*
 
 interface GatewayApi {
 
-    @GET("/v1/chains/{chainId}/balances/supported-fiat-codes")
-    suspend fun loadSupportedCurrencies(
-        @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID
-    ): List<String>
+    @GET("/v1/balances/supported-fiat-codes")
+    suspend fun loadSupportedCurrencies(): List<String>
 
     @GET("/v1/chains/{chainId}/safes/{address}")
     suspend fun getSafeInfo(
