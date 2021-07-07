@@ -42,6 +42,13 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/chain_ribbon"
+            style="@style/ChainRibbon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chain_ribbon_size"
+            tools:text="Mainnet" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
