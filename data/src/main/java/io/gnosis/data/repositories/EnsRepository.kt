@@ -30,7 +30,8 @@ class EnsRepository(
                 block = Block.LATEST,
                 transaction = Transaction(
                     address = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
-                    data = GET_RESOLVER + node.toHexString()
+                    data = GET_RESOLVER + node.toHexString(),
+                    chainId = chain.chainId
                 )
             )
         )
