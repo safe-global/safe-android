@@ -7,6 +7,7 @@ import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.SafeMetaData.Companion.COL_ADDRESS
 import io.gnosis.data.models.SafeMetaData.Companion.COL_CHAIN_ID
 import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 @Entity(
     tableName = SafeMetaData.TABLE_NAME,
@@ -28,7 +29,7 @@ data class SafeMetaData(
     val address: Solidity.Address,
 
     @ColumnInfo(name = COL_CHAIN_ID)
-    val chainId: Int = BuildConfig.CHAIN_ID,
+    val chainId: BigInteger = BuildConfig.CHAIN_ID.toBigInteger(),
 
     @ColumnInfo(name = COL_REGISTERED_NOTIFICATIONS)
     val registeredNotifications: Boolean

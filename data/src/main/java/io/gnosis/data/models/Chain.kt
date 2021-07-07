@@ -5,12 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.gnosis.data.models.Chain.Companion.TABLE_NAME
 import java.io.Serializable
+import java.math.BigInteger
 
 @Entity(tableName = TABLE_NAME)
 data class Chain(
     @PrimaryKey
     @ColumnInfo(name = COL_CHAIN_ID)
-    val chainId: Int,
+    val chainId: BigInteger,
 
     @ColumnInfo(name = COL_CHAIN_NAME)
     val name: String,
@@ -28,5 +29,8 @@ data class Chain(
         const val COL_CHAIN_ID = "chain_id"
         const val COL_BACKGROUND_COLOR = "background_color"
         const val COL_TEXT_COLOR = "text_color"
+
+        val ID_MAINNET = BigInteger.valueOf(1)
+        val ID_RINKEBY = BigInteger.valueOf(4)
     }
 }

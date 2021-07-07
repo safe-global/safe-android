@@ -26,14 +26,14 @@ class TransactionRepository(
     suspend fun loadTransactionsPage(pageLink: String): Page<TxListEntry> =
         gatewayApi.loadTransactionsPage(pageLink)
 
-    suspend fun getTransactionDetails(chainId: Int, txId: String): TransactionDetails =
+    suspend fun getTransactionDetails(chainId: BigInteger, txId: String): TransactionDetails =
         gatewayApi.loadTransactionDetails(transactionId = txId, chainId = chainId)
 
-    suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String, chainId: Int): TransactionDetails =
+    suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String, chainId: BigInteger): TransactionDetails =
         gatewayApi.submitConfirmation(safeTxHash = safeTxHash, txConfirmationRequest = TransactionConfirmationRequest(signedSafeTxHash), chainId = chainId)
 
     suspend fun proposeTransaction(
-        chainId: Int,
+        chainId: BigInteger,
         safeAddress: Solidity.Address,
         value: BigInteger = BigInteger.ZERO,
         data: String? = null,

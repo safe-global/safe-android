@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 
 class ChainInfoRepositoryTest {
 
@@ -27,19 +28,19 @@ class ChainInfoRepositoryTest {
     private val chainInfoRepository = ChainInfoRepository(chainDao, gatewayApi)
 
     private val rinkebyChainInfo = ChainInfo(
-        4, "Rinkeby", "", "",
+        Chain.ID_RINKEBY, "Rinkeby", "", "",
         NativeCurrency("", "", 18), "",
         ChainTheme("", "")
     )
     private val pagedResult: List<ChainInfo> = listOf(
         ChainInfo(
-            1, "Mainnet", "", "",
+            Chain.ID_MAINNET, "Mainnet", "", "",
             NativeCurrency("", "", 18), "",
             ChainTheme("", "")
         ),
         rinkebyChainInfo,
         ChainInfo(
-            137, "Matic", "", "",
+            BigInteger.valueOf(137), "Matic", "", "",
             NativeCurrency("", "", 18), "",
             ChainTheme("", "")
         )
@@ -62,10 +63,10 @@ class ChainInfoRepositoryTest {
     @Test
     fun updateChainInfo() = runBlocking {
         coEvery { chainDao.save(any()) } just Runs
-        val safes = listOf(Safe("0x00".asEthereumAddress()!!, "", 4))
+        val safes = listOf(Safe("0x00".asEthereumAddress()!!, "", Chain.ID_RINKEBY))
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
 
-        coVerify(exactly = 1) { chainDao.save(Chain(4, "Rinkeby", "", "")) }
+        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "")) }
     }
 }

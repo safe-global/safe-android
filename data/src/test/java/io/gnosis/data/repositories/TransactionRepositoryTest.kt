@@ -1,6 +1,6 @@
 package io.gnosis.data.repositories
 
-import io.gnosis.data.BuildConfig.CHAIN_ID
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Page
@@ -414,3 +414,7 @@ private fun buildTransferInfoEther(
 ): TransferInfo = TransferInfo.EtherTransfer(
     value = value
 )
+
+private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
+
+

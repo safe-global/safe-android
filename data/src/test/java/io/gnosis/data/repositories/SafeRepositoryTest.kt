@@ -1,7 +1,7 @@
 package io.gnosis.data.repositories
 
 import android.app.Application
-import io.gnosis.data.BuildConfig.CHAIN_ID
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.*
@@ -46,8 +46,7 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        val chain = Chain(1, "chain", "", "")
-        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, chain) }
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain) }
 
         val actual = safeRepository.getSafes()
 
@@ -103,8 +102,7 @@ class SafeRepositoryTest {
     @Test
     fun `getActiveSafe - (with active safe) should return safe`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
-        val chain = Chain(1, "chain", "", "")
-        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, chain)
+        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, defaultChain)
 
         safeRepository.setActiveSafe(safe)
         val actual = safeRepository.getActiveSafe()
@@ -243,8 +241,7 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        val chain = Chain(1, "chain", "", "")
-        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, chain) }
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain) }
         coEvery { safeDao.delete(any()) } just Runs
 
         safeRepository.clearUserData()
@@ -257,5 +254,6 @@ class SafeRepositoryTest {
 
     companion object {
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
+        private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
     }
 }
