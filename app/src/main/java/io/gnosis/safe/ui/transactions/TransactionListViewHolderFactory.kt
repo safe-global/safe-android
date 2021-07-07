@@ -8,6 +8,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.ConflictType
 import io.gnosis.data.models.transaction.LabelType
 import io.gnosis.safe.R
@@ -127,7 +128,7 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -154,7 +155,7 @@ class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBind
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -182,7 +183,7 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -208,7 +209,7 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -259,7 +260,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -311,7 +312,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -348,7 +349,7 @@ class RejectionQueuedViewHolder(private val viewBinding: ItemTxQueuedRejectionBi
             nonce.text = viewTransfer.nonce
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -378,7 +379,7 @@ class RejectionViewHolder(private val viewBinding: ItemTxRejectionBinding) :
             nonce.alpha = viewTransfer.alpha
 
             root.setOnClickListener {
-                navigateToTxDetails(it, viewTransfer.id)
+                navigateToTxDetails(it, viewTransfer.chain, viewTransfer.id)
             }
         }
     }
@@ -400,14 +401,14 @@ class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChang
 
             if (viewTransfer.creationDetails != null) {
                 root.setOnClickListener {
-                    navigateToCreationDetails(it, viewTransfer.creationDetails)
+                    navigateToCreationDetails(it, viewTransfer.chain, viewTransfer.creationDetails)
                 }
             }
         }
     }
 }
 
-private fun navigateToCreationDetails(view: View, details: TransactionView.CreationDetails) {
+private fun navigateToCreationDetails(view: View, chain: Chain, details: TransactionView.CreationDetails) {
 
     var creatorName: String? = null
     var creatorLogoUri: String? = null
@@ -426,6 +427,7 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
     Navigation.findNavController(view)
         .navigate(
             TransactionsFragmentDirections.actionTransactionsFragmentToTransactionCreationDetailsFragment(
+                chain = chain,
                 statusColorRes = details.statusColorRes,
                 statusTextRes = details.statusText,
                 dateTimeText = details.dateTimeText,
@@ -444,8 +446,8 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
         )
 }
 
-private fun navigateToTxDetails(view: View, id: String) {
-    Navigation.findNavController(view).navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(id))
+private fun navigateToTxDetails(view: View, chain: Chain, id: String) {
+    Navigation.findNavController(view).navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(chain, id))
 }
 
 class SectionDateHeaderViewHolder(private val viewBinding: ItemTxSectionHeaderBinding) :

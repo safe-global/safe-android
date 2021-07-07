@@ -99,21 +99,20 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     safe?.let {
                         safeRepository.setActiveSafe(it)
                         setSafeData(it)
-                    }
-                    if (txId == null) {
 
-                        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
-                            putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
-                        })
-                    } else {
-                        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
-                            navigate(R.id.transactionsFragment, Bundle().apply {
-                                putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
+                        if (txId == null) {
+                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
+                                putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                             })
-
-                            navigate(
-                                TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(txId)
-                            )
+                        } else {
+                            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                                navigate(R.id.transactionsFragment, Bundle().apply {
+                                    putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
+                                })
+                                navigate(
+                                    TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it.chain, txId)
+                                )
+                            }
                         }
                     }
 
@@ -232,7 +231,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         with(binding) {
             toolbarShadow.visible(false)
             chainRibbon.visible(true)
-            safe.chain!!.let {
+            safe.chain.let {
                 chainRibbon.text = it.name
                 chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
                 chainRibbon.setBackgroundColor(it.backgroundColor.toColor(applicationContext, R.color.primary))

@@ -73,7 +73,7 @@ class CollectiblesViewModel
             }
 
             collectiblesViewData.add(
-                CollectibleViewData.CollectibleItem(it, safe.chain!!)
+                CollectibleViewData.CollectibleItem(it, safe.chain)
             )
         }
 
