@@ -38,6 +38,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS
 
     private val navArgs by navArgs<TransactionDetailsFragmentArgs>()
+    private val chain by lazy { navArgs.chain }
     private val txId by lazy { navArgs.txId }
 
     @Inject
@@ -61,6 +62,11 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
+
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(chain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(chain.backgroundColor.toColor(requireContext(), R.color.primary))
+
             backButton.setOnClickListener {
                 Navigation.findNavController(root).navigateUp()
             }
@@ -340,6 +346,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     if (it is Param.Bytes && it.valueDecoded != null) {
                                         findNavController().navigate(
                                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                                chain,
                                                 paramSerializer.serializeDecodedValues(it.valueDecoded!!),
                                                 paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                             )
@@ -354,6 +361,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 txDetails.txData.let {
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                            chain = chain,
                                             action =it.dataDecoded?.method ?: "",
                                             data = it.hexData ?: "",
                                             decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },

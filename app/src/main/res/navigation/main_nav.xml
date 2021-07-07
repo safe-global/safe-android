@@ -544,6 +544,10 @@
             app:popUpTo="@id/transactionDetailsFragment" />
 
         <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
             android:name="txId"
             app:argType="string" />
 
@@ -614,6 +618,10 @@
             app:destination="@id/transactionDetailsActionFragment" />
 
         <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
             android:name="decodedValues"
             app:argType="string" />
 
@@ -629,6 +637,10 @@
         android:name="io.gnosis.safe.ui.transactions.details.TransactionDetailsActionFragment"
         android:label="TransactionDetailsActionFragment"
         tools:layout="@layout/fragment_transaction_details_action">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
         <argument
             android:name="action"
