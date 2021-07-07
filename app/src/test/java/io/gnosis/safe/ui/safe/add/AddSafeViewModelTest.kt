@@ -4,6 +4,7 @@ import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
+import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -32,7 +33,7 @@ class AddSafeViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = AddSafeViewModel(safeRepository, appDispatchers)
+        viewModel = AddSafeViewModel(safeRepository, UnstoppableDomainsRepository(), appDispatchers)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 

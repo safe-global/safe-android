@@ -4,10 +4,12 @@ import com.unstoppabledomains.exceptions.ns.NSExceptionCode
 import com.unstoppabledomains.exceptions.ns.NSExceptionParams
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.unstoppabledomains.resolution.DomainResolution
+import io.gnosis.data.models.Chain
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +23,7 @@ class UnstoppableRepositoryTest {
     @Before
     fun setup() {
         resolutionLib = mockk();
-        repository = UnstoppableDomainsRepository(resolutionLib);
+        repository = UnstoppableDomainsRepository(resolutionLib)
     }
 
     @Test
@@ -32,7 +34,7 @@ class UnstoppableRepositoryTest {
 
 
         val addr = runBlocking {
-            repository.resolve(SUCCESS_DOMAIN)
+            repository.resolve(SUCCESS_DOMAIN, 4)
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
@@ -46,11 +48,37 @@ class UnstoppableRepositoryTest {
             resolutionLib.getAddress(FAIL_DOMAIN, "eth")
         } throws NamingServiceException(NSExceptionCode.UnregisteredDomain, NSExceptionParams("d", FAIL_DOMAIN))
 
-        try { repository.resolve(FAIL_DOMAIN); }
-        catch(err: NamingServiceException) {
+        try {
+            repository.resolve(FAIL_DOMAIN, 4)
+        } catch (err: NamingServiceException) {
             assertTrue(err.code == NSExceptionCode.UnregisteredDomain)
         }
         coVerify { resolutionLib.getAddress(FAIL_DOMAIN, "eth") }
+    }
+
+    @Test
+    fun `canResolve - (1) should succeed for Mainnet`() {
+
+        val result = repository.canResolve(Chain(1, "Mainnet", "", ""))
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `canResolve - (4) should succeed for Rinkeby`() {
+        repository = UnstoppableDomainsRepository()
+
+        val result = repository.canResolve(Chain(4, "Rinkeby", "", ""))
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `canResolve - (17) should fail for unsupported_chain`() {
+
+        val result = repository.canResolve(Chain(17, "Unknown", "", ""))
+
+        assertFalse(result)
     }
 
     companion object {

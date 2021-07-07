@@ -1,8 +1,10 @@
 package io.gnosis.safe.ui.safe.add
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
+import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.utils.HttpCodes
@@ -12,6 +14,7 @@ import javax.inject.Inject
 class AddSafeViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
+    private val unstoppableDomainsRepository: UnstoppableDomainsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
@@ -36,7 +39,13 @@ class AddSafeViewModel
             }
         }
     }
+
+    fun enableUD(chain: Chain): Boolean {
+        return unstoppableDomainsRepository.canResolve(chain)
+    }
+
 }
+
 
 object SafeNotSupported : Throwable()
 object SafeNotFound : Throwable()
