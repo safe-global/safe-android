@@ -110,7 +110,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                                     putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
                                 })
                                 navigate(
-                                    TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it.chain!!, txId)
+                                    TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it.chain, txId)
                                 )
                             }
                         }
@@ -231,7 +231,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         with(binding) {
             toolbarShadow.visible(false)
             chainRibbon.visible(true)
-            safe.chain!!.let {
+            safe.chain.let {
                 chainRibbon.text = it.name
                 chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
                 chainRibbon.setBackgroundColor(it.backgroundColor.toColor(applicationContext, R.color.primary))

@@ -74,7 +74,7 @@ class TransactionListViewModel
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
-        val chain = safe.chain!!
+        val chain = safe.chain
 
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
