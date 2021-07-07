@@ -49,7 +49,7 @@
     <TextView
         android:id="@+id/method_label"
         style="@style/TextDark"
-        android:layout_width="142dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="8dp"
@@ -58,7 +58,7 @@
         android:lineSpacingExtra="3sp"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintStart_toEndOf="@+id/name_label"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="change Mastercopy" />
@@ -72,7 +72,6 @@
         android:ellipsize="end"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/address_label"
-        app:layout_constraintEnd_toStartOf="@+id/method_label"
         app:layout_constraintStart_toEndOf="@+id/address_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -85,6 +84,13 @@
         android:layout_height="@dimen/item_separator_height"
         android:background="@color/separator"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="name_label,address_label" />
 
     <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/address_image"
@@ -100,7 +106,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="16dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
-        app:strokeWidth="0.01dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/illustration_background"
+        app:strokeWidth="0.01dp" />
 
 </merge>

@@ -13,6 +13,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
 import io.gnosis.safe.utils.shortChecksumString
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -24,7 +25,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS
 
     private val navArgs by navArgs<CreationTransactionDetailsFragmentArgs>()
-
+    private val chain by lazy { navArgs.chain }
     private val statusTextRes by lazy { navArgs.statusTextRes }
     private val statusColorRes by lazy { navArgs.statusColorRes }
     private val transActionHash by lazy { navArgs.transActionHash }
@@ -51,6 +52,11 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(chain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(chain.backgroundColor.toColor(requireContext(), R.color.primary))
+
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }

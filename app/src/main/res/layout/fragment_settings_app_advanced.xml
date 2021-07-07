@@ -181,8 +181,8 @@
                     android:id="@+id/crash_the_app"
                     style="@style/TextDark"
                     android:text="@string/crash_the_app"
-                    android:layout_height="@dimen/header_height"
-                    android:layout_marginTop="@dimen/default_small_margin"
+                    android:gravity="center_vertical"
+                    android:layout_height="60dp"
                     android:layout_marginStart="@dimen/default_margin"
                     android:layout_width="match_parent" />
 

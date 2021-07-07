@@ -23,7 +23,12 @@ data class Safe(
 ) {
 
     @Ignore
-    var chain: Chain? = null
+    var chain: Chain = Chain(
+        BuildConfig.CHAIN_ID,
+        BuildConfig.BLOCKCHAIN_NAME,
+        BuildConfig.CHAIN_TEXT_COLOR,
+        BuildConfig.CHAIN_BACKGROUND_COLOR
+    )
 
     companion object {
         const val TABLE_NAME = "safes"

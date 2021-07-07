@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/surface_01">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -40,6 +41,13 @@
                 android:text="@string/tx_details_advanced" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/chain_ribbon"
+            style="@style/ChainRibbon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chain_ribbon_size"
+            tools:text="Mainnet" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

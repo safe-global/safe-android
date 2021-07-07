@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.MultisendActionView
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
@@ -29,6 +30,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION_LIST
 
     private val navArgs by navArgs<TransactionDetailsActionMultisendFragmentArgs>()
+    private val chain by lazy { navArgs.chain }
     private val decodedValues by lazy { paramSerializer.deserializeDecodedValues(navArgs.decodedValues) }
     private val addressInfoIndex by lazy { paramSerializer.deserializeAddressInfoIndex(navArgs.addressInfoIndex) }
 
@@ -52,6 +54,11 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(chain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(chain.backgroundColor.toColor(requireContext(), R.color.primary))
+
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
@@ -82,6 +89,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
                     item.setOnClickListener {
                         findNavController().navigate(
                             TransactionDetailsActionMultisendFragmentDirections.actionTransactionDetailsActionMultisendFragmentToTransactionDetailsActionFragment(
+                                chain,
                                 action,
                                 value.data,
                                 value.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },

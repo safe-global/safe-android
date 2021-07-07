@@ -2,10 +2,7 @@ package io.gnosis.safe.ui.transactions
 
 import androidx.paging.PagingData
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.models.AddressInfo
-import io.gnosis.data.models.Owner
-import io.gnosis.data.models.Page
-import io.gnosis.data.models.Safe
+import io.gnosis.data.models.*
 import io.gnosis.data.models.assets.TokenInfo
 import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.models.transaction.*
@@ -147,7 +144,9 @@ class TransactionListViewModelTest {
 
     @Test
     fun `load - (transactionRepository failure) should emit ShowError`() {
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe").apply {
+            chain = CHAIN
+        }
         val testObserver = TestLiveDataObserver<TransactionsViewState>()
         val throwable = Throwable()
         coEvery { safeRepository.activeSafeFlow() } returns flow { emit(safe) }
@@ -182,7 +181,7 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
         val transactions = createEmptyTransactionList()
-        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(0, transactionViews.size)
     }
@@ -200,6 +199,7 @@ class TransactionListViewModelTest {
         )
         val transactionViews = transactions.results.map { transaction ->
             transactionListViewModel.getTransactionView(
+                CHAIN,
                 transaction, safes,
                 needsYourConfirmation = false,
                 isConflict = false
@@ -224,6 +224,7 @@ class TransactionListViewModelTest {
         )
         val transactionViews = transactions.results.map { transaction ->
             transactionListViewModel.getTransactionView(
+                chain = CHAIN,
                 transaction = transaction,
                 safes = safes,
                 needsYourConfirmation = false,
@@ -243,7 +244,7 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithStatus(PENDING, SUCCESS)
-        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(true, transactionViews[0] is TransactionView.TransferQueued)
         assertEquals(true, transactionViews[1] is TransactionView.Transfer)
@@ -279,10 +280,11 @@ class TransactionListViewModelTest {
                 recipient = defaultSafeAddress
             )
         )
-        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(
             TransactionView.TransferQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_needs_confirmations,
@@ -302,6 +304,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.TransferQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_needs_execution,
@@ -322,6 +325,7 @@ class TransactionListViewModelTest {
         //FIXME: pass id's
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
@@ -338,6 +342,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -354,6 +359,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -370,6 +376,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -398,10 +405,11 @@ class TransactionListViewModelTest {
             buildTransfer(serviceTokenInfo = createErc20TokenInfo(), status = CANCELLED),
             buildTransfer(serviceTokenInfo = NATIVE_CURRENCY_INFO, value = BigInteger("100000000000000"), status = FAILED)
         )
-        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -418,6 +426,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -434,6 +443,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
@@ -450,6 +460,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.Transfer(
+                chain = CHAIN,
                 id = "",
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
@@ -479,10 +490,11 @@ class TransactionListViewModelTest {
             buildCustom(status = FAILED, actionCount = 1),
             buildCustom(status = CANCELLED, value = BigInteger("100000000000000"), actionCount = 1)
         )
-        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(
             TransactionView.CustomTransactionQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_needs_execution,
@@ -501,6 +513,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransactionQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_needs_confirmations,
@@ -519,6 +532,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -534,6 +548,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
@@ -549,6 +564,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
@@ -641,10 +657,11 @@ class TransactionListViewModelTest {
                 settingsInfo = SettingsInfo.RemoveOwner(defaultSafeAddress, null, 1)
             )
         )
-        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_needs_execution,
@@ -661,6 +678,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_needs_confirmations,
@@ -677,6 +695,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_needs_confirmations,
@@ -693,6 +712,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_CONFIRMATIONS,
                 statusText = R.string.tx_status_needs_confirmations,
@@ -709,6 +729,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChangeQueued(
+                chain = CHAIN,
                 id = "",
                 status = AWAITING_EXECUTION,
                 statusText = R.string.tx_status_needs_execution,
@@ -725,6 +746,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
+                chain = CHAIN,
                 id = "",
                 status = CANCELLED,
                 statusText = R.string.tx_status_cancelled,
@@ -738,6 +760,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -751,6 +774,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
+                chain = CHAIN,
                 id = "",
                 status = FAILED,
                 statusText = R.string.tx_status_failed,
@@ -764,6 +788,7 @@ class TransactionListViewModelTest {
         )
         assertEquals(
             TransactionView.SettingsChange(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -784,7 +809,7 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
         val transactions = createTransactionListWithCreationTx()
-        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.results.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(true, transactionViews[0] is TransactionView.Creation)
         val creationTransactionView = transactionViews[0] as TransactionView.Creation
@@ -843,6 +868,7 @@ class TransactionListViewModelTest {
 
         val transactionViewData = transactions.map {
             transactionListViewModel.getTransactionView(
+                CHAIN,
                 it,
                 listOf(safe),
                 it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress, type = Owner.Type.IMPORTED)))
@@ -931,10 +957,11 @@ class TransactionListViewModelTest {
             buildCustom(address = "0x2".asEthereumAddress()!!),
             buildCustom(address = defaultSafeAddress, toInfo = AddressInfo("name", "logoUri"))
         )
-        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(it, safes) }
+        val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -951,6 +978,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -971,6 +999,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -987,6 +1016,7 @@ class TransactionListViewModelTest {
 
         assertEquals(
             TransactionView.CustomTransaction(
+                chain = CHAIN,
                 id = "",
                 status = SUCCESS,
                 statusText = R.string.tx_status_success,
@@ -1185,6 +1215,13 @@ class TransactionListViewModelTest {
     )
 
     companion object {
+
+        private val CHAIN = Chain(
+            BuildConfig.CHAIN_ID,
+            BuildConfig.BLOCKCHAIN_NAME,
+            BuildConfig.CHAIN_TEXT_COLOR,
+            BuildConfig.CHAIN_BACKGROUND_COLOR
+        )
 
         private val ERC20_TOKEN_INFO_NO_SYMBOL = TokenInfo(
             TokenType.ERC20,

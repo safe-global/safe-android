@@ -25,6 +25,7 @@ import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.shortChecksumString
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -36,7 +37,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ACTION
 
     private val navArgs by navArgs<TransactionDetailsActionFragmentArgs>()
-
+    private val chain by lazy { navArgs.chain }
     private val action by lazy { navArgs.action }
     private val data by lazy { navArgs.data }
     private val decodedData by lazy { navArgs.decodedData?.let { paramSerializer.deserializeDecodedData(it) } }
@@ -59,12 +60,19 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
+
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(chain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(chain.backgroundColor.toColor(requireContext(), R.color.primary))
+
             title.text = action
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
         }
+
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when(val viewAction = it.viewAction) {
                 is Loading -> {
@@ -74,6 +82,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 }
             }
         })
+        
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
     }
 
