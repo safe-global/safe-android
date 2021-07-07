@@ -172,6 +172,7 @@ class Tracker private constructor(context: Context) {
 enum class ScreenId(val value: String) {
     LAUNCH("screen_launch"),
     LAUNCH_TERMS("screen_launch_terms"),
+    CHAIN_LIST("screen_chain_list"),
     ASSETS_NO_SAFE("screen_assets_no_safe"),
     ASSETS_COINS("screen_assets_coins"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),

@@ -22,7 +22,7 @@ import io.gnosis.safe.databinding.FragmentChainSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
@@ -38,8 +38,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
     @Inject
     lateinit var viewModel: ChainSelectionViewModel
 
-    //TODO: set correct screen id
-    override fun screenId() = ScreenId.ASSETS_COINS
+    override fun screenId() = ScreenId.CHAIN_LIST
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -59,11 +58,26 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
                 loadState.refresh.let {
-                    if (it is LoadState.Error) {
-                        if (adapter.itemCount == 0) {
-                            binding.contentNoData.root.visible(true)
+                    when (it) {
+                        is LoadState.Error -> {
+                            if (adapter.itemCount == 0) {
+                                binding.selectChainTitle.visible(false)
+                                binding.contentNoData.root.visible(true)
+                            }
+                            handleError(it.error)
                         }
-                        handleError(it.error)
+                        is LoadState.Loading -> {
+                            binding.contentNoData.root.visible(false)
+                        }
+                        is LoadState.NotLoading -> {
+                            if (viewModel.state.value?.viewAction is ShowChains && adapter.itemCount == 0) {
+                                binding.selectChainTitle.visible(false)
+                                binding.contentNoData.root.visible(true)
+                            } else {
+                                binding.selectChainTitle.visible(mode == ChainSelectionMode.ADD_SAFE)
+                                binding.contentNoData.root.visible(false)
+                            }
+                        }
                     }
                 }
                 loadState.append.let {
@@ -71,13 +85,6 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
                 }
                 loadState.prepend.let {
                     if (it is LoadState.Error) handleError(it.error)
-                }
-
-                if (viewModel.state.value?.viewAction is ShowChains && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
-                    binding.selectChainTitle.visible(false)
-                    binding.contentNoData.root.visible(true)
-                } else {
-                    binding.selectChainTitle.visible(mode == ChainSelectionMode.ADD_SAFE)
                 }
             }
         }
@@ -104,6 +111,7 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
                 is ShowError -> {
                     hideLoading()
                     if (adapter.itemCount == 0) {
+                        binding.selectChainTitle.visible(false)
                         binding.contentNoData.root.visible(true)
                     }
                     handleError(action.error)
