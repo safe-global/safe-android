@@ -14,6 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 
 class UnstoppableRepositoryTest {
 
@@ -34,7 +35,7 @@ class UnstoppableRepositoryTest {
 
 
         val addr = runBlocking {
-            repository.resolve(SUCCESS_DOMAIN, 4)
+            repository.resolve(SUCCESS_DOMAIN, Chain.ID_RINKEBY)
         }
 
         coVerify { resolutionLib.getAddress(SUCCESS_DOMAIN, "eth") }
@@ -49,7 +50,7 @@ class UnstoppableRepositoryTest {
         } throws NamingServiceException(NSExceptionCode.UnregisteredDomain, NSExceptionParams("d", FAIL_DOMAIN))
 
         try {
-            repository.resolve(FAIL_DOMAIN, 4)
+            repository.resolve(FAIL_DOMAIN, Chain.ID_RINKEBY)
         } catch (err: NamingServiceException) {
             assertTrue(err.code == NSExceptionCode.UnregisteredDomain)
         }
@@ -59,7 +60,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (1) should succeed for Mainnet`() {
 
-        val result = repository.canResolve(Chain(1, "Mainnet", "", ""))
+        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", ""))
 
         assertTrue(result)
     }
@@ -68,7 +69,7 @@ class UnstoppableRepositoryTest {
     fun `canResolve - (4) should succeed for Rinkeby`() {
         repository = UnstoppableDomainsRepository()
 
-        val result = repository.canResolve(Chain(4, "Rinkeby", "", ""))
+        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", ""))
 
         assertTrue(result)
     }
@@ -76,7 +77,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (17) should fail for unsupported_chain`() {
 
-        val result = repository.canResolve(Chain(17, "Unknown", "", ""))
+        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", ""))
 
         assertFalse(result)
     }
