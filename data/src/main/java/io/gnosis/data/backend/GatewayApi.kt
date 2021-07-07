@@ -33,41 +33,40 @@ interface GatewayApi {
         @Path("fiat") fiat: String = "usd"
     ): CoinBalances
 
-    @GET("v1/chains/{chainId}/transactions/{transactionId}")
+    @GET("/v1/chains/{chainId}/transactions/{transactionId}")
     suspend fun loadTransactionDetails(
         @Path("chainId") chainId: Int,
         @Path("transactionId") transactionId: String
     ): TransactionDetails
 
-    @POST("v1/chains/{chainId}/transactions/{safeTxHash}/confirmations")
+    @POST("/v1/chains/{chainId}/transactions/{safeTxHash}/confirmations")
     suspend fun submitConfirmation(
         @Path("chainId") chainId: Int,
         @Path("safeTxHash") safeTxHash: String,
         @Body txConfirmationRequest: TransactionConfirmationRequest
     ): TransactionDetails
 
-    @POST("v1/chains/{chainId}/transactions/{safeAddress}/propose")
+    @POST("/v1/chains/{chainId}/transactions/{safeAddress}/propose")
     suspend fun proposeTransaction(
         @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String,
         @Body multisigTransactionRequest: MultisigTransactionRequest
     )
 
-    @GET("v1/chains/{chainId}/safes/{safeAddress}/collectibles")
+    @GET("/v1/chains/{chainId}/safes/{safeAddress}/collectibles")
     suspend fun loadCollectibles(
         @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String
     ): List<Collectible>
 
-    // Unified endpoints
-    @GET("v1/chains/{chainId}/safes/{address}/transactions/history")
+    @GET("/v1/chains/{chainId}/safes/{address}/transactions/history")
     suspend fun loadTransactionsHistory(
         @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
     ): Page<TxListEntry>
 
-    @GET("v1/chains/{chainId}/safes/{address}/transactions/queued")
+    @GET("/v1/chains/{chainId}/safes/{address}/transactions/queued")
     suspend fun loadTransactionsQueue(
         @Path("chainId") chainId: Int,
         @Path("address") address: String,
@@ -77,7 +76,7 @@ interface GatewayApi {
     @GET
     suspend fun loadTransactionsPage(@Url pageLink: String): Page<TxListEntry>
 
-    @GET("v1/chains")
+    @GET("/v1/chains")
     suspend fun loadChainInfo(): Page<ChainInfo>
 
     @GET
