@@ -15,59 +15,59 @@ import java.util.*
 
 interface GatewayApi {
 
-    @GET("/{chainId}/v1/balances/supported-fiat-codes")
+    @GET("/v1/chains/{chainId}/balances/supported-fiat-codes")
     suspend fun loadSupportedCurrencies(
         @Path("chainId") chainId: Int = BuildConfig.CHAIN_ID
     ): List<String>
 
-    @GET("/{chainId}/v1/safes/{address}")
+    @GET("/v1/chains/{chainId}/safes/{address}")
     suspend fun getSafeInfo(
         @Path("chainId") chainId: Int,
         @Path("address") address: String
     ): SafeInfo
 
-    @GET("/{chainId}/v1/safes/{address}/balances/{fiat}")
+    @GET("/v1/chains/{chainId}/safes/{address}/balances/{fiat}")
     suspend fun loadBalances(
         @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Path("fiat") fiat: String = "usd"
     ): CoinBalances
 
-    @GET("{chainId}/v1/transactions/{transactionId}")
+    @GET("v1/chains/{chainId}/transactions/{transactionId}")
     suspend fun loadTransactionDetails(
         @Path("chainId") chainId: Int,
         @Path("transactionId") transactionId: String
     ): TransactionDetails
 
-    @POST("{chainId}/v1/transactions/{safeTxHash}/confirmations")
+    @POST("v1/chains/{chainId}/transactions/{safeTxHash}/confirmations")
     suspend fun submitConfirmation(
         @Path("chainId") chainId: Int,
         @Path("safeTxHash") safeTxHash: String,
         @Body txConfirmationRequest: TransactionConfirmationRequest
     ): TransactionDetails
 
-    @POST("{chainId}/v1/transactions/{safeAddress}/propose")
+    @POST("v1/chains/{chainId}/transactions/{safeAddress}/propose")
     suspend fun proposeTransaction(
         @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String,
         @Body multisigTransactionRequest: MultisigTransactionRequest
     )
 
-    @GET("{chainId}/v1/safes/{safeAddress}/collectibles")
+    @GET("v1/chains/{chainId}/safes/{safeAddress}/collectibles")
     suspend fun loadCollectibles(
         @Path("chainId") chainId: Int,
         @Path("safeAddress") safeAddress: String
     ): List<Collectible>
 
     // Unified endpoints
-    @GET("{chainId}/v1/safes/{address}/transactions/history")
+    @GET("v1/chains/{chainId}/safes/{address}/transactions/history")
     suspend fun loadTransactionsHistory(
         @Path("chainId") chainId: Int,
         @Path("address") address: String,
         @Query("timezone_offset") timezoneOffset: Int = TimeZone.getDefault().getOffset(Date().time)
     ): Page<TxListEntry>
 
-    @GET("{chainId}/v1/safes/{address}/transactions/queued")
+    @GET("v1/chains/{chainId}/safes/{address}/transactions/queued")
     suspend fun loadTransactionsQueue(
         @Path("chainId") chainId: Int,
         @Path("address") address: String,
