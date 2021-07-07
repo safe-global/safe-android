@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "c5b5fc4a584f4734a43fb5415749bb1e",
+    "identityHash": "71d70d6569197e70b91b2693991d6207",
     "entities": [
       {
         "tableName": "safes",
@@ -130,7 +130,7 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -155,6 +155,12 @@
             "columnName": "background_color",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "ensRegistryAddress",
+            "columnName": "ens_registry_address",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -170,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c5b5fc4a584f4734a43fb5415749bb1e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71d70d6569197e70b91b2693991d6207')"
     ]
   }
 }

@@ -21,7 +21,7 @@ data class Chain(
     @ColumnInfo(name = COL_BACKGROUND_COLOR)
     val backgroundColor: String,
 
-//    @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
+    @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
     val ensRegistryAddress: String?
 
 ) : Serializable {
@@ -31,7 +31,7 @@ data class Chain(
         const val COL_CHAIN_NAME = "chain_name"
         const val COL_CHAIN_ID = "chain_id"
         const val COL_BACKGROUND_COLOR = "background_color"
-//        const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
+        const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
         const val COL_TEXT_COLOR = "text_color"
     }
 }
