@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
@@ -73,6 +74,8 @@ class TransactionListViewModel
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
+        val chain = safe.chain!!
+
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
@@ -82,6 +85,7 @@ class TransactionListViewModel
                                 val isConflict = txListEntry.conflictType != ConflictType.None
                                 val txView =
                                     getTransactionView(
+                                        chain = chain,
                                         transaction = txListEntry.transaction,
                                         safes = safes,
                                         needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
@@ -106,6 +110,7 @@ class TransactionListViewModel
     }
 
     fun getTransactionView(
+        chain: Chain,
         transaction: Transaction,
         safes: List<Safe>,
         needsYourConfirmation: Boolean = false,
@@ -114,18 +119,18 @@ class TransactionListViewModel
     ): TransactionView {
         with(transaction) {
             return when (val txInfo = txInfo) {
-                is TransactionInfo.Transfer -> toTransferView(txInfo, needsYourConfirmation, isConflict)
-                is TransactionInfo.SettingsChange -> toSettingsChangeView(txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.Transfer -> toTransferView(chain, txInfo, needsYourConfirmation, isConflict)
+                is TransactionInfo.SettingsChange -> toSettingsChangeView(chain, txInfo, needsYourConfirmation, isConflict)
                 is TransactionInfo.Custom -> {
                     if (txInfo.isCancellation) {
-                        toRejectionTransactionView(needsYourConfirmation, isConflict)
+                        toRejectionTransactionView(chain, needsYourConfirmation, isConflict)
                     } else {
-                        toCustomTransactionView(txInfo, safes, needsYourConfirmation, isConflict)
+                        toCustomTransactionView(chain, txInfo, safes, needsYourConfirmation, isConflict)
                     }
                 }
                 is TransactionInfo.Creation -> {
                     val owner = localOwners.find { it.address == txInfo.creator }
-                    toHistoryCreation(txInfo, owner)
+                    toHistoryCreation(chain, txInfo, owner)
                 }
                 TransactionInfo.Unknown -> TransactionView.Unknown
             }
@@ -133,15 +138,17 @@ class TransactionListViewModel
     }
 
     private fun Transaction.toTransferView(
+        chain: Chain,
         txInfo: TransactionInfo.Transfer,
         needsYourConfirmation: Boolean,
         isConflict: Boolean = false
     ): TransactionView =
-        if (isCompleted(txStatus)) historicTransfer(txInfo, isConflict)
-        else queuedTransfer(txInfo, needsYourConfirmation, isConflict)
+        if (isCompleted(txStatus)) historicTransfer(chain, txInfo, isConflict)
+        else queuedTransfer(chain, txInfo, needsYourConfirmation, isConflict)
 
-    private fun Transaction.historicTransfer(txInfo: TransactionInfo.Transfer, isConflict: Boolean): TransactionView.Transfer =
+    private fun Transaction.historicTransfer(chain: Chain, txInfo: TransactionInfo.Transfer, isConflict: Boolean): TransactionView.Transfer =
         TransactionView.Transfer(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
@@ -156,6 +163,7 @@ class TransactionListViewModel
         )
 
     private fun Transaction.queuedTransfer(
+        chain: Chain,
         txInfo: TransactionInfo.Transfer,
         needsYourConfirmation: Boolean,
         isConflict: Boolean = false
@@ -166,6 +174,7 @@ class TransactionListViewModel
         val incoming = txInfo.incoming()
 
         return TransactionView.TransferQueued(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus, needsYourConfirmation),
@@ -184,13 +193,14 @@ class TransactionListViewModel
     }
 
     private fun Transaction.toSettingsChangeView(
+        chain: Chain,
         txInfo: TransactionInfo.SettingsChange,
         needsYourConfirmation: Boolean,
         isConflict: Boolean = false
     ): TransactionView =
         when {
-            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(txInfo, needsYourConfirmation, isConflict)
-            isHistoricSettingsChange(txStatus) -> historicSettingsChange(txInfo)
+            isQueuedSettingsChange(txStatus) -> queuedSettingsChange(chain, txInfo, needsYourConfirmation, isConflict)
+            isHistoricSettingsChange(txStatus) -> historicSettingsChange(chain, txInfo)
             else -> TransactionView.Unknown
         }
 
@@ -198,8 +208,9 @@ class TransactionListViewModel
 
     private fun isQueuedSettingsChange(txStatus: TransactionStatus): Boolean = !isCompleted(txStatus)
 
-    private fun Transaction.historicSettingsChange(txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChange =
+    private fun Transaction.historicSettingsChange(chain: Chain, txInfo: TransactionInfo.SettingsChange): TransactionView.SettingsChange =
         TransactionView.SettingsChange(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
@@ -211,6 +222,7 @@ class TransactionListViewModel
         )
 
     private fun Transaction.queuedSettingsChange(
+        chain: Chain,
         txInfo: TransactionInfo.SettingsChange,
         needsYourConfirmation: Boolean,
         isConflict: Boolean
@@ -220,6 +232,7 @@ class TransactionListViewModel
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
         return TransactionView.SettingsChangeQueued(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus, needsYourConfirmation),
@@ -235,15 +248,17 @@ class TransactionListViewModel
     }
 
     private fun Transaction.toCustomTransactionView(
+        chain: Chain,
         txInfo: TransactionInfo.Custom,
         safes: List<Safe>,
         needsYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedCustomTransaction(txInfo, safes, needsYourConfirmation, isConflict)
-        else historicCustomTransaction(txInfo, safes)
+        if (!isCompleted(txStatus)) queuedCustomTransaction(chain, txInfo, safes, needsYourConfirmation, isConflict)
+        else historicCustomTransaction(chain, txInfo, safes)
 
     private fun Transaction.historicCustomTransaction(
+        chain: Chain,
         txInfo: TransactionInfo.Custom,
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
@@ -251,6 +266,7 @@ class TransactionListViewModel
         val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransaction(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
@@ -265,6 +281,7 @@ class TransactionListViewModel
     }
 
     private fun Transaction.queuedCustomTransaction(
+        chain: Chain,
         txInfo: TransactionInfo.Custom,
         safes: List<Safe>,
         needsYourConfirmation: Boolean,
@@ -278,6 +295,7 @@ class TransactionListViewModel
         val addressInfo = resolveKnownAddress(txInfo.to, txInfo.toInfo, safeAppInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus, needsYourConfirmation),
@@ -295,15 +313,17 @@ class TransactionListViewModel
     }
 
     private fun Transaction.toRejectionTransactionView(
+        chain: Chain,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView =
-        if (!isCompleted(txStatus)) queuedRejectionTransaction(awaitingYourConfirmation, isConflict)
-        else historicRejectionTransaction()
+        if (!isCompleted(txStatus)) queuedRejectionTransaction(chain, awaitingYourConfirmation, isConflict)
+        else historicRejectionTransaction(chain)
 
-    private fun Transaction.historicRejectionTransaction(): TransactionView.RejectionTransaction {
+    private fun Transaction.historicRejectionTransaction(chain: Chain): TransactionView.RejectionTransaction {
 
         return TransactionView.RejectionTransaction(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
@@ -315,6 +335,7 @@ class TransactionListViewModel
     }
 
     private fun Transaction.queuedRejectionTransaction(
+        chain: Chain,
         awaitingYourConfirmation: Boolean,
         isConflict: Boolean
     ): TransactionView.RejectionTransactionQueued {
@@ -324,6 +345,7 @@ class TransactionListViewModel
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
         return TransactionView.RejectionTransactionQueued(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus, awaitingYourConfirmation),
@@ -353,8 +375,9 @@ class TransactionListViewModel
         }
     }
 
-    private fun Transaction.toHistoryCreation(txInfo: TransactionInfo.Creation, localCreator: Owner?): TransactionView.Creation =
+    private fun Transaction.toHistoryCreation(chain: Chain, txInfo: TransactionInfo.Creation, localCreator: Owner?): TransactionView.Creation =
         TransactionView.Creation(
+            chain = chain,
             id = id,
             status = txStatus,
             statusText = displayString(txStatus),
