@@ -684,6 +684,10 @@
         tools:layout="@layout/fragment_transaction_details_creation">
 
         <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
             android:name="statusTextRes"
             app:argType="reference" />
 
@@ -769,6 +773,10 @@
         android:name="io.gnosis.safe.ui.transactions.details.AdvancedTransactionDetailsFragment"
         android:label="AdvancedTransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details_advanced">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
         <argument
             android:name="nonce"

@@ -11,6 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -20,6 +21,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     override fun screenId() = ScreenId.TRANSACTIONS_DETAILS_ADVANCED
 
     private val navArgs by navArgs<AdvancedTransactionDetailsFragmentArgs>()
+    private val chain by lazy { navArgs.chain }
     private val nonce by lazy { navArgs.nonce }
     private val operation by lazy { navArgs.operation }
     private val hash by lazy { navArgs.hash }
@@ -36,6 +38,11 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(chain.textColor.toColor(requireContext(), R.color.white))
+            chainRibbon.setBackgroundColor(chain.backgroundColor.toColor(requireContext(), R.color.primary))
+
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }

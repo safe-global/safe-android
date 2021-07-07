@@ -211,6 +211,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val operation = txDetails.txData?.operation?.displayName() ?: ""
                 findNavController().navigate(
                     TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToAdvancedTransactionDetailsFragment(
+                        chain = chain,
                         nonce = nonce?.toString() ?: "",
                         operation = operation,
                         hash = txDetails.txHash,
