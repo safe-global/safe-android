@@ -54,7 +54,7 @@ class SafeRepository(
 
     suspend fun getSafesForChain(chainId: Int): List<Safe> = safeDao.loadAllByChain(chainId).map {
         val safe = it.safe
-        safe.chain = it.chain
+        safe.chain = it.chain!!
         safe
     }
 
