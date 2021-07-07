@@ -17,6 +17,7 @@ import io.gnosis.safe.utils.handleAddressBookResult
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.parseEthereumAddress
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import timber.log.Timber
 
@@ -25,7 +26,8 @@ class AddressInputHelper(
     tracker: Tracker,
     private val selectedChain: Chain,
     private val addressCallback: (Solidity.Address) -> Unit,
-    private val errorCallback: (Throwable, String?) -> Unit
+    private val errorCallback: (Throwable, String?) -> Unit,
+    private val enableUD: Boolean
 ) {
 
     private val dialog =
@@ -35,12 +37,18 @@ class AddressInputHelper(
             with(binding) {
                 setContentView(root)
 
-                bottomSheetAddressInputUnstoppabledomains.setOnClickListener {
-                    UnstoppableInputDialog.create(selectedChain).apply {
-                        callback = addressCallback
-                        show(fragment.childFragmentManager, null)
+                if (enableUD) {
+                    bottomSheetAddressInputUnstoppabledomains.setOnClickListener {
+                        UnstoppableInputDialog.create(selectedChain).apply {
+                            callback = addressCallback
+                            show(fragment.childFragmentManager, null)
+                        }
+                        dismiss()
                     }
-                    dismiss()
+                } else {
+                    bottomSheetAddressInputUnstoppabledomains.visible(false)
+                    bottomSheetAddressInputUnstoppabledomainsIcon.visible(false)
+                    bottomSheetAddressInputUnstoppabledomainsTouch.visible(false)
                 }
 
                 bottomSheetAddressInputEnsTouch.setOnClickListener {
