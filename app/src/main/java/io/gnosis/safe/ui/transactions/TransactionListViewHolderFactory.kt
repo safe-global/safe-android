@@ -401,14 +401,14 @@ class CreationTransactionViewHolder(private val viewBinding: ItemTxSettingsChang
 
             if (viewTransfer.creationDetails != null) {
                 root.setOnClickListener {
-                    navigateToCreationDetails(it, viewTransfer.creationDetails)
+                    navigateToCreationDetails(it, viewTransfer.chain, viewTransfer.creationDetails)
                 }
             }
         }
     }
 }
 
-private fun navigateToCreationDetails(view: View, details: TransactionView.CreationDetails) {
+private fun navigateToCreationDetails(view: View, chain: Chain, details: TransactionView.CreationDetails) {
 
     var creatorName: String? = null
     var creatorLogoUri: String? = null
@@ -427,6 +427,7 @@ private fun navigateToCreationDetails(view: View, details: TransactionView.Creat
     Navigation.findNavController(view)
         .navigate(
             TransactionsFragmentDirections.actionTransactionsFragmentToTransactionCreationDetailsFragment(
+                chain = chain,
                 statusColorRes = details.statusColorRes,
                 statusTextRes = details.statusText,
                 dateTimeText = details.dateTimeText,
