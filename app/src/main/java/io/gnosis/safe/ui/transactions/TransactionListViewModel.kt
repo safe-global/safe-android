@@ -74,8 +74,6 @@ class TransactionListViewModel
         type: TransactionPagingSource.Type
     ): Flow<PagingData<TransactionView>> {
 
-        val chain = safe.chain
-
         val safeTxItems: Flow<PagingData<TransactionView>> = transactionsPager.getTransactionsStream(safe, type)
             .map { pagingData ->
                 pagingData
@@ -85,7 +83,7 @@ class TransactionListViewModel
                                 val isConflict = txListEntry.conflictType != ConflictType.None
                                 val txView =
                                     getTransactionView(
-                                        chain = chain,
+                                        chain = safe.chain,
                                         transaction = txListEntry.transaction,
                                         safes = safes,
                                         needsYourConfirmation = txListEntry.transaction.canBeSignedByAnyOwner(owners),
