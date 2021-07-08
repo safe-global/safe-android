@@ -27,7 +27,7 @@ class AddSafeViewModelTest {
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
-    private val mainnet = Chain(1, "Mainnet", "", "")
+    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "")
 
     private lateinit var viewModel: AddSafeViewModel
 

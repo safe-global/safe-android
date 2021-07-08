@@ -159,7 +159,7 @@ class HeimdallDatabaseTest {
     @Throws(IOException::class)
     fun migrate4To5() {
 
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "Fnord", BuildConfig.CHAIN_ID)
+        val safe = Safe(Solidity.Address(BigInteger.ONE), "Fnord", BuildConfig.CHAIN_ID.toBigInteger())
 
         helper.createDatabase(TEST_DB, 4).apply {
 
@@ -182,7 +182,7 @@ class HeimdallDatabaseTest {
                 moveToFirst()
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_ADDRESS)), safe.address.asEthereumAddressString())
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_LOCAL_NAME)), safe.localName)
-                Assert.assertEquals(getInt(getColumnIndex(Safe.COL_CHAIN_ID)), safe.chainId)
+                Assert.assertEquals(getString(getColumnIndex(Safe.COL_CHAIN_ID)), safe.chainId.toString())
             }
 
             close()

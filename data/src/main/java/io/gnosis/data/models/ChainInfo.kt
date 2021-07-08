@@ -2,11 +2,13 @@ package io.gnosis.data.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import pm.gnosis.common.adapters.moshi.DecimalNumber
+import java.math.BigInteger
 
 
 @JsonClass(generateAdapter = true)
 data class ChainInfo(
-    @Json(name = "chainId") val chainId: Int,
+    @Json(name = "chainId") @field:DecimalNumber val chainId: BigInteger,
     @Json(name = "chainName") val chainName: String,
     @Json(name = "rpcUrl") val rpcUrl: String,
     @Json(name = "blockExplorerUrl") val blockExplorerUrl: String,

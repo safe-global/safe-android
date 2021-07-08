@@ -41,8 +41,8 @@ class AddSafeNameViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: AddSafeNameViewModel
-    private val mainnet = Chain(1, "Mainnet", "", "")
-    private val rinkeby = Chain(4, "Rinkeby", "", "")
+    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "")
+    private val rinkeby = Chain(Chain.ID_RINKEBY, "Rinkeby", "", "")
 
     @Before
     fun setup() {
