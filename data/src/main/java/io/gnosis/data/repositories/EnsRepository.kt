@@ -52,7 +52,8 @@ class EnsRepository(
                 block = Block.LATEST,
                 transaction = Transaction(
                     address = resolverAddress,
-                    data = GET_ADDRESS + node.toHexString()
+                    data = GET_ADDRESS + node.toHexString(),
+                    chainId = chain.chainId
                 )
             )
         )
@@ -65,7 +66,7 @@ class EnsRepository(
         }.asEthereumAddress()!!
     }
 
-    suspend fun reverseResolve(address: Solidity.Address): String? {
+    suspend fun reverseResolve(address: Solidity.Address, chain: Chain): String? {
 
         val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
         val resolver = ethereumRepository.request(
@@ -73,7 +74,8 @@ class EnsRepository(
                 block = Block.LATEST,
                 transaction = Transaction(
                     address = ENS_ADDRESS,
-                    data = GET_RESOLVER + node.toHexString()
+                    data = GET_RESOLVER + node.toHexString(),
+                    chainId = chain.chainId
                 )
             )
         ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
@@ -83,7 +85,8 @@ class EnsRepository(
                 block = Block.LATEST,
                 transaction = Transaction(
                     address = resolver,
-                    data = GET_NAME + node.toHexString()
+                    data = GET_NAME + node.toHexString(),
+                    chainId = chain.chainId
                 )
             )
         ).checkedResult("Failed to reverse resolve name")

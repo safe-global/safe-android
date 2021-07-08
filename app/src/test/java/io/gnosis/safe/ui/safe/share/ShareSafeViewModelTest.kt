@@ -12,7 +12,8 @@ import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -102,7 +103,7 @@ class ShareSafeViewModelTest {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "Safe name")
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { ensRepository.reverseResolve(any()) } throws throwable
+        coEvery { ensRepository.reverseResolve(any(), any()) } throws throwable
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } throws throwable
         mockkStatic(Timber::class)
         val testObserver = TestLiveDataObserver<ShareSafeState>()
@@ -121,7 +122,7 @@ class ShareSafeViewModelTest {
         }
         coVerifySequence {
             safeRepository.getActiveSafe()
-            ensRepository.reverseResolve(safe.address)
+            ensRepository.reverseResolve(safe.address, safe.chain)
             Timber.e(throwable)
             qrCodeGenerator.generateQrCode(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
             Timber.e(throwable)
@@ -134,7 +135,7 @@ class ShareSafeViewModelTest {
         val ensName = "ens.name"
         val bitmap = mockk<Bitmap>()
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { ensRepository.reverseResolve(any()) } returns ensName
+        coEvery { ensRepository.reverseResolve(any(), any()) } returns ensName
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns bitmap
         val testObserver = TestLiveDataObserver<ShareSafeState>()
         viewModel = ShareSafeViewModel(safeRepository, ensRepository, qrCodeGenerator, appDispatchers)
@@ -152,7 +153,7 @@ class ShareSafeViewModelTest {
         }
         coVerifySequence {
             safeRepository.getActiveSafe()
-            ensRepository.reverseResolve(safe.address)
+            ensRepository.reverseResolve(safe.address, safe.chain)
             qrCodeGenerator.generateQrCode(safe.address.asEthereumAddressChecksumString(), any(), any(), Color.WHITE)
         }
     }

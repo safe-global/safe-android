@@ -25,7 +25,7 @@ class ShareSafeViewModel
     fun load() {
         safeLaunch {
             safeRepository.getActiveSafe()?.let { activeSafe ->
-                val ensName = runCatching { ensRepository.reverseResolve(activeSafe.address) }
+                val ensName = runCatching { ensRepository.reverseResolve(activeSafe.address, activeSafe.chain) }
                     .onFailure { Timber.e(it) }
                     .getOrNull()
                 val qrCode = runCatching {
