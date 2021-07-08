@@ -1,6 +1,6 @@
 package io.gnosis.data.utils
 
-import io.gnosis.data.BuildConfig.CHAIN_ID
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -76,4 +76,7 @@ class SafeTxHashTest {
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
 
+    companion object {
+        private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
+    }
 }

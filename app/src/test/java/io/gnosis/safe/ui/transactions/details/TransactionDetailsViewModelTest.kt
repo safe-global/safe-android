@@ -1,8 +1,9 @@
 package io.gnosis.safe.ui.transactions.details
 
-import io.gnosis.data.BuildConfig.CHAIN_ID
+import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
@@ -329,6 +330,10 @@ class TransactionDetailsViewModelTest {
         val mockGatewayApi = mockk<GatewayApi>().apply {
             coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
         }
-        return TransactionRepository(mockGatewayApi).getTransactionDetails(1, "txId")
+        return TransactionRepository(mockGatewayApi).getTransactionDetails(Chain.ID_MAINNET, "txId")
+    }
+
+    companion object {
+        private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
     }
 }

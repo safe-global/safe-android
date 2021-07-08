@@ -59,7 +59,7 @@ class CollectiblesViewModelTest {
     fun `load - should emit collectibles view data list`() {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val chain = Chain(
-            BuildConfig.CHAIN_ID,
+            BuildConfig.CHAIN_ID.toBigInteger(),
             BuildConfig.BLOCKCHAIN_NAME,
             BuildConfig.CHAIN_TEXT_COLOR,
             BuildConfig.CHAIN_BACKGROUND_COLOR,
@@ -148,5 +148,4 @@ class CollectiblesViewModelTest {
             null
         )
     )
-
 }

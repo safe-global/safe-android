@@ -5,6 +5,7 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeMetaData
 import io.gnosis.data.models.SafeWithChainData
 import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 @Dao
 interface SafeDao {
@@ -22,7 +23,7 @@ interface SafeDao {
     suspend fun loadAll(): List<Safe>
 
     @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_ADDRESS} = :address AND ${Safe.COL_CHAIN_ID} = :chainId")
-    suspend fun loadByAddressAndChainId(address: Solidity.Address, chainId: Int): Safe?
+    suspend fun loadByAddressAndChainId(address: Solidity.Address, chainId: BigInteger): Safe?
 
     @Query("SELECT * FROM ${SafeMetaData.TABLE_NAME}")
     suspend fun getMetas(): List<SafeMetaData>
@@ -43,9 +44,9 @@ interface SafeDao {
 
     @Transaction
     @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_ADDRESS} = :address AND ${Safe.COL_CHAIN_ID} = :chainId")
-    suspend fun loadByAddressWithChainData(address: Solidity.Address, chainId: Int): SafeWithChainData?
+    suspend fun loadByAddressWithChainData(address: Solidity.Address, chainId: BigInteger): SafeWithChainData?
 
     @Transaction
     @Query("SELECT * FROM ${Safe.TABLE_NAME} WHERE ${Safe.COL_CHAIN_ID} = :chainId")
-    suspend fun loadAllByChain(chainId: Int): List<SafeWithChainData>
+    suspend fun loadAllByChain(chainId: BigInteger): List<SafeWithChainData>
 }

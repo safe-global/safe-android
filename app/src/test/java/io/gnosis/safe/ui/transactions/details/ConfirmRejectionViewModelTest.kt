@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.TransactionDetails
@@ -131,6 +132,6 @@ class ConfirmRejectionViewModelTest {
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
         val mockGatewayApi = mockk<GatewayApi>().apply { coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto }
-        return TransactionRepository(mockGatewayApi).getTransactionDetails(1, "txId")
+        return TransactionRepository(mockGatewayApi).getTransactionDetails(Chain.ID_MAINNET, "txId")
     }
 }

@@ -3,10 +3,11 @@
   "database": {
     "version": 5,
     "identityHash": "71d70d6569197e70b91b2693991d6207",
+    "identityHash": "9e972a4175c9a72e1dd67e2db5b05fe9",
     "entities": [
       {
         "tableName": "safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, PRIMARY KEY(`address`, `chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` TEXT NOT NULL, PRIMARY KEY(`address`, `chain_id`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -23,7 +24,7 @@
           {
             "fieldPath": "chainId",
             "columnName": "chain_id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -39,7 +40,7 @@
       },
       {
         "tableName": "safe_meta_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, `registered_notifications` INTEGER NOT NULL, PRIMARY KEY(`address`, `chain_id`), FOREIGN KEY(`address`, `chain_id`) REFERENCES `safes`(`address`, `chain_id`) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `chain_id` TEXT NOT NULL, `registered_notifications` INTEGER NOT NULL, PRIMARY KEY(`address`, `chain_id`), FOREIGN KEY(`address`, `chain_id`) REFERENCES `safes`(`address`, `chain_id`) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
         "fields": [
           {
             "fieldPath": "address",
@@ -50,7 +51,7 @@
           {
             "fieldPath": "chainId",
             "columnName": "chain_id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -130,12 +131,12 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` INTEGER NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
             "columnName": "chain_id",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -177,6 +178,7 @@
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71d70d6569197e70b91b2693991d6207')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9e972a4175c9a72e1dd67e2db5b05fe9')"
     ]
   }
 }

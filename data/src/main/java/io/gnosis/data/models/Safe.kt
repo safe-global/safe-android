@@ -7,6 +7,7 @@ import io.gnosis.data.models.Safe.Companion.COL_ADDRESS
 import io.gnosis.data.models.Safe.Companion.COL_CHAIN_ID
 import io.gnosis.data.models.Safe.Companion.TABLE_NAME
 import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 @Entity(
     tableName = TABLE_NAME,
@@ -20,12 +21,12 @@ data class Safe(
     val localName: String,
 
     @ColumnInfo(name = COL_CHAIN_ID)
-    val chainId: Int = BuildConfig.CHAIN_ID
+    val chainId: BigInteger = BuildConfig.CHAIN_ID.toBigInteger()
 ) {
 
     @Ignore
     var chain: Chain = Chain(
-        BuildConfig.CHAIN_ID,
+        BuildConfig.CHAIN_ID.toBigInteger(),
         BuildConfig.BLOCKCHAIN_NAME,
         BuildConfig.CHAIN_TEXT_COLOR,
         BuildConfig.CHAIN_BACKGROUND_COLOR,

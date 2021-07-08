@@ -10,10 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 
 class UnstoppableDomainsRepository(private val resolution: DomainResolution = DummyDomainResolution()) {
 
-    suspend fun resolve(domain: String, chainId: Int): Solidity.Address {
+    suspend fun resolve(domain: String, chainId: BigInteger): Solidity.Address {
         val address = withContext(Dispatchers.IO) {
             providesDomainResolutionLibrary(chainId)?.getAddress(domain, "eth")
         }
@@ -22,12 +23,13 @@ class UnstoppableDomainsRepository(private val resolution: DomainResolution = Du
 
     fun canResolve(chain: Chain): Boolean = providesDomainResolutionLibrary(chain.chainId) != null
 
-    private fun providesDomainResolutionLibrary(chainId: Int): DomainResolution? {
-        if (chainId != 1 && chainId != 4) {
+    private fun providesDomainResolutionLibrary(chainId: BigInteger): DomainResolution? {
+        if (chainId != Chain.ID_MAINNET && chainId != Chain.ID_RINKEBY) {
             return null
         }
         return if (resolution is DummyDomainResolution) {
-            val network = Network.getNetwork(chainId)
+            //FIXME: network should support big values for chainId
+            val network = Network.getNetwork(chainId.toInt())
             try {
                 Resolution.builder()
                     .chainId(NamingServiceType.CNS, network)
