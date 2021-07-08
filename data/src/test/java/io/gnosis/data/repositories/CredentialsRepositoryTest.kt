@@ -9,6 +9,7 @@ import org.junit.Test
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.svalinn.security.db.EncryptedString
 import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
 
@@ -85,6 +86,50 @@ class CredentialsRepositoryTest {
         coVerifySequence {
             encryptionManager.unlock()
             encryptionManager.decrypt(keyCryptoData)
+            encryptionManager.lock()
+        }
+    }
+
+    @Test
+    fun `encryptSeed`() = runBlocking {
+        val seed = "seed"
+        val seedEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
+        val seedCryptoData =  EncryptionManager.CryptoData.fromString(seedEncryptedString)
+
+        coEvery { ownerCredentialsVault.hasCredentials() } returns false
+        coEvery { encryptionManager.unlock() } just Runs
+        coEvery { encryptionManager.lock() } just Runs
+        coEvery { encryptionManager.encrypt(any()) } returns seedCryptoData
+
+        credentialsRepository = CredentialsRepository(ownerDao, encryptionManager, ownerCredentialsVault)
+        credentialsRepository.encryptSeed(seed)
+
+        coVerifySequence {
+            encryptionManager.unlock()
+            encryptionManager.encrypt(seed.toByteArray())
+            encryptionManager.lock()
+        }
+    }
+
+    @Test
+    fun `decryptSeed`() = runBlocking {
+
+        val seed = "seed"
+        val seedEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
+        val seedCryptoData =  EncryptionManager.CryptoData.fromString(seedEncryptedString)
+        val encryptedSeed = EncryptedString.Converter().fromStorage(seedEncryptedString)
+
+        coEvery { ownerCredentialsVault.hasCredentials() } returns false
+        coEvery { encryptionManager.unlock() } just Runs
+        coEvery { encryptionManager.lock() } just Runs
+        coEvery { encryptionManager.decrypt(any()) } returns seed.toByteArray()
+
+        credentialsRepository = CredentialsRepository(ownerDao, encryptionManager, ownerCredentialsVault)
+        credentialsRepository.decryptSeed(encryptedSeed)
+
+        coVerifySequence {
+            encryptionManager.unlock()
+            encryptionManager.decrypt(seedCryptoData)
             encryptionManager.lock()
         }
     }
