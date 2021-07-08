@@ -18,7 +18,7 @@ class EnsInputViewModelTest {
 
     private val viewModel = EnsInputViewModel(ensRepository)
 
-    private val defaultChain = Chain(1, "Mainnet", "", "", null)
+    private val defaultChain = Chain(Chain.ID_MAINNET, "Mainnet", "", "", null)
 
     @Test
     fun `processEnsInput (valid input ensRepository failure) should throw`() = runBlockingTest {

@@ -3,7 +3,6 @@
   "database": {
     "version": 5,
     "identityHash": "71d70d6569197e70b91b2693991d6207",
-    "identityHash": "9e972a4175c9a72e1dd67e2db5b05fe9",
     "entities": [
       {
         "tableName": "safes",
@@ -178,7 +177,6 @@
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71d70d6569197e70b91b2693991d6207')"
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9e972a4175c9a72e1dd67e2db5b05fe9')"
     ]
   }
 }

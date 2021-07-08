@@ -25,13 +25,14 @@ class EnsRepository(
     suspend fun resolve(url: String, chain: Chain): Solidity.Address {
         val node = ensNormalizer.normalize(url).nameHash()
 
+        //FIXME: adjust Transaction object by changing chainId type from Int to BigInteger
         val resolverAddressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
                 transaction = Transaction(
                     address = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
-                    chainId = chain.chainId
+                    chainId = chain.chainId.toInt()
                 )
             )
         )
@@ -53,7 +54,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = resolverAddress,
                     data = GET_ADDRESS + node.toHexString(),
-                    chainId = chain.chainId
+                    chainId = chain.chainId.toInt()
                 )
             )
         )
@@ -75,7 +76,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
-                    chainId = chain.chainId
+                    chainId = chain.chainId.toInt()
                 )
             )
         ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
@@ -86,7 +87,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = resolver,
                     data = GET_NAME + node.toHexString(),
-                    chainId = chain.chainId
+                    chainId = chain.chainId.toInt()
                 )
             )
         ).checkedResult("Failed to reverse resolve name")
