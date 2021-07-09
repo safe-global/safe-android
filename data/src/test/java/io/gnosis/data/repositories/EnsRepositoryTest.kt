@@ -65,7 +65,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = defaultChain.ensRegistryAddress?.asEthereumAddress()!!,
                         data = GET_RESOLVER + "0000000000000000000000000000000000000000000000000000000000000000",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -81,7 +81,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     )
                 ).apply {
                     response = EthRequest.Response.Success(TEST_ADDRESS.asEthereumAddressString())
@@ -102,7 +102,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -112,7 +112,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = TEST_ADDRESS,
                         data = GET_ADDRESS + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -128,7 +128,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     )
                 ).apply {
                     response = EthRequest.Response.Success(TEST_ADDRESS.asEthereumAddressString())
@@ -137,7 +137,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     )
                 ).apply {
                     response = EthRequest.Response.Success(TEST_SAFE.asEthereumAddressString())
@@ -159,7 +159,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -169,7 +169,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = TEST_ADDRESS,
                         data = GET_ADDRESS + "93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -184,7 +184,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     )
                 ).apply {
                     response = EthRequest.Response.Success(ENS_ADDRESS.asEthereumAddressString())
@@ -193,7 +193,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     )
                 ).apply {
                     response =
@@ -213,7 +213,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_RESOLVER + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
@@ -223,7 +223,7 @@ class EnsRepositoryTest {
                     transaction = Transaction(
                         address = ENS_ADDRESS,
                         data = GET_NAME + "f0071e6238d539afe51473967bba6b71de272de1bd4010584554dd682d65e5d6",
-                        chainId = defaultChain.chainId.toInt()
+                        chainId = defaultChain.chainId
                     ),
                     block = Block.LATEST
                 )
