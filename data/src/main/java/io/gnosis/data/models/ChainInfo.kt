@@ -11,7 +11,7 @@ import io.gnosis.contracts.BuildConfig.ENS_REGISTRY
 data class ChainInfo(
     @Json(name = "chainId") @field:DecimalNumber val chainId: BigInteger,
     @Json(name = "chainName") val chainName: String,
-    @Json(name = "ensRegistryAddress") val ensRegistryAddress: String? = ENS_REGISTRY,
+    @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUrl") val rpcUrl: String,
     @Json(name = "blockExplorerUrl") val blockExplorerUrl: String,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,
