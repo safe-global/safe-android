@@ -194,7 +194,6 @@ fun String.toColor(context: Context, failsafeColor: Int = R.color.white): Int {
         Color.parseColor(this)
     } catch (e: Exception) {
         Timber.e(e)
-        e.printStackTrace()
         context.getColorCompat(failsafeColor)
     }
 }

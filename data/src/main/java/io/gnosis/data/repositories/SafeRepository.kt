@@ -18,6 +18,7 @@ import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
+import java.math.BigInteger
 import io.gnosis.data.BuildConfig as DataBuildConfig
 
 class SafeRepository(
@@ -45,7 +46,7 @@ class SafeRepository(
         val safe = it.safe
         safe.chain = it.chain
             ?: Chain(
-                DataBuildConfig.CHAIN_ID,
+                DataBuildConfig.CHAIN_ID.toBigInteger(),
                 DataBuildConfig.BLOCKCHAIN_NAME,
                 DataBuildConfig.CHAIN_TEXT_COLOR,
                 DataBuildConfig.CHAIN_BACKGROUND_COLOR,
@@ -54,7 +55,7 @@ class SafeRepository(
         safe
     }
 
-    suspend fun getSafesForChain(chainId: Int): List<Safe> = safeDao.loadAllByChain(chainId).map {
+    suspend fun getSafesForChain(chainId: BigInteger): List<Safe> = safeDao.loadAllByChain(chainId).map {
         val safe = it.safe
         safe.chain = it.chain!!
         safe
@@ -82,7 +83,7 @@ class SafeRepository(
         val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
         val address = activeSafeData?.get(0)?.asEthereumAddress()
         return address?.let {
-            val chainId = nullOnThrow { activeSafeData[2].toInt() } ?: DataBuildConfig.CHAIN_ID
+            val chainId = nullOnThrow { activeSafeData[2].toBigInteger() } ?: DataBuildConfig.CHAIN_ID.toBigInteger()
             getSafeBy(it, chainId)
         }
     }
@@ -93,7 +94,7 @@ class SafeRepository(
         safe?.let {
             it.chain = safeWithChainData.chain
                 ?: Chain(
-                    DataBuildConfig.CHAIN_ID,
+                    DataBuildConfig.CHAIN_ID.toBigInteger(),
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
                     DataBuildConfig.CHAIN_BACKGROUND_COLOR,
@@ -103,13 +104,13 @@ class SafeRepository(
         return safe
     }
 
-    suspend fun getSafeBy(address: Solidity.Address, chainId: Int): Safe? {
+    suspend fun getSafeBy(address: Solidity.Address, chainId: BigInteger): Safe? {
         val safeWithChainData = safeDao.loadByAddressWithChainData(address, chainId)
         val safe = safeWithChainData?.safe
-        safe?.let {
-            it.chain = safeWithChainData.chain
+        safe?.apply {
+            chain = safeWithChainData.chain
                 ?: Chain(
-                    DataBuildConfig.CHAIN_ID,
+                    DataBuildConfig.CHAIN_ID.toBigInteger(),
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
                     DataBuildConfig.CHAIN_BACKGROUND_COLOR,

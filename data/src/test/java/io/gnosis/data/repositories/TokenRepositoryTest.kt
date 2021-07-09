@@ -2,7 +2,6 @@ package io.gnosis.data.repositories
 
 import com.squareup.moshi.Types
 import io.gnosis.data.BuildConfig
-import io.gnosis.data.BuildConfig.CHAIN_ID
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Safe
@@ -195,5 +194,9 @@ class TokenRepositoryTest {
                 this::class.java.getClassLoader()?.getResourceAsStream(fileName)!!
             )
         ).lines().parallel().collect(Collectors.joining("\n"))
+    }
+
+    companion object {
+        private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
     }
 }
