@@ -27,7 +27,7 @@ class SafeRepositoryTest {
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
 
-    private var defaultChain = Chain(CHAIN_ID, "Name", "", "")
+    private var defaultChain = Chain(CHAIN_ID, "Name", "", "", null)
 
     @Before
     fun setup() {

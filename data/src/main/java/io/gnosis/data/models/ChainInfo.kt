@@ -4,12 +4,14 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import pm.gnosis.common.adapters.moshi.DecimalNumber
 import java.math.BigInteger
+import io.gnosis.contracts.BuildConfig.ENS_REGISTRY
 
 
 @JsonClass(generateAdapter = true)
 data class ChainInfo(
     @Json(name = "chainId") @field:DecimalNumber val chainId: BigInteger,
     @Json(name = "chainName") val chainName: String,
+    @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUrl") val rpcUrl: String,
     @Json(name = "blockExplorerUrl") val blockExplorerUrl: String,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,

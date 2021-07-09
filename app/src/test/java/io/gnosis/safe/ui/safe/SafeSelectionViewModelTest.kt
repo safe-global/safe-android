@@ -10,8 +10,8 @@ import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import io.gnosis.safe.ui.safe.selection.SafeSelectionState
+import io.gnosis.safe.ui.safe.selection.SafeSelectionViewData.*
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -85,7 +85,8 @@ class SafeSelectionViewModelTest {
             BuildConfig.CHAIN_ID.toBigInteger(),
             BuildConfig.BLOCKCHAIN_NAME,
             BuildConfig.CHAIN_TEXT_COLOR,
-            BuildConfig.CHAIN_BACKGROUND_COLOR
+            BuildConfig.CHAIN_BACKGROUND_COLOR,
+            null
         )
         private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1").apply {
             chain = CHAIN

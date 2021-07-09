@@ -39,7 +39,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             selectedChain = selectedChain,
             addressCallback = ::updateAddress,
             errorCallback = ::handleError,
-            enableUD = viewModel.enableUD(selectedChain)
+            enableUD = viewModel.enableUD(selectedChain),
+            enableENS = viewModel.enableENS(selectedChain)
         )
     }
 

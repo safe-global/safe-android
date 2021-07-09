@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
@@ -26,14 +27,16 @@ class AddSafeViewModelTest {
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
+    private val ensRepository = mockk<EnsRepository>()
     private val safeRepository = mockk<SafeRepository>()
-    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "")
+
+    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", null)
 
     private lateinit var viewModel: AddSafeViewModel
 
     @Before
     fun setup() {
-        viewModel = AddSafeViewModel(safeRepository, UnstoppableDomainsRepository(), appDispatchers)
+        viewModel = AddSafeViewModel(safeRepository, UnstoppableDomainsRepository(), ensRepository, appDispatchers)
         Dispatchers.setMain(TestCoroutineDispatcher())
     }
 

@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.SafeStatus
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
@@ -15,6 +16,7 @@ class AddSafeViewModel
 @Inject constructor(
     private val safeRepository: SafeRepository,
     private val unstoppableDomainsRepository: UnstoppableDomainsRepository,
+    private val ensRepository: EnsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<BaseStateViewModel.State>(appDispatchers) {
 
@@ -44,6 +46,9 @@ class AddSafeViewModel
         return unstoppableDomainsRepository.canResolve(chain)
     }
 
+    fun enableENS(chain: Chain): Boolean {
+        return ensRepository.canResolve(chain)
+    }
 }
 
 

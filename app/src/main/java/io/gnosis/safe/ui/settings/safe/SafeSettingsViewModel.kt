@@ -55,7 +55,7 @@ class SafeSettingsViewModel @Inject constructor(
 
         val localOwners = credentialsRepository.owners()
 
-        val safeEnsName = runCatching { safe?.let { ensRepository.reverseResolve(it.address) } }
+        val safeEnsName = runCatching { safe?.let { ensRepository.reverseResolve(it.address, safe.chain) } }
             .onFailure { Timber.e(it) }
             .getOrNull()
 
