@@ -32,7 +32,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = chain.ensRegistryAddress?.asEthereumAddress() ?: ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
-                    chainId = chain.chainId.toInt()
+                    chainId = chain.chainId
                 )
             )
         )
@@ -54,7 +54,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = resolverAddress,
                     data = GET_ADDRESS + node.toHexString(),
-                    chainId = chain.chainId.toInt()
+                    chainId = chain.chainId
                 )
             )
         )
@@ -76,7 +76,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = ENS_ADDRESS,
                     data = GET_RESOLVER + node.toHexString(),
-                    chainId = chain.chainId.toInt()
+                    chainId = chain.chainId
                 )
             )
         ).checkedResult("ENS resolver address request failure").asEthereumAddress()!!
@@ -87,7 +87,7 @@ class EnsRepository(
                 transaction = Transaction(
                     address = resolver,
                     data = GET_NAME + node.toHexString(),
-                    chainId = chain.chainId.toInt()
+                    chainId = chain.chainId
                 )
             )
         ).checkedResult("Failed to reverse resolve name")
