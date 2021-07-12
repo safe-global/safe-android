@@ -1,12 +1,15 @@
 package io.gnosis.safe.ui.safe.share
 
-import android.graphics.Color
+import android.content.res.Configuration
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+import android.view.WindowManager
 import androidx.lifecycle.Observer
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -15,6 +18,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
 import io.gnosis.safe.utils.formatEthAddress
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
@@ -37,6 +41,25 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(STYLE_NO_TITLE, R.style.DayNightDialog)
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let {
+            it.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+            if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) {
+                it.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                it.statusBarColor = requireContext().getColorCompat(R.color.surface_04)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    it.insetsController?.setSystemBarsAppearance(0, APPEARANCE_LIGHT_STATUS_BARS)
+                } else {
+                    it.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,13 +94,9 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
 
-            chainName.text = safeDetails.safe.chain?.name
-            kotlin.runCatching {
-                Color.parseColor(safeDetails.safe.chain?.backgroundColor)
-            }.onSuccess {
-                chainCircle.setColorFilter(it, PorterDuff.Mode.SRC_IN)
-            }.onFailure {
-                chainCircle.setColorFilter(requireContext().getColorCompat(R.color.primary), PorterDuff.Mode.SRC_IN)
+            safeDetails.safe.chain.let {
+                chainName.text = it.name
+                chainCircle.setColorFilter(it.backgroundColor.toColor(requireContext(), R.color.primary), PorterDuff.Mode.SRC_IN)
             }
 
             safeDetails.safe.address.let { address ->
