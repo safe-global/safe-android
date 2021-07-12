@@ -7,11 +7,11 @@ import java.math.BigInteger
 sealed class PushNotification(
     val type: String
 ) {
-    abstract val chainId: Int
+    abstract val chainId: BigInteger
     abstract val safe: Solidity.Address
 
     data class ConfirmationRequest(
-        override val chainId: Int,
+        override val chainId: BigInteger,
         override val safe: Solidity.Address,
         val safeTxHash: String
     ) : PushNotification(TYPE) {
@@ -19,7 +19,7 @@ sealed class PushNotification(
             const val TYPE = "CONFIRMATION_REQUEST"
             fun fromMap(params: Map<String, String>) =
                 ConfirmationRequest(
-                    params.getOrThrow("chainId").toInt(),
+                    params.getOrThrow("chainId").toBigInteger(),
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("safeTxHash")
                 )
@@ -27,7 +27,7 @@ sealed class PushNotification(
     }
 
     data class ExecutedTransaction(
-        override val chainId: Int,
+        override val chainId: BigInteger,
         override val safe: Solidity.Address,
         val safeTxHash: String,
         val failed: Boolean
@@ -36,7 +36,7 @@ sealed class PushNotification(
             const val TYPE = "EXECUTED_MULTISIG_TRANSACTION"
             fun fromMap(params: Map<String, String>) =
                 ExecutedTransaction(
-                    params.getOrThrow("chainId").toInt(),
+                    params.getOrThrow("chainId").toBigInteger(),
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("safeTxHash"),
                     params.getOrThrow("failed").toBoolean()
@@ -45,7 +45,7 @@ sealed class PushNotification(
     }
 
     data class IncomingToken(
-        override val chainId: Int,
+        override val chainId: BigInteger,
         override val safe: Solidity.Address,
         val txHash: String,
         val tokenAddress: Solidity.Address, // null for ERC721 tokens
@@ -56,7 +56,7 @@ sealed class PushNotification(
             const val TYPE = "INCOMING_TOKEN"
             fun fromMap(params: Map<String, String>) =
                 IncomingToken(
-                    params.getOrThrow("chainId").toInt(),
+                    params.getOrThrow("chainId").toBigInteger(),
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("txHash"),
                     params.getOrThrow("tokenAddress").asEthereumAddress()!!,
@@ -67,7 +67,7 @@ sealed class PushNotification(
     }
 
     data class IncomingEther(
-        override val chainId: Int,
+        override val chainId: BigInteger,
         override val safe: Solidity.Address,
         val txHash: String,
         val value: BigInteger
@@ -76,7 +76,7 @@ sealed class PushNotification(
             const val TYPE = "INCOMING_ETHER"
             fun fromMap(params: Map<String, String>) =
                 IncomingEther(
-                    params.getOrThrow("chainId").toInt(),
+                    params.getOrThrow("chainId").toBigInteger(),
                     params.getOrThrow("address").asEthereumAddress()!!,
                     params.getOrThrow("txHash"),
                     params.getOrThrow("value").toBigInteger()
