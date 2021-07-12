@@ -86,7 +86,7 @@ class SafeSettingsViewModel @Inject constructor(
                 }.onSuccess {
                     updateState { SafeSettingsState(safe, null, null, listOf(), SafeRemoved) }
                     tracker.setNumSafes(safeRepository.getSafeCount())
-                    notificationRepository.unregisterSafe(safe.address)
+                    notificationRepository.unregisterSafe(safe.chainId, safe.address)
                     notificationManager.deleteNotificationChannelGroup(safe)
                 }
             }

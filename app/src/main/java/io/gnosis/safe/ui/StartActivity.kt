@@ -36,6 +36,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.math.BigInteger
 import javax.inject.Inject
 
 class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
@@ -89,13 +90,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun handleIntent(intent: Intent?) {
         intent?.let {
+            val chainId = it.getStringExtra(EXTRA_CHAIN_ID)?.toBigInteger() ?: BigInteger.ZERO
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
             safeAddress?.let {
                 // Workaround in order to change active safe when push notification for unselected safe is received
                 lifecycleScope.launch {
-                    val safe = safeRepository.getSafeBy(safeAddress)
+                    val safe = safeRepository.getSafeBy(safeAddress, chainId)
                     safe?.let {
                         safeRepository.setActiveSafe(it)
                         setSafeData(it)
@@ -318,12 +320,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     override fun screenId() = null
 
     companion object {
+        const val EXTRA_CHAIN_ID = "extra.string.chain_id"
         const val EXTRA_SAFE = "extra.string.safe"
         const val EXTRA_TX_ID = "extra.string.tx_id"
 
-        fun createIntent(context: Context, safe: Safe, txId: String? = null) =
+        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
             Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_SAFE, safe.address.asEthereumAddressString())
+                putExtra(EXTRA_CHAIN_ID, chainId.toString())
+                putExtra(EXTRA_SAFE, safeAddress)
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }

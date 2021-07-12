@@ -20,6 +20,7 @@ import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -56,9 +57,9 @@ class NotificationRepository(
         }
 
     suspend fun handlePushNotification(pushNotification: PushNotification) {
-        val safe = safeRepository.getSafes().find { it.address == pushNotification.safe }
+        val safe = safeRepository.getSafeBy(pushNotification.safe, pushNotification.chainId)
         if (safe == null) {
-            unregisterSafe(pushNotification.safe)
+            unregisterSafe(pushNotification.chainId, pushNotification.safe)
         } else {
             val notification = notificationManager.builder(safe, pushNotification).build()
             notificationManager.show(notification)
@@ -218,10 +219,11 @@ class NotificationRepository(
         }
     }
 
-    suspend fun unregisterSafe(safeAddress: Solidity.Address) {
+    suspend fun unregisterSafe(chainId: BigInteger, safeAddress: Solidity.Address) {
         // no need to update safe meta because on safe removal safe meta entry will be also deleted
         kotlin.runCatching {
             deviceUuid?.let {
+                //TODO: use new unregistration format
                 notificationService.unregisterSafe(it, safeAddress.asEthereumAddressChecksumString())
             }
         }
