@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.asEthereumAddressString
 
 class NotificationManager(
     private val context: Context,
@@ -35,8 +36,13 @@ class NotificationManager(
             // For upgrading users. Can be removed in a future release?
             runBlocking {
                 safeRepository.getSafes().forEach { safe ->
-                    if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) == null) {
+                    if (notificationManager.getNotificationChannelGroup(safe.notificationChannelId()) == null) {
                         createNotificationChannelGroup(safe)
+                    } else {
+                        // legacy notification groups
+                        if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) != null) {
+                            notificationManager.deleteNotificationChannelGroup(safe.address.asEthereumAddressChecksumString())
+                        }
                     }
                 }
                 notificationManager.deleteNotificationChannel(CHANNEL_ID)
@@ -53,7 +59,7 @@ class NotificationManager(
         }
 
     fun createNotificationChannelGroup(safe: Safe) {
-        val id = safe.address.asEthereumAddressChecksumString()
+        val id = safe.notificationChannelId()
         val name = safe.localName
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannelGroup(NotificationChannelGroup(id, name))
@@ -224,12 +230,12 @@ class NotificationManager(
     }
 
     private fun txDetailsIntent(safe: Safe, safeTxHash: String): PendingIntent {
-        val intent = StartActivity.createIntent(context, safe, safeTxHash)
+        val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString(), safeTxHash)
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun txListIntent(safe: Safe): PendingIntent {
-        val intent = StartActivity.createIntent(context, safe)
+        val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString())
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -240,3 +246,5 @@ class NotificationManager(
         private const val CHANNEL_ID = "channel_tx_notifications"
     }
 }
+
+fun Safe.notificationChannelId(): String = "${chainId}_${address.asEthereumAddressChecksumString()}"
