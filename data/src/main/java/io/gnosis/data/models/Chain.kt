@@ -29,13 +29,7 @@ data class Chain(
 ) : Serializable {
 
     @Ignore
-    var currency: Currency = Currency(
-        chainId,
-        "",
-        "",
-        0,
-        null
-    )
+    var currency: Currency = Currency.DEFAULT_CURRENCY
 
     @Entity(
         tableName = Currency.TABLE_NAME,
