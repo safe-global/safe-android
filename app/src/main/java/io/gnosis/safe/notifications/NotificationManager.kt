@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
@@ -128,13 +127,13 @@ class NotificationManager(
 
         when (pushNotification) {
             is PushNotification.ConfirmationRequest -> {
-                title = context.getString(R.string.push_title_confirmation_required)
+                title = context.getString(R.string.push_title_confirmation_required, safe.chain.name)
                 text = context.getString(R.string.push_text_confirmation_required, safeName)
                 intent = txDetailsIntent(safe, pushNotification.safeTxHash)
             }
             is PushNotification.ExecutedTransaction -> {
                 if (pushNotification.failed) {
-                    title = context.getString(R.string.push_title_failed)
+                    title = context.getString(R.string.push_title_failed, safe.chain.name)
                     text = context.getString(R.string.push_text_failed, safeName)
                 } else {
                     title = context.getString(R.string.push_title_executed)
@@ -144,18 +143,19 @@ class NotificationManager(
             }
             is PushNotification.IncomingToken -> {
                 if (pushNotification.tokenId != null) {
-                    title = context.getString(R.string.push_title_received_erc721)
+                    title = context.getString(R.string.push_title_received_erc721, safe.chain.name)
                     text = context.getString(R.string.push_text_received_erc721, safeName)
                 } else {
-                    title = context.getString(R.string.push_title_received_erc20)
+                    title = context.getString(R.string.push_title_received_erc20, safe.chain.name)
                     text = context.getString(R.string.push_text_received_erc20, safeName)
                 }
                 intent = txListIntent(safe)
             }
             is PushNotification.IncomingEther -> {
-                title = context.getString(R.string.push_title_received_eth)
-                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(TokenRepository.NATIVE_CURRENCY_INFO.decimals))
-                text = context.getString(R.string.push_text_received_eth, safeName, value)
+                val currencySymbol = safe.chain.currency.symbol
+                title = context.getString(R.string.push_title_received_native_currency, currencySymbol, safe.chain.name)
+                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(safe.chain.currency.decimals))
+                text = context.getString(R.string.push_text_received_native_currency, safeName, value, currencySymbol)
                 intent = txListIntent(safe)
             }
         }

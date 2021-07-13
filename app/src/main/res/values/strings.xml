@@ -400,22 +400,22 @@
 
     <string name="push_safe_name">Safe %1$s</string>
 
-    <string name="push_title_confirmation_required">Confirmation required</string>
+    <string name="push_title_confirmation_required">Confirmation required (%1$s)</string>
     <string name="push_text_confirmation_required">%1$s: A transaction requires your confirmation!</string>
 
-    <string name="push_title_executed">Transaction successful</string>
+    <string name="push_title_executed">Transaction successful (%1$s)</string>
     <string name="push_text_executed">%1$s: Transaction succeeded</string>
 
-    <string name="push_title_failed">Transaction failed</string>
+    <string name="push_title_failed">Transaction failed (%1$s)</string>
     <string name="push_text_failed">%1$s: Transaction failed</string>
 
-    <string name="push_title_received_eth">Incoming ETH</string>
-    <string name="push_text_received_eth">%1$s: %2$s ETH received</string>
+    <string name="push_title_received_native_currency">Incoming %1$s (%2$s)</string>
+    <string name="push_text_received_native_currency">%1$s: %2$s %3$s received</string>
 
-    <string name="push_title_received_erc20">Incoming ERC20</string>
+    <string name="push_title_received_erc20">Incoming ERC20 (%1$s)</string>
     <string name="push_text_received_erc20">%1$s: ERC20 tokens received</string>
 
-    <string name="push_title_received_erc721">Incoming ERC721</string>
+    <string name="push_title_received_erc721">Incoming ERC721 (%1$s)</string>
     <string name="push_text_received_erc721">%1$s: ERC721 token received</string>
 
     <string name="address_copied">Address copied</string>
