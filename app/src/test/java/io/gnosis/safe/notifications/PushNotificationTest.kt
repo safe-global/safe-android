@@ -1,7 +1,7 @@
 package io.gnosis.safe.notifications
 
 
-import io.gnosis.data.BuildConfig.CHAIN_ID
+import io.gnosis.data.BuildConfig
 import io.gnosis.safe.notifications.models.PushNotification
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -31,6 +31,7 @@ class PushNotificationTest {
     data class TestData(val input: Map<String, String>, val expected: PushNotification)
 
     companion object {
+        private val TEST_CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
         private const val TEST_SAFE = "0x0"
         private const val TEST_TX_HASH = "some hash"
         private const val TEST_SAFE_TX_HASH = "some tx hash"
@@ -45,36 +46,36 @@ class PushNotificationTest {
                     TestData(
                         mapOf(
                             "type" to "CONFIRMATION_REQUEST",
-                            "chainId" to "$CHAIN_ID",
+                            "chainId" to "$TEST_CHAIN_ID",
                             "address" to TEST_SAFE,
                             "safeTxHash" to TEST_SAFE_TX_HASH
                         ),
-                        PushNotification.ConfirmationRequest(CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_SAFE_TX_HASH)
+                        PushNotification.ConfirmationRequest(TEST_CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_SAFE_TX_HASH)
                     ),
             PushNotification.ExecutedTransaction::class to
                     TestData(
                         mapOf(
                             "type" to "EXECUTED_MULTISIG_TRANSACTION",
-                            "chainId" to "$CHAIN_ID",
+                            "chainId" to "$TEST_CHAIN_ID",
                             "address" to TEST_SAFE,
                             "safeTxHash" to TEST_SAFE_TX_HASH,
                             "failed" to TEST_FAILED
                         ),
-                        PushNotification.ExecutedTransaction(CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_SAFE_TX_HASH, TEST_FAILED.toBoolean())
+                        PushNotification.ExecutedTransaction(TEST_CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_SAFE_TX_HASH, TEST_FAILED.toBoolean())
                     ),
             //ERC20
             PushNotification.IncomingToken::class to
                     TestData(
                         mapOf(
                             "type" to "INCOMING_TOKEN",
-                            "chainId" to "$CHAIN_ID",
+                            "chainId" to "$TEST_CHAIN_ID",
                             "address" to TEST_SAFE,
                             "txHash" to TEST_TX_HASH,
                             "tokenAddress" to TEST_TOKEN_ADDRESS,
                             "value" to TEST_VALUE
                         ),
                         PushNotification.IncomingToken(
-                            CHAIN_ID,
+                            TEST_CHAIN_ID,
                             TEST_SAFE.asEthereumAddress()!!,
                             TEST_TX_HASH,
                             TEST_TOKEN_ADDRESS.asEthereumAddress()!!,
@@ -86,14 +87,14 @@ class PushNotificationTest {
                     TestData(
                         mapOf(
                             "type" to "INCOMING_TOKEN",
-                            "chainId" to "$CHAIN_ID",
+                            "chainId" to "$TEST_CHAIN_ID",
                             "address" to TEST_SAFE,
                             "txHash" to TEST_TX_HASH,
                             "tokenAddress" to TEST_TOKEN_ADDRESS,
                             "tokenId" to TEST_TOKEN_ID
                         ),
                         PushNotification.IncomingToken(
-                            CHAIN_ID,
+                            TEST_CHAIN_ID,
                             TEST_SAFE.asEthereumAddress()!!,
                             TEST_TX_HASH,
                             TEST_TOKEN_ADDRESS.asEthereumAddress()!!,
@@ -105,12 +106,12 @@ class PushNotificationTest {
                     TestData(
                         mapOf(
                             "type" to "INCOMING_ETHER",
-                            "chainId" to "$CHAIN_ID",
+                            "chainId" to "$TEST_CHAIN_ID",
                             "address" to TEST_SAFE,
                             "value" to TEST_VALUE,
                             "txHash" to TEST_TX_HASH
                         ),
-                        PushNotification.IncomingEther(CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_TX_HASH, TEST_VALUE.toBigInteger())
+                        PushNotification.IncomingEther(TEST_CHAIN_ID, TEST_SAFE.asEthereumAddress()!!, TEST_TX_HASH, TEST_VALUE.toBigInteger())
                     )
         )
     }

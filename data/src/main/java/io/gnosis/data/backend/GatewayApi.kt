@@ -78,6 +78,9 @@ interface GatewayApi {
     @GET("/v1/chains")
     suspend fun loadChainInfo(): Page<ChainInfo>
 
+    @GET("/v1/chains/{chainId}")
+    suspend fun loadChainInfo(@Path("chainId") chainId: BigInteger): ChainInfo
+
     @GET
     suspend fun loadChainInfoPage(@Url pageLink: String): Page<ChainInfo>
 

@@ -46,5 +46,7 @@ data class SafeWithChainData(
     @Embedded
     val safe: Safe,
     @Relation(parentColumn = Safe.COL_CHAIN_ID, entityColumn = Chain.COL_CHAIN_ID)
-    val chain: Chain?
+    val chain: Chain?,
+    @Relation(parentColumn = Safe.COL_CHAIN_ID, entityColumn = Chain.Currency.COL_CHAIN_ID)
+    val currency: Chain.Currency?
 )

@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.ui.StartActivity
@@ -21,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.asEthereumAddressString
 
 class NotificationManager(
     private val context: Context,
@@ -35,8 +35,11 @@ class NotificationManager(
             // For upgrading users. Can be removed in a future release?
             runBlocking {
                 safeRepository.getSafes().forEach { safe ->
-                    if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) == null) {
+                    if (notificationManager.getNotificationChannelGroup(safe.notificationChannelId()) == null) {
                         createNotificationChannelGroup(safe)
+                    } else if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) != null) {
+                        // legacy notification groups
+                        notificationManager.deleteNotificationChannelGroup(safe.address.asEthereumAddressChecksumString())
                     }
                 }
                 notificationManager.deleteNotificationChannel(CHANNEL_ID)
@@ -53,7 +56,7 @@ class NotificationManager(
         }
 
     fun createNotificationChannelGroup(safe: Safe) {
-        val id = safe.address.asEthereumAddressChecksumString()
+        val id = safe.notificationChannelId()
         val name = safe.localName
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannelGroup(NotificationChannelGroup(id, name))
@@ -122,13 +125,13 @@ class NotificationManager(
 
         when (pushNotification) {
             is PushNotification.ConfirmationRequest -> {
-                title = context.getString(R.string.push_title_confirmation_required)
+                title = context.getString(R.string.push_title_confirmation_required, safe.chain.name)
                 text = context.getString(R.string.push_text_confirmation_required, safeName)
                 intent = txDetailsIntent(safe, pushNotification.safeTxHash)
             }
             is PushNotification.ExecutedTransaction -> {
                 if (pushNotification.failed) {
-                    title = context.getString(R.string.push_title_failed)
+                    title = context.getString(R.string.push_title_failed, safe.chain.name)
                     text = context.getString(R.string.push_text_failed, safeName)
                 } else {
                     title = context.getString(R.string.push_title_executed)
@@ -138,18 +141,19 @@ class NotificationManager(
             }
             is PushNotification.IncomingToken -> {
                 if (pushNotification.tokenId != null) {
-                    title = context.getString(R.string.push_title_received_erc721)
+                    title = context.getString(R.string.push_title_received_erc721, safe.chain.name)
                     text = context.getString(R.string.push_text_received_erc721, safeName)
                 } else {
-                    title = context.getString(R.string.push_title_received_erc20)
+                    title = context.getString(R.string.push_title_received_erc20, safe.chain.name)
                     text = context.getString(R.string.push_text_received_erc20, safeName)
                 }
                 intent = txListIntent(safe)
             }
             is PushNotification.IncomingEther -> {
-                title = context.getString(R.string.push_title_received_eth)
-                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(TokenRepository.NATIVE_CURRENCY_INFO.decimals))
-                text = context.getString(R.string.push_text_received_eth, safeName, value)
+                val currencySymbol = safe.chain.currency.symbol
+                title = context.getString(R.string.push_title_received_native_currency, currencySymbol, safe.chain.name)
+                val value = balanceFormatter.shortAmount(pushNotification.value.convertAmount(safe.chain.currency.decimals))
+                text = context.getString(R.string.push_text_received_native_currency, safeName, value, currencySymbol)
                 intent = txListIntent(safe)
             }
         }
@@ -224,12 +228,12 @@ class NotificationManager(
     }
 
     private fun txDetailsIntent(safe: Safe, safeTxHash: String): PendingIntent {
-        val intent = StartActivity.createIntent(context, safe, safeTxHash)
+        val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString(), safeTxHash)
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun txListIntent(safe: Safe): PendingIntent {
-        val intent = StartActivity.createIntent(context, safe)
+        val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString())
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -240,3 +244,5 @@ class NotificationManager(
         private const val CHANNEL_ID = "channel_tx_notifications"
     }
 }
+
+fun Safe.notificationChannelId(): String = "${chainId}_${address.asEthereumAddressChecksumString()}"

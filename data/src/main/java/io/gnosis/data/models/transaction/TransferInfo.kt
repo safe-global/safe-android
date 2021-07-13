@@ -9,7 +9,7 @@ import java.math.BigInteger
 enum class TransferType {
     @Json(name = "ERC20") ERC20,
     @Json(name = "ERC721") ERC721,
-    @Json(name = "ETHER") ETHER
+    @Json(name = "NATIVE_COIN") NATIVE_COIN
 }
 
 sealed class TransferInfo(
@@ -45,11 +45,12 @@ sealed class TransferInfo(
         val logoUri: String?
     ) : TransferInfo(TransferType.ERC721)
 
+    //TODO: rename class to NativeTransfer
     @JsonClass(generateAdapter = true)
     data class EtherTransfer(
         @Json(name = "value")
         val value: BigInteger
-    ) : TransferInfo(TransferType.ETHER)
+    ) : TransferInfo(TransferType.NATIVE_COIN)
 }
 
 

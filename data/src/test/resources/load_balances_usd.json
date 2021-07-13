@@ -3,7 +3,7 @@
   "items": [
     {
       "tokenInfo": {
-        "type": "ETHER",
+        "type": "NATIVE_TOKEN",
         "address": "0x0000000000000000000000000000000000000000",
         "decimals": 0,
         "symbol": "ETH",

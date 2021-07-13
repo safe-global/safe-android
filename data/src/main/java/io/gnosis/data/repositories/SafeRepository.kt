@@ -44,14 +44,18 @@ class SafeRepository(
 
     suspend fun getSafes(): List<Safe> = safeDao.loadAllWithChainData().map {
         val safe = it.safe
-        safe.chain = it.chain
+        safe.chain = it.chain?.apply {
+            currency = it.currency ?: Chain.Currency.DEFAULT_CURRENCY
+        }
             ?: Chain(
                 DataBuildConfig.CHAIN_ID.toBigInteger(),
                 DataBuildConfig.BLOCKCHAIN_NAME,
                 DataBuildConfig.CHAIN_TEXT_COLOR,
                 DataBuildConfig.CHAIN_BACKGROUND_COLOR,
                 ENS_REGISTRY
-            )
+            ).apply {
+                currency = Chain.Currency.DEFAULT_CURRENCY
+            }
         safe
     }
 
@@ -83,8 +87,9 @@ class SafeRepository(
         val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
         val address = activeSafeData?.get(0)?.asEthereumAddress()
         return address?.let {
-            val chainId = nullOnThrow { activeSafeData[2].toBigInteger() } ?: DataBuildConfig.CHAIN_ID.toBigInteger()
-            getSafeBy(it, chainId)
+            val chainId = nullOnThrow { activeSafeData[2].toBigInteger() }
+            // safes from old version won't have chain id saved
+            if (chainId != null) getSafeBy(it, chainId) else getSafeBy(it)
         }
     }
 
@@ -92,14 +97,18 @@ class SafeRepository(
         val safeWithChainData = safeDao.loadByAddressWithChainData(address)
         val safe = safeWithChainData?.safe
         safe?.let {
-            it.chain = safeWithChainData.chain
+            it.chain = safeWithChainData.chain?.apply {
+                currency = safeWithChainData.currency ?: Chain.Currency.DEFAULT_CURRENCY
+            }
                 ?: Chain(
                     DataBuildConfig.CHAIN_ID.toBigInteger(),
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
                     DataBuildConfig.CHAIN_BACKGROUND_COLOR,
                     ENS_REGISTRY
-                )
+                ).apply {
+                    currency = Chain.Currency.DEFAULT_CURRENCY
+                }
         }
         return safe
     }
@@ -108,14 +117,18 @@ class SafeRepository(
         val safeWithChainData = safeDao.loadByAddressWithChainData(address, chainId)
         val safe = safeWithChainData?.safe
         safe?.apply {
-            chain = safeWithChainData.chain
+            chain = safeWithChainData.chain?.apply {
+                currency = safeWithChainData.currency ?: Chain.Currency.DEFAULT_CURRENCY
+            }
                 ?: Chain(
                     DataBuildConfig.CHAIN_ID.toBigInteger(),
                     DataBuildConfig.BLOCKCHAIN_NAME,
                     DataBuildConfig.CHAIN_TEXT_COLOR,
                     DataBuildConfig.CHAIN_BACKGROUND_COLOR,
                     ENS_REGISTRY
-                )
+                ).apply {
+                    currency = Chain.Currency.DEFAULT_CURRENCY
+                }
         }
         return safe
     }

@@ -13,8 +13,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
@@ -29,19 +29,19 @@ class ChainInfoRepositoryTest {
 
     private val rinkebyChainInfo = ChainInfo(
         Chain.ID_RINKEBY, "Rinkeby", null, "", "",
-        NativeCurrency("", "", 18), "",
+        NativeCurrency("", "", 18, ""), "",
         ChainTheme("", "")
     )
     private val pagedResult: List<ChainInfo> = listOf(
         ChainInfo(
             Chain.ID_MAINNET, "Mainnet", null, "", "",
-            NativeCurrency("", "", 18), "",
+            NativeCurrency("", "", 18, ""), "",
             ChainTheme("", "")
         ),
         rinkebyChainInfo,
         ChainInfo(
             BigInteger.valueOf(137), "Matic", null, "", "",
-            NativeCurrency("", "", 18), "",
+            NativeCurrency("", "", 18, ""), "",
             ChainTheme("", "")
         )
     )
@@ -63,6 +63,7 @@ class ChainInfoRepositoryTest {
     @Test
     fun updateChainInfo() = runBlocking {
         coEvery { chainDao.save(any()) } just Runs
+        coEvery { chainDao.saveCurrency(any()) } just Runs
         val safes = listOf(Safe("0x00".asEthereumAddress()!!, "", Chain.ID_RINKEBY))
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
