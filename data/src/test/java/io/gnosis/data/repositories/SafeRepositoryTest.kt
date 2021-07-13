@@ -56,6 +56,30 @@ class SafeRepositoryTest {
     }
 
     @Test
+    fun `getSafeBy (address) - should return safe`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
+        coEvery { safeDao.loadByAddressWithChainData(safeAddress) } returns SafeWithChainData(safe, null, null)
+
+        val actual = safeRepository.getSafeBy(safeAddress)
+
+        assertEquals(safe, actual)
+        coVerify(exactly = 1) { safeDao.loadByAddressWithChainData(safeAddress) }
+    }
+
+    @Test
+    fun `getSafeBy (address, chainId) - should return safe`() = runBlocking {
+        val safeAddress = Solidity.Address(BigInteger.ZERO)
+        val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
+        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, defaultChain, defaultCurrency)
+
+        val actual = safeRepository.getSafeBy(safeAddress, defaultChain.chainId)
+
+        assertEquals(safe, actual)
+        coVerify(exactly = 1) { safeDao.loadByAddressWithChainData(safeAddress, defaultChain.chainId) }
+    }
+
+    @Test
     fun `addSafe - (Safe) should succeed`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
         coEvery { safeDao.insert(any()) } just Runs
