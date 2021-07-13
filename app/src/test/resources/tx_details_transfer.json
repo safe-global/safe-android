@@ -7,7 +7,7 @@
     "recipient": "0x938bae50a210b80EA233112800Cd5Bc2e7644300",
     "direction": "OUTGOING",
     "transferInfo": {
-      "type": "ETHER",
+      "type": "NATIVE_COIN",
       "value": "100000000000000000"
     }
   },
