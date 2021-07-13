@@ -15,12 +15,7 @@ class TokenRepository(private val gatewayApi: GatewayApi) {
 
     suspend fun loadBalanceOf(safe: Safe, fiatCode: String): CoinBalances {
         val response = gatewayApi.loadBalances(address = safe.address.asEthereumAddressChecksumString(), fiat = fiatCode, chainId = safe.chainId)
-        return CoinBalances(response.fiatTotal, response.items.map {
-            if (it.tokenInfo.address == ZERO_ADDRESS)
-                it.copy(tokenInfo = it.tokenInfo.copy(logoUri = "local::native_currency"))
-            else
-                it
-        })
+        return CoinBalances(response.fiatTotal, response.items)
     }
 
     suspend fun loadCollectiblesOf(safe: Safe): List<Collectible> =
