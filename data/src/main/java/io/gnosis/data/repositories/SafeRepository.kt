@@ -87,8 +87,9 @@ class SafeRepository(
         val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
         val address = activeSafeData?.get(0)?.asEthereumAddress()
         return address?.let {
-            val chainId = nullOnThrow { activeSafeData[2].toBigInteger() } ?: DataBuildConfig.CHAIN_ID.toBigInteger()
-            getSafeBy(it, chainId)
+            val chainId = nullOnThrow { activeSafeData[2].toBigInteger() }
+            // safes from old version won't have chain id saved
+            if (chainId != null) getSafeBy(it, chainId) else getSafeBy(it)
         }
     }
 
