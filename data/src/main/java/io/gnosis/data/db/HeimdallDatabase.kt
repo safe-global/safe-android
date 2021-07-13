@@ -18,7 +18,8 @@ import pm.gnosis.svalinn.security.db.EncryptedString
         Safe::class,
         SafeMetaData::class,
         Owner::class,
-        Chain::class
+        Chain::class,
+        Chain.Currency::class
     ], version = HeimdallDatabase.LATEST_DB_VERSION
 )
 @TypeConverters(

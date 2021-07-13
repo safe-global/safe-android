@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 

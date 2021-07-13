@@ -10,6 +10,9 @@ interface ChainDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(chain: Chain)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveCurrency(currency: Chain.Currency)
+
     @Delete
     suspend fun delete(chain: Chain)
 

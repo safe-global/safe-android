@@ -22,13 +22,15 @@ class ChainInfoRepository(
         safes.map { it.chainId }.toSet().forEach { chainId ->
             val chainInfo = chains.find { it.chainId == chainId }
             chainInfo?.let {
-                val chain = Chain(it.chainId, it.chainName, it.theme.textColor, it.theme.backgroundColor, it.ensRegistryAddress)
-                chainDao.save(chain)
+                save(it.toChain())
             }
         }
     }
 
-    suspend fun save(chain: Chain) = chainDao.save(chain)
+    suspend fun save(chain: Chain) {
+        chainDao.save(chain)
+        chainDao.saveCurrency(chain.currency)
+    }
 
     suspend fun getChains(): List<Chain> = chainDao.loadAll()
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "71d70d6569197e70b91b2693991d6207",
+    "identityHash": "9b23af3e856ca2fedd1d0270c032f379",
     "entities": [
       {
         "tableName": "safes",
@@ -130,7 +130,7 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -171,12 +171,68 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "native_currency",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `decimals` INTEGER NOT NULL, `logo_url` TEXT, PRIMARY KEY(`chain_id`), FOREIGN KEY(`chain_id`) REFERENCES `chains`(`chain_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "chainId",
+            "columnName": "chain_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "symbol",
+            "columnName": "symbol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "decimals",
+            "columnName": "decimals",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logoUrl",
+            "columnName": "logo_url",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "chain_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "chains",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "chain_id"
+            ],
+            "referencedColumns": [
+              "chain_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71d70d6569197e70b91b2693991d6207')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b23af3e856ca2fedd1d0270c032f379')"
     ]
   }
 }
