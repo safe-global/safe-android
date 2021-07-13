@@ -39,13 +39,6 @@
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/toolbar_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-
     <TextView
         android:id="@+id/chain_ribbon"
         style="@style/ChainRibbon"
@@ -53,7 +46,7 @@
         android:layout_height="@dimen/chain_ribbon_size"
         tools:text="Mainnet"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_shadow"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"/>
 
     <TextView
         android:id="@+id/loaded"
