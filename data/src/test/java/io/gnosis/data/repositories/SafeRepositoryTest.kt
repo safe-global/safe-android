@@ -27,7 +27,8 @@ class SafeRepositoryTest {
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
 
-    private var defaultChain = Chain(CHAIN_ID, "Name", "", "", null)
+    private val defaultChain = Chain(CHAIN_ID, "Name", "", "", null)
+    private val defaultCurrency = Chain.Currency(CHAIN_ID, "name", "symbol", 18, null)
 
     @Before
     fun setup() {
@@ -46,7 +47,7 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain) }
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain, defaultCurrency) }
 
         val actual = safeRepository.getSafes()
 
@@ -102,7 +103,7 @@ class SafeRepositoryTest {
     @Test
     fun `getActiveSafe - (with active safe) should return safe`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ZERO), "zero")
-        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, defaultChain)
+        coEvery { safeDao.loadByAddressWithChainData(any(), any()) } returns SafeWithChainData(safe, defaultChain, defaultCurrency)
 
         safeRepository.setActiveSafe(safe)
         val actual = safeRepository.getActiveSafe()
@@ -241,7 +242,7 @@ class SafeRepositoryTest {
             Safe(Solidity.Address(BigInteger.ONE), "one"),
             Safe(Solidity.Address(BigInteger.TEN), "ten")
         )
-        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain) }
+        coEvery { safeDao.loadAllWithChainData() } returns safes.map { SafeWithChainData(it, defaultChain, defaultCurrency) }
         coEvery { safeDao.delete(any()) } just Runs
 
         safeRepository.clearUserData()
