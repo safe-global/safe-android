@@ -45,7 +45,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.let {
+        requireDialog().window?.let {
             it.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT

@@ -58,7 +58,7 @@ data class Chain(
         val decimals: Int,
 
         @ColumnInfo(name = Currency.COL_LOGO_URL)
-        val logoUrl: String?
+        val logoUrl: String
     ) : Serializable {
 
         companion object {
@@ -74,7 +74,7 @@ data class Chain(
                 BuildConfig.NATIVE_CURRENCY_NAME,
                 BuildConfig.NATIVE_CURRENCY_SYMBOL,
                 18,
-                null
+                "local::native_currency"
             )
         }
     }

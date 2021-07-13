@@ -30,7 +30,7 @@ data class NativeCurrency(
     @Json(name = "name") val name: String,
     @Json(name = "symbol") val symbol: String,
     @Json(name = "decimals") val decimals: Int,
-    @Json(name = "logoUrl") val logoUrl: String?
+    @Json(name = "logoUrl") val logoUrl: String
 ) {
 
     fun toCurrency(chainId: BigInteger): Chain.Currency {

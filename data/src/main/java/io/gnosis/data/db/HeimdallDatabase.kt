@@ -71,7 +71,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.COL_ENS_REGISTRY_ADDRESS}` TEXT, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
                 )
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${Chain.Currency.TABLE_NAME}` (`${Chain.Currency.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.Currency.COL_NAME}` TEXT NOT NULL, `${Chain.Currency.COL_SYMBOL}` TEXT NOT NULL, `${Chain.Currency.COL_DECIMALS}` INTEGER NOT NULL, `${Chain.Currency.COL_LOGO_URL}` TEXT, PRIMARY KEY(`${Chain.Currency.COL_CHAIN_ID}`), FOREIGN KEY(`${Chain.Currency.COL_CHAIN_ID}`) REFERENCES `${Chain.TABLE_NAME}`(`${Chain.COL_CHAIN_ID}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
+                    """CREATE TABLE IF NOT EXISTS `${Chain.Currency.TABLE_NAME}` (`${Chain.Currency.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.Currency.COL_NAME}` TEXT NOT NULL, `${Chain.Currency.COL_SYMBOL}` TEXT NOT NULL, `${Chain.Currency.COL_DECIMALS}` INTEGER NOT NULL, `${Chain.Currency.COL_LOGO_URL}` TEXT NOT NULL, PRIMARY KEY(`${Chain.Currency.COL_CHAIN_ID}`), FOREIGN KEY(`${Chain.Currency.COL_CHAIN_ID}`) REFERENCES `${Chain.TABLE_NAME}`(`${Chain.COL_CHAIN_ID}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
                 )
 
                 // Add CHAIN_ID column and add it to primary key

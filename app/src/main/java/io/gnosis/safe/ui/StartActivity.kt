@@ -89,7 +89,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun handleIntent(intent: Intent?) {
         intent?.let {
-            val chainId = it.getStringExtra(EXTRA_CHAIN_ID)?.toBigInteger() ?: BigInteger.ZERO
+            val chainId = it.getSerializableExtra(EXTRA_CHAIN_ID)?.let { it as BigInteger } ?: BigInteger.ZERO
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
@@ -325,7 +325,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
         fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
             Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_CHAIN_ID, chainId.toString())
+                putExtra(EXTRA_CHAIN_ID, chainId)
                 putExtra(EXTRA_SAFE, safeAddress)
                 putExtra(EXTRA_TX_ID, txId)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP

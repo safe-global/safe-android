@@ -37,11 +37,9 @@ class NotificationManager(
                 safeRepository.getSafes().forEach { safe ->
                     if (notificationManager.getNotificationChannelGroup(safe.notificationChannelId()) == null) {
                         createNotificationChannelGroup(safe)
-                    } else {
+                    } else if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) != null) {
                         // legacy notification groups
-                        if (notificationManager.getNotificationChannelGroup(safe.address.asEthereumAddressChecksumString()) != null) {
-                            notificationManager.deleteNotificationChannelGroup(safe.address.asEthereumAddressChecksumString())
-                        }
+                        notificationManager.deleteNotificationChannelGroup(safe.address.asEthereumAddressChecksumString())
                     }
                 }
                 notificationManager.deleteNotificationChannel(CHANNEL_ID)
