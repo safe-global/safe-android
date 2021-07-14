@@ -7,6 +7,7 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.repositories.*
+import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.workers.WorkRepository
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
@@ -39,7 +40,7 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun providesEthereumRepository(ethereumRpcConnector: EthereumRpcConnector): EthereumRepository =
-        RpcEthereumRepository(ethereumRpcConnector)
+        RpcEthereumRepository(ethereumRpcConnector, BuildConfig.BLOCKCHAIN_NET_URL)
 
     @Provides
     @Singleton

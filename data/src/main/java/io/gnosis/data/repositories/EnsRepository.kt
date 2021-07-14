@@ -23,9 +23,11 @@ class EnsRepository(
     fun canResolve(chain: Chain): Boolean = chain.ensRegistryAddress != null
 
     suspend fun resolve(url: String, chain: Chain): Solidity.Address {
+
+        ethereumRepository.rpcUrl = chain.rpcUrl
+
         val node = ensNormalizer.normalize(url).nameHash()
 
-        //FIXME: adjust Transaction object by changing chainId type from Int to BigInteger
         val resolverAddressRequest = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,
@@ -69,7 +71,10 @@ class EnsRepository(
 
     suspend fun reverseResolve(address: Solidity.Address, chain: Chain): String? {
 
+        ethereumRepository.rpcUrl = chain.rpcUrl
+
         val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
+
         val resolver = ethereumRepository.request(
             EthCall(
                 block = Block.LATEST,

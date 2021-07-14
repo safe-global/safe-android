@@ -21,6 +21,8 @@ android {
         buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#001428"))
         buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8E7E6"))
         buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Mainnet"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://etherscan.io/"))
 
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
 
@@ -35,6 +37,8 @@ android {
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
         }
 
         profile {
@@ -44,6 +48,8 @@ android {
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
         }
 
         unsafe {
@@ -53,6 +59,8 @@ android {
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
         }
 
         internal {
@@ -62,6 +70,8 @@ android {
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
 
         }
 
@@ -72,6 +82,8 @@ android {
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
             buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
             buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
         }
 
         mainnet_staging {

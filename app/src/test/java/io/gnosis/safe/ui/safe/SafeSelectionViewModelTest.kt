@@ -81,13 +81,7 @@ class SafeSelectionViewModelTest {
     }
 
     companion object {
-        private val CHAIN = Chain(
-            BuildConfig.CHAIN_ID.toBigInteger(),
-            BuildConfig.BLOCKCHAIN_NAME,
-            BuildConfig.CHAIN_TEXT_COLOR,
-            BuildConfig.CHAIN_BACKGROUND_COLOR,
-            null
-        )
+        private val CHAIN = Chain.DEFAULT_CHAIN
         private val SAFE_1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1").apply {
             chain = CHAIN
         }

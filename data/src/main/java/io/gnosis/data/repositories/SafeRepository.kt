@@ -2,7 +2,6 @@ package io.gnosis.data.repositories
 
 import android.content.SharedPreferences
 import io.gnosis.contracts.BuildConfig
-import io.gnosis.contracts.BuildConfig.ENS_REGISTRY
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
@@ -19,7 +18,6 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
-import io.gnosis.data.BuildConfig as DataBuildConfig
 
 class SafeRepository(
     private val safeDao: SafeDao,
@@ -47,15 +45,7 @@ class SafeRepository(
         safe.chain = it.chain?.apply {
             currency = it.currency ?: Chain.Currency.DEFAULT_CURRENCY
         }
-            ?: Chain(
-                DataBuildConfig.CHAIN_ID.toBigInteger(),
-                DataBuildConfig.BLOCKCHAIN_NAME,
-                DataBuildConfig.CHAIN_TEXT_COLOR,
-                DataBuildConfig.CHAIN_BACKGROUND_COLOR,
-                ENS_REGISTRY
-            ).apply {
-                currency = Chain.Currency.DEFAULT_CURRENCY
-            }
+            ?: Chain.DEFAULT_CHAIN
         safe
     }
 
@@ -100,15 +90,7 @@ class SafeRepository(
             it.chain = safeWithChainData.chain?.apply {
                 currency = safeWithChainData.currency ?: Chain.Currency.DEFAULT_CURRENCY
             }
-                ?: Chain(
-                    DataBuildConfig.CHAIN_ID.toBigInteger(),
-                    DataBuildConfig.BLOCKCHAIN_NAME,
-                    DataBuildConfig.CHAIN_TEXT_COLOR,
-                    DataBuildConfig.CHAIN_BACKGROUND_COLOR,
-                    ENS_REGISTRY
-                ).apply {
-                    currency = Chain.Currency.DEFAULT_CURRENCY
-                }
+                ?: Chain.DEFAULT_CHAIN
         }
         return safe
     }
@@ -120,15 +102,7 @@ class SafeRepository(
             chain = safeWithChainData.chain?.apply {
                 currency = safeWithChainData.currency ?: Chain.Currency.DEFAULT_CURRENCY
             }
-                ?: Chain(
-                    DataBuildConfig.CHAIN_ID.toBigInteger(),
-                    DataBuildConfig.BLOCKCHAIN_NAME,
-                    DataBuildConfig.CHAIN_TEXT_COLOR,
-                    DataBuildConfig.CHAIN_BACKGROUND_COLOR,
-                    ENS_REGISTRY
-                ).apply {
-                    currency = Chain.Currency.DEFAULT_CURRENCY
-                }
+                ?: Chain.DEFAULT_CHAIN
         }
         return safe
     }

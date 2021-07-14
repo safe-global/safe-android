@@ -68,6 +68,6 @@ class ChainInfoRepositoryTest {
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
 
-        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", null)) }
+        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", "", null)) }
     }
 }

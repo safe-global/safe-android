@@ -1216,13 +1216,7 @@ class TransactionListViewModelTest {
 
     companion object {
 
-        private val CHAIN = Chain(
-            BuildConfig.CHAIN_ID.toBigInteger(),
-            BuildConfig.BLOCKCHAIN_NAME,
-            BuildConfig.CHAIN_TEXT_COLOR,
-            BuildConfig.CHAIN_BACKGROUND_COLOR,
-            null
-        )
+        private val CHAIN = Chain.DEFAULT_CHAIN
 
         private val ERC20_TOKEN_INFO_NO_SYMBOL = TokenInfo(
             TokenType.ERC20,

@@ -21,7 +21,11 @@ data class Chain(
     @ColumnInfo(name = COL_BACKGROUND_COLOR)
     val backgroundColor: String,
 
-    //TODO: add block explorer url
+    @ColumnInfo(name = COL_RPC_URL)
+    val rpcUrl: String,
+
+    @ColumnInfo(name = COL_BLOCK_EXPLORER_URL)
+    val blockExplorerUrl: String,
 
     @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
     val ensRegistryAddress: String?
@@ -85,10 +89,24 @@ data class Chain(
         const val COL_CHAIN_NAME = "chain_name"
         const val COL_CHAIN_ID = "chain_id"
         const val COL_BACKGROUND_COLOR = "background_color"
+        const val COL_RPC_URL = "rpc_url"
+        const val COL_BLOCK_EXPLORER_URL = "block_explorer_url"
         const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
         const val COL_TEXT_COLOR = "text_color"
 
         val ID_MAINNET = BigInteger.valueOf(1)
         val ID_RINKEBY = BigInteger.valueOf(4)
+
+        val DEFAULT_CHAIN =  Chain(
+            BuildConfig.CHAIN_ID.toBigInteger(),
+            BuildConfig.BLOCKCHAIN_NAME,
+            BuildConfig.CHAIN_TEXT_COLOR,
+            BuildConfig.CHAIN_BACKGROUND_COLOR,
+            BuildConfig.BLOCKCHAIN_NET_URL,
+            BuildConfig.BLOCKCHAIN_EXPLORER_URL,
+            io.gnosis.contracts.BuildConfig.ENS_REGISTRY
+        ).apply {
+            currency = Currency.DEFAULT_CURRENCY
+        }
     }
 }

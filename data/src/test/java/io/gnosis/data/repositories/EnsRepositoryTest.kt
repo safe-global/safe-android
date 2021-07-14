@@ -21,16 +21,16 @@ class EnsRepositoryTest {
 
     private val normalizerMock = mockk<EnsNormalizer>()
     private val ethereumRepository = mockk<EthereumRepository>()
-    private val defaultChain = Chain(Chain.ID_MAINNET, "Mainnet", "", "", ENS_ADDRESS.asEthereumAddressString())
+    private val defaultChain = Chain.DEFAULT_CHAIN
 
     @Before
     fun setup() {
         repository = EnsRepository(normalizerMock, ethereumRepository)
-
     }
 
     @Test
     fun `resolve (normalize failure) should throw`() = runBlocking {
+        every { ethereumRepository.rpcUrl = any() } just Runs
         every { normalizerMock.normalize(any()) } throws IllegalArgumentException()
         val address = ""
 
@@ -41,12 +41,14 @@ class EnsRepositoryTest {
             assertTrue(exceptionOrNull() is IllegalArgumentException)
         }
 
+        coVerify { ethereumRepository.rpcUrl = any() }
         coVerify(exactly = 1) { normalizerMock.normalize(address) }
-        coVerify { ethereumRepository wasNot Called }
+        coVerify { ethereumRepository.request(any() as EthCall) wasNot Called }
     }
 
     @Test
     fun `resolve (bad resolver address) should throw`() = runBlocking {
+        every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } throws UnknownHostException()
         every { normalizerMock.normalize(any()) } returns ""
         val address = ""
@@ -58,8 +60,8 @@ class EnsRepositoryTest {
             assertTrue(exceptionOrNull() is UnknownHostException)
         }
         coVerifySequence {
+            ethereumRepository.rpcUrl = any()
             normalizerMock.normalize(address)
-
             ethereumRepository.request(
                 EthCall(
                     transaction = Transaction(
@@ -76,6 +78,7 @@ class EnsRepositoryTest {
     @Test
     fun `resolve (resolver request failure) should throw`() = runBlocking {
         val address = "eth"
+        every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
                     transaction = Transaction(
@@ -96,6 +99,7 @@ class EnsRepositoryTest {
         }
 
         coVerifySequence {
+            ethereumRepository.rpcUrl = any()
             normalizerMock.normalize(address)
             ethereumRepository.request(
                 EthCall(
@@ -123,6 +127,7 @@ class EnsRepositoryTest {
     @Test
     fun `resolve (valid url and conditions) should return address`() = runBlocking {
         val address = "eth"
+        every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
                     transaction = Transaction(
@@ -153,6 +158,7 @@ class EnsRepositoryTest {
         }
 
         coVerifySequence {
+            ethereumRepository.rpcUrl = any()
             normalizerMock.normalize(address)
             ethereumRepository.request(
                 EthCall(
@@ -179,6 +185,7 @@ class EnsRepositoryTest {
 
     @Test
     fun `resolveReverse (valid resolver and address) should return name`() = runBlocking {
+        every { ethereumRepository.rpcUrl = any() } just Runs
         coEvery { ethereumRepository.request(any<EthRequest<*>>()) } returns
                 EthCall(
                     transaction = Transaction(
@@ -208,6 +215,7 @@ class EnsRepositoryTest {
         }
 
         coVerifySequence {
+            ethereumRepository.rpcUrl = any()
             ethereumRepository.request(
                 EthCall(
                     transaction = Transaction(

@@ -60,7 +60,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (1) should succeed for Mainnet`() {
 
-        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", "", null))
+        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", "", null))
 
         assertTrue(result)
     }
@@ -69,7 +69,7 @@ class UnstoppableRepositoryTest {
     fun `canResolve - (4) should succeed for Rinkeby`() {
         repository = UnstoppableDomainsRepository()
 
-        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", null))
+        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", "", null))
 
         assertTrue(result)
     }
@@ -77,7 +77,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (17) should fail for unsupported_chain`() {
 
-        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", "", null))
+        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", "", "", "", null))
 
         assertFalse(result)
     }
