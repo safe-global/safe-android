@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.assets.collectibles
 
-import io.gnosis.data.BuildConfig
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.Collectible
@@ -58,13 +57,7 @@ class CollectiblesViewModelTest {
     @Test
     fun `load - should emit collectibles view data list`() {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
-        val chain = Chain(
-            BuildConfig.CHAIN_ID.toBigInteger(),
-            BuildConfig.BLOCKCHAIN_NAME,
-            BuildConfig.CHAIN_TEXT_COLOR,
-            BuildConfig.CHAIN_BACKGROUND_COLOR,
-            null
-        )
+        val chain = Chain.DEFAULT_CHAIN
         val collectibles = buildCollectibleList()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1").apply {
             this.chain = chain

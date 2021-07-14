@@ -19,7 +19,7 @@ data class ChainInfo(
 ) {
 
     fun toChain(): Chain {
-        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, ensRegistryAddress).apply {
+        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUrl, blockExplorerUrl, ensRegistryAddress).apply {
             currency = nativeCurrency.toCurrency(chainId)
         }
     }

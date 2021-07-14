@@ -27,8 +27,8 @@ class SafeRepositoryTest {
     private lateinit var preferences: TestPreferences
     private lateinit var safeRepository: SafeRepository
 
-    private val defaultChain = Chain(CHAIN_ID, "Name", "", "", null)
-    private val defaultCurrency = Chain.Currency(CHAIN_ID, "name", "symbol", 18, "")
+    private val defaultChain = Chain.DEFAULT_CHAIN
+    private val defaultCurrency = Chain.Currency.DEFAULT_CURRENCY
 
     @Before
     fun setup() {
