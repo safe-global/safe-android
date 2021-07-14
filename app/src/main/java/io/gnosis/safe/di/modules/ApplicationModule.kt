@@ -99,7 +99,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesEthereumRpcConnector(retrofitEthereumRpcApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
-        RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
+        RetrofitEthereumRpcConnector(retrofitEthereumRpcApi, BuildConfig.BLOCKCHAIN_NET_URL)
 
     @Provides
     @Singleton
