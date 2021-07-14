@@ -27,6 +27,7 @@ class HeimdallDatabaseTest {
 
     private val addressConverter = SolidityAddressConverter()
     private val ownerTypeConverter = OwnerTypeConverter()
+    private val bigIntegerConverter = BigIntegerConverter()
 
     @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
@@ -182,7 +183,7 @@ class HeimdallDatabaseTest {
                 moveToFirst()
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_ADDRESS)), safe.address.asEthereumAddressString())
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_LOCAL_NAME)), safe.localName)
-                Assert.assertEquals(getString(getColumnIndex(Safe.COL_CHAIN_ID)), safe.chainId.toString())
+                Assert.assertEquals(getString(getColumnIndex(Safe.COL_CHAIN_ID)), bigIntegerConverter.toHexString(safe.chainId))
             }
 
             close()
