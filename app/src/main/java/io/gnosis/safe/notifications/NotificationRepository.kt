@@ -138,8 +138,6 @@ class NotificationRepository(
         token?.let {
             val registration = Registration(
                 uuid = deviceUuid ?: generateUUID(),
-                // safes are always added and never removed on the registration request
-                //safes = safes,
                 cloudMessagingToken = token,
                 buildNumber = BuildConfig.VERSION_CODE.toString(),
                 bundle = BuildConfig.APPLICATION_ID,
