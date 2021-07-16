@@ -19,8 +19,6 @@ data class Registration(
     @Json(name = "version") val version: String,
     @Json(name = "timestamp") val timestamp: String? = null,
     @Json(name = "safeRegistrations") val chainRegistrations: MutableList<ChainData> = mutableListOf()
-//    @Json(name = "safes") val safes: List<String>,
-//    @Json(name = "signatures") val signatures: MutableList<String> = mutableListOf()
 ) {
 
     fun hashForSafes(safes: List<String>): String {
