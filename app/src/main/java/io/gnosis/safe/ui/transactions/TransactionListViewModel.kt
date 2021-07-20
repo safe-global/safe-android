@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
@@ -127,7 +126,7 @@ class TransactionListViewModel
                     }
                 }
                 is TransactionInfo.Creation -> {
-                    val owner = localOwners.find { it.address == txInfo.creator }
+                    val owner = localOwners.find { it.address == txInfo.creator.value }
                     toHistoryCreation(chain, txInfo, owner)
                 }
                 TransactionInfo.Unknown -> TransactionView.Unknown
@@ -261,7 +260,7 @@ class TransactionListViewModel
         safes: List<Safe>
     ): TransactionView.CustomTransaction {
 
-        val addressInfo = resolveKnownAddress(txInfo.to.value, txInfo.toInfo, safeAppInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, safeAppInfo, safes)
 
         return TransactionView.CustomTransaction(
             chain = chain,
@@ -290,7 +289,7 @@ class TransactionListViewModel
         val threshold = executionInfo?.confirmationsRequired ?: -1
         val thresholdMet = checkThreshold(threshold, executionInfo?.confirmationsSubmitted)
 
-        val addressInfo = resolveKnownAddress(txInfo.to.value, txInfo.toInfo, safeAppInfo, safes)
+        val addressInfo = resolveKnownAddress(txInfo.to, safeAppInfo, safes)
 
         return TransactionView.CustomTransactionQueued(
             chain = chain,
@@ -358,17 +357,16 @@ class TransactionListViewModel
     }
 
     private fun resolveKnownAddress(
-        address: Solidity.Address,
-        addressInfo: AddressInfo?,
+        addressData: AddressInfoExtended,
         safeAppInfo: SafeAppInfo?,
         safes: List<Safe>
     ): AddressInfoData {
-        val localName = safes.find { it.address == address }?.localName
-        val addressString = address.asEthereumAddressString()
+        val localName = safes.find { it.address == addressData.value }?.localName
+        val addressString = addressData.value.asEthereumAddressString()
         return when {
             localName != null -> AddressInfoData.Local(localName, addressString)
             safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString, true)
-            addressInfo != null -> AddressInfoData.Remote(addressInfo.name, addressInfo.logoUri, addressString, false)
+            !addressData.name.isNullOrBlank() -> AddressInfoData.Remote(addressData.name, addressData.logoUri, addressString, false)
             else -> AddressInfoData.Default
         }
     }
@@ -386,24 +384,24 @@ class TransactionListViewModel
                 statusText = displayString(txStatus),
                 statusColorRes = statusTextColor(txStatus),
                 dateTimeText = timestamp.formatBackendDateTime(),
-                creator = txInfo.creator.asEthereumAddressString(),
+                creator = txInfo.creator.value.asEthereumAddressString(),
                 creatorInfo =
                     if (localCreator == null) {
-                        AddressInfoData.Remote(txInfo.creatorInfo?.name, txInfo.creatorInfo?.logoUri, txInfo.creator.asEthereumAddressString())
+                        AddressInfoData.Remote(txInfo.creator.name, txInfo.creator.logoUri, txInfo.creator.value.asEthereumAddressString())
                     } else {
                         AddressInfoData.Local(localCreator.name, localCreator.address.asEthereumAddressString())
                     },
-                factory = txInfo.factory?.asEthereumAddressString(),
+                factory = txInfo.factory?.value?.asEthereumAddressString(),
                 factoryInfo = AddressInfoData.Remote(
-                    txInfo.factoryInfo?.name,
-                    txInfo.factoryInfo?.logoUri,
-                    txInfo.factory?.asEthereumAddressString()
+                    txInfo.factory?.name,
+                    txInfo.factory?.logoUri,
+                    txInfo.factory?.value?.asEthereumAddressString()
                 ),
-                implementation = txInfo.implementation?.asEthereumAddressString(),
+                implementation = txInfo.implementation?.value?.asEthereumAddressString(),
                 implementationInfo = AddressInfoData.Remote(
-                    txInfo.implementationInfo?.name,
-                    txInfo.implementationInfo?.logoUri,
-                    txInfo.implementation?.asEthereumAddressString()
+                    txInfo.implementation?.name,
+                    txInfo.implementation?.logoUri,
+                    txInfo.implementation?.value?.asEthereumAddressString()
                 ),
                 transactionHash = txInfo.transactionHash
             )

@@ -185,9 +185,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 binding.txConfirmations.setExecutionData(
                     rejection = isRejection,
                     status = txDetails.txStatus,
-                    confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer },
+                    confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer.value },
                     threshold = executionInfo.confirmationsRequired,
-                    executor = executionInfo.executor,
+                    executor = executionInfo.executor?.value,
                     localOwners = txDetails.owners
                 )
                 nonce = executionInfo.nonce

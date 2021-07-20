@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ParamType
@@ -86,7 +86,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
     }
 
-    private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    private fun updateUi(decodedDto: DataDecoded?, address: Solidity.Address? = null, amount: String? = null, addressInfoIndex: Map<String, AddressInfoExtended>? = null) {
 
         binding.content.removeAllViews()
 
@@ -131,7 +131,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         }
     }
 
-    private fun getTransferItem(address: Solidity.Address, amount: String, addressInfo: AddressInfo?): TxTransferActionView {
+    private fun getTransferItem(address: Solidity.Address, amount: String, addressInfo: AddressInfoExtended?): TxTransferActionView {
         val item = TxTransferActionView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
@@ -147,7 +147,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
+    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfoExtended>?): LabeledArrayItem {
         val item = LabeledArrayItem(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
@@ -167,7 +167,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
+    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfoExtended?): View {
         var item: View
         if (addressInfo == null) {
             item = LabeledAddressItem(requireContext())

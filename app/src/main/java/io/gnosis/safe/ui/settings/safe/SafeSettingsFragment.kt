@@ -119,7 +119,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             ownersContainer.removeAllViews()
             safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner, localOwners)) }
             masterCopy.setAddress(safeInfo?.implementation?.value, safeInfo?.version)
-            masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUrl, safeInfo?.implementation?.value)
+            masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
@@ -152,7 +152,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     address = owner.value
                     name = owner.name
                     showSeparator = true
-                    loadKnownAddressLogo(owner.logoUrl, owner.value)
+                    loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
                 AddressItem(requireContext()).apply {

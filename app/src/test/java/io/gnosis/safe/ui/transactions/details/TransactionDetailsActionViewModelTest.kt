@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
@@ -41,11 +41,11 @@ class TransactionDetailsActionViewModelTest {
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
         val owner1 = Owner(Solidity.Address(BigInteger.valueOf(2)), "owner1", Owner.Type.IMPORTED)
 
-        val addressInfoIndex = mapOf<String, AddressInfo>()
+        val addressInfoIndex = mapOf<String, AddressInfoExtended>()
         val extendexAddressInfoIndex = mapOf(
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe1.address, safe1.localName, null),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe2.address, safe2.localName, null),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfoExtended(owner1.address, owner1.name!!, null)
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)
@@ -71,7 +71,7 @@ class TransactionDetailsActionViewModelTest {
     fun `extendAddressInfoIndexWithLocalData - should add AddressInfo from local safes and owners to addressInfoIndex`() {
 
         val knownAddress = Solidity.Address(BigInteger.TEN)
-        val knownAddressInfo = AddressInfo("name", null)
+        val knownAddressInfo = AddressInfoExtended(knownAddress, "name", null)
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
@@ -82,9 +82,9 @@ class TransactionDetailsActionViewModelTest {
         )
         val extendexAddressInfoIndex = mapOf(
             knownAddress.asEthereumAddressChecksumString() to knownAddressInfo,
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe1.address, safe1.localName, null),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe2.address, safe2.localName, null),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfoExtended(owner1.address, owner1.name!!, null)
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)
@@ -110,10 +110,10 @@ class TransactionDetailsActionViewModelTest {
     fun `extendAddressInfoIndexWithLocalData - should replace AddressInfo in addressInfoIndex for addresses of local safes or owners`() {
 
         val knownAddress1 = Solidity.Address(BigInteger.ONE)
-        val knownAddressInfo1 = AddressInfo("known address 1", null)
+        val knownAddressInfo1 = AddressInfoExtended(knownAddress1, "known address 1", null)
 
         val knownAddress2 = Solidity.Address(BigInteger.TEN)
-        val knownAddressInfo2 = AddressInfo("known address 2", null)
+        val knownAddressInfo2 = AddressInfoExtended(knownAddress2,"known address 2", null)
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
@@ -124,9 +124,9 @@ class TransactionDetailsActionViewModelTest {
             knownAddress2.asEthereumAddressChecksumString() to knownAddressInfo2
         )
         val extendexAddressInfoIndex = mapOf(
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe1.address, safe1.localName, null),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfoExtended(safe2.address, safe2.localName, null),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfoExtended(owner1.address, owner1.name!!, null)
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)

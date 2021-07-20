@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.data.models.transaction.getParamItemType
 import io.gnosis.safe.R
@@ -39,7 +39,7 @@ class LabeledArrayItem @JvmOverloads constructor(
             field = value
         }
 
-    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String, addressInfoIndex: Map<String, AddressInfoExtended>? = null) {
         binding.arrayItemValues.removeAllViews()
         val typeValues = if (paramType == ParamType.MIXED) {
             paramValue.replace("[]", "").removeSurrounding("(", ")")
@@ -66,7 +66,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         }
     }
 
-    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String, addressInfoIndex: Map<String, AddressInfoExtended>? = null) {
         val arrayItem = ArrayItem(context)
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(6), 0, 0)
@@ -102,7 +102,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         container.addView(arrayItem)
     }
 
-    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType, addressInfo: AddressInfo? = null) {
+    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType, addressInfo: AddressInfoExtended? = null) {
         when (paramType) {
             ParamType.ADDRESS -> {
                 val addressItem: View

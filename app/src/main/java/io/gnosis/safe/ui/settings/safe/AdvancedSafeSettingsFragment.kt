@@ -100,7 +100,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             safeInfo.modules.takeUnless { it.isNullOrEmpty() }?.let {
                 moduleLabel.visible(true)
                 it.forEach { module ->
-                    modulesContainer.addView(labeledAddress(module.value, module.name ?: getString(R.string.unknown_module), module.logoUrl))
+                    modulesContainer.addView(labeledAddress(module.value, module.name ?: getString(R.string.unknown_module), module.logoUri))
                 }
             } ?: run { moduleLabel.visible(false) }
         }
@@ -115,7 +115,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                 name = getString(R.string.safe_settings_not_set)
             }
             //viewModel.isDefaultFallbackHandler(fallbackHandler) -> labeledAddress(fallbackHandler, R.string.default_fallback_handler)
-            else -> labeledAddress(fallbackHandler.value, fallbackHandler.name ?: getString(R.string.unknown_fallback_handler), fallbackHandler.logoUrl)
+            else -> labeledAddress(fallbackHandler.value, fallbackHandler.name ?: getString(R.string.unknown_fallback_handler), fallbackHandler.logoUri)
         }
 
     private fun labeledAddress(address: Solidity.Address, label: String, logoUri: String? = null): NamedAddressItem {

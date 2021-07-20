@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.transactions.details
 
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -16,19 +16,19 @@ class TransactionDetailsActionViewModel @Inject constructor(
 
     override fun initialState() = ActionDetailsState(null, ViewAction.Loading(true))
 
-    fun extendAddressInfoIndexWithLocalData(addressInfoIndex: Map<String, AddressInfo>?) {
+    fun extendAddressInfoIndexWithLocalData(addressInfoIndex: Map<String, AddressInfoExtended>?) {
         safeLaunch {
-            val extendedAddressInfoIndex = mutableMapOf<String, AddressInfo>()
+            val extendedAddressInfoIndex = mutableMapOf<String, AddressInfoExtended>()
             addressInfoIndex?.let { extendedAddressInfoIndex.putAll(it) }
 
             val safes = safeRepository.getSafes()
             safes.forEach {
-                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.localName, null)
+                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfoExtended(it.address, it.localName, null)
             }
 
             val owners = credentialsRepository.owners()
             owners.forEach {
-                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.name ?: "", null)
+                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfoExtended(it.address, it.name ?: "", null)
             }
 
             updateState {
@@ -39,6 +39,6 @@ class TransactionDetailsActionViewModel @Inject constructor(
 }
 
 data class ActionDetailsState(
-    val addressInfoIndex: Map<String, AddressInfo>?,
+    val addressInfoIndex: Map<String, AddressInfoExtended>?,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State

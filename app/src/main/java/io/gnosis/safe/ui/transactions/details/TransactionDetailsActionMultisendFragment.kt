@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import io.gnosis.data.models.transaction.ValueDecoded
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -76,7 +76,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
     }
 
-    private fun updateUi(decodedValues: List<ValueDecoded>?, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    private fun updateUi(decodedValues: List<ValueDecoded>?, addressInfoIndex: Map<String, AddressInfoExtended>? = null) {
 
         with(binding) {
 
@@ -107,7 +107,7 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
 
 
 
-    private fun getMultisendActionItem(address: Solidity.Address, method: String, addressInfoIndex: Map<String, AddressInfo>? = null): MultisendActionView {
+    private fun getMultisendActionItem(address: Solidity.Address, method: String, addressInfoIndex: Map<String, AddressInfoExtended>? = null): MultisendActionView {
         val item = MultisendActionView(requireContext())
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
