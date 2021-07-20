@@ -35,7 +35,7 @@ data class TxData(
     @Json(name = "dataDecoded")
     val dataDecoded: DataDecoded?,
     @Json(name = "to")
-    val to: Solidity.Address,
+    val to: AddressInfoExtended,
     @Json(name = "value")
     val value: BigInteger?,
     @Json(name = "operation")
@@ -67,7 +67,7 @@ sealed class DetailedExecutionInfo(
         @Json(name = "safeTxHash")
         val safeTxHash: String = "",
         @Json(name = "signers")
-        val signers: List<Solidity.Address> = emptyList(),
+        val signers: List<AddressInfoExtended> = emptyList(),
         @Json(name = "rejectors")
         val rejectors: List<Solidity.Address> = emptyList(),
         @Json(name = "confirmationsRequired")
@@ -75,7 +75,7 @@ sealed class DetailedExecutionInfo(
         @Json(name = "confirmations")
         val confirmations: List<Confirmations> = emptyList(),
         @Json(name = "executor")
-        val executor: Solidity.Address? = null,
+        val executor: AddressInfoExtended? = null,
         @Json(name = "safeTxGas")
         val safeTxGas: BigInteger = BigInteger.ZERO,
         @Json(name = "baseGas")
@@ -96,7 +96,7 @@ sealed class DetailedExecutionInfo(
 @JsonClass(generateAdapter = true)
 data class Confirmations(
     @Json(name = "signer")
-    val signer: Solidity.Address,
+    val signer: AddressInfoExtended,
     @Json(name = "signature")
     val signature: String,
     @Json(name = "submittedAt")

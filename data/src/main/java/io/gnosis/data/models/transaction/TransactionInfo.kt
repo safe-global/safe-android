@@ -3,6 +3,7 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -11,7 +12,7 @@ sealed class TransactionInfo(
 ) {
     @JsonClass(generateAdapter = true)
     data class Custom(
-        @Json(name = "to") val to: Solidity.Address,
+        @Json(name = "to") val to: AddressInfoExtended,
         @Json(name = "toInfo") val toInfo: AddressInfo? = null,
         @Json(name = "dataSize") val dataSize: Int = 0,
         @Json(name = "value") val value: BigInteger = BigInteger.ZERO,
@@ -28,9 +29,9 @@ sealed class TransactionInfo(
 
     @JsonClass(generateAdapter = true)
     data class Transfer(
-        @Json(name = "sender") val sender: Solidity.Address,
+        @Json(name = "sender") val sender: AddressInfoExtended,
         @Json(name = "senderInfo") val senderInfo: AddressInfo?,
-        @Json(name = "recipient") val recipient: Solidity.Address,
+        @Json(name = "recipient") val recipient: AddressInfoExtended,
         @Json(name = "recipientInfo") val recipientInfo: AddressInfo?,
         @Json(name = "transferInfo") val transferInfo: TransferInfo,
         @Json(name = "direction") val direction: TransactionDirection

@@ -3,6 +3,7 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.AddressInfoExtended
 import pm.gnosis.model.Solidity
 
 enum class SettingsInfoType {
@@ -35,23 +36,23 @@ sealed class SettingsInfo(
 
     @JsonClass(generateAdapter = true)
     data class AddOwner(
-        @Json(name = "owner") val owner: Solidity.Address,
+        @Json(name = "owner") val owner: AddressInfoExtended,
         @Json(name = "ownerInfo") val ownerInfo: AddressInfo?,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.ADD_OWNER)
 
     @JsonClass(generateAdapter = true)
     data class RemoveOwner(
-        @Json(name = "owner") val owner: Solidity.Address,
+        @Json(name = "owner") val owner: AddressInfoExtended,
         @Json(name = "ownerInfo") val ownerInfo: AddressInfo?,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.REMOVE_OWNER)
 
     @JsonClass(generateAdapter = true)
     data class SwapOwner(
-        @Json(name = "oldOwner") val oldOwner: Solidity.Address,
+        @Json(name = "oldOwner") val oldOwner: AddressInfoExtended,
         @Json(name = "oldOwnerInfo") val oldOwnerInfo: AddressInfo?,
-        @Json(name = "newOwner") val newOwner: Solidity.Address,
+        @Json(name = "newOwner") val newOwner: AddressInfoExtended,
         @Json(name = "newOwnerInfo") val newOwnerInfo: AddressInfo?
     ) : SettingsInfo(SettingsInfoType.SWAP_OWNER)
 

@@ -15,7 +15,7 @@ private const val ERC191_VERSION = "01"
 
 fun calculateSafeTxHash(
     safeAddress: Solidity.Address, transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
-): ByteArray? {
+): ByteArray {
 
     val to = when (val txInfo = transaction.txInfo) {
         is TransactionInfo.Transfer -> {
@@ -27,12 +27,12 @@ fun calculateSafeTxHash(
                     transferInfo.tokenAddress
                 }
                 is TransferInfo.EtherTransfer -> {
-                    txInfo.recipient
+                    txInfo.recipient.value
                 }
             }
         }
         is TransactionInfo.Custom -> {
-            txInfo.to
+            txInfo.to.value
         }
         is TransactionInfo.SettingsChange -> {
             safeAddress
