@@ -65,13 +65,6 @@ android {
             minifyEnabled false
         }
 
-        //Only this profile will have LeakCanary enabled (see dependencies)
-        profile {
-            initWith debug
-            applicationIdSuffix ".profile"
-            versionNameSuffix "-profile"
-        }
-
         unsafe {
             initWith debug
             applicationIdSuffix ".unsafe"
@@ -87,49 +80,19 @@ android {
             }
         }
 
+        //Only this profile will have LeakCanary enabled (see dependencies)
+        profile {
+            initWith debug
+            applicationIdSuffix ".profile"
+            versionNameSuffix "-profile"
+        }
+
         internal {
             applicationIdSuffix ".internal"
             versionNameSuffix "-internal"
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
-            firebaseAppDistribution {
-                releaseNotes = getKey("APP_RELEASE_NOTES")
-                groups = getKey("FIREBASE_GROUP")
-            }
-        }
-
-        rinkeby {
-            applicationIdSuffix ".rinkeby"
-            versionNameSuffix "-rinkeby"
-            minifyEnabled true
-            signingConfig signingConfigs.release
-            firebaseAppDistribution {
-                releaseNotes = getKey("APP_RELEASE_NOTES")
-                groups = getKey("FIREBASE_GROUP")
-            }
-        }
-
-        mainnet_staging {
-            initWith debug
-            applicationIdSuffix ".mainnet_staging"
-            versionNameSuffix "-mainnet_staging"
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Mainnet"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
-            firebaseAppDistribution {
-                releaseNotes = getKey("APP_RELEASE_NOTES")
-                groups = getKey("FIREBASE_GROUP")
-            }
-        }
-
-        xdai {
-            applicationIdSuffix ".xdai"
-            versionNameSuffix "-xdai"
-            debuggable true
-            minifyEnabled true
-            signingConfig signingConfigs.debug
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "xDai"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rpc.xdaichain.com/"))
             firebaseAppDistribution {
                 releaseNotes = getKey("APP_RELEASE_NOTES")
                 groups = getKey("FIREBASE_GROUP")
