@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -23,6 +24,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
+import io.gnosis.safe.utils.SemVer
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
@@ -36,7 +38,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
     @Inject
     lateinit var viewModel: AdvancedSafeSettingsViewModel
 
-    override fun screenId(): ScreenId? = ScreenId.SETTINGS_SAFE_ADVANCED
+    override fun screenId() = ScreenId.SETTINGS_SAFE_ADVANCED
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsSafeAdvancedBinding =
         FragmentSettingsSafeAdvancedBinding.inflate(inflater, container, false)
@@ -86,15 +88,16 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
 
     private fun setSafeInfo(safeInfo: SafeInfo) {
         with(binding) {
-            fallbackHandlerContainer.removeAllViews()
-            fallbackHandlerContainer.addView(fallbackHandlerView(safeInfo.fallbackHandler))
 
+            fallbackHandlerContainer.removeAllViews()
+            fallbackHandlerContainer.addView(safeParameterView(safeInfo.fallbackHandler, R.string.unknown_fallback_handler))
             fallbackHandlerHelpLink.text = ""
             fallbackHandlerHelpLink.appendLink(
                 urlText = resources.getString(R.string.safe_settings_fallback_handler_help),
                 url = resources.getString(R.string.safe_settings_fallback_handler_help_url),
                 linkIcon = R.drawable.ic_external_link_green_16dp
             )
+
             nonce.name = safeInfo.nonce.toString()
             modulesContainer.removeAllViews()
             safeInfo.modules.takeUnless { it.isNullOrEmpty() }?.let {
@@ -103,19 +106,41 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                     modulesContainer.addView(labeledAddress(module.value, module.name ?: getString(R.string.unknown_module), module.logoUri))
                 }
             } ?: run { moduleLabel.visible(false) }
+
+            val contractVersion = SemVer.parse(safeInfo.version)
+            if (contractVersion >= SemVer(1, 1, 3)) {
+
+                guardContainer.removeAllViews()
+                guardContainer.addView(safeParameterView(safeInfo.guard, R.string.unknown_guard))
+                guardHelpLink.text = ""
+                guardHelpLink.appendLink(
+                    urlText = resources.getString(R.string.safe_settings_guard_help),
+                    url = resources.getString(R.string.safe_settings_guard_help_url),
+                    linkIcon = R.drawable.ic_external_link_green_16dp
+                )
+
+                guardHeader.visible(true)
+                guardContainer.visible(true)
+                guardHelpLink.visible(true)
+
+            } else {
+                guardHeader.visible(false)
+                guardContainer.visible(false)
+                guardHelpLink.visible(false)
+            }
         }
     }
 
-    private fun fallbackHandlerView(fallbackHandler: AddressInfo?): View  =
+
+    private fun safeParameterView(addressInfo: AddressInfo?, @StringRes unknownString: Int): View  =
         when {
-            fallbackHandler == null || fallbackHandler.value.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
+            addressInfo == null || addressInfo.value.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dpToPx(60))
                 openable = false
                 name = getString(R.string.safe_settings_not_set)
             }
-            //viewModel.isDefaultFallbackHandler(fallbackHandler) -> labeledAddress(fallbackHandler, R.string.default_fallback_handler)
-            else -> labeledAddress(fallbackHandler.value, fallbackHandler.name ?: getString(R.string.unknown_fallback_handler), fallbackHandler.logoUri)
+            else -> labeledAddress(addressInfo.value, addressInfo.name ?: getString(unknownString), addressInfo.logoUri)
         }
 
     private fun labeledAddress(address: Solidity.Address, label: String, logoUri: String? = null): NamedAddressItem {

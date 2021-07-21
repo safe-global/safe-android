@@ -333,9 +333,11 @@
     <string name="safe_settings_master_copy_upgrade_available">Upgrade Available</string>
     <string name="safe_settings_master_copy_up_to_date">Up to date</string>
     <string name="safe_settings_fallback_handler">Fallback handler</string>
+    <string name="safe_settings_guard">Guard</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
     <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Gnosis Safe?</string>
+    <string name="safe_settings_guard_help">What is a guard and how does it relate to the Gnosis Safe?</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
 
@@ -475,6 +477,7 @@
 
     <string name="default_fallback_handler">DefaultFallbackHandler</string>
     <string name="unknown_fallback_handler">Unknown</string>
+    <string name="unknown_guard">Unknown</string>
     <string name="unknown_factory">Unknown</string>
     <string name="unknown_creator">Unknown</string>
     <string name="unknown_module">Unknown</string>
