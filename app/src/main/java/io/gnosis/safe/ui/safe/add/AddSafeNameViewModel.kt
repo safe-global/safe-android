@@ -43,6 +43,7 @@ class AddSafeNameViewModel
             }.onFailure {
                 updateState { AddSafeNameState(ViewAction.ShowError(it)) }
             }.onSuccess {
+                tracker.logSafeAdded()
                 tracker.setNumSafes(safeRepository.getSafeCount())
                 if (settingsHandler.showOwnerScreen && credentialsRepository.ownerCount() == 0) {
                     updateState { AddSafeNameState(ImportOwner) }

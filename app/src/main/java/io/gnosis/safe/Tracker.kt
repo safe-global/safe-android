@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import java.math.BigInteger
 import javax.inject.Singleton
 
 @Singleton
@@ -35,13 +36,22 @@ class Tracker private constructor(context: Context) {
         logEvent(screenId.value, null)
     }
 
+    fun logSafeAdded() {
+        logEvent(Event.SAFE_ADDED, null)
+    }
+
+    fun logSafeRemoved() {
+        logEvent(Event.SAFE_REMOVED, null)
+    }
+
     fun logKeyGenerated() {
         logEvent(Event.KEY_GENERATED, null)
     }
 
     fun logKeyImported(usingSeedPhrase: Boolean) {
         logEvent(
-            Event.KEY_IMPORTED, mapOf(
+            Event.KEY_IMPORTED,
+            mapOf(
                 Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
             )
         )
@@ -51,12 +61,22 @@ class Tracker private constructor(context: Context) {
         logEvent(name = Event.KEY_DELETED, attrs = null)
     }
 
-    fun logTransactionConfirmed() {
-        logEvent(Event.TRANSACTION_CONFIRMED, null)
+    fun logTransactionConfirmed(chainId: BigInteger) {
+        logEvent(
+            Event.TRANSACTION_CONFIRMED,
+            mapOf(
+                Param.CHAIN_ID to chainId.toString()
+            )
+        )
     }
 
-    fun logTransactionRejected() {
-        logEvent(Event.TRANSACTION_REJECTED, null)
+    fun logTransactionRejected(chainId: BigInteger) {
+        logEvent(
+            Event.TRANSACTION_REJECTED,
+            mapOf(
+                Param.CHAIN_ID to chainId.toString()
+            )
+        )
     }
 
     fun logBannerPasscodeSkip() {
@@ -123,6 +143,8 @@ class Tracker private constructor(context: Context) {
     }
 
     object Event {
+        val SAFE_ADDED = "user_safe_added"
+        val SAFE_REMOVED = "user_safe_removed"
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
         val KEY_DELETED = "user_key_deleted"
@@ -142,6 +164,7 @@ class Tracker private constructor(context: Context) {
     }
 
     object Param {
+        val CHAIN_ID = "chain_id"
         val NUM_SAFES = "num_safes"
         val PUSH_INFO = "push_info"
         val NUM_KEYS_GENERATED = "num_keys_generated"

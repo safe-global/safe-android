@@ -85,6 +85,7 @@ class SafeSettingsViewModel @Inject constructor(
                     updateState { SafeSettingsState(safe, null, null, listOf(), ViewAction.ShowError(it)) }
                 }.onSuccess {
                     updateState { SafeSettingsState(safe, null, null, listOf(), SafeRemoved) }
+                    tracker.logSafeRemoved()
                     tracker.setNumSafes(safeRepository.getSafeCount())
                     notificationRepository.unregisterSafe(safe.chainId, safe.address)
                     notificationManager.deleteNotificationChannelGroup(safe)

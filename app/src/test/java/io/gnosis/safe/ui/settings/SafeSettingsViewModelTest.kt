@@ -325,6 +325,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
         coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { notificationRepository.unregisterSafe(any(), any()) } just Runs
+        coEvery { tracker.logSafeRemoved() } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
         safeSettingsViewModel =
@@ -358,8 +359,8 @@ class SafeSettingsViewModelTest {
             safeRepository.removeSafe(SAFE_1)
             safeRepository.getSafes()
             safeRepository.clearActiveSafe()
+            tracker.logSafeRemoved()
             safeRepository.getSafeCount()
-            // verify SAFE_REMOVE event was tracked
             tracker.setNumSafes(0)
             notificationRepository.unregisterSafe(SAFE_1.chainId, SAFE_1.address)
         }
@@ -390,6 +391,7 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
         coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { notificationRepository.unregisterSafe(any(), any()) } just Runs
+        coEvery { tracker.logSafeRemoved() } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
 
         safeSettingsViewModel =
@@ -422,8 +424,8 @@ class SafeSettingsViewModelTest {
             safeRepository.removeSafe(SAFE_1)
             safeRepository.getSafes()
             safeRepository.setActiveSafe(SAFE_2)
+            tracker.logSafeRemoved()
             safeRepository.getSafeCount()
-            // verify SAFE_REMOVE event was tracked
             tracker.setNumSafes(1)
             notificationRepository.unregisterSafe(SAFE_1.chainId, SAFE_1.address)
         }

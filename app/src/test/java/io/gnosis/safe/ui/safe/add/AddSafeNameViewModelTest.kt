@@ -122,6 +122,7 @@ class AddSafeNameViewModelTest {
         coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.logSafeAdded() } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
@@ -138,6 +139,7 @@ class AddSafeNameViewModelTest {
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            tracker.logSafeAdded()
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
@@ -151,6 +153,7 @@ class AddSafeNameViewModelTest {
         coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.logSafeAdded() } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns false
@@ -167,6 +170,7 @@ class AddSafeNameViewModelTest {
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            tracker.logSafeAdded()
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
@@ -180,6 +184,7 @@ class AddSafeNameViewModelTest {
         coEvery { chainInfoRepository.save(any()) } just Runs
         coEvery { notificationRepository.registerSafes(any()) } just Runs
         coEvery { safeRepository.setActiveSafe(any()) } just Runs
+        coEvery { tracker.logSafeAdded() } just Runs
         coEvery { tracker.setNumSafes(any()) } just Runs
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { settingsHandler.showOwnerScreen } returns true
@@ -196,6 +201,7 @@ class AddSafeNameViewModelTest {
             notificationRepository.registerSafes(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             notificationManager.createNotificationChannelGroup(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
             safeRepository.setActiveSafe(Safe(VALID_SAFE_ADDRESS, "Name", rinkeby.chainId))
+            tracker.logSafeAdded()
             safeRepository.getSafeCount()
             tracker.setNumSafes(0)
             settingsHandler.showOwnerScreen
