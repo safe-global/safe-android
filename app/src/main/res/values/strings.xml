@@ -351,7 +351,7 @@
     <string name="tx_confirmations_executed">Executed</string>
     <string name="tx_confirmations_rejection_created">On-chain rejection created</string>
 
-    <string name="signing_owner_add_key">Add Owner Key</string>
+    <string name="signing_owner_add_key">Add owner key</string>
     <string name="signing_owner_import_existing_title">Import existing key</string>
     <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
     <string name="signing_owner_create_new_title">Create new key</string>
@@ -375,10 +375,10 @@
     <string name="signing_owner_export_tab_seed">Seed Phrase</string>
     <string name="signing_owner_export_tab_key">Private Key</string>
 
-    <string name="signing_owner_details_title">Owner Key</string>
+    <string name="signing_owner_details_title">Owner key</string>
     <string name="signing_owner_details_key_address">Key address</string>
 
-    <string name="signing_owner_name_title">Enter Key Name</string>
+    <string name="signing_owner_name_title">Enter key name</string>
     <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
 
     <string name="signing_owner_name_edit_title">Edit owner name</string>
@@ -458,7 +458,7 @@
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="import_owner_key_default">Default</string>
 
-    <string name="generate_owner_key_title">Create Owner Key</string>
+    <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
     <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Gnosis Safe, you can create a key and add it as an owner of your Safe. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
     <string name="generate_owner_key_intro_private_key_title">How secure is that?</string>
