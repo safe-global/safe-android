@@ -87,6 +87,7 @@ class SafeSettingsViewModelTest {
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
+            null,
             "1.1.1"
         )
         val safeInfo2 = SafeInfo(
@@ -96,6 +97,7 @@ class SafeSettingsViewModelTest {
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
+            null,
             null,
             "1.1.1"
         )
@@ -181,6 +183,7 @@ class SafeSettingsViewModelTest {
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
+            null,
             "1.1.1"
         )
         val ensName = "ens.name"
@@ -230,6 +233,7 @@ class SafeSettingsViewModelTest {
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
+            null,
             null,
             "1.1.1"
         )
@@ -371,6 +375,7 @@ class SafeSettingsViewModelTest {
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
             "1.1.1"
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)

@@ -74,6 +74,7 @@ class AdvancedSafeSettingsViewModelTest {
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
             "1.1.1"
         )
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
