@@ -26,7 +26,7 @@ fun calculateSafeTxHash(
                 is TransferInfo.Erc721Transfer -> {
                     transferInfo.tokenAddress
                 }
-                is TransferInfo.EtherTransfer -> {
+                is TransferInfo.NativeTransfer -> {
                     txInfo.recipient.value
                 }
             }

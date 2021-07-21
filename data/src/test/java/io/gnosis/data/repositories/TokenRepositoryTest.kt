@@ -6,7 +6,6 @@ import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.*
-import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
@@ -198,5 +197,13 @@ class TokenRepositoryTest {
 
     companion object {
         private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
+        private val NATIVE_CURRENCY_INFO = TokenInfo(
+            TokenType.NATIVE_CURRENCY,
+            Solidity.Address(BigInteger.ZERO),
+            18,
+            BuildConfig.NATIVE_CURRENCY_SYMBOL,
+            BuildConfig.NATIVE_CURRENCY_NAME,
+            "local::native_currency"
+        )
     }
 }

@@ -2,6 +2,7 @@ package io.gnosis.safe.utils
 
 import android.content.res.Resources
 import io.gnosis.data.BuildConfig
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransferInfo
@@ -24,6 +25,7 @@ import java.math.BigInteger
 
 private val anyAddress = "0x0000000000000000000000000000000000001234".asEthereumAddress()!!
 private val anotherAddress = "0x0000000000000000000000000000000000004321".asEthereumAddress()!!
+private val anyChain = Chain.DEFAULT_CHAIN
 
 class TxUtilsKtTest {
 
@@ -45,7 +47,7 @@ class TxUtilsKtTest {
     fun `formattedAmount (Unknown txInfo) should return 0 ETH`() {
 
         val txInfo = TransactionInfoViewData.Unknown
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
@@ -61,7 +63,7 @@ class TxUtilsKtTest {
             actionInfoAddressName = null,
             actionInfoAddressUri = null
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
@@ -77,7 +79,7 @@ class TxUtilsKtTest {
             actionInfoAddressName = null,
             actionInfoAddressUri = null
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
@@ -92,7 +94,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("-1 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
@@ -107,7 +109,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = BigInteger.ZERO)
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}", result)
     }
@@ -122,7 +124,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc20TransferInfo(value = BigInteger.ONE)
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("+0${DS}1 WETH", result)
     }
@@ -137,7 +139,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc20TransferInfo(value = BigInteger.ONE, tokenSymbol = null)
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("+0${DS}1 ERC20", result)
     }
@@ -152,7 +154,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.INCOMING,
             transferInfo = buildErc721TransferInfo(tokenSymbol = null)
         )
-        val result = txInfo.formattedAmount(balanceFormatter)
+        val result = txInfo.formattedAmount(anyChain, balanceFormatter)
 
         assertEquals("+1 NFT", result)
     }
@@ -346,7 +348,7 @@ class TxUtilsKtTest {
         assertEquals("4", addressOwner.value)
     }
 
-    private fun buildTransferInfo(value: BigInteger): TransferInfo = TransferInfo.EtherTransfer(value)
+    private fun buildTransferInfo(value: BigInteger): TransferInfo = TransferInfo.NativeTransfer(value)
 
     private fun buildErc20TransferInfo(value: BigInteger, tokenSymbol: String? = "WETH"): TransferInfo =
         TransferInfo.Erc20Transfer(

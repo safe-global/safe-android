@@ -79,8 +79,8 @@ class TransactionRepositoryTransferTest(
                     assertEquals(erc721Transfer.tokenName, transferInfo.tokenName)
                     assertEquals(erc721Transfer.tokenId, transferInfo.tokenId)
                 }
-                is TransferInfo.EtherTransfer -> {
-                    val etherTransfer = txInfo.transferInfo as TransferInfo.EtherTransfer
+                is TransferInfo.NativeTransfer -> {
+                    val etherTransfer = txInfo.transferInfo as TransferInfo.NativeTransfer
                     assertEquals(etherTransfer.value, transferInfo.value())
                 }
             }
@@ -406,7 +406,7 @@ private fun buildTransferInfoERC721(
 
 private fun buildTransferInfoEther(
     value: BigInteger = "23".toBigInteger()
-): TransferInfo = TransferInfo.EtherTransfer(
+): TransferInfo = TransferInfo.NativeTransfer(
     value = value
 )
 

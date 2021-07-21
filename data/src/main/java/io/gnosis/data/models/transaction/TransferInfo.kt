@@ -2,7 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.data.models.Chain
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
@@ -45,32 +45,30 @@ sealed class TransferInfo(
         val logoUri: String?
     ) : TransferInfo(TransferType.ERC721)
 
-    //TODO: rename class to NativeTransfer
     @JsonClass(generateAdapter = true)
-    data class EtherTransfer(
+    data class NativeTransfer(
         @Json(name = "value")
         val value: BigInteger
     ) : TransferInfo(TransferType.NATIVE_COIN)
 }
 
-
 fun TransferInfo.value(): BigInteger =
     when (this) {
-        is TransferInfo.EtherTransfer -> value
+        is TransferInfo.NativeTransfer -> value
         is TransferInfo.Erc20Transfer -> value
         is TransferInfo.Erc721Transfer -> BigInteger.ONE
     }
 
-fun TransferInfo.symbol(): String? =
+fun TransferInfo.symbol(chain: Chain): String? =
     when (this) {
-        is TransferInfo.EtherTransfer -> TokenRepository.NATIVE_CURRENCY_INFO.symbol
+        is TransferInfo.NativeTransfer -> chain.currency.symbol
         is TransferInfo.Erc20Transfer -> tokenSymbol
         is TransferInfo.Erc721Transfer -> tokenSymbol
     }
 
-fun TransferInfo.decimals(): Int? =
+fun TransferInfo.decimals(chain: Chain): Int? =
     when (this) {
         is TransferInfo.Erc20Transfer -> decimals
         is TransferInfo.Erc721Transfer -> 0
-        is TransferInfo.EtherTransfer -> TokenRepository.NATIVE_CURRENCY_INFO.decimals
+        is TransferInfo.NativeTransfer -> chain.currency.decimals
     }

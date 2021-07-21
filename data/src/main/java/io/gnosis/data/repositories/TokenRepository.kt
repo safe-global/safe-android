@@ -1,15 +1,10 @@
 package io.gnosis.data.repositories
 
-import io.gnosis.data.BuildConfig
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
-import io.gnosis.data.models.assets.TokenInfo
-import io.gnosis.data.models.assets.TokenType
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.model.Solidity
-import java.math.BigInteger
 
 class TokenRepository(private val gatewayApi: GatewayApi) {
 
@@ -53,16 +48,4 @@ class TokenRepository(private val gatewayApi: GatewayApi) {
             })
             .flatten()
             .toList()
-
-    companion object {
-        val ZERO_ADDRESS = Solidity.Address(BigInteger.ZERO)
-        val NATIVE_CURRENCY_INFO = TokenInfo(
-            TokenType.NATIVE_CURRENCY,
-            ZERO_ADDRESS,
-            18,
-            BuildConfig.NATIVE_CURRENCY_SYMBOL,
-            BuildConfig.NATIVE_CURRENCY_NAME,
-            "local::native_currency"
-        )
-    }
 }

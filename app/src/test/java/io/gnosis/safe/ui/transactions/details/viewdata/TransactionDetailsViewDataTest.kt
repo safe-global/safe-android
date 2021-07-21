@@ -120,7 +120,7 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toTransactionInfoViewData() (TransactionInfo_Transfer with AddressInfo) should return TransactionInfoViewData_Transfer `() {
         val transactionInfo = TransactionInfo.Transfer(
-            AddressInfo(anyAddress,"Sender Name", null), AddressInfo(anotherAddress), TransferInfo.EtherTransfer(
+            AddressInfo(anyAddress,"Sender Name", null), AddressInfo(anotherAddress), TransferInfo.NativeTransfer(
                 BigInteger.ONE
             ), TransactionDirection.INCOMING
         )
@@ -133,7 +133,7 @@ class TransactionDetailsViewDataTest {
                 address = anyAddress,
                 addressName = "Sender Name",
                 addressUri = null,
-                transferInfo = TransferInfo.EtherTransfer(
+                transferInfo = TransferInfo.NativeTransfer(
                     BigInteger.ONE
                 ),
                 direction = TransactionDirection.INCOMING
@@ -145,7 +145,7 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toTransactionInfoViewData() (TransactionInfo_Transfer direction outgoing) should return otherAddress `() {
         val transactionInfo = TransactionInfo.Transfer(
-            AddressInfo(anyAddress, "Sender Name", null), AddressInfo(anotherAddress), TransferInfo.EtherTransfer(
+            AddressInfo(anyAddress, "Sender Name", null), AddressInfo(anotherAddress), TransferInfo.NativeTransfer(
                 BigInteger.ONE
             ), TransactionDirection.OUTGOING
         )
@@ -158,7 +158,7 @@ class TransactionDetailsViewDataTest {
                 address = anotherAddress,
                 addressName = "Local Name",
                 addressUri = null,
-                transferInfo = TransferInfo.EtherTransfer(
+                transferInfo = TransferInfo.NativeTransfer(
                     BigInteger.ONE
                 ),
                 direction = TransactionDirection.OUTGOING
@@ -170,7 +170,7 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toTransactionInfoViewData() (TransactionInfo_Transfer with AddressInfo and safeAppInfo) should ignore safeAppInfo`() {
         val transactionInfo = TransactionInfo.Transfer(
-            AddressInfo(anyAddress, "Sender Name", null), AddressInfo(anotherAddress), TransferInfo.EtherTransfer(
+            AddressInfo(anyAddress, "Sender Name", null), AddressInfo(anotherAddress), TransferInfo.NativeTransfer(
                 BigInteger.ONE
             ), TransactionDirection.INCOMING
         )
@@ -183,7 +183,7 @@ class TransactionDetailsViewDataTest {
                 address = anyAddress,
                 addressName = "Sender Name",
                 addressUri = null,
-                transferInfo = TransferInfo.EtherTransfer(
+                transferInfo = TransferInfo.NativeTransfer(
                     BigInteger.ONE
                 ),
                 direction = TransactionDirection.INCOMING

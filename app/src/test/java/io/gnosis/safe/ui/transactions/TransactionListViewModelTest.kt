@@ -16,7 +16,6 @@ import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_REMOVE_OWNER
 import io.gnosis.data.repositories.SafeRepository.Companion.METHOD_SET_FALLBACK_HANDLER
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_0_0
 import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
-import io.gnosis.data.repositories.TokenRepository.Companion.NATIVE_CURRENCY_INFO
 import io.gnosis.data.repositories.TransactionRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -902,7 +901,7 @@ class TransactionListViewModelTest {
         val transfer = TransactionInfo.Transfer(
             sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
             recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
-            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            transferInfo = TransferInfo.NativeTransfer(BigInteger.ONE),
             direction = TransactionDirection.INCOMING
         )
 
@@ -916,7 +915,7 @@ class TransactionListViewModelTest {
         val transfer = TransactionInfo.Transfer(
             sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
             recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
-            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            transferInfo = TransferInfo.NativeTransfer(BigInteger.ONE),
             direction = TransactionDirection.UNKNOWN
         )
 
@@ -930,7 +929,7 @@ class TransactionListViewModelTest {
         val transfer = TransactionInfo.Transfer(
             sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
             recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
-            transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
+            transferInfo = TransferInfo.NativeTransfer(BigInteger.ONE),
             direction = TransactionDirection.OUTGOING
         )
 
@@ -1065,7 +1064,7 @@ class TransactionListViewModelTest {
                     recipient = AddressInfo(defaultToAddress),
                     sender = AddressInfo(defaultFromAddress),
                     direction = TransactionDirection.OUTGOING,
-                    transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE)
+                    transferInfo = TransferInfo.NativeTransfer(BigInteger.ONE)
                 ),
                 timestamp = Date(0),
                 safeAppInfo = null
@@ -1121,7 +1120,7 @@ class TransactionListViewModelTest {
                 logoUri = tokenInfo.logoUri,
                 tokenId = "tokenId"
             )
-            else -> TransferInfo.EtherTransfer(value)
+            else -> TransferInfo.NativeTransfer(value)
         }
     }
 
@@ -1202,6 +1201,15 @@ class TransactionListViewModelTest {
     companion object {
 
         private val CHAIN = Chain.DEFAULT_CHAIN
+
+        private val NATIVE_CURRENCY_INFO = TokenInfo(
+            TokenType.NATIVE_CURRENCY,
+            Solidity.Address(BigInteger.ZERO),
+            18,
+            BuildConfig.NATIVE_CURRENCY_SYMBOL,
+            BuildConfig.NATIVE_CURRENCY_NAME,
+            "local::native_currency"
+        )
 
         private val ERC20_TOKEN_INFO_NO_SYMBOL = TokenInfo(
             TokenType.ERC20,
