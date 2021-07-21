@@ -68,7 +68,7 @@ class ConfirmRejectionViewModelTest {
             )
         } just Runs
         coEvery { credentialsRepository.owner(owner.address) } returns owner
-        coEvery { tracker.logTransactionRejected() } just Runs
+        coEvery { tracker.logTransactionRejected(any()) } just Runs
         viewModel.txDetails = transactionDetails
 
         viewModel.submitRejection(owner.address)
@@ -101,7 +101,7 @@ class ConfirmRejectionViewModelTest {
             )
         }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
-        coVerify(exactly = 1) { tracker.logTransactionRejected() }
+        coVerify(exactly = 1) { tracker.logTransactionRejected(any()) }
     }
 
     @Test

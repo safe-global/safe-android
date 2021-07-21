@@ -270,7 +270,7 @@ class TransactionDetailsViewModelTest {
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns listOf(owner)
         coEvery { credentialsRepository.owner(someAddress) } returns owner
-        coEvery { tracker.logTransactionConfirmed() } just Runs
+        coEvery { tracker.logTransactionConfirmed(any()) } just Runs
         viewModel.txDetails = transactionDetails
 
         viewModel.submitConfirmation(transactionDetails, someAddress)
@@ -296,7 +296,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 2) { safeRepository.getActiveSafe() }
-        coVerify(exactly = 1) { tracker.logTransactionConfirmed() }
+        coVerify(exactly = 1) { tracker.logTransactionConfirmed(any()) }
     }
 
 
