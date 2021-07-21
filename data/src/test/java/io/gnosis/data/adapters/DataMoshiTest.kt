@@ -1,7 +1,7 @@
 package io.gnosis.data.adapters
 
 import com.squareup.moshi.Types
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.*
 import io.gnosis.data.models.transaction.TransactionStatus.SUCCESS
 import org.junit.Assert.assertEquals
@@ -31,12 +31,12 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Transfer(
                 direction = TransactionDirection.INCOMING,
-                recipient = AddressInfoExtended(
+                recipient = AddressInfo(
                     "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                     "Foo Bar Recipient",
                     "https://gnosis-safe-token-logos.s3.amazonaws.com/0x1C8b9B78e3085866521FE206fa4c1a67F49f153A.png"
                 ),
-                sender = AddressInfoExtended(
+                sender = AddressInfo(
                     "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                     "Foo Bar Sender",
                     "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
@@ -68,7 +68,7 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Custom(
                 dataSize = 0,
-                to = AddressInfoExtended(
+                to = AddressInfo(
                     "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                     "Foo Bar",
                     "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
@@ -111,7 +111,7 @@ class DataMoshiTest {
                     )
                 ),
                 settingsInfo = SettingsInfo.AddOwner(
-                    owner = AddressInfoExtended(
+                    owner = AddressInfo(
                         "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
                         name = "Foo Bar",
                         logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0x5c9E7b93900536D9cc5559b881375Bae93c933D0.png"
@@ -141,7 +141,7 @@ class DataMoshiTest {
             timestamp = Date(1543431151000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Creation(
-                creator = AddressInfoExtended(
+                creator = AddressInfo(
                     "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!
                 ),
                 factory = null,

@@ -144,15 +144,15 @@ class SafeRepositoryTest {
     fun `isValidSafe - valid safe`() = runBlocking {
         val safeAddress = Solidity.Address(BigInteger.ONE)
         val safeInfo = SafeInfo(
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
             1,
             listOf(
-                AddressInfoExtended(Solidity.Address(BigInteger.ONE))
+                AddressInfo(Solidity.Address(BigInteger.ONE))
             ),
-            AddressInfoExtended(SafeRepository.SAFE_IMPLEMENTATION_1_0_0),
-            listOf(AddressInfoExtended(Solidity.Address(BigInteger.ONE))),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(SafeRepository.SAFE_IMPLEMENTATION_1_0_0),
+            listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
 
@@ -234,15 +234,15 @@ class SafeRepositoryTest {
     fun `getSafeInfo - (valid address) should return safeInfo`() = runBlocking {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
         val safeInfo = SafeInfo(
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
             1,
             listOf(
-                AddressInfoExtended(Solidity.Address(BigInteger.ONE))
+                AddressInfo(Solidity.Address(BigInteger.ONE))
             ),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
-            listOf(AddressInfoExtended(Solidity.Address(BigInteger.ONE))),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             "v1"
         )
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo

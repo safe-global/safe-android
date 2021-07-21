@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.transactions.details.viewdata
 
 import androidx.annotation.VisibleForTesting
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
@@ -236,7 +236,7 @@ internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun AddressInfoExtended.toAddressInfoData(
+internal fun AddressInfo.toAddressInfoData(
     safes: List<Safe>,
     safeAppInfo: SafeAppInfo? = null
 ): AddressInfoData {

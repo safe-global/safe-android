@@ -2,7 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -34,7 +34,7 @@ data class TxData(
     @Json(name = "dataDecoded")
     val dataDecoded: DataDecoded?,
     @Json(name = "to")
-    val to: AddressInfoExtended,
+    val to: AddressInfo,
     @Json(name = "value")
     val value: BigInteger?,
     @Json(name = "operation")
@@ -42,7 +42,7 @@ data class TxData(
 
     //FIXME: suboptimal backend response structure
     @Json(name = "addressInfoIndex")
-    val addressInfoIndex: Map<String, AddressInfoExtended>? = null
+    val addressInfoIndex: Map<String, AddressInfo>? = null
 )
 
 
@@ -66,15 +66,15 @@ sealed class DetailedExecutionInfo(
         @Json(name = "safeTxHash")
         val safeTxHash: String = "",
         @Json(name = "signers")
-        val signers: List<AddressInfoExtended> = emptyList(),
+        val signers: List<AddressInfo> = emptyList(),
         @Json(name = "rejectors")
-        val rejectors: List<Solidity.Address> = emptyList(),
+        val rejectors: List<AddressInfo> = emptyList(),
         @Json(name = "confirmationsRequired")
         val confirmationsRequired: Int = 0,
         @Json(name = "confirmations")
         val confirmations: List<Confirmations> = emptyList(),
         @Json(name = "executor")
-        val executor: AddressInfoExtended? = null,
+        val executor: AddressInfo? = null,
         @Json(name = "safeTxGas")
         val safeTxGas: BigInteger = BigInteger.ZERO,
         @Json(name = "baseGas")
@@ -95,7 +95,7 @@ sealed class DetailedExecutionInfo(
 @JsonClass(generateAdapter = true)
 data class Confirmations(
     @Json(name = "signer")
-    val signer: AddressInfoExtended,
+    val signer: AddressInfo,
     @Json(name = "signature")
     val signature: String,
     @Json(name = "submittedAt")

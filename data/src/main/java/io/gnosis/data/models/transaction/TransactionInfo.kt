@@ -2,7 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import java.math.BigInteger
 
 sealed class TransactionInfo(
@@ -10,7 +10,7 @@ sealed class TransactionInfo(
 ) {
     @JsonClass(generateAdapter = true)
     data class Custom(
-        @Json(name = "to") val to: AddressInfoExtended,
+        @Json(name = "to") val to: AddressInfo,
         @Json(name = "dataSize") val dataSize: Int = 0,
         @Json(name = "value") val value: BigInteger = BigInteger.ZERO,
         @Json(name = "methodName") val methodName: String? = null,
@@ -26,18 +26,18 @@ sealed class TransactionInfo(
 
     @JsonClass(generateAdapter = true)
     data class Transfer(
-        @Json(name = "sender") val sender: AddressInfoExtended,
-        @Json(name = "recipient") val recipient: AddressInfoExtended,
+        @Json(name = "sender") val sender: AddressInfo,
+        @Json(name = "recipient") val recipient: AddressInfo,
         @Json(name = "transferInfo") val transferInfo: TransferInfo,
         @Json(name = "direction") val direction: TransactionDirection
     ) : TransactionInfo(TransactionType.Transfer)
 
     @JsonClass(generateAdapter = true)
     data class Creation(
-        @Json(name = "creator") val creator: AddressInfoExtended,
+        @Json(name = "creator") val creator: AddressInfo,
         @Json(name = "transactionHash") val transactionHash: String,
-        @Json(name = "implementation") val implementation: AddressInfoExtended?,
-        @Json(name = "factory") val factory: AddressInfoExtended?
+        @Json(name = "implementation") val implementation: AddressInfo?,
+        @Json(name = "factory") val factory: AddressInfo?
     ) : TransactionInfo(TransactionType.Creation)
 
     object Unknown : TransactionInfo(TransactionType.Unknown)

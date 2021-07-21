@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 
 @JsonClass(generateAdapter = true)
-data class AddressInfoExtended(
+data class AddressInfo(
     @Json(name = "value") val value: Solidity.Address,
     @Json(name = "name") val name: String? = null,
     @Json(name = "logoUri") val logoUri: String? = null

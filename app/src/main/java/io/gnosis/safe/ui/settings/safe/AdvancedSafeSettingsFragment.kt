@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -106,7 +106,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         }
     }
 
-    private fun fallbackHandlerView(fallbackHandler: AddressInfoExtended?): View  =
+    private fun fallbackHandlerView(fallbackHandler: AddressInfo?): View  =
         when {
             fallbackHandler == null || fallbackHandler.value.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)

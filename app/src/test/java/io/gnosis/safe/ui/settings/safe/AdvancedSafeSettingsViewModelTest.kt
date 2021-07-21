@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.settings.safe
 
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
@@ -67,13 +67,13 @@ class AdvancedSafeSettingsViewModelTest {
     fun `load - (safeRepository success) should emit viewAction with SafeInfo`() = runBlocking {
         val stateObserver = TestLiveDataObserver<AdvancedSafeSettingsState>()
         val safeInfo = SafeInfo(
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             BigInteger.TEN,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             "1.1.1"
         )
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo

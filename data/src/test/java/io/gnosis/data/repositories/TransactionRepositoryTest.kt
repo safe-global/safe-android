@@ -3,7 +3,7 @@ package io.gnosis.data.repositories
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Page
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
@@ -329,7 +329,7 @@ private fun buildCustomTxInfo(
 ): TransactionInfo.Custom =
     TransactionInfo.Custom(
         value = value,
-        to = AddressInfoExtended(to),
+        to = AddressInfo(to),
         dataSize = dataSize,
         methodName = null,
         isCancellation = false
@@ -343,9 +343,9 @@ private fun buildCreationTxInfo(
 ): TransactionInfo.Creation =
     TransactionInfo.Creation(
         transactionHash = hash,
-        implementation = AddressInfoExtended(implementation),
-        factory = AddressInfoExtended(factory),
-        creator = AddressInfoExtended(creator)
+        implementation = AddressInfo(implementation),
+        factory = AddressInfo(factory),
+        creator = AddressInfo(creator)
     )
 
 private fun buildSettingsChangeTxInfo(
@@ -366,8 +366,8 @@ private fun buildTransferTxInfo(
     transferInfo: TransferInfo = buildTransferInfoERC20()
 ): TransactionInfo.Transfer =
     TransactionInfo.Transfer(
-        sender = AddressInfoExtended(sender),
-        recipient = AddressInfoExtended(recipient),
+        sender = AddressInfo(sender),
+        recipient = AddressInfo(recipient),
         direction = direction,
         transferInfo = transferInfo
     )

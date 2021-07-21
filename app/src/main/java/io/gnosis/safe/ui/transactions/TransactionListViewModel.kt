@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
@@ -357,7 +357,7 @@ class TransactionListViewModel
     }
 
     private fun resolveKnownAddress(
-        addressData: AddressInfoExtended,
+        addressData: AddressInfo,
         safeAppInfo: SafeAppInfo?,
         safes: List<Safe>
     ): AddressInfoData {

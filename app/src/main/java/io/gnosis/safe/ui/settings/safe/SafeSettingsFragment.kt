@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -125,7 +125,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun ownerView(owner: AddressInfoExtended, localOwners: List<Owner>): View {
+    private fun ownerView(owner: AddressInfo, localOwners: List<Owner>): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 

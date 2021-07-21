@@ -2,7 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 
 enum class SettingsInfoType {
     @Json(name = "SET_FALLBACK_HANDLER")
@@ -28,25 +28,25 @@ sealed class SettingsInfo(
 ) {
     @JsonClass(generateAdapter = true)
     data class SetFallbackHandler(
-        @Json(name = "handler") val handler: AddressInfoExtended
+        @Json(name = "handler") val handler: AddressInfo
     ) : SettingsInfo(SettingsInfoType.SET_FALLBACK_HANDLER)
 
     @JsonClass(generateAdapter = true)
     data class AddOwner(
-        @Json(name = "owner") val owner: AddressInfoExtended,
+        @Json(name = "owner") val owner: AddressInfo,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.ADD_OWNER)
 
     @JsonClass(generateAdapter = true)
     data class RemoveOwner(
-        @Json(name = "owner") val owner: AddressInfoExtended,
+        @Json(name = "owner") val owner: AddressInfo,
         @Json(name = "threshold") val threshold: Long
     ) : SettingsInfo(SettingsInfoType.REMOVE_OWNER)
 
     @JsonClass(generateAdapter = true)
     data class SwapOwner(
-        @Json(name = "oldOwner") val oldOwner: AddressInfoExtended,
-        @Json(name = "newOwner") val newOwner: AddressInfoExtended
+        @Json(name = "oldOwner") val oldOwner: AddressInfo,
+        @Json(name = "newOwner") val newOwner: AddressInfo
     ) : SettingsInfo(SettingsInfoType.SWAP_OWNER)
 
     @JsonClass(generateAdapter = true)
@@ -56,16 +56,16 @@ sealed class SettingsInfo(
 
     @JsonClass(generateAdapter = true)
     data class ChangeImplementation(
-        @Json(name = "implementation") val implementation: AddressInfoExtended
+        @Json(name = "implementation") val implementation: AddressInfo
     ) : SettingsInfo(SettingsInfoType.CHANGE_IMPLEMENTATION)
 
     @JsonClass(generateAdapter = true)
     data class EnableModule(
-        @Json(name = "module") val module: AddressInfoExtended
+        @Json(name = "module") val module: AddressInfo
     ) : SettingsInfo(SettingsInfoType.ENABLE_MODULE)
 
     @JsonClass(generateAdapter = true)
     data class DisableModule(
-        @Json(name = "module") val module: AddressInfoExtended
+        @Json(name = "module") val module: AddressInfo
     ) : SettingsInfo(SettingsInfoType.DISABLE_MODULE)
 }

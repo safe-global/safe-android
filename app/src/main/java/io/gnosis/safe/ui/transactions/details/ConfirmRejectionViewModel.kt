@@ -1,7 +1,7 @@
 package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionInfo
@@ -67,7 +67,7 @@ class ConfirmRejectionViewModel
             val activeSafe = safeRepository.getActiveSafe()!!
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(to = AddressInfoExtended(activeSafe.address)),
+                txInfo = TransactionInfo.Custom(to = AddressInfo(activeSafe.address)),
                 detailedExecutionInfo = rejectionExecutionInfo,
                 safeAppInfo = null
             )
@@ -125,7 +125,7 @@ class ConfirmRejectionViewModel
         val executionInfo = txDetails?.detailedExecutionInfo
         if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
             val allPossibleSigners = executionInfo.signers
-            val rejectors = executionInfo.rejectors
+            val rejectors = executionInfo.rejectors.map { it.value }
             val missingSigners = allPossibleSigners.filter { possibleSigner ->
                 rejectors.all { address ->
                     address != possibleSigner.value
