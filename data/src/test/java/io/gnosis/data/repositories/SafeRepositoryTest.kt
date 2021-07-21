@@ -153,6 +153,7 @@ class SafeRepositoryTest {
             AddressInfo(SafeRepository.SAFE_IMPLEMENTATION_1_0_0),
             listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
             "v1"
         )
 
@@ -243,6 +244,7 @@ class SafeRepositoryTest {
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
             "v1"
         )
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo

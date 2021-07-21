@@ -13,5 +13,6 @@ data class SafeInfo(
     @Json(name = "implementation") val implementation: AddressInfo,
     @Json(name = "modules") val modules: List<AddressInfo>?,
     @Json(name = "fallbackHandler") val fallbackHandler: AddressInfo?,
+    @Json(name = "guard") val guard: AddressInfo?,
     @Json(name = "version") val version: String
 )
