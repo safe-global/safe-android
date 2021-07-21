@@ -38,7 +38,7 @@ fun TransactionInfoViewData.formattedAmount(chain: Chain, balanceFormatter: Bala
                 is TransferInfo.Erc20Transfer -> {
                     transferInfo.decimals ?: 0
                 }
-                is TransferInfo.NativeTransfer -> 18
+                is TransferInfo.NativeTransfer -> chain.currency.decimals
                 else -> 0
             }
             val symbol: String = when (val transferInfo = txInfo.transferInfo) {
