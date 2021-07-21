@@ -31,13 +31,13 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Transfer(
                 direction = TransactionDirection.INCOMING,
-                recipient = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
-                recipientInfo = AddressInfo(
+                recipient = AddressInfo(
+                    "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!,
                     "Foo Bar Recipient",
                     "https://gnosis-safe-token-logos.s3.amazonaws.com/0x1C8b9B78e3085866521FE206fa4c1a67F49f153A.png"
                 ),
-                sender = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                senderInfo = AddressInfo(
+                sender = AddressInfo(
+                    "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
                     "Foo Bar Sender",
                     "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
                 ),
@@ -68,8 +68,11 @@ class DataMoshiTest {
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Custom(
                 dataSize = 0,
-                to = "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
-                toInfo = AddressInfo("Foo Bar", "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"),
+                to = AddressInfo(
+                    "0x2134Bb3DE97813678daC21575E7A77a95079FC51".asEthereumAddress()!!,
+                    "Foo Bar",
+                    "https://gnosis-safe-token-logos.s3.amazonaws.com/0x2134Bb3DE97813678daC21575E7A77a95079FC51.png"
+                ),
                 value = "3140000000000000000".toBigInteger(),
                 methodName = null,
                 isCancellation = true
@@ -108,12 +111,12 @@ class DataMoshiTest {
                     )
                 ),
                 settingsInfo = SettingsInfo.AddOwner(
-                    owner = "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
-                    threshold = 1,
-                    ownerInfo = AddressInfo(
+                    owner = AddressInfo(
+                        "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
                         name = "Foo Bar",
                         logoUri = "https://gnosis-safe-token-logos.s3.amazonaws.com/0x5c9E7b93900536D9cc5559b881375Bae93c933D0.png"
-                    )
+                    ),
+                    threshold = 1
                 )
             ),
             executionInfo = ExecutionInfo(
@@ -138,12 +141,11 @@ class DataMoshiTest {
             timestamp = Date(1543431151000),
             txStatus = SUCCESS,
             txInfo = TransactionInfo.Creation(
-                creator = "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!,
-                creatorInfo = null,
+                creator = AddressInfo(
+                    "0x40682efa0a7359ca4878AA87D1C010185c8b8d23".asEthereumAddress()!!
+                ),
                 factory = null,
-                factoryInfo = null,
                 implementation = null,
-                implementationInfo = null,
                 transactionHash = "0xe4f00086442eadbac4975c6aa87110ac72700dca905da1d908947e04ed9cee47"
             ),
             executionInfo = null,

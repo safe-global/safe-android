@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionInfo
@@ -66,7 +67,7 @@ class ConfirmRejectionViewModel
             val activeSafe = safeRepository.getActiveSafe()!!
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(to = activeSafe.address),
+                txInfo = TransactionInfo.Custom(to = AddressInfo(activeSafe.address)),
                 detailedExecutionInfo = rejectionExecutionInfo,
                 safeAppInfo = null
             )
@@ -75,7 +76,7 @@ class ConfirmRejectionViewModel
                     safeAddress = activeSafe.address,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
-                )!!.toHexString()
+                ).toHexString()
             validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
             val selectedOwner = credentialsRepository.owner(owner) ?: throw MissingOwnerCredential
@@ -115,7 +116,7 @@ class ConfirmRejectionViewModel
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = executionInfo.safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo)?.toHexString()?.addHexPrefix()
+            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
@@ -124,10 +125,10 @@ class ConfirmRejectionViewModel
         val executionInfo = txDetails?.detailedExecutionInfo
         if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
             val allPossibleSigners = executionInfo.signers
-            val rejectors = executionInfo.rejectors
+            val rejectors = executionInfo.rejectors.map { it.value }
             val missingSigners = allPossibleSigners.filter { possibleSigner ->
                 rejectors.all { address ->
-                    address != possibleSigner
+                    address != possibleSigner.value
                 }
             }
             safeLaunch {
@@ -136,7 +137,7 @@ class ConfirmRejectionViewModel
                         ViewAction.NavigateTo(
                             ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
                                 missingSigners = missingSigners.map {
-                                    it.asEthereumAddressString()
+                                    it.value.asEthereumAddressString()
                                 }.toTypedArray(), isConfirmation = false
                             )
                         )

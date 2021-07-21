@@ -28,8 +28,8 @@ data class SafeAppInfo(
     val name: String,
     @Json(name = "url")
     val url: String,
-    @Json(name = "logoUrl")
-    val logoUrl: String
+    @Json(name = "logoUri")
+    val logoUri: String
 )
 
 @JsonClass(generateAdapter = true)

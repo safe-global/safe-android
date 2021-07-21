@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
@@ -119,13 +119,13 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             ownersContainer.removeAllViews()
             safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner, localOwners)) }
             masterCopy.setAddress(safeInfo?.implementation?.value, safeInfo?.version)
-            masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUrl, safeInfo?.implementation?.value)
+            masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
     }
 
-    private fun ownerView(owner: AddressInfoExtended, localOwners: List<Owner>): View {
+    private fun ownerView(owner: AddressInfo, localOwners: List<Owner>): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 
@@ -152,7 +152,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     address = owner.value
                     name = owner.name
                     showSeparator = true
-                    loadKnownAddressLogo(owner.logoUrl, owner.value)
+                    loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
                 AddressItem(requireContext()).apply {

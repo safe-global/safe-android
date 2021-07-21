@@ -105,8 +105,6 @@ class TransactionDetailsActionMultisendFragment : BaseViewBindingFragment<Fragme
         }
     }
 
-
-
     private fun getMultisendActionItem(address: Solidity.Address, method: String, addressInfoIndex: Map<String, AddressInfo>? = null): MultisendActionView {
         val item = MultisendActionView(requireContext())
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)

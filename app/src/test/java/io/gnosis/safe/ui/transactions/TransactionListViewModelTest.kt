@@ -74,7 +74,7 @@ class TransactionListViewModelTest {
     private val defaultKnownAddressName = "Known Address"
     private val defaultKnownAddressLogo = "logoUri"
     private val defaultKnownAddressAddress = "0x1".asEthereumAddress()!!
-    private val defaultKnownAddress = AddressInfo(defaultKnownAddressName, defaultKnownAddressLogo)
+    private val defaultKnownAddress = AddressInfo(defaultKnownAddressAddress, defaultKnownAddressName, defaultKnownAddressLogo)
 
     private val safes = listOf(Safe(defaultSafeAddress, defaultSafeName), Safe(secondSafeAddress, secondSafeName))
 
@@ -486,7 +486,7 @@ class TransactionListViewModelTest {
         val transactions = listOf(
             buildCustom(status = AWAITING_EXECUTION, confirmations = 2, actionCount = 2),
             buildCustom(status = AWAITING_CONFIRMATIONS, actionCount = 3),
-            buildCustom(value = BigInteger("100000000000000"), address = defaultSafeAddress, actionCount = 1),
+            buildCustom(value = BigInteger("100000000000000"), addressInfo = AddressInfo(defaultSafeAddress), actionCount = 1),
             buildCustom(status = FAILED, actionCount = 1),
             buildCustom(status = CANCELLED, value = BigInteger("100000000000000"), actionCount = 1)
         )
@@ -594,12 +594,12 @@ class TransactionListViewModelTest {
                     METHOD_CHANGE_MASTER_COPY,
                     listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_1_1))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(implementation = SAFE_IMPLEMENTATION_1_1_1, implementationInfo = null)
+                settingsInfo = SettingsInfo.ChangeImplementation(implementation = AddressInfo(SAFE_IMPLEMENTATION_1_1_1))
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
                 dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, listOf()),
-                settingsInfo = SettingsInfo.RemoveOwner(defaultSafeAddress, null, 1)
+                settingsInfo = SettingsInfo.RemoveOwner(AddressInfo(defaultSafeAddress), 1)
             ),
             buildSettingsChange(
                 status = AWAITING_CONFIRMATIONS,
@@ -612,7 +612,7 @@ class TransactionListViewModelTest {
                     METHOD_DISABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.DisableModule(module = defaultModuleAddress, moduleInfo = null)
+                settingsInfo = SettingsInfo.DisableModule(module = AddressInfo(defaultModuleAddress))
             ),
             buildSettingsChange(
                 status = AWAITING_EXECUTION,
@@ -621,7 +621,7 @@ class TransactionListViewModelTest {
                     METHOD_ENABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.EnableModule(module = defaultModuleAddress, moduleInfo = null)
+                settingsInfo = SettingsInfo.EnableModule(module = AddressInfo(defaultModuleAddress))
             ),
             // history
             buildSettingsChange(
@@ -630,7 +630,7 @@ class TransactionListViewModelTest {
                     METHOD_SET_FALLBACK_HANDLER,
                     listOf(Param.Address("address", "handler", defaultFallbackHandler))
                 ),
-                settingsInfo = SettingsInfo.SetFallbackHandler(handler = defaultFallbackHandler, handlerInfo = null)
+                settingsInfo = SettingsInfo.SetFallbackHandler(handler = AddressInfo(defaultFallbackHandler))
             ),
             buildSettingsChange(
                 status = SUCCESS,
@@ -639,7 +639,7 @@ class TransactionListViewModelTest {
                     METHOD_CHANGE_MASTER_COPY,
                     listOf(Param.Address("address", "_masterCopy", SAFE_IMPLEMENTATION_1_0_0))
                 ),
-                settingsInfo = SettingsInfo.ChangeImplementation(implementation = SAFE_IMPLEMENTATION_1_0_0, implementationInfo = null)
+                settingsInfo = SettingsInfo.ChangeImplementation(implementation = AddressInfo(SAFE_IMPLEMENTATION_1_0_0))
             ),
             buildSettingsChange(
                 status = FAILED,
@@ -647,14 +647,14 @@ class TransactionListViewModelTest {
                     METHOD_ENABLE_MODULE,
                     listOf(Param.Address("address", "module", defaultModuleAddress))
                 ),
-                settingsInfo = SettingsInfo.EnableModule(module = defaultModuleAddress, moduleInfo = null)
+                settingsInfo = SettingsInfo.EnableModule(module = AddressInfo(defaultModuleAddress))
             ),
             buildSettingsChange(
                 status = SUCCESS,
                 confirmations = 2,
                 dataDecoded = buildDataDecodedDto(METHOD_REMOVE_OWNER, emptyList()),
                 nonce = 10.toBigInteger(),
-                settingsInfo = SettingsInfo.RemoveOwner(defaultSafeAddress, null, 1)
+                settingsInfo = SettingsInfo.RemoveOwner(AddressInfo(defaultSafeAddress), 1)
             )
         )
         val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
@@ -900,12 +900,10 @@ class TransactionListViewModelTest {
     @Test
     fun `incoming (Transfer_TransactionDirection_INCOMING) is true`() {
         val transfer = TransactionInfo.Transfer(
-            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
-            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
+            recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
             transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
-            direction = TransactionDirection.INCOMING,
-            senderInfo = null,
-            recipientInfo = null
+            direction = TransactionDirection.INCOMING
         )
 
         val actual = transfer.incoming()
@@ -916,12 +914,10 @@ class TransactionListViewModelTest {
     @Test
     fun `incoming (Transfer_TransactionDirection_UNKNOWN) is true`() {
         val transfer = TransactionInfo.Transfer(
-            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
-            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
+            recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
             transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
-            direction = TransactionDirection.UNKNOWN,
-            recipientInfo = null,
-            senderInfo = null
+            direction = TransactionDirection.UNKNOWN
         )
 
         val actual = transfer.incoming()
@@ -932,12 +928,10 @@ class TransactionListViewModelTest {
     @Test
     fun `incoming (Transfer_TransactionDirection_OUTGOING) is true`() {
         val transfer = TransactionInfo.Transfer(
-            sender = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
-            recipient = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!,
+            sender = AddressInfo("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!),
+            recipient = AddressInfo("0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!),
             transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
-            direction = TransactionDirection.OUTGOING,
-            senderInfo = null,
-            recipientInfo = null
+            direction = TransactionDirection.OUTGOING
         )
 
         val actual = transfer.incoming()
@@ -952,10 +946,10 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
         val transactions = listOf(
-            buildCustom(address = defaultSafeAddress, actionCount = 1),
-            buildCustom(address = defaultKnownAddressAddress, toInfo = defaultKnownAddress),
-            buildCustom(address = "0x2".asEthereumAddress()!!),
-            buildCustom(address = defaultSafeAddress, toInfo = AddressInfo("name", "logoUri"))
+            buildCustom(addressInfo = AddressInfo(defaultSafeAddress), actionCount = 1),
+            buildCustom(addressInfo = defaultKnownAddress),
+            buildCustom(addressInfo = AddressInfo("0x2".asEthereumAddress()!!)),
+            buildCustom(addressInfo = AddressInfo(defaultSafeAddress, "name", "logoUri"))
         )
         val transactionViews = transactions.map { transactionListViewModel.getTransactionView(CHAIN, it, safes) }
 
@@ -1042,12 +1036,9 @@ class TransactionListViewModelTest {
                 id = "<random-id>",
                 txStatus = SUCCESS,
                 txInfo = TransactionInfo.Creation(
-                    creator = defaultFromAddress,
-                    creatorInfo = null,
-                    factory = defaultFactoryAddress,
-                    factoryInfo = null,
-                    implementation = defaultSafeAddress,
-                    implementationInfo = null,
+                    creator = AddressInfo(defaultFromAddress),
+                    factory = AddressInfo(defaultFactoryAddress),
+                    implementation = AddressInfo(defaultSafeAddress),
                     transactionHash = "0x00"
                 ),
                 timestamp = Date(1),
@@ -1071,12 +1062,10 @@ class TransactionListViewModelTest {
                 txStatus = status,
                 executionInfo = ExecutionInfo(nonce = defaultNonce, confirmationsRequired = 3, confirmationsSubmitted = 2, missingSigners = null),
                 txInfo = TransactionInfo.Transfer(
-                    recipient = defaultToAddress,
-                    sender = defaultFromAddress,
+                    recipient = AddressInfo(defaultToAddress),
+                    sender = AddressInfo(defaultFromAddress),
                     direction = TransactionDirection.OUTGOING,
-                    transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE),
-                    recipientInfo = null,
-                    senderInfo = null
+                    transferInfo = TransferInfo.EtherTransfer(BigInteger.ONE)
                 ),
                 timestamp = Date(0),
                 safeAppInfo = null
@@ -1100,12 +1089,10 @@ class TransactionListViewModelTest {
             id = "",
             txStatus = status,
             txInfo = TransactionInfo.Transfer(
-                recipient = recipient,
-                sender = sender,
+                recipient = AddressInfo(recipient),
+                sender = AddressInfo(sender),
                 direction = if (defaultSafeAddress == recipient) TransactionDirection.INCOMING else TransactionDirection.OUTGOING,
-                transferInfo = transferInfoFromToken(tokenInfo = serviceTokenInfo, value = value),
-                senderInfo = null,
-                recipientInfo = null
+                transferInfo = transferInfoFromToken(tokenInfo = serviceTokenInfo, value = value)
             ),
             executionInfo = ExecutionInfo(
                 nonce = nonce,
@@ -1145,8 +1132,7 @@ class TransactionListViewModelTest {
         value: BigInteger = BigInteger.ZERO,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
-        address: Solidity.Address = defaultToAddress,
-        toInfo: AddressInfo? = null,
+        addressInfo: AddressInfo = AddressInfo(defaultToAddress),
         dataSize: Int = 0,
         actionCount: Int? = null
     ): Transaction =
@@ -1154,11 +1140,10 @@ class TransactionListViewModelTest {
             id = "",
             txStatus = status,
             txInfo = TransactionInfo.Custom(
-                to = address,
+                to = addressInfo,
                 dataSize = dataSize,
                 value = value,
                 methodName = "multiSend",
-                toInfo = toInfo,
                 isCancellation = false,
                 actionCount = actionCount
             ),

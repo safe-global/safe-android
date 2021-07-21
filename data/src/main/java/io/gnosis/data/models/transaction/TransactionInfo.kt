@@ -3,7 +3,6 @@ package io.gnosis.data.models.transaction
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.gnosis.data.models.AddressInfo
-import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 sealed class TransactionInfo(
@@ -11,8 +10,7 @@ sealed class TransactionInfo(
 ) {
     @JsonClass(generateAdapter = true)
     data class Custom(
-        @Json(name = "to") val to: Solidity.Address,
-        @Json(name = "toInfo") val toInfo: AddressInfo? = null,
+        @Json(name = "to") val to: AddressInfo,
         @Json(name = "dataSize") val dataSize: Int = 0,
         @Json(name = "value") val value: BigInteger = BigInteger.ZERO,
         @Json(name = "methodName") val methodName: String? = null,
@@ -28,23 +26,18 @@ sealed class TransactionInfo(
 
     @JsonClass(generateAdapter = true)
     data class Transfer(
-        @Json(name = "sender") val sender: Solidity.Address,
-        @Json(name = "senderInfo") val senderInfo: AddressInfo?,
-        @Json(name = "recipient") val recipient: Solidity.Address,
-        @Json(name = "recipientInfo") val recipientInfo: AddressInfo?,
+        @Json(name = "sender") val sender: AddressInfo,
+        @Json(name = "recipient") val recipient: AddressInfo,
         @Json(name = "transferInfo") val transferInfo: TransferInfo,
         @Json(name = "direction") val direction: TransactionDirection
     ) : TransactionInfo(TransactionType.Transfer)
 
     @JsonClass(generateAdapter = true)
     data class Creation(
-        @Json(name = "creator") val creator: Solidity.Address,
-        @Json(name = "creatorInfo") val creatorInfo: AddressInfo?,
+        @Json(name = "creator") val creator: AddressInfo,
         @Json(name = "transactionHash") val transactionHash: String,
-        @Json(name = "implementation") val implementation: Solidity.Address?,
-        @Json(name = "implementationInfo") val implementationInfo: AddressInfo?,
-        @Json(name = "factory") val factory: Solidity.Address?,
-        @Json(name = "factoryInfo") val factoryInfo: AddressInfo?
+        @Json(name = "implementation") val implementation: AddressInfo?,
+        @Json(name = "factory") val factory: AddressInfo?
     ) : TransactionInfo(TransactionType.Creation)
 
     object Unknown : TransactionInfo(TransactionType.Unknown)

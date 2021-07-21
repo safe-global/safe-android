@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.settings
 
-import io.gnosis.data.models.AddressInfoExtended
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.CredentialsRepository
@@ -80,21 +80,21 @@ class SafeSettingsViewModelTest {
         val safe1 = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safe2 = Safe(Solidity.Address(BigInteger.TEN), "safe")
         val safeInfo1 = SafeInfo(
-            AddressInfoExtended(safe1.address),
+            AddressInfo(safe1.address),
             BigInteger.TEN,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
             "1.1.1"
         )
         val safeInfo2 = SafeInfo(
-            AddressInfoExtended(safe2.address),
+            AddressInfo(safe2.address),
             BigInteger.TEN,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
             "1.1.1"
@@ -174,11 +174,11 @@ class SafeSettingsViewModelTest {
     fun `reload - (activeSafe available, everything works) should emit everything`() = runBlockingTest {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safeInfo = SafeInfo(
-            AddressInfoExtended(safe.address),
+            AddressInfo(safe.address),
             BigInteger.TEN,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
             "1.1.1"
@@ -224,11 +224,11 @@ class SafeSettingsViewModelTest {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safeInfo = SafeInfo(
-            AddressInfoExtended(safe.address),
+            AddressInfo(safe.address),
             BigInteger.TEN,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
             null,
             "1.1.1"
@@ -364,13 +364,13 @@ class SafeSettingsViewModelTest {
     @Test
     fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
-            AddressInfoExtended(SAFE_1.address),
+            AddressInfo(SAFE_1.address),
             BigInteger.ONE,
             2,
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             emptyList(),
-            AddressInfoExtended(Solidity.Address(BigInteger.ONE)),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
             "1.1.1"
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)

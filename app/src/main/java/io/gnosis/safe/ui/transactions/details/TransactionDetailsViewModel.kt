@@ -70,7 +70,7 @@ class TransactionDetailsViewModel
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
                 owners.isNotEmpty() &&
                 owners.any { owner ->
-                    executionInfo.signers.contains(owner.address) && !executionInfo.confirmations.map { it.signer }.contains(owner.address)
+                    executionInfo.signers.map { it.value }.contains(owner.address) && !executionInfo.confirmations.map { it.signer.value }.contains(owner.address)
                 }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -78,8 +78,8 @@ class TransactionDetailsViewModel
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails,
         localOwners: List<Owner>
     ): Boolean {
-        val signedBy = executionInfo.confirmations.map { it.signer }
-        val possibleSigners = executionInfo.signers
+        val signedBy = executionInfo.confirmations.map { it.signer.value }
+        val possibleSigners = executionInfo.signers.map { it.value }
         return localOwners.isNotEmpty() &&
                 localOwners.any { owner ->
                     possibleSigners.contains(owner.address) && !signedBy.contains(owner.address)
@@ -93,7 +93,7 @@ class TransactionDetailsViewModel
     ): Boolean {
         return owners.isNotEmpty() &&
                 owners.any { owner ->
-                    executionInfo.signers.contains(owner.address)
+                    executionInfo.signers.map { it.value }.contains(owner.address)
                 }
     }
 
@@ -139,7 +139,7 @@ class TransactionDetailsViewModel
                 val confirmations = executionInfo.confirmations
                 val missingSigners = allPossibleSigners.filter { possibleSigner ->
                     confirmations.all { confirmation ->
-                        confirmation.signer != possibleSigner
+                        confirmation.signer.value != possibleSigner.value
                     }
                 }
                 updateState {
@@ -147,7 +147,7 @@ class TransactionDetailsViewModel
                         ViewAction.NavigateTo(
                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
                                 missingSigners = missingSigners.map {
-                                    it.asEthereumAddressString()
+                                    it.value.asEthereumAddressString()
                                 }.toTypedArray()
                             )
                         )

@@ -23,12 +23,12 @@ class TransactionDetailsActionViewModel @Inject constructor(
 
             val safes = safeRepository.getSafes()
             safes.forEach {
-                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.localName, null)
+                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.address, it.localName, null)
             }
 
             val owners = credentialsRepository.owners()
             owners.forEach {
-                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.name ?: "", null)
+                extendedAddressInfoIndex[it.address.asEthereumAddressChecksumString()] = AddressInfo(it.address, it.name ?: "", null)
             }
 
             updateState {

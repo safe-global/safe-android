@@ -6,7 +6,6 @@ import com.squareup.moshi.Types
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.ValueDecoded
-import pm.gnosis.model.Solidity
 
 class ParamSerializer(
     moshi: Moshi
