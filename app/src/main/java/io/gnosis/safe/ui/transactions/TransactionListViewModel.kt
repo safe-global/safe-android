@@ -150,7 +150,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus),
             statusColorRes = statusTextColor(txStatus),
-            amountText = formatTransferAmount(txInfo.transferInfo, txInfo.incoming()),
+            amountText = formatTransferAmount(chain, txInfo.transferInfo, txInfo.incoming()),
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
@@ -176,7 +176,7 @@ class TransactionListViewModel
             status = txStatus,
             statusText = displayString(txStatus, needsYourConfirmation),
             statusColorRes = statusTextColor(txStatus),
-            amountText = formatTransferAmount(txInfo.transferInfo, incoming),
+            amountText = formatTransferAmount(chain, txInfo.transferInfo, incoming),
             dateTime = timestamp,
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
@@ -428,15 +428,15 @@ class TransactionListViewModel
             TransactionStatus.PENDING -> R.string.tx_status_pending
         }
 
-    private fun formatTransferAmount(transferInfo: TransferInfo, incoming: Boolean): String {
-        val symbol = transferInfo.symbol().let { symbol ->
+    private fun formatTransferAmount(chain: Chain, transferInfo: TransferInfo, incoming: Boolean): String {
+        val symbol = transferInfo.symbol(chain).let { symbol ->
             if (symbol.isNullOrEmpty()) {
                 getDefaultSymbol(transferInfo.type)
             } else {
                 symbol
             }
         }
-        return balanceFormatter.formatAmount(transferInfo.value(), incoming, transferInfo.decimals() ?: 0, symbol)
+        return balanceFormatter.formatAmount(transferInfo.value(), incoming, transferInfo.decimals(chain) ?: 0, symbol)
     }
 
     private fun getDefaultSymbol(type: TransferType?): String = when (type) {

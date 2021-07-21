@@ -1,7 +1,6 @@
 package io.gnosis.safe.utils
 
 import androidx.annotation.VisibleForTesting
-import io.gnosis.data.BuildConfig
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
@@ -106,7 +105,7 @@ class BalanceFormatter {
         }
     }
 
-    fun formatAmount(amount: BigInteger, incoming: Boolean, decimals: Int = 18, symbol: String = BuildConfig.NATIVE_CURRENCY_SYMBOL): String {
+    fun formatAmount(amount: BigInteger, incoming: Boolean, decimals: Int, symbol: String): String {
         val decimalValue = amount.convertAmount(decimals)
         val shortAmount = shortAmount(decimalValue)
         val formattedAmount = when {

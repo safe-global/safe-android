@@ -1,7 +1,7 @@
 package io.gnosis.safe.utils
 
 import android.content.res.Resources
-import io.gnosis.data.BuildConfig
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.models.transaction.TransferInfo
@@ -27,10 +27,10 @@ fun TransactionStatus.isCompleted(): Boolean =
         TransactionStatus.CANCELLED -> true
     }
 
-fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter): String =
+fun TransactionInfoViewData.formattedAmount(chain: Chain, balanceFormatter: BalanceFormatter): String =
     when (val txInfo = this) {
         is TransactionInfoViewData.Custom -> {
-            balanceFormatter.formatAmount(txInfo.value, false, 18, BuildConfig.NATIVE_CURRENCY_SYMBOL)
+            balanceFormatter.formatAmount(txInfo.value, false, chain.currency.decimals, chain.currency.symbol)
         }
         is TransactionInfoViewData.Transfer -> {
             val incoming = txInfo.direction == TransactionDirection.INCOMING
@@ -38,7 +38,7 @@ fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter):
                 is TransferInfo.Erc20Transfer -> {
                     transferInfo.decimals ?: 0
                 }
-                is TransferInfo.EtherTransfer -> 18
+                is TransferInfo.NativeTransfer -> 18
                 else -> 0
             }
             val symbol: String = when (val transferInfo = txInfo.transferInfo) {
@@ -49,7 +49,7 @@ fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter):
                     transferInfo.tokenSymbol ?: DEFAULT_ERC721_SYMBOL
                 }
                 else -> {
-                    BuildConfig.NATIVE_CURRENCY_SYMBOL
+                    chain.currency.symbol
                 }
             }
             val value = when (val transferInfo = txInfo.transferInfo) {
@@ -60,17 +60,17 @@ fun TransactionInfoViewData.formattedAmount(balanceFormatter: BalanceFormatter):
                     BigInteger.ONE
                 }
 
-                is TransferInfo.EtherTransfer -> {
+                is TransferInfo.NativeTransfer -> {
                     transferInfo.value
                 }
 
             }
             balanceFormatter.formatAmount(value, incoming, decimals, symbol)
         }
-        is TransactionInfoViewData.SettingsChange -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
-        is TransactionInfoViewData.Creation -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
-        is TransactionInfoViewData.Rejection -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
-        TransactionInfoViewData.Unknown -> "0 ${BuildConfig.NATIVE_CURRENCY_SYMBOL}"
+        is TransactionInfoViewData.SettingsChange -> "0 ${chain.currency.symbol}"
+        is TransactionInfoViewData.Creation -> "0 ${chain.currency.symbol}"
+        is TransactionInfoViewData.Rejection -> "0 ${chain.currency.symbol}"
+        TransactionInfoViewData.Unknown -> "0 ${chain.currency.symbol}"
     }
 
 fun TransactionInfoViewData.logoUri(): String? =

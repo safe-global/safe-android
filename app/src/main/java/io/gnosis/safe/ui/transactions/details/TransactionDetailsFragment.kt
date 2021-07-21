@@ -269,7 +269,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         is TransferInfo.Erc721Transfer -> {
                             txAction.setActionInfo(
                                 outgoing = outgoing,
-                                amount = txInfo.formattedAmount(balanceFormatter),
+                                amount = txInfo.formattedAmount(chain, balanceFormatter),
                                 logoUri = txInfo.logoUri() ?: "",
                                 address = address,
                                 tokenId = transferInfo.tokenId,
@@ -282,7 +282,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         else -> {
                             txAction.setActionInfo(
                                 outgoing = outgoing,
-                                amount = txInfo.formattedAmount(balanceFormatter),
+                                amount = txInfo.formattedAmount(chain, balanceFormatter),
                                 logoUri = txInfo.logoUri() ?: "",
                                 address = address,
                                 addressName = txInfo.addressName,
@@ -325,7 +325,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 with(txDetailsCustomBinding) {
                     txAction.setActionInfo(
                         outgoing = true,
-                        amount = txInfo.formattedAmount(balanceFormatter),
+                        amount = txInfo.formattedAmount(chain, balanceFormatter),
                         logoUri = txInfo.logoUri()!!,
                         address = txInfo.to,
                         addressUri = txInfo.actionInfoAddressUri,
