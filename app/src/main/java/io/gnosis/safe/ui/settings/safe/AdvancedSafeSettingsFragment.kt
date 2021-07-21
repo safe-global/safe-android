@@ -108,7 +108,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             } ?: run { moduleLabel.visible(false) }
 
             val contractVersion = SemVer.parse(safeInfo.version)
-            if (contractVersion >= SemVer(1, 1, 3)) {
+            if (contractVersion >= SemVer(1, 3, 0)) {
 
                 guardContainer.removeAllViews()
                 guardContainer.addView(safeParameterView(safeInfo.guard, R.string.unknown_guard))
