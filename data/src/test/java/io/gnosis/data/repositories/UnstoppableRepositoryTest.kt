@@ -5,6 +5,7 @@ import com.unstoppabledomains.exceptions.ns.NSExceptionParams
 import com.unstoppabledomains.exceptions.ns.NamingServiceException
 import com.unstoppabledomains.resolution.DomainResolution
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.RpcAuthentication
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -60,7 +61,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (1) should succeed for Mainnet`() {
 
-        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", "", null))
+        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", null))
 
         assertTrue(result)
     }
@@ -69,7 +70,7 @@ class UnstoppableRepositoryTest {
     fun `canResolve - (4) should succeed for Rinkeby`() {
         repository = UnstoppableDomainsRepository()
 
-        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", "", null))
+        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH, "", null))
 
         assertTrue(result)
     }
@@ -77,7 +78,7 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (17) should fail for unsupported_chain`() {
 
-        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", "", "", "", null))
+        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", "", "", RpcAuthentication.API_KEY_PATH, "", null))
 
         assertFalse(result)
     }

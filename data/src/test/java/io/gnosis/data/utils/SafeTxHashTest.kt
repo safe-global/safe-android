@@ -3,6 +3,7 @@ package io.gnosis.data.utils
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.readJsonFrom
@@ -23,6 +24,7 @@ class SafeTxHashTest {
 
     private val txDtoAdapter = dataMoshi.adapter(TransactionDetails::class.java)
 
+    private val chain = Chain.DEFAULT_CHAIN
     private val safeAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
 
     @Test
@@ -34,10 +36,12 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txCustom,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -51,10 +55,12 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txTransfer,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -68,10 +74,12 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txSettingsChange,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
