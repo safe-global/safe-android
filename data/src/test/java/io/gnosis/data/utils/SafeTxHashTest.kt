@@ -84,6 +84,26 @@ class SafeTxHashTest {
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
 
+    @Test
+    fun `calculateSafeTxHash (v1_3_0, safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
+        val safeAddress = "0x6cf158C37354d8da5396fb6d3e965318CCf119c1".asEthereumAddress()!!
+        val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_custom_set_guard.json")
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txSettingsChangeDto
+        val txSettingsChange = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
+        val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
+
+        val txCustomSafeTxHash = executionInfo.safeTxHash
+        val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 3, 0),
+            chain.chainId,
+            safeAddress,
+            txSettingsChange,
+            executionInfo
+        ).toHexString().addHexPrefix()
+
+        assertEquals(txCustomSafeTxHash, calculatedTxHash)
+    }
+
     companion object {
         private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
     }

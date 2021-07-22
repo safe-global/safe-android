@@ -1,0 +1,71 @@
+{
+  "executedAt": 1626098764000,
+  "txStatus": "SUCCESS",
+  "txInfo": {
+    "type": "Custom",
+    "to": {
+      "value": "0x6cf158C37354d8da5396fb6d3e965318CCf119c1"
+    },
+    "dataSize": "36",
+    "value": "0",
+    "methodName": "setGuard",
+    "isCancellation": false
+  },
+  "txData": {
+    "hexData": "0xe19a9dd9000000000000000000000000f2565317f3ae8ae9ea98e9fe1e7fadc77f823cbd",
+    "dataDecoded": {
+      "method": "setGuard",
+      "parameters": [
+        {
+          "name": "guard",
+          "type": "address",
+          "value": "0xf2565317F3Ae8Ae9EA98E9Fe1e7FADC77F823cbD"
+        }
+      ]
+    },
+    "to": {
+      "value": "0x6cf158C37354d8da5396fb6d3e965318CCf119c1"
+    },
+    "value": "0",
+    "operation": 0,
+    "addressInfoIndex": {
+      "0xf2565317F3Ae8Ae9EA98E9Fe1e7FADC77F823cbD": {
+        "value": "0xf2565317F3Ae8Ae9EA98E9Fe1e7FADC77F823cbD",
+        "name": "Lil's second safe",
+        "logoUri": "https://safe-transaction-assets.staging.gnosisdev.com/contracts/logos/0xf2565317F3Ae8Ae9EA98E9Fe1e7FADC77F823cbD.png"
+      }
+    }
+  },
+  "detailedExecutionInfo": {
+    "type": "MULTISIG",
+    "submittedAt": 1626098764000,
+    "nonce": 1,
+    "safeTxGas": 60354,
+    "baseGas": 0,
+    "gasPrice": "0",
+    "gasToken": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": {
+      "value": "0x0000000000000000000000000000000000000000"
+    },
+    "safeTxHash": "0x6d94352e54bbea51ac4e641403047b6f9e01237145107471884227fbc3ceebea",
+    "executor": {
+      "value": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd"
+    },
+    "signers": [
+      {
+        "value": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd"
+      }
+    ],
+    "confirmationsRequired": 1,
+    "confirmations": [
+      {
+        "signer": {
+          "value": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd"
+        },
+        "signature": "0x000000000000000000000000f2cea96575d6b10f51d9af3b10e3e4e5738aa6bd000000000000000000000000000000000000000000000000000000000000000001",
+        "submittedAt": 1626098764000
+      }
+    ]
+  },
+  "txHash": "0xcbff5ef25531eb2f7ff2a61205b8a76a07753f5b336f146c0d711a4e7f7ad318"
+}
