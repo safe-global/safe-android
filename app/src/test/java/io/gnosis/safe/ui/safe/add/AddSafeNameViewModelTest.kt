@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.RpcAuthentication
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.CredentialsRepository
@@ -41,8 +42,8 @@ class AddSafeNameViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: AddSafeNameViewModel
-    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", "", null)
-    private val rinkeby = Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", "", null)
+    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", null)
+    private val rinkeby = Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH,"", null)
 
     @Before
     fun setup() {

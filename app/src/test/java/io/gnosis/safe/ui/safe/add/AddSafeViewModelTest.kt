@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.safe.add
 
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.RpcAuthentication
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -30,7 +31,7 @@ class AddSafeViewModelTest {
     private val ensRepository = mockk<EnsRepository>()
     private val safeRepository = mockk<SafeRepository>()
 
-    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", "", null)
+    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", null)
 
     private lateinit var viewModel: AddSafeViewModel
 
