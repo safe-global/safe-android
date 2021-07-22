@@ -8,6 +8,7 @@ import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -71,8 +72,11 @@ class ConfirmRejectionViewModel
                 detailedExecutionInfo = rejectionExecutionInfo,
                 safeAppInfo = null
             )
+            //TODO: get version
             val safeTxHash =
                 calculateSafeTxHash(
+                    implementationVersion = SemVer(1, 1, 0),
+                    chainId = activeSafe.chainId,
                     safeAddress = activeSafe.address,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
@@ -116,7 +120,8 @@ class ConfirmRejectionViewModel
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = executionInfo.safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo).toHexString().addHexPrefix()
+            //TODO get version
+            val calculatedSafeTxHash = calculateSafeTxHash(SemVer(1, 1, 0), safe!!.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
