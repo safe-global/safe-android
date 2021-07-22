@@ -27,18 +27,15 @@ import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
-import java.math.BigInteger
 import javax.inject.Inject
 
 class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
-    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
+    override fun screenId() = ScreenId.SAFE_ADD_ENS
 
-    override suspend fun chainId(): BigInteger {
-        return selectedChain.chainId
-    }
+    override suspend fun chainId() = selectedChain.chainId
 
     @Inject
     lateinit var viewModel: EnsInputViewModel
