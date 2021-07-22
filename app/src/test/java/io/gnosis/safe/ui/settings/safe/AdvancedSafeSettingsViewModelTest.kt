@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.safe
 
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
@@ -77,6 +78,7 @@ class AdvancedSafeSettingsViewModelTest {
             null,
             "1.1.1"
         )
+        val chain = Chain.DEFAULT_CHAIN
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
         coEvery { safeRepository.getActiveSafe() } returns defaultActiveSafe
         viewModel = AdvancedSafeSettingsViewModel(safeRepository, appDispatchers)
@@ -86,7 +88,7 @@ class AdvancedSafeSettingsViewModelTest {
 
         stateObserver.assertValueCount(2)
         with(stateObserver.values()[1]) {
-            assertEquals(LoadSafeInfo(safeInfo), viewAction)
+            assertEquals(LoadSafeInfo(chain, safeInfo), viewAction)
             assertEquals(isLoading, false)
         }
     }

@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.safe.R
@@ -43,7 +44,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         linePaint.color = context.getColorCompat(LINE_COLOR)
     }
 
-    fun setExecutionData(rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null, localOwners: List<Owner> = listOf()) {
+    fun setExecutionData(chain: Chain, rejection: Boolean, status: TransactionStatus, confirmations: List<Solidity.Address>, threshold: Int, executor: Solidity.Address? = null, localOwners: List<Owner> = listOf()) {
 
         clear()
 
@@ -58,9 +59,9 @@ class TxConfirmationsView @JvmOverloads constructor(
 
             val localOwner = localOwners.find { it.address == confirmationAddress }
             if (localOwner != null) {
-                addNamedAddressItem(localOwner.address, localOwner.name)
+                addNamedAddressItem(chain, localOwner.address, localOwner.name)
             } else {
-                addAddressItem(confirmationAddress)
+                addAddressItem(chain, confirmationAddress)
             }
         }
 
@@ -79,9 +80,9 @@ class TxConfirmationsView @JvmOverloads constructor(
 
                     val localOwner = localOwners.find { it.address == executor }
                     if (localOwner != null) {
-                        addNamedAddressItem(localOwner.address, localOwner.name)
+                        addNamedAddressItem(chain, localOwner.address, localOwner.name)
                     } else {
-                        addAddressItem(executor)
+                        addAddressItem(chain, executor)
                     }
 
                 } else {
@@ -108,22 +109,22 @@ class TxConfirmationsView @JvmOverloads constructor(
         })
     }
 
-    private fun addAddressItem(address: Solidity.Address) {
+    private fun addAddressItem(chain: Chain, address: Solidity.Address) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         addressItem.layoutParams = layoutParams
-        addressItem.address = address
+        addressItem.setAddress(chain, address)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(address: Solidity.Address, name: String?) {
+    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String?) {
         val namedAddressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         namedAddressItem.layoutParams = layoutParams
         namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_selectable_white)
-        namedAddressItem.address = address
+        namedAddressItem.setAddress(chain, address)
         namedAddressItem.name = if (name.isNullOrBlank())
             resources.getString(
                 R.string.settings_app_imported_owner_key_default_name,

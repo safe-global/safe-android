@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ParamType
@@ -110,10 +111,10 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 it.parameters?.forEach {
                     when (it) {
                         is Param.Address -> {
-                            content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
+                            content.addView(getLabeledAddressItem(chain, "${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
                         }
                         is Param.Array -> {
-                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
+                            content.addView(getArrayItem(chain, "${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
                         }
                         is Param.Bytes -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
@@ -137,6 +138,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
         item.layoutParams = layoutParams
         item.setActionInfo(
+            chain,
             outgoing = true,
             amount = amount,
             logoUri = "local::native_currency",
@@ -147,13 +149,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
+    private fun getArrayItem(chain: Chain, name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
         val item = LabeledArrayItem(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
         item.label = name
-        item.showArray(value, paramType, paramTypeValue, addressInfoIndex)
+        item.showArray(chain ,value, paramType, paramTypeValue, addressInfoIndex)
         return item
     }
 
@@ -167,16 +169,16 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
+    private fun getLabeledAddressItem(chain: Chain, name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
         var item: View
         if (addressInfo == null) {
             item = LabeledAddressItem(requireContext())
             item.label = name
-            item.address = value
+            item.setAddress(chain, value)
         } else {
             item = LabeledNamedAddressItem(requireContext())
             item.label = name
-            item.address = value
+            item.setAddress(chain, value)
             // only old imported owner keys could have empty names
             item.name = if (addressInfo.name.isNullOrBlank()) {
                 getString(R.string.settings_app_imported_owner_key_default_name, value.shortChecksumString())

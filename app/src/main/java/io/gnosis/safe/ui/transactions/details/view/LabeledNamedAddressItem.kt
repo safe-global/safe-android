@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.databinding.ViewLabeledNamedAddressItemBinding
 import pm.gnosis.model.Solidity
 
@@ -23,10 +24,12 @@ class LabeledNamedAddressItem @JvmOverloads constructor(
         }
 
     var address: Solidity.Address? = null
-        set(value) {
-            binding.value.address = value
-            field = value
-        }
+        private set
+
+    fun setAddress(chain: Chain, value: Solidity.Address?) {
+        binding.value.setAddress(chain, value)
+        address = value
+    }
 
     var name: String? = null
         set(value) {

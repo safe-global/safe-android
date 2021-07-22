@@ -68,7 +68,7 @@ class CollectiblesDetailsFragment : BaseViewBindingFragment<FragmentCollectibles
                 collectibleDescription.visible(false)
             }
             collectibleContract.name = getString(R.string.collectibles_asset_contract)
-            collectibleContract.address = contract.asEthereumAddress()
+            collectibleContract.setAddress(chain, contract.asEthereumAddress())
 
             collectibleUri.visible(false)
             //FIXME: uncomment when collectible uri should be visible

@@ -8,8 +8,10 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
+import io.gnosis.safe.utils.BlockExplorer
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
@@ -28,26 +30,23 @@ class AddressItem @JvmOverloads constructor(
     }
 
     var address: Solidity.Address? = null
-        set(value) {
-            with(binding) {
-                blockies.setAddress(value)
-                address.text = value?.formatOwnerAddress()
-                binding.link.setOnClickListener {
-                    context.openUrl(
-                        context.getString(
-                            R.string.etherscan_address_url,
-                            value?.asEthereumAddressChecksumString()
-                        )
-                    )
-                }
-                binding.address.setOnClickListener {
-                    context.copyToClipboard(context.getString(R.string.address_copied), address.text.toString()) {
-                        snackbar(view = root, textId = R.string.copied_success)
-                    }
+        private set
+
+    fun setAddress(chain: Chain, value: Solidity.Address?) {
+        with(binding) {
+            blockies.setAddress(value)
+            address.text = value?.formatOwnerAddress()
+            binding.link.setOnClickListener {
+                BlockExplorer.forChain(chain)?.showAddress(context, value)
+            }
+            binding.address.setOnClickListener {
+                context.copyToClipboard(context.getString(R.string.address_copied), address.text.toString()) {
+                    snackbar(view = root, textId = R.string.copied_success)
                 }
             }
-            field = value
         }
+        address = value
+    }
 
     var showSeparator: Boolean = false
         set(value) {

@@ -9,15 +9,16 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
+import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewMastercopyItemBinding
+import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.implementationVersion
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 
@@ -34,19 +35,13 @@ class MasterCopyItem @JvmOverloads constructor(
         binding.blockies.loadKnownAddressLogo(addressUri, address)
     }
 
-    fun setAddress(value: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean = true) {
+    fun setAddress(chain: Chain?, value: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean = true) {
         with(binding) {
             blockies.setAddress(value)
             setVersionName(value, version, showUpdateAvailable)
             address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
-
             binding.link.setOnClickListener {
-                context.openUrl(
-                    context.getString(
-                        R.string.etherscan_address_url,
-                        value?.asEthereumAddressChecksumString()
-                    )
-                )
+                BlockExplorer.forChain(chain)?.showAddress(context, value)
             }
 
             binding.root.setOnClickListener {

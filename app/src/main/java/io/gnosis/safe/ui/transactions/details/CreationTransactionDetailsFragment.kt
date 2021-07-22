@@ -12,10 +12,10 @@ import io.gnosis.safe.databinding.FragmentTransactionDetailsCreationBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.TxType
+import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -77,7 +77,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             creatorItemTitle.text = getString(R.string.tx_details_creation_creator_address)
             with(creatorItem) {
                 val creatorAddress = creator!!.asEthereumAddress()
-                address = creatorAddress
+                setAddress(chain, creatorAddress)
                 if (creatorLocal) {
                     name = if (creatorName.isNullOrBlank())
                         context.getString(
@@ -94,7 +94,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             if (implementation != null) {
                 with(implementationItem) {
                     val implementationAddress = implementation!!.asEthereumAddress()
-                    address = implementationAddress
+                    setAddress(chain, implementationAddress)
                     name = implementationName ?: getString(R.string.unknown_implementation_version)
                     loadKnownAddressLogo(implementationLogoUri, implementationAddress)
                 }
@@ -108,7 +108,7 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             if (factory != null) {
                 with(factoryItem) {
                     val factoryAddress = factory!!.asEthereumAddress()
-                    address = factoryAddress
+                    setAddress(chain, factoryAddress)
                     name = factoryName ?: getString(R.string.unknown_factory)
                     loadKnownAddressLogo(factoryLogoUri, factoryAddress)
                     visible(true)
@@ -124,16 +124,8 @@ class CreationTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             createdItem.value = dateTimeText
 
             etherscanItem.setOnClickListener {
-                requireContext().openUrl(
-                    getString(
-                        R.string.etherscan_transaction_url,
-                        transActionHash
-                    )
-                )
+                BlockExplorer.forChain(chain)?.showTransaction(requireContext(), transActionHash)
             }
-
         }
     }
 }
-
-

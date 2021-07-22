@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -51,7 +52,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         super.onViewCreated(view, savedInstanceState)
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             when (val viewAction = state.viewAction) {
-                is LoadSafeInfo -> setUi(state.isLoading, viewAction.safeInfo)
+                is LoadSafeInfo -> setUi(state.isLoading, viewAction.chain, viewAction.safeInfo)
                 is ShowError -> handleError(viewAction)
                 else -> setUi(state.isLoading)
             }
@@ -81,16 +82,16 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
         Timber.e(viewAction.error)
     }
 
-    private fun setUi(isLoading: Boolean, safeInfo: SafeInfo? = null) {
+    private fun setUi(isLoading: Boolean, chain: Chain? = null, safeInfo: SafeInfo? = null) {
         updateLoading(isLoading)
-        safeInfo?.let { setSafeInfo(it) }
+        safeInfo?.let { setSafeInfo(chain!!, it) }
     }
 
-    private fun setSafeInfo(safeInfo: SafeInfo) {
+    private fun setSafeInfo(chain: Chain, safeInfo: SafeInfo) {
         with(binding) {
 
             fallbackHandlerContainer.removeAllViews()
-            fallbackHandlerContainer.addView(safeParameterView(safeInfo.fallbackHandler, R.string.unknown_fallback_handler))
+            fallbackHandlerContainer.addView(safeParameterView(chain, safeInfo.fallbackHandler, R.string.unknown_fallback_handler))
             fallbackHandlerHelpLink.text = ""
             fallbackHandlerHelpLink.appendLink(
                 urlText = resources.getString(R.string.safe_settings_fallback_handler_help),
@@ -103,7 +104,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             safeInfo.modules.takeUnless { it.isNullOrEmpty() }?.let {
                 moduleLabel.visible(true)
                 it.forEach { module ->
-                    modulesContainer.addView(labeledAddress(module.value, module.name ?: getString(R.string.unknown_module), module.logoUri))
+                    modulesContainer.addView(labeledAddress(chain, module.value, module.name ?: getString(R.string.unknown_module), module.logoUri))
                 }
             } ?: run { moduleLabel.visible(false) }
 
@@ -111,7 +112,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             if (contractVersion >= SemVer(1, 3, 0)) {
 
                 guardContainer.removeAllViews()
-                guardContainer.addView(safeParameterView(safeInfo.guard, R.string.unknown_guard))
+                guardContainer.addView(safeParameterView(chain, safeInfo.guard, R.string.unknown_guard))
                 guardHelpLink.text = ""
                 guardHelpLink.appendLink(
                     urlText = resources.getString(R.string.safe_settings_guard_help),
@@ -132,7 +133,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
     }
 
 
-    private fun safeParameterView(addressInfo: AddressInfo?, @StringRes unknownString: Int): View  =
+    private fun safeParameterView(chain: Chain, addressInfo: AddressInfo?, @StringRes unknownString: Int): View  =
         when {
             addressInfo == null || addressInfo.value.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
@@ -140,14 +141,14 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
                 openable = false
                 name = getString(R.string.safe_settings_not_set)
             }
-            else -> labeledAddress(addressInfo.value, addressInfo.name ?: getString(unknownString), addressInfo.logoUri)
+            else -> labeledAddress(chain, addressInfo.value, addressInfo.name ?: getString(unknownString), addressInfo.logoUri)
         }
 
-    private fun labeledAddress(address: Solidity.Address, label: String, logoUri: String? = null): NamedAddressItem {
+    private fun labeledAddress(chain: Chain, address: Solidity.Address, label: String, logoUri: String? = null): NamedAddressItem {
         return NamedAddressItem(requireContext()).apply {
             background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            this.address = address
+            setAddress(chain, address)
             this.name = label
             logoUri?.let { this.loadKnownAddressLogo(it, address) }
             showSeparator = true

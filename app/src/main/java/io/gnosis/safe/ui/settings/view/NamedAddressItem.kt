@@ -5,13 +5,14 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
+import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -29,28 +30,25 @@ class NamedAddressItem @JvmOverloads constructor(
     }
 
     var address: Solidity.Address? = null
-        set(value) {
-            with(binding) {
-                blockies.setAddress(value)
-                address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
-                binding.link.setOnClickListener {
-                    context.openUrl(
-                        context.getString(
-                            R.string.etherscan_address_url,
-                            value?.asEthereumAddressChecksumString()
-                        )
-                    )
-                }
-                binding.root.setOnClickListener {
-                    value?.let {
-                        context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
-                            snackbar(view = root, textId = R.string.copied_success)
-                        }
+        private set
+
+    fun setAddress(chain: Chain, value: Solidity.Address?) {
+        with(binding) {
+            blockies.setAddress(value)
+            address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
+            binding.link.setOnClickListener {
+                BlockExplorer.forChain(chain)?.showAddress(context, value)
+            }
+            binding.root.setOnClickListener {
+                value?.let {
+                    context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
+                        snackbar(view = root, textId = R.string.copied_success)
                     }
                 }
             }
-            field = value
         }
+        address = value
+    }
 
     var name: String? = null
         set(value) {
