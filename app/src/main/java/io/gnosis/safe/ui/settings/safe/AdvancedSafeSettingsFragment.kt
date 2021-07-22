@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.utils.SemVer
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeAdvancedBinding
@@ -25,7 +26,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
-import io.gnosis.safe.utils.SemVer
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.dpToPx
 import pm.gnosis.model.Solidity
