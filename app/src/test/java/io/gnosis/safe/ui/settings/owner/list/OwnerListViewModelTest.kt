@@ -6,14 +6,18 @@ import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
+import io.gnosis.safe.ui.transactions.details.ConfirmRejection
+import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 class OwnerListViewModelTest {
@@ -53,5 +57,68 @@ class OwnerListViewModelTest {
         coVerify(exactly = 1) { credentialsRepository.owners() }
     }
 
-   
+    @Test
+    fun `selectKeyForSigning (passcode required) - should start enter passcode flow`() {
+
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
+
+        coEvery { settingsHandler.usePasscode } returns true
+        coEvery { settingsHandler.requirePasscodeForConfirmations } returns true
+
+        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        val testObserver = TestLiveDataObserver<OwnerListState>()
+        viewModel.state.observeForever(testObserver)
+
+        viewModel.selectKeyForSigning(owner.address, true)
+
+        testObserver.assertValues(
+            OwnerListState(Loading(true)),
+            OwnerListState(
+                NavigateTo(
+                    SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(owner.address.asEthereumAddressString())
+                )
+            ),
+            OwnerListState(None)
+        )
+    }
+
+    @Test
+    fun `selectKeyForSigning (passcode not required, confirmation) - should emit ConfirmConfirmation`() {
+
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
+
+        coEvery { settingsHandler.usePasscode } returns false
+
+        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        val testObserver = TestLiveDataObserver<OwnerListState>()
+        viewModel.state.observeForever(testObserver)
+
+        viewModel.selectKeyForSigning(owner.address, true)
+
+        testObserver.assertValues(
+            OwnerListState(Loading(true)),
+            OwnerListState(ConfirmConfirmation(owner.address)),
+            OwnerListState(None)
+        )
+    }
+
+    @Test
+    fun `selectKeyForSigning (passcode not required, not confirmation) - should emit ConfirmRejection`() {
+
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
+
+        coEvery { settingsHandler.usePasscode } returns false
+
+        viewModel = OwnerListViewModel(credentialsRepository, settingsHandler, appDispatchers)
+        val testObserver = TestLiveDataObserver<OwnerListState>()
+        viewModel.state.observeForever(testObserver)
+
+        viewModel.selectKeyForSigning(owner.address, false)
+
+        testObserver.assertValues(
+            OwnerListState(Loading(true)),
+            OwnerListState(ConfirmRejection(owner.address)),
+            OwnerListState(None)
+        )
+    }
 }
