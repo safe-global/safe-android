@@ -19,9 +19,14 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBinding>() {
+
+    override fun screenId() = ScreenId.OWNER_ENTER_NAME
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var viewModel: OwnerEnterNameViewModel
@@ -31,8 +36,6 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val ownerKey by lazy { navArgs.ownerKey.hexAsBigInteger() }
     private val fromSeedPhrase by lazy { navArgs.fromSeedPhrase }
     private val ownerSeedPhrase by lazy { navArgs.ownerSeedPhrase }
-
-    override fun screenId() = ScreenId.OWNER_ENTER_NAME
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

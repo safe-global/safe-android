@@ -26,9 +26,14 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
 import javax.inject.Inject
 
 class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBinding>() {
+
+    override fun screenId() = ScreenId.CHAIN_LIST
+
+    override suspend fun chainId(): BigInteger? = null
 
     private val navArgs by navArgs<ChainSelectionFragmentArgs>()
     private val mode by lazy { navArgs.mode }
@@ -38,7 +43,6 @@ class ChainSelectionFragment : BaseViewBindingFragment<FragmentChainSelectionBin
     @Inject
     lateinit var viewModel: ChainSelectionViewModel
 
-    override fun screenId() = ScreenId.CHAIN_LIST
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

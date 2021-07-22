@@ -20,6 +20,7 @@ import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>() {
@@ -32,6 +33,10 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
     private val selectedChain by lazy { navArgs.chain }
 
     override fun screenId() = ScreenId.SAFE_ADD_NAME
+
+    override suspend fun chainId(): BigInteger {
+        return selectedChain.chainId
+    }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

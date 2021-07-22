@@ -23,11 +23,14 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBinding>(), DerivedOwnerListAdapter.OnOwnerItemClickedListener {
 
     override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
+
+    override suspend fun chainId(): BigInteger? = null
 
     private val navArgs by navArgs<OwnerSelectionFragmentArgs>()
     private val privateKey: String? by lazy { navArgs.privateKey }

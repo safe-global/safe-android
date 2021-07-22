@@ -19,10 +19,10 @@ import javax.inject.Inject
 
 class SafeSettingsEditNameFragment : BaseViewBindingFragment<FragmentSettingsSafeEditNameBinding>() {
 
+    override fun screenId() = ScreenId.SETTINGS_SAFE_EDIT_NAME
+
     @Inject
     lateinit var viewModel: SafeSettingsEditNameViewModel
-
-    override fun screenId() = ScreenId.SETTINGS_SAFE_EDIT_NAME
 
     override fun viewModelProvider() = this
 

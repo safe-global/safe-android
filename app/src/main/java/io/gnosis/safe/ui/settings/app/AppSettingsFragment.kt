@@ -16,6 +16,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>() {
@@ -24,6 +25,8 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
     lateinit var viewModel: AppSettingsViewModel
 
     override fun screenId() = ScreenId.SETTINGS_APP
+
+    override suspend fun chainId(): BigInteger? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

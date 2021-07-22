@@ -23,6 +23,7 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), OwnerListAdapter.OwnerListener {
@@ -33,6 +34,8 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
     lateinit var adapter: OwnerListAdapter
 
     override fun screenId() = ScreenId.OWNER_LIST
+
+    override suspend fun chainId(): BigInteger? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

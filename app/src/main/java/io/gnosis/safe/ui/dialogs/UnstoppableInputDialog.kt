@@ -28,11 +28,18 @@ import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
 import javax.inject.Inject
 
 class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableInputBinding>() {
 
     private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
+
+    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
+
+    override suspend fun chainId(): BigInteger {
+        return selectedChain.chainId
+    }
 
     @Inject
     lateinit var viewModel: UnstoppableInputViewModel
@@ -53,8 +60,6 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogUnstoppableInputBinding =
         DialogUnstoppableInputBinding.inflate(inflater, container, false)
-
-    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

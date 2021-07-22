@@ -15,11 +15,14 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerExportKeyFragment : BaseViewBindingFragment<FragmentOwnerExportKeyBinding>() {
 
     override fun screenId() = ScreenId.OWNER_EXPORT_KEY
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var qrCodeGenerator: QrCodeGenerator

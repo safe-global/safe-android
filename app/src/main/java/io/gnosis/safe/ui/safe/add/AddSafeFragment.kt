@@ -22,6 +22,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
@@ -45,6 +46,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     }
 
     override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
+
+    override suspend fun chainId(): BigInteger {
+        return selectedChain.chainId
+    }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

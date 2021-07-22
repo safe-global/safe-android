@@ -23,11 +23,14 @@ import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding>() {
 
     override fun screenId() = ScreenId.OWNER_DETAILS
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var viewModel: OwnerDetailsViewModel

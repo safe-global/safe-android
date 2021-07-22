@@ -10,11 +10,14 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerInfoGenerateBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGenerateBinding>() {
 
     override fun screenId() = ScreenId.OWNER_GENERATE_INFO
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var viewModel: OwnerGenerateViewModel

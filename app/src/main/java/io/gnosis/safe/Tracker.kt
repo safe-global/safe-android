@@ -32,8 +32,15 @@ class Tracker private constructor(context: Context) {
         firebaseAnalytics.setUserProperty(Param.PASSCODE_IS_SET, usePasscode.toString())
     }
 
-    fun logScreen(screenId: ScreenId) {
-        logEvent(screenId.value, null)
+    fun logScreen(screenId: ScreenId, chainId: BigInteger? = null) {
+        logEvent(
+            screenId.value,
+            chainId?.let {
+                mapOf(
+                    Param.CHAIN_ID to it.toString()
+                )
+            }
+        )
     }
 
     fun logSafeAdded() {
