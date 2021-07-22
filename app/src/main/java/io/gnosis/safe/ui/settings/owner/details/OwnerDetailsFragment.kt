@@ -19,7 +19,6 @@ import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -75,13 +74,9 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                                 snackbar(requireView(), getString(R.string.copied_success))
                             }
                         }
+                        //FIXME: owners are chain independent; there is not enough context to decide on which blockexplorer to show owner's address
                         link.setOnClickListener {
-                            requireContext().openUrl(
-                                getString(
-                                    R.string.etherscan_address_url,
-                                    owner.asEthereumAddressChecksumString()
-                                )
-                            )
+                            // BlockExplorer.forChain().showAddress(requireContext(), owner)
                         }
                         removeButton.setOnClickListener {
                             showConfirmDialog(context = requireContext(), message = R.string.signing_owner_dialog_description) {

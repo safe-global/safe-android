@@ -118,7 +118,8 @@
             android:src="@drawable/ic_link_green_24dp"
             app:layout_constraintBottom_toBottomOf="@id/owner_address"
             app:layout_constraintStart_toEndOf="@id/owner_address"
-            app:layout_constraintTop_toTopOf="@id/owner_address" />
+            app:layout_constraintTop_toTopOf="@id/owner_address"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/owner_key_address_label"
