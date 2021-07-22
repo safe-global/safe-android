@@ -19,9 +19,14 @@ import io.gnosis.safe.utils.replaceDoubleNewlineWithParagraphLineSpacing
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseBinding>() {
+
+    override fun screenId(): ScreenId = ScreenId.OWNER_ENTER_SEED
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var viewModel: OwnerSeedPhraseViewModel
@@ -95,8 +100,6 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
         super.onPause()
         requireActivity().hideSoftKeyboard()
     }
-
-    override fun screenId(): ScreenId = ScreenId.OWNER_ENTER_SEED
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

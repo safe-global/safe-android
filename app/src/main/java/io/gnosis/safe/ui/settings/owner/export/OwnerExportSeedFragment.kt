@@ -9,10 +9,13 @@ import io.gnosis.safe.databinding.FragmentOwnerExportSeedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.withArgs
+import java.math.BigInteger
 
 class OwnerExportSeedFragment : BaseViewBindingFragment<FragmentOwnerExportSeedBinding>() {
 
     override fun screenId() = ScreenId.OWNER_EXPORT_SEED
+
+    override suspend fun chainId(): BigInteger? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

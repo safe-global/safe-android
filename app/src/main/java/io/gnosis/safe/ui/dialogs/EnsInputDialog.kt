@@ -33,6 +33,10 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
+    override fun screenId() = ScreenId.SAFE_ADD_ENS
+
+    override suspend fun chainId() = selectedChain.chainId
+
     @Inject
     lateinit var viewModel: EnsInputViewModel
 
@@ -53,8 +57,6 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogEnsInputBinding =
         DialogEnsInputBinding.inflate(inflater, container, false)
-
-    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

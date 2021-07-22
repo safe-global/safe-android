@@ -29,6 +29,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     private val navArgs by navArgs<AddSafeFragmentArgs>()
     private val selectedChain by lazy { navArgs.chain }
 
+    override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
+
+    override suspend fun chainId() = selectedChain.chainId
+
     @Inject
     lateinit var viewModel: AddSafeViewModel
 
@@ -43,8 +47,6 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             enableENS = viewModel.enableENS(selectedChain)
         )
     }
-
-    override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

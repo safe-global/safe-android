@@ -33,6 +33,8 @@ class AddSafeNameFragment : BaseViewBindingFragment<FragmentAddSafeNameBinding>(
 
     override fun screenId() = ScreenId.SAFE_ADD_NAME
 
+    override suspend fun chainId() = selectedChain.chainId
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }

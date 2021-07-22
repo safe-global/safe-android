@@ -91,7 +91,7 @@ class ConfirmRejectionViewModel
                     sender = selectedOwner.address
                 )
             }.onSuccess {
-                tracker.logTransactionRejected()
+                tracker.logTransactionRejected(activeSafe.chainId)
                 updateState { ConfirmationRejectedViewState(RejectionSubmitted) }
             }.onFailure {
                 throw TxRejectionFailed(it.cause ?: it)

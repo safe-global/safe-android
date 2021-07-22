@@ -17,17 +17,20 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 import javax.inject.Inject
 
 class OwnerEditNameFragment : BaseViewBindingFragment<FragmentOwnerNameEditBinding>() {
+
+    override fun screenId() = ScreenId.OWNER_EDIT_NAME
+
+    override suspend fun chainId(): BigInteger? = null
 
     @Inject
     lateinit var viewModel: OwnerEditNameViewModel
 
     private val navArgs by navArgs<OwnerEditNameFragmentArgs>()
     private val ownerAddress by lazy { navArgs.ownerAddress.asEthereumAddress()!! }
-
-    override fun screenId() = ScreenId.OWNER_EDIT_NAME
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

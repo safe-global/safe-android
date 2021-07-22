@@ -17,11 +17,14 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.appendLink
 import pm.gnosis.svalinn.common.utils.visible
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppAdvancedBinding>() {
 
     override fun screenId() = ScreenId.SETTINGS_APP_ADVANCED
+
+    override suspend fun chainId(): BigInteger? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

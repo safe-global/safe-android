@@ -34,6 +34,10 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
+    override fun screenId() = ScreenId.SAFE_ADD_ENS
+
+    override suspend fun chainId() = selectedChain.chainId
+
     @Inject
     lateinit var viewModel: UnstoppableInputViewModel
 
@@ -53,8 +57,6 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogUnstoppableInputBinding =
         DialogUnstoppableInputBinding.inflate(inflater, container, false)
-
-    override fun screenId(): ScreenId? = ScreenId.SAFE_ADD_ENS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

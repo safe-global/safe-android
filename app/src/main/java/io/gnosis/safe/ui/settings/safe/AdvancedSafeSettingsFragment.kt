@@ -35,10 +35,10 @@ import javax.inject.Inject
 
 class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeAdvancedBinding>() {
 
+    override fun screenId() = ScreenId.SETTINGS_SAFE_ADVANCED
+
     @Inject
     lateinit var viewModel: AdvancedSafeSettingsViewModel
-
-    override fun screenId() = ScreenId.SETTINGS_SAFE_ADVANCED
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsSafeAdvancedBinding =
         FragmentSettingsSafeAdvancedBinding.inflate(inflater, container, false)

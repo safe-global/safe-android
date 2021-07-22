@@ -10,10 +10,13 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerAddOptionsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import java.math.BigInteger
 
 class OwnerAddOptionsFragment : BaseViewBindingFragment<FragmentOwnerAddOptionsBinding>() {
 
     override fun screenId() = ScreenId.OWNER_ADD_OPTIONS
+
+    override suspend fun chainId(): BigInteger? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)

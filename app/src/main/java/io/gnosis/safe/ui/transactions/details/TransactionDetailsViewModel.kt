@@ -168,11 +168,12 @@ class TransactionDetailsViewModel
             if (credentialsRepository.ownerCount() == 0) {
                 throw MissingOwnerCredential
             }
+            val activeSafe = safeRepository.getActiveSafe()!!
             val selectedOwner = credentialsRepository.owner(selectedOwnerKey)
             val owners = credentialsRepository.owners()
             kotlin.runCatching {
                 transactionRepository.submitConfirmation(
-                    chainId = safeRepository.getActiveSafe()!!.chainId,
+                    chainId = activeSafe.chainId,
                     safeTxHash = executionInfo.safeTxHash,
                     signedSafeTxHash = credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
                 )
@@ -180,7 +181,7 @@ class TransactionDetailsViewModel
                 txDetails = it
                 val newExecutionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
                     ?: throw MissingCorrectExecutionDetailsException
-                tracker.logTransactionConfirmed()
+                tracker.logTransactionConfirmed(activeSafe.chainId)
                 val safes = safeRepository.getSafes()
 
                 val canSign = canBeSignedFromDevice(newExecutionInfo, owners)
