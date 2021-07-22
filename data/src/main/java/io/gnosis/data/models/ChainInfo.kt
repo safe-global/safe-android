@@ -11,16 +11,38 @@ data class ChainInfo(
     @Json(name = "chainId") @field:DecimalNumber val chainId: BigInteger,
     @Json(name = "chainName") val chainName: String,
     @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
-    @Json(name = "rpcUrl") val rpcUrl: String,
-    @Json(name = "blockExplorerUrl") val blockExplorerUrl: String,
+    @Json(name = "rpcUri") val rpcUri: RpcUri,
+    @Json(name = "blockExplorerUri") val blockExplorerUrl: String,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,
     @Json(name = "transactionService") val transactionService: String,
     @Json(name = "theme") val theme: ChainTheme
 ) {
 
     fun toChain(): Chain {
-        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUrl, blockExplorerUrl, ensRegistryAddress).apply {
+        //TODO: adjust rpcUri parsing
+        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerUrl, ensRegistryAddress).apply {
             currency = nativeCurrency.toCurrency(chainId)
+        }
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class RpcUri(
+    @Json(name = "authentication") val authentication: RpcAuthentication,
+    @Json(name = "value") val value: String
+)
+
+enum class RpcAuthentication(val value: Int) {
+    @Json(name = "API_KEY_PATH")
+    API_KEY_PATH(1),
+
+    @Json(name = "NO_AUTHENTICATION")
+    NO_AUTHENTICATION(2);
+
+    companion object {
+        fun from(value: Int): RpcAuthentication = when (value) {
+            1 -> API_KEY_PATH
+            else -> NO_AUTHENTICATION
         }
     }
 }
@@ -30,11 +52,11 @@ data class NativeCurrency(
     @Json(name = "name") val name: String,
     @Json(name = "symbol") val symbol: String,
     @Json(name = "decimals") val decimals: Int,
-    @Json(name = "logoUrl") val logoUrl: String
+    @Json(name = "logoUri") val logoUri: String
 ) {
 
     fun toCurrency(chainId: BigInteger): Chain.Currency {
-        return Chain.Currency(chainId, name, symbol, decimals, logoUrl)
+        return Chain.Currency(chainId, name, symbol, decimals, logoUri)
     }
 }
 

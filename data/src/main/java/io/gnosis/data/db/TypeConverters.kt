@@ -1,6 +1,7 @@
 package io.gnosis.data.db
 
 import androidx.room.TypeConverter
+import io.gnosis.data.models.RpcAuthentication
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -23,4 +24,12 @@ class BigIntegerConverter {
 
     @TypeConverter
     fun toHexString(value: BigInteger?): String? = value?.toHexString()
+}
+
+class RpcAuthenticationConverter {
+    @TypeConverter
+    fun toInt(rpcAuthentication: RpcAuthentication) = rpcAuthentication.value
+
+    @TypeConverter
+    fun fromInt(rpcAuthenticationValue: Int) = RpcAuthentication.from(rpcAuthenticationValue)
 }

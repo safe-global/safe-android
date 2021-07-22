@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "3573dd17854e8fde9812f2651ae28f0a",
+    "identityHash": "a44f046f7b5d7648a2d5606ff96ebd98",
     "entities": [
       {
         "tableName": "safes",
@@ -130,7 +130,7 @@
       },
       {
         "tableName": "chains",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `rpc_url` TEXT NOT NULL, `block_explorer_url` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `chain_name` TEXT NOT NULL, `text_color` TEXT NOT NULL, `background_color` TEXT NOT NULL, `rpc_uri` TEXT NOT NULL, `rpc_authentication` INTEGER NOT NULL, `block_explorer_uri` TEXT NOT NULL, `ens_registry_address` TEXT, PRIMARY KEY(`chain_id`))",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -157,14 +157,20 @@
             "notNull": true
           },
           {
-            "fieldPath": "rpcUrl",
-            "columnName": "rpc_url",
+            "fieldPath": "rpcUri",
+            "columnName": "rpc_uri",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "blockExplorerUrl",
-            "columnName": "block_explorer_url",
+            "fieldPath": "rpcAuthentication",
+            "columnName": "rpc_authentication",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blockExplorerUri",
+            "columnName": "block_explorer_uri",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -186,7 +192,7 @@
       },
       {
         "tableName": "native_currency",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `decimals` INTEGER NOT NULL, `logo_url` TEXT NOT NULL, PRIMARY KEY(`chain_id`), FOREIGN KEY(`chain_id`) REFERENCES `chains`(`chain_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chain_id` TEXT NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `decimals` INTEGER NOT NULL, `logo_uri` TEXT NOT NULL, PRIMARY KEY(`chain_id`), FOREIGN KEY(`chain_id`) REFERENCES `chains`(`chain_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "chainId",
@@ -213,8 +219,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "logoUrl",
-            "columnName": "logo_url",
+            "fieldPath": "logoUri",
+            "columnName": "logo_uri",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -244,7 +250,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3573dd17854e8fde9812f2651ae28f0a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a44f046f7b5d7648a2d5606ff96ebd98')"
     ]
   }
 }

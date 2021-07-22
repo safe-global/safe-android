@@ -27,7 +27,8 @@ import pm.gnosis.svalinn.security.db.EncryptedString
     SolidityAddressConverter::class,
     OwnerTypeConverter::class,
     EncryptedByteArray.NullableConverter::class,
-    EncryptedString.NullableConverter::class
+    EncryptedString.NullableConverter::class,
+    RpcAuthenticationConverter::class
 )
 abstract class HeimdallDatabase : RoomDatabase() {
 
@@ -69,10 +70,10 @@ abstract class HeimdallDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 val defaultChainId = BigIntegerConverter().toHexString(BuildConfig.CHAIN_ID.toBigInteger())
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_RPC_URL}` TEXT NOT NULL, `${Chain.COL_BLOCK_EXPLORER_URL}` TEXT NOT NULL, `${Chain.COL_ENS_REGISTRY_ADDRESS}` TEXT, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
+                    """CREATE TABLE IF NOT EXISTS `${Chain.TABLE_NAME}` (`${Chain.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.COL_CHAIN_NAME}` TEXT NOT NULL, `${Chain.COL_TEXT_COLOR}` TEXT NOT NULL, `${Chain.COL_BACKGROUND_COLOR}` TEXT NOT NULL, `${Chain.COL_RPC_URI}` TEXT NOT NULL, `${Chain.COL_RPC_AUTHENTICATION}` INTEGER NOT NULL, ${Chain.COL_BLOCK_EXPLORER_URI}` TEXT NOT NULL, `${Chain.COL_ENS_REGISTRY_ADDRESS}` TEXT, PRIMARY KEY(`${Chain.COL_CHAIN_ID}`))"""
                 )
                 database.execSQL(
-                    """CREATE TABLE IF NOT EXISTS `${Chain.Currency.TABLE_NAME}` (`${Chain.Currency.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.Currency.COL_NAME}` TEXT NOT NULL, `${Chain.Currency.COL_SYMBOL}` TEXT NOT NULL, `${Chain.Currency.COL_DECIMALS}` INTEGER NOT NULL, `${Chain.Currency.COL_LOGO_URL}` TEXT NOT NULL, PRIMARY KEY(`${Chain.Currency.COL_CHAIN_ID}`), FOREIGN KEY(`${Chain.Currency.COL_CHAIN_ID}`) REFERENCES `${Chain.TABLE_NAME}`(`${Chain.COL_CHAIN_ID}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
+                    """CREATE TABLE IF NOT EXISTS `${Chain.Currency.TABLE_NAME}` (`${Chain.Currency.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.Currency.COL_NAME}` TEXT NOT NULL, `${Chain.Currency.COL_SYMBOL}` TEXT NOT NULL, `${Chain.Currency.COL_DECIMALS}` INTEGER NOT NULL, `${Chain.Currency.COL_LOGO_URI}` TEXT NOT NULL, PRIMARY KEY(`${Chain.Currency.COL_CHAIN_ID}`), FOREIGN KEY(`${Chain.Currency.COL_CHAIN_ID}`) REFERENCES `${Chain.TABLE_NAME}`(`${Chain.COL_CHAIN_ID}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
                 )
 
                 // Add CHAIN_ID column and add it to primary key
