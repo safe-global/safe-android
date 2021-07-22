@@ -13,11 +13,11 @@ import io.gnosis.safe.databinding.FragmentAddSafeOwnerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
 import javax.inject.Inject
@@ -53,12 +53,7 @@ class AddSafeOwnerFragment : BaseViewBindingFragment<FragmentAddSafeOwnerBinding
                 }
             }
             safeLink.setOnClickListener {
-                requireContext().openUrl(
-                    getString(
-                        R.string.etherscan_address_url,
-                        address.asEthereumAddressChecksumString()
-                    )
-                )
+                BlockExplorer.forChain(selectedChain)?.showAddress(requireContext(), address)
             }
             blockie.setAddress(address)
             readOnlyDescription.text = getString(R.string.add_safe_owner_read_only_notice, name)

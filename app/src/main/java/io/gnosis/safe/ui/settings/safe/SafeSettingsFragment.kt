@@ -8,10 +8,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.models.AddressInfo
-import io.gnosis.data.models.Owner
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.*
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsSafeBinding
@@ -117,15 +114,15 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(owner, localOwners)) }
-            masterCopy.setAddress(safeInfo?.implementation?.value, safeInfo?.version)
+            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners)) }
+            masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
     }
 
-    private fun ownerView(owner: AddressInfo, localOwners: List<Owner>): View {
+    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 
@@ -134,7 +131,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             NamedAddressItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                address = owner.value
+                setAddress(chain, owner.value)
                 name = if (localOwner.name.isNullOrBlank())
                     context.getString(
                         R.string.settings_app_imported_owner_key_default_name,
@@ -149,7 +146,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    address = owner.value
+                    setAddress(chain, owner.value)
                     name = owner.name
                     showSeparator = true
                     loadKnownAddressLogo(owner.logoUri, owner.value)
@@ -159,7 +156,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    address = owner.value
+                    setAddress(chain, owner.value)
                     showSeparator = true
                 }
             }

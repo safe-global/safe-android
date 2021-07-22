@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
@@ -28,6 +29,7 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     fun setActionInfo(
+        chain: Chain,
         outgoing: Boolean,
         amount: String,
         logoUri: String,
@@ -47,9 +49,9 @@ class TxTransferActionView @JvmOverloads constructor(
             }
         } else {
             if (addressName != null) {
-                addNamedAddressItem(address, addressName, addressUri)
+                addNamedAddressItem(chain, address, addressName, addressUri)
             } else {
-                addAddressItem(address)
+                addAddressItem(chain, address)
             }
         }
 
@@ -57,9 +59,9 @@ class TxTransferActionView @JvmOverloads constructor(
 
         if (outgoing) {
             if (addressName != null) {
-                addNamedAddressItem(address, addressName, addressUri)
+                addNamedAddressItem(chain, address, addressName, addressUri)
             } else {
-                addAddressItem(address)
+                addAddressItem(chain, address)
             }
         } else {
             if (tokenId.isNotEmpty()) {
@@ -89,21 +91,21 @@ class TxTransferActionView @JvmOverloads constructor(
         addView(amountView)
     }
 
-    private fun addAddressItem(address: Solidity.Address) {
+    private fun addAddressItem(chain: Chain, address: Solidity.Address) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
         layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
         addressItem.layoutParams = layoutParams
-        addressItem.address = address
+        addressItem.setAddress(chain, address)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(address: Solidity.Address, name: String, addressUri: String?) {
+    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String, addressUri: String?) {
         val addressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
         layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
         addressItem.layoutParams = layoutParams
-        addressItem.address = address
+        addressItem.setAddress(chain, address)
         addressItem.name = name
         addressItem.loadKnownAddressLogo(addressUri, address)
         addView(addressItem)

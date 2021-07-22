@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.ui.settings.view.AddressItem
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
@@ -25,7 +26,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         removeAllViews()
     }
 
-    fun setActionInfoItems(actionInfoItems: List<ActionInfoItem>) {
+    fun setActionInfoItems(chain: Chain, actionInfoItems: List<ActionInfoItem>) {
         clear()
         actionInfoItems.forEach { actionInfoItem ->
             addStringItem(context.getString(actionInfoItem.itemLabel!!))
@@ -35,15 +36,14 @@ class TxSettingsActionView @JvmOverloads constructor(
                     addStringItem(actionInfoItem.value, R.color.text_emphasis_medium, DEFAULT_MARGIN)
                 }
                 is ActionInfoItem.Address -> {
-                    addAddressItem(actionInfoItem.address)
+                    addAddressItem(chain, actionInfoItem.address)
                 }
                 is ActionInfoItem.AddressWithLabel -> {
-                    addNamedAddressItem(actionInfoItem.address, actionInfoItem.addressLabel, actionInfoItem.addressUrl)
+                    addNamedAddressItem(chain, actionInfoItem.address, actionInfoItem.addressLabel, actionInfoItem.addressUrl)
                 }
             }
         }
     }
-
 
     private fun addStringItem(text: String, color: Int = R.color.text_emphasis_high, marginBottom: Int = 0) {
         val actionLabel = ActionLabelView(context)
@@ -54,17 +54,17 @@ class TxSettingsActionView @JvmOverloads constructor(
         addView(actionLabel)
     }
 
-    private fun addAddressItem(address: Solidity.Address?) {
+    private fun addAddressItem(chain: Chain, address: Solidity.Address?) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
         addressItem.layoutParams = layoutParams
-        addressItem.address = address
+        addressItem.setAddress(chain, address)
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(address: Solidity.Address?, label: String?, addressUrl: String?) {
+    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address?, label: String?, addressUrl: String?) {
         val addressItem = NamedAddressItem(context)
-        addressItem.address = address
+        addressItem.setAddress(chain, address)
         addressItem.name = label
         addressItem.showSeparator = false
         address?.let {

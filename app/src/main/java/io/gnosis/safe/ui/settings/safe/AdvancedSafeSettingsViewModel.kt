@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.safe
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -22,7 +23,7 @@ class AdvancedSafeSettingsViewModel
                 updateState {
                     AdvancedSafeSettingsState(
                         isLoading = false,
-                        viewAction = LoadSafeInfo(safeInfo)
+                        viewAction = LoadSafeInfo(safe.chain, safeInfo)
                     )
                 }
             }
@@ -34,6 +35,7 @@ class AdvancedSafeSettingsViewModel
 }
 
 data class LoadSafeInfo(
+    val chain: Chain,
     val safeInfo: SafeInfo
 ) : BaseStateViewModel.ViewAction
 

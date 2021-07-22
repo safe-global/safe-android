@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.data.models.transaction.getParamItemType
 import io.gnosis.safe.R
@@ -39,7 +40,7 @@ class LabeledArrayItem @JvmOverloads constructor(
             field = value
         }
 
-    fun showArray(array: List<Any>?, paramType: ParamType, paramValue: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    fun showArray(chain: Chain, array: List<Any>?, paramType: ParamType, paramValue: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
         binding.arrayItemValues.removeAllViews()
         val typeValues = if (paramType == ParamType.MIXED) {
             paramValue.replace("[]", "").removeSurrounding("(", ")")
@@ -50,14 +51,14 @@ class LabeledArrayItem @JvmOverloads constructor(
         if (!array.isNullOrEmpty()) {
             array.forEachIndexed { index, value ->
                 if (value is List<*>) {
-                    addArrayItem(binding.arrayItemValues, value as List<Any>, paramType, typeValues)
+                    addArrayItem(binding.arrayItemValues, value as List<Any>, paramType, typeValues, chain)
 
                 } else {
                     if (paramType == ParamType.MIXED) {
                         val valueType = typeValues.split(",")[index]
-                        addValueItem(binding.arrayItemValues, value, getParamItemType(valueType), addressInfoIndex?.get(value))
+                        addValueItem(binding.arrayItemValues, value, getParamItemType(valueType), chain, addressInfoIndex?.get(value))
                     } else {
-                        addValueItem(binding.arrayItemValues, value, paramType, addressInfoIndex?.get(value))
+                        addValueItem(binding.arrayItemValues, value, paramType, chain, addressInfoIndex?.get(value))
                     }
                 }
             }
@@ -66,7 +67,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         }
     }
 
-    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String, addressInfoIndex: Map<String, AddressInfo>? = null) {
+    private fun addArrayItem(container: ViewGroup, values: List<Any>, paramType: ParamType, typeValues: String, chain: Chain, addressInfoIndex: Map<String, AddressInfo>? = null) {
         val arrayItem = ArrayItem(context)
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(6), 0, 0)
@@ -81,19 +82,19 @@ class LabeledArrayItem @JvmOverloads constructor(
                         nestingLevel++
                         if (paramType == ParamType.MIXED) {
                             val valueType = typeValues.split(",")[index]
-                            addArrayItem(arrayItem.container, value as List<Any>, getParamItemType(valueType), valueType)
+                            addArrayItem(arrayItem.container, value as List<Any>, getParamItemType(valueType), valueType, chain)
                         } else {
-                            addArrayItem(arrayItem.container, value as List<Any>, paramType, typeValues)
+                            addArrayItem(arrayItem.container, value as List<Any>, paramType, typeValues, chain)
                         }
                     } else {
-                        addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE)
+                        addValueItem(arrayItem.container, context.getString(R.string.array), ParamType.VALUE, chain)
                     }
                 } else {
                     if (paramType == ParamType.MIXED) {
                         val valueType = typeValues.split(",")[index]
-                        addValueItem(arrayItem.container, value, getParamItemType(valueType), addressInfoIndex?.get(value))
+                        addValueItem(arrayItem.container, value, getParamItemType(valueType), chain, addressInfoIndex?.get(value))
                     } else {
-                        addValueItem(arrayItem.container, value, paramType, addressInfoIndex?.get(value))
+                        addValueItem(arrayItem.container, value, paramType, chain, addressInfoIndex?.get(value))
                     }
                 }
             }
@@ -102,19 +103,19 @@ class LabeledArrayItem @JvmOverloads constructor(
         container.addView(arrayItem)
     }
 
-    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType, addressInfo: AddressInfo? = null) {
+    private fun addValueItem(container: ViewGroup, value: Any, paramType: ParamType, chain: Chain, addressInfo: AddressInfo? = null) {
         when (paramType) {
             ParamType.ADDRESS -> {
                 val addressItem: View
                 if (addressInfo != null) {
                     addressItem = NamedAddressItem(context)
                     val address = (value as String).asEthereumAddress()
-                    addressItem.address = address
+                    addressItem.setAddress(chain, address)
                     addressItem.name = addressInfo.name
                     addressItem.loadKnownAddressLogo(addressInfo.logoUri, address)
                 } else {
                     addressItem = AddressItem(context)
-                    addressItem.address = (value as String).asEthereumAddress()
+                    addressItem.setAddress(chain, (value as String).asEthereumAddress())
                 }
                 val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 layoutParams.setMargins(dpToPx(-16), dpToPx(8), dpToPx(-16), 0)

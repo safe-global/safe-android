@@ -17,6 +17,7 @@ import io.gnosis.safe.databinding.DialogShareSafeBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingDialogFragment
+import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -94,25 +95,21 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             blockies.setAddress(safeDetails.safe.address)
             safeLocalName.text = safeDetails.safe.localName
 
-            safeDetails.safe.chain.let {
+            val chain = safeDetails.safe.chain
+            chain.let {
                 chainName.text = it.name
                 chainCircle.setColorFilter(it.backgroundColor.toColor(requireContext(), R.color.primary), PorterDuff.Mode.SRC_IN)
             }
 
             safeDetails.safe.address.let { address ->
-                safeAddress.text = safeDetails.safe.address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+                safeAddress.text = address.formatEthAddress(requireContext(), addMiddleLinebreak = false)
                 safeAddress.setOnClickListener {
                     requireContext().copyToClipboard(getString(R.string.address_copied), address.asEthereumAddressChecksumString()) {
                         snackbar(requireView(), getString(R.string.copied_success))
                     }
                 }
                 link.setOnClickListener {
-                    requireContext().openUrl(
-                        getString(
-                            R.string.etherscan_address_url,
-                            address.asEthereumAddressChecksumString()
-                        )
-                    )
+                    BlockExplorer.forChain(chain)?.showAddress(requireContext(), address)
                 }
             }
             safeQrCode.setImageBitmap(safeDetails.qrCode)

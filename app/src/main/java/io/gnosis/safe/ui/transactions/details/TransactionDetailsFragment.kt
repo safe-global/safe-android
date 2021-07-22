@@ -26,7 +26,6 @@ import io.gnosis.safe.ui.transactions.details.viewdata.TransactionDetailsViewDat
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
 import io.gnosis.safe.utils.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -183,6 +182,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                 binding.txConfirmationsDivider.visible(true)
                 binding.txConfirmations.setExecutionData(
+                    chain = chain,
                     rejection = isRejection,
                     status = txDetails.txStatus,
                     confirmations = executionInfo.confirmations.sortedBy { it.submittedAt }.map { it.signer.value },
@@ -235,12 +235,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
         if (txDetails.txHash != null) {
             binding.etherscan.visible(true)
             binding.etherscan.setOnClickListener {
-                requireContext().openUrl(
-                    getString(
-                        R.string.etherscan_transaction_url,
-                        txDetails.txHash
-                    )
-                )
+                BlockExplorer.forChain(chain)?.showTransaction(requireContext(), txDetails.txHash)
             }
         } else {
             binding.etherscan.visible(false)
@@ -268,6 +263,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                     when (val transferInfo = txInfo.transferInfo) {
                         is TransferInfo.Erc721Transfer -> {
                             txAction.setActionInfo(
+                                chain = chain,
                                 outgoing = outgoing,
                                 amount = txInfo.formattedAmount(chain, balanceFormatter),
                                 logoUri = txInfo.logoUri() ?: "",
@@ -276,11 +272,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 addressName = txInfo.addressName,
                                 addressUri = txInfo.addressUri
                             )
-                            contractAddress.address = transferInfo.tokenAddress
+                            contractAddress.setAddress(chain, transferInfo.tokenAddress)
                             contractAddress.name = getString(R.string.tx_details_asset_contract)
                         }
                         else -> {
                             txAction.setActionInfo(
+                                chain = chain,
                                 outgoing = outgoing,
                                 amount = txInfo.formattedAmount(chain, balanceFormatter),
                                 logoUri = txInfo.logoUri() ?: "",
@@ -307,7 +304,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
                 with(txDetailsSettingsChangeBinding) {
-                    txAction.setActionInfoItems(txInfo.txActionInfoItems(requireContext().resources))
+                    txAction.setActionInfoItems(chain, txInfo.txActionInfoItems(requireContext().resources))
                     txStatus.setStatus(
                         TxType.MODIFY_SETTINGS.titleRes,
                         TxType.MODIFY_SETTINGS.iconRes,
@@ -324,6 +321,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 val txDetailsCustomBinding = contentBinding as TxDetailsCustomBinding
                 with(txDetailsCustomBinding) {
                     txAction.setActionInfo(
+                        chain = chain,
                         outgoing = true,
                         amount = txInfo.formattedAmount(chain, balanceFormatter),
                         logoUri = txInfo.logoUri()!!,
