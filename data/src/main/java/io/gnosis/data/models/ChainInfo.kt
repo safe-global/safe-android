@@ -19,7 +19,6 @@ data class ChainInfo(
 ) {
 
     fun toChain(): Chain {
-        //TODO: adjust rpcUri parsing
         return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerUrl, ensRegistryAddress).apply {
             currency = nativeCurrency.toCurrency(chainId)
         }
