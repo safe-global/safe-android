@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.settings
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.VersionState
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -88,7 +89,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             null,
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         val safeInfo2 = SafeInfo(
             AddressInfo(safe2.address),
@@ -99,7 +101,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             null,
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         val ensName1 = "ens.name"
         val ensName2 = "ens.name"
@@ -184,7 +187,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             null,
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         val ensName = "ens.name"
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -235,7 +239,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             null,
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         coEvery { safeRepository.getActiveSafe() } returns safe
         coEvery { credentialsRepository.owners() } returns emptyList()
@@ -377,7 +382,8 @@ class SafeSettingsViewModelTest {
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, SAFE_2)
         coEvery { safeRepository.activeSafeFlow() } returns flow {

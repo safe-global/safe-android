@@ -11,11 +11,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import io.gnosis.data.models.Chain
 import io.gnosis.data.repositories.SafeRepository
+import io.gnosis.data.utils.SemVer
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewMastercopyItemBinding
 import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.abbreviateEthAddress
-import io.gnosis.safe.utils.implementationVersion
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -56,42 +56,49 @@ class MasterCopyItem @JvmOverloads constructor(
 
     private fun setVersionName(address: Solidity.Address?, version: String? = null, showUpdateAvailable: Boolean) {
         with(binding) {
-            if (address?.implementationVersion() == null) {
-                implementationVersionName.text = version ?: context.getString(R.string.unknown_implementation_version)
-                versionInfo.visible(false, View.INVISIBLE)
-            } else {
-                implementationVersionName.text = version ?: context.getString(address.implementationVersion() ?: R.string.unknown_implementation_version)
-                if (showUpdateAvailable) {
-                    versionInfo.apply {
-                        visible(true)
-                        val versionInfoView = buildVersionInfoView(address)
-                        setCompoundDrawablesWithIntrinsicBounds(
-                            ResourcesCompat.getDrawable(resources, versionInfoView.leftDrawable, context.theme),
-                            null,
-                            null,
-                            null
-                        )
-                        setTextColor(ResourcesCompat.getColor(resources, versionInfoView.infoColor, context.theme))
-                        setText(versionInfoView.infoText)
-                    }
-                } else {
-                    versionInfo.visible(false, View.INVISIBLE)
+            implementationVersionName.text =
+                version ?: context.getString(R.string.unknown_implementation_version)
+            if (showUpdateAvailable) {
+                versionInfo.apply {
+                    visible(true)
+                    val versionInfoView = buildVersionInfoView(version)
+                    setCompoundDrawablesWithIntrinsicBounds(
+                        ResourcesCompat.getDrawable(resources, versionInfoView.leftDrawable, context.theme),
+                        null,
+                        null,
+                        null
+                    )
+                    setTextColor(ResourcesCompat.getColor(resources, versionInfoView.infoColor, context.theme))
+                    setText(versionInfoView.infoText)
                 }
+            } else {
+                versionInfo.visible(false, View.INVISIBLE)
             }
         }
     }
 
-    private fun buildVersionInfoView(address: Solidity.Address?): VersionInfoView =
-        if (SafeRepository.isLatestVersion(address)) VersionInfoView(
-            R.drawable.ic_check,
-            R.color.primary,
-            R.string.safe_settings_master_copy_up_to_date
-        )
-        else VersionInfoView(
-            R.drawable.ic_error,
-            R.color.error,
-            R.string.safe_settings_master_copy_upgrade_available
-        )
+    private fun buildVersionInfoView(versionString: String?): VersionInfoView {
+
+        val version = kotlin.runCatching {
+            versionString?.let {
+                SemVer.parse(it)
+            }
+        }.getOrNull()
+
+        return if (SafeRepository.isUpToDateVersion(version)) {
+            VersionInfoView(
+                R.drawable.ic_check,
+                R.color.primary,
+                R.string.safe_settings_master_copy_up_to_date
+            )
+        } else {
+            VersionInfoView(
+                R.drawable.ic_error,
+                R.color.error,
+                R.string.safe_settings_master_copy_upgrade_available
+            )
+        }
+    }
 
     private data class VersionInfoView(
         @DrawableRes val leftDrawable: Int,
