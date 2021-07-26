@@ -16,7 +16,6 @@ import pm.gnosis.svalinn.security.db.EncryptedString
 @Database(
     entities = [
         Safe::class,
-        SafeMetaData::class,
         Owner::class,
         Chain::class,
         Chain.Currency::class
@@ -76,21 +75,8 @@ abstract class HeimdallDatabase : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `${Chain.Currency.TABLE_NAME}` (`${Chain.Currency.COL_CHAIN_ID}` TEXT NOT NULL, `${Chain.Currency.COL_NAME}` TEXT NOT NULL, `${Chain.Currency.COL_SYMBOL}` TEXT NOT NULL, `${Chain.Currency.COL_DECIMALS}` INTEGER NOT NULL, `${Chain.Currency.COL_LOGO_URI}` TEXT NOT NULL, PRIMARY KEY(`${Chain.Currency.COL_CHAIN_ID}`), FOREIGN KEY(`${Chain.Currency.COL_CHAIN_ID}`) REFERENCES `${Chain.TABLE_NAME}`(`${Chain.COL_CHAIN_ID}`) ON UPDATE CASCADE ON DELETE CASCADE )"""
                 )
 
-                // Add CHAIN_ID column and add it to primary key
                 database.execSQL(
-                    """ALTER TABLE `${SafeMetaData.TABLE_NAME}` ADD COLUMN `${SafeMetaData.COL_CHAIN_ID}` TEXT NOT NULL DEFAULT `${defaultChainId}`"""
-                )
-                database.execSQL(
-                    """ALTER TABLE `${SafeMetaData.TABLE_NAME}` RENAME TO `${SafeMetaData.TABLE_NAME}_old`"""
-                )
-                database.execSQL(
-                    """CREATE TABLE `${SafeMetaData.TABLE_NAME}` (`address` TEXT NOT NULL, `chain_id` TEXT NOT NULL DEFAULT `${defaultChainId}`, `registered_notifications` INTEGER NOT NULL, PRIMARY KEY(`address`, `chain_id`), FOREIGN KEY(`address`, `chain_id`) REFERENCES `safes`(`address`, `chain_id`) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)"""
-                )
-                database.execSQL(
-                    """INSERT INTO ${SafeMetaData.TABLE_NAME} SELECT * FROM ${SafeMetaData.TABLE_NAME}_old"""
-                )
-                database.execSQL(
-                    """DROP TABLE IF EXISTS `${SafeMetaData.TABLE_NAME}_old`"""
+                    """DROP TABLE IF EXISTS 'safe_meta_data'"""
                 )
 
                 // Add CHAIN_ID column and add it to primary key
@@ -98,10 +84,13 @@ abstract class HeimdallDatabase : RoomDatabase() {
                     """ALTER TABLE `${Safe.TABLE_NAME}` ADD COLUMN `${Safe.COL_CHAIN_ID}` TEXT NOT NULL DEFAULT `${defaultChainId}`"""
                 )
                 database.execSQL(
+                    """ALTER TABLE `${Safe.TABLE_NAME}` ADD COLUMN `${Safe.COL_VERSION}` TEXT"""
+                )
+                database.execSQL(
                     """ALTER TABLE `${Safe.TABLE_NAME}` RENAME TO `${Safe.TABLE_NAME}_old`"""
                 )
                 database.execSQL(
-                    """CREATE TABLE `${Safe.TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` TEXT NOT NULL DEFAULT `${defaultChainId}`, PRIMARY KEY(`address`, `chain_id`))"""
+                    """CREATE TABLE `${Safe.TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` TEXT NOT NULL DEFAULT `${defaultChainId}`, `${Safe.COL_VERSION}` TEXT,  PRIMARY KEY(`address`, `chain_id`))"""
                 )
                 database.execSQL(
                     """INSERT INTO ${Safe.TABLE_NAME} SELECT * FROM ${Safe.TABLE_NAME}_old"""

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "a44f046f7b5d7648a2d5606ff96ebd98",
+    "identityHash": "d99ade1a53e159854e0770f54c8a8230",
     "entities": [
       {
         "tableName": "safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` TEXT NOT NULL, PRIMARY KEY(`address`, `chain_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `local_name` TEXT NOT NULL, `chain_id` TEXT NOT NULL, `version` TEXT, PRIMARY KEY(`address`, `chain_id`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -25,6 +25,12 @@
             "columnName": "chain_id",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -36,53 +42,6 @@
         },
         "indices": [],
         "foreignKeys": []
-      },
-      {
-        "tableName": "safe_meta_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `chain_id` TEXT NOT NULL, `registered_notifications` INTEGER NOT NULL, PRIMARY KEY(`address`, `chain_id`), FOREIGN KEY(`address`, `chain_id`) REFERENCES `safes`(`address`, `chain_id`) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED)",
-        "fields": [
-          {
-            "fieldPath": "address",
-            "columnName": "address",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "chainId",
-            "columnName": "chain_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "registeredNotifications",
-            "columnName": "registered_notifications",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "address",
-            "chain_id"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": [
-          {
-            "table": "safes",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "address",
-              "chain_id"
-            ],
-            "referencedColumns": [
-              "address",
-              "chain_id"
-            ]
-          }
-        ]
       },
       {
         "tableName": "owners",
@@ -250,7 +209,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a44f046f7b5d7648a2d5606ff96ebd98')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd99ade1a53e159854e0770f54c8a8230')"
     ]
   }
 }

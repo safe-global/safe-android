@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionStatus
@@ -160,21 +161,27 @@ class TransactionDetailsViewModel
     }
 
     fun submitConfirmation(transaction: TransactionDetails, selectedOwnerKey: Solidity.Address) {
+
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
-            validateSafeTxHash(transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+
             updateState { TransactionDetailsViewState(ViewAction.Loading(true)) }
+
+            val safe = safeRepository.getActiveSafe()!!
+
+            validateSafeTxHash(safe, transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+
             if (credentialsRepository.ownerCount() == 0) {
                 throw MissingOwnerCredential
             }
-            val activeSafe = safeRepository.getActiveSafe()!!
+
             val selectedOwner = credentialsRepository.owner(selectedOwnerKey)
             val owners = credentialsRepository.owners()
             kotlin.runCatching {
                 transactionRepository.submitConfirmation(
-                    chainId = activeSafe.chainId,
+                    chainId = safe.chainId,
                     safeTxHash = executionInfo.safeTxHash,
                     signedSafeTxHash = credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
                 )
@@ -182,7 +189,7 @@ class TransactionDetailsViewModel
                 txDetails = it
                 val newExecutionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
                     ?: throw MissingCorrectExecutionDetailsException
-                tracker.logTransactionConfirmed(activeSafe.chainId)
+                tracker.logTransactionConfirmed(safe.chainId)
                 val safes = safeRepository.getSafes()
 
                 val canSign = canBeSignedFromDevice(newExecutionInfo, owners)
@@ -202,14 +209,16 @@ class TransactionDetailsViewModel
     }
 
     private suspend fun validateSafeTxHash(
+        safe: Safe,
         transaction: TransactionDetails,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
     ): Boolean {
         return kotlin.runCatching {
-            val safe = safeRepository.getActiveSafe()
+            val contractVersion = safe.version?.let {
+                SemVer.parse(it)
+            } ?: SemVer(0, 0, 0)
             val safeTxHash = executionInfo.safeTxHash
-            //TODO: get version
-            val calculatedSafeTxHash = calculateSafeTxHash(SemVer(1, 1, 0), safe!!.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
+            val calculatedSafeTxHash = calculateSafeTxHash(contractVersion, safe.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
