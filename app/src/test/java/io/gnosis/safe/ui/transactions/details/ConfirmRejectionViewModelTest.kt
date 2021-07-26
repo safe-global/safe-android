@@ -5,6 +5,7 @@ import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -100,7 +101,7 @@ class ConfirmRejectionViewModelTest {
                 "a64c3d38e98284acabf6c84312dd84817fe58cbf403e7556c5cbb9d57142786a".hexToByteArray()
             )
         }
-        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionRejected(any()) }
     }
 

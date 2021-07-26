@@ -24,6 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
+import java.math.BigInteger
 
 class TransactionDetailsViewModelTest {
 
@@ -162,9 +163,17 @@ class TransactionDetailsViewModelTest {
     fun `submitConfirmation (invalid safeTxHash) emits error MismatchingSafeTxHash`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        viewModel.txDetails = transactionDetails
+        val corruptedTransactionDetails = transactionDetails.copy(
+            detailedExecutionInfo = (transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).copy(
+                nonce = BigInteger.valueOf(
+                    -1
+                )
+            )
+        )
+        coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
+        viewModel.txDetails = corruptedTransactionDetails
 
-        viewModel.submitConfirmation(transactionDetails, "0x00".asEthereumAddress()!!)
+        viewModel.submitConfirmation(corruptedTransactionDetails, "0x00".asEthereumAddress()!!)
 
         with(viewModel.state.test().values()) {
             assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MismatchingSafeTxHash))
@@ -220,7 +229,7 @@ class TransactionDetailsViewModelTest {
             )
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
 
 
@@ -254,7 +263,7 @@ class TransactionDetailsViewModelTest {
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
         coVerify(exactly = 1) { credentialsRepository.owner(ownerAddress) }
-        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
     }
 
     @Test
@@ -295,7 +304,7 @@ class TransactionDetailsViewModelTest {
             )
         }
         coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 2) { safeRepository.getActiveSafe() }
+        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         coVerify(exactly = 1) { tracker.logTransactionConfirmed(any()) }
     }
 

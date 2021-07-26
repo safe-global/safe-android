@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details
 
 import androidx.annotation.VisibleForTesting
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.models.transaction.TransactionInfo
@@ -61,33 +62,36 @@ class ConfirmRejectionViewModel
     }
 
     fun submitRejection(owner: Solidity.Address) {
+
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
 
         safeLaunch {
-            val activeSafe = safeRepository.getActiveSafe()!!
+
+            val safe = safeRepository.getActiveSafe()!!
+
+            validateSafeTxHash(safe, txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
+
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
             val rejectionTxDetails = TransactionDetails(
-                txInfo = TransactionInfo.Custom(to = AddressInfo(activeSafe.address)),
+                txInfo = TransactionInfo.Custom(to = AddressInfo(safe.address)),
                 detailedExecutionInfo = rejectionExecutionInfo,
                 safeAppInfo = null
             )
-            //TODO: get version
             val safeTxHash =
                 calculateSafeTxHash(
                     implementationVersion = SemVer(1, 1, 0),
-                    chainId = activeSafe.chainId,
-                    safeAddress = activeSafe.address,
+                    chainId = safe.chainId,
+                    safeAddress = safe.address,
                     transaction = rejectionTxDetails,
                     executionInfo = rejectionExecutionInfo
                 ).toHexString()
-            validateSafeTxHash(txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
             val selectedOwner = credentialsRepository.owner(owner) ?: throw MissingOwnerCredential
             kotlin.runCatching {
                 transactionRepository.proposeTransaction(
-                    chainId = activeSafe.chainId,
-                    safeAddress = activeSafe.address,
+                    chainId = safe.chainId,
+                    safeAddress = safe.address,
                     nonce = rejectionExecutionInfo.nonce,
                     signature = credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
@@ -95,7 +99,7 @@ class ConfirmRejectionViewModel
                     sender = selectedOwner.address
                 )
             }.onSuccess {
-                tracker.logTransactionRejected(activeSafe.chainId)
+                tracker.logTransactionRejected(safe.chainId)
                 updateState { ConfirmationRejectedViewState(RejectionSubmitted) }
             }.onFailure {
                 throw TxRejectionFailed(it.cause ?: it)
@@ -114,14 +118,16 @@ class ConfirmRejectionViewModel
     }
 
     private suspend fun validateSafeTxHash(
+        safe: Safe,
         transaction: TransactionDetails,
         executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
     ): Boolean {
         return kotlin.runCatching {
-            val safe = safeRepository.getActiveSafe()
+            val contractVersion = safe.version?.let {
+                SemVer.parse(it)
+            } ?: SemVer(0, 0, 0)
             val safeTxHash = executionInfo.safeTxHash
-            //TODO get version
-            val calculatedSafeTxHash = calculateSafeTxHash(SemVer(1, 1, 0), safe!!.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
+            val calculatedSafeTxHash = calculateSafeTxHash(contractVersion, safe.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }
