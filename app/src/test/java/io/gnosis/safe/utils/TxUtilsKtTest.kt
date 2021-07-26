@@ -38,7 +38,6 @@ class TxUtilsKtTest {
         resources.apply {
             every { getString(R.string.default_fallback_handler) } returns "DefaultFallbackHandler"
             every { getString(R.string.unknown_fallback_handler) } returns "Unknown"
-            every { getString(R.string.implementation_version_1_1_1) } returns "1.1.1"
             every { getString(R.string.tx_details_change_required_confirmations) } returns "Change required confirmations:"
         }
     }
@@ -256,7 +255,7 @@ class TxUtilsKtTest {
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals(resources.getString(R.string.implementation_version_1_1_1), address.addressLabel)
+        assertEquals("1.1.1", address.addressLabel)
         assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
