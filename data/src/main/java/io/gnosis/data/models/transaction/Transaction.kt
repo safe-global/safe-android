@@ -35,11 +35,11 @@ data class SafeAppInfo(
 @JsonClass(generateAdapter = true)
 data class ExecutionInfo(
     @Json(name = "nonce")
-    val nonce: BigInteger,
+    val nonce: BigInteger?,
     @Json(name = "confirmationsRequired")
-    val confirmationsRequired: Int,
+    val confirmationsRequired: Int?,
     @Json(name = "confirmationsSubmitted")
-    val confirmationsSubmitted: Int,
+    val confirmationsSubmitted: Int?,
     @Json(name = "missingSigners")
     val missingSigners: List<Solidity.Address>?
 )
