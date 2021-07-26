@@ -19,7 +19,7 @@ data class SafeInfo(
 )
 
 enum class VersionState {
-    @Json(name = "UPTODATE")
+    @Json(name = "UP_TO_DATE")
     UP_TO_DATE,
     @Json(name = "OUTDATED")
     OUTDATED,
