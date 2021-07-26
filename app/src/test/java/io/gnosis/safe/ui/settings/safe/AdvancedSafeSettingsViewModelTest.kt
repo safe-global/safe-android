@@ -1,9 +1,6 @@
 package io.gnosis.safe.ui.settings.safe
 
-import io.gnosis.data.models.AddressInfo
-import io.gnosis.data.models.Chain
-import io.gnosis.data.models.Safe
-import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.models.*
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
@@ -76,7 +73,8 @@ class AdvancedSafeSettingsViewModelTest {
             emptyList(),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             null,
-            "1.1.1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         val chain = Chain.DEFAULT_CHAIN
         coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo

@@ -109,9 +109,7 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resource
 
     when (val settingsInfo = settingsChange.settingsInfo) {
         is SettingsInfoViewData.ChangeImplementation -> {
-            val mainCopy = settingsInfo.implementation
-            val label = settingsInfo.implementationInfo?.getLabel() ?: resources.getString(mainCopy.implementationVersion())
-
+            val label = settingsInfo.implementationInfo?.getLabel() ?: resources.getString(R.string.unknown_implementation_version)
             result.add(
                 getAddressActionInfoItem(
                     settingsInfo.implementation,
@@ -141,7 +139,7 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resource
         }
         is SettingsInfoViewData.SetFallbackHandler -> {
 
-            val label: String? = settingsInfo.handlerInfo?.getLabel()
+            val label: String = settingsInfo.handlerInfo?.getLabel()
                 ?: if (SafeRepository.DEFAULT_FALLBACK_HANDLER == settingsInfo.handler) {
                     resources.getString(R.string.default_fallback_handler)
                 } else {

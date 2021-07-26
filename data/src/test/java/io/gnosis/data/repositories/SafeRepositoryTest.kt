@@ -16,6 +16,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
@@ -150,11 +151,12 @@ class SafeRepositoryTest {
             listOf(
                 AddressInfo(Solidity.Address(BigInteger.ONE))
             ),
-            AddressInfo(SafeRepository.SAFE_IMPLEMENTATION_1_0_0),
+            AddressInfo(SAFE_IMPLEMENTATION_1_0_0),
             listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             null,
-            "v1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
 
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo
@@ -245,7 +247,8 @@ class SafeRepositoryTest {
             listOf(AddressInfo(Solidity.Address(BigInteger.ONE))),
             AddressInfo(Solidity.Address(BigInteger.ONE)),
             null,
-            "v1"
+            "1.1.1",
+            VersionState.OUTDATED
         )
         coEvery { gatewayApi.getSafeInfo(address = any(), chainId = any()) } returns safeInfo
 
@@ -282,5 +285,10 @@ class SafeRepositoryTest {
     companion object {
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
         private val CHAIN_ID = BuildConfig.CHAIN_ID.toBigInteger()
+
+        private val SAFE_IMPLEMENTATION_1_0_0 = "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af".asEthereumAddress()!!
+        private val SAFE_IMPLEMENTATION_1_1_1 = "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A".asEthereumAddress()!!
+        private val SAFE_IMPLEMENTATION_1_2_0 = "0x6851d6fdfafd08c0295c392436245e5bc78b0185".asEthereumAddress()!!
+        private val SAFE_IMPLEMENTATION_1_3_0 = "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552".asEthereumAddress()!!
     }
 }

@@ -15,11 +15,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_0_0_2
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_0_1_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_0_0
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_2_0
 import io.gnosis.safe.R
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -94,18 +89,6 @@ fun Solidity.Address?.fallBackHandlerLabel(): Int =
     } else {
         R.string.unknown_fallback_handler
     }
-
-@StringRes
-fun Solidity.Address.implementationVersion(): Int {
-    val supportedContracts = mapOf(
-        SAFE_IMPLEMENTATION_0_0_2 to R.string.implementation_version_0_0_2,
-        SAFE_IMPLEMENTATION_0_1_0 to R.string.implementation_version_0_1_0,
-        SAFE_IMPLEMENTATION_1_0_0 to R.string.implementation_version_1_0_0,
-        SAFE_IMPLEMENTATION_1_1_1 to R.string.implementation_version_1_1_1,
-        SAFE_IMPLEMENTATION_1_2_0 to R.string.implementation_version_1_2_0
-    )
-    return supportedContracts[this] ?: R.string.unknown_implementation_version
-}
 
 fun String.formatEthAddressBold(prefixLength: Int = 6, suffixLength: Int = 4): Spannable {
     return SpannableStringBuilder(this.substring(0, this.length / 2) + "\n" + this.substring(this.length / 2, this.length)).apply {

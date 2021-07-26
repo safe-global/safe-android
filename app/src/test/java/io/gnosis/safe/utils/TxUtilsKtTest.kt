@@ -7,8 +7,8 @@ import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.TransactionDirection
 import io.gnosis.data.models.transaction.TransferInfo
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.SafeRepository.Companion.SAFE_IMPLEMENTATION_1_1_1
 import io.gnosis.safe.R
+import io.gnosis.safe.ui.transactions.AddressInfoData
 import io.gnosis.safe.ui.transactions.details.view.ActionInfoItem
 import io.gnosis.safe.ui.transactions.details.viewdata.SettingsInfoViewData
 import io.gnosis.safe.ui.transactions.details.viewdata.TransactionInfoViewData
@@ -38,7 +38,6 @@ class TxUtilsKtTest {
         resources.apply {
             every { getString(R.string.default_fallback_handler) } returns "DefaultFallbackHandler"
             every { getString(R.string.unknown_fallback_handler) } returns "Unknown"
-            every { getString(R.string.implementation_version_1_1_1) } returns SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString()
             every { getString(R.string.tx_details_change_required_confirmations) } returns "Change required confirmations:"
         }
     }
@@ -248,7 +247,7 @@ class TxUtilsKtTest {
         val settingsChange: TransactionInfoViewData.SettingsChange =
             TransactionInfoViewData.SettingsChange(
                 dataDecoded = dummyDataDecoded,
-                settingsInfo = SettingsInfoViewData.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1, null)
+                settingsInfo = SettingsInfoViewData.ChangeImplementation(SAFE_IMPLEMENTATION_1_1_1, AddressInfoData.Remote("1.1.1", null, null))
             )
 
         val result = settingsChange.txActionInfoItems(resources)
@@ -256,7 +255,7 @@ class TxUtilsKtTest {
         assertEquals(R.string.tx_details_new_mastercopy, result[0].itemLabel)
         assertEquals(1, result.size)
         val address = (result[0] as ActionInfoItem.AddressWithLabel)
-        assertEquals(resources.getString(R.string.implementation_version_1_1_1), address.addressLabel)
+        assertEquals("1.1.1", address.addressLabel)
         assertEquals(SAFE_IMPLEMENTATION_1_1_1.asEthereumAddressChecksumString(), address.address?.asEthereumAddressChecksumString())
     }
 
@@ -373,4 +372,8 @@ class TxUtilsKtTest {
         method = "dummy",
         parameters = null
     )
+
+    companion object {
+        private val SAFE_IMPLEMENTATION_1_1_1 = "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A".asEthereumAddress()!!
+    }
 }
