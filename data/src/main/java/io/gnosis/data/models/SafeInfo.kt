@@ -14,5 +14,15 @@ data class SafeInfo(
     @Json(name = "modules") val modules: List<AddressInfo>?,
     @Json(name = "fallbackHandler") val fallbackHandler: AddressInfo?,
     @Json(name = "guard") val guard: AddressInfo?,
-    @Json(name = "version") val version: String
+    @Json(name = "version") val version: String,
+    @Json(name = "implementationVersionState") val versionState: VersionState
 )
+
+enum class VersionState {
+    @Json(name = "UPTODATE")
+    UP_TO_DATE,
+    @Json(name = "OUTDATED")
+    OUTDATED,
+    @Json(name = "UNKNOWN")
+    UNKNOWN
+}
