@@ -20,7 +20,10 @@ data class Safe(
     val localName: String,
 
     @ColumnInfo(name = COL_CHAIN_ID)
-    val chainId: BigInteger = BuildConfig.CHAIN_ID.toBigInteger()
+    val chainId: BigInteger = BuildConfig.CHAIN_ID.toBigInteger(),
+
+    @ColumnInfo(name = COL_VERSION)
+    val version: String? = null
 ) {
 
     @Ignore
@@ -32,6 +35,7 @@ data class Safe(
         const val COL_ADDRESS = "address"
         const val COL_LOCAL_NAME = "local_name"
         const val COL_CHAIN_ID = "chain_id"
+        const val COL_VERSION = "version"
     }
 }
 
