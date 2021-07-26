@@ -112,10 +112,6 @@ class SafeRepository(
         val safeInfo = gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
         val version = kotlin.runCatching {
             SemVer.parse(safeInfo.version)
-        }.onSuccess {
-            it
-        }.onFailure {
-            SemVer(0, 0, 0)
         }.getOrNull()
 
         return when {
