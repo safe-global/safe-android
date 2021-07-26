@@ -7,7 +7,6 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
-import io.gnosis.data.models.SafeMetaData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -106,12 +105,6 @@ class SafeRepository(
         }
         return safe
     }
-
-    suspend fun getSafeMetas(): List<SafeMetaData> = safeDao.getMetas()
-
-    suspend fun getSafeMeta(address: Solidity.Address): SafeMetaData? = safeDao.getMeta(address)
-
-    suspend fun saveSafeMeta(safeMeta: SafeMetaData) = safeDao.saveMeta(safeMeta)
 
     suspend fun getSafeStatus(safe: Safe): SafeStatus {
 
