@@ -14,6 +14,8 @@ android {
         // Version 1.1.1 (All networks)
         buildConfigField javaTypes.STRING, "SAFE_IMPLEMENTATION_1_2_0", asString(getKey("SAFE_IMPLEMENTATION_1_2_0", "0x6851d6fdfafd08c0295c392436245e5bc78b0185"))
         // Version 1.2.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_IMPLEMENTATION_1_3_0", asString(getKey("SAFE_IMPLEMENTATION_1_3_0", "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552"))
+        // Version 1.3.0 (All networks)
 
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_OLD_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))

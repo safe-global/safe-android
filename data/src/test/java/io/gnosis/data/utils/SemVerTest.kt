@@ -1,4 +1,4 @@
-package io.gnosis.safe.utils
+package io.gnosis.data.utils
 
 import org.junit.Assert.*
 import org.junit.Test
@@ -37,7 +37,7 @@ class SemVerTest {
         val version2 = SemVer.parse("2.17.0")
         val version3 = SemVer.parse("2.15.0-255-internal")
         val version4 = SemVer.parse("2.17.0-300-internal")
-        
+
         val rangeString1 = "2.15.0...2.17.0"
         val range1 = SemVer.parseRange(rangeString1)
         assertTrue(range1.first != null)

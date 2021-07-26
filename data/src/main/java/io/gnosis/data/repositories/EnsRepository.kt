@@ -24,7 +24,7 @@ class EnsRepository(
 
     suspend fun resolve(url: String, chain: Chain): Solidity.Address {
 
-        ethereumRepository.rpcUrl = chain.rpcUrl
+        ethereumRepository.rpcUrl = chain.rpcUri
 
         val node = ensNormalizer.normalize(url).nameHash()
 
@@ -71,7 +71,7 @@ class EnsRepository(
 
     suspend fun reverseResolve(address: Solidity.Address, chain: Chain): String? {
 
-        ethereumRepository.rpcUrl = chain.rpcUrl
+        ethereumRepository.rpcUrl = chain.rpcUri
 
         val node = "${address.asEthereumAddressString().removeHexPrefix()}.addr.reverse".nameHash()
 

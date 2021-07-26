@@ -8,6 +8,7 @@ import io.gnosis.data.models.transaction.TransactionStatus
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.utils.SemVer
 import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -207,7 +208,8 @@ class TransactionDetailsViewModel
         return kotlin.runCatching {
             val safe = safeRepository.getActiveSafe()
             val safeTxHash = executionInfo.safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(safe!!.address, transaction, executionInfo)?.toHexString()?.addHexPrefix()
+            //TODO: get version
+            val calculatedSafeTxHash = calculateSafeTxHash(SemVer(1, 1, 0), safe!!.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }

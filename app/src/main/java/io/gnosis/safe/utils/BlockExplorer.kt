@@ -23,7 +23,7 @@ class BlockExplorer private constructor(
     companion object {
         fun forChain(chain: Chain?): BlockExplorer? {
             return chain?.let {
-                BlockExplorer(it.blockExplorerUrl)
+                BlockExplorer(it.blockExplorerUri)
             }
         }
     }

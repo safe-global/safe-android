@@ -3,6 +3,7 @@ package io.gnosis.data.utils
 import io.gnosis.data.BuildConfig
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.readJsonFrom
@@ -23,6 +24,7 @@ class SafeTxHashTest {
 
     private val txDtoAdapter = dataMoshi.adapter(TransactionDetails::class.java)
 
+    private val chain = Chain.DEFAULT_CHAIN
     private val safeAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
 
     @Test
@@ -34,10 +36,12 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txCustom,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -51,10 +55,12 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txTransfer,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }
@@ -68,10 +74,32 @@ class SafeTxHashTest {
 
         val txCustomSafeTxHash = executionInfo.safeTxHash
         val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 1, 0),
+            chain.chainId,
             safeAddress,
             txSettingsChange,
             executionInfo
-        )?.toHexString()?.addHexPrefix()
+        ).toHexString().addHexPrefix()
+
+        assertEquals(txCustomSafeTxHash, calculatedTxHash)
+    }
+
+    @Test
+    fun `calculateSafeTxHash (v1_3_0 safe, settingsChangeTx) should return same value as in settingsChangeTx`() = runBlocking {
+        val safeAddress = "0x6cf158C37354d8da5396fb6d3e965318CCf119c1".asEthereumAddress()!!
+        val txSettingsChangeDto = txDtoAdapter.readJsonFrom("tx_details_custom_set_guard.json")
+        coEvery { gatewayApi.loadTransactionDetails(transactionId = any(), chainId = any()) } returns txSettingsChangeDto
+        val txSettingsChange = transactionRepository.getTransactionDetails(CHAIN_ID, "id")
+        val executionInfo = txSettingsChange.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
+
+        val txCustomSafeTxHash = executionInfo.safeTxHash
+        val calculatedTxHash = calculateSafeTxHash(
+            SemVer(1, 3, 0),
+            chain.chainId,
+            safeAddress,
+            txSettingsChange,
+            executionInfo
+        ).toHexString().addHexPrefix()
 
         assertEquals(txCustomSafeTxHash, calculatedTxHash)
     }

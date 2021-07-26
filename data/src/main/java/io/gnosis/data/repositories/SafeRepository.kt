@@ -120,7 +120,8 @@ class SafeRepository(
         val supportedContracts = setOf(
             SAFE_IMPLEMENTATION_1_0_0,
             SAFE_IMPLEMENTATION_1_1_1,
-            SAFE_IMPLEMENTATION_1_2_0
+            SAFE_IMPLEMENTATION_1_2_0,
+            SAFE_IMPLEMENTATION_1_3_0
         )
 
         return when {
@@ -149,6 +150,7 @@ class SafeRepository(
         val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_IMPLEMENTATION_1_0_0.asEthereumAddress()!!
         val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_IMPLEMENTATION_1_1_1.asEthereumAddress()!!
         val SAFE_IMPLEMENTATION_1_2_0 = BuildConfig.SAFE_IMPLEMENTATION_1_2_0.asEthereumAddress()!!
+        val SAFE_IMPLEMENTATION_1_3_0 = BuildConfig.SAFE_IMPLEMENTATION_1_3_0.asEthereumAddress()!!
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 

@@ -14,7 +14,11 @@ private const val ERC191_BYTE = "19"
 private const val ERC191_VERSION = "01"
 
 fun calculateSafeTxHash(
-    safeAddress: Solidity.Address, transaction: TransactionDetails, executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
+    implementationVersion: SemVer,
+    chainId: BigInteger,
+    safeAddress: Solidity.Address,
+    transaction: TransactionDetails,
+    executionInfo: DetailedExecutionInfo.MultisigExecutionDetails
 ): ByteArray {
 
     val to = when (val txInfo = transaction.txInfo) {
@@ -53,6 +57,8 @@ fun calculateSafeTxHash(
     val nonce = executionInfo.nonce.paddedHexString()
 
     return hash(
+        implementationVersion,
+        chainId,
         safeAddress,
         to,
         value,
@@ -67,17 +73,23 @@ fun calculateSafeTxHash(
     )
 }
 
-private fun hash(safeAddress: Solidity.Address, vararg parts: String): ByteArray {
+private fun hash(implementationVersion: SemVer, chainId: BigInteger, safeAddress: Solidity.Address, vararg parts: String): ByteArray {
     val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(
-        domainHash(safeAddress)
+        domainHash(implementationVersion, chainId, safeAddress)
     ).append(valuesHash(parts))
     return Sha3Utils.keccak(initial.toString().hexToByteArray())
 }
 
-private fun domainHash(safeAddress: Solidity.Address) =
-    Sha3Utils.keccak(
-        "0x035aff83d86937d35b32e04f0ddc6ff469290eef2f1b692d8a815c89404d4749${safeAddress.value.paddedHexString()}".hexToByteArray()
-    ).toHex()
+private fun domainHash(implementationVersion: SemVer, chainId: BigInteger, safeAddress: Solidity.Address) =
+    if (implementationVersion >= SemVer(1, 3, 0)) {
+        Sha3Utils.keccak(
+            "0x47e79534a245952e8b16893a336b85a3d9ea9fa8c573f3d803afb92a79469218${chainId.paddedHexString()}${safeAddress.value.paddedHexString()}".hexToByteArray()
+        ).toHex()
+    } else {
+        Sha3Utils.keccak(
+            "0x035aff83d86937d35b32e04f0ddc6ff469290eef2f1b692d8a815c89404d4749${safeAddress.value.paddedHexString()}".hexToByteArray()
+        ).toHex()
+    }
 
 private fun valuesHash(parts: Array<out String>) =
     parts.fold(StringBuilder().append(getTypeHash())) { acc, part ->

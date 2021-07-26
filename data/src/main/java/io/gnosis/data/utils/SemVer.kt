@@ -1,4 +1,4 @@
-package io.gnosis.safe.utils
+package io.gnosis.data.utils
 
 data class SemVer(
     val major: Int = 0,

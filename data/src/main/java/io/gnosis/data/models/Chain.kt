@@ -21,11 +21,14 @@ data class Chain(
     @ColumnInfo(name = COL_BACKGROUND_COLOR)
     val backgroundColor: String,
 
-    @ColumnInfo(name = COL_RPC_URL)
-    val rpcUrl: String,
+    @ColumnInfo(name = COL_RPC_URI)
+    val rpcUri: String,
 
-    @ColumnInfo(name = COL_BLOCK_EXPLORER_URL)
-    val blockExplorerUrl: String,
+    @ColumnInfo(name = COL_RPC_AUTHENTICATION)
+    val rpcAuthentication: RpcAuthentication,
+
+    @ColumnInfo(name = COL_BLOCK_EXPLORER_URI)
+    val blockExplorerUri: String,
 
     @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
     val ensRegistryAddress: String?
@@ -61,8 +64,8 @@ data class Chain(
         @ColumnInfo(name = Currency.COL_DECIMALS)
         val decimals: Int,
 
-        @ColumnInfo(name = Currency.COL_LOGO_URL)
-        val logoUrl: String
+        @ColumnInfo(name = Currency.COL_LOGO_URI)
+        val logoUri: String
     ) : Serializable {
 
         companion object {
@@ -71,7 +74,7 @@ data class Chain(
             const val COL_NAME = "name"
             const val COL_SYMBOL = "symbol"
             const val COL_DECIMALS = "decimals"
-            const val COL_LOGO_URL = "logo_url"
+            const val COL_LOGO_URI = "logo_uri"
 
             val DEFAULT_CURRENCY = Currency(
                 BuildConfig.CHAIN_ID.toBigInteger(),
@@ -89,8 +92,9 @@ data class Chain(
         const val COL_CHAIN_NAME = "chain_name"
         const val COL_CHAIN_ID = "chain_id"
         const val COL_BACKGROUND_COLOR = "background_color"
-        const val COL_RPC_URL = "rpc_url"
-        const val COL_BLOCK_EXPLORER_URL = "block_explorer_url"
+        const val COL_RPC_URI = "rpc_uri"
+        const val COL_RPC_AUTHENTICATION = "rpc_authentication"
+        const val COL_BLOCK_EXPLORER_URI = "block_explorer_uri"
         const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
         const val COL_TEXT_COLOR = "text_color"
 
@@ -103,6 +107,7 @@ data class Chain(
             BuildConfig.CHAIN_TEXT_COLOR,
             BuildConfig.CHAIN_BACKGROUND_COLOR,
             BuildConfig.BLOCKCHAIN_NET_URL,
+            RpcAuthentication.API_KEY_PATH,
             BuildConfig.BLOCKCHAIN_EXPLORER_URL,
             io.gnosis.contracts.BuildConfig.ENS_REGISTRY
         ).apply {
