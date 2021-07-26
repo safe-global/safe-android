@@ -7,6 +7,7 @@ import io.gnosis.data.db.daos.SafeDao
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.SafeInfo
+import io.gnosis.data.utils.SemVer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -109,16 +110,16 @@ class SafeRepository(
     suspend fun getSafeStatus(safe: Safe): SafeStatus {
 
         val safeInfo = gatewayApi.getSafeInfo(address = safe.address.asEthereumAddressChecksumString(), chainId = safe.chainId)
-
-        val supportedContracts = setOf(
-            SAFE_IMPLEMENTATION_1_0_0,
-            SAFE_IMPLEMENTATION_1_1_1,
-            SAFE_IMPLEMENTATION_1_2_0,
-            SAFE_IMPLEMENTATION_1_3_0
-        )
+        val version = kotlin.runCatching {
+            SemVer.parse(safeInfo.version)
+        }.onSuccess {
+            it
+        }.onFailure {
+            SemVer(0, 0, 0)
+        }.getOrNull()
 
         return when {
-            safeInfo != null && safeInfo.implementation.value in supportedContracts -> SafeStatus.VALID
+            safeInfo != null && isSupportedVersion(version) -> SafeStatus.VALID
             safeInfo != null -> SafeStatus.NOT_SUPPORTED
             else -> SafeStatus.INVALID
         }
@@ -138,16 +139,16 @@ class SafeRepository(
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
 
-        val SAFE_IMPLEMENTATION_0_0_2 = BuildConfig.SAFE_IMPLEMENTATION_0_0_2.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_0_1_0 = BuildConfig.SAFE_IMPLEMENTATION_0_1_0.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_0_0 = BuildConfig.SAFE_IMPLEMENTATION_1_0_0.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_1_1 = BuildConfig.SAFE_IMPLEMENTATION_1_1_1.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_2_0 = BuildConfig.SAFE_IMPLEMENTATION_1_2_0.asEthereumAddress()!!
-        val SAFE_IMPLEMENTATION_1_3_0 = BuildConfig.SAFE_IMPLEMENTATION_1_3_0.asEthereumAddress()!!
-
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
-        fun isLatestVersion(address: Solidity.Address?): Boolean = address == SAFE_IMPLEMENTATION_1_1_1 || address == SAFE_IMPLEMENTATION_1_2_0
+        fun isUpToDateVersion(version: SemVer?): Boolean {
+            //FIXME: adjust when 1.1.1 and 1.2.0 should not be regarded as up to date
+            return version != null && version >= SemVer(1, 1, 1)
+        }
+
+        fun isSupportedVersion(version: SemVer?): Boolean {
+            return version != null && version >= SemVer(1, 0, 0) && version <= SemVer(1, 3, 0)
+        }
 
         const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
         const val METHOD_ADD_OWNER_WITH_THRESHOLD = "addOwnerWithThreshold"
@@ -159,9 +160,6 @@ class SafeRepository(
         const val METHOD_DISABLE_MODULE = "disableModule"
 
     }
-
-//    suspend fun getChainInfo(): List<ChainInfo> = gatewayApi.loadChainInfo().results
-
 }
 
 enum class SafeStatus {
