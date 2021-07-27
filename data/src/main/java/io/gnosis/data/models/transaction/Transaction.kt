@@ -2,7 +2,7 @@ package io.gnosis.data.models.transaction
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import pm.gnosis.model.Solidity
+import io.gnosis.data.models.AddressInfo
 import java.math.BigInteger
 import java.util.*
 
@@ -41,7 +41,7 @@ data class ExecutionInfo(
     @Json(name = "confirmationsSubmitted")
     val confirmationsSubmitted: Int?,
     @Json(name = "missingSigners")
-    val missingSigners: List<Solidity.Address>?
+    val missingSigners: List<AddressInfo>?
 )
 
 enum class TransactionType {
