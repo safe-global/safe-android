@@ -27,8 +27,11 @@ data class Chain(
     @ColumnInfo(name = COL_RPC_AUTHENTICATION)
     val rpcAuthentication: RpcAuthentication,
 
-    @ColumnInfo(name = COL_BLOCK_EXPLORER_URI)
-    val blockExplorerUri: String,
+    @ColumnInfo(name = COL_BLOCK_EXPLORER_TEMPLATE_ADDRESS)
+    val blockExplorerTemplateAddress: String,
+
+    @ColumnInfo(name = COL_BLOCK_EXPLORER_TEMPLATE_TX_HASH)
+    val blockExplorerTemplateTxHash: String,
 
     @ColumnInfo(name = COL_ENS_REGISTRY_ADDRESS)
     val ensRegistryAddress: String?
@@ -94,7 +97,8 @@ data class Chain(
         const val COL_BACKGROUND_COLOR = "background_color"
         const val COL_RPC_URI = "rpc_uri"
         const val COL_RPC_AUTHENTICATION = "rpc_authentication"
-        const val COL_BLOCK_EXPLORER_URI = "block_explorer_uri"
+        const val COL_BLOCK_EXPLORER_TEMPLATE_ADDRESS = "block_explorer_address_uri"
+        const val COL_BLOCK_EXPLORER_TEMPLATE_TX_HASH = "block_explorer_tx_hash_uri"
         const val COL_ENS_REGISTRY_ADDRESS = "ens_registry_address"
         const val COL_TEXT_COLOR = "text_color"
 
@@ -106,9 +110,10 @@ data class Chain(
             BuildConfig.BLOCKCHAIN_NAME,
             BuildConfig.CHAIN_TEXT_COLOR,
             BuildConfig.CHAIN_BACKGROUND_COLOR,
-            BuildConfig.BLOCKCHAIN_NET_URL,
-            RpcAuthentication.API_KEY_PATH,
             BuildConfig.BLOCKCHAIN_EXPLORER_URL,
+            RpcAuthentication.API_KEY_PATH,
+            BuildConfig.BLOCKCHAIN_NET_URL + "address/",
+            BuildConfig.BLOCKCHAIN_NET_URL + "tx/",
             io.gnosis.contracts.BuildConfig.ENS_REGISTRY
         ).apply {
             currency = Currency.DEFAULT_CURRENCY

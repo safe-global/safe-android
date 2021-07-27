@@ -12,18 +12,29 @@ data class ChainInfo(
     @Json(name = "chainName") val chainName: String,
     @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUri") val rpcUri: RpcUri,
-    @Json(name = "blockExplorerUri") val blockExplorerUrl: String,
+    //TODO: remove blockExplorerUri when blockExplorerTemplate is available in response
+    @Json(name = "blockExplorerUri") val blockExplorerUri: String,
+    //TODO: uncomment when blockExplorerTemplate is available in response
+//    @Json(name = "blockExplorerTemplate") val blockExplorerTemplate: BlockExplorerTemplate,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,
     @Json(name = "transactionService") val transactionService: String,
     @Json(name = "theme") val theme: ChainTheme
 ) {
 
     fun toChain(): Chain {
-        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerUrl, ensRegistryAddress).apply {
+        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerUri, blockExplorerUri, ensRegistryAddress).apply {
+        //TODO: uncomment after backend is returning blockExplorerTemplate in chains response
+        //return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerTemplate.address, blockExplorerTemplate.txHash, ensRegistryAddress).apply {
             currency = nativeCurrency.toCurrency(chainId)
         }
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class BlockExplorerTemplate(
+    @Json(name = "address") val address: String,
+    @Json(name = "txHash") val txHash: String
+)
 
 @JsonClass(generateAdapter = true)
 data class RpcUri(
