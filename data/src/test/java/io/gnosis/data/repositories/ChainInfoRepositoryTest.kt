@@ -63,6 +63,6 @@ class ChainInfoRepositoryTest {
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
 
-        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH, "", null)) }
+        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null)) }
     }
 }
