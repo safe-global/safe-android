@@ -493,7 +493,7 @@ object NoSafeSelected : BaseStateViewModel.ViewAction
 fun Transaction.canBeSignedByAnyOwner(owners: List<Owner>): Boolean {
     return executionInfo?.missingSigners?.any { address ->
         owners.any { owner ->
-            owner.address == address
+            owner.address == address.value
         }
     } ?: false
 }

@@ -829,8 +829,8 @@ class TransactionListViewModelTest {
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
         val safe = Safe(Solidity.Address(BigInteger.ONE), "test_safe")
-        val ownerAddress = Solidity.Address(BigInteger.ONE)
-        val notOwnerAddress = Solidity.Address(BigInteger.TEN)
+        val ownerAddress = AddressInfo(Solidity.Address(BigInteger.ONE))
+        val notOwnerAddress = AddressInfo(Solidity.Address(BigInteger.TEN))
 
         val transactions = listOf(
             buildTransfer(
@@ -868,7 +868,7 @@ class TransactionListViewModelTest {
                 CHAIN,
                 it,
                 listOf(safe),
-                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress, type = Owner.Type.IMPORTED)))
+                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress.value, type = Owner.Type.IMPORTED)))
             )
         }
 
@@ -1074,7 +1074,7 @@ class TransactionListViewModelTest {
     private fun buildTransfer(
         status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
-        missingSigners: List<Solidity.Address>? = null,
+        missingSigners: List<AddressInfo>? = null,
         recipient: Solidity.Address = defaultToAddress,
         sender: Solidity.Address = defaultFromAddress,
         value: BigInteger = BigInteger.ONE,
@@ -1125,7 +1125,7 @@ class TransactionListViewModelTest {
     private fun buildCustom(
         status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
-        missingSigners: List<Solidity.Address>? = null,
+        missingSigners: List<AddressInfo>? = null,
         value: BigInteger = BigInteger.ZERO,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
@@ -1157,7 +1157,7 @@ class TransactionListViewModelTest {
     private fun buildSettingsChange(
         status: TransactionStatus = SUCCESS,
         confirmations: Int = 0,
-        missingSigners: List<Solidity.Address>? = null,
+        missingSigners: List<AddressInfo>? = null,
         date: Date = Date(0),
         nonce: BigInteger = defaultNonce,
         dataDecoded: DataDecoded = buildDataDecodedDto(),
