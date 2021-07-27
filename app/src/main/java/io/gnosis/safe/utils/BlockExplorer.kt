@@ -12,15 +12,11 @@ class BlockExplorer private constructor(
 ) {
 
     fun showAddress(context: Context, address: Solidity.Address?) {
-        //TODO: uncomment after backend is returnng blockExplorerTemplate in chains response
-        //context.openUrl(addressUriTemplate.replace("{{address}}", address?.asEthereumAddressChecksumString() ?: ""))
-        context.openUrl("${addressUriTemplate}address/${address?.asEthereumAddressChecksumString()}")
+        context.openUrl(addressUriTemplate.replace("{{address}}", address?.asEthereumAddressChecksumString() ?: ""))
     }
 
     fun showTransaction(context: Context, txHash: String?) {
-        //TODO: uncomment after backend is returnng blockExplorerTemplate in chains response
-        //context.openUrl(txHashUriTemplate.replace("{{txHash}}", txHash ?: ""))
-        context.openUrl("${txHashUriTemplate}tx/${txHash}")
+        context.openUrl(txHashUriTemplate.replace("{{txHash}}", txHash ?: ""))
     }
 
     companion object {
