@@ -23,19 +23,19 @@ class ChainInfoRepositoryTest {
     private val chainInfoRepository = ChainInfoRepository(chainDao, gatewayApi)
 
     private val rinkebyChainInfo = ChainInfo(
-        Chain.ID_RINKEBY, "Rinkeby", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), "",
+        Chain.ID_RINKEBY, "Rinkeby", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
         NativeCurrency("", "", 18, ""), "",
         ChainTheme("", "")
     )
     private val pagedResult: List<ChainInfo> = listOf(
         ChainInfo(
-            Chain.ID_MAINNET, "Mainnet", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), "",
+            Chain.ID_MAINNET, "Mainnet", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
             NativeCurrency("", "", 18, ""), "",
             ChainTheme("", "")
         ),
         rinkebyChainInfo,
         ChainInfo(
-            BigInteger.valueOf(137), "Matic", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), "",
+            BigInteger.valueOf(137), "Matic", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
             NativeCurrency("", "", 18, ""), "",
             ChainTheme("", "")
         )
