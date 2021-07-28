@@ -12,7 +12,7 @@ data class ChainInfo(
     @Json(name = "chainName") val chainName: String,
     @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUri") val rpcUri: RpcUri,
-    @Json(name = "blockExplorerUri") val blockExplorerUrl: String,
+    @Json(name = "blockExplorerUriTemplate") val blockExplorerUrl: String,
     @Json(name = "nativeCurrency") val nativeCurrency: NativeCurrency,
     @Json(name = "transactionService") val transactionService: String,
     @Json(name = "theme") val theme: ChainTheme
