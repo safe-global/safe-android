@@ -84,13 +84,12 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-                                viewModel.enableBiometry()
                                 try {
                                     //Some device still throw an IllegalStateException
                                     // (due to no fingerprints enrolled) even though they return BIOMETRIC_SUCCESS
                                     viewModel.encryptPasscodeWithBiometricKey(viewAction.passcode)
+                                    viewModel.enableBiometry()
                                 } catch (e: Exception) {
-                                    settingsHandler.useBiometrics = false
                                     Timber.e(e, "encryptPasscodeWithBiometricKey() failed")
                                 }
                                 dialog.dismiss()
