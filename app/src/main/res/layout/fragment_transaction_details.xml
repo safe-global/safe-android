@@ -167,7 +167,7 @@
                     app:drawableEndCompat="@drawable/ic_link_green_24dp"
                     android:drawablePadding="6dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/tx_details_view_on_etherscan" />
+                    android:text="@string/tx_details_view_on_block_explorer" />
 
             </LinearLayout>
 
