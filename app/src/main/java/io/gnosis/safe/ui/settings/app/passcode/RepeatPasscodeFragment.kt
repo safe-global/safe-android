@@ -83,8 +83,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-                                viewModel.enableBiometry()
-                                viewModel.encryptPasscodeWithBiometricKey(viewAction.passcode)
+                                viewModel.activateBiometry(viewAction.passcode)
                                 dialog.dismiss()
                             },
                             confirmColor = R.color.primary,
