@@ -7,23 +7,22 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.openUrl
 
 class BlockExplorer private constructor(
-    private val blockExplorerUrl: String
+    private val addressUriTemplate: String,
+    private val txHashUriTemplate: String
 ) {
 
     fun showAddress(context: Context, address: Solidity.Address?) {
-        //FIXME: handle possible differences in address endpoint format for different block explorers
-        context.openUrl("${blockExplorerUrl}address/${address?.asEthereumAddressChecksumString()}")
+        context.openUrl(addressUriTemplate.replace("{{address}}", address?.asEthereumAddressChecksumString() ?: ""))
     }
 
     fun showTransaction(context: Context, txHash: String?) {
-        //FIXME: handle possible differences in tx endpoint format for different block explorers
-        context.openUrl("${blockExplorerUrl}tx/${txHash}")
+        context.openUrl(txHashUriTemplate.replace("{{txHash}}", txHash ?: ""))
     }
 
     companion object {
         fun forChain(chain: Chain?): BlockExplorer? {
             return chain?.let {
-                BlockExplorer(it.blockExplorerUri)
+                BlockExplorer(it.blockExplorerTemplateAddress, it.blockExplorerTemplateTxHash)
             }
         }
     }
