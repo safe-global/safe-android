@@ -25,7 +25,6 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.CustomAlertDialogBuilder
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
-import timber.log.Timber
 import javax.inject.Inject
 
 class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>() {
@@ -84,14 +83,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-                                try {
-                                    //Some device still throw an IllegalStateException
-                                    // (due to no fingerprints enrolled) even though they return BIOMETRIC_SUCCESS
-                                    viewModel.encryptPasscodeWithBiometricKey(viewAction.passcode)
-                                    viewModel.enableBiometry()
-                                } catch (e: Exception) {
-                                    Timber.e(e, "encryptPasscodeWithBiometricKey() failed")
-                                }
+                                viewModel.activateBiometry(viewAction.passcode)
                                 dialog.dismiss()
                             },
                             confirmColor = R.color.primary,
