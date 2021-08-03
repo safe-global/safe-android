@@ -134,7 +134,7 @@ class NotificationManager(
                     title = context.getString(R.string.push_title_failed, safe.chain.name)
                     text = context.getString(R.string.push_text_failed, safeName)
                 } else {
-                    title = context.getString(R.string.push_title_executed)
+                    title = context.getString(R.string.push_title_executed, safe.chain.name)
                     text = context.getString(R.string.push_text_executed, safeName)
                 }
                 intent = txDetailsIntent(safe, pushNotification.safeTxHash)
