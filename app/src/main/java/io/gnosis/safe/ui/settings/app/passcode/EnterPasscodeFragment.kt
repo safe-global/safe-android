@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.app.passcode
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -43,6 +44,8 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
+
+    private var forgotPasscodeDialog: Dialog? = null
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
         FragmentPasscodeBinding.inflate(inflater, container, false)
@@ -123,7 +126,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             actionButton.setOnClickListener {
                 binding.errorMessage.visibility = View.INVISIBLE
 
-                showConfirmDialog(
+                forgotPasscodeDialog = showConfirmDialog(
                     requireContext(),
                     message = R.string.settings_passcode_confirm_disable_passcode,
                     confirm = R.string.settings_passcode_disable_passcode,
@@ -137,6 +140,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                 input.showKeyboardForView()
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        forgotPasscodeDialog?.dismiss()
     }
 
     private fun handlePasscodeCorrect() {
