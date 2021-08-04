@@ -69,7 +69,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
                     if (requirePasscodeToOpen) {
                         findNavController().popBackStack(R.id.enterPasscodeFragment, true)
                     } else if (!selectedOwner.isNullOrBlank()) {
-                        findNavController().popBackStack(R.id.transactionDetailsFragment, false)
+                        findNavController().popBackStack(R.id.transactionDetailsFragment, true)
                     } else {
                         findNavController().popBackStack(R.id.ownerDetailsFragment, true)
                     }
