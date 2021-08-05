@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.formatEthAddress
+import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
@@ -80,5 +81,10 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().hideSoftKeyboard()
     }
 }
