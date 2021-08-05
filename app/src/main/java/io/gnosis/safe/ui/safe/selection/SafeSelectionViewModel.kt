@@ -53,8 +53,10 @@ class SafeSelectionViewModel @Inject constructor(
                 val chains = chainInfoRepository.getChains().filter { it.chainId != activeSafe?.chainId }.sortedBy { it.chainId }
                 chains.forEach {
                     val safesForChain = safeRepository.getSafesForChain(it.chainId)
-                    add(ChainHeader(it.name, it.backgroundColor))
-                    addAll(safesForChain.reversed().map { SafeItem(it) })
+                    if (safesForChain.isNotEmpty()) {
+                        add(ChainHeader(it.name, it.backgroundColor))
+                        addAll(safesForChain.reversed().map { SafeItem(it) })
+                    }
                 }
             }
 
