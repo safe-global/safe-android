@@ -83,6 +83,7 @@
         android:id="@+id/type_icon"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:scaleType="center"
         android:layout_marginStart="@dimen/default_margin"
         android:src="@drawable/ic_code_16dp"
         app:layout_constraintBottom_toBottomOf="@+id/status_title"

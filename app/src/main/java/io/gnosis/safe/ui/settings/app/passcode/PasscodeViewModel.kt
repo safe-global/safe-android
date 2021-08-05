@@ -162,9 +162,10 @@ class PasscodeViewModel
         try {
             //Some device still throw an IllegalStateException
             // (due to no fingerprints enrolled) even though they return BIOMETRIC_SUCCESS
-            encryptPasscodeWithBiometricKey(newPasscode)
             settingsHandler.useBiometrics = true
+            encryptPasscodeWithBiometricKey(newPasscode)
         } catch (e: Exception) {
+            settingsHandler.useBiometrics = false
             Timber.e(e, "activateBiometry() failed")
         }
     }

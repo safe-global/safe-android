@@ -21,6 +21,7 @@ import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,6 +49,8 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
         )
     }
 
+    private var inputValue: String? = null
+
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -70,6 +73,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             chainRibbon.text = selectedChain.name
             chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
             chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
+
+            savedInstanceState?.let {
+                inputValue = it[STATE_INPUT] as String?
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -88,6 +95,9 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun handleError(throwable: Throwable, input: String? = null) {
         Timber.e(throwable)
+        input?.let {
+            inputValue = it
+        }
         with(binding) {
             progress.visible(false)
             nextButton.isEnabled = false
@@ -97,7 +107,10 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             if (error.trackingRequired) {
                 tracker.logException(throwable)
             }
-            addSafeAddressInputLayout.setError(error.message(requireContext(), R.string.error_description_safe_address), input)
+
+            val errorMsg = error.message(requireContext(), R.string.error_description_safe_address)
+
+            addSafeAddressInputLayout.setError(errorMsg, inputValue)
         }
     }
 
@@ -107,6 +120,7 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
     }
 
     private fun updateAddress(address: Solidity.Address) {
+        inputValue = address.asEthereumAddressString()
         with(binding) {
             nextButton.isEnabled = false
             addSafeAddressInputLayout.setNewAddress(address)
@@ -116,6 +130,9 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
 
     private fun handleValid(address: Solidity.Address) {
         with(binding) {
+            if (addSafeAddressInputLayout.address == null) {
+                addSafeAddressInputLayout.setNewAddress(address)
+            }
             progress.visible(false)
             binding.nextButton.setOnClickListener {
                 findNavController().navigate(
@@ -125,5 +142,14 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             nextButton.isEnabled = true
             bottomLabels.visible(false)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_INPUT, inputValue)
+    }
+
+    companion object {
+        private const val STATE_INPUT = "state.string.input"
     }
 }
