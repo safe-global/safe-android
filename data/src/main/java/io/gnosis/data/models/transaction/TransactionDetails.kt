@@ -88,7 +88,7 @@ sealed class DetailedExecutionInfo(
     @JsonClass(generateAdapter = true)
     data class ModuleExecutionDetails(
         @Json(name = "address")
-        val address: String
+        val address: AddressInfo
     ) : DetailedExecutionInfo(DetailedExecutionInfoType.MODULE)
 }
 
