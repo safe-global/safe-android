@@ -116,7 +116,7 @@ class GetInTouchViewModel
         val text = StringBuilder()
         text.appendln("${context.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME}")
         text.appendln(context.getString(R.string.feedback_safe, activeSafe?.address?.asEthereumAddressChecksumString() ?: ""))
-        text.appendln(context.getString(R.string.feedback_chain, activeSafe?.chain?.name ?: ""))
+        text.appendln(context.getString(R.string.feedback_chain, activeSafe?.chain?.name ?: "", activeSafe?.chain?.chainId))
         text.appendln(context.getString(R.string.feedback_feedback))
         return text.toString()
     }
