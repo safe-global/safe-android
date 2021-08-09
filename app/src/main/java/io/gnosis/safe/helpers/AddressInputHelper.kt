@@ -69,7 +69,7 @@ class AddressInputHelper(
 
                 bottomSheetAddressInputQrTouch.setOnClickListener {
                     QRCodeScanActivity.startForResult(fragment)
-                    tracker.logScreen(ScreenId.SCANNER)
+                    tracker.logScreen(ScreenId.SCANNER, selectedChain.chainId)
                     dismiss()
                 }
                 bottomSheetAddressInputPasteTouch.setOnClickListener {
