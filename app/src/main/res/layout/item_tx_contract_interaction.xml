@@ -42,53 +42,73 @@
         app:layout_constraintTop_toTopOf="@+id/nonce"
         tools:text="Apr 27, 2020 — 1:01:42PM" />
 
-    <TextView
-        android:id="@+id/address_name"
-        style="@style/TextDark"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_small_margin"
-        android:ellipsize="end"
-        android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
-        app:layout_constraintStart_toEndOf="@+id/address_logo"
-        app:layout_constraintTop_toTopOf="@+id/address_logo"
+<!--Revise TableLayout solution when
+        app:layout_constraintWidth_percent=""
         app:layout_constraintWidth_max="wrap"
-        app:layout_constraintWidth_percent="0.4"
-        tools:text="@string/tx_list_contract_interaction" />
-
-    <TextView
-        android:id="@+id/app_label"
-        style="@style/TextDark"
+    works as expected
+-->
+    <TableLayout
+        android:id="@id/address_name_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:shrinkColumns="0"
         android:layout_marginStart="@dimen/default_small_margin"
-        android:background="@drawable/background_app_label"
-        android:ellipsize="none"
-        android:gravity="start"
-        android:singleLine="true"
-        android:text="@string/app"
-        app:layout_constraintBottom_toBottomOf="@id/address_name"
-        app:layout_constraintStart_toEndOf="@id/address_name"
-        app:layout_constraintTop_toTopOf="@id/address_name" />
+        android:layout_marginEnd="@dimen/default_small_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/address_logo"
+        app:layout_constraintEnd_toStartOf="@id/action"
+        app:layout_constraintStart_toEndOf="@+id/address_logo"
+        app:layout_constraintTop_toTopOf="@+id/address_logo">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/address_name"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:singleLine="true"
+                tools:text="@string/tx_list_contract_interaction" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/app_label"
+                    style="@style/TextDark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/default_small_margin"
+                    android:background="@drawable/background_app_label"
+                    android:ellipsize="none"
+                    android:gravity="start"
+                    android:singleLine="true"
+                    android:text="@string/app" />
+
+            </FrameLayout>
+
+        </TableRow>
+
+    </TableLayout>
 
     <TextView
         android:id="@+id/action"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_small_margin"
-        android:layout_marginStart="@dimen/default_small_margin"
         android:ellipsize="end"
         android:gravity="end"
         android:lineSpacingExtra="4sp"
         android:maxWidth="100dp"
         android:singleLine="true"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="@+id/address_name"
+        app:layout_constraintBottom_toBottomOf="@+id/address_name_container"
         app:layout_constraintEnd_toStartOf="@+id/chevron"
-        app:layout_constraintStart_toEndOf="@id/app_label"
-        app:layout_constraintTop_toTopOf="@+id/address_name"
+        app:layout_constraintTop_toTopOf="@+id/address_name_container"
         tools:text="approve" />
 
     <TextView
