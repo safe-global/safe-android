@@ -34,7 +34,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
     private val selectedChain by lazy { requireArguments()[ARGS_CHAIN] as Chain }
 
-    override fun screenId() = ScreenId.SAFE_ADD_ENS
+    override fun screenId() = ScreenId.SAFE_ADD_UD
 
     override suspend fun chainId() = selectedChain.chainId
 
