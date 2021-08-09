@@ -154,7 +154,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
         item.label = name
-        item.showArray(chain ,value, paramType, paramTypeValue, addressInfoIndex)
+        item.showArray(chain, value, paramType, paramTypeValue, addressInfoIndex)
         return item
     }
 
