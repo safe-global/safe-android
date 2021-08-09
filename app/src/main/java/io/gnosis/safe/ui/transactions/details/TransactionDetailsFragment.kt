@@ -266,7 +266,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 chain = chain,
                                 outgoing = outgoing,
                                 amount = txInfo.formattedAmount(chain, balanceFormatter),
-                                logoUri = txInfo.logoUri() ?: "",
+                                logoUri = txInfo.logoUri(chain) ?: "",
                                 address = address,
                                 tokenId = transferInfo.tokenId,
                                 addressName = txInfo.addressName,
@@ -280,7 +280,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 chain = chain,
                                 outgoing = outgoing,
                                 amount = txInfo.formattedAmount(chain, balanceFormatter),
-                                logoUri = txInfo.logoUri() ?: "",
+                                logoUri = txInfo.logoUri(chain) ?: "",
                                 address = address,
                                 addressName = txInfo.addressName,
                                 addressUri = txInfo.addressUri
@@ -324,7 +324,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                         chain = chain,
                         outgoing = true,
                         amount = txInfo.formattedAmount(chain, balanceFormatter),
-                        logoUri = txInfo.logoUri()!!,
+                        logoUri = txInfo.logoUri(chain) ?: "",
                         address = txInfo.to,
                         addressUri = txInfo.actionInfoAddressUri,
                         addressName = txInfo.actionInfoAddressName

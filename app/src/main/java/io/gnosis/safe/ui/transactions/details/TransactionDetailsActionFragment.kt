@@ -93,7 +93,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
         address?.let {
             with(binding) {
-                content.addView(getTransferItem(it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
+                content.addView(getTransferItem(chain, it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
                 content.addView(getDivider())
             }
         }
@@ -132,7 +132,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         }
     }
 
-    private fun getTransferItem(address: Solidity.Address, amount: String, addressInfo: AddressInfo?): TxTransferActionView {
+    private fun getTransferItem(chain: Chain, address: Solidity.Address, amount: String, addressInfo: AddressInfo?): TxTransferActionView {
         val item = TxTransferActionView(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
@@ -141,7 +141,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
             chain,
             outgoing = true,
             amount = amount,
-            logoUri = "local::native_currency",
+            logoUri = chain.currency.logoUri,
             address = address,
             addressName = addressInfo?.name,
             addressUri = addressInfo?.logoUri
