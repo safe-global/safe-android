@@ -8,56 +8,65 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <TextView
-        android:id="@+id/status_title"
-        style="@style/TextDark"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/status_title_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_small_margin"
         android:layout_marginStart="@dimen/default_small_margin"
         android:layout_marginTop="@dimen/default_margin"
-        android:ellipsize="end"
-        android:maxWidth="200dp"
-        android:singleLine="true"
+        android:shrinkColumns="0"
+        android:stretchColumns="1"
         app:layout_constraintBottom_toTopOf="@+id/status_long"
-        app:layout_constraintEnd_toStartOf="@+id/app_label"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintEnd_toStartOf="@id/status"
         app:layout_constraintStart_toEndOf="@+id/type_icon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_goneMarginBottom="@dimen/default_margin"
-        tools:text="Balancer Pool Management even long" />
+        app:layout_goneMarginBottom="@dimen/default_margin">
 
-    <TextView
-        android:id="@+id/app_label"
-        style="@style/TextDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/background_app_label"
-        android:gravity="start"
-        android:minWidth="40dp"
-        android:singleLine="true"
-        android:text="@string/app"
-        app:layout_constraintBottom_toBottomOf="@+id/status_title"
-        app:layout_constraintEnd_toStartOf="@+id/status"
-        app:layout_constraintStart_toEndOf="@+id/status_title"
-        app:layout_constraintTop_toTopOf="@+id/status_title"
-        tools:visibility="visible" />
+        <TableRow>
+
+            <TextView
+                android:id="@+id/status_title"
+                style="@style/TextDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                tools:text="@string/tx_list_contract_interaction" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/app_label"
+                    style="@style/TextDark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/default_small_margin"
+                    android:background="@drawable/background_app_label"
+                    android:ellipsize="none"
+                    android:singleLine="true"
+                    android:text="@string/app" />
+
+            </FrameLayout>
+
+        </TableRow>
+
+    </TableLayout>
 
     <TextView
         android:id="@+id/status"
         style="@style/TextDark"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
-        android:minWidth="100dp"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:ellipsize="none"
+        android:gravity="end"
         android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="@+id/status_title"
+        app:layout_constraintBottom_toBottomOf="@+id/status_title_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/app_label"
-        app:layout_constraintTop_toTopOf="@+id/status_title"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_goneMarginEnd="@dimen/default_margin"
+        app:layout_constraintTop_toTopOf="@+id/status_title_container"
         tools:text="Failed"
         tools:visibility="visible" />
 
@@ -66,29 +75,28 @@
         style="@style/TextDark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="@dimen/default_small_margin"
         android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status_title"
+        app:layout_constraintTop_toBottomOf="@+id/status_title_container"
         tools:text="@string/tx_status_needs_confirmations"
         tools:visibility="visible" />
 
-
     <io.gnosis.safe.ui.settings.view.KnownAddressLogoView
         android:id="@+id/type_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:scaleType="center"
+        android:layout_width="@dimen/default_margin"
+        android:layout_height="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_code_16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/status_title"
+        app:layout_constraintBottom_toBottomOf="@+id/status_title_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/status_title"
+        app:layout_constraintTop_toTopOf="@+id/status_title_container"
         app:srcCompat="@drawable/ic_arrow_green_10dp"
         app:strokeColor="@color/illustration_background"
         app:strokeWidth="0.01dp" />
