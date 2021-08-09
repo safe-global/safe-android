@@ -235,6 +235,7 @@
     <string name="feedback_subject">Feedback</string>
 
     <string name="feedback_safe">Safe address: %1$s</string>
+    <string name="feedback_chain">Chain: %1$s</string>
     <string name="feedback_feedback">Feedback:</string>
 
     <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
