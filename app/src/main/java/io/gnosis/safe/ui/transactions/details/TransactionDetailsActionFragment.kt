@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
-import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ParamType
@@ -20,7 +19,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
@@ -111,10 +110,10 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 it.parameters?.forEach {
                     when (it) {
                         is Param.Address -> {
-                            content.addView(getLabeledAddressItem(chain, "${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
+                            content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
                         }
                         is Param.Array -> {
-                            content.addView(getArrayItem(chain, "${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
+                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
                         }
                         is Param.Bytes -> {
                             content.addView(getDataItem("${it.name}(${it.type}):", it.value))
@@ -141,7 +140,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
             chain,
             outgoing = true,
             amount = amount,
-            logoUri = "local::native_currency",
+            logoUri = chain.currency.logoUri,
             address = address,
             addressName = addressInfo?.name,
             addressUri = addressInfo?.logoUri
@@ -149,13 +148,13 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getArrayItem(chain: Chain, name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
+    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
         val item = LabeledArrayItem(requireContext())
         val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, 0)
         item.layoutParams = layoutParams
         item.label = name
-        item.showArray(chain ,value, paramType, paramTypeValue, addressInfoIndex)
+        item.showArray(chain, value, paramType, paramTypeValue, addressInfoIndex)
         return item
     }
 
@@ -169,7 +168,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         return item
     }
 
-    private fun getLabeledAddressItem(chain: Chain, name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
+    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
         var item: View
         if (addressInfo == null) {
             item = LabeledAddressItem(requireContext())
