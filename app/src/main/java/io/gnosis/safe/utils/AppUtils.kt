@@ -1,6 +1,7 @@
 package io.gnosis.safe.utils
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -66,10 +67,10 @@ fun showConfirmDialog(
     @ColorRes confirmColor: Int = R.color.error,
     dismissCallback: DialogInterface.OnDismissListener = DialogInterface.OnDismissListener { },
     confirmCallback: () -> Unit
-) {
+): Dialog {
     val dialogBinding = DialogRemoveBinding.inflate(LayoutInflater.from(context), null, false)
     dialogBinding.message.setText(message)
-    CustomAlertDialogBuilder.build(
+    return CustomAlertDialogBuilder.build(
         context = context,
         confirmCallback = { dialog ->
             confirmCallback()
@@ -82,5 +83,7 @@ fun showConfirmDialog(
         confirmColor = confirmColor,
         cancelColor = R.color.primary,
         title = if (title == null) null else context.resources.getString(title)
-    ).show()
+    ).apply {
+        show()
+    }
 }

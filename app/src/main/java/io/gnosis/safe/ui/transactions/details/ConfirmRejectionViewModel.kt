@@ -69,6 +69,9 @@ class ConfirmRejectionViewModel
         safeLaunch {
 
             val safe = safeRepository.getActiveSafe()!!
+            val contractVersion = safe.version?.let {
+                SemVer.parse(it)
+            } ?: SemVer(0, 0, 0)
 
             validateSafeTxHash(safe, txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
@@ -80,7 +83,7 @@ class ConfirmRejectionViewModel
             )
             val safeTxHash =
                 calculateSafeTxHash(
-                    implementationVersion = SemVer(1, 1, 0),
+                    implementationVersion = contractVersion,
                     chainId = safe.chainId,
                     safeAddress = safe.address,
                     transaction = rejectionTxDetails,
