@@ -69,7 +69,12 @@ class TransactionDetailsViewModelTest {
         coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
         val expectedTransactionInfoViewData =
-            transactionDetails.toTransactionDetailsViewData(emptyList(), canSign = false, hasOwnerKey = false, owners = emptyList())
+            transactionDetails.toTransactionDetailsViewData(
+                emptyList(),
+                canSign = false,
+                owners = emptyList(),
+                hasOwnerKey = false
+            )
 
         viewModel.loadDetails("tx_details_id")
 
@@ -290,8 +295,8 @@ class TransactionDetailsViewModelTest {
                     txDetails = transactionDetails.toTransactionDetailsViewData(
                         safes = emptyList(),
                         canSign = false,
-                        hasOwnerKey = false,
-                        owners = listOf(owner)
+                        owners = listOf(owner),
+                        hasOwnerKey = false
                     )
                 ), this[0].viewAction
             )

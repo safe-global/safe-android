@@ -6,6 +6,7 @@ import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -127,7 +128,12 @@ fun TransactionDetails.toTransactionDetailsViewData(
     TransactionDetailsViewData(
         txHash = txHash,
         txStatus = txStatus,
-        txInfo = txInfo.toTransactionInfoViewData(safes = safes, safeAppInfo = safeAppInfo, owners = owners),
+        txInfo = txInfo.toTransactionInfoViewData(
+            safes = safes,
+            safeAppInfo = safeAppInfo,
+            owners = owners,
+            addressInfoIndex = txData?.addressInfoIndex ?: emptyMap()
+        ),
         executedAt = executedAt,
         txData = txData,
         detailedExecutionInfo = detailedExecutionInfo,
@@ -137,14 +143,19 @@ fun TransactionDetails.toTransactionDetailsViewData(
     )
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null, owners: List<Owner> = emptyList()): TransactionInfoViewData =
+internal fun TransactionInfo.toTransactionInfoViewData(
+    safes: List<Safe>,
+    safeAppInfo: SafeAppInfo? = null,
+    owners: List<Owner> = emptyList(),
+    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
+): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            val addressUri = when (val toInfo = to.toAddressInfoData(safes)) {
+            val addressUri = when (val toInfo = to.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)) {
                 is AddressInfoData.Remote -> toInfo.addressLogoUri
                 else -> null
             }
-            val addressName = when (val toInfo = to.toAddressInfoData(safes)) {
+            val addressName = when (val toInfo = to.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)) {
                 is AddressInfoData.Local -> toInfo.name
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
@@ -180,14 +191,14 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
         )
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
-            settingsInfo.toSettingsInfoViewData(safes, owners = owners)
+            settingsInfo.toSettingsInfoViewData(safes, owners = owners, addressInfoIndex = addressInfoIndex)
         )
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {
-                    recipient.toAddressInfoData(safes)
+                    recipient.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)
                 } else {
-                    sender.toAddressInfoData(safes)
+                    sender.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)
                 }
 
             val addressUri = when (addressInfoData) {
@@ -211,27 +222,48 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null, owners: List<Owner> = emptyList()): SettingsInfoViewData? =
+internal fun SettingsInfo?.toSettingsInfoViewData(
+    safes: List<Safe>,
+    safeAppInfo: SafeAppInfo? = null,
+    owners: List<Owner> = emptyList(),
+    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
+): SettingsInfoViewData? =
     when (this) {
         is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(
             handler.value,
-            handler.toAddressInfoData(safes, safeAppInfo)
+            handler.toAddressInfoData(safes, safeAppInfo, addressInfoIndex = addressInfoIndex)
         )
-        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners), threshold)
-        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners), threshold)
+        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex), threshold)
+        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(
+            owner.value,
+            owner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex),
+            threshold
+        )
         is SettingsInfo.SwapOwner -> SettingsInfoViewData.SwapOwner(
             oldOwner.value,
-            oldOwner.toAddressInfoData(safes, safeAppInfo, owners),
+            oldOwner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex),
             newOwner.value,
-            newOwner.toAddressInfoData(safes, safeAppInfo, owners)
+            newOwner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex)
         )
         is SettingsInfo.ChangeThreshold -> SettingsInfoViewData.ChangeThreshold(threshold)
         is SettingsInfo.ChangeImplementation -> SettingsInfoViewData.ChangeImplementation(
             implementation.value,
-            implementation.toAddressInfoData(safes, safeAppInfo)
+            implementation.toAddressInfoData(safes, safeAppInfo, addressInfoIndex = addressInfoIndex)
         )
-        is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(module.value, module.toAddressInfoData(safes, safeAppInfo))
-        is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(module.value, module.toAddressInfoData(safes, safeAppInfo))
+        is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(
+            module.value, module.toAddressInfoData(
+                safes,
+                safeAppInfo,
+                addressInfoIndex = addressInfoIndex
+            )
+        )
+        is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(
+            module.value, module.toAddressInfoData(
+                safes,
+                safeAppInfo,
+                addressInfoIndex = addressInfoIndex
+            )
+        )
         null -> null
     }
 
@@ -239,15 +271,20 @@ internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo
 internal fun AddressInfo.toAddressInfoData(
     safes: List<Safe>,
     safeAppInfo: SafeAppInfo? = null,
-    owners: List<Owner> = emptyList()
+    owners: List<Owner> = emptyList(),
+    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
 ): AddressInfoData {
     val localSafeName = safes.find { it.address == value }?.localName
     val localOwnerName = owners.find { it.address == value }?.name
-    val addressString = value.asEthereumAddressString()
+
+    val addressString = value.asEthereumAddressChecksumString()
+    val remoteAddressInfo = addressInfoIndex[addressString]
+
     return when {
         localSafeName != null -> AddressInfoData.Local(localSafeName, addressString)
         localOwnerName != null -> AddressInfoData.Local(localOwnerName, addressString)
         safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString)
+        remoteAddressInfo != null -> AddressInfoData.Remote(remoteAddressInfo.name, remoteAddressInfo.logoUri, addressString)
         !this.name.isNullOrBlank() -> AddressInfoData.Remote(this.name, this.logoUri, addressString)
         else -> AddressInfoData.Default
     }
