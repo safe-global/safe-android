@@ -43,12 +43,22 @@ class Tracker private constructor(context: Context) {
         )
     }
 
-    fun logSafeAdded() {
-        logEvent(Event.SAFE_ADDED, null)
+    fun logSafeAdded(chainId: BigInteger) {
+        logEvent(
+            Event.SAFE_ADDED,
+            mapOf(
+                Param.CHAIN_ID to chainId.toString()
+            )
+        )
     }
 
-    fun logSafeRemoved() {
-        logEvent(Event.SAFE_REMOVED, null)
+    fun logSafeRemoved(chainId: BigInteger) {
+        logEvent(
+            Event.SAFE_REMOVED,
+            mapOf(
+                Param.CHAIN_ID to chainId.toString()
+            )
+        )
     }
 
     fun logKeyGenerated() {
@@ -223,6 +233,7 @@ enum class ScreenId(val value: String) {
     SAFE_ADD_NAME("screen_safe_add_name"),
     SAFE_ADD_OWNER("screen_safe_add_owner"),
     SAFE_ADD_ENS("screen_safe_add_ens"),
+    SAFE_ADD_UD("screen_safe_add_ud"),
     TRANSACTIONS_NO_SAFE("screen_transactions_no_safe"),
     TRANSACTIONS_QUEUE("screen_transactions_queue"),
     TRANSACTIONS_HISTORY("screen_transactions_history"),
