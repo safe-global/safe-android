@@ -44,7 +44,6 @@ class TransactionDetailsViewModel
 
             val executionInfo = txDetails?.detailedExecutionInfo
             val owners = credentialsRepository.owners()
-            val addressInfoIndex = txDetails?.txData?.addressInfoIndex ?: emptyMap()
 
             var canSign = false
             var safeOwner = false
