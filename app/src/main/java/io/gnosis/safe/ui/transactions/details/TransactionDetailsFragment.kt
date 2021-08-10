@@ -304,7 +304,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 }
                 val txDetailsSettingsChangeBinding = contentBinding as TxDetailsSettingsChangeBinding
                 with(txDetailsSettingsChangeBinding) {
-                    txAction.setActionInfoItems(chain, txInfo.txActionInfoItems(requireContext().resources))
+                    txAction.setActionInfoItems(chain, txInfo.txActionInfoItems(requireContext().resources, txDetails.owners))
                     txStatus.setStatus(
                         TxType.MODIFY_SETTINGS.titleRes,
                         TxType.MODIFY_SETTINGS.iconRes,
@@ -361,7 +361,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                                             chain = chain,
-                                            action =it.dataDecoded?.method ?: "",
+                                            action = it.dataDecoded?.method ?: "",
                                             data = it.hexData ?: "",
                                             decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
                                             addressInfoIndex = paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
