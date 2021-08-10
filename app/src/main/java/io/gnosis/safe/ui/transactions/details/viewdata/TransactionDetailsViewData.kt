@@ -125,9 +125,9 @@ fun TransactionDetails.toTransactionDetailsViewData(
     hasOwnerKey: Boolean
 ): TransactionDetailsViewData =
     TransactionDetailsViewData(
-        txHash,
-        txStatus,
-        txInfo.toTransactionInfoViewData(safes = safes, safeAppInfo = safeAppInfo),
+        txHash = txHash,
+        txStatus = txStatus,
+        txInfo = txInfo.toTransactionInfoViewData(safes = safes, safeAppInfo = safeAppInfo, owners = owners),
         executedAt = executedAt,
         txData = txData,
         detailedExecutionInfo = detailedExecutionInfo,
@@ -137,14 +137,14 @@ fun TransactionDetails.toTransactionDetailsViewData(
     )
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): TransactionInfoViewData =
+internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null, owners: List<Owner> = emptyList()): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            val addressUri = when (val toInfo = to.toAddressInfoData(safes, null)) {
+            val addressUri = when (val toInfo = to.toAddressInfoData(safes)) {
                 is AddressInfoData.Remote -> toInfo.addressLogoUri
                 else -> null
             }
-            val addressName = when (val toInfo = to.toAddressInfoData(safes, null)) {
+            val addressName = when (val toInfo = to.toAddressInfoData(safes)) {
                 is AddressInfoData.Local -> toInfo.name
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
@@ -180,7 +180,7 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
         )
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
-            settingsInfo.toSettingsInfoViewData(safes)
+            settingsInfo.toSettingsInfoViewData(safes, owners = owners)
         )
         is TransactionInfo.Transfer -> {
             val addressInfoData =
@@ -211,19 +211,19 @@ internal fun TransactionInfo.toTransactionInfoViewData(safes: List<Safe>, safeAp
     }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null): SettingsInfoViewData? =
+internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo: SafeAppInfo? = null, owners: List<Owner> = emptyList()): SettingsInfoViewData? =
     when (this) {
         is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(
             handler.value,
             handler.toAddressInfoData(safes, safeAppInfo)
         )
-        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo), threshold)
-        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo), threshold)
+        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners), threshold)
+        is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners), threshold)
         is SettingsInfo.SwapOwner -> SettingsInfoViewData.SwapOwner(
             oldOwner.value,
-            oldOwner.toAddressInfoData(safes, safeAppInfo),
+            oldOwner.toAddressInfoData(safes, safeAppInfo, owners),
             newOwner.value,
-            newOwner.toAddressInfoData(safes, safeAppInfo)
+            newOwner.toAddressInfoData(safes, safeAppInfo, owners)
         )
         is SettingsInfo.ChangeThreshold -> SettingsInfoViewData.ChangeThreshold(threshold)
         is SettingsInfo.ChangeImplementation -> SettingsInfoViewData.ChangeImplementation(
@@ -238,12 +238,15 @@ internal fun SettingsInfo?.toSettingsInfoViewData(safes: List<Safe>, safeAppInfo
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun AddressInfo.toAddressInfoData(
     safes: List<Safe>,
-    safeAppInfo: SafeAppInfo? = null
+    safeAppInfo: SafeAppInfo? = null,
+    owners: List<Owner> = emptyList()
 ): AddressInfoData {
-    val localName = safes.find { it.address == value }?.localName
+    val localSafeName = safes.find { it.address == value }?.localName
+    val localOwnerName = owners.find { it.address == value }?.name
     val addressString = value.asEthereumAddressString()
     return when {
-        localName != null -> AddressInfoData.Local(localName, addressString)
+        localSafeName != null -> AddressInfoData.Local(localSafeName, addressString)
+        localOwnerName != null -> AddressInfoData.Local(localOwnerName, addressString)
         safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString)
         !this.name.isNullOrBlank() -> AddressInfoData.Remote(this.name, this.logoUri, addressString)
         else -> AddressInfoData.Default
