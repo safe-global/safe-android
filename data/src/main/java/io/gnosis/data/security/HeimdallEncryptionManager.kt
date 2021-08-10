@@ -307,7 +307,7 @@ class HeimdallEncryptionManager(
     ): PasscodeCiphertextWrapper? {
         val jsonAdapter = moshi.adapter<PasscodeCiphertextWrapper>(PasscodeCiphertextWrapper::class.java)
         val json = context.getSharedPreferences(filename, mode).getString(prefKey, null)
-        return jsonAdapter.fromJson(json)
+        return json?.let { jsonAdapter.fromJson(it) }
     }
 }
 

@@ -83,8 +83,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                                 dismissCreatePasscodeFragment()
                             },
                             confirmCallback = { dialog ->
-                                viewModel.enableBiometry()
-                                viewModel.encryptPasscodeWithBiometricKey(viewAction.passcode)
+                                viewModel.activateBiometry(viewAction.passcode)
                                 dialog.dismiss()
                             },
                             confirmColor = R.color.primary,
@@ -144,7 +143,10 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
 
-        binding.input.hideSoftKeyboard()
+        if(isAdded) {
+            binding.input.hideSoftKeyboard()
+        }
+
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(
             SafeOverviewBaseFragment.PASSCODE_SET_RESULT,

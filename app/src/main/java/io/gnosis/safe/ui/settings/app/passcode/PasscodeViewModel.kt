@@ -158,6 +158,18 @@ class PasscodeViewModel
         }
     }
 
+    fun activateBiometry(newPasscode: String) {
+        try {
+            //Some device still throw an IllegalStateException
+            // (due to no fingerprints enrolled) even though they return BIOMETRIC_SUCCESS
+            settingsHandler.useBiometrics = true
+            encryptPasscodeWithBiometricKey(newPasscode)
+        } catch (e: Exception) {
+            settingsHandler.useBiometrics = false
+            Timber.e(e, "activateBiometry() failed")
+        }
+    }
+
     fun encryptPasscodeWithBiometricKey(newPasscode: String) {
         if (settingsHandler.useBiometrics) {
             val cipher = biometricPasscodeManager.getInitializedRSACipherForEncryption(BiometricPasscodeManager.KEY_NAME)
@@ -203,10 +215,6 @@ class PasscodeViewModel
             Timber.e(e, "cannot decrypt passcode")
             settingsHandler.useBiometrics = false
         }
-    }
-
-    fun enableBiometry() {
-        settingsHandler.useBiometrics = true
     }
 
     data class PasscodeState(override var viewAction: ViewAction?) : State

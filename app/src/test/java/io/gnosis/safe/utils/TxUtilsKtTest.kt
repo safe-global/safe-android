@@ -168,9 +168,9 @@ class TxUtilsKtTest {
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildTransferInfo(value = "1000000000000000000".toBigInteger())
         )
-        val result = txInfo.logoUri()
+        val result = txInfo.logoUri(anyChain)
 
-        assertEquals("local::native_currency", result)
+        assertEquals(anyChain.currency.logoUri, result)
     }
 
     @Test
@@ -183,7 +183,7 @@ class TxUtilsKtTest {
             direction = TransactionDirection.OUTGOING,
             transferInfo = buildErc20TransferInfo(value = "1000000000000000000".toBigInteger())
         )
-        val result = txInfo.logoUri()
+        val result = txInfo.logoUri(anyChain)
 
         assertEquals("dummy", result)
     }

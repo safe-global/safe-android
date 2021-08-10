@@ -73,7 +73,7 @@ fun TransactionInfoViewData.formattedAmount(chain: Chain, balanceFormatter: Bala
         TransactionInfoViewData.Unknown -> "0 ${chain.currency.symbol}"
     }
 
-fun TransactionInfoViewData.logoUri(): String? =
+fun TransactionInfoViewData.logoUri(chain: Chain): String? =
     when (val transactionInfo = this) {
         is TransactionInfoViewData.Transfer -> when (val transferInfo = transactionInfo.transferInfo) {
             is TransferInfo.Erc20Transfer -> {
@@ -83,14 +83,14 @@ fun TransactionInfoViewData.logoUri(): String? =
                 transferInfo.logoUri
             }
             else -> {
-                "local::native_currency"
+                chain.currency.logoUri
             }
         }
         is TransactionInfoViewData.Custom,
         is TransactionInfoViewData.SettingsChange,
         is TransactionInfoViewData.Creation,
         is TransactionInfoViewData.Rejection,
-        TransactionInfoViewData.Unknown -> "local::native_currency"
+        TransactionInfoViewData.Unknown -> chain.currency.logoUri
     }
 
 fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resources): List<ActionInfoItem> {
