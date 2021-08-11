@@ -295,8 +295,8 @@ class TransactionDetailsViewModelTest {
                     txDetails = transactionDetails.toTransactionDetailsViewData(
                         safes = emptyList(),
                         canSign = false,
-                        owners = listOf(owner),
-                        hasOwnerKey = false
+                        hasOwnerKey = false,
+                        owners = listOf(owner)
                     )
                 ), this[0].viewAction
             )
