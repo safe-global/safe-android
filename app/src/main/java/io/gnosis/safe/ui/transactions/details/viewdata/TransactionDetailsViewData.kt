@@ -278,14 +278,14 @@ internal fun AddressInfo.toAddressInfoData(
     val localOwnerName = owners.find { it.address == value }?.name
 
     val addressString = value.asEthereumAddressChecksumString()
-    val remoteAddressInfo = addressInfoIndex[addressString]
+    val addressInfoIndexLabel = addressInfoIndex[addressString]
 
     return when {
         localSafeName != null -> AddressInfoData.Local(localSafeName, addressString)
         localOwnerName != null -> AddressInfoData.Local(localOwnerName, addressString)
         safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString)
-        remoteAddressInfo != null -> AddressInfoData.Remote(remoteAddressInfo.name, remoteAddressInfo.logoUri, addressString)
         !this.name.isNullOrBlank() -> AddressInfoData.Remote(this.name, this.logoUri, addressString)
+        addressInfoIndexLabel != null -> AddressInfoData.Remote(addressInfoIndexLabel.name, addressInfoIndexLabel.logoUri, addressString)
         else -> AddressInfoData.Default
     }
 }
