@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.transactions.details.viewdata
 
 import io.gnosis.data.models.AddressInfo
+import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
@@ -32,6 +33,26 @@ class TransactionDetailsViewDataTest {
         val safes = listOf(Safe(anyAddress, "Local Name"))
 
         val result = addressInfo.toAddressInfoData(safes, null)
+
+        assertEquals(AddressInfoData.Remote("Foo", "https://www.foo.de/foo.png", "0x0000000000000000000000000000000000000002"), result)
+    }
+
+    @Test
+    fun `toAddressInfoData() (Address matches local owner) should return AddressInfoData_Local`() {
+        val addressInfo = AddressInfo(anyAddress, "Foo", "https://www.foo.de/foo.png")
+        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = Owner.Type.IMPORTED))
+
+        val result = addressInfo.toAddressInfoData(safes = emptyList(), safeAppInfo = aSafeAppInfo, owners = owners)
+
+        assertEquals(AddressInfoData.Local("Local owner Name", "0x0000000000000000000000000000000000000001"), result)
+    }
+
+    @Test
+    fun `toAddressInfoData() (Address does not match any local owner) should return AddressInfoData_Remote`() {
+        val addressInfo = AddressInfo(anotherAddress, "Foo", "https://www.foo.de/foo.png")
+        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = Owner.Type.IMPORTED))
+
+        val result = addressInfo.toAddressInfoData(emptyList(), null, owners)
 
         assertEquals(AddressInfoData.Remote("Foo", "https://www.foo.de/foo.png", "0x0000000000000000000000000000000000000002"), result)
     }
