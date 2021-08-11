@@ -131,8 +131,7 @@ fun TransactionDetails.toTransactionDetailsViewData(
         txInfo = txInfo.toTransactionInfoViewData(
             safes = safes,
             safeAppInfo = safeAppInfo,
-            owners = owners,
-            addressInfoIndex = txData?.addressInfoIndex ?: emptyMap()
+            owners = owners
         ),
         executedAt = executedAt,
         txData = txData,
@@ -146,16 +145,15 @@ fun TransactionDetails.toTransactionDetailsViewData(
 internal fun TransactionInfo.toTransactionInfoViewData(
     safes: List<Safe>,
     safeAppInfo: SafeAppInfo? = null,
-    owners: List<Owner> = emptyList(),
-    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
+    owners: List<Owner> = emptyList()
 ): TransactionInfoViewData =
     when (this) {
         is TransactionInfo.Custom -> {
-            val addressUri = when (val toInfo = to.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)) {
+            val addressUri = when (val toInfo = to.toAddressInfoData(safes)) {
                 is AddressInfoData.Remote -> toInfo.addressLogoUri
                 else -> null
             }
-            val addressName = when (val toInfo = to.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)) {
+            val addressName = when (val toInfo = to.toAddressInfoData(safes)) {
                 is AddressInfoData.Local -> toInfo.name
                 is AddressInfoData.Remote -> toInfo.name
                 else -> null
@@ -191,14 +189,14 @@ internal fun TransactionInfo.toTransactionInfoViewData(
         )
         is TransactionInfo.SettingsChange -> TransactionInfoViewData.SettingsChange(
             dataDecoded,
-            settingsInfo.toSettingsInfoViewData(safes, owners = owners, addressInfoIndex = addressInfoIndex)
+            settingsInfo.toSettingsInfoViewData(safes, owners = owners)
         )
         is TransactionInfo.Transfer -> {
             val addressInfoData =
                 if (direction == TransactionDirection.OUTGOING) {
-                    recipient.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)
+                    recipient.toAddressInfoData(safes)
                 } else {
-                    sender.toAddressInfoData(safes, addressInfoIndex = addressInfoIndex)
+                    sender.toAddressInfoData(safes)
                 }
 
             val addressUri = when (addressInfoData) {
@@ -225,43 +223,40 @@ internal fun TransactionInfo.toTransactionInfoViewData(
 internal fun SettingsInfo?.toSettingsInfoViewData(
     safes: List<Safe>,
     safeAppInfo: SafeAppInfo? = null,
-    owners: List<Owner> = emptyList(),
-    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
+    owners: List<Owner> = emptyList()
 ): SettingsInfoViewData? =
     when (this) {
         is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(
             handler.value,
-            handler.toAddressInfoData(safes, safeAppInfo, addressInfoIndex = addressInfoIndex)
+            handler.toAddressInfoData(safes, safeAppInfo)
         )
-        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex), threshold)
+        is SettingsInfo.AddOwner -> SettingsInfoViewData.AddOwner(owner.value, owner.toAddressInfoData(safes, safeAppInfo, owners), threshold)
         is SettingsInfo.RemoveOwner -> SettingsInfoViewData.RemoveOwner(
             owner.value,
-            owner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex),
+            owner.toAddressInfoData(safes, safeAppInfo, owners),
             threshold
         )
         is SettingsInfo.SwapOwner -> SettingsInfoViewData.SwapOwner(
             oldOwner.value,
-            oldOwner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex),
+            oldOwner.toAddressInfoData(safes, safeAppInfo, owners),
             newOwner.value,
-            newOwner.toAddressInfoData(safes, safeAppInfo, owners, addressInfoIndex)
+            newOwner.toAddressInfoData(safes, safeAppInfo, owners)
         )
         is SettingsInfo.ChangeThreshold -> SettingsInfoViewData.ChangeThreshold(threshold)
         is SettingsInfo.ChangeImplementation -> SettingsInfoViewData.ChangeImplementation(
             implementation.value,
-            implementation.toAddressInfoData(safes, safeAppInfo, addressInfoIndex = addressInfoIndex)
+            implementation.toAddressInfoData(safes, safeAppInfo)
         )
         is SettingsInfo.EnableModule -> SettingsInfoViewData.EnableModule(
             module.value, module.toAddressInfoData(
                 safes,
-                safeAppInfo,
-                addressInfoIndex = addressInfoIndex
+                safeAppInfo
             )
         )
         is SettingsInfo.DisableModule -> SettingsInfoViewData.DisableModule(
             module.value, module.toAddressInfoData(
                 safes,
-                safeAppInfo,
-                addressInfoIndex = addressInfoIndex
+                safeAppInfo
             )
         )
         null -> null
@@ -271,21 +266,18 @@ internal fun SettingsInfo?.toSettingsInfoViewData(
 internal fun AddressInfo.toAddressInfoData(
     safes: List<Safe>,
     safeAppInfo: SafeAppInfo? = null,
-    owners: List<Owner> = emptyList(),
-    addressInfoIndex: Map<String, AddressInfo> = emptyMap()
+    owners: List<Owner> = emptyList()
 ): AddressInfoData {
     val localSafeName = safes.find { it.address == value }?.localName
     val localOwnerName = owners.find { it.address == value }?.name
 
     val addressString = value.asEthereumAddressChecksumString()
-    val addressInfoIndexLabel = addressInfoIndex[addressString]
 
     return when {
         localSafeName != null -> AddressInfoData.Local(localSafeName, addressString)
         localOwnerName != null -> AddressInfoData.Local(localOwnerName, addressString)
         safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString)
         !this.name.isNullOrBlank() -> AddressInfoData.Remote(this.name, this.logoUri, addressString)
-        addressInfoIndexLabel != null -> AddressInfoData.Remote(addressInfoIndexLabel.name, addressInfoIndexLabel.logoUri, addressString)
         else -> AddressInfoData.Default
     }
 }
