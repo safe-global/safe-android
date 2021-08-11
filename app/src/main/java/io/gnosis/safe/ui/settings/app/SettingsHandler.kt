@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatDelegate.NightMode
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.gnosis.data.backend.GatewayApi
-import io.gnosis.safe.BuildConfig
 import io.gnosis.data.utils.SemVer
+import io.gnosis.safe.BuildConfig
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import javax.inject.Inject
