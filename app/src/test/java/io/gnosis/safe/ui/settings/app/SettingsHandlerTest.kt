@@ -200,7 +200,6 @@ class SettingsHandlerTest {
         Assert.assertEquals(supportedFiats, actual.getOrNull())
     }
 
-    // KEY_USER_DEFAULT_FIAT
     @Test
     fun `getUserDefaultFiat - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -239,8 +238,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-
-    // KEY_SHOW_OWNER_BANNER
     @Test
     fun `showOwnerBanner - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -279,7 +276,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-    // KEY_SHOW_OWNER_SCREEN
     @Test
     fun `showOwnerScreen - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -317,7 +313,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-    // appStartCount
     @Test
     fun `appStartCount - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -354,8 +349,6 @@ class SettingsHandlerTest {
         verify(exactly = 1) { preferences.putInt(SettingsHandler.KEY_APP_START_COUNT, 100) }
         assertEquals(expected, actual)
     }
-
-// usePasscode KEY_USE_PASSCODE
 
     @Test
     fun `usePasscode - no value set`() = runBlocking {
@@ -394,9 +387,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-
-    // showPasscodeBanner KEY_SHOW_PASSCODE_BANNER
-
     @Test
     fun `showPasscodeBanner - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -434,10 +424,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-
-    // useBiometrics  KEY_USE_BIOMETRICS
-
-
     @Test
     fun `useBiometrics - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -474,8 +460,6 @@ class SettingsHandlerTest {
         verify(exactly = 1) { preferences.putBoolean(SettingsHandler.KEY_USE_BIOMETRICS, true) }
         assertEquals(expected, actual)
     }
-    // requirePasscodeToOpen KEY_REQUIRE_PASSCODE_TO_OPEN_APP
-
 
     @Test
     fun `requirePasscodeToOpen - no value set`() = runBlocking {
@@ -514,7 +498,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-    // requirePasscodeForConfirmations KEY_REQUIRE_PASSCODE_FOR_CONFIRMATIONS
     @Test
     fun `requirePasscodeForConfirmations - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -552,8 +535,6 @@ class SettingsHandlerTest {
         assertEquals(expected, actual)
     }
 
-
-    // requirePasscodeToExportKeys KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS
     @Test
     fun `requirePasscodeToExportKeys - no value set`() = runBlocking {
         val settingsHandler = SettingsHandler(gatewayApi, preferencesManager, remoteConfig)
@@ -590,7 +571,6 @@ class SettingsHandlerTest {
         verify(exactly = 1) { preferences.putBoolean(SettingsHandler.KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS, false) }
         assertEquals(expected, actual)
     }
-    // askForPasscodeSetupOnFirstLaunch KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH
 
     @Test
     fun `askForPasscodeSetupOnFirstLaunch - no value set`() = runBlocking {
