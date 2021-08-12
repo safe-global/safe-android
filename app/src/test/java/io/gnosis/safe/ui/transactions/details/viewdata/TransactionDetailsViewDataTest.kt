@@ -62,7 +62,7 @@ class TransactionDetailsViewDataTest {
         val settingsInfo = SettingsInfo.DisableModule(AddressInfo(anyAddress, "Remote Name", null))
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = settingsInfo.toSettingsInfoViewData(safes, null)
+        val result = settingsInfo.toSettingsInfoViewData(safes, owners = emptyList(), safeAppInfo = null)
 
         assertEquals(
             SettingsInfoViewData.DisableModule(
@@ -78,7 +78,7 @@ class TransactionDetailsViewDataTest {
         val settingsInfo = SettingsInfo.SwapOwner(AddressInfo(anyAddress, "Remote Old Owner Name", null), AddressInfo(anotherAddress))
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = settingsInfo.toSettingsInfoViewData(safes, null)
+        val result = settingsInfo.toSettingsInfoViewData(safes, owners = emptyList(), safeAppInfo = null)
 
         assertEquals(
             SettingsInfoViewData.SwapOwner(
@@ -96,7 +96,7 @@ class TransactionDetailsViewDataTest {
         val settingsInfo = SettingsInfo.ChangeImplementation(AddressInfo(anyAddress, "Remote Name", null))
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = settingsInfo.toSettingsInfoViewData(safes)
+        val result = settingsInfo.toSettingsInfoViewData(safes = safes, owners = emptyList())
 
         assertEquals(
             SettingsInfoViewData.ChangeImplementation(
@@ -113,7 +113,7 @@ class TransactionDetailsViewDataTest {
         val transactionInfo = TransactionInfo.Custom(AddressInfo(anyAddress, "Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, true)
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes)
+        val result = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList())
 
         assertEquals(
             TransactionInfoViewData.Rejection(
@@ -130,7 +130,7 @@ class TransactionDetailsViewDataTest {
         val transactionInfo = TransactionInfo.SettingsChange(dummyDataDecoded, SettingsInfo.SetFallbackHandler(AddressInfo(anyAddress)))
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes)
+        val result = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList())
 
         assertEquals(
             TransactionInfoViewData.SettingsChange(dummyDataDecoded, SettingsInfoViewData.SetFallbackHandler(anyAddress, AddressInfoData.Default)),
@@ -141,13 +141,13 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toTransactionInfoViewData() (TransactionInfo_Transfer with AddressInfo) should return TransactionInfoViewData_Transfer `() {
         val transactionInfo = TransactionInfo.Transfer(
-            AddressInfo(anyAddress,"Sender Name", null), AddressInfo(anotherAddress), TransferInfo.NativeTransfer(
+            AddressInfo(anyAddress, "Sender Name", null), AddressInfo(anotherAddress), TransferInfo.NativeTransfer(
                 BigInteger.ONE
             ), TransactionDirection.INCOMING
         )
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes)
+        val result = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList())
 
         assertEquals(
             TransactionInfoViewData.Transfer(
@@ -172,7 +172,7 @@ class TransactionDetailsViewDataTest {
         )
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+        val result = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList(), safeAppInfo = aSafeAppInfo)
 
         assertEquals(
             TransactionInfoViewData.Transfer(
@@ -197,7 +197,7 @@ class TransactionDetailsViewDataTest {
         )
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val result = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+        val result = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList(), safeAppInfo = aSafeAppInfo)
 
         assertEquals(
             TransactionInfoViewData.Transfer(
@@ -218,7 +218,7 @@ class TransactionDetailsViewDataTest {
         val transactionInfo = TransactionInfo.Custom(AddressInfo(anyAddress, "Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, false)
         val safes = listOf(Safe(anotherAddress, "Local Name"))
 
-        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList(), safeAppInfo = aSafeAppInfo)
 
         assertEquals(
             TransactionInfoViewData.Custom(
@@ -241,7 +241,7 @@ class TransactionDetailsViewDataTest {
         val transactionInfo = TransactionInfo.Custom(AddressInfo(anyAddress, "Remote Name", null), 1, BigInteger.ZERO, "dummyName", null, false)
         val safes = listOf(Safe(anyAddress, "Local Name"))
 
-        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes, aSafeAppInfo)
+        val transactionInfoViewData = transactionInfo.toTransactionInfoViewData(safes = safes, owners = emptyList(), safeAppInfo = aSafeAppInfo)
 
         assertEquals(
             TransactionInfoViewData.Custom(

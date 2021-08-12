@@ -222,8 +222,8 @@ internal fun TransactionInfo.toTransactionInfoViewData(
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun SettingsInfo?.toSettingsInfoViewData(
     safes: List<Safe>,
-    safeAppInfo: SafeAppInfo? = null,
-    owners: List<Owner> = emptyList()
+    owners: List<Owner>,
+    safeAppInfo: SafeAppInfo? = null
 ): SettingsInfoViewData? =
     when (this) {
         is SettingsInfo.SetFallbackHandler -> SettingsInfoViewData.SetFallbackHandler(
