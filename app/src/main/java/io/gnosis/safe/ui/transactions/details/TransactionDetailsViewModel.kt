@@ -56,7 +56,12 @@ class TransactionDetailsViewModel
             updateState {
                 TransactionDetailsViewState(
                     UpdateDetails(
-                        txDetails?.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
+                        txDetails?.toTransactionDetailsViewData(
+                            safes = safes,
+                            canSign = canSign,
+                            owners = owners,
+                            hasOwnerKey = safeOwner
+                        )
                     )
                 )
             }
@@ -72,7 +77,8 @@ class TransactionDetailsViewModel
         status == TransactionStatus.AWAITING_CONFIRMATIONS &&
                 owners.isNotEmpty() &&
                 owners.any { owner ->
-                    executionInfo.signers.map { it.value }.contains(owner.address) && !executionInfo.confirmations.map { it.signer.value }.contains(owner.address)
+                    executionInfo.signers.map { it.value }.contains(owner.address) && !executionInfo.confirmations.map { it.signer.value }
+                        .contains(owner.address)
                 }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -111,6 +117,7 @@ class TransactionDetailsViewModel
             val executionInfo = txDetails?.detailedExecutionInfo
 
             val owners = credentialsRepository.owners()
+            val addressInfoIndex = txDetails?.txData?.addressInfoIndex ?: emptyMap()
 
             var canSign = false
             var safeOwner = false
@@ -122,7 +129,12 @@ class TransactionDetailsViewModel
             updateState {
                 TransactionDetailsViewState(
                     UpdateDetails(
-                        txDetails?.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
+                        txDetails?.toTransactionDetailsViewData(
+                            safes = safes,
+                            canSign = canSign,
+                            owners = owners,
+                            hasOwnerKey = safeOwner
+                        )
                     )
                 )
             }
@@ -198,7 +210,12 @@ class TransactionDetailsViewModel
                 updateState {
                     TransactionDetailsViewState(
                         ConfirmationSubmitted(
-                            it.toTransactionDetailsViewData(safes = safes, canSign = canSign, hasOwnerKey = safeOwner, owners = owners)
+                            it.toTransactionDetailsViewData(
+                                safes = safes,
+                                canSign = canSign,
+                                owners = owners,
+                                hasOwnerKey = safeOwner
+                            )
                         )
                     )
                 }
@@ -218,7 +235,8 @@ class TransactionDetailsViewModel
                 SemVer.parse(it)
             } ?: SemVer(0, 0, 0)
             val safeTxHash = executionInfo.safeTxHash
-            val calculatedSafeTxHash = calculateSafeTxHash(contractVersion, safe.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
+            val calculatedSafeTxHash =
+                calculateSafeTxHash(contractVersion, safe.chainId, safe.address, transaction, executionInfo).toHexString().addHexPrefix()
             safeTxHash == calculatedSafeTxHash
         }.getOrDefault(false)
     }

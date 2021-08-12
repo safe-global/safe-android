@@ -277,7 +277,73 @@ class TxUtilsKtTest {
         val addressNewOwner = (result[1] as ActionInfoItem.Address)
         assertEquals(R.string.tx_details_add_owner, addressNewOwner.itemLabel)
         assertEquals(anotherAddress, addressNewOwner.address)
+    }
 
+    @Test
+    fun `txActionInfoItems (Swap Owner, local names) result two address items with label`() {
+        val localName = "foobar_local"
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SwapOwner(
+                    oldOwner = anyAddress,
+                    oldOwnerInfo = AddressInfoData.Local(
+                        name = localName,
+                        address = anyAddress.asEthereumAddressChecksumString()
+                    ),
+                    newOwner = anotherAddress,
+                    newOwnerInfo = AddressInfoData.Local(
+                        name = localName,
+                        address = anyAddress.asEthereumAddressChecksumString()
+                    )
+                )
+            )
+
+        val result = settingsChange.txActionInfoItems(resources)
+
+        assertEquals(2, result.size)
+        val addressOldOwner = (result[0] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_remove_owner, addressOldOwner.itemLabel)
+        assertEquals(anyAddress, addressOldOwner.address)
+
+        val addressNewOwner = (result[1] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_add_owner, addressNewOwner.itemLabel)
+        assertEquals(anotherAddress, addressNewOwner.address)
+    }
+
+    @Test
+    fun `txActionInfoItems (Swap Owner, remote names) result two address item with label`() {
+        val remoteName = "foobar_remote"
+
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.SwapOwner(
+                    oldOwner = anyAddress, oldOwnerInfo = AddressInfoData.Remote(
+                        name = remoteName,
+                        appInfo = false,
+                        address = anyAddress.asEthereumAddressChecksumString(),
+                        addressLogoUri = null
+                    ), newOwner = anotherAddress,
+                    newOwnerInfo = AddressInfoData.Remote(
+                        name = remoteName,
+                        appInfo = false,
+                        address = anyAddress.asEthereumAddressChecksumString(),
+                        addressLogoUri = null
+                    )
+                )
+            )
+
+        val result = settingsChange.txActionInfoItems(resources)
+
+        assertEquals(2, result.size)
+        val addressOldOwner = (result[0] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_remove_owner, addressOldOwner.itemLabel)
+        assertEquals(anyAddress, addressOldOwner.address)
+
+        val addressNewOwner = (result[1] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_add_owner, addressNewOwner.itemLabel)
+        assertEquals(anotherAddress, addressNewOwner.address)
     }
 
     @Test
@@ -294,6 +360,66 @@ class TxUtilsKtTest {
         val addressOwner = (result[0] as ActionInfoItem.Address)
         assertEquals(R.string.tx_details_remove_owner, addressOwner.itemLabel)
         assertEquals(anyAddress, addressOwner.address)
+
+        val value = (result[1] as ActionInfoItem.Value)
+        assertEquals(R.string.tx_details_change_required_confirmations, value.itemLabel)
+        assertEquals("2", value.value)
+    }
+
+    @Test
+    fun `txActionInfoItems (Remove Owner with remote name) result one address item with label`() {
+        val remoteName = "foobar"
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.RemoveOwner(
+                    owner = anyAddress,
+                    ownerInfo = AddressInfoData.Remote(
+                        name = remoteName,
+                        appInfo = false,
+                        address = anyAddress.asEthereumAddressChecksumString(),
+                        addressLogoUri = null
+                    ),
+                    threshold = 2
+                )
+            )
+
+        val result = settingsChange.txActionInfoItems(resources)
+
+        assertEquals(2, result.size)
+        val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_remove_owner, addressOwner.itemLabel)
+        assertEquals(anyAddress, addressOwner.address)
+        assertEquals(remoteName, addressOwner.addressLabel)
+
+        val value = (result[1] as ActionInfoItem.Value)
+        assertEquals(R.string.tx_details_change_required_confirmations, value.itemLabel)
+        assertEquals("2", value.value)
+    }
+
+    @Test
+    fun `txActionInfoItems (Remove Owner with local name) result a local address item with label`() {
+        val localName = "foobar"
+        val settingsChange: TransactionInfoViewData.SettingsChange =
+            TransactionInfoViewData.SettingsChange(
+                dataDecoded = dummyDataDecoded,
+                settingsInfo = SettingsInfoViewData.RemoveOwner(
+                    anyAddress,
+                    AddressInfoData.Local(
+                        name = localName,
+                        address = anyAddress.asEthereumAddressChecksumString()
+                    ),
+                    2
+                )
+            )
+
+        val result = settingsChange.txActionInfoItems(resources)
+
+        assertEquals(2, result.size)
+        val addressOwner = (result[0] as ActionInfoItem.AddressWithLabel)
+        assertEquals(R.string.tx_details_remove_owner, addressOwner.itemLabel)
+        assertEquals(anyAddress, addressOwner.address)
+        assertEquals(localName, addressOwner.addressLabel)
 
         val value = (result[1] as ActionInfoItem.Value)
         assertEquals(R.string.tx_details_change_required_confirmations, value.itemLabel)
