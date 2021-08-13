@@ -13,21 +13,21 @@ class DateUtilsKtTest {
     fun `formatBackendDateTime (german locale and europe timezone) should return german date string`() {
         val result = Date(0).formatBackendDateTime(ZoneId.of("CET"), Locale.GERMAN)
 
-        assertEquals("01.01.1970 01:00:00", result)
+        assertEquals("01.01.1970, 01:00:00", result)
     }
 
     @Test
     fun `formatBackendDateTime (english locale and europe timezone) should return english date string`() {
         val result = Date(0).formatBackendDateTime(ZoneId.of("CET"), Locale.ENGLISH)
 
-        assertEquals("Jan 1, 1970 1:00:00 AM", result)
+        assertEquals("Jan 1, 1970, 1:00:00 AM", result)
     }
 
     @Test
     fun `formatBackendDateTime (english locale and UTC timezone) should return english date string`() {
         val result = Date(0).formatBackendDateTime(ZoneId.of("Z"), Locale.ENGLISH)
 
-        assertEquals("Jan 1, 1970 12:00:00 AM", result)
+        assertEquals("Jan 1, 1970, 12:00:00 AM", result)
     }
 
     @Test

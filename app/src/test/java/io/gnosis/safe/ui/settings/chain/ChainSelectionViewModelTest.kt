@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.chain
 
 import androidx.paging.PagingData
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
@@ -42,7 +43,7 @@ class ChainSelectionViewModelTest {
     @Test
     fun `loadChains - should emit ShowChains`() {
 
-        coEvery { chainPager.getChainsStream() } returns flow { emit(PagingData.empty()) }
+        coEvery { chainPager.getChainsStream() } returns flow { emit(PagingData.empty<Chain>()) }
 
         viewModel = ChainSelectionViewModel(chainPager, appDispatchers)
         val testObserver = TestLiveDataObserver<ChainSelectionState>()

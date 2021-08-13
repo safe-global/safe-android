@@ -60,7 +60,7 @@ class BalanceFormatter {
         }
         val formattedAmount = numberFormat.format(0)
         val shortAmount = shortAmount(amount)
-        return formattedAmount.replace("0${decimalSeparator}00", shortAmount)
+        return formattedAmount.replace("0${decimalSeparator}00", shortAmount).replace("\u00A0", " ")
     }
 
     fun shortAmount(value: BigDecimal): String = when {

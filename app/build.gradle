@@ -139,15 +139,14 @@ android {
     }
 
     testOptions {
-        unitTests {
-            returnDefaultValues = true
-        }
+        unitTests.returnDefaultValues = true
     }
 
     viewBinding {
         enabled = true
     }
 }
+
 
 androidExtensions {
     experimental = true
@@ -242,7 +241,6 @@ dependencies {
     implementation "androidx.biometric:biometric:$versions.androidx_biometrics"
 
 }
-
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
     kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]

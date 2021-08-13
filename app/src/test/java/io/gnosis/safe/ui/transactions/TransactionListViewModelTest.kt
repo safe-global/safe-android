@@ -123,7 +123,7 @@ class TransactionListViewModelTest {
                 any(),
                 TransactionPagingSource.Type.HISTORY
             )
-        } returns flow { emit(PagingData.empty()) }
+        } returns flow { emit(PagingData.empty<TxListEntry>()) }
         transactionListViewModel =
             TransactionListViewModel(transactionPagingProvider, safeRepository, credentialsRepository, balanceFormatter, appDispatchers)
 
