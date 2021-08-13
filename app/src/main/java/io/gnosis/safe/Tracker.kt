@@ -8,9 +8,10 @@ import java.math.BigInteger
 import javax.inject.Singleton
 
 @Singleton
-class Tracker private constructor(context: Context) {
-
-    private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+class Tracker private constructor(
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) {
 
     fun setNumSafes(numSafes: Int) {
         firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
@@ -156,7 +157,7 @@ class Tracker private constructor(context: Context) {
     }
 
     fun logException(exception: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(exception)
+        firebaseCrashlytics.recordException(exception)
     }
 
     object Event {
@@ -177,7 +178,6 @@ class Tracker private constructor(context: Context) {
         val PASSCODE_DISABLED = "user_passcode_disabled"
         val PASSCODE_RESET = "user_passcode_reset"
         val PASSCODE_SKIPPED = "user_passcode_skipped"
-
     }
 
     object Param {
@@ -202,10 +202,13 @@ class Tracker private constructor(context: Context) {
         @Volatile
         private var INSTANCE: Tracker? = null
 
-        fun getInstance(context: Context): Tracker =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Tracker(context).also { INSTANCE = it }
+        fun getInstance(context: Context): Tracker {
+            val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Tracker(firebaseAnalytics, firebaseCrashlytics).also { INSTANCE = it }
             }
+        }
     }
 }
 
