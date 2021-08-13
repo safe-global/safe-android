@@ -2,13 +2,15 @@ package io.gnosis.safe
 
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.math.BigInteger
 import javax.inject.Singleton
 
 @Singleton
-class Tracker private constructor(
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+class Tracker internal constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val firebaseCrashlytics: FirebaseCrashlytics
 ) {
