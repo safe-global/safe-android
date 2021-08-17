@@ -255,5 +255,5 @@ task printVersion {
 }
 
 ext {
-    jacocoCoverageThreshold = 0.3 // 30%
+    jacocoCoverageThreshold = 0.4 // 30%
 }
