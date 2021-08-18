@@ -1,7 +1,14 @@
 package io.gnosis.safe
 
+import android.os.Bundle
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.Tracker.Param.CHAIN_ID
+import io.gnosis.safe.Tracker.Param.KEY_IMPORT_TYPE
+import io.gnosis.safe.Tracker.Param.PASSCODE_IS_SET
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_KEY
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_SEED
 import io.gnosis.safe.Tracker.ParamValues.PUSH_DISABLED
 import io.gnosis.safe.Tracker.ParamValues.PUSH_ENABLED
 import io.mockk.every
@@ -9,8 +16,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.math.BigInteger
 
+@RunWith(AndroidJUnit4::class)
 class TrackerTest {
 
     val firebaseAnalytics = mockk<FirebaseAnalytics>(relaxed = true)
@@ -67,7 +76,7 @@ class TrackerTest {
 
         tracker.setPasscodeIsSet(true)
 
-        verify(exactly = 1) { firebaseAnalytics.setUserProperty(Tracker.Param.PASSCODE_IS_SET, "true") }
+        verify(exactly = 1) { firebaseAnalytics.setUserProperty(PASSCODE_IS_SET, "true") }
     }
 
     @Test
@@ -75,7 +84,7 @@ class TrackerTest {
 
         tracker.setPasscodeIsSet(false)
 
-        verify(exactly = 1) { firebaseAnalytics.setUserProperty(Tracker.Param.PASSCODE_IS_SET, "false") }
+        verify(exactly = 1) { firebaseAnalytics.setUserProperty(PASSCODE_IS_SET, "false") }
     }
 
     @Test
@@ -83,8 +92,7 @@ class TrackerTest {
 
         tracker.logScreen(ScreenId.ASSETS_COINS, BigInteger.ONE)
 
-        // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(ScreenId.ASSETS_COINS.value, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(ScreenId.ASSETS_COINS.value, match { it.getString(CHAIN_ID) == "1" }) }
     }
 
     @Test
@@ -95,7 +103,7 @@ class TrackerTest {
 
         tracker.logScreen(ScreenId.ASSETS_COINS, BigInteger.ONE)
 
-        verify(exactly = 1) { firebaseAnalytics.logEvent(ScreenId.ASSETS_COINS.value, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(ScreenId.ASSETS_COINS.value, match { it.getString(CHAIN_ID) == "1" }) }
         verify(exactly = 1) { firebaseCrashlytics.recordException(exception) }
     }
 
@@ -104,8 +112,7 @@ class TrackerTest {
 
         tracker.logSafeAdded(BigInteger.ONE)
 
-        // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.SAFE_ADDED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.SAFE_ADDED, match { it.getString(CHAIN_ID) == "1" }) }
     }
 
     @Test
@@ -113,8 +120,7 @@ class TrackerTest {
 
         tracker.logSafeRemoved(BigInteger.ONE)
 
-        // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.SAFE_REMOVED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.SAFE_REMOVED, match { it.getString(CHAIN_ID) == "1" }) }
     }
 
     @Test
@@ -122,17 +128,27 @@ class TrackerTest {
 
         tracker.logKeyGenerated()
 
-        // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_GENERATED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_GENERATED, match { it.isEmpty }) }
     }
 
     @Test
-    fun logKeyImported() {
+    fun `logKeyImported(seed)`() {
 
         tracker.logKeyImported(true)
 
-        // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_IMPORTED, any()) }
+        val bundle = Bundle()
+        bundle.getString(KEY_IMPORT_TYPE, KEY_IMPORT_TYPE_SEED)
+
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_IMPORTED, match { it.getString(KEY_IMPORT_TYPE) == KEY_IMPORT_TYPE_SEED }) }
+    }
+
+    @Test
+    fun `logKeyImported(key)`() {
+
+        tracker.logKeyImported(false)
+
+        // We cannot compare bundles
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_IMPORTED, match { it.getString(KEY_IMPORT_TYPE) == KEY_IMPORT_TYPE_KEY }) }
     }
 
     @Test
@@ -141,7 +157,7 @@ class TrackerTest {
         tracker.logKeyDeleted()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_DELETED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.KEY_DELETED, match { it.isEmpty }) }
     }
 
     @Test
@@ -150,7 +166,7 @@ class TrackerTest {
         tracker.logTransactionConfirmed(BigInteger.ONE)
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.TRANSACTION_CONFIRMED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.TRANSACTION_CONFIRMED, match { it.getString(CHAIN_ID) == "1" }) }
     }
 
     @Test
@@ -159,7 +175,7 @@ class TrackerTest {
         tracker.logTransactionRejected(BigInteger.ONE)
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.TRANSACTION_REJECTED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.TRANSACTION_REJECTED, match { it.getString(CHAIN_ID) == "1" }) }
     }
 
     @Test
@@ -168,7 +184,7 @@ class TrackerTest {
         tracker.logBannerPasscodeSkip()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_PASSCODE_SKIP, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_PASSCODE_SKIP, match { it.isEmpty }) }
     }
 
     @Test
@@ -177,7 +193,7 @@ class TrackerTest {
         tracker.logBannerPasscodeCreate()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_PASSCODE_CREATE, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_PASSCODE_CREATE, match { it.isEmpty }) }
     }
 
     @Test
@@ -186,7 +202,7 @@ class TrackerTest {
         tracker.logBannerOwnerSkip()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_OWNER_SKIP, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_OWNER_SKIP, match { it.isEmpty }) }
     }
 
     @Test
@@ -194,7 +210,7 @@ class TrackerTest {
         tracker.logBannerOwnerImport()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_OWNER_IMPORT, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.BANNER_OWNER_IMPORT, match { it.isEmpty }) }
     }
 
     @Test
@@ -202,7 +218,7 @@ class TrackerTest {
         tracker.logOnboardingOwnerSkipped()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.ONBOARDING_OWNER_SKIPPED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.ONBOARDING_OWNER_SKIPPED, match { it.isEmpty }) }
     }
 
     @Test
@@ -210,7 +226,7 @@ class TrackerTest {
         tracker.logOnboardingOwnerImport()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.ONBOARDING_OWNER_IMPORT, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.ONBOARDING_OWNER_IMPORT, match { it.isEmpty }) }
     }
 
     @Test
@@ -218,7 +234,7 @@ class TrackerTest {
         tracker.logPasscodeEnabled()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_ENABLED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_ENABLED, match { it.isEmpty }) }
     }
 
     @Test
@@ -226,7 +242,7 @@ class TrackerTest {
         tracker.logPasscodeDisabled()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_DISABLED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_DISABLED, match { it.isEmpty }) }
     }
 
     @Test
@@ -234,7 +250,7 @@ class TrackerTest {
         tracker.logPasscodeReset()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_RESET, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_RESET, match { it.isEmpty }) }
     }
 
     @Test
@@ -242,7 +258,7 @@ class TrackerTest {
         tracker.logPasscodeSkipped()
 
         // We cannot look inside Bundles in unit tests :-(
-        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_SKIPPED, any()) }
+        verify(exactly = 1) { firebaseAnalytics.logEvent(Tracker.Event.PASSCODE_SKIPPED, match { it.isEmpty }) }
     }
 
     @Test

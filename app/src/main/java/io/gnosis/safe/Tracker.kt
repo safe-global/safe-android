@@ -5,6 +5,10 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.Tracker.Param.KEY_IMPORT_TYPE
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_KEY
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_SEED
+import org.bouncycastle.jcajce.provider.symmetric.SEED
 import java.math.BigInteger
 import javax.inject.Singleton
 
@@ -72,7 +76,7 @@ class Tracker internal constructor(
         logEvent(
             Event.KEY_IMPORTED,
             mapOf(
-                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
+                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) KEY_IMPORT_TYPE_SEED else KEY_IMPORT_TYPE_KEY
             )
         )
     }
