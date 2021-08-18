@@ -141,12 +141,15 @@ android {
     testOptions {
         unitTests {
             returnDefaultValues = true
+            includeAndroidResources = true
         }
     }
 
     viewBinding {
         enabled = true
     }
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
 }
 
 androidExtensions {
