@@ -5,10 +5,8 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import io.gnosis.safe.Tracker.Param.KEY_IMPORT_TYPE
 import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_KEY
 import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_SEED
-import org.bouncycastle.jcajce.provider.symmetric.SEED
 import java.math.BigInteger
 import javax.inject.Singleton
 
@@ -54,7 +52,7 @@ class Tracker internal constructor(
         logEvent(
             Event.SAFE_ADDED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -63,7 +61,7 @@ class Tracker internal constructor(
         logEvent(
             Event.SAFE_REMOVED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -89,7 +87,7 @@ class Tracker internal constructor(
         logEvent(
             Event.TRANSACTION_CONFIRMED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -98,7 +96,7 @@ class Tracker internal constructor(
         logEvent(
             Event.TRANSACTION_REJECTED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -152,6 +150,7 @@ class Tracker internal constructor(
                         is String -> bundle.putString(key, value)
                         is Long -> bundle.putLong(key, value)
                         is Int -> bundle.putInt(key, value)
+                        is BigInteger -> bundle.putString(key, value.toString())
                         is Number -> bundle.putFloat(key, value.toFloat())
                     }
                 }
