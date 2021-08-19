@@ -7,7 +7,7 @@ source ./ci/prepare_env_buildkite.sh
 
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
-./gradlew assembleRinkeby assembleRelease
+./gradlew assembleRelease
 
 # -------- Upload to github ----------
 REPO="https://api.github.com/repos/gnosis/safe-android"
