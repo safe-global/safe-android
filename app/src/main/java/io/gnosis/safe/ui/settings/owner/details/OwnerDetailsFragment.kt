@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.details
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -79,7 +80,14 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                             // BlockExplorer.forChain().showAddress(requireContext(), owner)
                         }
                         removeButton.setOnClickListener {
-                            showConfirmDialog(context = requireContext(), message = R.string.signing_owner_dialog_description) {
+                            removeButton.isEnabled = false
+                            showConfirmDialog(
+                                context = requireContext(),
+                                message = R.string.signing_owner_dialog_description,
+                                dismissCallback = DialogInterface.OnDismissListener {
+                                    removeButton.isEnabled = true
+                                }
+                            ) {
                                 viewModel.removeOwner(owner)
                                 findNavController().previousBackStackEntry?.savedStateHandle?.set(ARGS_RESULT_OWNER_REMOVED, true)
                             }
