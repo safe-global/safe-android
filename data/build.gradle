@@ -84,6 +84,7 @@ android {
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
+    buildToolsVersion '29.0.3'
 }
 
 dependencies {

@@ -2,6 +2,8 @@ apply from: '../buildsystem/android_library.gradle'
 apply plugin: 'bivrost'
 
 android {
+
+    buildToolsVersion '29.0.3'
     defaultConfig {
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_OLD_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))

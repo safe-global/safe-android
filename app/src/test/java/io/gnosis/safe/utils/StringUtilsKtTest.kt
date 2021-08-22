@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.widget.TextView
 import androidx.core.text.getSpans
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,6 +15,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -50,12 +52,19 @@ class StringUtilsKtTest {
         assertEquals(23, result)
     }
 
+    @Ignore
     @Test
     fun `setLink`() {
+        val textView = TextView(applicationContext)
+
+        textView.setLink(url="url", urlText = "urlText", prefix = "prefix", underline = false)
+
+        assertEquals(7, textView.text.length)
     }
 
     @Test
     fun `appendLink`() {
+
     }
 
     @Test
@@ -81,7 +90,7 @@ class StringUtilsKtTest {
     @Test
     fun `fallBackHandlerLabel`() {
     }
-    
+
     @Test
     fun `formatEthAddress (with middleLineBreak)`() {
         val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
