@@ -3,23 +3,27 @@ package io.gnosis.safe.utils
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.widget.TextView
 import androidx.core.text.getSpans
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.safe.R
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
+import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
 class StringUtilsKtTest {
@@ -52,43 +56,85 @@ class StringUtilsKtTest {
         assertEquals(23, result)
     }
 
-    @Ignore
+    //TODO make proper test
     @Test
     fun `setLink`() {
         val textView = TextView(applicationContext)
 
-        textView.setLink(url="url", urlText = "urlText", prefix = "prefix", underline = false)
+        textView.setLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
 
-        assertEquals(7, textView.text.length)
+        assertEquals(13, textView.text.length)
     }
 
+    //TODO make proper test
     @Test
     fun `appendLink`() {
+        val textView = TextView(applicationContext)
 
+        textView.appendLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
+
+        assertEquals(13, textView.text.length)
     }
 
+    //TODO make proper test
     @Test
     fun `replaceDoubleNewlineWithParagraphLineSpacing`() {
     }
 
+    //TODO make proper test
     @Test
     fun `appendTextWithSpans`() {
+
+        val builder = SpannableStringBuilder()
+        builder.appendTextWithSpans("text", emptyList())
     }
 
     @Test
     fun `formatForTxList`() {
+
+        val address = Solidity.Address(BigInteger.TEN)
+
+        val result = address.formatForTxList()
+
+        assertEquals(result, "0x0000...000A")
     }
 
     @Test
     fun `abbreviateEthAddress`() {
+
+        val addressString = "0x000000000000000000000000000000A"
+
+        val result = addressString.abbreviateEthAddress()
+
+        assertEquals(result, "0x0000...000A")
     }
 
     @Test
     fun `formatEthAddressBold`() {
+        val addressString = "0x000000000000000000000000000000A"
+
+        val result = addressString.formatEthAddressBold()
+
+        assertEquals("0x00000000000000\n" +
+                "0000000000000000A", result.toString())
     }
 
     @Test
-    fun `fallBackHandlerLabel`() {
+    fun `fallBackHandlerLabel (Unknown)`() {
+        val address = Solidity.Address(BigInteger.TEN)
+
+        val result = address.fallBackHandlerLabel()
+
+        assertEquals(R.string.unknown_fallback_handler, result)
+    }
+
+    @Test
+    fun `fallBackHandlerLabel (default)`() {
+        val address = DEFAULT_FALLBACK_HANDLER
+
+        val result = address.fallBackHandlerLabel()
+
+        assertEquals(R.string.default_fallback_handler, result)
     }
 
     @Test
@@ -144,7 +190,6 @@ class StringUtilsKtTest {
 
         val spans = spannable.getSpans<Any>()
         assertEquals(5, spans.size)
-
     }
 
     @Test
