@@ -7,7 +7,7 @@ source ./ci/prepare_env_buildkite.sh
 
 echo "INFURA_API_KEY=$INFURA_API_KEY" > project_keys
 
-./gradlew assembleRinkeby assembleRelease
+./gradlew assembleRelease
 
 # -------- Upload to github ----------
 REPO="https://api.github.com/repos/gnosis/safe-android"
@@ -29,7 +29,6 @@ echo "Uploading assets..." >&2
 # Construct url
 ASSET="https://uploads.github.com/repos/gnosis/safe-android/releases/$id/assets"
 
-curl --data-binary @"app/build/outputs/apk/rinkeby/gnosis-safe-${APP_VERSION_CODE}-rinkeby.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=gnosis-safe-${APP_VERSION_CODE}-rinkeby.apk
 curl --data-binary @"app/build/outputs/apk/release/gnosis-safe-${APP_VERSION_CODE}-release.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=gnosis-safe-${APP_VERSION_CODE}-release.apk
 
 ci/notify_slack.sh
