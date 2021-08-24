@@ -361,7 +361,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                     findNavController().navigate(
                                         TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionFragment(
                                             chain = chain,
-                                            action =it.dataDecoded?.method ?: "",
+                                            action = it.dataDecoded?.method ?: "",
                                             data = it.hexData ?: "",
                                             decodedData = it.dataDecoded?.let { paramSerializer.serializeDecodedData(it) },
                                             addressInfoIndex = paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)

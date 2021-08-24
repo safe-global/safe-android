@@ -69,7 +69,12 @@ class TransactionDetailsViewModelTest {
         coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
         val expectedTransactionInfoViewData =
-            transactionDetails.toTransactionDetailsViewData(emptyList(), canSign = false, hasOwnerKey = false, owners = emptyList())
+            transactionDetails.toTransactionDetailsViewData(
+                emptyList(),
+                canSign = false,
+                owners = emptyList(),
+                hasOwnerKey = false
+            )
 
         viewModel.loadDetails("tx_details_id")
 

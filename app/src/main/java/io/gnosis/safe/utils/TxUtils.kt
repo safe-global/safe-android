@@ -124,17 +124,29 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resource
             result.add(ActionInfoItem.Value(itemLabel = settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], value = value))
         }
         is SettingsInfoViewData.AddOwner -> {
+            val label = settingsInfo.ownerInfo?.getLabel()
+
             result.add(
                 getAddressActionInfoItem(
-                    settingsInfo.owner,
-                    settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    settingsInfo.ownerInfo
+                    address = settingsInfo.owner,
+                    title = settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
+                    ownerInfo = settingsInfo.ownerInfo,
+                    label = label
                 )
             )
             result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], settingsInfo.threshold.toString()))
         }
         is SettingsInfoViewData.RemoveOwner -> {
-            result.add(getAddressActionInfoItem(settingsInfo.owner, settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER], settingsInfo.ownerInfo))
+            val label = settingsInfo.ownerInfo?.getLabel()
+
+            result.add(
+                getAddressActionInfoItem(
+                    address = settingsInfo.owner,
+                    title = settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
+                    ownerInfo = settingsInfo.ownerInfo,
+                    label = label
+                )
+            )
             result.add(ActionInfoItem.Value(settingsMethodTitle[SafeRepository.METHOD_CHANGE_THRESHOLD], settingsInfo.threshold.toString()))
         }
         is SettingsInfoViewData.SetFallbackHandler -> {
@@ -155,18 +167,23 @@ fun TransactionInfoViewData.SettingsChange.txActionInfoItems(resources: Resource
             )
         }
         is SettingsInfoViewData.SwapOwner -> {
+            val oldOwnerLabel = settingsInfo.oldOwnerInfo?.getLabel()
+            val newOwnerLabel = settingsInfo.newOwnerInfo?.getLabel()
+
             result.add(
                 getAddressActionInfoItem(
                     settingsInfo.oldOwner,
                     settingsMethodTitle[SafeRepository.METHOD_REMOVE_OWNER],
-                    settingsInfo.oldOwnerInfo
+                    settingsInfo.oldOwnerInfo,
+                    oldOwnerLabel
                 )
             )
             result.add(
                 getAddressActionInfoItem(
                     settingsInfo.newOwner,
                     settingsMethodTitle[SafeRepository.METHOD_ADD_OWNER_WITH_THRESHOLD],
-                    settingsInfo.newOwnerInfo
+                    settingsInfo.newOwnerInfo,
+                    newOwnerLabel
                 )
             )
         }
