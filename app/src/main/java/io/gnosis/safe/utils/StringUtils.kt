@@ -24,6 +24,7 @@ import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import java.util.regex.Pattern
 
+// Is this used anywhere except in the test?
 fun String.asMiddleEllipsized(boundariesLength: Int): String {
     return if (this.length > boundariesLength * 2)
         "${this.subSequence(0, boundariesLength)}...${this.subSequence(this.length - boundariesLength, this.length)}"
@@ -36,7 +37,8 @@ fun String.asMiddleEllipsized(prefixLength: Int, suffixLength: Int): String {
     else this
 }
 
-fun String.underline(): CharSequence =
+// Is this used anywhere except in the test?
+fun String.underline() =
     SpannableString(this).also {
         it.setSpan(UnderlineSpan(), 0, length, 0)
     }

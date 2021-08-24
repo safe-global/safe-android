@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.widget.TextView
 import androidx.core.text.getSpans
 import androidx.test.core.app.ApplicationProvider
@@ -16,13 +17,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
@@ -115,8 +117,9 @@ class StringUtilsKtTest {
 
         val result = addressString.formatEthAddressBold()
 
-        assertEquals("0x00000000000000\n" +
-                "0000000000000000A", result.toString())
+        assertEquals(
+            "0x00000000000000\n0000000000000000A", result.toString()
+        )
     }
 
     @Test
@@ -194,21 +197,44 @@ class StringUtilsKtTest {
 
     @Test
     fun `shortChecksumString`() {
+        val address = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asEthereumAddress()!!
+
+        val result = address.shortChecksumString()
+
+        assertEquals(13, result.length)
+        assertEquals("0xd5D8...dF44", result)
     }
 
     @Test
     fun `parseEthereumAddress`() {
+        val address = parseEthereumAddress("0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44")!!
+
+        assertEquals("0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44", address.asEthereumAddressChecksumString())
     }
 
     @Test
     fun `underline`() {
+
+        val result = "abcde".underline()
+
+        val spans = result.getSpans<Any>(0, result.length)
+        assertEquals(1, spans.size)
+        assertTrue(spans[0] is UnderlineSpan)
     }
 
     @Test
     fun `asMiddleEllipsized(boundariesLength)`() {
+
+        val result = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asMiddleEllipsized(3)
+
+        assertEquals(result, "0xd...F44")
     }
 
     @Test
     fun `asMiddleEllipsized(prefixLength, suffixLength)`() {
+
+        val result = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asMiddleEllipsized(5, 5)
+
+        assertEquals(result, "0xd5D...BdF44")
     }
 }
