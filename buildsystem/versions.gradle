@@ -55,7 +55,7 @@ ext {
             espresso                        : '3.1.1',
             junit                           : '4.12',
             mockito                         : '2.26.0',
-            mockk                           : '1.9.3',
+            mockk                           : '1.11.0',
             powermock                       : '2.0.2',
             robolectric                     : '4.6.1',
 

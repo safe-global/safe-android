@@ -13,9 +13,12 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.gnosis.data.repositories.SafeRepository.Companion.DEFAULT_FALLBACK_HANDLER
 import io.gnosis.safe.R
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -58,37 +61,87 @@ class StringUtilsKtTest {
         assertEquals(23, result)
     }
 
-    //TODO make proper test
     @Test
-    fun `setLink`() {
-        val textView = TextView(applicationContext)
+    fun `appendTextWithSpans (no spans)`() {
+        val builder = SpannableStringBuilder()
 
-        textView.setLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
+        builder.appendTextWithSpans("text", emptyList())
 
-        assertEquals(13, textView.text.length)
+        assertEquals(builder.toString(), "text")
+        val spans = builder.getSpans<Any>()
+        assertEquals(0, spans.size)
+    }
+
+    @Test
+    fun `appendTextWithSpans (with span)`() {
+        val builder = SpannableStringBuilder()
+
+        builder.appendTextWithSpans("text", listOf(ForegroundColorSpan(applicationContext.getColorCompat(R.color.address_boundaries))))
+
+        assertEquals(builder.toString(), "text")
+        val spans = builder.getSpans<Any>()
+        assertEquals(1, spans.size)
+        assertTrue(spans[0] is ForegroundColorSpan)
+    }
+
+    @Test
+    fun `appendTextWithSpans (with spans)`() {
+        val builder = SpannableStringBuilder()
+
+        builder.appendTextWithSpans("text", listOf(ForegroundColorSpan(applicationContext.getColorCompat(R.color.address_boundaries)), UnderlineSpan()))
+
+        assertEquals(builder.toString(), "text")
+        val spans = builder.getSpans<Any>()
+        assertEquals(2, spans.size)
+        assertTrue(spans[0] is ForegroundColorSpan)
+        assertTrue(spans[1] is UnderlineSpan)
     }
 
     //TODO make proper test
     @Test
     fun `appendLink`() {
-        val textView = TextView(applicationContext)
+////        val textView = TextView(applicationContext)
+//        val textView = mockk<TextView>()
+//
+//        every { textView.movementMethod = any() } just Runs
+//        every { textView.context } returns applicationContext
+//        every { textView.append(any()) } just Runs
+//
+//        textView.appendLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
+//
+//        // assertEquals(13, textView.text.length)
+//
+//        verify { textView.append("xxxx") }
+//        verify { textView.append("yyyy") }
+    }
 
-        textView.appendLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
+    @Test
+    fun `setLink`() {
+        mockkStatic(TextView::appendLink)
+        val textView = mockk<TextView>(relaxed = true)
+        every { textView.appendLink(any(), any(), any(), any(), any(), any()) } just Runs
 
-        assertEquals(13, textView.text.length)
+        textView.setLink(url = "url", urlText = "urlText", prefix = "prefix", underline = true)
+
+        verify { textView.text = null }
+        verify { textView.appendLink("url", "urlText", null, R.color.primary, "prefix", true) }
+    }
+
+    @Test
+    fun `setLink(no prefix)`() {
+        mockkStatic(TextView::appendLink)
+        val textView = mockk<TextView>(relaxed = true)
+        every { textView.appendLink(any(), any(), any(), any(), any(), any()) } just Runs
+
+        textView.setLink(url = "url", urlText = "urlText")
+
+        verify { textView.text = null }
+        verify { textView.appendLink("url", "urlText", null, R.color.primary, "", false) }
     }
 
     //TODO make proper test
     @Test
     fun `replaceDoubleNewlineWithParagraphLineSpacing`() {
-    }
-
-    //TODO make proper test
-    @Test
-    fun `appendTextWithSpans`() {
-
-        val builder = SpannableStringBuilder()
-        builder.appendTextWithSpans("text", emptyList())
     }
 
     @Test
@@ -231,10 +284,26 @@ class StringUtilsKtTest {
     }
 
     @Test
+    fun `asMiddleEllipsized(boundariesLength) shorter than 2 * bounderies`() {
+
+        val result = "0xdF44".asMiddleEllipsized(3)
+
+        assertEquals(result, "0xdF44")
+    }
+
+    @Test
     fun `asMiddleEllipsized(prefixLength, suffixLength)`() {
 
         val result = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asMiddleEllipsized(5, 5)
 
         assertEquals(result, "0xd5D...BdF44")
+    }
+
+    @Test
+    fun `asMiddleEllipsized(prefixLength, suffixLength) shorter than prefix+suffix`() {
+
+        val result = "0xd5DBdF44".asMiddleEllipsized(5, 5)
+
+        assertEquals(result, "0xd5DBdF44")
     }
 }
