@@ -39,7 +39,7 @@ abstract class HeimdallDatabase : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "safe_db"
-        const val LATEST_DB_VERSION = 5
+        const val LATEST_DB_VERSION = 6
 
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -97,6 +97,14 @@ abstract class HeimdallDatabase : RoomDatabase() {
                 )
                 database.execSQL(
                     """DROP TABLE IF EXISTS `${Safe.TABLE_NAME}_old`"""
+                )
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """ALTER TABLE `${Owner.TABLE_NAME}` ADD COLUMN `${Owner.COL_KEY_DERIVATION_PATH}` TEXT"""
                 )
             }
         }
