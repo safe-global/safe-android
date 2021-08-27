@@ -8,7 +8,12 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
-import android.text.style.*
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.ImageSpan
+import android.text.style.StyleSpan
+import android.text.style.URLSpan
+import android.text.style.UnderlineSpan
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -115,8 +120,8 @@ fun SpannableStringBuilder.appendTextWithSpans(text: CharSequence, spans: List<A
 }
 
 fun Resources.replaceDoubleNewlineWithParagraphLineSpacing(@StringRes stringResource: Int): SpannableString {
-    val spannableString = SpannableString(getString(stringResource));
-    val matcher = Pattern.compile("\n\n").matcher(getString(stringResource));
+    val spannableString = SpannableString(getString(stringResource))
+    val matcher = Pattern.compile("\n\n").matcher(getString(stringResource))
     while (matcher.find()) {
         spannableString.setSpan(
             AbsoluteSizeSpan(getDimension(R.dimen.default_paragraph_line_spacing).toInt()),

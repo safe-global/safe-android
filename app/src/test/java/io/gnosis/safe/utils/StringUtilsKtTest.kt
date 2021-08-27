@@ -1,9 +1,11 @@
 package io.gnosis.safe.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
@@ -24,8 +26,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.shadows.ShadowTextView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -123,9 +123,33 @@ class StringUtilsKtTest {
         verify { any<TextView>().appendLink("url", "urlText", null, R.color.primary, "", false) }
     }
 
-    //TODO make proper test
     @Test
-    fun `replaceDoubleNewlineWithParagraphLineSpacing`() {
+    fun `replaceDoubleNewlineWithParagraphLineSpacing (with double newline)`() {
+        val resources = mockk<Resources>(relaxed = true)
+        every { resources.getString(any()) } returns "foo\n\nbar"
+
+        val result = resources.replaceDoubleNewlineWithParagraphLineSpacing(1)
+
+        verify { resources.getString(1) }
+
+        val spans = result.getSpans<Any>()
+        assertEquals(1, spans.size)
+        assertTrue(spans[0] is AbsoluteSizeSpan)
+
+        val absoluteSizeSpans = result.getSpans<AbsoluteSizeSpan>(4, 5)
+        assertEquals(1, absoluteSizeSpans.size)
+    }
+
+    @Test
+    fun `replaceDoubleNewlineWithParagraphLineSpacing (without double newline)`() {
+        val resources = mockk<Resources>(relaxed = true)
+        every { resources.getString(any()) } returns "foo\nbar"
+
+        val result = resources.replaceDoubleNewlineWithParagraphLineSpacing(1)
+
+        verify { resources.getString(1) }
+        val spans = result.getSpans<Any>()
+        assertEquals(0, spans.size)
     }
 
     @Test
