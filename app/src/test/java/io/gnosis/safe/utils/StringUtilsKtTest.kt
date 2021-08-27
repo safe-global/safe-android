@@ -24,6 +24,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.shadows.ShadowTextView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -97,34 +99,16 @@ class StringUtilsKtTest {
         assertTrue(spans[1] is UnderlineSpan)
     }
 
-    //TODO make proper test
-    @Test
-    fun `appendLink`() {
-////        val textView = TextView(applicationContext)
-//        val textView = mockk<TextView>()
-//
-//        every { textView.movementMethod = any() } just Runs
-//        every { textView.context } returns applicationContext
-//        every { textView.append(any()) } just Runs
-//
-//        textView.appendLink(url = "url", urlText = "urlText", prefix = "prefix", underline = false)
-//
-//        // assertEquals(13, textView.text.length)
-//
-//        verify { textView.append("xxxx") }
-//        verify { textView.append("yyyy") }
-    }
-
     @Test
     fun `setLink`() {
         mockkStatic(TextView::appendLink)
         val textView = mockk<TextView>(relaxed = true)
-        every { textView.appendLink(any(), any(), any(), any(), any(), any()) } just Runs
+        every { any<TextView>().appendLink(any(), any(), any(), any(), any(), any()) } just Runs
 
         textView.setLink(url = "url", urlText = "urlText", prefix = "prefix", underline = true)
 
         verify { textView.text = null }
-        verify { textView.appendLink("url", "urlText", null, R.color.primary, "prefix", true) }
+        verify { any<TextView>().appendLink("url", "urlText", null, R.color.primary, "prefix", true) }
     }
 
     @Test
@@ -136,7 +120,7 @@ class StringUtilsKtTest {
         textView.setLink(url = "url", urlText = "urlText")
 
         verify { textView.text = null }
-        verify { textView.appendLink("url", "urlText", null, R.color.primary, "", false) }
+        verify { any<TextView>().appendLink("url", "urlText", null, R.color.primary, "", false) }
     }
 
     //TODO make proper test
