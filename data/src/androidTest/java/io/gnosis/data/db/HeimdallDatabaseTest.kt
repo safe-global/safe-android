@@ -43,7 +43,13 @@ class HeimdallDatabaseTest {
         helper.createDatabase(TEST_DB, 1).apply {
             close()
         }
-        val allMigrations = arrayOf(HeimdallDatabase.MIGRATION_1_2, HeimdallDatabase.MIGRATION_2_3, HeimdallDatabase.MIGRATION_3_4, HeimdallDatabase.MIGRATION_4_5)
+        val allMigrations = arrayOf(
+            HeimdallDatabase.MIGRATION_1_2,
+            HeimdallDatabase.MIGRATION_2_3,
+            HeimdallDatabase.MIGRATION_3_4,
+            HeimdallDatabase.MIGRATION_4_5,
+            HeimdallDatabase.MIGRATION_5_6
+        )
 
         // Open latest version of the database. Room will validate the schema
         // once all migrations execute.
