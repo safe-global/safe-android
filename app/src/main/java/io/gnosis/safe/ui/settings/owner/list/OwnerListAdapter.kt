@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
 import io.gnosis.safe.utils.shortChecksumString
@@ -94,6 +95,7 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
+            keyType.setImageResource(owner.getImageResForKeyType())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
@@ -107,12 +109,21 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
     }
 }
 
+private fun OwnerViewData.LocalOwner.getImageResForKeyType(): Int =
+    when (type) {
+        Owner.Type.IMPORTED -> R.drawable.ic_key_type_key
+        Owner.Type.GENERATED -> R.drawable.ic_key_type_seed
+        Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger
+    }
+
+
 class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
     fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
+            keyType.setImageResource(owner.getImageResForKeyType())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
