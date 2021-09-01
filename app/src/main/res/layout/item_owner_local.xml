@@ -8,14 +8,21 @@
     android:background="@drawable/background_selectable_white"
     android:minHeight="68dp">
 
-    <ImageView
-        android:id="@+id/arrow"
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextDark.Bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/settings_app_imported_owner_key"
+        android:maxWidth="220dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toTopOf="@id/owner_address"
+        app:layout_constraintEnd_toStartOf="@id/arrow"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/owner_address"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_settings_arrow" />
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/owner_address"
@@ -29,63 +36,66 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/arrow"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies_container"
         app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_goneMarginLeft="16dp"
         tools:text="0x123456..1235" />
 
-    <TextView
-        android:id="@+id/title"
-        style="@style/TextDark.Bold"
+    <ImageView
+        android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxWidth="220dp"
-        android:singleLine="true"
-        android:text="@string/settings_app_imported_owner_key"
-        app:layout_constraintBottom_toTopOf="@id/owner_address"
-        app:layout_constraintEnd_toStartOf="@id/arrow"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="@id/owner_address"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:srcCompat="@drawable/ic_settings_arrow" />
 
-
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/blockies"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_margin="@dimen/default_margin"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/blockies_container"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/owner_address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <pm.gnosis.blockies.BlockiesImageView
+            android:id="@+id/blockies"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/key_type_background"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/circle_dark_grey"
+            app:layout_constraintBottom_toBottomOf="@id/blockies"
+            app:layout_constraintStart_toStartOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/blockies" />
+
+        <ImageView
+            android:id="@+id/key_type"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_key_type_seed"
+            app:layout_constraintBottom_toBottomOf="@id/key_type_background"
+            app:layout_constraintEnd_toEndOf="@id/key_type_background"
+            app:layout_constraintStart_toStartOf="@id/key_type_background"
+            app:layout_constraintTop_toTopOf="@id/key_type_background" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
 
 
-
-    <ImageView
-        android:id="@+id/key_type_background"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/circle_dark_grey"
-        app:layout_constraintBottom_toBottomOf="@id/blockies"
-        app:layout_constraintEnd_toEndOf="@id/blockies"
-        app:layout_constraintStart_toEndOf="@id/blockies"
-        app:layout_constraintTop_toBottomOf="@id/blockies" />
-
-    <ImageView
-        android:id="@+id/key_type"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/ic_key_type_seed"
-        app:layout_constraintBottom_toBottomOf="@id/blockies"
-        app:layout_constraintEnd_toEndOf="@id/blockies"
-        app:layout_constraintStart_toEndOf="@id/blockies"
-        app:layout_constraintTop_toBottomOf="@id/blockies" />
-
-
-
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
