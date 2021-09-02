@@ -13,7 +13,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:elevation="4dp"
-        app:layout_constraintBottom_toTopOf="@id/new_address_blockies"
+        app:layout_constraintBottom_toTopOf="@id/new_address_blockies_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -56,16 +56,57 @@
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
-    <pm.gnosis.blockies.BlockiesImageView
-        android:id="@+id/new_address_blockies"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/new_address_blockies_container"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toTopOf="@id/new_address_hex"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <pm.gnosis.blockies.BlockiesImageView
+            android:id="@+id/new_address_blockies"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/key_type_background"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/circle_dark_grey"
+            app:layout_constraintStart_toStartOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
+
+        <ImageView
+            android:id="@+id/key_type"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_key_type_imported_16dp"
+            app:layout_constraintBottom_toBottomOf="@id/key_type_background"
+            app:layout_constraintEnd_toEndOf="@id/key_type_background"
+            app:layout_constraintStart_toStartOf="@id/key_type_background"
+            app:layout_constraintTop_toTopOf="@id/key_type_background" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.4375" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_guideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4375" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/valid_check_mark"
@@ -92,7 +133,7 @@
         app:layout_constraintBottom_toTopOf="@id/owner_name_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/valid_check_mark"
-        app:layout_constraintTop_toBottomOf="@id/new_address_blockies"
+        app:layout_constraintTop_toBottomOf="@id/new_address_blockies_container"
         tools:text="0x01293891238912830192831092381238120938120398" />
 
     <TextView
