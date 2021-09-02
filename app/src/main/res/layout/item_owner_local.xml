@@ -82,7 +82,7 @@
             android:id="@+id/key_type"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/ic_key_type_seed_white_two"
+            tools:src="@drawable/ic_key_type_imported_16dp"
             app:layout_constraintBottom_toBottomOf="@id/key_type_background"
             app:layout_constraintEnd_toEndOf="@id/key_type_background"
             app:layout_constraintStart_toStartOf="@id/key_type_background"
