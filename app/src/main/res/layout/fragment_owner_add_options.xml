@@ -60,11 +60,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/surface_01"
-                android:paddingBottom="@dimen/default_margin"
-                android:paddingTop="@dimen/default_margin"
                 app:setting_name="@string/signing_owner_import_existing_title"
                 app:setting_description="@string/signing_owner_import_existing_desc"
-                app:setting_openable="true" />
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_imported_24dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -76,17 +75,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/surface_01"
-                android:paddingBottom="@dimen/default_margin"
-                android:paddingTop="@dimen/default_margin"
                 app:setting_name="@string/signing_owner_create_new_title"
                 app:setting_description="@string/signing_owner_create_new_desc"
-                app:setting_openable="true" />
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_generated_24dp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_separator_height"
                 android:background="@color/separator" />
 
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/item_connect_ledger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_01"
+                app:setting_name="@string/signing_owner_connect_ledger_title"
+                app:setting_description="@string/signing_owner_connect_ledger_desc"
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_ledger_24dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/separator" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

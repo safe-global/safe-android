@@ -10,10 +10,9 @@ data class OwnerViewData(
     val type: Owner.Type
 )
 
-
 fun OwnerViewData.getImageResForKeyType(): Int =
     when (type) {
-        Owner.Type.IMPORTED -> R.drawable.ic_key_type_key
-        Owner.Type.GENERATED -> R.drawable.ic_key_type_seed
-        Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger
+        Owner.Type.IMPORTED -> R.drawable.ic_key_type_imported_16dp
+        Owner.Type.GENERATED -> R.drawable.ic_key_type_generated_16dp
+        Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger_16dp
     }
