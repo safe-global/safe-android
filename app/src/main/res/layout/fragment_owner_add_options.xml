@@ -64,7 +64,8 @@
                 android:paddingTop="@dimen/default_margin"
                 app:setting_name="@string/signing_owner_import_existing_title"
                 app:setting_description="@string/signing_owner_import_existing_desc"
-                app:setting_openable="true" />
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_key_emphasis_high" />
 
             <View
                 android:layout_width="match_parent"
@@ -80,7 +81,8 @@
                 android:paddingTop="@dimen/default_margin"
                 app:setting_name="@string/signing_owner_create_new_title"
                 app:setting_description="@string/signing_owner_create_new_desc"
-                app:setting_openable="true" />
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_seed_emphasis_high" />
 
             <View
                 android:layout_width="match_parent"
@@ -96,7 +98,8 @@
                 android:paddingTop="@dimen/default_margin"
                 app:setting_name="@string/signing_owner_connect_ledger_title"
                 app:setting_description="@string/signing_owner_connect_ledger_desc"
-                app:setting_openable="true" />
+                app:setting_openable="true"
+                app:setting_image="@drawable/ic_key_type_ledger_emphasis_high" />
 
             <View
                 android:layout_width="match_parent"
