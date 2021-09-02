@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class OwnerInfoLedgerFragment : BaseViewBindingFragment<FragmentOwnerInfoLedgerBinding>() {
 
-    override fun screenId() = ScreenId.OWNER_GENERATE_INFO
+    override fun screenId() = ScreenId.OWNER_LEDGER_INFO
 
     override suspend fun chainId(): BigInteger? = null
 
