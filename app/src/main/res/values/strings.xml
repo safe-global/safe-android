@@ -460,6 +460,13 @@
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="import_owner_key_default">Default</string>
+    <string name="import_owner_key_ledger_title">Connect Ledger Nano X</string>
+    <string name="import_owner_key_ledger_how_does_it_work_title">How does it work?</string>
+    <string name="import_owner_key_ledger_how_does_it_work_desc">You can connect your Ledger device and select a key. If it is an owner of your Safe you can sign transactions.</string>
+    <string name="import_owner_key_ledger_pair_your_ledger_device_title">Pair your ledger device</string>
+    <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
+    <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
+    <string name="import_owner_key_ledger_how_secure_is_that_desc">Your key will remain on your Ledger wallet. We do not store it in the app.</string>
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
