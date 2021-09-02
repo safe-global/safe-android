@@ -38,6 +38,9 @@ class OwnerAddOptionsFragment : BaseViewBindingFragment<FragmentOwnerAddOptionsB
             itemCreateNew.setOnClickListener {
                 findNavController().navigate(OwnerAddOptionsFragmentDirections.actionOwnerAddOptionsFragmentToOwnerInfoGenerateFragment())
             }
+            itemConnectLedger.setOnClickListener {
+                findNavController().navigate(OwnerAddOptionsFragmentDirections.actionOwnerAddOptionsFragmentToOwnerInfoLedgerFragment())
+            }
         }
     }
 }
