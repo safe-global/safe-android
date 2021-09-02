@@ -10,7 +10,6 @@ data class OwnerViewData(
     val type: Owner.Type
 )
 
-
 fun OwnerViewData.getImageResForKeyType(): Int =
     when (type) {
         Owner.Type.IMPORTED -> R.drawable.ic_key_type_key_white_two

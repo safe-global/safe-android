@@ -4,7 +4,6 @@ import dagger.Component
 import io.gnosis.safe.di.ForView
 import io.gnosis.safe.di.modules.ViewModule
 import io.gnosis.safe.ui.StartActivity
-import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.ui.assets.AssetsFragment
 import io.gnosis.safe.ui.assets.coins.CoinsFragment
 import io.gnosis.safe.ui.assets.collectibles.CollectiblesFragment
@@ -24,9 +23,9 @@ import io.gnosis.safe.ui.settings.app.NightModeAppSettingsFragment
 import io.gnosis.safe.ui.settings.app.fiat.AppFiatFragment
 import io.gnosis.safe.ui.settings.app.passcode.*
 import io.gnosis.safe.ui.settings.chain.ChainSelectionFragment
+import io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment
-import io.gnosis.safe.ui.settings.owner.OwnerAddOptionsFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.ui.settings.owner.export.OwnerExportFragment
@@ -34,6 +33,7 @@ import io.gnosis.safe.ui.settings.owner.export.OwnerExportKeyFragment
 import io.gnosis.safe.ui.settings.owner.export.OwnerExportSeedFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
+import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
@@ -44,6 +44,7 @@ import io.gnosis.safe.ui.terms.TermsBottomSheetDialog
 import io.gnosis.safe.ui.transactions.TransactionListFragment
 import io.gnosis.safe.ui.transactions.TransactionsFragment
 import io.gnosis.safe.ui.transactions.details.*
+import io.gnosis.safe.ui.updates.UpdatesFragment
 
 @ForView
 @Component(
@@ -87,6 +88,8 @@ interface ViewComponent {
     fun inject(fragment: OwnerInfoFragment)
 
     fun inject(fragment: OwnerInfoGenerateFragment)
+
+    fun inject(fragment: OwnerInfoLedgerFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
 
