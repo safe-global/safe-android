@@ -34,19 +34,7 @@ class OwnerInfoLedgerFragment : BaseViewBindingFragment<FragmentOwnerInfoLedgerB
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                /*
-                    proceed with key generation
-                    app creates a unique seed phrase and derives the key at index 0, and uses that to show the key address in the next screen.
-                    When the user goes back to this screen and presses “Next” again then the user must be able to see the same key again.
-                */
-                 viewModel.ownerData?.let {
-                     findNavController().navigate(OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToOwnerEnterNameFragment(
-                         ownerAddress = it.address,
-                         ownerKey = it.key,
-                         fromSeedPhrase = false,
-                         ownerSeedPhrase = it.mnemonic
-                     ))
-                 }
+                // TODO get address from Ledger Nano X
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
         }
