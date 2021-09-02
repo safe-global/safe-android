@@ -124,6 +124,9 @@
             android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoGenerateFragment"
             app:destination="@id/ownerInfoGenerateFragment" />
 
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoLedgerFragment"
+            app:destination="@id/ownerInfoLedgerFragment" />
     </fragment>
 
     <fragment
@@ -135,6 +138,16 @@
         <action
             android:id="@+id/action_ownerInfoGenerateFragment_to_ownerEnterNameFragment"
             app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoLedgerFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment"
+        android:label="OwnerInfoLedgerFragment"
+        tools:layout="@layout/fragment_owner_info_ledger">
+
+        <!-- TODO add action to navigate to DeviceListFragment in future PR -->
 
     </fragment>
 

@@ -44,7 +44,7 @@
                 android:layout_marginHorizontal="@dimen/default_margin"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:text="@string/generate_owner_key_title" />
+                android:text="@string/import_owner_key_ledger_title" />
 
             <TextView
                 android:id="@+id/next_button"
@@ -78,8 +78,20 @@
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
                 app:info_icon="@drawable/ic_seed_phrase"
-                app:info_title="@string/generate_owner_key_intro_seed_phrase_title"
-                app:info_text="@string/generate_owner_key_intro_seed_phrase_desc"
+                app:info_title="@string/import_owner_key_ledger_how_does_it_work_title"
+                app:info_text="@string/import_owner_key_ledger_how_does_it_work_desc"
+                app:cardCornerRadius="8dp"/>
+
+            <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_01"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginRight="@dimen/default_margin"
+                app:info_icon="@drawable/ic_illustration_bluetooth"
+                app:info_title="@string/import_owner_key_ledger_pair_your_ledger_device_title"
+                app:info_text="@string/import_owner_key_ledger_pair_your_ledger_device_desc"
                 app:cardCornerRadius="8dp"/>
 
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
@@ -90,24 +102,11 @@
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
-                app:info_icon="@drawable/ic_private_key"
-                app:info_title="@string/generate_owner_key_intro_private_key_title"
-                app:info_text="@string/generate_owner_key_intro_private_key_desc"
-                app:cardCornerRadius="8dp"/>
-
-            <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/surface_01"
-                android:layout_marginTop="@dimen/default_margin"
-                android:layout_marginLeft="@dimen/default_margin"
-                android:layout_marginRight="@dimen/default_margin"
                 android:layout_marginBottom="36dp"
-                app:info_icon="@drawable/ic_wallets"
-                app:info_title="@string/generate_owner_key_intro_export_title"
-                app:info_text="@string/generate_owner_key_intro_export_desc"
+                app:info_icon="@drawable/ic_private_key"
+                app:info_title="@string/import_owner_key_ledger_how_secure_is_that_title"
+                app:info_text="@string/import_owner_key_ledger_how_secure_is_that_desc"
                 app:cardCornerRadius="8dp"/>
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
