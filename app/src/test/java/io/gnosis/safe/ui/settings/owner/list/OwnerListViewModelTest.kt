@@ -46,7 +46,7 @@ class OwnerListViewModelTest {
 
         viewModel.loadOwners()
 
-        val expectedOwnerViewData = listOf(owner1, owner2).map { OwnerViewData.LocalOwner(it.address, it.name) }.sortedBy { it.name }
+        val expectedOwnerViewData = listOf(owner1, owner2).map { OwnerViewData(it.address, it.name, it.type) }.sortedBy { it.name }
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),

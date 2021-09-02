@@ -29,11 +29,11 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
     override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
         when (holder) {
             is LocalOwnerViewHolder -> {
-                val owner = items[position] as OwnerViewData.LocalOwner
+                val owner = items[position]
                 holder.bind(owner, ownerListener, position)
             }
             is LocalOwnerForSigningViewHolder -> {
-                val owner = items[position] as OwnerViewData.LocalOwner
+                val owner = items[position]
                 holder.bind(owner, ownerListener, position)
             }
         }
@@ -58,18 +58,12 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        val item = items[position]
-        return when (item) {
-            is OwnerViewData.LocalOwner -> {
-                if (forSigningOnly) {
-                    OwnerItemViewType.LOCAL_FOR_SIGN
-                } else {
-                    OwnerItemViewType.LOCAL
-                }
-            }
+    override fun getItemViewType(position: Int): Int =
+        if (forSigningOnly) {
+            OwnerItemViewType.LOCAL_FOR_SIGN
+        } else {
+            OwnerItemViewType.LOCAL
         }.ordinal
-    }
 
     override fun getItemCount() = items.size
 
@@ -90,10 +84,11 @@ abstract class BaseOwnerViewHolder(
 
 class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
+    fun bind(owner: OwnerViewData, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
+            keyType.setImageResource(owner.getImageResForKeyType())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
@@ -109,10 +104,11 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
 
 class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
+    fun bind(owner: OwnerViewData, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
+            keyType.setImageResource(owner.getImageResForKeyType())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
