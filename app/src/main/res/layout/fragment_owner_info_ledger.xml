@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_04">
+
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
+            style="@style/Toolbar"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/add_safe_label_top"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/ToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="@string/import_owner_key_ledger_title" />
+
+            <TextView
+                android:id="@+id/next_button"
+                style="@style/ToolbarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_weight="0"
+                android:text="@string/next" />
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_01"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:info_icon="@drawable/ic_seed_phrase"
+                app:info_title="@string/import_owner_key_ledger_how_does_it_work_title"
+                app:info_text="@string/import_owner_key_ledger_how_does_it_work_desc"
+                app:cardCornerRadius="8dp"/>
+
+            <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_01"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:info_icon="@drawable/ic_illustration_bluetooth"
+                app:info_title="@string/import_owner_key_ledger_pair_your_ledger_device_title"
+                app:info_text="@string/import_owner_key_ledger_pair_your_ledger_device_desc"
+                app:cardCornerRadius="8dp"/>
+
+            <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
+                android:id="@+id/info_private_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_01"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="36dp"
+                app:info_icon="@drawable/ic_private_key"
+                app:info_title="@string/import_owner_key_ledger_how_secure_is_that_title"
+                app:info_text="@string/import_owner_key_ledger_how_secure_is_that_desc"
+                app:cardCornerRadius="8dp"/>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
