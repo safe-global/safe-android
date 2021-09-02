@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
 import io.gnosis.safe.utils.shortChecksumString
@@ -30,11 +29,11 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
     override fun onBindViewHolder(holder: BaseOwnerViewHolder, position: Int) {
         when (holder) {
             is LocalOwnerViewHolder -> {
-                val owner = items[position] as OwnerViewData.LocalOwner
+                val owner = items[position]
                 holder.bind(owner, ownerListener, position)
             }
             is LocalOwnerForSigningViewHolder -> {
-                val owner = items[position] as OwnerViewData.LocalOwner
+                val owner = items[position]
                 holder.bind(owner, ownerListener, position)
             }
         }
@@ -59,18 +58,12 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        val item = items[position]
-        return when (item) {
-            is OwnerViewData.LocalOwner -> {
-                if (forSigningOnly) {
-                    OwnerItemViewType.LOCAL_FOR_SIGN
-                } else {
-                    OwnerItemViewType.LOCAL
-                }
-            }
+    override fun getItemViewType(position: Int): Int =
+        if (forSigningOnly) {
+            OwnerItemViewType.LOCAL_FOR_SIGN
+        } else {
+            OwnerItemViewType.LOCAL
         }.ordinal
-    }
 
     override fun getItemCount() = items.size
 
@@ -91,7 +84,7 @@ abstract class BaseOwnerViewHolder(
 
 class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
+    fun bind(owner: OwnerViewData, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
@@ -109,17 +102,9 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
     }
 }
 
-private fun OwnerViewData.LocalOwner.getImageResForKeyType(): Int =
-    when (type) {
-        Owner.Type.IMPORTED -> R.drawable.ic_key_type_key
-        Owner.Type.GENERATED -> R.drawable.ic_key_type_seed
-        Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger
-    }
-
-
 class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(owner: OwnerViewData.LocalOwner, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
+    fun bind(owner: OwnerViewData, ownerListener: OwnerListAdapter.OwnerListener, position: Int) {
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
