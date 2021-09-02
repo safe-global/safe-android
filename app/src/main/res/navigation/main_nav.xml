@@ -147,9 +147,7 @@
         android:label="OwnerInfoLedgerFragment"
         tools:layout="@layout/fragment_owner_info_ledger">
 
-        <action
-            android:id="@+id/action_ownerInfoLedgerFragment_to_ownerEnterNameFragment"
-            app:destination="@id/ownerEnterNameFragment" />
+        <!-- TODO add action to navigate to DeviceListFragment in future PR -->
 
     </fragment>
 
