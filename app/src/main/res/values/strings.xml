@@ -353,10 +353,12 @@
     <string name="tx_confirmations_rejection_created">On-chain rejection created</string>
 
     <string name="signing_owner_add_key">Add owner key</string>
-    <string name="signing_owner_import_existing_title">Import existing key</string>
+    <string name="signing_owner_import_existing_title">Import existing owner key</string>
     <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
-    <string name="signing_owner_create_new_title">Create new key</string>
+    <string name="signing_owner_create_new_title">Create new owner key</string>
     <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Gnosis Safe</string>
+    <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
+    <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
 
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
