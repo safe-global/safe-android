@@ -61,7 +61,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@id/new_address_hex"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,8 +79,8 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/circle_dark_grey"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
             android:id="@+id/key_type"
@@ -91,20 +91,6 @@
             app:layout_constraintEnd_toEndOf="@id/key_type_background"
             app:layout_constraintStart_toStartOf="@id/key_type_background"
             app:layout_constraintTop_toTopOf="@id/key_type_background" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.4375" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/horizontal_guideline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.4375" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
