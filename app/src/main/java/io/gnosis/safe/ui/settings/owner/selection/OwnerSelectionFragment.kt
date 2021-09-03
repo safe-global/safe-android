@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.OwnerType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
@@ -66,7 +67,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                     binding.showMoreOwners.visible(false)
                 } else {
 
-                    binding.nextButton.isEnabled = adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L &&  adapter.peek(0)?.disabled == false
+                    binding.nextButton.isEnabled =
+                        adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false
                     binding.progress.visible(false)
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
@@ -82,7 +84,12 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                 val (address, key) = viewModel.getOwnerData(privateKey)
 
                 findNavController().navigate(
-                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(ownerAddress = address, ownerKey = key, fromSeedPhrase = usingSeedPhrase())
+                    OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(
+                        ownerAddress = address,
+                        ownerKey = key,
+                        fromSeedPhrase = usingSeedPhrase(),
+                        ownerType = OwnerType.IMPORTED
+                    )
                 )
             }
             owners.adapter = adapter

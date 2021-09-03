@@ -222,6 +222,11 @@
             app:nullable="true"
             android:defaultValue="@null"/>
 
+        <argument
+            android:name="ownerType"
+            app:argType="io.gnosis.data.models.OwnerType"
+            app:nullable="false" />
+
         <action
             android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
             app:destination="@id/createPasscodeFragment" />

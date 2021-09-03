@@ -19,7 +19,7 @@ data class Owner(
 
     @ColumnInfo(name = COL_TYPE)
     @TypeConverters(OwnerTypeConverter::class)
-    val type: Type,
+    val type: OwnerType,
 
     @ColumnInfo(name = COL_PRIVATE_KEY)
     @TypeConverters(EncryptedByteArray.NullableConverter::class)
@@ -34,23 +34,6 @@ data class Owner(
 
     //FIXME: add device uuid?
 ) {
-
-    enum class Type(val value: Int) {
-        // add types here
-        IMPORTED(0),
-        GENERATED(1),
-        LEDGER_NANO_X(2);
-
-        companion object {
-            fun get(value: Int) = when (value) {
-                0 -> IMPORTED
-                1 -> GENERATED
-                2 -> LEDGER_NANO_X
-                else -> IMPORTED
-            }
-        }
-    }
-
     companion object {
         const val TABLE_NAME = "owners"
 
@@ -63,15 +46,31 @@ data class Owner(
     }
 }
 
-class OwnerTypeConverter {
+// Can't be inner class because NavArgs doesn't support it.
+enum class OwnerType(val value: Int) {
+    // add types here
+    IMPORTED(0),
+    GENERATED(1),
+    LEDGER_NANO_X(2);
 
+    companion object {
+        fun get(value: Int) = when (value) {
+            0 -> IMPORTED
+            1 -> GENERATED
+            2 -> LEDGER_NANO_X
+            else -> IMPORTED
+        }
+    }
+}
+
+class OwnerTypeConverter {
     @TypeConverter
-    fun toType(typeValue: Int): Owner.Type {
-        return Owner.Type.get(typeValue)
+    fun toType(typeValue: Int): OwnerType {
+        return OwnerType.get(typeValue)
     }
 
     @TypeConverter
-    fun toValue(type: Owner.Type): Int {
+    fun toValue(type: OwnerType): Int {
         return type.value
     }
 }

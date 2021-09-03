@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details.viewdata
 
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
@@ -40,7 +41,7 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toAddressInfoData() (Address matches local owner) should return AddressInfoData_Local`() {
         val addressInfo = AddressInfo(anyAddress, "Foo", "https://www.foo.de/foo.png")
-        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = Owner.Type.IMPORTED))
+        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = OwnerType.IMPORTED))
 
         val result = addressInfo.toAddressInfoData(safes = emptyList(), safeAppInfo = aSafeAppInfo, owners = owners)
 
@@ -50,7 +51,7 @@ class TransactionDetailsViewDataTest {
     @Test
     fun `toAddressInfoData() (Address does not match any local owner) should return AddressInfoData_Remote`() {
         val addressInfo = AddressInfo(anotherAddress, "Foo", "https://www.foo.de/foo.png")
-        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = Owner.Type.IMPORTED))
+        val owners = listOf(Owner(address = anyAddress, name = "Local owner Name", type = OwnerType.IMPORTED))
 
         val result = addressInfo.toAddressInfoData(emptyList(), null, owners)
 

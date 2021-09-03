@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details
 
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -39,7 +40,7 @@ class TransactionDetailsActionViewModelTest {
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
-        val owner1 = Owner(Solidity.Address(BigInteger.valueOf(2)), "owner1", Owner.Type.IMPORTED)
+        val owner1 = Owner(Solidity.Address(BigInteger.valueOf(2)), "owner1", OwnerType.IMPORTED)
 
         val addressInfoIndex = mapOf<String, AddressInfo>()
         val extendexAddressInfoIndex = mapOf(
@@ -75,7 +76,7 @@ class TransactionDetailsActionViewModelTest {
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
-        val owner1 = Owner(Solidity.Address(BigInteger.valueOf(2)), "owner1", Owner.Type.IMPORTED)
+        val owner1 = Owner(Solidity.Address(BigInteger.valueOf(2)), "owner1", OwnerType.IMPORTED)
 
         val addressInfoIndex = mapOf(
             knownAddress.asEthereumAddressChecksumString() to knownAddressInfo
@@ -117,7 +118,7 @@ class TransactionDetailsActionViewModelTest {
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
-        val owner1 = Owner(Solidity.Address(BigInteger.TEN), "owner1", Owner.Type.IMPORTED)
+        val owner1 = Owner(Solidity.Address(BigInteger.TEN), "owner1", OwnerType.IMPORTED)
 
         val addressInfoIndex = mapOf(
             knownAddress1.asEthereumAddressChecksumString() to knownAddressInfo1,

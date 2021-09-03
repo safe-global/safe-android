@@ -2,7 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.content.Context
 import android.content.Intent
-import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
@@ -41,8 +41,8 @@ constructor(
 
         val numSafes = safeRepository.getSafeCount()
         tracker.setNumSafes(numSafes)
-        tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
-        tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
+        tracker.setNumKeysImported(credentialsRepository.ownerCount(OwnerType.IMPORTED))
+        tracker.setNumKeysGenerated(credentialsRepository.ownerCount(OwnerType.GENERATED))
     }
 
     fun onStartClicked() {

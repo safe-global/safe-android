@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
@@ -267,7 +268,7 @@ class OwnerSeedPhraseViewModelTest {
 
     @Test
     fun `validatePrivateKey (good key already imported ) should fail`() {
-        coEvery { credentialsRepository.owner(any()) } returns Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED)
+        coEvery { credentialsRepository.owner(any()) } returns Owner(address = "0x00".asEthereumAddress()!!, type = OwnerType.IMPORTED)
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 

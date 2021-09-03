@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.splash
 
 import android.app.Application
 import android.content.Context
-import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule

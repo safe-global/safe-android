@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.OwnerType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerInfoGenerateBinding
@@ -45,7 +46,8 @@ class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGener
                          ownerAddress = it.address,
                          ownerKey = it.key,
                          fromSeedPhrase = false,
-                         ownerSeedPhrase = it.mnemonic
+                         ownerSeedPhrase = it.mnemonic,
+                         ownerType = OwnerType.GENERATED
                      ))
                  }
             }

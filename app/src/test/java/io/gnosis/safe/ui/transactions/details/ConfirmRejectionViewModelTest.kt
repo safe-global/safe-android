@@ -4,8 +4,8 @@ import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.Safe
-import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -44,7 +44,7 @@ class ConfirmRejectionViewModelTest {
         val owner = Owner(
             "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
             null,
-            Owner.Type.IMPORTED,
+            OwnerType.IMPORTED,
             null
         )
         coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")

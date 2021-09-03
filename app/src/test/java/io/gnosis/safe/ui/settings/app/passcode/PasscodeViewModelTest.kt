@@ -5,6 +5,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.security.BiometricPasscodeManager
@@ -96,7 +97,7 @@ class PasscodeViewModelTest {
 
     @Test
     fun `onForgotPasscode - (successful owner deletion) should remove passcode and delete owner data `() {
-        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED))
+        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = OwnerType.IMPORTED))
         coEvery { credentialsRepository.ownerCount() } returns 0
         coEvery { safeRepository.clearActiveSafe() } just Runs
         coEvery { safeRepository.getSafes() } returns emptyList()
@@ -127,7 +128,7 @@ class PasscodeViewModelTest {
 
     @Test
     fun `onForgotPasscode - (owner deletion failed) should not remove passcode and delete owner data `() {
-        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = Owner.Type.IMPORTED))
+        coEvery { credentialsRepository.owners() } returns listOf(Owner(address = "0x00".asEthereumAddress()!!, type = OwnerType.IMPORTED))
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { safeRepository.clearActiveSafe() } just Runs
         coEvery { safeRepository.getSafes() } returns emptyList()

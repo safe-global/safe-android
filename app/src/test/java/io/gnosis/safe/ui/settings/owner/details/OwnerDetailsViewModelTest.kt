@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner.details
 
 import android.graphics.Bitmap
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
@@ -39,7 +40,7 @@ class OwnerDetailsViewModelTest {
         val ownerName = "owner1"
         val qrCode = mockk<Bitmap>()
 
-        coEvery { credentialsRepository.owner(ownerAddress) } returns Owner(ownerAddress, "owner1", Owner.Type.IMPORTED)
+        coEvery { credentialsRepository.owner(ownerAddress) } returns Owner(ownerAddress, "owner1", OwnerType.IMPORTED)
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns qrCode
 
         viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
@@ -63,13 +64,13 @@ class OwnerDetailsViewModelTest {
     fun `removeOwner (ownerAddress) - should remove and unregister owner`() {
 
         val ownerAddress = Solidity.Address(BigInteger.ZERO)
-        val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
+        val owner = Owner(ownerAddress, null, OwnerType.IMPORTED, null)
 
         coEvery { credentialsRepository.owner(any()) } returns owner
         coEvery { credentialsRepository.removeOwner(owner) } just Runs
         coEvery { notificationRepository.unregisterOwners() } just Runs
         coEvery { tracker.logKeyDeleted() } just Runs
-        coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 0
+        coEvery { credentialsRepository.ownerCount(OwnerType.IMPORTED) } returns 0
         coEvery { tracker.setNumKeysImported(any()) } just Runs
 
         viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
@@ -88,7 +89,7 @@ class OwnerDetailsViewModelTest {
             credentialsRepository.removeOwner(owner)
             notificationRepository.unregisterOwners()
             tracker.logKeyDeleted()
-            credentialsRepository.ownerCount(Owner.Type.IMPORTED)
+            credentialsRepository.ownerCount(OwnerType.IMPORTED)
             tracker.setNumKeysImported(any())
         }
     }
