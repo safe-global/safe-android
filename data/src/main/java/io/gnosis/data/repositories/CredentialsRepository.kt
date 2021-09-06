@@ -2,7 +2,6 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.gnosis.data.utils.toSignatureString
@@ -36,9 +35,9 @@ class CredentialsRepository(
         return encryptionManager.unlocked()
     }
 
-    suspend fun ownerCount(ownerType: OwnerType? = null): Int {
+    suspend fun ownerCount(ownerType: Owner.Type? = null): Int {
         return when {
-            ownerType == OwnerType.IMPORTED || ownerType == OwnerType.GENERATED -> {
+            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED -> {
                 ownerDao.ownerCountForType(OwnerTypeConverter().toValue(ownerType))
             }
             else -> {
@@ -64,7 +63,7 @@ class CredentialsRepository(
         val owner = Owner(
             address = address,
             name = name,
-            type = OwnerType.IMPORTED,
+            type = Owner.Type.IMPORTED,
             privateKey = encryptedKey,
             seedPhrase = null
         )
@@ -82,7 +81,7 @@ class CredentialsRepository(
         val owner = Owner(
             address = address,
             name = name,
-            type = OwnerType.GENERATED,
+            type = Owner.Type.GENERATED,
             privateKey = encryptedKey,
             seedPhrase = encryptedSeedPhrase
         )

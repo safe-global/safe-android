@@ -868,7 +868,7 @@ class TransactionListViewModelTest {
                 CHAIN,
                 it,
                 listOf(safe),
-                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress.value, type = OwnerType.IMPORTED)))
+                it.canBeSignedByAnyOwner(listOf(Owner(address = ownerAddress.value, type = Owner.Type.IMPORTED)))
             )
         }
 

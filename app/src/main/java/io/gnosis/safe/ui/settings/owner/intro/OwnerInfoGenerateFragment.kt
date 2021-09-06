@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerInfoGenerateBinding
@@ -32,6 +33,8 @@ class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGener
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerInfoGenerateBinding =
         FragmentOwnerInfoGenerateBinding.inflate(inflater, container, false)
 
+    private val ownerTypeConverter = OwnerTypeConverter()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
@@ -47,7 +50,7 @@ class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGener
                          ownerKey = it.key,
                          fromSeedPhrase = false,
                          ownerSeedPhrase = it.mnemonic,
-                         ownerType = OwnerType.GENERATED
+                         ownerType = ownerTypeConverter.toValue(Owner.Type.GENERATED)
                      ))
                  }
             }

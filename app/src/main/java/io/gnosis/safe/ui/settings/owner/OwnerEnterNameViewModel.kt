@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -28,7 +28,7 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(fromSeedPhrase)
-            tracker.setNumKeysImported(credentialsRepository.ownerCount(OwnerType.IMPORTED))
+            tracker.setNumKeysImported(credentialsRepository.ownerCount(Owner.Type.IMPORTED))
             notificationRepository.registerSafes()
 
             updateState {
@@ -49,7 +49,7 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyGenerated()
-            tracker.setNumKeysGenerated(credentialsRepository.ownerCount(OwnerType.GENERATED))
+            tracker.setNumKeysGenerated(credentialsRepository.ownerCount(Owner.Type.GENERATED))
             notificationRepository.registerSafes()
 
             updateState {

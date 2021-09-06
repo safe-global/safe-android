@@ -224,7 +224,7 @@
 
         <argument
             android:name="ownerType"
-            app:argType="io.gnosis.data.models.OwnerType"
+            app:argType="integer"
             app:nullable="false" />
 
         <action

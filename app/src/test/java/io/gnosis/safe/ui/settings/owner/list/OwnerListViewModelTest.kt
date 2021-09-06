@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.list
 
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
@@ -36,8 +35,8 @@ class OwnerListViewModelTest {
 
     @Test
     fun `loadOwners - should load locally saved owners`() {
-        val owner1 = Owner(Solidity.Address(BigInteger.ZERO), null, OwnerType.GENERATED)
-        val owner2 = Owner(Solidity.Address(BigInteger.ONE), null, OwnerType.IMPORTED)
+        val owner1 = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
+        val owner2 = Owner(Solidity.Address(BigInteger.ONE), null, Owner.Type.IMPORTED)
 
         coEvery { credentialsRepository.owners() } returns listOf(owner1, owner2)
 
@@ -61,7 +60,7 @@ class OwnerListViewModelTest {
     @Test
     fun `selectKeyForSigning (passcode required) - should start enter passcode flow`() {
 
-        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, OwnerType.GENERATED)
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
 
         coEvery { settingsHandler.usePasscode } returns true
         coEvery { settingsHandler.requirePasscodeForConfirmations } returns true
@@ -86,7 +85,7 @@ class OwnerListViewModelTest {
     @Test
     fun `selectKeyForSigning (passcode not required, confirmation) - should emit ConfirmConfirmation`() {
 
-        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, OwnerType.GENERATED)
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
 
         coEvery { settingsHandler.usePasscode } returns false
 
@@ -106,7 +105,7 @@ class OwnerListViewModelTest {
     @Test
     fun `selectKeyForSigning (passcode not required, not confirmation) - should emit ConfirmRejection`() {
 
-        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, OwnerType.GENERATED)
+        val owner = Owner(Solidity.Address(BigInteger.ZERO), null, Owner.Type.GENERATED)
 
         coEvery { settingsHandler.usePasscode } returns false
 

@@ -8,7 +8,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
@@ -17,7 +18,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.list.getImageResForOwnerType
+import io.gnosis.safe.ui.settings.owner.list.getImageRes16dp
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
@@ -39,7 +40,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val ownerKey by lazy { navArgs.ownerKey.hexAsBigInteger() }
     private val fromSeedPhrase by lazy { navArgs.fromSeedPhrase }
     private val ownerSeedPhrase by lazy { navArgs.ownerSeedPhrase }
-    private val ownerType: OwnerType by lazy { navArgs.ownerType }
+    private val ownerType: Owner.Type by lazy { OwnerTypeConverter().toType(navArgs.ownerType) }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -55,7 +56,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
         with(binding) {
             newAddressBlockies.setAddress(ownerAddress)
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
-            keyType.setImageResource(ownerType.getImageResForOwnerType())
+            keyType.setImageResource(ownerType.getImageRes16dp())
             backButton.setOnClickListener { findNavController().navigateUp() }
             if (ownerSeedPhrase != null) {
                 nextButton.text = getString(R.string.signing_owner_save)

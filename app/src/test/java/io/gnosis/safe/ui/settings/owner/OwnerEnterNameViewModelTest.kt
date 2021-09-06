@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.settings.owner
 
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
@@ -35,7 +35,7 @@ class OwnerEnterNameViewModelTest {
         val ownerName = "owner1"
 
         coEvery { credentialsRepository.saveOwner(any(), any(), any()) } just Runs
-        coEvery { credentialsRepository.ownerCount(OwnerType.IMPORTED) } returns 1
+        coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 1
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
@@ -60,7 +60,7 @@ class OwnerEnterNameViewModelTest {
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(any())
-            credentialsRepository.ownerCount(OwnerType.IMPORTED)
+            credentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(any())
             notificationRepository.registerSafes()
             settingsHandler.usePasscode
@@ -74,7 +74,7 @@ class OwnerEnterNameViewModelTest {
         val ownerName = "owner1"
 
         coEvery { credentialsRepository.saveOwner(any(), any(), any()) } just Runs
-        coEvery { credentialsRepository.ownerCount(OwnerType.IMPORTED) } returns 3
+        coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 3
         coEvery { settingsHandler.showOwnerBanner = false } just Runs
         coEvery { settingsHandler.showOwnerScreen = false } just Runs
         coEvery { tracker.logKeyImported(any()) } just Runs
@@ -99,7 +99,7 @@ class OwnerEnterNameViewModelTest {
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
             tracker.logKeyImported(any())
-            credentialsRepository.ownerCount(OwnerType.IMPORTED)
+            credentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(3)
             notificationRepository.registerSafes()
             settingsHandler.usePasscode

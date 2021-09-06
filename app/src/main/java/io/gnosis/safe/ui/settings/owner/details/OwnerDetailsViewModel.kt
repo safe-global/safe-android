@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.owner.details
 import android.graphics.Bitmap
 import android.graphics.Color
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
@@ -90,8 +89,8 @@ class OwnerDetailsViewModel
             notificationRepository.unregisterOwners()
             tracker.logKeyDeleted()
             when(owner.type) {
-                OwnerType.IMPORTED -> tracker.setNumKeysImported(credentialsRepository.ownerCount(owner.type))
-                OwnerType.GENERATED -> tracker.setNumKeysGenerated(credentialsRepository.ownerCount(owner.type))
+                Owner.Type.IMPORTED -> tracker.setNumKeysImported(credentialsRepository.ownerCount(owner.type))
+                Owner.Type.GENERATED -> tracker.setNumKeysGenerated(credentialsRepository.ownerCount(owner.type))
             }
             updateState { OwnerDetailsState(ViewAction.CloseScreen) }
         }

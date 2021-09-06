@@ -5,7 +5,6 @@ import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
@@ -118,7 +117,7 @@ class TransactionDetailsViewModelTest {
     fun `isAwaitingOwnerConfirmation (owner is not signer) should return false`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x1".asEthereumAddress()!!, null, OwnerType.IMPORTED, null))
+        val owners = listOf(Owner("0x1".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns owners
 
@@ -135,7 +134,7 @@ class TransactionDetailsViewModelTest {
     fun `isAwaitingOwnerConfirmation (owner is signer but has already signed) should return false`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0".asEthereumAddress()!!, null, OwnerType.IMPORTED, null))
+        val owners = listOf(Owner("0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns owners
 
@@ -152,7 +151,7 @@ class TransactionDetailsViewModelTest {
     fun `isAwaitingOwnerConfirmation (successful) should return false`() = runBlockingTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164".asEthereumAddress()!!, null, OwnerType.IMPORTED, null))
+        val owners = listOf(Owner("0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
         coEvery { credentialsRepository.ownerCount() } returns 1
         coEvery { credentialsRepository.owners() } returns owners
 
@@ -212,7 +211,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(someAddress, null, OwnerType.IMPORTED, null)
+        val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
         coEvery { credentialsRepository.signWithOwner(any(), any()) } throws throwable
         coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
@@ -245,7 +244,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val ownerAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(ownerAddress, null, OwnerType.IMPORTED, null)
+        val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
         coEvery { safeRepository.getActiveSafe() } returns Safe(ownerAddress, "safe_name")
         coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
         coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
@@ -277,7 +276,7 @@ class TransactionDetailsViewModelTest {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(someAddress, null, OwnerType.IMPORTED, null)
+        val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""

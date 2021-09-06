@@ -15,7 +15,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
@@ -50,6 +51,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerSelectionBinding =
         FragmentOwnerSelectionBinding.inflate(inflater, container, false)
+
+    private val ownerTypeConverter = OwnerTypeConverter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -88,7 +91,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         ownerAddress = address,
                         ownerKey = key,
                         fromSeedPhrase = usingSeedPhrase(),
-                        ownerType = OwnerType.IMPORTED
+                        ownerType = ownerTypeConverter.toValue(Owner.Type.IMPORTED)
                     )
                 )
             }

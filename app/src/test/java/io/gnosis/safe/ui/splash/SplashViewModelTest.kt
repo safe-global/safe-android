@@ -2,7 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.app.Application
 import android.content.Context
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.TestLifecycleRule
@@ -179,8 +179,8 @@ class SplashViewModelTest {
         coEvery { tracker.setNumKeysImported(any()) } just Runs
         coEvery { tracker.setNumKeysGenerated(any()) } just Runs
         coEvery { safeRepository.getSafeCount() } returns 0
-        coEvery { ownerCredentialsRepository.ownerCount(OwnerType.IMPORTED) } returns 1
-        coEvery { ownerCredentialsRepository.ownerCount(OwnerType.GENERATED) } returns 0
+        coEvery { ownerCredentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 1
+        coEvery { ownerCredentialsRepository.ownerCount(Owner.Type.GENERATED) } returns 0
 
         val viewModel =
             SplashViewModel(
@@ -203,9 +203,9 @@ class SplashViewModelTest {
             notificationRepository.checkPermissions()
             tracker.setPushInfo(true)
             tracker.setNumSafes(0)
-            ownerCredentialsRepository.ownerCount(OwnerType.IMPORTED)
+            ownerCredentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(1)
-            ownerCredentialsRepository.ownerCount(OwnerType.GENERATED)
+            ownerCredentialsRepository.ownerCount(Owner.Type.GENERATED)
             tracker.setNumKeysGenerated(0)
         }
     }
@@ -246,9 +246,9 @@ class SplashViewModelTest {
             notificationRepository.checkPermissions()
             tracker.setPushInfo(true)
             tracker.setNumSafes(0)
-            ownerCredentialsRepository.ownerCount(OwnerType.IMPORTED)
+            ownerCredentialsRepository.ownerCount(Owner.Type.IMPORTED)
             tracker.setNumKeysImported(0)
-            ownerCredentialsRepository.ownerCount(OwnerType.GENERATED)
+            ownerCredentialsRepository.ownerCount(Owner.Type.GENERATED)
             tracker.setNumKeysGenerated(0)
         }
     }

@@ -8,7 +8,6 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
 import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.data.models.Safe
 import io.gnosis.data.test.BuildConfig
@@ -132,7 +131,7 @@ class HeimdallDatabaseTest {
     @Throws(IOException::class)
     fun migrate3To4() {
 
-        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", OwnerType.IMPORTED)
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED)
 
         helper.createDatabase(TEST_DB, 3).apply {
 

@@ -2,7 +2,7 @@ package io.gnosis.data.repositories
 
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerType
+import io.gnosis.data.models.Owner.Type
 import io.gnosis.data.security.HeimdallEncryptionManager
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
@@ -28,7 +28,7 @@ class CredentialsRepositoryTest {
         val key = "decrypted".toByteArray()
         val keyEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
         val keyCryptoData =  EncryptionManager.CryptoData.fromString(keyEncryptedString)
-        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", OwnerType.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Type.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
 
         coEvery { ownerCredentialsVault.hasCredentials() } returns false
         coEvery { encryptionManager.unlock() } just Runs
@@ -51,7 +51,7 @@ class CredentialsRepositoryTest {
         val key = "decrypted".toByteArray()
         val keyEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
         val keyCryptoData =  EncryptionManager.CryptoData.fromString(keyEncryptedString)
-        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", OwnerType.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
 
         coEvery { ownerCredentialsVault.hasCredentials() } returns false
         coEvery { encryptionManager.unlock() } just Runs
@@ -74,7 +74,7 @@ class CredentialsRepositoryTest {
         val key = "decrypted".toByteArray()
         val keyEncryptedString = "0x1234${EncryptionManager.CryptoData.SEPARATOR}0x1234"
         val keyCryptoData =  EncryptionManager.CryptoData.fromString(keyEncryptedString)
-        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", OwnerType.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Type.IMPORTED, EncryptedByteArray.Converter().fromStorage(keyEncryptedString))
 
         coEvery { ownerCredentialsVault.hasCredentials() } returns false
         coEvery { encryptionManager.unlock() } just Runs
