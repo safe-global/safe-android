@@ -527,7 +527,11 @@
 
     <string name="chain_select_network">Select network on which your Safe was created:</string>
 
-
+    <string name="ledger_connect">Connect Ledger Nano X</string>
+    <string name="ledger_select_device">Select your device</string>
+    <string name="ledger_device_search">Looking for Ledger Nano X devices</string>
+    <string name="ledger_device_not_found">No Ledger Nano X device found. Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
     <string name="ledger_tab_ledger">LEDGER</string>
+    
 </resources>
