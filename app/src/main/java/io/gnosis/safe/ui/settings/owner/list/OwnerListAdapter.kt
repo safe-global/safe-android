@@ -88,7 +88,7 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
-            keyType.setImageResource(owner.getImageRes16dp())
+            keyType.setImageResource(owner.getImageRes())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(
@@ -108,7 +108,7 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
         with(viewBinding) {
             val context = root.context
             blockies.setAddress(owner.address)
-            keyType.setImageResource(owner.getImageRes16dp())
+            keyType.setImageResource(owner.getImageRes())
             ownerAddress.text = owner.address.shortChecksumString()
             title.text = if (owner.name.isNullOrBlank())
                 context.getString(

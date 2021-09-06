@@ -10,9 +10,9 @@ data class OwnerViewData(
     val type: Type
 )
 
-fun OwnerViewData.getImageRes16dp(): Int = type.getImageRes16dp()
+fun OwnerViewData.getImageRes(): Int = type.getImageRes()
 
-fun Type.getImageRes16dp(): Int =
+fun Type.getImageRes(): Int =
     when (this) {
         Type.IMPORTED -> R.drawable.ic_key_type_imported_16dp
         Type.GENERATED -> R.drawable.ic_key_type_generated_16dp
