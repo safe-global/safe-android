@@ -52,8 +52,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerSelectionBinding =
         FragmentOwnerSelectionBinding.inflate(inflater, container, false)
 
-    private val ownerTypeConverter = OwnerTypeConverter()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -91,7 +89,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                         ownerAddress = address,
                         ownerKey = key,
                         fromSeedPhrase = usingSeedPhrase(),
-                        ownerType = ownerTypeConverter.toValue(Owner.Type.IMPORTED)
+                        ownerType = OwnerTypeConverter().toValue(Owner.Type.IMPORTED)
                     )
                 )
             }

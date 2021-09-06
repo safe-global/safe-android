@@ -33,8 +33,6 @@ class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGener
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerInfoGenerateBinding =
         FragmentOwnerInfoGenerateBinding.inflate(inflater, container, false)
 
-    private val ownerTypeConverter = OwnerTypeConverter()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
@@ -50,7 +48,7 @@ class OwnerInfoGenerateFragment : BaseViewBindingFragment<FragmentOwnerInfoGener
                          ownerKey = it.key,
                          fromSeedPhrase = false,
                          ownerSeedPhrase = it.mnemonic,
-                         ownerType = ownerTypeConverter.toValue(Owner.Type.GENERATED)
+                         ownerType = OwnerTypeConverter().toValue(Owner.Type.GENERATED)
                      ))
                  }
             }
