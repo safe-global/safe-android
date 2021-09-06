@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.gnosis.safe.ui.settings.view.SettingItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/device_item"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_setting_openable_height"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_selectable_white"
+    app:setting_openable="true" />
