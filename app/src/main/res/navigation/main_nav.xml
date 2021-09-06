@@ -148,8 +148,9 @@
         tools:layout="@layout/fragment_owner_info_ledger">
 
         <action
-            android:id="@+id/action_ownerInfoLedgerFragment_to_LedgerTabsFragment"
-            app:destination="@id/ledgerTabsFragment" />
+            android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerDeviceListFragment"
+            app:destination="@id/ledgerDeviceListFragment" />
+
     </fragment>
 
     <fragment
@@ -909,5 +910,13 @@
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_settings_safe_advanced" />
+
+    <fragment
+        android:id="@+id/ledgerDeviceListFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment"
+        android:label="LedgerDeviceListFragment"
+        tools:layout="@layout/fragment_ledger_device_list">
+
+    </fragment>
 
 </navigation>
