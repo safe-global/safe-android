@@ -49,6 +49,14 @@ data class Owner(
                 else -> IMPORTED
             }
         }
+
+        override fun toString(): String =
+            when(value) {
+                0 -> "Imported"
+                1 -> "Generated"
+                2 -> "Ledger Nano X"
+                else -> "Imported"
+            }
     }
 
     companion object {

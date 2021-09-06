@@ -16,7 +16,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
-import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -58,9 +57,9 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
             }
-            content.alpha = 0f
-            ownerBlockie.setAddress(owner)
-            ownerAddress.text = owner.formatEthAddress(requireContext(), addMiddleLinebreak = false)
+//            content.alpha = 0f
+//            ownerBlockie.setAddress(owner)
+            ownerAddress.setAddress(null, owner)
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
@@ -69,16 +68,14 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 is CloseScreen -> findNavController().navigateUp()
                 is ShowOwnerDetails -> {
                     with(binding) {
-                        ownerName.text = viewAction.ownerDetails.name
+                        ownerName.name = viewAction.ownerDetails.name
+                        ownerName.settingImage = viewAction.ownerDetails.
                         ownerAddress.setOnClickListener {
                             requireContext().copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
                                 snackbar(requireView(), getString(R.string.copied_success))
                             }
                         }
-                        //FIXME: owners are chain independent; there is not enough context to decide on which blockexplorer to show owner's address
-                        link.setOnClickListener {
-                            // BlockExplorer.forChain().showAddress(requireContext(), owner)
-                        }
+                        ownerType.name = viewAction.ownerDetails.ownerType.toString()
                         removeButton.setOnClickListener {
                             removeButton.isEnabled = false
                             showConfirmDialog(
@@ -94,7 +91,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                         }
 
                         ownerQrCode.setImageBitmap(viewAction.ownerDetails.qrCode)
-                        content.animate().alpha(1f).setDuration(1000)
+//                        content.animate().alpha(1f).setDuration(1000)
                         exportButton.isEnabled = viewAction.ownerDetails.exportable
                     }
                 }

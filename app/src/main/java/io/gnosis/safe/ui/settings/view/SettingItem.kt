@@ -59,6 +59,14 @@ class SettingItem @JvmOverloads constructor(
             field = value
         }
 
+    var settingImage: Int? = null
+        set(value) {
+            value?.let {
+                binding.image.setImageResource(value)
+            }
+            field = value
+        }
+
     private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
         context.theme.obtainStyledAttributes(
             attrs,

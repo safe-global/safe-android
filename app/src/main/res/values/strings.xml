@@ -378,8 +378,11 @@
     <string name="signing_owner_export_tab_seed">Seed Phrase</string>
     <string name="signing_owner_export_tab_key">Private Key</string>
 
-    <string name="signing_owner_details_title">Owner key</string>
+    <string name="signing_owner_details_title">Owner key details</string>
     <string name="signing_owner_details_key_address">Key address</string>
+    <string name="signing_owner_details_owner_name">Owner name</string>
+    <string name="signing_owner_details_owner_address">Owner address</string>
+    <string name="signing_owner_details_owner_type">Owner type</string>
 
     <string name="signing_owner_name_title">Enter key name</string>
     <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
