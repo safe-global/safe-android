@@ -197,7 +197,7 @@
                 android:drawablePadding="9dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="@string/remove_safe"
+                android:text="@string/signing_owner_name_edit_remove"
                 android:textColor="@color/error" />
 
         </LinearLayout>
