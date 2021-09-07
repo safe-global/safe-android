@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.transactions.details.viewdata
 
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Owner
+import io.gnosis.data.models.Owner.Type
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
 import io.gnosis.safe.ui.transactions.AddressInfoData
