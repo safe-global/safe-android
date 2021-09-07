@@ -34,7 +34,6 @@ data class Owner(
 
     //FIXME: add device uuid?
 ) {
-
     enum class Type(val value: Int) {
         // add types here
         IMPORTED(0),
@@ -63,8 +62,8 @@ data class Owner(
     }
 }
 
-class OwnerTypeConverter {
 
+class OwnerTypeConverter {
     @TypeConverter
     fun toType(typeValue: Int): Owner.Type {
         return Owner.Type.get(typeValue)

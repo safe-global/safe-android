@@ -53,8 +53,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/blockies_container"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -74,9 +74,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/circle_dark_grey"
-            app:layout_constraintBottom_toBottomOf="@id/blockies"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/blockies" />
+            app:layout_constraintBottom_toBottomOf="@id/blockies_container"
+            app:layout_constraintEnd_toEndOf="@id/blockies_container"/>
 
         <ImageView
             android:id="@+id/key_type"
@@ -87,14 +86,6 @@
             app:layout_constraintEnd_toEndOf="@id/key_type_background"
             app:layout_constraintStart_toStartOf="@id/key_type_background"
             app:layout_constraintTop_toTopOf="@id/key_type_background" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.3" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
