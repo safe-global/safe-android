@@ -18,16 +18,6 @@ class LedgerDeviceListAdapter(private val ownerListener: DeviceListener, private
         notifyDataSetChanged()
     }
 
-    fun addDeviceData(deviceViewData: LedgerDeviceViewData) {
-        items.add(deviceViewData)
-        notifyItemInserted(items.size - 1)
-    }
-
-    fun clear() {
-        items.clear()
-        notifyDataSetChanged()
-    }
-
     override fun onBindViewHolder(holder: LedgerDeviceViewHolder, position: Int) {
         val device = items[position]
         holder.bind(device, ownerListener, position)
@@ -46,7 +36,7 @@ class LedgerDeviceListAdapter(private val ownerListener: DeviceListener, private
     override fun getItemCount() = items.size
 
     interface DeviceListener {
-        fun onDeviceClick()
+        fun onDeviceClick(position: Int)
     }
 }
 
@@ -62,7 +52,7 @@ class LedgerDeviceViewHolder(private val viewBinding: ItemLedgerDeviceBinding) :
             deviceItem.name = device.name
             root.setOnClickListener {
                 //TODO: pass device data
-                deviceListener.onDeviceClick()
+                deviceListener.onDeviceClick(position)
             }
         }
     }
