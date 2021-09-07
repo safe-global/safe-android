@@ -46,7 +46,7 @@ class OwnerDetailsViewModel
                 .getOrNull()
 
             updateState {
-                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(owner.name, qrCode, owner.privateKey != null, owner.type, owner)))
+                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(owner.name, qrCode, owner.privateKey != null, owner.type)))
             }
         }
     }

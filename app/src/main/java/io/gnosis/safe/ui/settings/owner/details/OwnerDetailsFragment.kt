@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
+import io.gnosis.safe.ui.settings.owner.list.imageRes16dp
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -69,7 +70,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 is ShowOwnerDetails -> {
                     with(binding) {
                         ownerName.name = viewAction.ownerDetails.name
-                        ownerName.settingImage = viewAction.ownerDetails.
+                        ownerName.settingImage = viewAction.ownerDetails.ownerType.imageRes16dp()
                         ownerAddress.setOnClickListener {
                             requireContext().copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
                                 snackbar(requireView(), getString(R.string.copied_success))
