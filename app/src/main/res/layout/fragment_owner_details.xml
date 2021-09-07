@@ -187,20 +187,19 @@
                     app:setting_name="@string/signing_owner_details_owner_type"
                     app:setting_openable="false" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-        <TextView
-            android:id="@+id/remove_button"
-            style="@style/TextDark.Bold"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/header_height"
-            android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
-            android:gravity="center_vertical"
-            android:background="@color/separator"
-            android:drawableLeft="@drawable/ic_remove"
-            android:drawablePadding="16dp"
-            android:text="@string/signing_owner_name_edit_remove"
-            android:textColor="@color/error" />
+            <TextView
+                android:id="@+id/remove"
+                style="@style/TextDark"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/background_selectable"
+                app:drawableStartCompat="@drawable/ic_remove"
+                android:drawablePadding="9dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="@string/remove_safe"
+                android:textColor="@color/error" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
