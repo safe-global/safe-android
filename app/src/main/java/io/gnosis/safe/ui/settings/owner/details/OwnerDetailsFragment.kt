@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -16,7 +17,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
-import io.gnosis.safe.ui.settings.owner.list.imageRes16dp
+import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -58,8 +59,6 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             ownerName.setOnClickListener {
                 findNavController().navigate(OwnerDetailsFragmentDirections.actionOwnerDetailsFragmentToOwnerEditNameFragment(owner.asEthereumAddressString()))
             }
-//            content.alpha = 0f
-//            ownerBlockie.setAddress(owner)
             ownerAddress.setAddress(null, owner)
         }
 
@@ -70,7 +69,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                 is ShowOwnerDetails -> {
                     with(binding) {
                         ownerName.name = viewAction.ownerDetails.name
-                        ownerName.settingImage = viewAction.ownerDetails.ownerType.imageRes16dp()
+                        ownerTypeImage.setImageDrawable(ContextCompat.getDrawable(requireContext(), viewAction.ownerDetails.ownerType.imageRes24dpWhite()))
                         ownerAddress.setOnClickListener {
                             requireContext().copyToClipboard(getString(R.string.address_copied), owner.asEthereumAddressChecksumString()) {
                                 snackbar(requireView(), getString(R.string.copied_success))

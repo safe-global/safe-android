@@ -22,8 +22,8 @@ fun Owner.Type.imageRes24dp() = when (this) {
     Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger_24dp
 }
 
-//    val imageRes36dp: Int = when (this) {
-//            Owner.Type.IMPORTED -> R.drawable.ic_key_type_imported_36dp
-//            Owner.Type.GENERATED -> R.drawable.ic_key_type_generated_36dp
-//            Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger_36dp
-//        }
+fun Owner.Type.imageRes24dpWhite() = when (this) {
+    Owner.Type.IMPORTED -> R.drawable.ic_key_type_imported_24dp_white
+    Owner.Type.GENERATED -> R.drawable.ic_key_type_generated_24dp_white
+    Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger_24dp_white
+}

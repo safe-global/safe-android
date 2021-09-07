@@ -144,22 +144,57 @@
                 android:text="@string/signing_owner_details_owner_type"
                 android:textAllCaps="true" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/owner_type_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_selectable_white" >
+
+                <ImageView
+                    android:id="@+id/key_type_background"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/circle_dark_grey"
+                    android:layout_margin="@dimen/default_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/owner_type"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/owner_type_image"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_key_type_generated_24dp_white"
+                    app:layout_constraintEnd_toEndOf="@id/key_type_background"
+                    app:layout_constraintStart_toStartOf="@id/key_type_background"
+                    app:layout_constraintTop_toTopOf="@id/key_type_background"
+                    app:layout_constraintBottom_toBottomOf="@id/key_type_background" />
+
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/owner_type"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/signing_owner_details_owner_type"
-                app:setting_image="@drawable/ic_key_type_ledger_24dp"
-                app:setting_openable="false" />
-
+                app:setting_openable="false"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/key_type_background"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
             android:id="@+id/remove_button"
             style="@style/TextDark.Bold"
             android:layout_width="match_parent"
             android:layout_height="@dimen/header_height"
             android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="24dp"
             android:gravity="center_vertical"
             android:background="@color/separator"
             android:drawableLeft="@drawable/ic_remove"
