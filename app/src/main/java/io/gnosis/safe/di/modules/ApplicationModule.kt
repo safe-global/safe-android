@@ -33,6 +33,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.settings.chain.paging.ChainPagingProvider
 import io.gnosis.safe.ui.settings.owner.ledger.FakeLedgerDevice
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerAddressProvider
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
@@ -339,4 +340,8 @@ class ApplicationModule(private val application: Application) {
         )
         return WorkManager.getInstance(context)
     }
+
+    @Provides
+    @Singleton
+    fun providesLedgerController(@ApplicationContext context: Context) = LedgerController(context)
 }
