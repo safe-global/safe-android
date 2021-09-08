@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
@@ -14,7 +15,10 @@ import io.gnosis.safe.databinding.ViewAddressItemBinding
 import io.gnosis.safe.utils.BlockExplorer
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.copyToClipboard
+import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 
 class AddressItem @JvmOverloads constructor(
@@ -32,14 +36,16 @@ class AddressItem @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
-    fun setAddress(chain: Chain, value: Solidity.Address?) {
+    fun setAddress(chain: Chain?, value: Solidity.Address?) {
         with(binding) {
             blockies.setAddress(value)
             address.text = value?.formatOwnerAddress()
-            binding.link.setOnClickListener {
-                BlockExplorer.forChain(chain)?.showAddress(context, value)
-            }
-            binding.address.setOnClickListener {
+            chain?.let {
+                link.setOnClickListener {
+                    BlockExplorer.forChain(chain)?.showAddress(context, value)
+                }
+            } ?: link.visible(false, View.INVISIBLE)
+            address.setOnClickListener {
                 context.copyToClipboard(context.getString(R.string.address_copied), address.text.toString()) {
                     snackbar(view = root, textId = R.string.copied_success)
                 }

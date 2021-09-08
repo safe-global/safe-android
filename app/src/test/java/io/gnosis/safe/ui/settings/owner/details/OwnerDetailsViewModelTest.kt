@@ -50,7 +50,7 @@ class OwnerDetailsViewModelTest {
 
         testObserver.assertValues(
             OwnerDetailsState(None),
-            OwnerDetailsState(ShowOwnerDetails(OwnerDetails(ownerName, qrCode, false)))
+            OwnerDetailsState(ShowOwnerDetails(OwnerDetails(ownerName, qrCode, false, Owner.Type.IMPORTED)))
         )
 
         coVerifySequence {
