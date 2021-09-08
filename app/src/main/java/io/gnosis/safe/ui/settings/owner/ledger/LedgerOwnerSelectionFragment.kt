@@ -120,11 +120,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             }
         })
 
-        viewModel.loadFirstDerivedOwner("creek banner employ mix teach sunny sure mutual pole mom either lion")
+        viewModel.loadFirstDerivedOwner("m/44'/60'/0'/0/{index}") // ledger live is the default derivation path
 
     }
-
-//    private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
     override fun onOwnerClicked(ownerIndex: Long) {
         binding.nextButton.isEnabled = true

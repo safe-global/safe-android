@@ -55,11 +55,6 @@ data class OwnerSelectionState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
-//data class SingleOwner(
-//    val owner: Solidity.Address,
-//    val hasMore: Boolean
-//) : BaseStateViewModel.ViewAction
-
 data class DerivedOwners(
     val newOwners: PagingData<OwnerHolder>
 ) : BaseStateViewModel.ViewAction
