@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -17,7 +15,6 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragmentDirections
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
@@ -60,8 +57,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     binding.showMoreOwners.visible(false)
                 } else {
 
-                    binding.nextButton.isEnabled =
-                        adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false
+//                    binding.nextButton.isEnabled =
+//                        adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false
                     binding.progress.visible(false)
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
@@ -69,15 +66,15 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
 
         with(binding) {
-            backButton.setOnClickListener {
-                Navigation.findNavController(it).navigateUp()
-            }
-            nextButton.setOnClickListener {
-                findNavController().navigate(
-                    //TODO add navigation to Enter name fragment
-                    OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerOwnerSelectionFragment()
-                )
-            }
+//            backButton.setOnClickListener {
+//                Navigation.findNavController(it).navigateUp()
+//            }
+//            nextButton.setOnClickListener {
+//                findNavController().navigate(
+//                    //TODO add navigation to Enter name fragment
+//                    OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerTabsFragment()
+//                )
+//            }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
         }
@@ -125,11 +122,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     override fun onOwnerClicked(ownerIndex: Long) {
-        binding.nextButton.isEnabled = true
         viewModel.setOwnerIndex(ownerIndex)
     }
 
     companion object {
         private const val MAX_PAGES = LedgerOwnerPagingProvider.MAX_PAGES
+        fun newInstance(derivationPath: String): LedgerOwnerSelectionFragment {
+            return LedgerOwnerSelectionFragment()
+        }
     }
 }
+

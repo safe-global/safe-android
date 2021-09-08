@@ -150,8 +150,8 @@
         <!-- TODO add action to navigate to DeviceListFragment in future PR -->
 
         <action
-            android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerOwnerSelectionFragment"
-            app:destination="@id/ledgerOwnerSelectionFragment" />
+            android:id="@+id/action_ownerInfoLedgerFragment_to_LedgerTabsFragment"
+            app:destination="@id/ledgerTabsFragment" />
 
 
     </fragment>
@@ -203,10 +203,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/ledgerOwnerSelectionFragment"
-        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment"
-        android:label="LedgerOwnerSelectionFragment"
-        tools:layout="@layout/fragment_ledger_owner_selection">
+        android:id="@+id/ledgerTabsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment"
+        android:label="LedgerTabsFragment"
+        tools:layout="@layout/fragment_ledger">
 
         <action
             android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
