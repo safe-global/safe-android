@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import io.gnosis.safe.databinding.ItemDefaultOwnerDisabledKeyBinding
-import io.gnosis.safe.databinding.ItemDefaultOwnerKeyBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionDisabledOwnerBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
@@ -33,7 +31,6 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        AccountItemViewType.DEFAULT_OWNER.ordinal,
         AccountItemViewType.OWNER.ordinal -> OwnerViewHolder(
             ItemOwnerSelectionOwnerBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -43,13 +40,6 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
         )
         AccountItemViewType.DISABLED_OWNER.ordinal -> DisabledOwnerViewHolder(
             ItemOwnerSelectionDisabledOwnerBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
-        AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal -> DisabledDefaultOwnerViewHolder(
-            ItemDefaultOwnerDisabledKeyBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -90,10 +80,8 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     }
 
     enum class AccountItemViewType {
-        DEFAULT_OWNER,
         OWNER,
-        DISABLED_OWNER,
-        DISABLED_DEFAULT_OWNER
+        DISABLED_OWNER
     }
 
     abstract class BaseOwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -116,22 +104,6 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
         }
     }
 
-    inner class DisabledDefaultOwnerViewHolder(private val binding: ItemDefaultOwnerDisabledKeyBinding) : BaseOwnerViewHolder(binding.root) {
-
-        @SuppressLint("SetTextI18n")
-        override fun bind(ownerHolder: OwnerHolder, position: Int) {
-            with(binding) {
-                cardContainerLayout.alpha = OPACITY_HALF
-                defaultOwnerSelection.visible(false)
-                defaultOwnerNumber.text = "#${position + 1}"
-                defaultOwnerImage.setAddress(ownerHolder.address)
-                ownerShortAddress.text = ownerHolder.address.shortChecksumString()
-                ownerLabel.text = ownerHolder.name
-                derivedKeysExplanation.visible(itemCount > 1)
-            }
-        }
-    }
-
     inner class OwnerViewHolder(private val binding: ItemOwnerSelectionOwnerBinding) : BaseOwnerViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
@@ -147,25 +119,6 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
                 root.alpha = OPACITY_FULL
                 ownerSelection.visible(selectedOwnerPosition == position)
-            }
-        }
-    }
-
-    inner class DefaultOwnerViewHolder(private val binding: ItemDefaultOwnerKeyBinding) : BaseOwnerViewHolder(binding.root) {
-
-        @SuppressLint("SetTextI18n")
-        override fun bind(ownerHolder: OwnerHolder, position: Int) {
-            with(binding) {
-                root.setOnClickListener {
-                    selectedOwnerPosition = position
-                    notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
-                }
-                defaultOwnerNumber.text = "#${position + 1}"
-                defaultOwnerImage.setAddress(ownerHolder.address)
-                defaultOwnerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
-                defaultOwnerSelection.visibility = if (selectedOwnerPosition == position) View.VISIBLE else View.INVISIBLE
-                derivedKeysExplanation.visible(itemCount > 1)
             }
         }
     }
