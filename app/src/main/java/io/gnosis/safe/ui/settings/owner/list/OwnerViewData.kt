@@ -27,3 +27,11 @@ fun Owner.Type.imageRes24dpWhite() = when (this) {
     Owner.Type.GENERATED -> R.drawable.ic_key_type_generated_24dp_white
     Owner.Type.LEDGER_NANO_X -> R.drawable.ic_key_type_ledger_24dp_white
 }
+
+fun Owner.Type.stringRes(): Int =
+    when(value) {
+        0 -> R.string.signing_owner_details_owner_type_imported
+        1 -> R.string.signing_owner_details_owner_type_generated
+        2 -> R.string.signing_owner_details_owner_type_ledger
+        else -> R.string.signing_owner_details_owner_type_imported
+    }

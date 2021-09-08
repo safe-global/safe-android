@@ -18,6 +18,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
 import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
+import io.gnosis.safe.ui.settings.owner.list.stringRes
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -75,7 +76,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                                 snackbar(requireView(), getString(R.string.copied_success))
                             }
                         }
-                        ownerType.name = viewAction.ownerDetails.ownerType.toString()
+                        ownerType.name = getString(viewAction.ownerDetails.ownerType.stringRes())
                         removeButton.setOnClickListener {
                             removeButton.isEnabled = false
                             showConfirmDialog(
@@ -91,7 +92,6 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                         }
 
                         ownerQrCode.setImageBitmap(viewAction.ownerDetails.qrCode)
-//                        content.animate().alpha(1f).setDuration(1000)
                         exportButton.isEnabled = viewAction.ownerDetails.exportable
                     }
                 }
