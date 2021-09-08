@@ -7,7 +7,6 @@ import androidx.paging.map
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.utils.MnemonicAddressDerivator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -17,7 +16,7 @@ import javax.inject.Inject
 
 class LedgerOwnerSelectionViewModel
 @Inject constructor(
-    private val derivator: MnemonicAddressDerivator,
+    private val addressProvider: LedgerAddressProvider,
     private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
@@ -26,23 +25,14 @@ class LedgerOwnerSelectionViewModel
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
-//    fun loadSingleOwner(privateKey: String) {
-//        safeLaunch {
-//            val keyPair = KeyPair.fromPrivate(privateKey.hexAsBigInteger())
-//            updateState {
-//                OwnerSelectionState(SingleOwner(Solidity.Address(keyPair.address.asBigInteger()), false))
-//            }
-//        }
-//    }
-
-    fun loadFirstDerivedOwner(mnemonic: String) {
-        derivator.initialize(mnemonic)
+    fun loadFirstDerivedOwner(derivationPath: String) {
+        addressProvider.initialize(derivationPath)
         loadMoreOwners()
     }
 
     fun loadMoreOwners() {
         safeLaunch {
-            LedgerOwnerPagingProvider(derivator).getOwnersStream()
+            LedgerOwnerPagingProvider(addressProvider).getOwnersStream()
                 .cachedIn(viewModelScope)
                 .map {
                     it.map {address ->
@@ -60,18 +50,6 @@ class LedgerOwnerSelectionViewModel
     fun setOwnerIndex(index: Long) {
         ownerIndex = index
     }
-
-//    fun getOwnerData(privateKey: String? = null): Pair<String, String> {
-//        val key = privateKey?.hexAsBigInteger() ?: derivator.keyForIndex(ownerIndex)
-//
-//        val address = if (privateKey != null) {
-//            listOf(Solidity.Address(KeyPair.fromPrivate(privateKey.hexAsBigInteger()).address.asBigInteger()))[0]
-//        } else {
-//            derivator.addressesForPage(ownerIndex, 1)[0]
-//        }
-//
-//        return address.asEthereumAddressString() to key.toHexString()
-//    }
 }
 
 data class OwnerSelectionState(

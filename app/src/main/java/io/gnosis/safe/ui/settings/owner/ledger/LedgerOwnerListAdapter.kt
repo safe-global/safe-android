@@ -21,7 +21,7 @@ import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
-class LedgerOwnerListAdapter() : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
+class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 0
     private var selectedOwnerPosition: Int = 0

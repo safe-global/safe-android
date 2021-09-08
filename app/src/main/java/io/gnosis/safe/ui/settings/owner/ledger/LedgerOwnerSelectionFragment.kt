@@ -38,7 +38,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     @Inject
     lateinit var viewModel: LedgerOwnerSelectionViewModel
-//    lateinit var viewModel: OwnerSelectionViewModel
 
     private lateinit var adapter: LedgerOwnerListAdapter
 

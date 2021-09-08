@@ -32,10 +32,10 @@ import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.settings.chain.paging.ChainPagingProvider
 import io.gnosis.safe.ui.settings.owner.ledger.FakeLedgerDevice
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerAddressProvider
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
-import io.gnosis.safe.utils.MnemonicAddressDerivator
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.workers.HeimdallWorkerFactory
@@ -235,7 +235,7 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesMnemonicAddressDerivator(): MnemonicAddressDerivator = FakeLedgerDevice()
+    fun providesLedgerAddressProvider(): LedgerAddressProvider = FakeLedgerDevice()
 
     @Provides
     @Singleton
