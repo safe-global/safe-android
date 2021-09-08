@@ -23,7 +23,7 @@ import kotlin.math.min
 
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
-    var pagesVisible = 0
+    var pagesVisible = 1
     private var selectedOwnerPosition: Int = 0
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
@@ -33,13 +33,7 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        AccountItemViewType.DEFAULT_OWNER.ordinal -> DefaultOwnerViewHolder(
-            ItemDefaultOwnerKeyBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        AccountItemViewType.DEFAULT_OWNER.ordinal,
         AccountItemViewType.OWNER.ordinal -> OwnerViewHolder(
             ItemOwnerSelectionOwnerBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -83,18 +77,10 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     }
 
     override fun getItemViewType(position: Int): Int =
-        if (position == 0) {
-            if (getItem(position)?.disabled == true) {
-                AccountItemViewType.DISABLED_DEFAULT_OWNER.ordinal
-            } else {
-                AccountItemViewType.DEFAULT_OWNER.ordinal
-            }
+        if (getItem(position)?.disabled == true) {
+            AccountItemViewType.DISABLED_OWNER.ordinal
         } else {
-            if (getItem(position)?.disabled == true) {
-                AccountItemViewType.DISABLED_OWNER.ordinal
-            } else {
-                AccountItemViewType.OWNER.ordinal
-            }
+            AccountItemViewType.OWNER.ordinal
         }
 
     fun getSelectedOwnerIndex(): Long = selectedOwnerPosition.toLong()

@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -20,21 +18,17 @@ import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragmentDirections
-import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
 
-class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(), LedgerOwnerListAdapter.OnOwnerItemClickedListener {
+class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
+    LedgerOwnerListAdapter.OnOwnerItemClickedListener {
 
     override fun screenId() = ScreenId.OWNER_SELECT_LEDGER_ACCOUNT
 
     override suspend fun chainId(): BigInteger? = null
-
-//    private val navArgs by navArgs<LedgerOwnerSelectionFragmentArgs>()
-//    private val privateKey: String? by lazy { navArgs.privateKey }
-//    private val seedPhrase: String? by lazy { navArgs.seedPhrase }
 
     @Inject
     lateinit var viewModel: LedgerOwnerSelectionViewModel
@@ -79,8 +73,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 Navigation.findNavController(it).navigateUp()
             }
             nextButton.setOnClickListener {
-
                 findNavController().navigate(
+                    //TODO add navigation to Enter name fragment
                     OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerOwnerSelectionFragment()
                 )
             }
@@ -91,36 +85,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is SingleOwner -> {
-                        lifecycleScope.launch {
-                            with(binding) {
-                                progress.visible(false)
-                                nextButton.isEnabled = true
-
-                                if (viewAction.hasMore) {
-                                    derivedOwners.visible(true)
-                                    singleOwner.visible(false)
-                                    showMoreOwners.visible(viewAction.hasMore)
-                                    showMoreOwners.setOnClickListener {
-                                        //viewModel.loadMoreOwners()
-                                    }
-                                } else {
-                                    singleOwner.visible(true)
-                                    singleOwnerAddress.text =
-                                        viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
-                                    singleOwnerImage.setAddress(viewAction.owner)
-                                    derivedOwners.visible(false)
-                                }
-
-                            }
-                        }
-                    }
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
-                                val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-                                dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
-                                owners.addItemDecoration(dividerItemDecoration)
                                 adapter.pagesVisible++
                                 val visualFeedback = it.animate().alpha(0.0f)
                                 visualFeedback.duration = 100
@@ -153,11 +120,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             }
         })
 
-//        if (usingSeedPhrase()) {
-            viewModel.loadFirstDerivedOwner("creek banner employ mix teach sunny sure mutual pole mom either lion")
-//        } else {
-//            viewModel.loadSingleOwner(privateKey!!)
-//        }
+        viewModel.loadFirstDerivedOwner("creek banner employ mix teach sunny sure mutual pole mom either lion")
+
     }
 
 //    private fun usingSeedPhrase(): Boolean = seedPhrase != null

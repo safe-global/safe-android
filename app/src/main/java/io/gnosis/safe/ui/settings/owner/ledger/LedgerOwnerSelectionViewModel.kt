@@ -10,7 +10,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.model.Solidity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class LedgerOwnerSelectionViewModel
         loadMoreOwners()
     }
 
-    fun loadMoreOwners() {
+    private fun loadMoreOwners() {
         safeLaunch {
             LedgerOwnerPagingProvider(addressProvider).getOwnersStream()
                 .cachedIn(viewModelScope)
@@ -56,10 +55,10 @@ data class OwnerSelectionState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
-data class SingleOwner(
-    val owner: Solidity.Address,
-    val hasMore: Boolean
-) : BaseStateViewModel.ViewAction
+//data class SingleOwner(
+//    val owner: Solidity.Address,
+//    val hasMore: Boolean
+//) : BaseStateViewModel.ViewAction
 
 data class DerivedOwners(
     val newOwners: PagingData<OwnerHolder>
