@@ -4,8 +4,8 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 
 class FakeLedgerDevice : LedgerAddressProvider {
-
-    private val addresses = listOf(
+    private var derivationPath = ""
+    private var addresses = listOf(
         "0xE86935943315293154c7AD63296b4e1adAc76364".asEthereumAddress()!!,
         "0x5c9E7b93900536D9cc5559b881375Bae93c933D0".asEthereumAddress()!!,
         "0xD28293bf13549Abb49Ed1D83D515301A05E3Fc8d".asEthereumAddress()!!,
@@ -83,7 +83,9 @@ class FakeLedgerDevice : LedgerAddressProvider {
     )
 
     override fun initialize(derivationPath: String) {
-        // ignored for this Fake Generator
+        if (derivationPath.isBlank()) {
+            addresses = addresses.reversed()
+        }
     }
 
     override fun addressesForRange(range: LongRange): List<Solidity.Address> {

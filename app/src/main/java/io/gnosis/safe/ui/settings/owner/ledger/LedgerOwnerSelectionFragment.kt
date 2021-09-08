@@ -17,6 +17,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.withArgs
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -43,6 +44,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
 
         adapter = LedgerOwnerListAdapter()
         adapter.setListener(this)
@@ -117,7 +120,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             }
         })
 
-        viewModel.loadFirstDerivedOwner("m/44'/60'/0'/0/{index}") // ledger live is the default derivation path
+        viewModel.loadFirstDerivedOwner(derivationPath)
 
     }
 
@@ -126,9 +129,13 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     companion object {
+        private const val ARGS_DERIVATION_PATH = "args.string.derivation.path"
         private const val MAX_PAGES = LedgerOwnerPagingProvider.MAX_PAGES
         fun newInstance(derivationPath: String): LedgerOwnerSelectionFragment {
-            return LedgerOwnerSelectionFragment()
+            return LedgerOwnerSelectionFragment().withArgs(Bundle().apply {
+                putString(ARGS_DERIVATION_PATH, derivationPath)
+            }) as LedgerOwnerSelectionFragment
+
         }
     }
 }

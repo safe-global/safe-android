@@ -81,12 +81,11 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun createFragment(position: Int): Fragment =
         when (Tabs.values()[position]) {
             Tabs.LEDGER_LIVE -> {
-                //TODO use Bundle to pass args to fragment so no-param constructor works
                 LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/0/{index}")
             }
             Tabs.LEDGER -> {
-                //TODO use Bundle to pass args to fragment so no-param constructor works
-                LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/{index}")
+                LedgerOwnerSelectionFragment.newInstance("")
+//                LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/{index}")
             }
         }
 
