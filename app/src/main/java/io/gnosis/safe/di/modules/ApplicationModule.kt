@@ -31,9 +31,11 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.notifications.NotificationServiceApi
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.settings.chain.paging.ChainPagingProvider
+import io.gnosis.safe.ui.settings.owner.ledger.FakeLedgerDevice
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.ui.transactions.paging.TransactionPagingProvider
 import io.gnosis.safe.utils.BalanceFormatter
+import io.gnosis.safe.utils.MnemonicAddressDerivator
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.workers.HeimdallWorkerFactory
@@ -230,6 +232,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesMnemonicKeyAndAddressDerivator(bip39: Bip39): MnemonicKeyAndAddressDerivator = MnemonicKeyAndAddressDerivator(bip39)
+
+    @Provides
+    @Singleton
+    fun providesMnemonicAddressDerivator(): MnemonicAddressDerivator = FakeLedgerDevice()
 
     @Provides
     @Singleton

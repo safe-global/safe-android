@@ -149,6 +149,11 @@
 
         <!-- TODO add action to navigate to DeviceListFragment in future PR -->
 
+        <action
+            android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerOwnerSelectionFragment"
+            app:destination="@id/ledgerOwnerSelectionFragment" />
+
+
     </fragment>
 
     <fragment
@@ -197,6 +202,17 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/ledgerOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment"
+        android:label="LedgerOwnerSelectionFragment"
+        tools:layout="@layout/fragment_ledger_owner_selection">
+
+        <action
+            android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
     <fragment
         android:id="@+id/ownerEnterNameFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
