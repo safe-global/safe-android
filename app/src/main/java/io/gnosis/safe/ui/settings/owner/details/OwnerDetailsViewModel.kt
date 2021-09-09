@@ -46,7 +46,7 @@ class OwnerDetailsViewModel
                 .getOrNull()
 
             updateState {
-                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(owner.name, qrCode, owner.privateKey != null)))
+                OwnerDetailsState(ShowOwnerDetails(OwnerDetails(owner.name, qrCode, owner.privateKey != null, owner.type)))
             }
         }
     }
@@ -91,6 +91,7 @@ class OwnerDetailsViewModel
             when(owner.type) {
                 Owner.Type.IMPORTED -> tracker.setNumKeysImported(credentialsRepository.ownerCount(owner.type))
                 Owner.Type.GENERATED -> tracker.setNumKeysGenerated(credentialsRepository.ownerCount(owner.type))
+                Owner.Type.LEDGER_NANO_X -> tracker.setNumKeysLedger(credentialsRepository.ownerCount(owner.type))
             }
             updateState { OwnerDetailsState(ViewAction.CloseScreen) }
         }
@@ -104,7 +105,8 @@ data class OwnerDetailsState(
 data class OwnerDetails(
     val name: String?,
     val qrCode: Bitmap?,
-    val exportable: Boolean
+    val exportable: Boolean,
+    val ownerType: Owner.Type
 )
 
 data class ShowOwnerDetails(

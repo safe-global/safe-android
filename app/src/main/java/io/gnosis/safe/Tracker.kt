@@ -24,6 +24,10 @@ class Tracker private constructor(context: Context) {
         firebaseAnalytics.setUserProperty(Param.NUM_KEYS_IMPORTED, numKeysImported.toString())
     }
 
+    fun setNumKeysLedger(numKeysLedger: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_LEDGER, numKeysLedger.toString())
+    }
+
     fun setPushInfo(enabled: Boolean) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
@@ -189,6 +193,7 @@ class Tracker private constructor(context: Context) {
         val PUSH_INFO = "push_info"
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
+        val NUM_KEYS_LEDGER = "num_keys_ledger"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
     }

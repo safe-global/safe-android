@@ -18,7 +18,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.list.getImageRes
+import io.gnosis.safe.ui.settings.owner.list.imageRes24dp
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
@@ -56,7 +56,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
         with(binding) {
             newAddressBlockies.setAddress(ownerAddress)
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
-            keyType.setImageResource(ownerType.getImageRes())
+            keyType.setImageResource(ownerType.imageRes24dp())
             backButton.setOnClickListener { findNavController().navigateUp() }
             if (ownerSeedPhrase != null) {
                 nextButton.text = getString(R.string.signing_owner_save)
