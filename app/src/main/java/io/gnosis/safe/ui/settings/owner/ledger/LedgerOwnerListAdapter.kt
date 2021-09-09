@@ -16,6 +16,7 @@ import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -98,8 +99,9 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 ownerSelection.visible(selectedOwnerPosition == position)
                 ownerLabel.text = ownerHolder.name
                 ownerShortAddress.text = ownerHolder.address.shortChecksumString()
-
+                Timber.i("---> BEFORE: root.alpha: ${root.alpha}")
                 root.alpha = OPACITY_HALF
+                Timber.i("--->  AFTER: root.alpha: ${root.alpha}")
             }
         }
     }
@@ -117,7 +119,9 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)
                 ownerAddress.text = ownerHolder.address.formatEthAddress(context = root.context, addMiddleLinebreak = false)
+                Timber.i("---> BEFORE: root.alpha: ${root.alpha}")
                 root.alpha = OPACITY_FULL
+                Timber.i("--->  AFTER: root.alpha: ${root.alpha}")
                 ownerSelection.visible(selectedOwnerPosition == position)
             }
         }
