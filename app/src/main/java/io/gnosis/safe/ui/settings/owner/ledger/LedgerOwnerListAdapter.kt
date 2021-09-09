@@ -1,6 +1,8 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,8 +102,12 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 ownerLabel.text = ownerHolder.name
                 ownerShortAddress.text = ownerHolder.address.shortChecksumString()
                 Timber.i("---> BEFORE: root.alpha: ${root.alpha}")
-                root.alpha = OPACITY_HALF
-                Timber.i("--->  AFTER: root.alpha: ${root.alpha}")
+                //TODO How can we avoid this delay? Without the delay the opacity is not applied correctly. For example the blocky is not greyed out. Also 100ms is not enough :-/
+                Handler(Looper.getMainLooper()).postDelayed({
+                    root.alpha = OPACITY_HALF
+                    Timber.i("--->  AFTER: root.alpha: ${root.alpha}")
+
+                }, 500)
             }
         }
     }
