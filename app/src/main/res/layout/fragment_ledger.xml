@@ -17,8 +17,7 @@
             android:id="@+id/toolbar_layout"
             style="@style/Toolbar"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_scrollFlags="scroll|enterAlways">
+            android:orientation="horizontal" >
 
             <ImageButton
                 android:id="@+id/back_button"
