@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
-import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +17,10 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
+import javax.inject.Singleton
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
     LedgerOwnerListAdapter.OnOwnerItemClickedListener {
@@ -29,6 +30,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     override suspend fun chainId(): BigInteger? = null
 
     @Inject
+    @Singleton
     lateinit var viewModel: LedgerOwnerSelectionViewModel
 
     private lateinit var adapter: LedgerOwnerListAdapter
@@ -47,6 +49,37 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
 
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            Timber.i("LedgerOwnerSelectionFragment ----> state: $state")
+
+            state.viewAction.let { viewAction ->
+                when (viewAction) {
+                    is DerivedOwners -> {
+                        Timber.i("LedgerOwnerSelectionFragment ----> DerivedOwners... ")
+
+                        with(binding) {
+                            showMoreOwners.setOnClickListener {
+                                adapter.pagesVisible++
+                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
+                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                            }
+                        }
+                        lifecycleScope.launch {
+                            adapter.submitData(viewAction.newOwners)
+                        }
+
+                    }
+                    is EnableNextButton -> {
+                        Timber.i("LedgerOwnerSelectionFragment ----> EnableNextButton... ")
+
+                    }
+                    else -> {
+                        Timber.i("LedgerOwnerSelectionFragment ----> else... ")
+                    }
+                }
+            }
+        })
+
         adapter = LedgerOwnerListAdapter()
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
@@ -60,8 +93,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     binding.showMoreOwners.visible(false)
                 } else {
 
-//                    binding.nextButton.isEnabled =
-//                        adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false
+//                    viewModel.enableNextButton(adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false)
+
                     binding.progress.visible(false)
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
@@ -69,56 +102,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
 
         with(binding) {
-//            backButton.setOnClickListener {
-//                Navigation.findNavController(it).navigateUp()
-//            }
-//            nextButton.setOnClickListener {
-//                findNavController().navigate(
-//                    //TODO add navigation to Enter name fragment
-//                    OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerTabsFragment()
-//                )
-//            }
             owners.adapter = adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
         }
-
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            state.viewAction.let { viewAction ->
-                when (viewAction) {
-                    is DerivedOwners -> {
-                        with(binding) {
-                            showMoreOwners.setOnClickListener {
-                                adapter.pagesVisible++
-                                val visualFeedback = it.animate().alpha(0.0f)
-                                visualFeedback.duration = 100
-                                visualFeedback.setListener(object : Animator.AnimatorListener {
-
-                                    override fun onAnimationRepeat(animation: Animator?) {}
-
-                                    override fun onAnimationEnd(animation: Animator?) {
-                                        adapter.notifyDataSetChanged()
-                                        showMoreOwners.alpha = 1.0f
-                                    }
-
-                                    override fun onAnimationCancel(animation: Animator?) {}
-
-                                    override fun onAnimationStart(animation: Animator?) {}
-                                })
-                                visualFeedback.start()
-                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
-                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-                            }
-                        }
-                        lifecycleScope.launch {
-                            adapter.submitData(viewAction.newOwners)
-                        }
-
-                    }
-                    else -> {
-                    }
-                }
-            }
-        })
 
         viewModel.loadFirstDerivedOwner(derivationPath)
 

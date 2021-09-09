@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -13,7 +16,11 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragmentDirections
+import timber.log.Timber
 import java.math.BigInteger
+import javax.inject.Inject
+import javax.inject.Singleton
 
 class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
@@ -22,6 +29,10 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
     override suspend fun chainId(): BigInteger? = null
 
     private lateinit var pager: LedgerPagerAdapter
+
+    @Inject
+    @Singleton
+    lateinit var viewModel: LedgerOwnerSelectionViewModel
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -34,28 +45,43 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+            Timber.i("LedgerTabsFragment ----> state: $state")
+            state.viewAction.let { viewAction ->
+                when (viewAction) {
+                    is DerivedOwners -> {
+                        // ignore here
+                        Timber.i("LedgerTabsFragment ----> DerivedOwners... ")
+                    }
+                    is EnableNextButton -> {
+                        Timber.i("LedgerTabsFragment ----> EnableNextButton... ")
+                        binding.nextButton.isEnabled = true
+                    }
+                }
+            }
+        })
+
         with(binding) {
+            backButton.setOnClickListener {
+                Navigation.findNavController(it).navigateUp()
+            }
+            nextButton.setOnClickListener {
+                Timber.i("LedgerTabsFragment ----> Goto next screen... ")
+                findNavController().navigate(OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerTabsFragment())
+            }
             pager = LedgerPagerAdapter(this@LedgerTabsFragment)
             ledgerContent.adapter = pager
             TabLayoutMediator(ledgerTabBar, ledgerContent, true) { tab, position ->
                 when (LedgerPagerAdapter.Tabs.values()[position]) {
                     LedgerPagerAdapter.Tabs.LEDGER_LIVE -> {
-                        //tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_settings_safe_24dp)
                         tab.text = getString(R.string.ledger_tab_ledger_live)
                     }
                     LedgerPagerAdapter.Tabs.LEDGER -> {
-//                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_settings_app_24dp)
                         tab.text = getString(R.string.ledger_tab_ledger)
                     }
                 }
             }.attach()
-        }
-    }
-
-    companion object {
-        private const val MAX_PAGES = LedgerOwnerPagingProvider.MAX_PAGES
-        fun newInstance(derivationPath: String): LedgerOwnerSelectionFragment {
-            return LedgerOwnerSelectionFragment()
         }
     }
 }

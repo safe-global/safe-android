@@ -20,6 +20,10 @@ class LedgerOwnerSelectionViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
 
+    init {
+        Timber.i("----> LedgerOwnerSelectionViewModel.init() -> $this")
+    }
+
     private var ownerIndex: Long = 0
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
@@ -34,13 +38,15 @@ class LedgerOwnerSelectionViewModel
             LedgerOwnerPagingProvider(addressProvider).getOwnersStream()
                 .cachedIn(viewModelScope)
                 .map {
-                    it.map {address ->
+                    it.map { address ->
                         val name = credentialsRepository.owner(address)?.name
                         Timber.i("Address: ${address.asEthereumAddressChecksumString()}")
                         OwnerHolder(address, name, name != null)
                     }
                 }
                 .collectLatest {
+                    Timber.i("LedgerOwnerSelectionViewModel ----> updateState... DerivedOwners")
+
                     updateState { OwnerSelectionState(DerivedOwners(it)) }
                 }
         }
@@ -48,6 +54,10 @@ class LedgerOwnerSelectionViewModel
 
     fun setOwnerIndex(index: Long) {
         ownerIndex = index
+        safeLaunch {
+            Timber.i("LedgerOwnerSelectionViewModel ----> updateState... EnableNextButton")
+            updateState { OwnerSelectionState(EnableNextButton) }
+        }
     }
 }
 
@@ -59,4 +69,4 @@ data class DerivedOwners(
     val newOwners: PagingData<OwnerHolder>
 ) : BaseStateViewModel.ViewAction
 
-
+object EnableNextButton : BaseStateViewModel.ViewAction
