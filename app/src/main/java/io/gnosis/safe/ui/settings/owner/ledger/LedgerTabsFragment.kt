@@ -38,8 +38,6 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
         component.inject(this)
     }
 
-    override fun viewModelProvider() = this
-
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerBinding =
         FragmentLedgerBinding.inflate(inflater, container, false)
 
@@ -83,6 +81,11 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                 }
             }.attach()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("LedgerTabsFragment ----> onResume: this: $this")
     }
 }
 

@@ -29,13 +29,12 @@ class LedgerOwnerSelectionViewModel
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
     fun loadFirstDerivedOwner(derivationPath: String) {
-        addressProvider.initialize(derivationPath)
-        loadMoreOwners()
+        loadMoreOwners(derivationPath)
     }
 
-    private fun loadMoreOwners() {
+    private fun loadMoreOwners(derivationPath: String) {
         safeLaunch {
-            LedgerOwnerPagingProvider(addressProvider).getOwnersStream()
+            LedgerOwnerPagingProvider(addressProvider, derivationPath).getOwnersStream()
                 .cachedIn(viewModelScope)
                 .map {
                     it.map { address ->

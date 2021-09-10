@@ -19,8 +19,6 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import timber.log.Timber
 import java.math.BigInteger
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
     LedgerOwnerListAdapter.OnOwnerItemClickedListener {
@@ -29,17 +27,11 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     override suspend fun chainId(): BigInteger? = null
 
-    @Inject
-    @Singleton
-    lateinit var viewModel: LedgerOwnerSelectionViewModel
-
     private lateinit var adapter: LedgerOwnerListAdapter
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
-
-    override fun viewModelProvider() = this
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerOwnerSelectionBinding =
         FragmentLedgerOwnerSelectionBinding.inflate(inflater, container, false)
@@ -48,6 +40,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         super.onViewCreated(view, savedInstanceState)
 
         val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
+        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             Timber.i("LedgerOwnerSelectionFragment ----> state: $state")
@@ -110,7 +103,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Timber.i("LedgerOwnerSelectionFragment ----> onResume: this: $this, adapter: $adapter")
+        Timber.i("LedgerOwnerSelectionFragment ----> onResume: this: $this, adapter: $adapter.")
+    }
+
     override fun onOwnerClicked(ownerIndex: Long) {
+        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
         viewModel.setOwnerIndex(ownerIndex)
     }
 

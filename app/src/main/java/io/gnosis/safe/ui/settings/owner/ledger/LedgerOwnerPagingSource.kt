@@ -7,6 +7,7 @@ import timber.log.Timber
 
 class LedgerOwnerPagingSource(
     private val addressProvider: LedgerAddressProvider,
+    private val derivationPath: String,
     private val maxPages: Int
 ) : PagingSource<Long, Solidity.Address>() {
 
@@ -16,7 +17,7 @@ class LedgerOwnerPagingSource(
         val pageSize = params.loadSize
 
         kotlin.runCatching {
-            pageLink?.let { addressProvider.addressesForPage(pageLink, pageSize) } ?: addressProvider.addressesForPage(0, pageSize)
+            pageLink?.let { addressProvider.addressesForPage(derivationPath, pageLink, pageSize) } ?: addressProvider.addressesForPage(derivationPath,0, pageSize)
 
         }.onSuccess {
             return LoadResult.Page(
