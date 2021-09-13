@@ -17,7 +17,6 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
-import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -43,13 +42,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
-            Timber.i("LedgerOwnerSelectionFragment ----> state: $state")
-
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is DerivedOwners -> {
-                        Timber.i("LedgerOwnerSelectionFragment ----> DerivedOwners... ")
-
                         with(binding) {
                             showMoreOwners.setOnClickListener {
                                 adapter.pagesVisible++
@@ -58,16 +53,15 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                             }
                         }
                         lifecycleScope.launch {
-                            adapter.submitData(viewAction.newOwners)
+                            if (derivationPath == viewAction.derivationPath) {
+                                adapter.submitData(viewAction.newOwners)
+                            }
                         }
 
                     }
                     is EnableNextButton -> {
-                        Timber.i("LedgerOwnerSelectionFragment ----> EnableNextButton... ")
-
                     }
                     else -> {
-                        Timber.i("LedgerOwnerSelectionFragment ----> else... ")
                     }
                 }
             }
@@ -101,12 +95,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         viewModel.loadFirstDerivedOwner(derivationPath)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("LedgerOwnerSelectionFragment ----> onResume: this: $this, adapter: $adapter")
-        Timber.i("LedgerOwnerSelectionFragment ----> onResume: this: $this, adapter: $adapter.")
     }
 
     override fun onOwnerClicked(ownerIndex: Long) {

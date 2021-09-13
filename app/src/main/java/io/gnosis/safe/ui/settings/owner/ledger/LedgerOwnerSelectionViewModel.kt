@@ -9,8 +9,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import timber.log.Timber
 import javax.inject.Inject
 
 class LedgerOwnerSelectionViewModel
@@ -19,10 +17,6 @@ class LedgerOwnerSelectionViewModel
     private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
-
-    init {
-        Timber.i("----> LedgerOwnerSelectionViewModel.init() -> $this")
-    }
 
     private var ownerIndex: Long = 0
 
@@ -39,14 +33,11 @@ class LedgerOwnerSelectionViewModel
                 .map {
                     it.map { address ->
                         val name = credentialsRepository.owner(address)?.name
-                        Timber.i("Address: ${address.asEthereumAddressChecksumString()}")
                         OwnerHolder(address, name, name != null)
                     }
                 }
                 .collectLatest {
-                    Timber.i("LedgerOwnerSelectionViewModel ----> updateState... DerivedOwners")
-
-                    updateState { OwnerSelectionState(DerivedOwners(it)) }
+                    updateState { OwnerSelectionState(DerivedOwners(it, derivationPath)) }
                 }
         }
     }
@@ -54,7 +45,6 @@ class LedgerOwnerSelectionViewModel
     fun setOwnerIndex(index: Long) {
         ownerIndex = index
         safeLaunch {
-            Timber.i("LedgerOwnerSelectionViewModel ----> updateState... EnableNextButton")
             updateState { OwnerSelectionState(EnableNextButton) }
         }
     }
@@ -65,7 +55,8 @@ data class OwnerSelectionState(
 ) : BaseStateViewModel.State
 
 data class DerivedOwners(
-    val newOwners: PagingData<OwnerHolder>
+    val newOwners: PagingData<OwnerHolder>,
+    val derivationPath: String
 ) : BaseStateViewModel.ViewAction
 
 object EnableNextButton : BaseStateViewModel.ViewAction
