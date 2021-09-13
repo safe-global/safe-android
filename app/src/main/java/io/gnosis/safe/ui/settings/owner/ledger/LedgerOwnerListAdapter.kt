@@ -21,7 +21,7 @@ import kotlin.math.min
 
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
-    var pagesVisible = 1
+    var pagesVisible = 0
     private var selectedOwnerPosition: Int = 0
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
@@ -60,8 +60,8 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     override fun getItemCount(): Int {
         val itemCount = super.getItemCount()
         return when {
-            itemCount > 0 && pagesVisible == 0 -> 1
-            itemCount != 0 -> min(pagesVisible * PAGE_SIZE, itemCount)
+            itemCount > 0 && pagesVisible == 0 -> itemCount
+            itemCount > 0 -> min(pagesVisible * PAGE_SIZE, itemCount)
             else -> 0
         }
     }

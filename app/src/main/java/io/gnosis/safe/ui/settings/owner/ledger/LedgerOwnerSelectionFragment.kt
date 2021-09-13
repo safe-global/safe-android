@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
+import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -43,11 +44,13 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
+                Timber.i("----> viewAction: $viewAction")
                 when (viewAction) {
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
                                 adapter.pagesVisible++
+                                Timber.d("----> Show more: adapter.pagesVisible: ${adapter.pagesVisible}")
                                 showMoreOwners.text = getString(R.string.signing_owner_selection_more)
                                 showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                             }

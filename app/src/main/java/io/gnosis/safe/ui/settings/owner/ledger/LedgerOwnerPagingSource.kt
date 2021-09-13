@@ -17,6 +17,7 @@ class LedgerOwnerPagingSource(
         val pageSize = params.loadSize
 
         kotlin.runCatching {
+
             pageLink?.let { addressProvider.addressesForPage(derivationPath, pageLink, pageSize) } ?: addressProvider.addressesForPage(derivationPath,0, pageSize)
 
         }.onSuccess {

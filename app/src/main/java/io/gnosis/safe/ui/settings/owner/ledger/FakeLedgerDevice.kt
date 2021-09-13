@@ -305,17 +305,13 @@ class FakeLedgerDevice : LedgerAddressProvider {
     override fun addressesForRange(derivationPath: String, range: LongRange): List<Solidity.Address> {
         Timber.d("----> addressesForPage([path: $derivationPath], range: $range")
         if (derivationPath.isBlank()) {
-            return addresses2.subList(range.first.toInt(), range.last.toInt())
+            return addresses2.subList(range.first.toInt(), range.last.toInt() + 1)
         }
-        return addresses.subList(range.first.toInt(), range.last.toInt())
+        return addresses.subList(range.first.toInt(), range.last.toInt() + 1)
     }
 
     override fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
-        Timber.d("----> addressesForPage([path: $derivationPath], start: $start, pageSize: $pageSize")
-        if (derivationPath.isBlank()) {
-            return addresses2.subList(start.toInt(), (start + pageSize).toInt())
-        }
-        return addresses.subList(start.toInt(), (start + pageSize).toInt())
+        return addressesForRange(derivationPath, LongRange(start, start + pageSize - 1))
     }
 }
 
