@@ -21,7 +21,7 @@ import kotlin.math.min
 
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
-    var pagesVisible = 0
+    var pagesVisible = 1
     private var selectedOwnerPosition: Int = 0
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
@@ -60,18 +60,19 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     override fun getItemCount(): Int {
         val itemCount = super.getItemCount()
         return when {
-            itemCount > 0 && pagesVisible == 0 -> itemCount
             itemCount > 0 -> min(pagesVisible * PAGE_SIZE, itemCount)
             else -> 0
         }
     }
 
-    override fun getItemViewType(position: Int): Int =
-        if (getItem(position)?.disabled == true) {
+    override fun getItemViewType(position: Int): Int {
+        return if (getItem(position)?.disabled == true) {
             AccountItemViewType.DISABLED_OWNER.ordinal
         } else {
             AccountItemViewType.OWNER.ordinal
         }
+    }
+
 
     fun getSelectedOwnerIndex(): Long = selectedOwnerPosition.toLong()
 
@@ -144,5 +145,6 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
         }
     }
 }
+
 
 data class OwnerHolder(val address: Solidity.Address, val name: String?, val disabled: Boolean)

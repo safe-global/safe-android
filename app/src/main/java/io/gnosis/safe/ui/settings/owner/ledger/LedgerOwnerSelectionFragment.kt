@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
+import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,6 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
-import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -44,13 +44,28 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
-                Timber.i("----> viewAction: $viewAction")
                 when (viewAction) {
                     is DerivedOwners -> {
+
                         with(binding) {
                             showMoreOwners.setOnClickListener {
                                 adapter.pagesVisible++
-                                Timber.d("----> Show more: adapter.pagesVisible: ${adapter.pagesVisible}")
+                                val visualFeedback = it.animate().alpha(0.0f)
+                                visualFeedback.duration = 100
+                                visualFeedback.setListener(object : Animator.AnimatorListener {
+
+                                    override fun onAnimationRepeat(animation: Animator?) {}
+
+                                    override fun onAnimationEnd(animation: Animator?) {
+                                        adapter.notifyDataSetChanged()
+                                        showMoreOwners.alpha = 1.0f
+                                    }
+
+                                    override fun onAnimationCancel(animation: Animator?) {}
+
+                                    override fun onAnimationStart(animation: Animator?) {}
+                                })
+                                visualFeedback.start()
                                 showMoreOwners.text = getString(R.string.signing_owner_selection_more)
                                 showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                             }
@@ -82,9 +97,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
                     binding.showMoreOwners.visible(false)
                 } else {
-
-//                    viewModel.enableNextButton(adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false)
-
                     binding.progress.visible(false)
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
