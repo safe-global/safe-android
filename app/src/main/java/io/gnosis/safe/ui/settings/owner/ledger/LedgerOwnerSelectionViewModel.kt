@@ -5,12 +5,14 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@ExcludeClassFromJacocoGeneratedReport
 class LedgerOwnerSelectionViewModel
 @Inject constructor(
     private val addressProvider: LedgerAddressProvider,

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.databinding.ItemOwnerSelectionDisabledOwnerBinding
 import io.gnosis.safe.databinding.ItemOwnerSelectionOwnerBinding
 import io.gnosis.safe.ui.base.adapter.UnsupportedViewType
@@ -19,6 +20,7 @@ import pm.gnosis.svalinn.common.utils.visible
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
+@ExcludeClassFromJacocoGeneratedReport
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 1

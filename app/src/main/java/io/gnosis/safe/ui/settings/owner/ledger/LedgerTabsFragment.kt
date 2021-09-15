@@ -10,6 +10,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
@@ -20,6 +21,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@ExcludeClassFromJacocoGeneratedReport
 class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     override fun screenId() = ScreenId.OWNER_SELECT_LEDGER_ACCOUNT

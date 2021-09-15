@@ -1,10 +1,11 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
 import androidx.paging.PagingSource
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
-
+@ExcludeClassFromJacocoGeneratedReport
 class LedgerOwnerPagingSource(
     private val addressProvider: LedgerAddressProvider,
     private val derivationPath: String,
