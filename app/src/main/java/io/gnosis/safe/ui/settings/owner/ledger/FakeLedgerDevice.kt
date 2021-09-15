@@ -1,9 +1,11 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 
+@ExcludeClassFromJacocoGeneratedReport
 class FakeLedgerDevice : LedgerAddressProvider {
     private var addresses = listOf(
         "0xE86935943315293154c7AD63296b4e1adAc76364".asEthereumAddress()!!,
