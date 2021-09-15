@@ -78,6 +78,10 @@ class Tracker private constructor(context: Context) {
         )
     }
 
+    fun logLedgerKeyImported() {
+        logEvent(Event.KEY_IMPORTED_LEDGER)
+    }
+
     fun logKeyDeleted() {
         logEvent(name = Event.KEY_DELETED, attrs = null)
     }

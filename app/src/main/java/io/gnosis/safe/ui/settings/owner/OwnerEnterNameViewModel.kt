@@ -69,8 +69,7 @@ class OwnerEnterNameViewModel
             credentialsRepository.saveLedgerOwner(derivationPathWithIndex, address, name)
             settingsHandler.showOwnerBanner = false
             settingsHandler.showOwnerScreen = false
-            //TODO: log correct event (TRacking)
-//            tracker.logKeyImported()
+            tracker.logLedgerKeyImported()
             tracker.setNumKeysLedger(credentialsRepository.ownerCount(Owner.Type.LEDGER_NANO_X))
             notificationRepository.registerSafes()
 
