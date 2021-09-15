@@ -22,11 +22,7 @@ class LedgerOwnerSelectionViewModel
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
-    fun loadFirstDerivedOwner(derivationPath: String) {
-        loadMoreOwners(derivationPath)
-    }
-
-    private fun loadMoreOwners(derivationPath: String) {
+    fun loadOwners(derivationPath: String) {
         safeLaunch {
             LedgerOwnerPagingProvider(addressProvider, derivationPath).getOwnersStream()
                 .cachedIn(viewModelScope)

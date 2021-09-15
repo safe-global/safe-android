@@ -108,7 +108,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             owners.layoutManager = LinearLayoutManager(requireContext())
         }
 
-        viewModel.loadFirstDerivedOwner(derivationPath)
+        viewModel.loadOwners(derivationPath)
 
     }
 
