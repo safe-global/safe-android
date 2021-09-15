@@ -7,7 +7,6 @@ import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 
-@ExcludeClassFromJacocoGeneratedReport
 class LedgerOwnerPagingProvider(
     private val addressProvider: LedgerAddressProvider,
     private val derivationPath: String

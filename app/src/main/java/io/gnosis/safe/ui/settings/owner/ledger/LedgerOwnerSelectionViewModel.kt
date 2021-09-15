@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-@ExcludeClassFromJacocoGeneratedReport
 class LedgerOwnerSelectionViewModel
 @Inject constructor(
     private val addressProvider: LedgerAddressProvider,
