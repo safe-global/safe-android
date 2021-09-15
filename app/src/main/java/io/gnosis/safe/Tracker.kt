@@ -197,7 +197,7 @@ class Tracker private constructor(context: Context) {
         val PUSH_INFO = "push_info"
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
-        val NUM_KEYS_LEDGER = "num_keys_ledger"
+        val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
     }
