@@ -43,8 +43,6 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val ownerType: Owner.Type by lazy { OwnerTypeConverter().toType(navArgs.ownerType) }
     private val derivationPathWithIndex: String? by lazy { navArgs.derivationPathWithIndex }
 
-    //TODO: Pass derivation path and store it in database
-
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
