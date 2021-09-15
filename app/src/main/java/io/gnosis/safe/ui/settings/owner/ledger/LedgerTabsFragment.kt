@@ -33,6 +33,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     private lateinit var pager: LedgerPagerAdapter
     private var selectedAddress: Solidity.Address = "0x00".asEthereumAddress()!!
+    private var derivationPathWithIndex: String? = null
 
     @Inject
     @Singleton
@@ -57,6 +58,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                     is OwnerSelected -> {
                         binding.nextButton.isEnabled = true
                         selectedAddress = viewAction.selectedOwner.address
+                        derivationPathWithIndex = viewAction.derivationPathWithIndex
                     }
                 }
             }
@@ -73,7 +75,8 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                         fromSeedPhrase = false,
                         ownerKey = "",
                         ownerSeedPhrase = "",
-                        ownerType = Owner.Type.LEDGER_NANO_X.value
+                        ownerType = Owner.Type.LEDGER_NANO_X.value,
+                        derivationPathWithIndex = derivationPathWithIndex
                     )
                 )
             }

@@ -63,6 +63,28 @@ class OwnerEnterNameViewModel
             }
         }
     }
+
+    fun importLedgerOwner(address: Solidity.Address, name: String, derivationPathWithIndex: String) {
+        safeLaunch {
+            credentialsRepository.saveLedgerOwner(derivationPathWithIndex, address, name)
+            settingsHandler.showOwnerBanner = false
+            settingsHandler.showOwnerScreen = false
+            //TODO: log correct event (TRacking)
+//            tracker.logKeyImported()
+            tracker.setNumKeysLedger(credentialsRepository.ownerCount(Owner.Type.LEDGER_NANO_X))
+            notificationRepository.registerSafes()
+
+            updateState {
+                OwnerEnterNameState(
+                    if (settingsHandler.usePasscode) {
+                        ViewAction.CloseScreen
+                    } else {
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true))
+                    }
+                )
+            }
+        }
+    }
 }
 
 data class OwnerEnterNameState(
