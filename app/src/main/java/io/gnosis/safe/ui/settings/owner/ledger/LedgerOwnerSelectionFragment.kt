@@ -17,6 +17,7 @@ import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import java.math.BigInteger
@@ -79,7 +80,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                         }
 
                     }
-                    is EnableNextButton -> {
+                    is OwnerSelected -> {
                     }
                     else -> {
                     }
@@ -114,9 +115,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     }
 
-    override fun onOwnerClicked(ownerIndex: Long) {
+    override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {
         val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
-        viewModel.setOwnerIndex(ownerIndex)
+        viewModel.setOwnerIndex(ownerIndex, address)
     }
 
     companion object {

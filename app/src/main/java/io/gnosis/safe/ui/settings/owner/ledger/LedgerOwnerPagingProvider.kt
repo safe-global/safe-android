@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.owner.ledger
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 

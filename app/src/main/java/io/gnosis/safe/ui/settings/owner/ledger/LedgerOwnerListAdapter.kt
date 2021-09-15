@@ -79,7 +79,7 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
     fun getSelectedOwnerIndex(): Long = selectedOwnerPosition.toLong()
 
     interface OnOwnerItemClickedListener {
-        fun onOwnerClicked(ownerIndex: Long)
+        fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address)
     }
 
     enum class AccountItemViewType {
@@ -120,7 +120,7 @@ class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAda
                 root.setOnClickListener {
                     selectedOwnerPosition = position
                     notifyDataSetChanged()
-                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex())
+                    listener?.get()?.onOwnerClicked(getSelectedOwnerIndex(), ownerHolder.address)
                 }
                 ownerNumber.text = "#${position + 1}"
                 ownerImage.setAddress(ownerHolder.address)

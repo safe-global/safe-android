@@ -10,13 +10,16 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import io.gnosis.data.models.Owner
 import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragmentDirections
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,6 +32,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
     override suspend fun chainId(): BigInteger? = null
 
     private lateinit var pager: LedgerPagerAdapter
+    private var selectedAddress: Solidity.Address = "0x00".asEthereumAddress()!!
 
     @Inject
     @Singleton
@@ -50,8 +54,9 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                     is DerivedOwners -> {
                         // ignore here
                     }
-                    is EnableNextButton -> {
+                    is OwnerSelected -> {
                         binding.nextButton.isEnabled = true
+                        selectedAddress = viewAction.selectedOwner.address
                     }
                 }
             }
@@ -62,7 +67,15 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                 Navigation.findNavController(it).navigateUp()
             }
             nextButton.setOnClickListener {
-                findNavController().navigate(OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerTabsFragment())
+                findNavController().navigate(
+                    LedgerTabsFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(
+                        ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
+                        fromSeedPhrase = false,
+                        ownerKey = "",
+                        ownerSeedPhrase = "",
+                        ownerType = Owner.Type.LEDGER_NANO_X.value
+                    )
+                )
             }
             pager = LedgerPagerAdapter(this@LedgerTabsFragment)
             ledgerContent.adapter = pager
@@ -96,6 +109,7 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
             Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/0/{index}")
 
             Tabs.LEDGER -> {
+                //TODO use right derivation path when using real ledger device
                 LedgerOwnerSelectionFragment.newInstance("")
 //                LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/{index}")
             }

@@ -27,9 +27,6 @@ class OwnerInfoLedgerFragment : BaseViewBindingFragment<FragmentOwnerInfoLedgerB
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                // TODO get address from Ledger Nano X
-
-                // Go to Ledger address selection
                 findNavController().navigate(
                     OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerTabsFragment()
                 )
