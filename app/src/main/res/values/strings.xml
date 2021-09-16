@@ -526,4 +526,8 @@
     <string name="settings_passcode_enable_biometry_enable">Enable</string>
 
     <string name="chain_select_network">Select network on which your Safe was created:</string>
+
+
+    <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
+    <string name="ledger_tab_ledger">LEDGER</string>
 </resources>

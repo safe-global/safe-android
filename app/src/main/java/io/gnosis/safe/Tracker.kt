@@ -168,9 +168,12 @@ class Tracker private constructor(context: Context) {
         val SAFE_REMOVED = "user_safe_removed"
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
+        val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
+        val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"
@@ -260,6 +263,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
+    OWNER_SELECT_LEDGER_ACCOUNT("screen_owner_ledger_account"),
     PASSCODE_CREATE("screen_passcode_create"),
     PASSCODE_CREATE_REPEAT("screen_passcode_create_repeat"),
     PASSCODE_CHANGE("screen_passcode_change"),

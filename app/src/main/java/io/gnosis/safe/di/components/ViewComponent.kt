@@ -34,6 +34,8 @@ import io.gnosis.safe.ui.settings.owner.export.OwnerExportSeedFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
@@ -92,6 +94,10 @@ interface ViewComponent {
     fun inject(fragment: OwnerInfoLedgerFragment)
 
     fun inject(fragment: OwnerSelectionFragment)
+
+    fun inject(fragment: LedgerOwnerSelectionFragment)
+
+    fun inject(fragment: LedgerTabsFragment)
 
     fun inject(fragment: OwnerSeedPhraseFragment)
 
