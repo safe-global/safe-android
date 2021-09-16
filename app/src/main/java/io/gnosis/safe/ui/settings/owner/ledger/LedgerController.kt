@@ -165,7 +165,6 @@ class LedgerController(val context: Context) {
     }
 
 
-
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
 
         val paths = splitPath1(path)!!
@@ -195,6 +194,15 @@ class LedgerController(val context: Context) {
     suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapADPU(getAddressCommand(path)))
         addressContinuation = it
+    }
+
+    suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
+        val addressPage = mutableListOf<Solidity.Address>()
+        for (i in start until pageSize) {
+            val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
+            addressPage.add(address)
+        }
+        return addressPage
     }
 
 
