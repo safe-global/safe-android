@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.owner.ledger.ble
 
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothDevice.TRANSPORT_LE
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
@@ -11,16 +12,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
 private const val GATT_MIN_MTU_SIZE = 23
+
 /** Maximum BLE MTU size as defined in gatt_api.h. */
 private const val GATT_MAX_MTU_SIZE = 517
 
@@ -43,7 +46,9 @@ object ConnectionManager {
     }
 
     fun registerListener(listener: ConnectionEventListener) {
-        if (listeners.map { it.get() }.contains(listener)) { return }
+        if (listeners.map { it.get() }.contains(listener)) {
+            return
+        }
         listeners.add(WeakReference(listener))
         listeners = listeners.filter { it.get() != null }.toMutableSet()
         Timber.d("Added listener $listener, ${listeners.size} listeners total")
@@ -178,6 +183,8 @@ object ConnectionManager {
     @Synchronized
     private fun signalEndOfOperation() {
         Timber.d("End of $pendingOperation")
+        if (pendingOperation is CharacteristicWrite)
+            Timber.e((pendingOperation as CharacteristicWrite).payload.toHexString())
         pendingOperation = null
         if (operationQueue.isNotEmpty()) {
             doNextOperation()
@@ -205,7 +212,11 @@ object ConnectionManager {
         if (operation is Connect) {
             with(operation) {
                 Timber.w("Connecting to ${device.address}")
-                device.connectGatt(context, false, callback)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    device.connectGatt(context, false, callback, TRANSPORT_LE)
+                } else {
+                    device.connectGatt(context, false, callback)
+                }
             }
             return
         }
@@ -320,6 +331,7 @@ object ConnectionManager {
     }
 
     private val callback = object : BluetoothGattCallback() {
+
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             val deviceAddress = gatt.device.address
 
@@ -347,8 +359,8 @@ object ConnectionManager {
             with(gatt) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     Timber.w("Discovered ${services.size} services for ${device.address}.")
-                    //printGattTable()
-                    //requestMtu(device, GATT_MAX_MTU_SIZE)
+                    printGattTable()
+                    requestMtu(device, GATT_MAX_MTU_SIZE)
                     listeners.forEach { it.get()?.onConnectionSetupComplete?.invoke(this) }
                 } else {
                     Timber.e("Service discovery failed due to status $status")
@@ -419,6 +431,7 @@ object ConnectionManager {
                 signalEndOfOperation()
             }
         }
+
 
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
@@ -547,6 +560,10 @@ object ConnectionManager {
             BluetoothDevice.BOND_NONE -> "NOT BONDED"
             else -> "ERROR: $this"
         }
+    }
+
+    fun isDeviceConnected(device: BluetoothDevice): Boolean {
+        return deviceGattMap.containsKey(device)
     }
 
     private fun BluetoothDevice.isConnected() = deviceGattMap.containsKey(this)

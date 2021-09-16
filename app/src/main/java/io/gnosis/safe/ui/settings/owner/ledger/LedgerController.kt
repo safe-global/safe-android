@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -16,15 +17,19 @@ import android.os.Build
 import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapADPU
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionEventListener
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.util.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.suspendCoroutine
 
 class LedgerController(val context: Context) {
 
@@ -32,6 +37,21 @@ class LedgerController(val context: Context) {
         private set
 
     private var deviceConnectedCallback: DeviceConnectedCallback? = null
+    private var addressContinuation: Continuation<Solidity.Address>? = null
+
+    var writeCharacteristic: BluetoothGattCharacteristic? = null
+    var notifyCharacteristic: BluetoothGattCharacteristic? = null
+
+    fun loadDeviceCharacteristics() {
+        val characteristic = connectedDevice?.let {
+            ConnectionManager.servicesOnDevice(it)?.flatMap { service ->
+                service.characteristics ?: listOf()
+            }
+        } ?: listOf()
+        writeCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0002-4c6564676572") }
+        notifyCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0001-4c6564676572") }
+    }
+
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -56,29 +76,24 @@ class LedgerController(val context: Context) {
                 connectedDevice = null
             }
 
-            onCharacteristicRead = { _, characteristic ->
-                Timber.d("Read from ${characteristic.uuid}: ${characteristic.value.toHexString()}")
-            }
+            onCharacteristicRead = { _, characteristic -> }
 
-            onCharacteristicWrite = { _, characteristic ->
-                Timber.d("Wrote to ${characteristic.uuid}")
-            }
+            onCharacteristicWrite = { _, characteristic -> }
 
-            onMtuChanged = { _, mtu ->
-                Timber.d("MTU updated to $mtu")
-            }
+            onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
-                Timber.d("Value changed on ${characteristic.uuid}: ${characteristic.value.toHexString()}")
+                val address = parseGetAddress(characteristic.value)
+                Timber.d(address)
+                addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
+
             }
 
             onNotificationsEnabled = { _, characteristic ->
-                Timber.d("Enabled notifications on ${characteristic.uuid}")
                 notifyingCharacteristics.add(characteristic.uuid)
             }
 
             onNotificationsDisabled = { _, characteristic ->
-                Timber.d("Disabled notifications on ${characteristic.uuid}")
                 notifyingCharacteristics.remove(characteristic.uuid)
             }
         }
@@ -89,7 +104,6 @@ class LedgerController(val context: Context) {
     }
 
     private var notifyingCharacteristics = mutableListOf<UUID>()
-
     private lateinit var scanCallback: ScanCallback
     private val scanResultFlow = callbackFlow {
         scanCallback = object : ScanCallback() {
@@ -104,6 +118,7 @@ class LedgerController(val context: Context) {
         scanResultFlow.conflate()
 
     private val scanSettings = ScanSettings.Builder()
+        //.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
         .build()
 
@@ -121,6 +136,9 @@ class LedgerController(val context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 missingLocationPermissionHandler.invoke()
             } else {
+                if (isScanning) {
+                    stopBleScan()
+                }
                 bleScanner.startScan(listOf(scanFilter), scanSettings, scanCallback)
                 isScanning = true
             }
@@ -136,19 +154,49 @@ class LedgerController(val context: Context) {
         if (isScanning) {
             stopBleScan()
         }
+        Timber.d("Attempting to connect to ${device.name}")
         deviceConnectedCallback = callback
         ConnectionManager.connect(device, context)
     }
 
     fun teardownConnection() {
         ConnectionManager.unregisterListener(connectionEventListener)
-        connectedDevice?.let {  ConnectionManager.teardownConnection(it) }
+        connectedDevice?.let { ConnectionManager.teardownConnection(it) }
     }
 
-    suspend fun getAddresses(baseDerivationPath: String, startIndex: Int, endIndex: Int): List<Solidity.Address> {
-        //TODO
-        return listOf()
+
+
+    fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
+
+        val paths = splitPath1(path)!!
+
+        val commandData = mutableListOf<Byte>()
+
+        val pathsData = ByteArray(1 + paths.size)
+        pathsData[0] = paths.size.toByte()
+
+        paths.forEachIndexed { index, element ->
+            pathsData[1 + index] = element
+        }
+
+        commandData.add(0xe0.toByte())
+        commandData.add(0x02.toByte())
+        commandData.add((if (displayVerificationDialog) 0x01.toByte() else 0x00.toByte()))
+        commandData.add((if (chainCode) 0x01.toByte() else 0x00.toByte()))
+        commandData.addAll(pathsData.toList())
+
+        val command = commandData.toByteArray()
+        Timber.d(command.toHexString())
+
+        return command
     }
+
+
+    suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
+        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapADPU(getAddressCommand(path)))
+        addressContinuation = it
+    }
+
 
     private fun promptEnableBluetooth(fragment: Fragment) {
         if (!bluetoothAdapter.isEnabled) {
