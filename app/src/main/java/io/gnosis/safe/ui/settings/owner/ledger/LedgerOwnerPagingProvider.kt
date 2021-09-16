@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 
 class LedgerOwnerPagingProvider(
-    private val addressProvider: LedgerAddressProvider,
+    private val ledgerController: LedgerController,
     private val derivationPath: String
 ) {
 
@@ -22,7 +22,7 @@ class LedgerOwnerPagingProvider(
                 maxSize = PAGE_SIZE * MAX_PAGES
             ),
             pagingSourceFactory = {
-                LedgerOwnerPagingSource(addressProvider, derivationPath, MAX_PAGES)
+                LedgerOwnerPagingSource(ledgerController, derivationPath, MAX_PAGES)
             }
         ).flow
     }
