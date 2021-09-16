@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -73,7 +74,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                         adapter.updateDeviceData(action.results)
                     }
                     is DeviceConnected -> {
-                        //TODO: navigate to address selection; pass action.device in EXTRA_DEVICE
+                        findNavController().navigate(LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerTabsFragment())
                     }
                     is ShowError -> {
                         hideLoading()
@@ -89,12 +90,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         viewModel.scanForDevices(this, ::requestMissingLocationPermission)
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // ConnectionManager.registerListener(connectionEventListener)
-    }
-
     private fun showLoading() {
         if (adapter.itemCount == 0) {
             binding.action.text = getString(R.string.ledger_device_search)
@@ -107,13 +102,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     private fun hideLoading() {
         binding.progress.visible(false)
         binding.refresh.isRefreshing = false
-    }
-
-    private fun showPlaceholder() {
-        if (adapter.itemCount == 0) {
-            binding.action.visible(false)
-            binding.emptyPlaceholder.visible(true)
-        }
     }
 
     private fun requestMissingLocationPermission() {
@@ -150,6 +138,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     }
 
     override fun onDeviceClick(position: Int) {
-        viewModel.connectToDevice(requireContext(), position)
+        viewModel.connectAndOpenList(requireContext(), position)
     }
 }

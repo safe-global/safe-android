@@ -91,6 +91,29 @@ class LedgerDeviceListViewModel
         }
     }
 
+    fun connectAndOpenList(context: Context, position: Int) {
+        safeLaunch {
+            val device = scanResults[position].device
+            if (device == ledgerController.connectedDevice) {
+                updateState {
+                    LedgerDeviceListState(DeviceConnected(device))
+                }
+            } else {
+                ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
+                    override fun onDeviceConnected(device: BluetoothDevice) {
+                        ledgerController.loadDeviceCharacteristics()
+                        ConnectionManager.enableNotifications(device, ledgerController.notifyCharacteristic!!)
+                        safeLaunch {
+                            updateState {
+                                LedgerDeviceListState(DeviceConnected(device))
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
+
     fun connectToDevice(context: Context, position: Int) {
         val device = scanResults[position].device
 
@@ -110,11 +133,9 @@ class LedgerDeviceListViewModel
                 }
             })
         } else {
-
             safeLaunch {
                 val address = ledgerController.getAddress(device, "44'/60'/0'/0/0")
                 Timber.e("address received: ${address.asEthereumAddressChecksumString()}")
-
             }
         }
     }
