@@ -54,8 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/surface_01"
-            android:visibility="visible"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"

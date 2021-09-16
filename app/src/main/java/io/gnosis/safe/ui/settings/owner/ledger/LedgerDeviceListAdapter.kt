@@ -7,7 +7,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.databinding.ItemLedgerDeviceBinding
 
 
-class LedgerDeviceListAdapter(private val ownerListener: DeviceListener, private val forSigningOnly: Boolean = false) :
+class LedgerDeviceListAdapter(private val listener: DeviceListener, private val forSigningOnly: Boolean = false) :
     RecyclerView.Adapter<LedgerDeviceViewHolder>() {
 
     private val items = mutableListOf<LedgerDeviceViewData>()
@@ -20,7 +20,7 @@ class LedgerDeviceListAdapter(private val ownerListener: DeviceListener, private
 
     override fun onBindViewHolder(holder: LedgerDeviceViewHolder, position: Int) {
         val device = items[position]
-        holder.bind(device, ownerListener, position)
+        holder.bind(device, listener, position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LedgerDeviceViewHolder {
@@ -46,13 +46,12 @@ abstract class BaseOwnerViewHolder(
 
 class LedgerDeviceViewHolder(private val viewBinding: ItemLedgerDeviceBinding) : BaseOwnerViewHolder(viewBinding) {
 
-    fun bind(device: LedgerDeviceViewData, deviceListener: LedgerDeviceListAdapter.DeviceListener, position: Int) {
+    fun bind(device: LedgerDeviceViewData, listener: LedgerDeviceListAdapter.DeviceListener, position: Int) {
         with(viewBinding) {
-            val context = root.context
             deviceItem.name = device.name
             root.setOnClickListener {
                 //TODO: pass device data
-                deviceListener.onDeviceClick(position)
+                listener.onDeviceClick(position)
             }
         }
     }
