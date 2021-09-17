@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
@@ -26,6 +27,7 @@ import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import javax.inject.Inject
 
+@ExcludeClassFromJacocoGeneratedReport
 class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBinding>() {
 
     override fun screenId() = ScreenId.OWNER_ENTER_NAME
