@@ -1,12 +1,11 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
 import androidx.paging.PagingSource
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
 class LedgerOwnerPagingSource(
-    private val addressProvider: LedgerAddressProvider,
+    private val ledgerController: LedgerController,
     private val derivationPath: String,
     private val maxPages: Int
 ) : PagingSource<Long, Solidity.Address>() {
@@ -17,7 +16,7 @@ class LedgerOwnerPagingSource(
 
         kotlin.runCatching {
 
-            pageLink?.let { addressProvider.addressesForPage(derivationPath, pageLink, pageSize) } ?: addressProvider.addressesForPage(
+            pageLink?.let { ledgerController.addressesForPage(derivationPath, pageLink, pageSize) } ?: ledgerController.addressesForPage(
                 derivationPath,
                 0,
                 pageSize

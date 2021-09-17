@@ -77,7 +77,7 @@
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
-                app:info_icon="@drawable/ic_seed_phrase"
+                app:info_icon="@drawable/ic_ledger_connect_key"
                 app:info_title="@string/import_owner_key_ledger_how_does_it_work_title"
                 app:info_text="@string/import_owner_key_ledger_how_does_it_work_desc"
                 app:cardCornerRadius="8dp"/>
