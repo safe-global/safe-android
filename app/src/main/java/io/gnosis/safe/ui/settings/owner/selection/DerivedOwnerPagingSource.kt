@@ -5,7 +5,6 @@ import io.gnosis.safe.utils.MnemonicAddressDerivator
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
-
 class DerivedOwnerPagingSource(
     private val derivator: MnemonicAddressDerivator,
     private val maxPages: Int

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -57,122 +57,150 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/content"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="24dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-        <pm.gnosis.blockies.BlockiesImageView
-            android:id="@+id/owner_blockie"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:layout_constraintBottom_toTopOf="@id/owner_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <TextView
-            android:id="@+id/owner_name"
-            style="@style/TextDark.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:drawablePadding="11dp"
-            android:drawableRight="@drawable/ic_edit_green_24dp"
-            app:layout_constraintBottom_toTopOf="@id/owner_address"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/owner_blockie"
-            tools:text="Key 1" />
+            style="@style/Header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header_height"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@color/separator"
+            android:text="@string/signing_owner_details_owner_name"
+            android:textAllCaps="true" />
+
+            <io.gnosis.safe.ui.settings.view.SettingItem
+                android:id="@+id/owner_name"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/background_selectable_white"
+                app:setting_name="@string/signing_owner_details_owner_name"
+                app:setting_openable="true" />
+
+            <TextView
+                style="@style/Header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/header_height"
+                android:gravity="center_vertical"
+                android:background="@color/separator"
+                android:paddingHorizontal="16dp"
+                android:text="@string/signing_owner_details_owner_address"
+                android:textAllCaps="true" />
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/default_margin"
+    android:background="@drawable/background_selectable_white" >
+
+    <io.gnosis.safe.ui.settings.view.AddressItem
+        android:id="@+id/owner_address"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_address"
+        android:background="@drawable/background_selectable_white"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/owner_qr_code"
+        android:layout_width="124dp"
+        android:layout_height="124dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_address"
+
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
+        tools:src="@color/text_emphasis_medium" />
+
+    <ImageView
+        android:id="@+id/owner_qr_code_outline"
+        android:layout_width="124dp"
+        android:layout_height="124dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/background_rounded_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_address" />
+</androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/owner_address"
-            style="@style/TextMedium"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="72dp"
-            android:layout_marginStart="72dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/background_selectable"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:lines="3"
-            android:textColor="@color/text_emphasis_low"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@id/owner_key_address_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/owner_name"
-            tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+                style="@style/Header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/header_height"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@color/separator"
+                android:text="@string/signing_owner_details_owner_type"
+                android:textAllCaps="true" />
 
-        <ImageView
-            android:id="@+id/link"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="12dp"
-            android:background="@drawable/background_selectable"
-            android:src="@drawable/ic_link_green_24dp"
-            app:layout_constraintBottom_toBottomOf="@id/owner_address"
-            app:layout_constraintStart_toEndOf="@id/owner_address"
-            app:layout_constraintTop_toTopOf="@id/owner_address"
-            android:visibility="gone" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/owner_type_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_selectable_white" >
 
-        <TextView
-            android:id="@+id/owner_key_address_label"
-            style="@style/TextDark.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/signing_owner_details_key_address"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/owner_address" />
+                <ImageView
+                    android:id="@+id/key_type_background"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_margin="@dimen/default_margin"
+                    android:src="@drawable/circle_dark_grey"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/owner_qr_code"
-            android:layout_width="124dp"
-            android:layout_height="124dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerInside"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/owner_key_address_label"
-            app:layout_goneMarginTop="16dp"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
-            tools:src="@color/text_emphasis_medium" />
+                <ImageView
+                    android:id="@+id/owner_type_image"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_key_type_generated_24dp_white"
+                    app:layout_constraintEnd_toEndOf="@id/key_type_background"
+                    app:layout_constraintStart_toStartOf="@id/key_type_background"
+                    app:layout_constraintTop_toTopOf="@id/key_type_background"
+                    app:layout_constraintBottom_toBottomOf="@id/key_type_background" />
 
-        <ImageView
-            android:id="@+id/owner_qr_code_outline"
-            android:layout_width="124dp"
-            android:layout_height="124dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/background_rounded_rectangle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/owner_key_address_label"
-            app:layout_goneMarginTop="16dp" />
+                <io.gnosis.safe.ui.settings.view.SettingItem
+                    android:id="@+id/owner_type"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="@drawable/background_selectable_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/key_type_background"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:setting_name="@string/signing_owner_details_owner_type"
+                    app:setting_openable="false" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/remove_button"
+                style="@style/TextDark"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/background_selectable"
+                app:drawableStartCompat="@drawable/ic_remove"
+                android:drawablePadding="9dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:text="@string/signing_owner_name_edit_remove"
+                android:textColor="@color/error" />
 
-        <TextView
-            android:id="@+id/remove_button"
-            style="@style/TextDark.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:drawableLeft="@drawable/ic_remove"
-            android:drawablePadding="9dp"
-            android:text="@string/signing_owner_name_edit_remove"
-            android:textColor="@color/error"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/owner_qr_code_outline" />
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

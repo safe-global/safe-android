@@ -353,10 +353,12 @@
     <string name="tx_confirmations_rejection_created">On-chain rejection created</string>
 
     <string name="signing_owner_add_key">Add owner key</string>
-    <string name="signing_owner_import_existing_title">Import existing key</string>
+    <string name="signing_owner_import_existing_title">Import existing owner key</string>
     <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
-    <string name="signing_owner_create_new_title">Create new key</string>
+    <string name="signing_owner_create_new_title">Create new owner key</string>
     <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Gnosis Safe</string>
+    <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
+    <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
 
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
@@ -376,8 +378,14 @@
     <string name="signing_owner_export_tab_seed">Seed Phrase</string>
     <string name="signing_owner_export_tab_key">Private Key</string>
 
-    <string name="signing_owner_details_title">Owner key</string>
+    <string name="signing_owner_details_title">Owner key details</string>
     <string name="signing_owner_details_key_address">Key address</string>
+    <string name="signing_owner_details_owner_name">Owner name</string>
+    <string name="signing_owner_details_owner_address">Owner address</string>
+    <string name="signing_owner_details_owner_type">Owner type</string>
+    <string name="signing_owner_details_owner_type_imported">Imported</string>
+    <string name="signing_owner_details_owner_type_generated">Generated</string>
+    <string name="signing_owner_details_owner_type_ledger">Ledger Nano X</string>
 
     <string name="signing_owner_name_title">Enter key name</string>
     <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
@@ -458,6 +466,13 @@
     <string name="import_owner_key_intro_wallet_desc">You can use your seed phrase from MetaMask or hardware wallet. We support private keys from any wallet in a hexadecimal 64 characters format. Importing the key will not show the balance for Ether or other assets from your MetaMask or hardware wallet.</string>
     <string name="import_owner_key_derived_keys_explanation">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="import_owner_key_default">Default</string>
+    <string name="import_owner_key_ledger_title">Connect Ledger Nano X</string>
+    <string name="import_owner_key_ledger_how_does_it_work_title">How does it work?</string>
+    <string name="import_owner_key_ledger_how_does_it_work_desc">You can connect your Ledger device and select a key. If it is an owner of your Safe you can sign transactions.</string>
+    <string name="import_owner_key_ledger_pair_your_ledger_device_title">Pair your Ledger device</string>
+    <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
+    <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
+    <string name="import_owner_key_ledger_how_secure_is_that_desc">Your key will remain on your Ledger wallet. We do not store it in the app.</string>
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
@@ -511,4 +526,12 @@
     <string name="settings_passcode_enable_biometry_enable">Enable</string>
 
     <string name="chain_select_network">Select network on which your Safe was created:</string>
+
+    <string name="ledger_connect">Connect Ledger Nano X</string>
+    <string name="ledger_select_device">Select your device</string>
+    <string name="ledger_device_search">Looking for Ledger Nano X devices</string>
+    <string name="ledger_device_not_found">No Ledger Nano X device found. Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
+    <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
+    <string name="ledger_tab_ledger">LEDGER</string>
+
 </resources>

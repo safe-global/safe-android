@@ -124,6 +124,9 @@
             android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoGenerateFragment"
             app:destination="@id/ownerInfoGenerateFragment" />
 
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoLedgerFragment"
+            app:destination="@id/ownerInfoLedgerFragment" />
     </fragment>
 
     <fragment
@@ -135,6 +138,18 @@
         <action
             android:id="@+id/action_ownerInfoGenerateFragment_to_ownerEnterNameFragment"
             app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoLedgerFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment"
+        android:label="OwnerInfoLedgerFragment"
+        tools:layout="@layout/fragment_owner_info_ledger">
+
+        <action
+            android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerDeviceListFragment"
+            app:destination="@id/ledgerDeviceListFragment" />
 
     </fragment>
 
@@ -185,6 +200,17 @@
     </fragment>
 
     <fragment
+        android:id="@+id/ledgerTabsFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment"
+        android:label="LedgerTabsFragment"
+        tools:layout="@layout/fragment_ledger">
+
+        <action
+            android:id="@+id/action_ledgerTabs_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
+    </fragment>
+    <fragment
         android:id="@+id/ownerEnterNameFragment"
         android:name="io.gnosis.safe.ui.settings.owner.OwnerEnterNameFragment"
         android:label="OwnerEnterNameFragment"
@@ -208,6 +234,11 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null"/>
+
+        <argument
+            android:name="ownerType"
+            app:argType="integer"
+            app:nullable="false" />
 
         <action
             android:id="@+id/action_ownerEnterNameFragment_to_createPasscodeFragment"
@@ -871,7 +902,6 @@
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
-
     </fragment>
 
     <fragment
@@ -879,5 +909,17 @@
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
         tools:layout="@layout/fragment_settings_safe_advanced" />
+
+    <fragment
+        android:id="@+id/ledgerDeviceListFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment"
+        android:label="LedgerDeviceListFragment"
+        tools:layout="@layout/fragment_ledger_device_list">
+
+        <action
+            android:id="@+id/action_ledgerDeviceListFragment_to_ledgerTabsFragment"
+            app:destination="@id/ledgerTabsFragment" />
+
+    </fragment>
 
 </navigation>

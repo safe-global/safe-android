@@ -72,7 +72,6 @@
         android:layout_marginEnd="12dp"
         android:layout_marginStart="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/owner_address"
         app:layout_constraintStart_toEndOf="@+id/owner_number"
         app:layout_constraintTop_toTopOf="parent" />
 

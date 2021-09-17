@@ -27,18 +27,24 @@ data class Owner(
 
     @ColumnInfo(name = COL_SEED_PHRASE)
     @TypeConverters(EncryptedString.NullableConverter::class)
-    val seedPhrase: EncryptedString? = null
-) {
+    val seedPhrase: EncryptedString? = null,
 
+    @ColumnInfo(name = COL_KEY_DERIVATION_PATH)
+    val keyDerivationPath: String? = null
+
+    //FIXME: add device uuid?
+) {
     enum class Type(val value: Int) {
         // add types here
         IMPORTED(0),
-        GENERATED(1);
+        GENERATED(1),
+        LEDGER_NANO_X(2);
 
         companion object {
             fun get(value: Int) = when (value) {
                 0 -> IMPORTED
                 1 -> GENERATED
+                2 -> LEDGER_NANO_X
                 else -> IMPORTED
             }
         }
@@ -52,11 +58,12 @@ data class Owner(
         const val COL_TYPE = "type"
         const val COL_PRIVATE_KEY = "private_key"
         const val COL_SEED_PHRASE = "seed_phrase"
+        const val COL_KEY_DERIVATION_PATH = "derivation_path"
     }
 }
 
-class OwnerTypeConverter {
 
+class OwnerTypeConverter {
     @TypeConverter
     fun toType(typeValue: Int): Owner.Type {
         return Owner.Type.get(typeValue)

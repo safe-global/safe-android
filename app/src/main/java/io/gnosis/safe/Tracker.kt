@@ -29,6 +29,10 @@ class Tracker internal constructor(
         firebaseAnalytics.setUserProperty(Param.NUM_KEYS_IMPORTED, numKeysImported.toString())
     }
 
+    fun setNumKeysLedger(numKeysLedger: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_LEDGER, numKeysLedger.toString())
+    }
+
     fun setPushInfo(enabled: Boolean) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
@@ -170,9 +174,12 @@ class Tracker internal constructor(
         val SAFE_REMOVED = "user_safe_removed"
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
+        val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
+        val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"
@@ -191,6 +198,7 @@ class Tracker internal constructor(
         val PUSH_INFO = "push_info"
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
+        val NUM_KEYS_LEDGER = "num_keys_ledger"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
     }
@@ -228,6 +236,7 @@ enum class ScreenId(val value: String) {
     OWNER_ADD_OPTIONS("screen_owner_options"),
     OWNER_INFO("screen_owner_info"),
     OWNER_GENERATE_INFO("screen_owner_generate_info"),
+    OWNER_LEDGER_INFO("screen_owner_ledger_nano_x_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     OWNER_ENTER_NAME("screen_owner_enter_name"),
     OWNER_EDIT_NAME("screen_owner_edit_name"),
@@ -262,6 +271,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
+    OWNER_SELECT_LEDGER_ACCOUNT("screen_owner_ledger_account"),
     PASSCODE_CREATE("screen_passcode_create"),
     PASSCODE_CREATE_REPEAT("screen_passcode_create_repeat"),
     PASSCODE_CHANGE("screen_passcode_change"),
@@ -270,5 +280,6 @@ enum class ScreenId(val value: String) {
     PASSCODE_ENTER("screen_passcode_enter"),
     UPDATE_DEPRECATED("screen_update_deprecated"),
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
-    UPDATE_NEW_VERSION("screen_update_new_version")
+    UPDATE_NEW_VERSION("screen_update_new_version"),
+    LEDGER_DEVICE_LIST("screen_ledger_nano_x_device")
 }
