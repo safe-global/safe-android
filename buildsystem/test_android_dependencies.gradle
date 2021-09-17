@@ -1,6 +1,7 @@
 dependencies {
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinx_coroutines}"
     androidTestImplementation "androidx.room:room-testing:$versions.androidx_room"
