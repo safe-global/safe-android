@@ -122,8 +122,7 @@ class LedgerController(val context: Context) {
         scanResultFlow.conflate()
 
     private val scanSettings = ScanSettings.Builder()
-        //.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+        .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
         .build()
 
     private val scanFilter = ScanFilter.Builder()
