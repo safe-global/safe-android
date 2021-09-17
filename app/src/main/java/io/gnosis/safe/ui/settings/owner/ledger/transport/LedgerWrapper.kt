@@ -9,7 +9,7 @@ object LedgerWrapper {
 
     private const val TAG_APDU = 0x05
 
-    fun wrapADPU(data: ByteArray): ByteArray {
+    fun wrapAPDU(data: ByteArray): ByteArray {
         val apdu = ByteArrayOutputStream()
         apdu.write(TAG_APDU)
         apdu.write(0x00)
@@ -19,7 +19,7 @@ object LedgerWrapper {
         return apdu.toByteArray()
     }
 
-    fun unwrapADPU(data: ByteArray): ByteArray {
+    fun unwrapAPDU(data: ByteArray): ByteArray {
         if (data.size <= 6 || data[0] != 0x05.toByte()) {
             throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data size")
         }
@@ -63,12 +63,3 @@ object LedgerWrapper {
         return address.toString(Charsets.US_ASCII)
     }
 }
-
-
-
-
-
-
-
-
-

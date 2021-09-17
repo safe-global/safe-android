@@ -19,8 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
-import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapADPU
-import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapADPU
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapAPDU
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionEventListener
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
 import kotlinx.coroutines.channels.awaitClose
@@ -86,9 +86,9 @@ class LedgerController(val context: Context) {
             onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
-                val unwrappedResponse = unwrapADPU(characteristic.value)
+                val unwrappedResponse = unwrapAPDU(characteristic.value)
                 val address = parseGetAddress(unwrappedResponse)
-                Timber.d(address)
+                Timber.d("onCharacteristicChanged() | Parsed address: $address")
                 addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
 
             }
@@ -187,13 +187,13 @@ class LedgerController(val context: Context) {
         commandData.addAll(pathsData.toList())
 
         val command = commandData.toByteArray()
-        Timber.d(command.toHexString())
+        Timber.d("Get address command: ${command.toHexString()}")
 
         return command
     }
 
     suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
-        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapADPU(getAddressCommand(path)))
+        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
         addressContinuation = it
     }
 
