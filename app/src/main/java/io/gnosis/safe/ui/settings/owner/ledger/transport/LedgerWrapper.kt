@@ -21,7 +21,7 @@ object LedgerWrapper {
 
     fun unwrapAPDU(data: ByteArray): ByteArray {
         if (data.size <= 6 || data[0] != 0x05.toByte()) {
-            throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data size")
+            throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data format")
         }
         val unwrappedData = data.slice(5..data.size - 1)
         return unwrappedData.toByteArray()
