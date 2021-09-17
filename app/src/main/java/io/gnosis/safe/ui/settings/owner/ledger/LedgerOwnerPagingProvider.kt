@@ -28,7 +28,7 @@ class LedgerOwnerPagingProvider(
     }
 
     companion object {
-        const val PAGE_SIZE = 10
-        const val MAX_PAGES = 10
+        const val PAGE_SIZE = 5
+        const val MAX_PAGES = 20
     }
 }
