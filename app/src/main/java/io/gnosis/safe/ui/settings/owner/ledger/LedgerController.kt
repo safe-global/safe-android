@@ -17,6 +17,9 @@ import android.os.Build
 import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapADPU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapADPU
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionEventListener
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
@@ -83,7 +86,8 @@ class LedgerController(val context: Context) {
             onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
-                val address = parseGetAddress(characteristic.value)
+                val unwrappedResponse = unwrapADPU(characteristic.value)
+                val address = parseGetAddress(unwrappedResponse)
                 Timber.d(address)
                 addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
 
@@ -167,7 +171,7 @@ class LedgerController(val context: Context) {
 
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
 
-        val paths = splitPath1(path)!!
+        val paths = splitPath(path)
 
         val commandData = mutableListOf<Byte>()
 
