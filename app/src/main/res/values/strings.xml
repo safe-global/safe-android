@@ -469,7 +469,7 @@
     <string name="import_owner_key_ledger_title">Connect Ledger Nano X</string>
     <string name="import_owner_key_ledger_how_does_it_work_title">How does it work?</string>
     <string name="import_owner_key_ledger_how_does_it_work_desc">You can connect your Ledger device and select a key. If it is an owner of your Safe you can sign transactions.</string>
-    <string name="import_owner_key_ledger_pair_your_ledger_device_title">Pair your ledger device</string>
+    <string name="import_owner_key_ledger_pair_your_ledger_device_title">Pair your Ledger device</string>
     <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
     <string name="import_owner_key_ledger_how_secure_is_that_desc">Your key will remain on your Ledger wallet. We do not store it in the app.</string>
@@ -527,7 +527,11 @@
 
     <string name="chain_select_network">Select network on which your Safe was created:</string>
 
-
+    <string name="ledger_connect">Connect Ledger Nano X</string>
+    <string name="ledger_select_device">Select your device</string>
+    <string name="ledger_device_search">Looking for Ledger Nano X devices</string>
+    <string name="ledger_device_not_found">No Ledger Nano X device found. Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
     <string name="ledger_tab_ledger">LEDGER</string>
+
 </resources>

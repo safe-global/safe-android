@@ -272,5 +272,6 @@ enum class ScreenId(val value: String) {
     PASSCODE_ENTER("screen_passcode_enter"),
     UPDATE_DEPRECATED("screen_update_deprecated"),
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
-    UPDATE_NEW_VERSION("screen_update_new_version")
+    UPDATE_NEW_VERSION("screen_update_new_version"),
+    LEDGER_DEVICE_LIST("screen_ledger_nano_x_device")
 }

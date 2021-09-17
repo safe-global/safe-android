@@ -68,7 +68,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
             }
             nextButton.setOnClickListener {
                 findNavController().navigate(
-                    LedgerTabsFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(
+                    LedgerTabsFragmentDirections.actionLedgerTabsToOwnerEnterNameFragment(
                         ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
                         fromSeedPhrase = false,
                         ownerKey = "",
@@ -106,13 +106,8 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment =
         when (Tabs.values()[position]) {
-            Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/0/{index}")
-
-            Tabs.LEDGER -> {
-                //TODO use right derivation path when using real ledger device
-                LedgerOwnerSelectionFragment.newInstance("")
-//                LedgerOwnerSelectionFragment.newInstance("m/44'/60'/0'/{index}")
-            }
+            Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/0/{index}")
+            Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/{index}")
         }
 
     override fun getItemId(position: Int): Long {

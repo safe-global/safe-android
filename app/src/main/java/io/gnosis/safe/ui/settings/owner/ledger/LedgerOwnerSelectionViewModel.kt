@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class LedgerOwnerSelectionViewModel
 @Inject constructor(
-    private val addressProvider: LedgerAddressProvider,
+    private val ledgerController: LedgerController,
     private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<OwnerSelectionState>(appDispatchers) {
@@ -26,7 +26,7 @@ class LedgerOwnerSelectionViewModel
 
     fun loadOwners(derivationPath: String) {
         safeLaunch {
-            LedgerOwnerPagingProvider(addressProvider, derivationPath).getOwnersStream()
+            LedgerOwnerPagingProvider(ledgerController, derivationPath).getOwnersStream()
                 .cachedIn(viewModelScope)
                 .map {
                     it.map { address ->
