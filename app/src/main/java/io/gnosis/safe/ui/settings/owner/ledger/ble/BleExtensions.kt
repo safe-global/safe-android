@@ -8,7 +8,7 @@ import java.util.Locale
 import java.util.UUID
 
 /** UUID of the Client Characteristic Configuration Descriptor (0x2902). */
-const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"//00002902-0000-1000-8000-00805F9B34FB"
+const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
 
 // BluetoothGatt
 
