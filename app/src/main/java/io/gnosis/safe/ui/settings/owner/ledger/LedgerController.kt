@@ -36,26 +36,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class LedgerController(val context: Context) {
 
-    var connectedDevice: BluetoothDevice? = null
-        private set
-
-    private var deviceConnectedCallback: DeviceConnectedCallback? = null
-    private var addressContinuation: Continuation<Solidity.Address>? = null
-
-    var writeCharacteristic: BluetoothGattCharacteristic? = null
-    var notifyCharacteristic: BluetoothGattCharacteristic? = null
-
-    fun loadDeviceCharacteristics() {
-        val characteristic = connectedDevice?.let {
-            ConnectionManager.servicesOnDevice(it)?.flatMap { service ->
-                service.characteristics ?: listOf()
-            }
-        } ?: listOf()
-        writeCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0002-4c6564676572") }
-        notifyCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0001-4c6564676572") }
-    }
-
-
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
@@ -65,6 +45,25 @@ class LedgerController(val context: Context) {
         bluetoothAdapter.bluetoothLeScanner
     }
 
+    var connectedDevice: BluetoothDevice? = null
+        private set
+
+    private var deviceConnectedCallback: DeviceConnectedCallback? = null
+    private var addressContinuation: Continuation<Solidity.Address>? = null
+
+    var writeCharacteristic: BluetoothGattCharacteristic? = null
+    var notifyCharacteristic: BluetoothGattCharacteristic? = null
+
+    private fun loadDeviceCharacteristics() {
+        val characteristic = connectedDevice?.let {
+            ConnectionManager.servicesOnDevice(it)?.flatMap { service ->
+                service.characteristics ?: listOf()
+            }
+        } ?: listOf()
+        writeCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0002-4c6564676572") }
+        notifyCharacteristic = characteristic.find { it.uuid == UUID.fromString("13d63400-2c97-0004-0001-4c6564676572") }
+    }
+
     private val connectionEventListener by lazy {
 
         ConnectionEventListener().apply {
@@ -72,6 +71,8 @@ class LedgerController(val context: Context) {
             onConnectionSetupComplete = { gatt ->
                 Timber.d("Connected to ${gatt.device.name}")
                 connectedDevice = gatt.device
+                loadDeviceCharacteristics()
+                ConnectionManager.enableNotifications(gatt.device, notifyCharacteristic!!)
                 deviceConnectedCallback?.onDeviceConnected(connectedDevice!!)
             }
 

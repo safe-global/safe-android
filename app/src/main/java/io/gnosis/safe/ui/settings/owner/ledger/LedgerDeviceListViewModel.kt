@@ -7,9 +7,7 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
 import kotlinx.coroutines.flow.collect
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -101,8 +99,6 @@ class LedgerDeviceListViewModel
             } else {
                 ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
                     override fun onDeviceConnected(device: BluetoothDevice) {
-                        ledgerController.loadDeviceCharacteristics()
-                        ConnectionManager.enableNotifications(device, ledgerController.notifyCharacteristic!!)
                         safeLaunch {
                             updateState {
                                 LedgerDeviceListState(DeviceConnected(device))
@@ -110,32 +106,6 @@ class LedgerDeviceListViewModel
                         }
                     }
                 })
-            }
-        }
-    }
-
-    fun connectToDevice(context: Context, position: Int) {
-        val device = scanResults[position].device
-
-
-        if (!ConnectionManager.isDeviceConnected(device)) {
-            ledgerController.connectToDevice(context, scanResults[position].device, object : LedgerController.DeviceConnectedCallback {
-                override fun onDeviceConnected(device: BluetoothDevice) {
-
-                    ledgerController.loadDeviceCharacteristics()
-                    ConnectionManager.enableNotifications(device, ledgerController.notifyCharacteristic!!)
-
-                    safeLaunch {
-                        val address = ledgerController.getAddress(device, "44'/60'/0'/0/0")
-                        Timber.e("address received: ${address.asEthereumAddressChecksumString()}")
-
-                    }
-                }
-            })
-        } else {
-            safeLaunch {
-                val address = ledgerController.getAddress(device, "44'/60'/0'/0/0")
-                Timber.e("address received: ${address.asEthereumAddressChecksumString()}")
             }
         }
     }
