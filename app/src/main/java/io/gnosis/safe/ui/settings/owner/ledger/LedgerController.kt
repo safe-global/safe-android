@@ -199,7 +199,7 @@ class LedgerController(val context: Context) {
 
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
         val addressPage = mutableListOf<Solidity.Address>()
-        for (i in start until pageSize) {
+        for (i in start until start + pageSize) {
             val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
             addressPage.add(address)
         }
