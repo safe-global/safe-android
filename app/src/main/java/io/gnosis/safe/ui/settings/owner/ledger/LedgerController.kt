@@ -167,7 +167,6 @@ class LedgerController(val context: Context) {
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
     }
 
-
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
 
         val paths = splitPath(path)
@@ -193,7 +192,6 @@ class LedgerController(val context: Context) {
         return command
     }
 
-
     suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapADPU(getAddressCommand(path)))
         addressContinuation = it
@@ -207,7 +205,6 @@ class LedgerController(val context: Context) {
         }
         return addressPage
     }
-
 
     private fun promptEnableBluetooth(fragment: Fragment) {
         if (!bluetoothAdapter.isEnabled) {
