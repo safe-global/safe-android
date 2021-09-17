@@ -31,6 +31,7 @@ import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsViewModel
 import io.gnosis.safe.ui.settings.owner.intro.OwnerGenerateViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionViewModel
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
@@ -207,4 +208,8 @@ class ViewModule(
     @Provides
     @ForView
     fun providesUpdatesViewModel(provider: ViewModelProvider) = provider[UpdatesViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesLedgerDeviceListViewModel(provider: ViewModelProvider) = provider[LedgerDeviceListViewModel::class.java]
 }

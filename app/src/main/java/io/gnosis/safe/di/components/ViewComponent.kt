@@ -36,6 +36,7 @@ import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoGenerateFragment
 import io.gnosis.safe.ui.settings.owner.intro.OwnerInfoLedgerFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerTabsFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragment
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragment
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment
@@ -158,6 +159,8 @@ interface ViewComponent {
     fun inject(fragment: SigningOwnerSelectionFragment)
 
     fun inject(fragment: UpdatesFragment)
+
+    fun inject(fragment: LedgerDeviceListFragment)
 
     // Dialogs
     fun inject(dialog: EnsInputDialog)
