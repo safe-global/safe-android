@@ -3,10 +3,6 @@ apply from: '../buildsystem/constants.gradle'
 apply from: '../buildsystem/helpers.gradle'
 apply from: '../buildsystem/test_dependencies.gradle'
 
-android {
-    buildToolsVersion '29.0.3'
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
