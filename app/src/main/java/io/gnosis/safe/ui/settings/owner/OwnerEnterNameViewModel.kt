@@ -71,7 +71,8 @@ class OwnerEnterNameViewModel
             settingsHandler.showOwnerScreen = false
             tracker.logLedgerKeyImported()
             tracker.setNumKeysLedger(credentialsRepository.ownerCount(Owner.Type.LEDGER_NANO_X))
-            notificationRepository.registerSafes()
+            // TODO enable this, when we have the delegate key to do it properly
+            //notificationRepository.registerSafes()
 
             updateState {
                 OwnerEnterNameState(
