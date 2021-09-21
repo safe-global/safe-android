@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
 import io.gnosis.safe.utils.BlockExplorer
@@ -32,7 +33,7 @@ class NamedAddressItem @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
-    fun setAddress(chain: Chain, value: Solidity.Address?) {
+    fun setAddress(chain: Chain, value: Solidity.Address?, ownerType: Owner.Type? = null) {
         with(binding) {
             blockies.setAddress(value)
             address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
