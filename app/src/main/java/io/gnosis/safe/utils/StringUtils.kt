@@ -29,24 +29,11 @@ import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 import java.util.regex.Pattern
 
-// Is this used anywhere except in the test?
-fun String.asMiddleEllipsized(boundariesLength: Int): String {
-    return if (this.length > boundariesLength * 2)
-        "${this.subSequence(0, boundariesLength)}...${this.subSequence(this.length - boundariesLength, this.length)}"
-    else this
-}
-
 fun String.asMiddleEllipsized(prefixLength: Int, suffixLength: Int): String {
     return if (this.length > (prefixLength + suffixLength))
         "${this.subSequence(0, prefixLength)}...${this.subSequence(this.length - suffixLength, this.length)}"
     else this
 }
-
-// Is this used anywhere except in the test?
-fun String.underline() =
-    SpannableString(this).also {
-        it.setSpan(UnderlineSpan(), 0, length, 0)
-    }
 
 fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
 

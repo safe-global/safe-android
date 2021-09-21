@@ -274,32 +274,6 @@ class StringUtilsKtTest {
     }
 
     @Test
-    fun `underline`() {
-
-        val result = "abcde".underline()
-
-        val spans = result.getSpans<Any>(0, result.length)
-        assertEquals(1, spans.size)
-        assertTrue(spans[0] is UnderlineSpan)
-    }
-
-    @Test
-    fun `asMiddleEllipsized(boundariesLength)`() {
-
-        val result = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asMiddleEllipsized(3)
-
-        assertEquals(result, "0xd...F44")
-    }
-
-    @Test
-    fun `asMiddleEllipsized(boundariesLength) shorter than 2 * bounderies`() {
-
-        val result = "0xdF44".asMiddleEllipsized(3)
-
-        assertEquals(result, "0xdF44")
-    }
-
-    @Test
     fun `asMiddleEllipsized(prefixLength, suffixLength)`() {
 
         val result = "0xd5D82B6aDDc9027B22dCA772Aa68D5d74cdBdF44".asMiddleEllipsized(5, 5)
