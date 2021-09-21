@@ -1,27 +1,31 @@
-package io.gnosis.safe.ui.settings.owner.selection
+package io.gnosis.safe.ui.settings.owner.ledger
 
 import androidx.paging.PagingSource
-import io.gnosis.safe.utils.MnemonicAddressDerivator
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
-class DerivedOwnerPagingSource(
-    private val derivator: MnemonicAddressDerivator,
+class LedgerOwnerPagingSource(
+    private val ledgerController: LedgerController,
+    private val derivationPath: String,
     private val maxPages: Int
 ) : PagingSource<Long, Solidity.Address>() {
 
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Solidity.Address> {
-
         val pageLink = params.key
         val pageSize = params.loadSize
 
         kotlin.runCatching {
-            pageLink?.let { derivator.addressesForPage(pageLink, pageSize) } ?: derivator.addressesForPage(0, pageSize)
+
+            pageLink?.let { ledgerController.addressesForPage(derivationPath, pageLink, pageSize) } ?: ledgerController.addressesForPage(
+                derivationPath,
+                0,
+                pageSize
+            )
 
         }.onSuccess {
             return LoadResult.Page(
                 data = it,
-                prevKey =  if (pageLink == null || pageLink == 0L) null else pageLink - pageSize,
+                prevKey = if (pageLink == null || pageLink == 0L) null else pageLink - pageSize,
                 nextKey = if ((pageLink ?: 0) < (maxPages - 1) * pageSize) (pageLink ?: 0) + pageSize else null
             )
         }

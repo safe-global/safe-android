@@ -2,15 +2,20 @@ package io.gnosis.safe
 
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_KEY
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_SEED
 import java.math.BigInteger
 import javax.inject.Singleton
 
 @Singleton
-class Tracker private constructor(context: Context) {
-
-    private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+class Tracker internal constructor(
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) {
 
     fun setNumSafes(numSafes: Int) {
         firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
@@ -51,7 +56,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.SAFE_ADDED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -60,7 +65,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.SAFE_REMOVED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -73,7 +78,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.KEY_IMPORTED,
             mapOf(
-                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
+                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) KEY_IMPORT_TYPE_SEED else KEY_IMPORT_TYPE_KEY
             )
         )
     }
@@ -86,7 +91,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.TRANSACTION_CONFIRMED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -95,7 +100,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.TRANSACTION_REJECTED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -149,6 +154,7 @@ class Tracker private constructor(context: Context) {
                         is String -> bundle.putString(key, value)
                         is Long -> bundle.putLong(key, value)
                         is Int -> bundle.putInt(key, value)
+                        is BigInteger -> bundle.putString(key, value.toString())
                         is Number -> bundle.putFloat(key, value.toFloat())
                     }
                 }
@@ -160,7 +166,7 @@ class Tracker private constructor(context: Context) {
     }
 
     fun logException(exception: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(exception)
+        firebaseCrashlytics.recordException(exception)
     }
 
     object Event {
@@ -168,9 +174,12 @@ class Tracker private constructor(context: Context) {
         val SAFE_REMOVED = "user_safe_removed"
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
+        val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
+        val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
+        val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
         val BANNER_PASSCODE_SKIP = "user_banner_passcode_skip"
         val BANNER_PASSCODE_CREATE = "user_banner_passcode_create"
         val BANNER_OWNER_SKIP = "user_banner_owner_skip"
@@ -181,7 +190,6 @@ class Tracker private constructor(context: Context) {
         val PASSCODE_DISABLED = "user_passcode_disabled"
         val PASSCODE_RESET = "user_passcode_reset"
         val PASSCODE_SKIPPED = "user_passcode_skipped"
-
     }
 
     object Param {
@@ -207,10 +215,13 @@ class Tracker private constructor(context: Context) {
         @Volatile
         private var INSTANCE: Tracker? = null
 
-        fun getInstance(context: Context): Tracker =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Tracker(context).also { INSTANCE = it }
+        fun getInstance(context: Context): Tracker {
+            val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Tracker(firebaseAnalytics, firebaseCrashlytics).also { INSTANCE = it }
             }
+        }
     }
 }
 
@@ -260,6 +271,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
+    OWNER_SELECT_LEDGER_ACCOUNT("screen_owner_ledger_account"),
     PASSCODE_CREATE("screen_passcode_create"),
     PASSCODE_CREATE_REPEAT("screen_passcode_create_repeat"),
     PASSCODE_CHANGE("screen_passcode_change"),
@@ -268,5 +280,6 @@ enum class ScreenId(val value: String) {
     PASSCODE_ENTER("screen_passcode_enter"),
     UPDATE_DEPRECATED("screen_update_deprecated"),
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
-    UPDATE_NEW_VERSION("screen_update_new_version")
+    UPDATE_NEW_VERSION("screen_update_new_version"),
+    LEDGER_DEVICE_LIST("screen_ledger_nano_x_device")
 }
