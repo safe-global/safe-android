@@ -2,15 +2,20 @@ package io.gnosis.safe
 
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_KEY
+import io.gnosis.safe.Tracker.ParamValues.KEY_IMPORT_TYPE_SEED
 import java.math.BigInteger
 import javax.inject.Singleton
 
 @Singleton
-class Tracker private constructor(context: Context) {
-
-    private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+class Tracker internal constructor(
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) {
 
     fun setNumSafes(numSafes: Int) {
         firebaseAnalytics.setUserProperty(Param.NUM_SAFES, numSafes.toString())
@@ -51,7 +56,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.SAFE_ADDED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -60,7 +65,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.SAFE_REMOVED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -73,7 +78,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.KEY_IMPORTED,
             mapOf(
-                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) ParamValues.KEY_IMPORT_TYPE_SEED else ParamValues.KEY_IMPORT_TYPE_KEY
+                Param.KEY_IMPORT_TYPE to if (usingSeedPhrase) KEY_IMPORT_TYPE_SEED else KEY_IMPORT_TYPE_KEY
             )
         )
     }
@@ -86,7 +91,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.TRANSACTION_CONFIRMED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -95,7 +100,7 @@ class Tracker private constructor(context: Context) {
         logEvent(
             Event.TRANSACTION_REJECTED,
             mapOf(
-                Param.CHAIN_ID to chainId.toString()
+                Param.CHAIN_ID to chainId
             )
         )
     }
@@ -149,6 +154,7 @@ class Tracker private constructor(context: Context) {
                         is String -> bundle.putString(key, value)
                         is Long -> bundle.putLong(key, value)
                         is Int -> bundle.putInt(key, value)
+                        is BigInteger -> bundle.putString(key, value.toString())
                         is Number -> bundle.putFloat(key, value.toFloat())
                     }
                 }
@@ -160,7 +166,7 @@ class Tracker private constructor(context: Context) {
     }
 
     fun logException(exception: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(exception)
+        firebaseCrashlytics.recordException(exception)
     }
 
     object Event {
@@ -184,7 +190,6 @@ class Tracker private constructor(context: Context) {
         val PASSCODE_DISABLED = "user_passcode_disabled"
         val PASSCODE_RESET = "user_passcode_reset"
         val PASSCODE_SKIPPED = "user_passcode_skipped"
-
     }
 
     object Param {
@@ -210,10 +215,13 @@ class Tracker private constructor(context: Context) {
         @Volatile
         private var INSTANCE: Tracker? = null
 
-        fun getInstance(context: Context): Tracker =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Tracker(context).also { INSTANCE = it }
+        fun getInstance(context: Context): Tracker {
+            val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Tracker(firebaseAnalytics, firebaseCrashlytics).also { INSTANCE = it }
             }
+        }
     }
 }
 
