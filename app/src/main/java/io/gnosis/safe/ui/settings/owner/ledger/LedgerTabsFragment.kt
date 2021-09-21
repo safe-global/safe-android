@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Owner
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
@@ -24,7 +23,6 @@ import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@ExcludeClassFromJacocoGeneratedReport
 class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     override fun screenId() = ScreenId.OWNER_SELECT_LEDGER_ACCOUNT
@@ -44,7 +42,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
     }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerBinding =
-        FragmentLedgerBinding.inflate(inflater, container, false)
+            FragmentLedgerBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,14 +68,14 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
             }
             nextButton.setOnClickListener {
                 findNavController().navigate(
-                    LedgerTabsFragmentDirections.actionLedgerTabsToOwnerEnterNameFragment(
-                        ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
-                        fromSeedPhrase = false,
-                        ownerKey = "",
-                        ownerSeedPhrase = "",
-                        ownerType = Owner.Type.LEDGER_NANO_X.value,
-                        derivationPathWithIndex = derivationPathWithIndex
-                    )
+                        LedgerTabsFragmentDirections.actionLedgerTabsToOwnerEnterNameFragment(
+                                ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
+                                fromSeedPhrase = false,
+                                ownerKey = "",
+                                ownerSeedPhrase = "",
+                                ownerType = Owner.Type.LEDGER_NANO_X.value,
+                                derivationPathWithIndex = derivationPathWithIndex
+                        )
                 )
             }
             pager = LedgerPagerAdapter(this@LedgerTabsFragment)
@@ -108,10 +106,10 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = Tabs.values().size
 
     override fun createFragment(position: Int): Fragment =
-        when (Tabs.values()[position]) {
-            Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/0/{index}")
-            Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/{index}")
-        }
+            when (Tabs.values()[position]) {
+                Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/0/{index}")
+                Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/{index}")
+            }
 
     override fun getItemId(position: Int): Long {
         return when (Tabs.values()[position]) {
