@@ -490,12 +490,12 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
                         Timber.e("Write not permitted for $uuid!")
-                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write failed")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write not permitted for $uuid!")
 
                     }
                     else -> {
                         Timber.e("Descriptor write failed for $uuid, error: $status")
-                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write failed")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Descriptor write failed for $uuid, error: $status")
                     }
                 }
             }
