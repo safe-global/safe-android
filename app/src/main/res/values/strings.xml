@@ -534,5 +534,6 @@
     <string name="ledger_no_addresses_loaded">No addresses could be loaded from the Ledger Nano X. Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
     <string name="ledger_tab_ledger">LEDGER</string>
+    <string name="error_description_ledger_address_list">Failed to load owner addresses</string>
 
 </resources>

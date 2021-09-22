@@ -160,7 +160,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         if (error.trackingRequired) {
             tracker.logException(throwable)
         }
-        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
     }
 
     private fun showList() {

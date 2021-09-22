@@ -32,6 +32,7 @@ import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.Continuation
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class LedgerController(val context: Context) {
@@ -87,11 +88,14 @@ class LedgerController(val context: Context) {
             onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
-                val unwrappedResponse = unwrapAPDU(characteristic.value)
-                val address = parseGetAddress(unwrappedResponse)
-                Timber.d("onCharacteristicChanged() | Parsed address: $address")
-                addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
-
+                try {
+                    val unwrappedResponse = unwrapAPDU(characteristic.value)
+                    val address = parseGetAddress(unwrappedResponse)
+                    Timber.d("onCharacteristicChanged() | Parsed address: $address")
+                    addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
+                } catch (e: Throwable) {
+                    addressContinuation?.resumeWithException(e)
+                }
             }
 
             onNotificationsEnabled = { _, characteristic ->
