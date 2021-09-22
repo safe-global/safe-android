@@ -14,11 +14,14 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
+import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -89,19 +92,58 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         adapter = LedgerOwnerListAdapter()
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
+
+            Timber.i("----> loadState: $loadState")
+
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
                 if (loadState.refresh is LoadState.Loading && adapter.itemCount == 0) {
+                    Timber.i("----> Show progress")
+
                     binding.progress.visible(true)
+                    binding.emptyPlaceholder.visible(false)
+//                    binding.
                 }
 
-                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
-                    binding.showMoreOwners.visible(false)
-                } else {
-                    binding.progress.visible(false)
+                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount > 0) {
+                    Timber.i("----> showMoreOwners.visible(${adapter.pagesVisible < MAX_PAGES})")
                     binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                 }
+
+                if (loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                    Timber.i("----> showEmptyState()")
+                    showEmptyState()
+                }
+                if (adapter.itemCount > 0) {
+                    Timber.i("----> showList()")
+
+                    showList()
+                }
             }
+            loadState.append.let {
+                if (it is LoadState.Error) {
+                    Timber.i("----> Handle Error (append) ${it.error}")
+
+                    handleError(it.error)
+                    showEmptyState()
+                }
+            }
+            loadState.prepend.let {
+                if (it is LoadState.Error) {
+                    Timber.i("----> Handle Error (prepend) ${it.error}")
+
+                    handleError(it.error)
+                    showEmptyState()
+                }
+            }
+            loadState.refresh.let {
+                if (it is LoadState.Error) {
+                    Timber.i("----> Handle Error (refresh) ${it.error}")
+                    handleError(it.error)
+                    showEmptyState()
+                }
+            }
+
         }
 
         with(binding) {
@@ -111,6 +153,32 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         viewModel.loadOwners(derivationPath)
 
+    }
+
+    private fun handleError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error.trackingRequired) {
+            tracker.logException(throwable)
+        }
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_tx_list))
+    }
+
+    private fun showList() {
+//        startElapsedIntervalsUpdate()
+        with(binding) {
+            progress.visible(false)
+            derivedOwners.visible(true)
+            emptyPlaceholder.visible(false)
+        }
+    }
+
+    private fun showEmptyState() {
+//        stopElapsedIntervalsUpdate()
+        with(binding) {
+            derivedOwners.visible(false)
+            emptyPlaceholder.visible(true)
+            binding.progress.visible(false)
+        }
     }
 
     override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {

@@ -7,7 +7,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.safe.databinding.ItemLedgerDeviceBinding
 
 
-class LedgerDeviceListAdapter(private val listener: DeviceListener, private val forSigningOnly: Boolean = false) :
+class LedgerDeviceListAdapter(private val listener: DeviceListener) :
     RecyclerView.Adapter<LedgerDeviceViewHolder>() {
 
     private val items = mutableListOf<LedgerDeviceViewData>()
