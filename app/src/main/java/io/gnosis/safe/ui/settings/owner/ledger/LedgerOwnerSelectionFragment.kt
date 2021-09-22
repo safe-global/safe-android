@@ -102,7 +102,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
                     binding.progress.visible(true)
                     binding.emptyPlaceholder.visible(false)
-//                    binding.
                 }
 
                 if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount > 0) {
@@ -164,7 +163,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     private fun showList() {
-//        startElapsedIntervalsUpdate()
         with(binding) {
             progress.visible(false)
             derivedOwners.visible(true)
@@ -173,7 +171,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     private fun showEmptyState() {
-//        stopElapsedIntervalsUpdate()
         with(binding) {
             derivedOwners.visible(false)
             emptyPlaceholder.visible(true)
