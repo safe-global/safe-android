@@ -59,7 +59,7 @@ object LedgerWrapper {
         val publicKeyLength = 65
         val addressLength = 40
 
-        val address = data.slice(publicKeyLength + 2..publicKeyLength + addressLength).toByteArray()
+        val address = data.slice(publicKeyLength + 2..publicKeyLength + addressLength + 1).toByteArray()
         return address.toString(Charsets.US_ASCII)
     }
 }
