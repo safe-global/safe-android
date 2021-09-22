@@ -1,13 +1,7 @@
 package io.gnosis.safe.ui.settings.owner.ledger.ble
 
-import android.bluetooth.BluetoothDevice
+import android.bluetooth.*
 import android.bluetooth.BluetoothDevice.TRANSPORT_LE
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothGattDescriptor
-import android.bluetooth.BluetoothGattService
-import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +9,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -395,9 +390,11 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_READ_NOT_PERMITTED -> {
                         Timber.e("Read not permitted for $uuid!")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Read not permitted for $uuid!")
                     }
                     else -> {
                         Timber.e("Characteristic read failed for $uuid, error: $status")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Characteristic read failed for $uuid, error: $status")
                     }
                 }
             }
@@ -420,9 +417,13 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
                         Timber.e("Write not permitted for $uuid!")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write not permitted for $uuid!")
+
                     }
                     else -> {
                         Timber.e("Characteristic write failed for $uuid, error: $status")
+                        val error =  LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Characteristic write failed for $uuid, error: $status")
+                        listeners.forEach { it.get()?.onCharacteristicWriteError?.invoke(gatt.device, this, error) }
                     }
                 }
             }
@@ -456,9 +457,12 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_READ_NOT_PERMITTED -> {
                         Timber.e("Read not permitted for $uuid!")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Read not permitted for $uuid!")
                     }
                     else -> {
                         Timber.e("Descriptor read failed for $uuid, error: $status")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Descriptor read failed for $uuid, error: $status")
+
                     }
                 }
             }
@@ -486,9 +490,12 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
                         Timber.e("Write not permitted for $uuid!")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write failed")
+
                     }
                     else -> {
                         Timber.e("Descriptor write failed for $uuid, error: $status")
+                        throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write failed")
                     }
                 }
             }
@@ -535,6 +542,8 @@ object ConnectionManager {
                 }
                 else -> {
                     Timber.e("Unexpected value ${value.toHexString()} on CCCD of $charUuid")
+                    throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Unexpected value ${value.toHexString()} on CCCD of $charUuid")
+
                 }
             }
         }

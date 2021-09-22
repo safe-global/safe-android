@@ -85,6 +85,10 @@ class LedgerController(val context: Context) {
 
             onCharacteristicWrite = { _, characteristic -> }
 
+            onCharacteristicWriteError = { _, _, error ->
+                addressContinuation?.resumeWithException(error)
+            }
+
             onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
