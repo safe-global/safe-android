@@ -50,7 +50,7 @@ class LedgerOwnerSelectionViewModel
                             address = address,
                             name = null,
                             disabled = false
-                        ), derivationPath = derivationPath
+                        ), derivationPathWithIndex = derivationPath.replace(oldValue = "{index}", newValue = "$index")
                     )
                 )
             }
@@ -69,5 +69,5 @@ data class DerivedOwners(
 
 data class OwnerSelected(
     val selectedOwner: OwnerHolder,
-    val derivationPath: String
+    val derivationPathWithIndex: String
 ) : BaseStateViewModel.ViewAction

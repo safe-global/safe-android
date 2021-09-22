@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.OwnerTypeConverter
+import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerNameEnterBinding
@@ -26,6 +27,7 @@ import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import javax.inject.Inject
 
+@ExcludeClassFromJacocoGeneratedReport
 class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBinding>() {
 
     override fun screenId() = ScreenId.OWNER_ENTER_NAME
@@ -41,6 +43,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val fromSeedPhrase by lazy { navArgs.fromSeedPhrase }
     private val ownerSeedPhrase by lazy { navArgs.ownerSeedPhrase }
     private val ownerType: Owner.Type by lazy { OwnerTypeConverter().toType(navArgs.ownerType) }
+    private val derivationPathWithIndex: String? by lazy { navArgs.derivationPathWithIndex }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -58,15 +61,25 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
             keyType.setImageResource(ownerType.imageRes24dp())
             backButton.setOnClickListener { findNavController().navigateUp() }
-            if (ownerSeedPhrase != null) {
-                nextButton.text = getString(R.string.signing_owner_save)
-                nextButton.setOnClickListener {
-                    viewModel.importGeneratedOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, ownerSeedPhrase!!)
+
+            when (ownerType) {
+                Owner.Type.IMPORTED -> {
+                    nextButton.text = getString(R.string.signing_owner_import)
+                    nextButton.setOnClickListener {
+                        viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+                    }
                 }
-            } else {
-                nextButton.text = getString(R.string.signing_owner_import)
-                nextButton.setOnClickListener {
-                    viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
+                Owner.Type.GENERATED-> {
+                    nextButton.text = getString(R.string.signing_owner_save)
+                    nextButton.setOnClickListener {
+                        viewModel.importGeneratedOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, ownerSeedPhrase!!)
+                    }
+                }
+                Owner.Type.LEDGER_NANO_X -> {
+                    nextButton.text = getString(R.string.signing_owner_import)
+                    nextButton.setOnClickListener {
+                        viewModel.importLedgerOwner(ownerAddress, ownerNameEntry.text.toString(), derivationPathWithIndex!!)
+                    }
                 }
             }
             ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
