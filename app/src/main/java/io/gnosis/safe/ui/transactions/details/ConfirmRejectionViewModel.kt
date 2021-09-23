@@ -149,7 +149,30 @@ class ConfirmRejectionViewModel
                     address != possibleSigner.value
                 }
             }
+
             safeLaunch {
+                //FIXME: refactor this section. tx hash of the rejection transaction needs to be propagated for signing on ledger device
+                val safe = safeRepository.getActiveSafe()!!
+                val contractVersion = safe.version?.let {
+                    SemVer.parse(it)
+                } ?: SemVer(0, 0, 0)
+
+                val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
+                val rejectionTxDetails = TransactionDetails(
+                    txInfo = TransactionInfo.Custom(to = AddressInfo(safe.address)),
+                    detailedExecutionInfo = rejectionExecutionInfo,
+                    safeAppInfo = null
+                )
+                val rejectionTxHash =
+                    calculateSafeTxHash(
+                        implementationVersion = contractVersion,
+                        chainId = safe.chainId,
+                        safeAddress = safe.address,
+                        transaction = rejectionTxDetails,
+                        executionInfo = rejectionExecutionInfo
+                    ).toHexString()
+                // ----------------
+
                 updateState {
                     ConfirmationRejectedViewState(
                         ViewAction.NavigateTo(
@@ -158,7 +181,7 @@ class ConfirmRejectionViewModel
                                     it.value.asEthereumAddressString()
                                 }.toTypedArray(),
                                 isConfirmation = false,
-                                safeTxHash = executionInfo.safeTxHash
+                                safeTxHash = rejectionTxHash
                             )
                         )
                     )
