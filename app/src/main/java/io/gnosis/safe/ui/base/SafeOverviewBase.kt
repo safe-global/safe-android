@@ -104,6 +104,7 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         const val OWNER_IMPORT_RESULT = "args.boolean.owner_import_result"
         const val OWNER_CREATE_RESULT = "args.boolean.owner_create_result"
         const val OWNER_SELECTED_RESULT = "args.string.owner_selected_result"
+        const val OWNER_SIGNED_RESULT = "args.string.owner_signed_result"
         const val PASSCODE_SET_RESULT = "args.boolean.passcode_set_result"
         const val PASSCODE_DISABLED_RESULT = "args.boolean.passcode_disabled_result"
         const val PASSCODE_CHANGED_RESULT = "args.boolean.passcode_changed_result"

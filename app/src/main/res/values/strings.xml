@@ -536,4 +536,9 @@
     <string name="ledger_tab_ledger">LEDGER</string>
     <string name="error_description_ledger_address_list">Failed to load owner addresses</string>
 
+    <string name="ledger_sign_confirm">Confirm Transaction</string>
+    <string name="ledger_sign_reject">Reject Transaction</string>
+    <string name="ledger_sign_verify">Verify the transaction hash below on your Ledger Nano X and confirm by pressing both buttons simultaneously.</string>
+    <string name="ledger_sign_cancel">Cancel</string>
+
 </resources>

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
 import io.gnosis.safe.utils.shortChecksumString
@@ -73,7 +74,7 @@ class OwnerListAdapter(private val ownerListener: OwnerListener, private val for
     }
 
     interface OwnerListener {
-        fun onOwnerClick(owner: Solidity.Address)
+        fun onOwnerClick(owner: Solidity.Address, type: Owner.Type)
     }
 }
 
@@ -96,7 +97,7 @@ class LocalOwnerViewHolder(private val viewBinding: ItemOwnerLocalBinding) : Bas
                     owner.address.shortChecksumString()
                 ) else owner.name
             root.setOnClickListener {
-                ownerListener.onOwnerClick(owner.address)
+                ownerListener.onOwnerClick(owner.address, owner.type)
             }
         }
     }
@@ -116,7 +117,7 @@ class LocalOwnerForSigningViewHolder(private val viewBinding: ItemOwnerLocalBind
                     owner.address.shortChecksumString()
                 ) else owner.name
             root.setOnClickListener {
-                ownerListener.onOwnerClick(owner.address)
+                ownerListener.onOwnerClick(owner.address, owner.type)
             }
         }
     }

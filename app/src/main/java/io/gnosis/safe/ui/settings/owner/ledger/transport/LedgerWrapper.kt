@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.settings.owner.ledger
 
 import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
 import io.gnosis.safe.ui.settings.owner.ledger.transport.SerializeHelper
+import pm.gnosis.utils.asBigInteger
 import java.io.ByteArrayOutputStream
 
 
@@ -61,5 +62,17 @@ object LedgerWrapper {
 
         val address = data.slice(publicKeyLength + 2..publicKeyLength + addressLength + 1).toByteArray()
         return address.toString(Charsets.US_ASCII)
+    }
+
+    fun parseSignMessage(data: ByteArray): String {
+        if (data.size < 65) throw LedgerException(LedgerException.ExceptionReason.INVALID_PARAMETER, "invalid data size")
+
+        val v = data[0] + 4
+        val r = data.slice(1..32).toByteArray().asBigInteger()
+        val s = data.slice(33..65).toByteArray().asBigInteger()
+
+        return r.toString(16).padStart(64, '0').substring(0, 64) +
+                s.toString(16).padStart(64, '0').substring(0, 64) +
+                v.toString(16).padStart(2, '0')
     }
 }
