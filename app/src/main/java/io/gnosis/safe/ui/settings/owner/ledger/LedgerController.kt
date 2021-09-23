@@ -103,7 +103,6 @@ class LedgerController(val context: Context) {
                 }
 
                 signContinuation?.let {
-                    Timber.e(unwrappedResponse.toHexString())
                     val signature = parseSignMessage(unwrappedResponse)
                     Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
                     it.resumeWith(Result.success(signature))
