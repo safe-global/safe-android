@@ -37,6 +37,7 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.coroutines.Continuation
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class LedgerController(val context: Context) {
@@ -103,9 +104,14 @@ class LedgerController(val context: Context) {
                 }
 
                 signContinuation?.let {
-                    val signature = parseSignMessage(unwrappedResponse)
-                    Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
-                    it.resumeWith(Result.success(signature))
+                    try {
+                        val signature = parseSignMessage(unwrappedResponse)
+                        Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
+                        it.resumeWith(Result.success(signature))
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        it.resumeWithException(e)
+                    }
                     signContinuation = null
                 }
             }
