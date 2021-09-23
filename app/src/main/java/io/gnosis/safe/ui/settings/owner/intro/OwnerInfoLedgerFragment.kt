@@ -9,6 +9,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerInfoLedgerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 
 class OwnerInfoLedgerFragment : BaseViewBindingFragment<FragmentOwnerInfoLedgerBinding>() {
 
@@ -27,8 +28,11 @@ class OwnerInfoLedgerFragment : BaseViewBindingFragment<FragmentOwnerInfoLedgerB
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                findNavController().navigate(OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerDeviceListFragment())
-
+                findNavController().navigate(
+                    OwnerInfoLedgerFragmentDirections.actionOwnerInfoLedgerFragmentToLedgerDeviceListFragment(
+                        LedgerDeviceListFragment.Mode.ADDRESS_SELECTION.name
+                    )
+                )
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
         }
