@@ -13,6 +13,7 @@ import io.gnosis.safe.databinding.DialogLedgerSignBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
+import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
@@ -39,37 +40,54 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        with(binding) {
+            actionLabel.text = getString(if (confirmation) R.string.ledger_sign_confirm else R.string.ledger_sign_reject)
+            hash.text = viewModel.getPreviewHash(safeTxHash)
+            cancel.setOnClickListener {
+                navigateBack()
+            }
+        }
+
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction?.let { action ->
                 when (action) {
                     is Signature -> {
-                        if (confirmation) {
-                            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                                owner.asEthereumAddressString()
-                            )
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
-                                action.signature
-                            )
-                        } else {
-                            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                                owner.asEthereumAddressString()
-                            )
-                            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                                SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
-                                action.signature
-                            )
-                        }
+                        navigateBack(action.signature)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
         })
 
         viewModel.getSignature(owner, safeTxHash)
+    }
+
+    private fun navigateBack(signedSafeTxHash: String? = null) {
+        if (confirmation) {
+            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+            signedSafeTxHash?.let {
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                    owner.asEthereumAddressString()
+                )
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                    SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+                    it
+                )
+            }
+        } else {
+            findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+            signedSafeTxHash?.let {
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                    SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+                    owner.asEthereumAddressString()
+                )
+                findNavController().currentBackStackEntry?.savedStateHandle?.set(
+                    SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+                    it
+                )
+            }
+        }
     }
 }
