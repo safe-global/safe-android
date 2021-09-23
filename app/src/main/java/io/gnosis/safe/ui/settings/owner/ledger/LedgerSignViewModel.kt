@@ -3,7 +3,6 @@ package io.gnosis.safe.ui.settings.owner.ledger
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.hexToByteArray
 import java.security.MessageDigest
@@ -36,7 +35,7 @@ class LedgerSignViewModel
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(safeTxHash.hexToByteArray())
         val sha256hash = digest.fold("", { str, it -> str + "%02x".format(it) })
-        return sha256hash.asMiddleEllipsized(4, 4).toUpperCase()
+        return sha256hash.toUpperCase()
     }
 
     override fun onCleared() {

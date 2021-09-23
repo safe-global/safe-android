@@ -13,7 +13,6 @@ import io.gnosis.safe.databinding.DialogLedgerSignBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
-import io.gnosis.safe.utils.asMiddleEllipsized
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
