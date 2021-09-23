@@ -18,20 +18,26 @@ import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseSignMessage
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionEventListener
 import io.gnosis.safe.ui.settings.owner.ledger.ble.ConnectionManager
+import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
+import io.gnosis.safe.ui.settings.owner.ledger.transport.SerializeHelper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.coroutines.Continuation
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class LedgerController(val context: Context) {
@@ -50,6 +56,7 @@ class LedgerController(val context: Context) {
 
     private var deviceConnectedCallback: DeviceConnectedCallback? = null
     private var addressContinuation: Continuation<Solidity.Address>? = null
+    private var signContinuation: Continuation<String>? = null
 
     var writeCharacteristic: BluetoothGattCharacteristic? = null
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
@@ -88,10 +95,25 @@ class LedgerController(val context: Context) {
 
             onCharacteristicChanged = { _, characteristic ->
                 val unwrappedResponse = unwrapAPDU(characteristic.value)
-                val address = parseGetAddress(unwrappedResponse)
-                Timber.d("onCharacteristicChanged() | Parsed address: $address")
-                addressContinuation?.resumeWith(Result.success(address.asEthereumAddress()!!))
 
+                addressContinuation?.let {
+                    val address = parseGetAddress(unwrappedResponse)
+                    Timber.d("onCharacteristicChanged() | Parsed address: $address")
+                    it.resumeWith(Result.success(address.asEthereumAddress()!!))
+                    addressContinuation = null
+                }
+
+                signContinuation?.let {
+                    try {
+                        val signature = parseSignMessage(unwrappedResponse)
+                        Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
+                        it.resumeWith(Result.success(signature))
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        it.resumeWithException(e)
+                    }
+                    signContinuation = null
+                }
             }
 
             onNotificationsEnabled = { _, characteristic ->
@@ -102,10 +124,6 @@ class LedgerController(val context: Context) {
                 notifyingCharacteristics.remove(characteristic.uuid)
             }
         }
-    }
-
-    init {
-        ConnectionManager.registerListener(connectionEventListener)
     }
 
     private var notifyingCharacteristics = mutableListOf<UUID>()
@@ -155,6 +173,7 @@ class LedgerController(val context: Context) {
     }
 
     fun connectToDevice(context: Context, device: BluetoothDevice, callback: DeviceConnectedCallback) {
+        ConnectionManager.registerListener(connectionEventListener)
         if (isScanning) {
             stopBleScan()
         }
@@ -166,6 +185,47 @@ class LedgerController(val context: Context) {
     fun teardownConnection() {
         ConnectionManager.unregisterListener(connectionEventListener)
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
+    }
+
+    fun getSignCommand(path: String, message: String): ByteArray {
+
+        val paths = splitPath(path)
+        val messageBytes = message.hexToByteArray()
+
+        val pathsData = ByteArray(paths.size)
+        paths.forEachIndexed { index, element ->
+            pathsData[index] = element
+        }
+
+        val commandData = mutableListOf<Byte>()
+        commandData.add(0xe0.toByte())
+        commandData.add(0x08.toByte())
+        commandData.add(0x00.toByte())
+        commandData.add(0x00.toByte())
+
+        val messageData = ByteArrayOutputStream()
+        SerializeHelper.writeUint32BE(messageData, messageBytes.size.toLong())
+        messageBytes.forEachIndexed { index, element ->
+            messageData.write(element.toInt())
+        }
+
+        commandData.add((paths.size + messageBytes.size + 4).toByte())
+        commandData.addAll(pathsData.toList())
+        commandData.addAll(messageData.toByteArray().toList())
+
+        // Command length should be 150 bytes length otherwise we should split
+        // it into chuncks. As we sign hashes we should be fine for now.
+        val command = commandData.toByteArray()
+        Timber.d("Sign command: ${command.toHexString()}")
+
+        if (command.size > 150) throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "invalid data format")
+
+        return command
+    }
+
+    suspend fun getSignature(path: String, message: String): String = suspendCoroutine {
+        ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, wrapAPDU(getSignCommand(path, message)))
+        signContinuation = it
     }
 
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {

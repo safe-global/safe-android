@@ -109,7 +109,7 @@ class TransactionDetailsViewModel
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         set
 
-    fun resumeFlow(selectedOwnerAddress: Solidity.Address) {
+    fun resumeFlow(selectedOwnerAddress: Solidity.Address, signedSafeTxHash: String? = null) {
         safeLaunch {
             // update ui without reloading tx details
             val safes = safeRepository.getSafes()
@@ -139,7 +139,10 @@ class TransactionDetailsViewModel
                 )
             }
 
-            if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
+            if (signedSafeTxHash != null) {
+                // no need to additionally protect device key with a passcode
+                submitConfirmation(txDetails!!, selectedOwnerAddress, signedSafeTxHash)
+            } else if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
                 submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
         }
@@ -156,13 +159,16 @@ class TransactionDetailsViewModel
                         confirmation.signer.value != possibleSigner.value
                     }
                 }
+                //FIXME: validate safeTxHash here and abort flow if validation fails
                 updateState {
                     TransactionDetailsViewState(
                         ViewAction.NavigateTo(
                             TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
                                 missingSigners = missingSigners.map {
                                     it.value.asEthereumAddressString()
-                                }.toTypedArray()
+                                }.toTypedArray(),
+                                isConfirmation = true,
+                                safeTxHash = executionInfo.safeTxHash
                             )
                         )
                     )
@@ -172,7 +178,7 @@ class TransactionDetailsViewModel
         }
     }
 
-    fun submitConfirmation(transaction: TransactionDetails, selectedOwnerKey: Solidity.Address) {
+    fun submitConfirmation(transaction: TransactionDetails, selectedOwnerKey: Solidity.Address, signedSafeTxHash: String? = null) {
 
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
@@ -183,6 +189,7 @@ class TransactionDetailsViewModel
 
             val safe = safeRepository.getActiveSafe()!!
 
+            //FIXME: validate safeTxHash in startConfirmationFlow
             validateSafeTxHash(safe, transaction, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
             if (credentialsRepository.ownerCount() == 0) {
@@ -195,7 +202,7 @@ class TransactionDetailsViewModel
                 transactionRepository.submitConfirmation(
                     chainId = safe.chainId,
                     safeTxHash = executionInfo.safeTxHash,
-                    signedSafeTxHash = credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
+                    signedSafeTxHash = signedSafeTxHash ?: credentialsRepository.signWithOwner(selectedOwner!!, executionInfo.safeTxHash.hexToByteArray())
                 )
             }.onSuccess {
                 txDetails = it
