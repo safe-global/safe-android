@@ -25,6 +25,7 @@ class LedgerOwnerSelectionViewModel
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
     fun loadOwners(derivationPath: String) {
+        this.derivationPath = derivationPath
         safeLaunch {
             LedgerOwnerPagingProvider(ledgerController, derivationPath).getOwnersStream()
                 .cachedIn(viewModelScope)
