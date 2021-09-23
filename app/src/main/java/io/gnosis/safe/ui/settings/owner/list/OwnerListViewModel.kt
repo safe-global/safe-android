@@ -1,9 +1,11 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
@@ -42,24 +44,42 @@ class OwnerListViewModel
         }
     }
 
-    fun selectKeyForSigning(owner: Solidity.Address, isConfirmation: Boolean) {
+    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, isConfirmation: Boolean, safeTxHash: String?) {
         safeLaunch {
-            if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
-                updateState {
-                    OwnerListState(
-                        ViewAction.NavigateTo(
-                            SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(selectedOwner = owner.asEthereumAddressString())
+
+            when(type) {
+                Owner.Type.LEDGER_NANO_X -> {
+                    updateState {
+                        OwnerListState(
+                            ViewAction.NavigateTo(
+                                SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToLedgerDeviceListFragmet(
+                                    if (isConfirmation) LedgerDeviceListFragment.Mode.CONFIRMATION.name else LedgerDeviceListFragment.Mode.REJECTION.name,
+                                    owner.asEthereumAddressString(),
+                                    safeTxHash
+                                )
+                            )
                         )
-                    )
+                    }
                 }
-                updateState { OwnerListState(ViewAction.None) }
-            } else {
-                if (isConfirmation) {
-                    updateState { OwnerListState(ConfirmConfirmation(owner)) }
-                    updateState { OwnerListState(ViewAction.None) }
-                } else {
-                    updateState { OwnerListState(ConfirmRejection(owner)) }
-                    updateState { OwnerListState(ViewAction.None) }
+                else -> {
+                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeForConfirmations) {
+                        updateState {
+                            OwnerListState(
+                                ViewAction.NavigateTo(
+                                    SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToEnterPasscodeFragment(selectedOwner = owner.asEthereumAddressString())
+                                )
+                            )
+                        }
+                        updateState { OwnerListState(ViewAction.None) }
+                    } else {
+                        if (isConfirmation) {
+                            updateState { OwnerListState(ConfirmConfirmation(owner)) }
+                            updateState { OwnerListState(ViewAction.None) }
+                        } else {
+                            updateState { OwnerListState(ConfirmRejection(owner)) }
+                            updateState { OwnerListState(ViewAction.None) }
+                        }
+                    }
                 }
             }
         }
