@@ -112,15 +112,14 @@ class ConfirmRejectionViewModelTest {
 
     @Test
     fun `selectSigningOwner () `() = runBlockingTest {
+        val safeAddress = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!
+        coEvery { safeRepository.getActiveSafe() } returns Safe(safeAddress, "safe_name")
         val testObserver = TestLiveDataObserver<ConfirmationRejectedViewState>()
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val executionInfo = transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
-        val safeAddress = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!
         viewModel.txDetails = transactionDetails
         viewModel.state.observeForever(testObserver)
-
-        viewModel.selectSigningOwner()
 
         val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
         val rejectionTxDetails = TransactionDetails(
@@ -130,12 +129,14 @@ class ConfirmRejectionViewModelTest {
         )
         val rejectionTxHash =
             calculateSafeTxHash(
-                implementationVersion = SemVer(1, 3, 0),
+                implementationVersion = SemVer(1, 1, 0),
                 chainId = Chain.ID_RINKEBY,
                 safeAddress = safeAddress,
                 transaction = rejectionTxDetails,
                 executionInfo = rejectionExecutionInfo
             ).toHexString()
+
+        viewModel.selectSigningOwner()
 
         testObserver.assertValueCount(3)
         with(testObserver.values()[1]) {
@@ -147,7 +148,7 @@ class ConfirmRejectionViewModelTest {
                             "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
                         ).toTypedArray(),
                         isConfirmation = false,
-                        safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
+                        safeTxHash = rejectionTxHash
                     )
                 ).toString(), viewAction.toString()
             )
