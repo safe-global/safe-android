@@ -44,9 +44,8 @@ class OwnerListViewModel
         }
     }
 
-    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, isConfirmation: Boolean, safeTxHash: String?) {
+    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, isConfirmation: Boolean, safeTxHash: String? = null) {
         safeLaunch {
-
             when(type) {
                 Owner.Type.LEDGER_NANO_X -> {
                     updateState {
