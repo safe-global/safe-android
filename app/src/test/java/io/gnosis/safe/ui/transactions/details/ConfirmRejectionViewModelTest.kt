@@ -123,7 +123,8 @@ class ConfirmRejectionViewModelTest {
                             "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
                             "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
                         ).toTypedArray(),
-                        isConfirmation = false
+                        isConfirmation = false,
+                        safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
                     )
                 ).toString(), viewAction.toString()
             )
