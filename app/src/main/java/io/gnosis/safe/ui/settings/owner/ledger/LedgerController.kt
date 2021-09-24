@@ -330,6 +330,8 @@ class LedgerController(val context: Context) {
     }
 
     companion object {
+        const val LEDGER_LIVE_PATH = "44'/60'/0'/0/{index}"
+        const val LEDGER_PATH = "44'/60'/0'/{index}"
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 1
         private const val REQUEST_CODE_LOCATION_PERMISSION = 2

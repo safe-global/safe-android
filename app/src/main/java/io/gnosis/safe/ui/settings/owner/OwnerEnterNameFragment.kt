@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_LIVE_PATH
 import io.gnosis.safe.ui.settings.owner.list.imageRes24dp
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
@@ -69,7 +70,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                         viewModel.importOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, fromSeedPhrase)
                     }
                 }
-                Owner.Type.GENERATED-> {
+                Owner.Type.GENERATED -> {
                     nextButton.text = getString(R.string.signing_owner_save)
                     nextButton.setOnClickListener {
                         viewModel.importGeneratedOwner(ownerAddress, ownerNameEntry.text.toString(), ownerKey, ownerSeedPhrase!!)
@@ -80,9 +81,10 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     nextButton.setOnClickListener {
                         viewModel.importLedgerOwner(ownerAddress, ownerNameEntry.text.toString(), derivationPathWithIndex!!)
                     }
-                    ownerNameEntry.setText("Ledger Key #1 [$derivationPathWithIndex]")
-
-                 }
+                    derivationPathWithIndex?.let {
+                        ownerNameEntry.setText(generateDefaultNameFromDerivationPath(it))
+                    }
+                }
             }
             nextButton.isEnabled = !ownerNameEntry.text.isNullOrBlank()
             ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
@@ -102,6 +104,17 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                 }
             }
         })
+    }
+
+    private fun generateDefaultNameFromDerivationPath(derivationPathWithIndex: String): String {
+        val index = derivationPathWithIndex.split("/").last().toInt()
+        val ledgerLive =
+            derivationPathWithIndex.removeSuffix(index.toString()) == LEDGER_LIVE_PATH.removeSuffix("{index}")
+        return if (ledgerLive) {
+            "Ledger Live key #${index + 1}"
+        } else {
+            "Ledger key #${index + 1}"
+        }
     }
 
     override fun onDestroyView() {

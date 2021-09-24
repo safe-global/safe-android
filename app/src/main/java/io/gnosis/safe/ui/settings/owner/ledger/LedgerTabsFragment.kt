@@ -16,6 +16,8 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_LIVE_PATH
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_PATH
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -107,8 +109,8 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment =
             when (Tabs.values()[position]) {
-                Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/0/{index}")
-                Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/{index}")
+                Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance(LEDGER_LIVE_PATH)
+                Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance(LEDGER_PATH)
             }
 
     override fun getItemId(position: Int): Long {
