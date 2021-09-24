@@ -114,6 +114,10 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     Timber.i("----> showEmptyState()")
                     showEmptyState()
                 }
+                if (loadState.refresh is LoadState.Error && adapter.itemCount == 0) {
+                    Timber.i("----> showEmptyState()")
+                    showEmptyState()
+                }
                 if (adapter.itemCount > 0) {
                     Timber.i("----> showList()")
 
