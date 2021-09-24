@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -47,6 +48,12 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBackNavigation()
+            }
+        })
+
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
                 when (viewAction) {
@@ -64,7 +71,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
         with(binding) {
             backButton.setOnClickListener {
-                Navigation.findNavController(it).navigateUp()
+                onBackNavigation()
             }
             nextButton.setOnClickListener {
                 findNavController().navigate(
@@ -91,6 +98,11 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                 }
             }.attach()
         }
+    }
+
+    private fun onBackNavigation() {
+        viewModel.disconnectFromDevice()
+        findNavController().navigateUp()
     }
 }
 

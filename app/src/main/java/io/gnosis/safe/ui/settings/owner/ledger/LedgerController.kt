@@ -85,8 +85,6 @@ class LedgerController(val context: Context) {
             }
 
             onDisconnect = {
-                connectedDevice = null
-                ConnectionManager.unregisterListener(this)
             }
 
             onCharacteristicRead = { _, characteristic -> }
@@ -186,6 +184,8 @@ class LedgerController(val context: Context) {
 
     fun teardownConnection() {
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
+        connectedDevice = null
+        ConnectionManager.unregisterListener(connectionEventListener)
     }
 
     fun getSignCommand(path: String, message: String): ByteArray {
