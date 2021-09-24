@@ -89,25 +89,23 @@ class LedgerDeviceListViewModel
         }
     }
 
-    fun connectAndOpenList(context: Context, position: Int) {
+    fun connectToDevice(context: Context, position: Int) {
         safeLaunch {
             val device = scanResults[position].device
-            if (device == ledgerController.connectedDevice) {
-                updateState {
-                    LedgerDeviceListState(DeviceConnected(device))
-                }
-            } else {
-                ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
-                    override fun onDeviceConnected(device: BluetoothDevice) {
-                        safeLaunch {
-                            updateState {
-                                LedgerDeviceListState(DeviceConnected(device))
-                            }
+            ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
+                override fun onDeviceConnected(device: BluetoothDevice) {
+                    safeLaunch {
+                        updateState {
+                            LedgerDeviceListState(DeviceConnected(device))
                         }
                     }
-                })
-            }
+                }
+            })
         }
+    }
+
+    fun disconnectFromDevice() {
+        ledgerController.teardownConnection()
     }
 }
 

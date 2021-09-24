@@ -5,10 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -23,6 +24,17 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceListBinding>(), LedgerDeviceListAdapter.DeviceListener {
+
+    enum class Mode {
+        ADDRESS_SELECTION,
+        CONFIRMATION,
+        REJECTION
+    }
+
+    private val navArgs by navArgs<LedgerDeviceListFragmentArgs>()
+    private val mode by lazy { Mode.valueOf(navArgs.mode) }
+    private val owner by lazy { navArgs.owner }
+    private val safeTxHash by lazy { navArgs.safeTxHash }
 
     override fun screenId() = ScreenId.LEDGER_DEVICE_LIST
 
@@ -44,11 +56,17 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBackNavigation()
+            }
+        })
+
         adapter = LedgerDeviceListAdapter(this)
 
         with(binding) {
             backButton.setOnClickListener {
-                Navigation.findNavController(it).navigateUp()
+                onBackNavigation()
             }
             refresh.setOnRefreshListener {
                 viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingLocationPermission)
@@ -74,7 +92,26 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                         adapter.updateDeviceData(action.results)
                     }
                     is DeviceConnected -> {
-                        findNavController().navigate(LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerTabsFragment())
+
+                        when (mode) {
+                            Mode.ADDRESS_SELECTION ->
+                                findNavController().navigate(LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerTabsFragment())
+                            Mode.CONFIRMATION ->
+                                findNavController().navigate(
+                                    LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerSignDialog(
+                                        owner!!,
+                                        safeTxHash!!
+                                    )
+                                )
+                            Mode.REJECTION ->
+                                findNavController().navigate(
+                                    LedgerDeviceListFragmentDirections.actionLedgerDeviceListFragmentToLedgerSignDialog(
+                                        owner!!,
+                                        safeTxHash!!,
+                                        false
+                                    )
+                                )
+                        }
                     }
                     is ShowError -> {
                         hideLoading()
@@ -88,6 +125,11 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         })
 
         viewModel.scanForDevices(this, ::requestMissingLocationPermission)
+    }
+
+    private fun onBackNavigation() {
+        viewModel.disconnectFromDevice()
+        findNavController().navigateUp()
     }
 
     private fun showLoading() {
@@ -138,6 +180,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     }
 
     override fun onDeviceClick(position: Int) {
-        viewModel.connectAndOpenList(requireContext(), position)
+        viewModel.connectToDevice(requireContext(), position)
     }
 }

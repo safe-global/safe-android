@@ -120,8 +120,8 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
     override fun onResume() {
         super.onResume()
         if (ownerSelected() != null) {
-            viewModel.resumeFlow(ownerSelected()!!)
-            resetOwnerSelected()
+            viewModel.resumeFlow(ownerSelected()!!, ownerSigned())
+            resetOwnerData()
         }
     }
 
@@ -130,8 +130,13 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
             ?.asEthereumAddress()
     }
 
-    private fun resetOwnerSelected() {
+    private fun ownerSigned(): String? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT)
+    }
+
+    private fun resetOwnerData() {
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, null)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT, null)
     }
 
 

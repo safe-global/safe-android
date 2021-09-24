@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSigningOwnerSelectionBinding
@@ -19,6 +20,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.list.LocalOwners
 import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter
+import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener
 import io.gnosis.safe.ui.settings.owner.list.OwnerListState
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
 import pm.gnosis.model.Solidity
@@ -26,14 +28,14 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
-import io.gnosis.safe.ui.settings.owner.list.OwnerListAdapter.OwnerListener as OwnerListener1
 
-class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwnerSelectionBinding>(), OwnerListener1 {
+class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwnerSelectionBinding>(), OwnerListener {
 
     override fun screenId() = ScreenId.OWNER_LIST
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
     private val isConfirmation by lazy { navArgs.isConfirmation }
+    private val safeTxHash by lazy { navArgs.safeTxHash }
 
     lateinit var adapter: OwnerListAdapter
 
@@ -123,8 +125,8 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
         })
     }
 
-    override fun onOwnerClick(owner: Solidity.Address) {
-        viewModel.selectKeyForSigning(owner, isConfirmation)
+    override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {
+        viewModel.selectKeyForSigning(owner, type, isConfirmation, safeTxHash)
     }
 
     private fun showList() {

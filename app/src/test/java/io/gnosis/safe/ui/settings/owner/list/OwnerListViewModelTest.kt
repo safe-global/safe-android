@@ -69,7 +69,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -93,7 +93,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -113,7 +113,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, false)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, false)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),

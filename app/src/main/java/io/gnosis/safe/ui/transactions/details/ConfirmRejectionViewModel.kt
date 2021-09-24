@@ -38,8 +38,11 @@ class ConfirmRejectionViewModel
 
     override fun initialState(): ConfirmationRejectedViewState = ConfirmationRejectedViewState(ViewAction.Loading(true))
 
-    fun resumeFlow(owner: Solidity.Address) {
-        if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
+    fun resumeFlow(owner: Solidity.Address, signedSafeTxHash: String? = null) {
+        if (signedSafeTxHash != null) {
+            // no need to additionally protect device key with a passcode
+            submitRejection(owner, signedSafeTxHash)
+        } else if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
             submitRejection(owner)
         }
     }
@@ -61,7 +64,7 @@ class ConfirmRejectionViewModel
         }
     }
 
-    fun submitRejection(owner: Solidity.Address) {
+    fun submitRejection(owner: Solidity.Address, signedSafeTxHash: String? = null) {
 
         val executionInfo = txDetails?.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails
             ?: throw MissingCorrectExecutionDetailsException
@@ -73,6 +76,7 @@ class ConfirmRejectionViewModel
                 SemVer.parse(it)
             } ?: SemVer(0, 0, 0)
 
+            //FIXME: validate earlier
             validateSafeTxHash(safe, txDetails!!, executionInfo).takeUnless { it }?.let { throw MismatchingSafeTxHash }
 
             val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
@@ -96,7 +100,7 @@ class ConfirmRejectionViewModel
                     chainId = safe.chainId,
                     safeAddress = safe.address,
                     nonce = rejectionExecutionInfo.nonce,
-                    signature = credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
+                    signature = signedSafeTxHash ?: credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
                     safeTxHash = safeTxHash,
                     sender = selectedOwner.address
@@ -145,14 +149,39 @@ class ConfirmRejectionViewModel
                     address != possibleSigner.value
                 }
             }
+
             safeLaunch {
+                //FIXME: refactor this section. tx hash of the rejection transaction needs to be propagated for signing on ledger device
+                val safe = safeRepository.getActiveSafe()!!
+                val contractVersion = safe.version?.let {
+                    SemVer.parse(it)
+                } ?: SemVer(0, 0, 0)
+
+                val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
+                val rejectionTxDetails = TransactionDetails(
+                    txInfo = TransactionInfo.Custom(to = AddressInfo(safe.address)),
+                    detailedExecutionInfo = rejectionExecutionInfo,
+                    safeAppInfo = null
+                )
+                val rejectionTxHash =
+                    calculateSafeTxHash(
+                        implementationVersion = contractVersion,
+                        chainId = safe.chainId,
+                        safeAddress = safe.address,
+                        transaction = rejectionTxDetails,
+                        executionInfo = rejectionExecutionInfo
+                    ).toHexString()
+                // ----------------
+
                 updateState {
                     ConfirmationRejectedViewState(
                         ViewAction.NavigateTo(
                             ConfirmRejectionFragmentDirections.actionConfirmRejectionFragmentToSigningOwnerSelectionFragment(
                                 missingSigners = missingSigners.map {
                                     it.value.asEthereumAddressString()
-                                }.toTypedArray(), isConfirmation = false
+                                }.toTypedArray(),
+                                isConfirmation = false,
+                                safeTxHash = rejectionTxHash
                             )
                         )
                     )
