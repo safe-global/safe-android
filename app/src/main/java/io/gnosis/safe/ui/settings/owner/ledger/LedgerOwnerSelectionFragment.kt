@@ -32,6 +32,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     override suspend fun chainId(): BigInteger? = null
 
     private lateinit var adapter: LedgerOwnerListAdapter
+//    private lateinit var adapter by lazy { LedgerOwnerListAdapter() }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -146,7 +147,10 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
 
         with(binding) {
-            owners.adapter = adapter
+            owners.adapter = this@LedgerOwnerSelectionFragment.adapter.withLoadStateHeaderAndFooter(
+                header = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() },
+                footer = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() }
+            )
             owners.layoutManager = LinearLayoutManager(requireContext())
         }
 
