@@ -80,8 +80,11 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     nextButton.setOnClickListener {
                         viewModel.importLedgerOwner(ownerAddress, ownerNameEntry.text.toString(), derivationPathWithIndex!!)
                     }
-                }
+                    ownerNameEntry.setText("Ledger Key #1 [$derivationPathWithIndex]")
+
+                 }
             }
+            nextButton.isEnabled = !ownerNameEntry.text.isNullOrBlank()
             ownerNameEntry.doOnTextChanged { text, _, _, _ -> binding.nextButton.isEnabled = !text.isNullOrBlank() }
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
