@@ -125,7 +125,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     Timber.i("----> Handle Error (append) ${it.error}")
 
                     handleError(it.error)
-                    showEmptyState()
                 }
             }
             loadState.prepend.let {
@@ -133,14 +132,12 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     Timber.i("----> Handle Error (prepend) ${it.error}")
 
                     handleError(it.error)
-                    showEmptyState()
                 }
             }
             loadState.refresh.let {
                 if (it is LoadState.Error) {
                     Timber.i("----> Handle Error (refresh) ${it.error}")
                     handleError(it.error)
-                    showEmptyState()
                 }
             }
 

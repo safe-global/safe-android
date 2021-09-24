@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLoadStateBinding
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 
 
 class LedgerOwnerLoadStateAdapter(
@@ -33,6 +34,7 @@ class LedgerOwnerLoadStateViewHolder(
     }
 
     fun bind(loadState: LoadState) {
+        Timber.i("----> loadState: $loadState")
         with(binding) {
             progressBar.visible(loadState is LoadState.Loading)
             retryButton.visible(loadState !is LoadState.Loading)
