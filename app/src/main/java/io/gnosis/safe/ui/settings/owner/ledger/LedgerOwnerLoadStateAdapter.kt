@@ -6,7 +6,7 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
-import io.gnosis.safe.databinding.ItemTxLoadStateBinding
+import io.gnosis.safe.databinding.ItemOwnerLoadStateBinding
 import pm.gnosis.svalinn.common.utils.visible
 
 
@@ -24,7 +24,7 @@ class LedgerOwnerLoadStateAdapter(
 }
 
 class LedgerOwnerLoadStateViewHolder(
-    private val binding: ItemTxLoadStateBinding,
+    private val binding: ItemOwnerLoadStateBinding,
     retry: () -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -45,7 +45,7 @@ class LedgerOwnerLoadStateViewHolder(
 
         fun create(parent: ViewGroup, retry: () -> Unit): LedgerOwnerLoadStateViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_tx_load_state, parent, false)
-            val binding = ItemTxLoadStateBinding.bind(view)
+            val binding = ItemOwnerLoadStateBinding.bind(view)
             return LedgerOwnerLoadStateViewHolder(binding, retry)
         }
     }
