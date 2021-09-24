@@ -62,6 +62,11 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
         viewModel.getSignature(owner, safeTxHash)
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.disconnectFromDevice()
+    }
+
     private fun navigateBack(signedSafeTxHash: String? = null) {
         if (confirmation) {
             findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
