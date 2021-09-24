@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.conflate
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -55,8 +56,8 @@ class LedgerController(val context: Context) {
         private set
 
     private var deviceConnectedCallback: DeviceConnectedCallback? = null
-    private var addressContinuation: Continuation<Solidity.Address>? = null
-    private var signContinuation: Continuation<String>? = null
+    private var addressContinuations = Stack<Continuation<Solidity.Address>>()
+    private var signContinuations = Stack<Continuation<String>>()
 
     var writeCharacteristic: BluetoothGattCharacteristic? = null
     var notifyCharacteristic: BluetoothGattCharacteristic? = null
@@ -84,7 +85,6 @@ class LedgerController(val context: Context) {
             }
 
             onDisconnect = {
-                connectedDevice = null
             }
 
             onCharacteristicRead = { _, characteristic -> }
@@ -96,13 +96,14 @@ class LedgerController(val context: Context) {
             onCharacteristicChanged = { _, characteristic ->
                 val unwrappedResponse = unwrapAPDU(characteristic.value)
 
+                val addressContinuation = nullOnThrow { addressContinuations.pop() }
                 addressContinuation?.let {
                     val address = parseGetAddress(unwrappedResponse)
                     Timber.d("onCharacteristicChanged() | Parsed address: $address")
                     it.resumeWith(Result.success(address.asEthereumAddress()!!))
-                    addressContinuation = null
                 }
 
+                val signContinuation = nullOnThrow { signContinuations.pop() }
                 signContinuation?.let {
                     try {
                         val signature = parseSignMessage(unwrappedResponse)
@@ -112,7 +113,6 @@ class LedgerController(val context: Context) {
                         Timber.e(e)
                         it.resumeWithException(e)
                     }
-                    signContinuation = null
                 }
             }
 
@@ -183,8 +183,9 @@ class LedgerController(val context: Context) {
     }
 
     fun teardownConnection() {
-        ConnectionManager.unregisterListener(connectionEventListener)
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
+        connectedDevice = null
+        ConnectionManager.unregisterListener(connectionEventListener)
     }
 
     fun getSignCommand(path: String, message: String): ByteArray {
@@ -225,7 +226,7 @@ class LedgerController(val context: Context) {
 
     suspend fun getSignature(path: String, message: String): String = suspendCoroutine {
         ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, wrapAPDU(getSignCommand(path, message)))
-        signContinuation = it
+        signContinuations.push(it)
     }
 
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
@@ -255,7 +256,7 @@ class LedgerController(val context: Context) {
 
     suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
-        addressContinuation = it
+        addressContinuations.push(it)
     }
 
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {

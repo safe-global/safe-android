@@ -24,9 +24,11 @@ class LedgerSignViewModel
                 owner.keyDerivationPath!!,
                 safeTxHash
             )
-            ledgerController.teardownConnection()
             updateState {
                 LedgerSignState(Signature(signature))
+            }
+            updateState {
+                LedgerSignState(ViewAction.None)
             }
         }
     }
@@ -38,8 +40,7 @@ class LedgerSignViewModel
         return sha256hash.toUpperCase()
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    fun disconnectFromDevice() {
         ledgerController.teardownConnection()
     }
 }

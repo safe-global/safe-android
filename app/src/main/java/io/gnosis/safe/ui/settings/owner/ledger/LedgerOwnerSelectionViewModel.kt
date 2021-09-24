@@ -57,6 +57,10 @@ class LedgerOwnerSelectionViewModel
             }
         }
     }
+
+    fun disconnectFromDevice() {
+        ledgerController.teardownConnection()
+    }
 }
 
 data class OwnerSelectionState(
