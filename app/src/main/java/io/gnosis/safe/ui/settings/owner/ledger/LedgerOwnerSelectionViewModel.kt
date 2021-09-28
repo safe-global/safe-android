@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 class LedgerOwnerSelectionViewModel
 @Inject constructor(
+    private val ownersPager: LedgerOwnerPagingProvider,
     private val ledgerController: LedgerController,
     private val credentialsRepository: CredentialsRepository,
     appDispatchers: AppDispatchers
@@ -27,14 +28,14 @@ class LedgerOwnerSelectionViewModel
     fun loadOwners(derivationPath: String) {
         this.derivationPath = derivationPath
         safeLaunch {
-            LedgerOwnerPagingProvider(ledgerController, derivationPath).getOwnersStream()
-                .cachedIn(viewModelScope)
+            ownersPager.getOwnersStream(derivationPath)
                 .map {
                     it.map { address ->
                         val name = credentialsRepository.owner(address)?.name
                         OwnerHolder(address, name, name != null)
                     }
                 }
+                .cachedIn(viewModelScope)
                 .collectLatest {
                     updateState { OwnerSelectionState(DerivedOwners(it, derivationPath)) }
                 }

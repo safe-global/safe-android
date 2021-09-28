@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.transactions
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,7 +51,7 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
 
     private var reload: Boolean = true
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val intervalUpdateRunnable = object : Runnable {
         override fun run() {
             adapter.notifyDataSetChanged()
