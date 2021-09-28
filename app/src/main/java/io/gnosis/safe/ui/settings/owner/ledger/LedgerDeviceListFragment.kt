@@ -82,8 +82,16 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
             state.viewAction?.let { action ->
                 when (action) {
                     is Loading -> {
-                        binding.emptyPlaceholder.visible(false)
-                        showLoading()
+                        if (action.isLoading) {
+                            binding.emptyPlaceholder.visible(false)
+                            showLoading()
+                        } else {
+                            hideLoading()
+                            if (adapter.itemCount == 0) {
+                                binding.action.visible(false)
+                                binding.emptyPlaceholder.visible(true)
+                            }
+                        }
                     }
                     is DeviceFound -> {
                         hideLoading()

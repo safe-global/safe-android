@@ -7,7 +7,10 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withTimeout
+import okhttp3.internal.wait
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -80,6 +83,11 @@ class LedgerDeviceListViewModel
             }
             scanResults.clear()
             ledgerController.startBleScan(fragment, missingLocationPermissionHandler)
+            delay(LedgerController.LEDGER_OP_TIMEOUT)
+            ledgerController.stopBleScan()
+            updateState {
+                LedgerDeviceListState(ViewAction.Loading(false))
+            }
         }
     }
 
