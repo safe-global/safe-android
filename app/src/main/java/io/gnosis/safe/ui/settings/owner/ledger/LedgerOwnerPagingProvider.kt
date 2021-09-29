@@ -7,11 +7,10 @@ import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 
 class LedgerOwnerPagingProvider(
-    private val ledgerController: LedgerController,
-    private val derivationPath: String
+    private val ledgerController: LedgerController
 ) {
 
-    fun getOwnersStream(): Flow<PagingData<Solidity.Address>> {
+    fun getOwnersStream(derivationPath: String): Flow<PagingData<Solidity.Address>> {
         return Pager(
             initialKey = 0,
             config = PagingConfig(

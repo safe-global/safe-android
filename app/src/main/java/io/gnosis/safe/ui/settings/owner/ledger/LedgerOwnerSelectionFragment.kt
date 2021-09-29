@@ -1,10 +1,11 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
-import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,9 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
@@ -47,27 +51,10 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is DerivedOwners -> {
-
                         with(binding) {
                             showMoreOwners.setOnClickListener {
+                                showMoreOwners.showNext()
                                 adapter.pagesVisible++
-                                val visualFeedback = it.animate().alpha(0.0f)
-                                visualFeedback.duration = 100
-                                visualFeedback.setListener(object : Animator.AnimatorListener {
-
-                                    override fun onAnimationRepeat(animation: Animator?) {}
-
-                                    override fun onAnimationEnd(animation: Animator?) {
-                                        adapter.notifyDataSetChanged()
-                                        showMoreOwners.alpha = 1.0f
-                                    }
-
-                                    override fun onAnimationCancel(animation: Animator?) {}
-
-                                    override fun onAnimationStart(animation: Animator?) {}
-                                })
-                                visualFeedback.start()
-                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
                                 showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                             }
                         }
@@ -80,6 +67,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     }
                     is OwnerSelected -> {
                     }
+                    is ShowError -> {
+                        binding.refresh.isRefreshing = false
+                        binding.progress.visible(false)
+                        if (adapter.itemCount == 0) {
+                            showEmptyState()
+                        }
+                        handleError(viewAction.error)
+                    }
                     else -> {
                     }
                 }
@@ -89,28 +84,97 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         adapter = LedgerOwnerListAdapter()
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
+
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
-                if (loadState.refresh is LoadState.Loading && adapter.itemCount == 0) {
-                    binding.progress.visible(true)
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
+                binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
+
+                loadState.refresh.let {
+                    when(it) {
+                        is LoadState.Error -> {
+                            if (adapter.itemCount == 0) {
+                                showEmptyState()
+                            }
+                            handleError(it.error)
+                        }
+                        is LoadState.Loading -> {
+                            binding.emptyPlaceholder.visible(false)
+                        }
+                        is LoadState.NotLoading -> {
+                            if (adapter.itemCount == 0) {
+                                showEmptyState()
+                            } else {
+                               if (viewModel.state.value?.viewAction is DerivedOwners) {
+                                   binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                               }
+                            }
+                        }
+                    }
                 }
 
-                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
-                    binding.showMoreOwners.visible(false)
+                loadState.append.let {
+                    if (it !is LoadState.Loading) {
+                        if (binding.showMoreOwners.currentView is ProgressBar) {
+                            binding.showMoreOwners.showNext()
+                        }
+                    }
+                    if (it is LoadState.Error) {
+                        handleError(it.error)
+                        binding.showMoreOwners.setOnClickListener {
+                            binding.showMoreOwners.showNext()
+                            adapter.retry()
+                        }
+                    }
+                }
+                loadState.prepend.let {
+                    if (it is LoadState.Error) {
+                        handleError(it.error)
+                    }
+                }
+
+                if (adapter.itemCount > 0) {
+                    showList()
+                    binding.refresh.isEnabled = false
                 } else {
-                    binding.progress.visible(false)
-                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                    binding.refresh.isEnabled = true
                 }
             }
         }
 
         with(binding) {
-            owners.adapter = adapter
+            owners.adapter = this@LedgerOwnerSelectionFragment.adapter
             owners.layoutManager = LinearLayoutManager(requireContext())
+            refresh.setOnRefreshListener {
+                if (adapter.itemCount == 0) {
+                    viewModel.loadOwners(derivationPath)
+                }
+            }
         }
 
         viewModel.loadOwners(derivationPath)
+    }
 
+    private fun handleError(throwable: Throwable) {
+        val error = throwable.toError()
+        if (error.trackingRequired) {
+            tracker.logException(throwable)
+        }
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
+    }
+
+    private fun showList() {
+        with(binding) {
+            derivedOwners.visible(true)
+            emptyPlaceholder.visible(false)
+        }
+    }
+
+    private fun showEmptyState() {
+        with(binding) {
+            derivedOwners.visible(false)
+            emptyPlaceholder.visible(true)
+        }
     }
 
     override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {

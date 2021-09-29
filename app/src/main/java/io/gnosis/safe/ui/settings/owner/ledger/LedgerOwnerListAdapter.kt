@@ -22,7 +22,7 @@ import kotlin.math.min
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 1
-    private var selectedOwnerPosition: Int = 0
+    private var selectedOwnerPosition: Int = -1
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
 
