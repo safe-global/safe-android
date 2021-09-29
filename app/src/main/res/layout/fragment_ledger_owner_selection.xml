@@ -42,15 +42,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <TextView
+                <ViewSwitcher
                     android:id="@+id/show_more_owners"
-                    style="@style/TextLink"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:gravity="center"
-                    android:text="@string/signing_owner_selection_more"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        style="@style/TextLink"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:gravity="center"
+                        android:text="@string/signing_owner_selection_more" />
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                </ViewSwitcher>
 
             </LinearLayout>
 

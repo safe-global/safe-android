@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
-import android.animation.Animator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +16,12 @@ import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
-import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -55,24 +52,8 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
+                                showMoreOwners.showNext()
                                 adapter.pagesVisible++
-                                val visualFeedback = it.animate().alpha(0.0f)
-                                visualFeedback.duration = 100
-                                visualFeedback.setListener(object : Animator.AnimatorListener {
-
-                                    override fun onAnimationRepeat(animation: Animator?) {}
-
-                                    override fun onAnimationEnd(animation: Animator?) {
-                                        adapter.notifyDataSetChanged()
-                                        showMoreOwners.alpha = 1.0f
-                                    }
-
-                                    override fun onAnimationCancel(animation: Animator?) {}
-
-                                    override fun onAnimationStart(animation: Animator?) {}
-                                })
-                                visualFeedback.start()
-                                showMoreOwners.text = getString(R.string.signing_owner_selection_more)
                                 showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                             }
                         }
@@ -108,12 +89,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
-                Timber.i("----> loadState: $loadState")
-
                 loadState.refresh.let {
                     when(it) {
                         is LoadState.Error -> {
-                            Timber.i("----> Handle Error (refresh) ${it.error}")
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
                             }
@@ -127,7 +105,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                                 showEmptyState()
                             } else {
                                if (viewModel.state.value?.viewAction is DerivedOwners) {
-                                   Timber.i("----> showMoreOwners.visible(${adapter.pagesVisible < MAX_PAGES})")
                                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                                }
                             }
@@ -137,19 +114,19 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
                 loadState.append.let {
                     if (it is LoadState.Error) {
-                        Timber.i("----> Handle Error (append) ${it.error}")
                         handleError(it.error)
+                    }
+                    if (it is LoadState.NotLoading) {
+                        binding.showMoreOwners.showNext()
                     }
                 }
                 loadState.prepend.let {
                     if (it is LoadState.Error) {
-                        Timber.i("----> Handle Error (prepend) ${it.error}")
                         handleError(it.error)
                     }
                 }
 
                 if (adapter.itemCount > 0) {
-                    Timber.i("----> showList()")
                     showList()
                     binding.refresh.isEnabled = false
                 } else {
@@ -160,10 +137,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         with(binding) {
             owners.adapter = this@LedgerOwnerSelectionFragment.adapter
-//            owners.adapter = this@LedgerOwnerSelectionFragment.adapter.withLoadStateHeaderAndFooter(
-//                header = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() },
-//                footer = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() }
-//            )
             owners.layoutManager = LinearLayoutManager(requireContext())
             refresh.setOnRefreshListener {
                 if (adapter.itemCount == 0) {
@@ -173,7 +146,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
 
         viewModel.loadOwners(derivationPath)
-
     }
 
     private fun handleError(throwable: Throwable) {
