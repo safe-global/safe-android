@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -113,11 +114,17 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 }
 
                 loadState.append.let {
+                    if (it !is LoadState.Loading) {
+                        if (binding.showMoreOwners.currentView is ProgressBar) {
+                            binding.showMoreOwners.showNext()
+                        }
+                    }
                     if (it is LoadState.Error) {
                         handleError(it.error)
-                    }
-                    if (it is LoadState.NotLoading) {
-                        binding.showMoreOwners.showNext()
+                        binding.showMoreOwners.setOnClickListener {
+                            binding.showMoreOwners.showNext()
+                            adapter.retry()
+                        }
                     }
                 }
                 loadState.prepend.let {
