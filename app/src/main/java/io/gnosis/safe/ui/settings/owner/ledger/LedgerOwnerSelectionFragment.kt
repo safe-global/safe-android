@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,8 @@ import io.gnosis.safe.databinding.FragmentLedgerOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
@@ -32,7 +35,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     override suspend fun chainId(): BigInteger? = null
 
     private lateinit var adapter: LedgerOwnerListAdapter
-//    private lateinit var adapter by lazy { LedgerOwnerListAdapter() }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -51,7 +53,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             state.viewAction.let { viewAction ->
                 when (viewAction) {
                     is DerivedOwners -> {
-
                         with(binding) {
                             showMoreOwners.setOnClickListener {
                                 adapter.pagesVisible++
@@ -84,6 +85,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     }
                     is OwnerSelected -> {
                     }
+                    is ShowError -> {
+                        binding.refresh.isRefreshing = false
+                        binding.progress.visible(false)
+                        if (adapter.itemCount == 0) {
+                            showEmptyState()
+                        }
+                        handleError(viewAction.error)
+                    }
                     else -> {
                     }
                 }
@@ -94,65 +103,73 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         adapter.setListener(this)
         adapter.addLoadStateListener { loadState ->
 
-            Timber.i("----> loadState: $loadState")
-
             if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
 
-                if (loadState.refresh is LoadState.Loading && adapter.itemCount == 0) {
-                    Timber.i("----> Show progress")
+                binding.progress.isVisible = loadState.refresh is LoadState.Loading && adapter.itemCount == 0
+                binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
-                    binding.progress.visible(true)
-                    binding.emptyPlaceholder.visible(false)
+                Timber.i("----> loadState: $loadState")
+
+                loadState.refresh.let {
+                    when(it) {
+                        is LoadState.Error -> {
+                            Timber.i("----> Handle Error (refresh) ${it.error}")
+                            if (adapter.itemCount == 0) {
+                                showEmptyState()
+                            }
+                            handleError(it.error)
+                        }
+                        is LoadState.Loading -> {
+                            binding.emptyPlaceholder.visible(false)
+                        }
+                        is LoadState.NotLoading -> {
+                            if (adapter.itemCount == 0) {
+                                showEmptyState()
+                            } else {
+                               if (viewModel.state.value?.viewAction is DerivedOwners) {
+                                   Timber.i("----> showMoreOwners.visible(${adapter.pagesVisible < MAX_PAGES})")
+                                   binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                               }
+                            }
+                        }
+                    }
                 }
 
-                if (viewModel.state.value?.viewAction is DerivedOwners && loadState.refresh is LoadState.NotLoading && adapter.itemCount > 0) {
-                    Timber.i("----> showMoreOwners.visible(${adapter.pagesVisible < MAX_PAGES})")
-                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                loadState.append.let {
+                    if (it is LoadState.Error) {
+                        Timber.i("----> Handle Error (append) ${it.error}")
+                        handleError(it.error)
+                    }
+                }
+                loadState.prepend.let {
+                    if (it is LoadState.Error) {
+                        Timber.i("----> Handle Error (prepend) ${it.error}")
+                        handleError(it.error)
+                    }
                 }
 
-                if (loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
-                    Timber.i("----> showEmptyState()")
-                    showEmptyState()
-                }
-                if (loadState.refresh is LoadState.Error && adapter.itemCount == 0) {
-                    Timber.i("----> showEmptyState()")
-                    showEmptyState()
-                }
                 if (adapter.itemCount > 0) {
                     Timber.i("----> showList()")
-
                     showList()
+                    binding.refresh.isEnabled = false
+                } else {
+                    binding.refresh.isEnabled = true
                 }
             }
-            loadState.append.let {
-                if (it is LoadState.Error) {
-                    Timber.i("----> Handle Error (append) ${it.error}")
-
-                    handleError(it.error)
-                }
-            }
-            loadState.prepend.let {
-                if (it is LoadState.Error) {
-                    Timber.i("----> Handle Error (prepend) ${it.error}")
-
-                    handleError(it.error)
-                }
-            }
-            loadState.refresh.let {
-                if (it is LoadState.Error) {
-                    Timber.i("----> Handle Error (refresh) ${it.error}")
-                    handleError(it.error)
-                }
-            }
-
         }
 
         with(binding) {
-            owners.adapter = this@LedgerOwnerSelectionFragment.adapter.withLoadStateHeaderAndFooter(
-                header = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() },
-                footer = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() }
-            )
+            owners.adapter = this@LedgerOwnerSelectionFragment.adapter
+//            owners.adapter = this@LedgerOwnerSelectionFragment.adapter.withLoadStateHeaderAndFooter(
+//                header = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() },
+//                footer = LedgerOwnerLoadStateAdapter { this@LedgerOwnerSelectionFragment.adapter.retry() }
+//            )
             owners.layoutManager = LinearLayoutManager(requireContext())
+            refresh.setOnRefreshListener {
+                if (adapter.itemCount == 0) {
+                    viewModel.loadOwners(derivationPath)
+                }
+            }
         }
 
         viewModel.loadOwners(derivationPath)
@@ -169,7 +186,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     private fun showList() {
         with(binding) {
-            progress.visible(false)
             derivedOwners.visible(true)
             emptyPlaceholder.visible(false)
         }
@@ -179,7 +195,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         with(binding) {
             derivedOwners.visible(false)
             emptyPlaceholder.visible(true)
-            binding.progress.visible(false)
         }
     }
 

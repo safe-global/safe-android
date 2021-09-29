@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
+import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -7,6 +8,8 @@ import androidx.paging.map
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
@@ -27,19 +30,37 @@ class LedgerOwnerSelectionViewModel
 
     fun loadOwners(derivationPath: String) {
         this.derivationPath = derivationPath
-        safeLaunch {
-            ownersPager.getOwnersStream(derivationPath)
-                .map {
-                    it.map { address ->
-                        val name = credentialsRepository.owner(address)?.name
-                        OwnerHolder(address, name, name != null)
+        if (!ledgerController.isConnected()) {
+            ledgerController.reconnect(object : LedgerController.DeviceConnectedCallback {
+                override fun onDeviceConnected(device: BluetoothDevice) {
+                    safeLaunch {
+                        getOwners(derivationPath)
+                            .collectLatest {
+                                updateState { OwnerSelectionState(DerivedOwners(it, derivationPath)) }
+                            }
                     }
                 }
-                .cachedIn(viewModelScope)
-                .collectLatest {
-                    updateState { OwnerSelectionState(DerivedOwners(it, derivationPath)) }
-                }
+            })
+        } else {
+            safeLaunch {
+                getOwners(derivationPath)
+                    .collectLatest {
+                        updateState { OwnerSelectionState(DerivedOwners(it, derivationPath)) }
+                    }
+            }
         }
+    }
+
+    private fun getOwners(derivationPath: String): Flow<PagingData<OwnerHolder>> {
+        val ownerItems = ownersPager.getOwnersStream(derivationPath)
+            .map {
+                it.map { address ->
+                    val name = credentialsRepository.owner(address)?.name
+                    OwnerHolder(address, name, name != null)
+                }
+            }
+            .cachedIn(viewModelScope)
+        return ownerItems
     }
 
     fun setOwnerIndex(index: Long, address: Solidity.Address) {

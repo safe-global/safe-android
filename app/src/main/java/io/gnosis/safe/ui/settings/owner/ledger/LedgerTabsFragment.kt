@@ -44,6 +44,8 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerBinding =
             FragmentLedgerBinding.inflate(inflater, container, false)
 
@@ -131,6 +133,4 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
             Tabs.LEDGER -> Items.LEDGER.value
         }
     }
-
-    override fun containsItem(itemId: Long): Boolean = true
 }

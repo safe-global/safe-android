@@ -29,6 +29,8 @@ import io.gnosis.safe.ui.settings.owner.ledger.transport.SerializeHelper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
@@ -194,6 +196,17 @@ class LedgerController(val context: Context) {
         ConnectionManager.connect(device, context)
     }
 
+    fun isConnected(): Boolean {
+        return ConnectionManager.isDeviceConnected(connectedDevice!!)
+    }
+
+    fun reconnect(callback: DeviceConnectedCallback) {
+        val device = connectedDevice!!
+        connectedDevice?.let { ConnectionManager.teardownConnection(it) }
+        deviceConnectedCallback = callback
+        ConnectionManager.connect(device, context)
+    }
+
     fun teardownConnection() {
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
         connectedDevice = null
@@ -236,9 +249,9 @@ class LedgerController(val context: Context) {
         return command
     }
 
-    suspend fun getSignature(path: String, message: String): String = suspendCoroutine {
+    suspend fun getSignature(path: String, message: String): String = suspendCoroutine { continuation ->
         ConnectionManager.writeCharacteristic(connectedDevice!!, writeCharacteristic!!, wrapAPDU(getSignCommand(path, message)))
-        signContinuations.push(it)
+        signContinuations.push(continuation)
     }
 
     fun getAddressCommand(path: String, displayVerificationDialog: Boolean = false, chainCode: Boolean = false): ByteArray {
@@ -266,17 +279,24 @@ class LedgerController(val context: Context) {
         return command
     }
 
-    suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCoroutine {
+    suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
-        addressContinuations.push(it)
+        addressContinuations.push(continuation)
     }
 
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
         val addressPage = mutableListOf<Solidity.Address>()
-        for (i in start until start + pageSize) {
-            Timber.d("---> connectedDevice: $connectedDevice")
-            val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
-            addressPage.add(address)
+        kotlin.runCatching {
+            withTimeout(LEDGER_OP_TIMEOUT) {
+                for (i in start until start + pageSize) {
+                    Timber.d("---> connectedDevice: $connectedDevice")
+                    val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
+                    addressPage.add(address)
+                }
+            }
+        }.onFailure {
+            addressContinuations.clear()
+            throw it
         }
         return addressPage
     }
@@ -335,6 +355,7 @@ class LedgerController(val context: Context) {
     }
 
     companion object {
+        const val LEDGER_OP_TIMEOUT = 5000L
         const val LEDGER_LIVE_PATH = "44'/60'/0'/0/{index}"
         const val LEDGER_PATH = "44'/60'/0'/{index}"
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")
