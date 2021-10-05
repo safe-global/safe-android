@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -88,6 +87,8 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                                 derivationPathWithIndex = derivationPathWithIndex
                         )
                 )
+                viewModel.disconnectFromDevice()
+
             }
             pager = LedgerPagerAdapter(this@LedgerTabsFragment)
             ledgerContent.adapter = pager
@@ -107,6 +108,13 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
     private fun onBackNavigation() {
         viewModel.disconnectFromDevice()
         findNavController().navigateUp()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isConnected()) {
+            viewModel.reconnect(requireContext())
+        }
     }
 }
 

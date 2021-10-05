@@ -1,6 +1,7 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -8,11 +9,11 @@ import androidx.paging.map
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.settings.owner.list.OwnerViewData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import pm.gnosis.model.Solidity
+import timber.log.Timber
 import javax.inject.Inject
 
 class LedgerOwnerSelectionViewModel
@@ -27,6 +28,8 @@ class LedgerOwnerSelectionViewModel
     private var derivationPath: String = ""
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
+
+    private val device = ledgerController.connectedDevice
 
     fun loadOwners(derivationPath: String) {
         this.derivationPath = derivationPath
@@ -83,6 +86,25 @@ class LedgerOwnerSelectionViewModel
     fun disconnectFromDevice() {
         ledgerController.teardownConnection()
     }
+
+    fun reconnect(context: Context) {
+        device?.let {
+            ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
+                override fun onDeviceConnected(device: BluetoothDevice) {
+                    Timber.i("---> device: $device")
+                    loadOwners(derivationPath)
+                }
+            })
+        } ?: Timber.d("Bluetooth device was null")
+    }
+
+    fun isConnected(): Boolean {
+        device?.let {
+            return ledgerController.isConnected()
+        }
+        return false
+    }
+
 }
 
 data class OwnerSelectionState(

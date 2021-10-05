@@ -35,7 +35,7 @@ class LedgerDeviceListViewModel
                     scanResults.add(result)
                 }
                 updateState {
-                    LedgerDeviceListState(DeviceFound(scanResults.map { LedgerDeviceViewData(it.device.name) }))
+                    LedgerDeviceListState(DeviceFound(scanResults.map { LedgerDeviceViewData(it.device.name ?: it.device.address) }))
                 }
             }
         }

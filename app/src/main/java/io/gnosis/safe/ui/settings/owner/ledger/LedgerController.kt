@@ -145,6 +145,7 @@ class LedgerController(val context: Context) {
     private val scanResultFlow = callbackFlow {
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
+                Timber.i("$callbackType, result: ${result.device.address}/${result.device.name}")
                 offer(result)
             }
         }
@@ -196,15 +197,16 @@ class LedgerController(val context: Context) {
         ConnectionManager.connect(device, context)
     }
 
-    fun isConnected(): Boolean {
+    fun isConnected(): Boolean = connectedDevice?.let {
         return ConnectionManager.isDeviceConnected(connectedDevice!!)
-    }
+    } ?: false
 
     fun reconnect(callback: DeviceConnectedCallback) {
-        val device = connectedDevice!!
-        connectedDevice?.let { ConnectionManager.teardownConnection(it) }
-        deviceConnectedCallback = callback
-        ConnectionManager.connect(device, context)
+        connectedDevice?.let {
+            ConnectionManager.teardownConnection(it)
+            deviceConnectedCallback = callback
+            ConnectionManager.connect(connectedDevice!!, context)
+        }
     }
 
     fun teardownConnection() {
