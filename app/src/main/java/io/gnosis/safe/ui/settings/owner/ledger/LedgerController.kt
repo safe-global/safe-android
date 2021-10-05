@@ -145,7 +145,7 @@ class LedgerController(val context: Context) {
     private val scanResultFlow = callbackFlow {
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
-                Timber.i("$callbackType, result: ${result.device.address}/${result.device.name}")
+                Timber.d("$callbackType, result: ${result.device.address}/${result.device.name}")
                 offer(result)
             }
         }
