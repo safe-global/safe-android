@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
@@ -295,7 +296,7 @@ class LedgerController(val context: Context) {
                 Timber.d("addressesForPage() |  connectedDevice: $connectedDevice")
                 for (i in start until start + pageSize) {
                     val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
-                    Timber.d("addressesForPage() |  received address: ${address.value.toHexString()}")
+                    Timber.d("addressesForPage() |  received address: ${Solidity.Address(address.value).asEthereumAddressChecksumString()}")
                     addressPage.add(address)
                 }
             }
