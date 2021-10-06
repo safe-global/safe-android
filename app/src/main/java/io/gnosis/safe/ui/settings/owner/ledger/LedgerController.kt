@@ -287,12 +287,15 @@ class LedgerController(val context: Context) {
     }
 
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
+        Timber.d("addressesForPage(derivationPath=$derivationPath, start=$start, pageSize=$pageSize)")
+
         val addressPage = mutableListOf<Solidity.Address>()
         kotlin.runCatching {
             withTimeout(LEDGER_OP_TIMEOUT) {
+                Timber.d("addressesForPage() |  connectedDevice: $connectedDevice")
                 for (i in start until start + pageSize) {
-                    Timber.d("---> connectedDevice: $connectedDevice")
                     val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
+                    Timber.d("addressesForPage() |  received address: ${address.value.toHexString()}")
                     addressPage.add(address)
                 }
             }
@@ -358,7 +361,7 @@ class LedgerController(val context: Context) {
 
     companion object {
         const val LEDGER_OP_TIMEOUT = 5000L
-        const val LEDGER_LIVE_PATH = "44'/60'/0'/0/{index}"
+        const val LEDGER_LIVE_PATH = "44'/60'/{index}'/0/0"
         const val LEDGER_PATH = "44'/60'/0'/{index}"
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 1
