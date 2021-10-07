@@ -267,7 +267,6 @@ class LedgerController(val context: Context) {
     }
 
     private suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
-        Timber.d("---> getAddress(path=$path)")
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
         addressContinuations.add(continuation)
     }
@@ -350,7 +349,7 @@ class LedgerController(val context: Context) {
     }
 
     companion object {
-        const val LEDGER_OP_TIMEOUT = 15000L
+        const val LEDGER_OP_TIMEOUT = 5000L
         const val LEDGER_LIVE_PATH = "44'/60'/{index}'/0/0"
         const val LEDGER_PATH = "44'/60'/0'/{index}"
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
@@ -22,7 +21,6 @@ import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -104,13 +102,6 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                     }
                 }
             }.attach()
-
-            ledgerContent.registerOnPageChangeCallback( object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    Timber.d("---> onPageSelected($position)")
-                }
-            })
         }
     }
 
