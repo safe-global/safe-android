@@ -18,6 +18,7 @@ import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseSignMessage
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapAPDU
@@ -109,7 +110,6 @@ class LedgerController(val context: Context) {
                 val addressContinuation = nullOnThrow {
                     addressContinuations.remove()
                 }
-
                 addressContinuation?.let {
                     try {
                         val unwrappedResponse = unwrapAPDU(characteristic.value)
@@ -117,6 +117,21 @@ class LedgerController(val context: Context) {
                         Timber.d("onCharacteristicChanged() | Parsed address: $address")
                         it.resumeWith(Result.success(address.asEthereumAddress()!!))
                     } catch (e: Throwable) {
+                        Timber.e(e)
+                        it.resumeWithException(e)
+                    }
+                }
+
+                val signContinuation = nullOnThrow {
+                    signContinuations.remove()
+                }
+                signContinuation?.let {
+                    try {
+                        val unwrappedResponse = unwrapAPDU(characteristic.value)
+                        val signature = parseSignMessage(unwrappedResponse)
+                        Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
+                        it.resumeWith(Result.success(signature))
+                    } catch (e: Exception) {
                         Timber.e(e)
                         it.resumeWithException(e)
                     }
