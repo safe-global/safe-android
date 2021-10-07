@@ -100,14 +100,15 @@ object ConnectionManager {
                 BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
             }
             else -> {
-                Timber.e("Characteristic ${characteristic.uuid} cannot be written to")
+                Timber.e("---> Characteristic ${characteristic.uuid} cannot be written to")
                 return
             }
         }
         if (device.isConnected()) {
+            Timber.d("---> EnqueueOperation($payload)")
             enqueueOperation(CharacteristicWrite(device, characteristic.uuid, writeType, payload))
         } else {
-            Timber.e("Not connected to ${device.address}, cannot perform characteristic write")
+            Timber.e("---> Not connected to ${device.address}, cannot perform characteristic write")
         }
     }
 

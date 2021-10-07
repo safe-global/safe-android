@@ -95,7 +95,10 @@ class LedgerController(val context: Context) {
             onCharacteristicWrite = { _, characteristic -> }
 
             onCharacteristicWriteError = { _, _, error ->
-                val addressContinuation = nullOnThrow { addressContinuations.pop() }
+                val addressContinuation = nullOnThrow {
+                    Timber.d("---> addressContinuations.pop() (error)")
+                    addressContinuations.pop()
+                }
                 addressContinuation?.let {
                     it.resumeWithException(error)
                 }
@@ -106,7 +109,10 @@ class LedgerController(val context: Context) {
             onCharacteristicChanged = { _, characteristic ->
                 val unwrappedResponse = unwrapAPDU(characteristic.value)
 
-                val addressContinuation = nullOnThrow { addressContinuations.pop() }
+                val addressContinuation = nullOnThrow {
+                    Timber.d("---> addressContinuations.pop()")
+                    addressContinuations.pop()
+                }
                 addressContinuation?.let {
                     try {
                         val address = parseGetAddress(unwrappedResponse)
@@ -282,21 +288,24 @@ class LedgerController(val context: Context) {
         return command
     }
 
-    suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
+    private suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
+        Timber.d("---> getAddress(path=$path)")
+
         ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
         addressContinuations.push(continuation)
     }
 
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
-        Timber.d("addressesForPage(derivationPath=$derivationPath, start=$start, pageSize=$pageSize)")
+        Timber.d("---> addressesForPage(derivationPath=$derivationPath, start=$start, pageSize=$pageSize)")
 
         val addressPage = mutableListOf<Solidity.Address>()
         kotlin.runCatching {
             withTimeout(LEDGER_OP_TIMEOUT) {
                 Timber.d("addressesForPage() |  connectedDevice: $connectedDevice")
                 for (i in start until start + pageSize) {
-                    val address = getAddress(connectedDevice!!, derivationPath.replace("{index}", i.toString()))
-                    Timber.d("addressesForPage() |  received address: ${Solidity.Address(address.value).asEthereumAddressChecksumString()}")
+                    val pathWithIndex = derivationPath.replace("{index}", i.toString())
+                    val address = getAddress(connectedDevice!!, pathWithIndex)
+                    Timber.d("---> addressesForPage() |  received address: ${Solidity.Address(address.value).asEthereumAddressChecksumString()} pathWithIndex: $pathWithIndex")
                     addressPage.add(address)
                 }
             }
@@ -374,3 +383,5 @@ private fun Context.hasPermission(permissionType: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permissionType) ==
             PackageManager.PERMISSION_GRANTED
 }
+
+data class AddressWithPath(val address: Solidity.Address, val path: String)

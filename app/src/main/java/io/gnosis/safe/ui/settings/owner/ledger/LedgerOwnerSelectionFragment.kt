@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
+import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -186,6 +187,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         private const val ARGS_DERIVATION_PATH = "args.string.derivation.path"
         private const val MAX_PAGES = LedgerOwnerPagingProvider.MAX_PAGES
         fun newInstance(derivationPath: String): LedgerOwnerSelectionFragment {
+            Timber.d("addressesForPage -> derivationPath: $derivationPath")
             return LedgerOwnerSelectionFragment().withArgs(Bundle().apply {
                 putString(ARGS_DERIVATION_PATH, derivationPath)
             }) as LedgerOwnerSelectionFragment
