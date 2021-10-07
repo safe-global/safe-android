@@ -109,13 +109,6 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
         viewModel.disconnectFromDevice()
         findNavController().navigateUp()
     }
-
-    override fun onResume() {
-        super.onResume()
-        if (!viewModel.isConnected()) {
-            viewModel.reconnect(requireContext())
-        }
-    }
 }
 
 class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
