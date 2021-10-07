@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -38,14 +39,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         component.inject(this)
     }
 
+    private val derivationPath by lazy { requireArguments()[ARGS_DERIVATION_PATH] as String }
+    private val viewModel by lazy { (requireParentFragment() as LedgerTabsFragment).viewModel }
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerOwnerSelectionBinding =
         FragmentLedgerOwnerSelectionBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
@@ -53,9 +54,11 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
-                                showMoreOwners.showNext()
-                                adapter.pagesVisible++
-                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                if (showMoreOwners.currentView is TextView) {
+                                    showMoreOwners.showNext()
+                                    adapter.pagesVisible++
+                                    showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                }
                             }
                         }
                         lifecycleScope.launch {
@@ -91,7 +94,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
                 loadState.refresh.let {
-                    when(it) {
+                    when (it) {
                         is LoadState.Error -> {
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
@@ -105,28 +108,29 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
                             } else {
-                               if (viewModel.state.value?.viewAction is DerivedOwners) {
-                                   binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-                               }
+                                if (viewModel.state.value?.viewAction is DerivedOwners) {
+                                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                }
                             }
                         }
                     }
                 }
 
                 loadState.append.let {
-                    if (it !is LoadState.Loading) {
-                        if (binding.showMoreOwners.currentView is ProgressBar) {
-                            binding.showMoreOwners.showNext()
-                        }
+                    if (binding.showMoreOwners.currentView is ProgressBar) {
+                        binding.showMoreOwners.showNext()
                     }
                     if (it is LoadState.Error) {
                         handleError(it.error)
                         binding.showMoreOwners.setOnClickListener {
-                            binding.showMoreOwners.showNext()
+                            if (binding.showMoreOwners.currentView is ProgressBar) {
+                                binding.showMoreOwners.showNext()
+                            }
                             adapter.retry()
                         }
                     }
                 }
+
                 loadState.prepend.let {
                     if (it is LoadState.Error) {
                         handleError(it.error)
@@ -147,12 +151,12 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             owners.layoutManager = LinearLayoutManager(requireContext())
             refresh.setOnRefreshListener {
                 if (adapter.itemCount == 0) {
-                    viewModel.loadOwners(derivationPath)
+                    viewModel.loadOwners(requireContext(), derivationPath)
                 }
             }
         }
 
-        viewModel.loadOwners(derivationPath)
+        viewModel.loadOwners(requireContext(), derivationPath)
     }
 
     private fun handleError(throwable: Throwable) {
@@ -178,7 +182,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
         viewModel.setOwnerIndex(ownerIndex, address)
     }
 
@@ -193,4 +196,3 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
     }
 }
-

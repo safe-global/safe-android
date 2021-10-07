@@ -105,6 +105,7 @@ object ConnectionManager {
             }
         }
         if (device.isConnected()) {
+            Timber.d("EnqueueOperation($payload)")
             enqueueOperation(CharacteristicWrite(device, characteristic.uuid, writeType, payload))
         } else {
             Timber.e("Not connected to ${device.address}, cannot perform characteristic write")
@@ -427,10 +428,6 @@ object ConnectionManager {
                     }
                 }
             }
-
-            if (pendingOperation is CharacteristicWrite) {
-                signalEndOfOperation()
-            }
         }
 
 
@@ -438,6 +435,10 @@ object ConnectionManager {
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
+            //FIXME: define custom operation for GetAddress command
+            if (pendingOperation is CharacteristicWrite) {
+                signalEndOfOperation()
+            }
             with(characteristic) {
                 Timber.i("Characteristic $uuid changed | value: ${value.toHexString()}")
                 listeners.forEach { it.get()?.onCharacteristicChanged?.invoke(gatt.device, this) }
