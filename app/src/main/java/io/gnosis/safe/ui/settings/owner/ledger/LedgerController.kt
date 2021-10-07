@@ -18,7 +18,6 @@ import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseGetAddress
-import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.parseSignMessage
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.splitPath
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.unwrapAPDU
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerWrapper.wrapAPDU
@@ -59,7 +58,7 @@ class LedgerController(val context: Context) {
         private set
 
     private var deviceConnectedCallback: DeviceConnectedCallback? = null
-    private var addressContinuations = Stack<Continuation<Solidity.Address>>()
+    private var addressContinuations = Stack<Pair<String, Continuation<Pair<String, Solidity.Address>>>>()
     private var signContinuations = Stack<Continuation<String>>()
 
     var writeCharacteristic: BluetoothGattCharacteristic? = null
@@ -97,7 +96,7 @@ class LedgerController(val context: Context) {
             onCharacteristicWriteError = { _, _, error ->
                 val addressContinuation = nullOnThrow {
                     Timber.d("---> addressContinuations.pop() (error)")
-                    addressContinuations.pop()
+                    addressContinuations.pop().second
                 }
                 addressContinuation?.let {
                     it.resumeWithException(error)
@@ -107,32 +106,22 @@ class LedgerController(val context: Context) {
             onMtuChanged = { _, mtu -> }
 
             onCharacteristicChanged = { _, characteristic ->
-                val unwrappedResponse = unwrapAPDU(characteristic.value)
 
                 val addressContinuation = nullOnThrow {
-                    Timber.d("---> addressContinuations.pop()")
-                    addressContinuations.pop()
-                }
-                addressContinuation?.let {
-                    try {
-                        val address = parseGetAddress(unwrappedResponse)
-                        Timber.d("onCharacteristicChanged() | Parsed address: $address")
-                        it.resumeWith(Result.success(address.asEthereumAddress()!!))
-                    } catch (e: Throwable) {
-                        Timber.e(e)
-                        it.resumeWithException(e)
-                    }
+                    val pair = addressContinuations.pop()
+                    Timber.d("---> addressContinuations.pop() derivation Path: -> ${pair.first}")
+                    pair
                 }
 
-                val signContinuation = nullOnThrow { signContinuations.pop() }
-                signContinuation?.let {
+                addressContinuation?.let {
                     try {
-                        val signature = parseSignMessage(unwrappedResponse)
-                        Timber.d("onCharacteristicChanged() | Parsed signature: $signature")
-                        it.resumeWith(Result.success(signature))
-                    } catch (e: Exception) {
+                        val unwrappedResponse = unwrapAPDU(characteristic.value)
+                        val address = parseGetAddress(unwrappedResponse)
+                        Timber.d("onCharacteristicChanged() | Parsed address: $address")
+                        it.second.resumeWith(Result.success(Pair(it.first, address.asEthereumAddress()!!)))
+                    } catch (e: Throwable) {
                         Timber.e(e)
-                        it.resumeWithException(e)
+                        it.second.resumeWithException(e)
                     }
                 }
             }
@@ -208,14 +197,6 @@ class LedgerController(val context: Context) {
         return ConnectionManager.isDeviceConnected(connectedDevice!!)
     } ?: false
 
-    fun reconnect(callback: DeviceConnectedCallback) {
-        connectedDevice?.let {
-            ConnectionManager.teardownConnection(it)
-            deviceConnectedCallback = callback
-            ConnectionManager.connect(connectedDevice!!, context)
-        }
-    }
-
     fun teardownConnection() {
         connectedDevice?.let { ConnectionManager.teardownConnection(it) }
         connectedDevice = null
@@ -288,15 +269,17 @@ class LedgerController(val context: Context) {
         return command
     }
 
-    private suspend fun getAddress(device: BluetoothDevice, path: String): Solidity.Address = suspendCancellableCoroutine { continuation ->
-        Timber.d("---> getAddress(path=$path)")
+    private suspend fun getAddress(device: BluetoothDevice, path: String): Pair<String, Solidity.Address> =
+        suspendCancellableCoroutine { continuation ->
+            Timber.d("---> getAddress(path=$path)")
+            ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
+            addressContinuations.push(Pair(path, continuation))
+        }
 
-        ConnectionManager.writeCharacteristic(device, writeCharacteristic!!, wrapAPDU(getAddressCommand(path)))
-        addressContinuations.push(continuation)
-    }
-
+    @Synchronized
     suspend fun addressesForPage(derivationPath: String, start: Long, pageSize: Int): List<Solidity.Address> {
         Timber.d("---> addressesForPage(derivationPath=$derivationPath, start=$start, pageSize=$pageSize)")
+        addressContinuations.clear()
 
         val addressPage = mutableListOf<Solidity.Address>()
         kotlin.runCatching {
@@ -304,9 +287,22 @@ class LedgerController(val context: Context) {
                 Timber.d("addressesForPage() |  connectedDevice: $connectedDevice")
                 for (i in start until start + pageSize) {
                     val pathWithIndex = derivationPath.replace("{index}", i.toString())
-                    val address = getAddress(connectedDevice!!, pathWithIndex)
-                    Timber.d("---> addressesForPage() |  received address: ${Solidity.Address(address.value).asEthereumAddressChecksumString()} pathWithIndex: $pathWithIndex")
-                    addressPage.add(address)
+                    val addressPair = getAddress(connectedDevice!!, pathWithIndex)
+
+                    Timber.d(
+                        "---> addressesForPage() |  received address: ${
+                            Solidity.Address(addressPair.second.value).asEthereumAddressChecksumString()
+                        } pathWithIndex: $pathWithIndex, PATH: ${addressPair.first}"
+                    )
+
+
+                    Timber.i("---> path in result:  ${addressPair.first}, expected: $pathWithIndex")
+
+                    if (addressPair.first == pathWithIndex) {
+                        addressPage.add(addressPair.second)
+                    } else {
+                        Timber.i("---> wrong path in result:  ${addressPair.first}, expected: $pathWithIndex")
+                    }
                 }
             }
         }.onFailure {
@@ -370,7 +366,7 @@ class LedgerController(val context: Context) {
     }
 
     companion object {
-        const val LEDGER_OP_TIMEOUT = 5000L
+        const val LEDGER_OP_TIMEOUT = 15000L
         const val LEDGER_LIVE_PATH = "44'/60'/{index}'/0/0"
         const val LEDGER_PATH = "44'/60'/0'/{index}"
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")
@@ -383,5 +379,3 @@ private fun Context.hasPermission(permissionType: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permissionType) ==
             PackageManager.PERMISSION_GRANTED
 }
-
-data class AddressWithPath(val address: Solidity.Address, val path: String)

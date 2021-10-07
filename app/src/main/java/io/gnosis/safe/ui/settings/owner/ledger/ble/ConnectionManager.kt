@@ -429,9 +429,9 @@ object ConnectionManager {
                 }
             }
 
-            if (pendingOperation is CharacteristicWrite) {
-                signalEndOfOperation()
-            }
+//            if (pendingOperation is CharacteristicWrite) {
+//                signalEndOfOperation()
+//            }
         }
 
 
@@ -439,6 +439,9 @@ object ConnectionManager {
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
+            if (pendingOperation is CharacteristicWrite) {
+                signalEndOfOperation()
+            }
             with(characteristic) {
                 Timber.i("Characteristic $uuid changed | value: ${value.toHexString()}")
                 listeners.forEach { it.get()?.onCharacteristicChanged?.invoke(gatt.device, this) }

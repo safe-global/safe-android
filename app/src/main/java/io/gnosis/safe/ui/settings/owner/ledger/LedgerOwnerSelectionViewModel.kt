@@ -29,12 +29,15 @@ class LedgerOwnerSelectionViewModel
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
-    private val device = ledgerController.connectedDevice
+    private val device = ledgerController.connectedDevice!!
 
-    fun loadOwners(derivationPath: String) {
+    fun loadOwners(context: Context, derivationPath: String) {
+
+        Timber.i("--> loadOwners called")
+
         this.derivationPath = derivationPath
         if (!ledgerController.isConnected()) {
-            ledgerController.reconnect(object : LedgerController.DeviceConnectedCallback {
+            ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
                 override fun onDeviceConnected(device: BluetoothDevice) {
                     safeLaunch {
                         getOwners(derivationPath)
@@ -92,7 +95,7 @@ class LedgerOwnerSelectionViewModel
             ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
                 override fun onDeviceConnected(device: BluetoothDevice) {
                     Timber.i("---> device: $device")
-                    loadOwners(derivationPath)
+                    loadOwners(context, derivationPath)
                 }
             })
         } ?: Timber.d("Bluetooth device was null")
@@ -104,7 +107,6 @@ class LedgerOwnerSelectionViewModel
         }
         return false
     }
-
 }
 
 data class OwnerSelectionState(

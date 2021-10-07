@@ -92,7 +92,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
                 loadState.refresh.let {
-                    when(it) {
+                    when (it) {
                         is LoadState.Error -> {
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
@@ -106,9 +106,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
                             } else {
-                               if (viewModel.state.value?.viewAction is DerivedOwners) {
-                                   binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-                               }
+                                if (viewModel.state.value?.viewAction is DerivedOwners) {
+                                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                }
                             }
                         }
                     }
@@ -148,12 +148,12 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             owners.layoutManager = LinearLayoutManager(requireContext())
             refresh.setOnRefreshListener {
                 if (adapter.itemCount == 0) {
-                    viewModel.loadOwners(derivationPath)
+                    viewModel.loadOwners(requireContext(), derivationPath)
                 }
             }
         }
 
-        viewModel.loadOwners(derivationPath)
+        viewModel.loadOwners(requireContext(), derivationPath)
     }
 
     private fun handleError(throwable: Throwable) {
