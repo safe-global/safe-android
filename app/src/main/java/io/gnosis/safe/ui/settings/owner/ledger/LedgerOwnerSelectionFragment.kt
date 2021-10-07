@@ -57,7 +57,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                                 if (showMoreOwners.currentView is TextView) {
                                     showMoreOwners.showNext()
                                     adapter.pagesVisible++
-                                    adapter.notifyDataSetChanged()
                                     showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
                                 }
                             }
