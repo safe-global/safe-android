@@ -38,14 +38,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         component.inject(this)
     }
 
+    private val derivationPath by lazy { requireArguments()[ARGS_DERIVATION_PATH] as String }
+    private val viewModel by lazy { (requireParentFragment() as LedgerTabsFragment).viewModel }
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerOwnerSelectionBinding =
         FragmentLedgerOwnerSelectionBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
@@ -91,7 +91,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 binding.refresh.isRefreshing = loadState.refresh is LoadState.Loading && adapter.itemCount != 0
 
                 loadState.refresh.let {
-                    when(it) {
+                    when (it) {
                         is LoadState.Error -> {
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
@@ -105,9 +105,9 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                             if (adapter.itemCount == 0) {
                                 showEmptyState()
                             } else {
-                               if (viewModel.state.value?.viewAction is DerivedOwners) {
-                                   binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
-                               }
+                                if (viewModel.state.value?.viewAction is DerivedOwners) {
+                                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                }
                             }
                         }
                     }
@@ -147,12 +147,12 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
             owners.layoutManager = LinearLayoutManager(requireContext())
             refresh.setOnRefreshListener {
                 if (adapter.itemCount == 0) {
-                    viewModel.loadOwners(derivationPath)
+                    viewModel.loadOwners(requireContext(), derivationPath)
                 }
             }
         }
 
-        viewModel.loadOwners(derivationPath)
+        viewModel.loadOwners(requireContext(), derivationPath)
     }
 
     private fun handleError(throwable: Throwable) {
@@ -178,7 +178,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
         viewModel.setOwnerIndex(ownerIndex, address)
     }
 
@@ -193,4 +192,3 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         }
     }
 }
-
