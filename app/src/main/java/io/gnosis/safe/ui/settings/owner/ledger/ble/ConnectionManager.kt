@@ -428,10 +428,6 @@ object ConnectionManager {
                     }
                 }
             }
-
-//            if (pendingOperation is CharacteristicWrite) {
-//                signalEndOfOperation()
-//            }
         }
 
 
@@ -439,6 +435,7 @@ object ConnectionManager {
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
+            //FIXME: define custom operation for GetAddress command
             if (pendingOperation is CharacteristicWrite) {
                 signalEndOfOperation()
             }
