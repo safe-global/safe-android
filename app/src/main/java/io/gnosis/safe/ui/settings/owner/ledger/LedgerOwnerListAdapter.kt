@@ -22,6 +22,11 @@ import kotlin.math.min
 class LedgerOwnerListAdapter : PagingDataAdapter<OwnerHolder, LedgerOwnerListAdapter.BaseOwnerViewHolder>(COMPARATOR) {
 
     var pagesVisible = 1
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     private var selectedOwnerPosition: Int = -1
 
     private var listener: WeakReference<OnOwnerItemClickedListener>? = null
