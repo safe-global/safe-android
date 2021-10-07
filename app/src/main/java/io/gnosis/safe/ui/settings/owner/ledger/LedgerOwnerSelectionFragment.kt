@@ -19,6 +19,7 @@ import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
@@ -39,14 +40,14 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         component.inject(this)
     }
 
+    private val derivationPath by lazy { requireArguments()[ARGS_DERIVATION_PATH] as String }
+    private val viewModel by lazy { (requireParentFragment() as LedgerTabsFragment).viewModel }
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerOwnerSelectionBinding =
         FragmentLedgerOwnerSelectionBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val derivationPath = requireArguments()[ARGS_DERIVATION_PATH] as String
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
@@ -157,11 +158,13 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     private fun handleError(throwable: Throwable) {
-        val error = throwable.toError()
-        if (error.trackingRequired) {
-            tracker.logException(throwable)
+        if (throwable !is CancellationException) {
+            val error = throwable.toError()
+            if (error.trackingRequired) {
+                tracker.logException(throwable)
+            }
+            errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
         }
-        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
     }
 
     private fun showList() {
@@ -179,7 +182,6 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     override fun onOwnerClicked(ownerIndex: Long, address: Solidity.Address) {
-        val viewModel = (requireParentFragment() as LedgerTabsFragment).viewModel
         viewModel.setOwnerIndex(ownerIndex, address)
     }
 
@@ -194,5 +196,11 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
         }
     }
-}
 
+    override fun onResume() {
+        super.onResume()
+        if (binding.emptyPlaceholder.isVisible) {
+            viewModel.loadOwners(requireContext(), derivationPath)
+        }
+    }
+}
