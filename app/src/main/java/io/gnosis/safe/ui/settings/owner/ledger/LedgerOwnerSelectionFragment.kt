@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -53,9 +54,12 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
-                                showMoreOwners.showNext()
-                                adapter.pagesVisible++
-                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                if (showMoreOwners.currentView is TextView) {
+                                    showMoreOwners.showNext()
+                                    adapter.pagesVisible++
+                                    adapter.notifyDataSetChanged()
+                                    showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                }
                             }
                         }
                         lifecycleScope.launch {
@@ -114,19 +118,20 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                 }
 
                 loadState.append.let {
-                    if (it !is LoadState.Loading) {
-                        if (binding.showMoreOwners.currentView is ProgressBar) {
-                            binding.showMoreOwners.showNext()
-                        }
+                    if (binding.showMoreOwners.currentView is ProgressBar) {
+                        binding.showMoreOwners.showNext()
                     }
                     if (it is LoadState.Error) {
                         handleError(it.error)
                         binding.showMoreOwners.setOnClickListener {
-                            binding.showMoreOwners.showNext()
+                            if (binding.showMoreOwners.currentView is ProgressBar) {
+                                binding.showMoreOwners.showNext()
+                            }
                             adapter.retry()
                         }
                     }
                 }
+
                 loadState.prepend.let {
                     if (it is LoadState.Error) {
                         handleError(it.error)
