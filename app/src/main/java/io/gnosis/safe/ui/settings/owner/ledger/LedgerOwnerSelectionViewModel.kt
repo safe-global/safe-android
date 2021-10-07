@@ -33,8 +33,6 @@ class LedgerOwnerSelectionViewModel
 
     fun loadOwners(context: Context, derivationPath: String) {
 
-        Timber.i("--> loadOwners called")
-
         this.derivationPath = derivationPath
         if (!ledgerController.isConnected()) {
             ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {

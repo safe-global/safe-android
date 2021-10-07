@@ -19,12 +19,10 @@ import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
-import timber.log.Timber
 import java.math.BigInteger
 
 class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwnerSelectionBinding>(),
@@ -158,13 +156,11 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
     }
 
     private fun handleError(throwable: Throwable) {
-        if (throwable !is CancellationException) {
-            val error = throwable.toError()
-            if (error.trackingRequired) {
-                tracker.logException(throwable)
-            }
-            errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
+        val error = throwable.toError()
+        if (error.trackingRequired) {
+            tracker.logException(throwable)
         }
+        errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_ledger_address_list))
     }
 
     private fun showList() {
@@ -189,18 +185,10 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
         private const val ARGS_DERIVATION_PATH = "args.string.derivation.path"
         private const val MAX_PAGES = LedgerOwnerPagingProvider.MAX_PAGES
         fun newInstance(derivationPath: String): LedgerOwnerSelectionFragment {
-            Timber.d("addressesForPage -> derivationPath: $derivationPath")
             return LedgerOwnerSelectionFragment().withArgs(Bundle().apply {
                 putString(ARGS_DERIVATION_PATH, derivationPath)
             }) as LedgerOwnerSelectionFragment
 
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (binding.emptyPlaceholder.isVisible) {
-            viewModel.loadOwners(requireContext(), derivationPath)
         }
     }
 }
