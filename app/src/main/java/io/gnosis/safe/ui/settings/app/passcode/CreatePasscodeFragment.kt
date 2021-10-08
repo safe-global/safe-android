@@ -25,6 +25,7 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun screenId() = ScreenId.PASSCODE_CREATE
     private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
     private val ownerImported by lazy { navArgs.ownerImported }
+    private val ownerAddress by lazy { navArgs.ownerAddress }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
@@ -90,6 +91,9 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
         if (ownerImported) {
             findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+            findNavController().navigate(R.id.action_to_owner_details, Bundle().apply {
+                putString("ownerAddress", ownerAddress!!)
+            })
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }

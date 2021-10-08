@@ -24,6 +24,7 @@ import io.gnosis.safe.ui.settings.owner.list.imageRes24dp
 import io.gnosis.safe.utils.formatEthAddress
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import javax.inject.Inject
@@ -93,6 +94,9 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             when (val viewAction = it.viewAction) {
                 is CloseScreen -> {
                     findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+                    findNavController().navigate(R.id.action_to_owner_details, Bundle().apply {
+                        putString("ownerAddress", ownerAddress.asEthereumAddressString())
+                    })
                     if (ownerSeedPhrase != null) {
                         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, true)
                     } else {

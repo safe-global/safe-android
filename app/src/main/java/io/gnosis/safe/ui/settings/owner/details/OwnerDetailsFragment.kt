@@ -15,6 +15,7 @@ import io.gnosis.safe.databinding.FragmentOwnerDetailsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
 import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
@@ -108,6 +109,16 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
         if (passcodeUnlocked()) {
             resetPasscodeUnlocked()
             resumeExportFlow()
+        }
+        //FIXME: find better way to pass results in nav graph
+        //TODO: add extension functions for handling back stack entries
+        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        }
+        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_created))
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
         }
     }
 

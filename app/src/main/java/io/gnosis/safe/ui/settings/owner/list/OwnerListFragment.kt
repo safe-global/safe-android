@@ -16,7 +16,6 @@ import io.gnosis.safe.databinding.FragmentOwnerListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
-import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import pm.gnosis.model.Solidity
@@ -100,14 +99,6 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
         if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
             findNavController().currentBackStackEntry?.savedStateHandle?.set(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
-        }
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-        }
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_created))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
         }
     }
 
