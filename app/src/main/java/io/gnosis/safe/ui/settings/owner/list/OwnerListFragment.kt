@@ -18,6 +18,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
+import io.gnosis.safe.utils.getFromCurrent
+import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -95,10 +97,9 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
         super.onResume()
         viewModel.loadOwners()
         //FIXME: find better way to pass results in nav graph
-        //TODO: add extension functions for handling back stack entries
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
+        if (findNavController().getFromCurrent<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
+            findNavController().setToCurrent(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
         }
     }
 

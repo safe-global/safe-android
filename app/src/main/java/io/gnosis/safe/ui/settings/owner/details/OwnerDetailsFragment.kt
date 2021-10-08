@@ -20,6 +20,8 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
 import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
 import io.gnosis.safe.ui.settings.owner.list.stringRes
+import io.gnosis.safe.utils.getFromCurrent
+import io.gnosis.safe.utils.setToCurrent
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -111,14 +113,13 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             resumeExportFlow()
         }
         //FIXME: find better way to pass results in nav graph
-        //TODO: add extension functions for handling back stack entries
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         }
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_created))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
         }
     }
 
@@ -127,11 +128,11 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
     }
 
     private fun passcodeUnlocked(): Boolean {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(RESULT_PASSCODE_UNLOCKED) == true
+        return findNavController().getFromCurrent<Boolean>(RESULT_PASSCODE_UNLOCKED) == true
     }
 
     private fun resetPasscodeUnlocked() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(RESULT_PASSCODE_UNLOCKED, null)
+        findNavController().setToCurrent(RESULT_PASSCODE_UNLOCKED, null)
     }
 
     companion object {
