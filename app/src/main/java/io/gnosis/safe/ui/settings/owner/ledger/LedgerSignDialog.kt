@@ -11,6 +11,7 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogLedgerSignBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
 import pm.gnosis.utils.asEthereumAddress
@@ -33,6 +34,8 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
         viewComponent.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?) =
         DialogLedgerSignBinding.inflate(inflater, container, false)
 
@@ -52,6 +55,9 @@ class LedgerSignDialog : BaseBottomSheetDialogFragment<DialogLedgerSignBinding>(
                 when (action) {
                     is Signature -> {
                         navigateBack(action.signature)
+                    }
+                    is ShowError -> {
+                        findNavController().navigateUp()
                     }
                     else -> {
                     }
