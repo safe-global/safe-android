@@ -107,11 +107,13 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     }
 
     private fun generateDefaultNameFromDerivationPath(derivationPathWithIndex: String): String {
-        val index = derivationPathWithIndex.split("/").last().toInt()
-        val ledger = derivationPathWithIndex.removeSuffix(index.toString()) == LEDGER_PATH.removeSuffix("{index}")
+        val derivationParts = derivationPathWithIndex.split("/")
+        val ledger = derivationParts.size == LEDGER_PATH.split("/").size
         return if (ledger) {
+            val index = derivationParts[3].toInt()
             "Ledger key #${index + 1}"
         } else {
+            val index = derivationParts[2].removeSuffix("'").toInt()
             "Ledger Live key #${index + 1}"
         }
     }
