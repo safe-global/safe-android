@@ -348,6 +348,12 @@
             app:argType="boolean" />
 
         <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
             android:name="ownerAddress"
             android:defaultValue="@null"
             app:argType="string"
@@ -368,6 +374,18 @@
         <argument
             android:name="ownerImported"
             app:argType="boolean" />
+
+        <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ownerAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 

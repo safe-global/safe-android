@@ -37,7 +37,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, address.asEthereumAddressString()))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.IMPORTED.name, address.asEthereumAddressString()))
                     }
                 )
             }
@@ -58,7 +58,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, address.asEthereumAddressString()))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.GENERATED.name, address.asEthereumAddressString()))
                     }
                 )
             }
@@ -80,7 +80,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, address.asEthereumAddressString()))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.LEDGER_NANO_X.name, address.asEthereumAddressString()))
                     }
                 )
             }

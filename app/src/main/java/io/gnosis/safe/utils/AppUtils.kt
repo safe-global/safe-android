@@ -93,6 +93,10 @@ fun <T>NavController.setToCurrent(key: String, value: T) {
     currentBackStackEntry?.savedStateHandle?.set(key, value)
 }
 
+fun <T>NavController.setToPrevious(key: String, value: T) {
+    previousBackStackEntry?.savedStateHandle?.set(key, value)
+}
+
 fun <T>NavController.getFromCurrent(key: String): T? {
     return currentBackStackEntry?.savedStateHandle?.get<T>(key)
 }

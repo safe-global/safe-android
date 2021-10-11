@@ -16,6 +16,7 @@ import io.gnosis.safe.databinding.FragmentOwnerListBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
 import io.gnosis.safe.utils.getFromCurrent
@@ -97,10 +98,15 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
         super.onResume()
         viewModel.loadOwners()
         //FIXME: find better way to pass results in nav graph
-        if (findNavController().getFromCurrent<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_REMOVED_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-            findNavController().setToCurrent(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_REMOVED_RESULT, false)
         }
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
+            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+        }
+
     }
 
     override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {

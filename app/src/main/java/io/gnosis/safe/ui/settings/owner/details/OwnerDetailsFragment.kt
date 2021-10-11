@@ -22,6 +22,7 @@ import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
 import io.gnosis.safe.ui.settings.owner.list.stringRes
 import io.gnosis.safe.utils.getFromCurrent
 import io.gnosis.safe.utils.setToCurrent
+import io.gnosis.safe.utils.setToPrevious
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.copyToClipboard
@@ -90,7 +91,7 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
                                 }
                             ) {
                                 viewModel.removeOwner(owner)
-                                findNavController().previousBackStackEntry?.savedStateHandle?.set(ARGS_RESULT_OWNER_REMOVED, true)
+                                findNavController().setToPrevious(SafeOverviewBaseFragment.OWNER_REMOVED_RESULT, true)
                             }
                         }
 
@@ -113,10 +114,6 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
             resumeExportFlow()
         }
         //FIXME: find better way to pass results in nav graph
-        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-        }
         if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_created))
             findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
@@ -136,7 +133,6 @@ class OwnerDetailsFragment : BaseViewBindingFragment<FragmentOwnerDetailsBinding
     }
 
     companion object {
-        const val ARGS_RESULT_OWNER_REMOVED = "args.boolean.owner_removed_result"
         const val RESULT_PASSCODE_UNLOCKED = "result.boolean.passcode_unlocked"
     }
 }
