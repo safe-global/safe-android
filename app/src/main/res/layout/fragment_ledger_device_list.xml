@@ -96,7 +96,7 @@
             style="@style/TextDark"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:layout_margin="@dimen/default_margin"
             android:text="@string/ledger_device_not_found"
             app:layout_constraintTop_toTopOf="parent"
