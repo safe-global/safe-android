@@ -53,7 +53,7 @@ class OwnerEnterNameViewModelTest {
 
         testObserver.assertValues(
             OwnerEnterNameState(None),
-            OwnerEnterNameState(NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, ownerAddress.asEthereumAddressString())))
+            OwnerEnterNameState(NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.IMPORTED.name, ownerAddress.asEthereumAddressString())))
         )
 
         coVerifySequence {
