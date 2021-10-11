@@ -179,6 +179,10 @@
             android:id="@+id/action_ownerSeedPhraseFragment_to_ownerSelectionFragment"
             app:destination="@id/ownerSelectionFragment" />
 
+        <action
+            android:id="@+id/action_ownerSeedPhraseFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
     </fragment>
 
     <fragment
@@ -194,8 +198,7 @@
 
         <argument
             android:name="seedPhrase"
-            app:argType="string"
-            app:nullable="true" />
+            app:argType="string" />
 
         <action
             android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
