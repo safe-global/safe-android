@@ -533,14 +533,11 @@
     <string name="ledger_select_device">Select your device</string>
     <string name="ledger_device_search">Looking for Ledger Nano X devices</string>
     <string name="ledger_device_not_found">No Ledger Nano X device found</string>
-    <string name="ledger_device_not_found_check">Please make sure:
-        <ul>
-            \n<li>Your Ledger Nano X is unlocked</li>
-            \n<li>Your Ledger Nano X has been paired with this device</li>
-            \n<li>Bluetooth and Location Services are enabled (we will not collect any location data)</li>
-            \n<li>The Ethereum app is installed and open</li>
-        </ul>
-    </string>
+    <string name="ledger_device_not_found_please_make_sure">Please make sure</string>
+    <string name="ledger_device_not_found_unlocked">Your Ledger Nano X is unlocked</string>
+    <string name="ledger_device_not_found_paired">Your Ledger Nano X has been paired with this device</string>
+    <string name="ledger_device_not_found_bluetooth">Bluetooth and Location Services are enabled (we will not collect any location data)</string>
+    <string name="ledger_device_not_found_ethereum_app_running">The Ethereum app is installed and open</string>
     <string name="ledger_no_addresses_loaded">No addresses could be loaded from the Ledger Nano X</string>
     <string name="ledger_no_addresses_loaded_check">Please make sure:
         <ul>
