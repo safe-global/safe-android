@@ -51,8 +51,12 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
         with(binding) {
 
-            //FIXME: adjust text depending on owner type
-            status.visible(ownerImported, View.INVISIBLE)
+            if (ownerImported) {
+                status.text = getString(if (Owner.Type.valueOf(ownerType!!) == Owner.Type.GENERATED) R.string.settings_passcode_owner_key_successful_created else R.string.settings_passcode_owner_key_successful_imported)
+                status.visible(true, View.INVISIBLE)
+            } else {
+                status.visible(false, View.INVISIBLE)
+            }
 
             backButton.setOnClickListener {
                 skipPasscodeSetup()

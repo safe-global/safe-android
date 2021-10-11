@@ -186,7 +186,8 @@
     <string name="settings_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
     <string name="settings_passcode_create_a_new_6_digit_passcode">Create a new 6-digit passcode</string>
     <string name="settings_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
-    <string name="settings_passcode_owner_key_successful_imported">Owner key successful imported</string>
+    <string name="settings_passcode_owner_key_successful_imported">Owner key successfully imported</string>
+    <string name="settings_passcode_owner_key_successful_created">Owner key successfully created</string>
     <string name="settings_passcode_dont_match">Passcodes don’t match</string>
     <string name="settings_passcode_wrong_passcode">Wrong passcode</string>
     <string name="settings_passcode_enter_your_current_passcode">Enter your current passcode</string>
