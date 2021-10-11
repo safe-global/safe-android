@@ -160,7 +160,7 @@
             android:src="@drawable/circle"
             android:background="@color/primary"
             app:tint="@color/primary"
-            app:layout_constraintStart_toStartOf="@id/empty_first_bullet"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/empty_paired"
             />
 
@@ -184,7 +184,7 @@
             android:src="@drawable/circle"
             android:background="@color/primary"
             app:tint="@color/primary"
-            app:layout_constraintStart_toStartOf="@id/empty_first_bullet"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/empty_bluetooth"
             />
 
@@ -208,7 +208,7 @@
             android:src="@drawable/circle"
             android:background="@color/primary"
             app:tint="@color/primary"
-            app:layout_constraintStart_toStartOf="@id/empty_first_bullet"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/empty_app_running"
             />
         <TextView
