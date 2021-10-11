@@ -9,6 +9,7 @@ import pm.gnosis.crypto.KeyPair
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
@@ -53,7 +54,7 @@ class OwnerSeedPhraseViewModel
                 val ownerKeyPair = KeyPair.fromPrivate(input.hexAsBigInteger())
                 val ownerAddress = Solidity.Address(ownerKeyPair.address.asBigInteger())
                 if (credentialsRepository.owner(ownerAddress) == null) {
-                    updateState { ImportOwnerKeyState.ValidKeySubmitted(input) }
+                    updateState { ImportOwnerKeyState.ValidKeySubmitted(input, ownerAddress.asEthereumAddressString()) }
                 } else {
                     updateState { ImportOwnerKeyState.Error(KeyAlreadyImported) }
                 }
@@ -108,6 +109,6 @@ sealed class ImportOwnerKeyState(
 ) : BaseStateViewModel.State {
 
     data class ValidSeedPhraseSubmitted(val validSeedPhrase: String) : ImportOwnerKeyState()
-    data class ValidKeySubmitted(val key: String) : ImportOwnerKeyState()
+    data class ValidKeySubmitted(val key: String, val address: String) : ImportOwnerKeyState()
     data class Error(val throwable: Throwable) : ImportOwnerKeyState(BaseStateViewModel.ViewAction.ShowError(throwable))
 }
