@@ -103,9 +103,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginLeft="@dimen/double_margin"
-            android:layout_marginRight="@dimen/double_margin"
+            android:layout_marginLeft="@dimen/default_large_margin"
+            android:layout_marginRight="@dimen/default_large_margin"
             android:text="@string/ledger_device_not_found"
+            android:gravity="center"
+            android:textSize="20sp" />
+
+        <TextView
+            style="@style/TextDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginLeft="@dimen/default_large_margin"
+            android:layout_marginRight="@dimen/default_large_margin"
+            android:text="@string/ledger_device_not_found_check"
             android:gravity="start|center"
             android:textSize="20sp" />
 
