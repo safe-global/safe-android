@@ -66,47 +66,123 @@
     </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/empty_placeholder"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
-        tools:visibility="visible" >
+        tools:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" >
 
         <TextView
+            android:id="@+id/empty_title"
             style="@style/TextDark"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_large_margin"
-            android:layout_marginLeft="@dimen/default_large_margin"
-            android:layout_marginRight="@dimen/default_large_margin"
+            android:layout_margin="@dimen/default_margin"
             android:text="@string/ledger_no_addresses_loaded"
-            android:gravity="center"
-            android:textSize="20sp" />
+            android:gravity="center_horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_ledger_not_found" />
+            android:id="@+id/empty_image"
+            android:layout_width="136dp"
+            android:layout_height="112dp"
+            android:layout_margin="@dimen/default_margin"
+            android:gravity="center_horizontal"
+            android:src="@drawable/ic_ledger_not_found"
+            app:layout_constraintTop_toBottomOf="@id/empty_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
+            android:id="@+id/empty_please_make_sure"
             style="@style/TextDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginLeft="@dimen/default_large_margin"
-            android:layout_marginRight="@dimen/default_large_margin"
-            android:text="@string/ledger_no_addresses_loaded_check"
-            android:gravity="start|center"
-             />
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/not_found_please_make_sure"
+            app:layout_constraintTop_toBottomOf="@id/empty_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/empty_first_bullet"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="@dimen/default_margin"
+            android:src="@drawable/circle"
+            android:background="@color/primary"
+            app:tint="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/empty_unlocked"
+            />
+
+        <TextView
+            android:id="@+id/empty_unlocked"
+            style="@style/TextDark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/not_found_unlocked"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/empty_please_make_sure"
+            app:layout_constraintStart_toStartOf="@id/empty_first_bullet"/>
+
+        <ImageView
+            android:id="@+id/empty_third_bullet"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="@dimen/default_margin"
+            android:src="@drawable/circle"
+            android:background="@color/primary"
+            app:tint="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/empty_bluetooth"
+            />
+
+        <TextView
+            android:id="@+id/empty_bluetooth"
+            style="@style/TextDark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/not_found_bluetooth"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/empty_third_bullet"
+            app:layout_constraintTop_toBottomOf="@id/empty_unlocked"/>
+
+        <ImageView
+            android:id="@+id/empty_fourth_bullet"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="@dimen/default_margin"
+            android:src="@drawable/circle"
+            android:background="@color/primary"
+            app:tint="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/empty_app_running"
+            />
+        <TextView
+            android:id="@+id/empty_app_running"
+            style="@style/TextDark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:text="@string/not_found_ethereum_app_running"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/empty_fourth_bullet"
+            app:layout_constraintTop_toBottomOf="@id/empty_bluetooth" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

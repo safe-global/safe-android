@@ -94,7 +94,7 @@
         <TextView
             android:id="@+id/empty_title"
             style="@style/TextDark"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/default_margin"
@@ -121,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found_please_make_sure"
+            android:text="@string/not_found_please_make_sure"
             app:layout_constraintTop_toBottomOf="@id/empty_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -146,7 +146,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found_unlocked"
+            android:text="@string/not_found_unlocked"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/empty_please_make_sure"
             app:layout_constraintStart_toStartOf="@id/empty_first_bullet"/>
@@ -170,7 +170,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found_paired"
+            android:text="@string/not_found_paired"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/empty_unlocked"
             app:layout_constraintStart_toStartOf="@id/empty_second_bullet"/>
@@ -194,7 +194,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found_bluetooth"
+            android:text="@string/not_found_bluetooth"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/empty_third_bullet"
             app:layout_constraintTop_toBottomOf="@id/empty_paired"/>
@@ -217,7 +217,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found_ethereum_app_running"
+            android:text="@string/not_found_ethereum_app_running"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/empty_fourth_bullet"
             app:layout_constraintTop_toBottomOf="@id/empty_bluetooth" />
