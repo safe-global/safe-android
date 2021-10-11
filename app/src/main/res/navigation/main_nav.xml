@@ -16,6 +16,10 @@
         app:destination="@id/ownerAddOptionsFragment" />
 
     <action
+        android:id="@+id/action_to_owner_details"
+        app:destination="@id/ownerDetailsFragment" />
+
+    <action
         android:id="@+id/action_to_passcode_setup"
         app:destination="@id/createPasscodeFragment" />
 
@@ -343,6 +347,18 @@
             android:defaultValue="false"
             app:argType="boolean" />
 
+        <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ownerAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
     </fragment>
 
     <fragment
@@ -358,6 +374,18 @@
         <argument
             android:name="ownerImported"
             app:argType="boolean" />
+
+        <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ownerAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 

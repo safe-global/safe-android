@@ -20,10 +20,12 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_PATH
-import io.gnosis.safe.ui.settings.owner.list.imageRes24dp
+import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
 import io.gnosis.safe.utils.formatEthAddress
+import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import javax.inject.Inject
@@ -53,14 +55,14 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     override fun viewModelProvider() = this
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerNameEnterBinding =
-        FragmentOwnerNameEnterBinding.inflate(inflater, container, false)
+            FragmentOwnerNameEnterBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             newAddressBlockies.setAddress(ownerAddress)
             newAddressHex.text = ownerAddress.formatEthAddress(requireContext(), addMiddleLinebreak = false)
-            keyType.setImageResource(ownerType.imageRes24dp())
+            keyType.setImageResource(ownerType.imageRes24dpWhite())
             backButton.setOnClickListener { findNavController().navigateUp() }
 
             when (ownerType) {
@@ -93,10 +95,13 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
             when (val viewAction = it.viewAction) {
                 is CloseScreen -> {
                     findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
-                    if (ownerSeedPhrase != null) {
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, true)
+                    if (ownerType == Owner.Type.GENERATED) {
+                        findNavController().navigate(R.id.action_to_owner_details, Bundle().apply {
+                            putString("ownerAddress", ownerAddress.asEthereumAddressString())
+                        })
+                        findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, true)
                     } else {
-                        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
+                        findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
                     }
                 }
                 is NavigateTo -> {

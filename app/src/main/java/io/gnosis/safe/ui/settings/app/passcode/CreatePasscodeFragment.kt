@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentPasscodeBinding
@@ -16,6 +17,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
+import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -25,12 +27,14 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     override fun screenId() = ScreenId.PASSCODE_CREATE
     private val navArgs by navArgs<CreatePasscodeFragmentArgs>()
     private val ownerImported by lazy { navArgs.ownerImported }
+    private val ownerType by lazy { navArgs.ownerType }
+    private val ownerAddress by lazy { navArgs.ownerAddress }
 
     @Inject
     lateinit var settingsHandler: SettingsHandler
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPasscodeBinding =
-        FragmentPasscodeBinding.inflate(inflater, container, false)
+            FragmentPasscodeBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -47,7 +51,12 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
         with(binding) {
 
-            status.visible(ownerImported, View.INVISIBLE)
+            if (ownerImported) {
+                status.text = getString(if (Owner.Type.valueOf(ownerType!!) == Owner.Type.GENERATED) R.string.settings_passcode_owner_key_successful_created else R.string.settings_passcode_owner_key_successful_imported)
+                status.visible(true, View.INVISIBLE)
+            } else {
+                status.visible(false, View.INVISIBLE)
+            }
 
             backButton.setOnClickListener {
                 skipPasscodeSetup()
@@ -63,10 +72,12 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
             input.doOnTextChanged(onSixDigitsHandler(digits, requireContext()) { digitsAsString ->
                 findNavController().navigate(
-                    CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
-                        passcode = digitsAsString,
-                        ownerImported = ownerImported
-                    )
+                        CreatePasscodeFragmentDirections.actionCreatePasscodeFragmentToRepeatPasscodeFragment(
+                                passcode = digitsAsString,
+                                ownerImported = ownerImported,
+                                ownerType = ownerType,
+                                ownerAddress = ownerAddress
+                        )
                 )
                 input.setText("") // So it is empty, when the user navigates back
             })
@@ -90,10 +101,14 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
 
         if (ownerImported) {
             findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+            if (Owner.Type.valueOf(ownerType!!) == Owner.Type.GENERATED) {
+                findNavController().navigate(R.id.action_to_owner_details, Bundle().apply {
+                    putString("ownerAddress", ownerAddress!!)
+                })
+            }
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
+        findNavController().setToCurrent(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
 }
