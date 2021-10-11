@@ -80,6 +80,17 @@
         android:visibility="gone"
         tools:visibility="visible" >
 
+        <TextView
+            style="@style/TextDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_large_margin"
+            android:layout_marginLeft="@dimen/default_large_margin"
+            android:layout_marginRight="@dimen/default_large_margin"
+            android:text="@string/ledger_no_addresses_loaded"
+            android:gravity="center"
+            android:textSize="20sp" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,20 +103,9 @@
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginLeft="@dimen/default_large_margin"
             android:layout_marginRight="@dimen/default_large_margin"
-            android:text="@string/ledger_no_addresses_loaded"
-            android:gravity="center"
-            android:textSize="20sp" />
-
-        <TextView
-            style="@style/TextDark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginLeft="@dimen/default_large_margin"
-            android:layout_marginRight="@dimen/default_large_margin"
             android:text="@string/ledger_no_addresses_loaded_check"
             android:gravity="start|center"
-            android:textSize="20sp" />
+             />
 
     </LinearLayout>
 
