@@ -1,7 +1,7 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools                    : '4.0.1',
+            android_tools                    : '7.0.2',
             firebase_app_distribution_gradle : '2.0.0',
             firebase_crashlytics_gradle      : '2.3.0',
             google_services                  : '4.3.3',
