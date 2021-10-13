@@ -91,8 +91,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                         } else {
                             hideLoading()
                             if (adapter.itemCount == 0) {
-                                binding.action.visible(false)
-                                binding.emptyPlaceholder.visible(true)
+                                showPlaceholder()
                             }
                         }
                     }
@@ -127,7 +126,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                     is ShowError -> {
                         hideLoading()
                         if (adapter.itemCount == 0) {
-                            binding.action.visible(false)
                             binding.emptyPlaceholder.visible(true)
                         }
                     }
@@ -146,7 +144,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     private fun showLoading() {
         if (adapter.itemCount == 0) {
             binding.action.text = getString(R.string.ledger_device_search)
-            binding.action.visible(true)
             binding.progress.visible(true)
             binding.refresh.isRefreshing = false
         }
@@ -155,6 +152,11 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     private fun hideLoading() {
         binding.progress.visible(false)
         binding.refresh.isRefreshing = false
+    }
+
+    private fun showPlaceholder() {
+        binding.action.text = getString(R.string.ledger_device_not_found)
+        binding.emptyPlaceholder.visible(true)
     }
 
     private fun requestMissingLocationPermission() {
