@@ -229,7 +229,7 @@ class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedC
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
-                    appLabel.visible(false)
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
@@ -279,7 +279,7 @@ class ContractInteractionViewHolder(private val viewBinding: ItemTxContractInter
                 is AddressInfoData.Local -> {
                     addressName.text = addressInfo.name
                     addressLogo.setAddress(addressInfo.address.asEthereumAddress())
-                    appLabel.visible(false)
+                    appLabel.visible(addressInfo.appInfo)
                 }
                 is AddressInfoData.Remote -> {
                     addressName.text = addressInfo.name
