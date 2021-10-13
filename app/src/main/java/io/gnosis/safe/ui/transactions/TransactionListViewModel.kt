@@ -364,8 +364,8 @@ class TransactionListViewModel
         val localName = safes.find { it.address == addressData.value }?.localName
         val addressString = addressData.value.asEthereumAddressString()
         return when {
-            localName != null -> AddressInfoData.Local(localName, addressString)
             safeAppInfo != null -> AddressInfoData.Remote(safeAppInfo.name, safeAppInfo.logoUri, addressString, true)
+            localName != null -> AddressInfoData.Local(localName, addressString)
             !addressData.name.isNullOrBlank() -> AddressInfoData.Remote(addressData.name, addressData.logoUri, addressString, false)
             else -> AddressInfoData.Default
         }
