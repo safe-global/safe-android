@@ -28,7 +28,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     private val safeTxHash by lazy { navArgs.safeTxHash }
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsAdvancedBinding =
-        FragmentTransactionDetailsAdvancedBinding.inflate(inflater, container, false)
+            FragmentTransactionDetailsAdvancedBinding.inflate(inflater, container, false)
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -52,7 +52,12 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             } else {
                 nonceItem.value = nonce
             }
-            operationItem.value = operation
+            if (operation.isBlank()) {
+                operationItem.visible(false)
+                operationSeparator.visible(false)
+            } else {
+                operationItem.value = operation
+            }
             if (hash.isNullOrBlank()) {
                 hashItem.visible(false)
                 hashSeparator.visible(false)
