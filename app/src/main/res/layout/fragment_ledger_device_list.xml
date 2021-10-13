@@ -87,21 +87,9 @@
         android:id="@+id/empty_placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-
-        <TextView
-            android:id="@+id/empty_title"
-            style="@style/TextDark"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_margin="@dimen/default_margin"
-            android:text="@string/ledger_device_not_found"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        tools:visibility="visible">
 
 
         <ImageView
@@ -111,7 +99,7 @@
             android:layout_margin="@dimen/default_margin"
             android:gravity="center_horizontal"
             android:src="@drawable/ic_ledger_not_found"
-            app:layout_constraintTop_toBottomOf="@id/empty_title"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
