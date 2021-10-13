@@ -150,7 +150,7 @@ class LedgerController(val context: Context) {
 
     private var notifyingCharacteristics = mutableListOf<UUID>()
     private lateinit var scanCallback: ScanCallback
-    private val scanResultFlow = callbackFlow {
+    private val scanResultFlow = callbackFlow<ScanResult> {
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 Timber.d("$callbackType, result: ${result.device.address}/${result.device.name}")
