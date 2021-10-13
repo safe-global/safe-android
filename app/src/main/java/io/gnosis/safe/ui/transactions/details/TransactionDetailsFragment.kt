@@ -204,7 +204,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
             }
         }
 
-        if (txDetails.detailedExecutionInfo != null) {
+        if (txDetails.detailedExecutionInfo != null || txDetails.txHash != null) {
             binding.advanced.visible(true)
             binding.advancedDivider.visible(true)
             binding.advanced.setOnClickListener {
