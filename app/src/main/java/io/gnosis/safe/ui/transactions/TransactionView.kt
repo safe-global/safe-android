@@ -172,8 +172,7 @@ sealed class AddressInfoData {
 
     data class Local(
         val name: String?,
-        val address: String,
-        val appInfo: Boolean = false
+        val address: String
     ) : AddressInfoData()
 
     data class Remote(
