@@ -6,6 +6,7 @@
     <dimen name="primary_button_radius">16dp</dimen>
     <dimen name="safe_blockie_size">36dp</dimen>
     <dimen name="default_margin">16dp</dimen>
+    <dimen name="default_large_margin">32dp</dimen>
     <dimen name="default_small_margin">8dp</dimen>
     <dimen name="default_line_spacing">6sp</dimen>
     <dimen name="nav_bar_height">56dp</dimen>
