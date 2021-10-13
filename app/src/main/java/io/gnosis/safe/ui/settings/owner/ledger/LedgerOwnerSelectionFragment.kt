@@ -169,14 +169,17 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
 
     private fun showList() {
         with(binding) {
-            derivedOwners.visible(true)
+            action.visible(false)
+            owners.visible(true)
             emptyPlaceholder.visible(false)
         }
     }
 
     private fun showEmptyState() {
         with(binding) {
-            derivedOwners.visible(false)
+            action.visible(true)
+            owners.visible(false)
+            showMoreOwners.visible(false)
             emptyPlaceholder.visible(true)
         }
     }
