@@ -75,11 +75,11 @@ class SettingsFragment : SafeOverviewBaseFragment<FragmentSettingsBinding>() {
 
 class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    enum class Tabs { SAFE, APP }
+    enum class Tabs { APP, SAFE }
 
     enum class Items(val value: Long) {
-        SAFE(Tabs.SAFE.ordinal.toLong()),
         APP(Tabs.APP.ordinal.toLong()),
+        SAFE(Tabs.SAFE.ordinal.toLong()),
         NO_SAFE(RecyclerView.NO_ID) }
 
     var noActiveSafe: Boolean = false
@@ -92,14 +92,14 @@ class SettingsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     override fun createFragment(position: Int): Fragment =
         when (Tabs.values()[position]) {
-            Tabs.SAFE -> if (noActiveSafe) NoSafeFragment.newInstance(NoSafeFragment.Position.SETTINGS) else SafeSettingsFragment.newInstance()
             Tabs.APP -> AppSettingsFragment.newInstance()
+            Tabs.SAFE -> if (noActiveSafe) NoSafeFragment.newInstance(NoSafeFragment.Position.SETTINGS) else SafeSettingsFragment.newInstance()
         }
 
     override fun getItemId(position: Int): Long {
         return when (Tabs.values()[position]) {
-            Tabs.SAFE -> if (noActiveSafe) Items.NO_SAFE.value else Items.SAFE.value
             Tabs.APP -> Items.APP.value
+            Tabs.SAFE -> if (noActiveSafe) Items.NO_SAFE.value else Items.SAFE.value
         }
     }
 
