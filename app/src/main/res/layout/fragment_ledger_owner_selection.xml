@@ -8,16 +8,6 @@
     android:background="@color/surface_01"
     android:orientation="vertical" >
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="visible"/>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
@@ -40,8 +30,10 @@
                     style="@style/TextDark"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/default_margin"
+                    android:layout_margin="24dp"
                     android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:visibility="gone"
                     android:text="@string/ledger_no_addresses_loaded" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -53,6 +45,7 @@
                     android:id="@+id/show_more_owners"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:layout_gravity="center">
 
                     <TextView
@@ -177,5 +170,15 @@
             app:layout_constraintTop_toBottomOf="@id/empty_bluetooth" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
