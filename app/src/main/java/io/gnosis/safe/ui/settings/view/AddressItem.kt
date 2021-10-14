@@ -53,6 +53,22 @@ class AddressItem @JvmOverloads constructor(
             }
         }
         address = value
+        if (ownerType != null) {
+            when (ownerType) {
+                Owner.Type.IMPORTED -> {
+                    binding.keyType.setImageResource(R.drawable.ic_key_type_imported_16dp)
+                }
+                Owner.Type.GENERATED -> {
+                    binding.keyType.setImageResource(R.drawable.ic_key_type_generated_16dp)
+                }
+                Owner.Type.LEDGER_NANO_X -> {
+                    binding.keyType.setImageResource(R.drawable.ic_key_type_ledger_16dp)
+                }
+            }
+        } else {
+            binding.keyType.visible(false)
+            binding.keyTypeBackground.visible(false)
+        }
     }
 
     var showSeparator: Boolean = false

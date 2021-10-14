@@ -94,6 +94,7 @@
             app:layout_constraintTop_toTopOf="@id/key_type_background" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:id="@+id/named_address_item_separator"
         android:layout_width="match_parent"

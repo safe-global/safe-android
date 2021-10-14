@@ -131,9 +131,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             NamedAddressItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                setAddress(chain, owner.value)
-                //TODO Do not add type icon
-
+                setAddress(chain, owner.value, localOwner.type)
                 name = if (localOwner.name.isNullOrBlank())
                     context.getString(
                         R.string.settings_app_imported_owner_key_default_name,
@@ -149,9 +147,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    setAddress(chain, owner.value, localOwner?.type)
-                    //TODO add type icon
-
+                    setAddress(chain, owner.value)
                     name = owner.name
                     showSeparator = true
                     loadKnownAddressLogo(owner.logoUri, owner.value)
@@ -161,8 +157,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                    setAddress(chain, owner.value, localOwner?.type)
-                    //TODO add type icon
+                    setAddress(chain, owner.value)
                     showSeparator = true
                 }
             }
