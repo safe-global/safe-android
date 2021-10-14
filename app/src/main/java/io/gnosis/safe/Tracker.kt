@@ -83,6 +83,10 @@ class Tracker internal constructor(
         )
     }
 
+    fun logLedgerKeyImported() {
+        logEvent(Event.KEY_IMPORTED_LEDGER, null)
+    }
+
     fun logKeyDeleted() {
         logEvent(name = Event.KEY_DELETED, attrs = null)
     }
@@ -198,7 +202,7 @@ class Tracker internal constructor(
         val PUSH_INFO = "push_info"
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
-        val NUM_KEYS_LEDGER = "num_keys_ledger"
+        val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
     }
@@ -281,5 +285,6 @@ enum class ScreenId(val value: String) {
     UPDATE_DEPRECATED("screen_update_deprecated"),
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
     UPDATE_NEW_VERSION("screen_update_new_version"),
-    LEDGER_DEVICE_LIST("screen_ledger_nano_x_device")
+    LEDGER_DEVICE_LIST("screen_ledger_nano_x_device"),
+    LEDGER_SIGN("screen_ledger_nano_x_sign")
 }

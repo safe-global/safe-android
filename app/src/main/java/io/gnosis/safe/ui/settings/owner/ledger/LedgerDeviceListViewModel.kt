@@ -7,7 +7,10 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withTimeout
+import okhttp3.internal.wait
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,7 +35,7 @@ class LedgerDeviceListViewModel
                     scanResults.add(result)
                 }
                 updateState {
-                    LedgerDeviceListState(DeviceFound(scanResults.map { LedgerDeviceViewData(it.device.name) }))
+                    LedgerDeviceListState(DeviceFound(scanResults.map { LedgerDeviceViewData(it.device.name ?: it.device.address) }))
                 }
             }
         }
@@ -80,6 +83,11 @@ class LedgerDeviceListViewModel
             }
             scanResults.clear()
             ledgerController.startBleScan(fragment, missingLocationPermissionHandler)
+            delay(LedgerController.LEDGER_OP_TIMEOUT)
+            ledgerController.stopBleScan()
+            updateState {
+                LedgerDeviceListState(ViewAction.Loading(false))
+            }
         }
     }
 
@@ -89,25 +97,23 @@ class LedgerDeviceListViewModel
         }
     }
 
-    fun connectAndOpenList(context: Context, position: Int) {
+    fun connectToDevice(context: Context, position: Int) {
         safeLaunch {
             val device = scanResults[position].device
-            if (device == ledgerController.connectedDevice) {
-                updateState {
-                    LedgerDeviceListState(DeviceConnected(device))
-                }
-            } else {
-                ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
-                    override fun onDeviceConnected(device: BluetoothDevice) {
-                        safeLaunch {
-                            updateState {
-                                LedgerDeviceListState(DeviceConnected(device))
-                            }
+            ledgerController.connectToDevice(context, device, object : LedgerController.DeviceConnectedCallback {
+                override fun onDeviceConnected(device: BluetoothDevice) {
+                    safeLaunch {
+                        updateState {
+                            LedgerDeviceListState(DeviceConnected(device))
                         }
                     }
-                })
-            }
+                }
+            })
         }
+    }
+
+    fun disconnectFromDevice() {
+        ledgerController.teardownConnection()
     }
 }
 

@@ -16,6 +16,10 @@
         app:destination="@id/ownerAddOptionsFragment" />
 
     <action
+        android:id="@+id/action_to_owner_details"
+        app:destination="@id/ownerDetailsFragment" />
+
+    <action
         android:id="@+id/action_to_passcode_setup"
         app:destination="@id/createPasscodeFragment" />
 
@@ -175,6 +179,10 @@
             android:id="@+id/action_ownerSeedPhraseFragment_to_ownerSelectionFragment"
             app:destination="@id/ownerSelectionFragment" />
 
+        <action
+            android:id="@+id/action_ownerSeedPhraseFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
     </fragment>
 
     <fragment
@@ -190,8 +198,7 @@
 
         <argument
             android:name="seedPhrase"
-            app:argType="string"
-            app:nullable="true" />
+            app:argType="string" />
 
         <action
             android:id="@+id/action_ownerSelectionFragment_to_ownerEnterNameFragment"
@@ -226,11 +233,17 @@
 
         <argument
             android:name="fromSeedPhrase"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <argument
             android:name="ownerSeedPhrase"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="derivationPathWithIndex"
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null"/>
@@ -316,9 +329,9 @@
 
         <argument
             android:name="ownerSeed"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
 
     </fragment>
 
@@ -334,8 +347,20 @@
 
         <argument
             android:name="ownerImported"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ownerAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -352,6 +377,18 @@
         <argument
             android:name="ownerImported"
             app:argType="boolean" />
+
+        <argument
+            android:name="ownerType"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ownerAddress"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -374,14 +411,14 @@
 
         <argument
             android:name="selectedOwner"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
 
         <argument
             android:name="requirePasscodeToOpen"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
 
     </fragment>
 
@@ -600,15 +637,26 @@
             app:destination="@id/enterPasscodeFragment"
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
+        <action
+            android:id="@+id/action_signingOwnerSelectionFragment_to_ledgerDeviceListFragmet"
+            app:destination="@id/ledgerDeviceListFragment"
+            app:popUpTo="@id/signingOwnerSelectionFragment" />
+
         <argument
             android:name="missingSigners"
             app:argType="string[]"
-            app:nullable="true"/>
+            app:nullable="true" />
 
         <argument
             android:name="isConfirmation"
-            app:argType="boolean"
-            android:defaultValue="true"/>
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+        <argument
+            android:name="safeTxHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -843,8 +891,8 @@
 
         <argument
             android:name="mode"
-            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode"
-            android:defaultValue="ADD_SAFE"/>
+            android:defaultValue="ADD_SAFE"
+            app:argType="io.gnosis.safe.ui.settings.chain.ChainSelectionMode" />
 
     </fragment>
 
@@ -920,6 +968,47 @@
             android:id="@+id/action_ledgerDeviceListFragment_to_ledgerTabsFragment"
             app:destination="@id/ledgerTabsFragment" />
 
+        <action
+            android:id="@+id/action_ledgerDeviceListFragment_to_ledgerSignDialog"
+            app:destination="@id/ledgerSignDialog" />
+
+        <argument
+            android:name="mode"
+            app:argType="string" />
+
+        <argument
+            android:name="owner"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="safeTxHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
     </fragment>
+
+    <dialog
+        android:id="@+id/ledgerSignDialog"
+        android:name="io.gnosis.safe.ui.settings.owner.ledger.LedgerSignDialog"
+        android:label="LedgerSignDialog"
+        tools:layout="@layout/dialog_ledger_sign">
+
+        <argument
+            android:name="owner"
+            app:argType="string" />
+
+        <argument
+            android:name="safeTxHash"
+            app:argType="string" />
+
+        <argument
+            android:name="confirmation"
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+    </dialog>
 
 </navigation>

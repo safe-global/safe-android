@@ -4,19 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import io.gnosis.data.models.Owner
-import io.gnosis.data.utils.ExcludeClassFromJacocoGeneratedReport
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentLedgerBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_LIVE_PATH
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_PATH
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -24,7 +25,6 @@ import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@ExcludeClassFromJacocoGeneratedReport
 class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     override fun screenId() = ScreenId.OWNER_SELECT_LEDGER_ACCOUNT
@@ -33,6 +33,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
     private lateinit var pager: LedgerPagerAdapter
     private var selectedAddress: Solidity.Address = "0x00".asEthereumAddress()!!
+    private var derivationPathWithIndex: String? = null
 
     @Inject
     @Singleton
@@ -42,11 +43,19 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentLedgerBinding =
-        FragmentLedgerBinding.inflate(inflater, container, false)
+            FragmentLedgerBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBackNavigation()
+            }
+        })
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
@@ -57,6 +66,7 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
                     is OwnerSelected -> {
                         binding.nextButton.isEnabled = true
                         selectedAddress = viewAction.selectedOwner.address
+                        derivationPathWithIndex = viewAction.derivationPathWithIndex
                     }
                 }
             }
@@ -64,18 +74,21 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
 
         with(binding) {
             backButton.setOnClickListener {
-                Navigation.findNavController(it).navigateUp()
+                onBackNavigation()
             }
             nextButton.setOnClickListener {
                 findNavController().navigate(
-                    LedgerTabsFragmentDirections.actionLedgerTabsToOwnerEnterNameFragment(
-                        ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
-                        fromSeedPhrase = false,
-                        ownerKey = "",
-                        ownerSeedPhrase = "",
-                        ownerType = Owner.Type.LEDGER_NANO_X.value
-                    )
+                        LedgerTabsFragmentDirections.actionLedgerTabsToOwnerEnterNameFragment(
+                                ownerAddress = selectedAddress.asEthereumAddressChecksumString(),
+                                fromSeedPhrase = false,
+                                ownerKey = "",
+                                ownerSeedPhrase = "",
+                                ownerType = Owner.Type.LEDGER_NANO_X.value,
+                                derivationPathWithIndex = derivationPathWithIndex
+                        )
                 )
+                viewModel.disconnectFromDevice()
+
             }
             pager = LedgerPagerAdapter(this@LedgerTabsFragment)
             ledgerContent.adapter = pager
@@ -91,6 +104,11 @@ class LedgerTabsFragment : BaseViewBindingFragment<FragmentLedgerBinding>() {
             }.attach()
         }
     }
+
+    private fun onBackNavigation() {
+        viewModel.disconnectFromDevice()
+        findNavController().navigateUp()
+    }
 }
 
 class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
@@ -105,10 +123,10 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = Tabs.values().size
 
     override fun createFragment(position: Int): Fragment =
-        when (Tabs.values()[position]) {
-            Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/0/{index}")
-            Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance("44'/60'/0'/{index}")
-        }
+            when (Tabs.values()[position]) {
+                Tabs.LEDGER_LIVE -> LedgerOwnerSelectionFragment.newInstance(LEDGER_LIVE_PATH)
+                Tabs.LEDGER -> LedgerOwnerSelectionFragment.newInstance(LEDGER_PATH)
+            }
 
     override fun getItemId(position: Int): Long {
         return when (Tabs.values()[position]) {
@@ -116,6 +134,4 @@ class LedgerPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
             Tabs.LEDGER -> Items.LEDGER.value
         }
     }
-
-    override fun containsItem(itemId: Long): Boolean = true
 }

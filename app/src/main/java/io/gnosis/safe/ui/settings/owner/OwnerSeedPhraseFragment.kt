@@ -9,12 +9,15 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import io.gnosis.data.models.Owner
+import io.gnosis.data.models.OwnerTypeConverter
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSeedPhraseBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionFragmentDirections
 import io.gnosis.safe.utils.replaceDoubleNewlineWithParagraphLineSpacing
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
@@ -86,10 +89,12 @@ class OwnerSeedPhraseFragment : BaseViewBindingFragment<FragmentOwnerSeedPhraseB
                 }
                 is ImportOwnerKeyState.ValidKeySubmitted -> {
                     findNavController().navigate(
-                        OwnerSeedPhraseFragmentDirections.actionOwnerSeedPhraseFragmentToOwnerSelectionFragment(
-                            privateKey = state.key,
-                            seedPhrase = null
-                        )
+                            OwnerSeedPhraseFragmentDirections.actionOwnerSeedPhraseFragmentToOwnerEnterNameFragment(
+                                    ownerAddress = state.address,
+                                    ownerKey = state.key,
+                                    fromSeedPhrase = false,
+                                    ownerType = OwnerTypeConverter().toValue(Owner.Type.IMPORTED)
+                            )
                     )
                 }
             }

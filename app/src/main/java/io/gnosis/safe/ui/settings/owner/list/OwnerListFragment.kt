@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerListBinding
@@ -18,6 +19,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
+import io.gnosis.safe.utils.getFromCurrent
+import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
@@ -95,22 +98,18 @@ class OwnerListFragment : BaseViewBindingFragment<FragmentOwnerListBinding>(), O
         super.onResume()
         viewModel.loadOwners()
         //FIXME: find better way to pass results in nav graph
-        //TODO: add extension functions for handling back stack entries
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED) == true) {
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_REMOVED_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_removed))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(OwnerDetailsFragment.ARGS_RESULT_OWNER_REMOVED, false)
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_REMOVED_RESULT, false)
         }
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
+        if (findNavController().getFromCurrent<Boolean>(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT) == true) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         }
-        if (findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(SafeOverviewBaseFragment.OWNER_CREATE_RESULT) == true) {
-            snackbar(requireView(), getString(R.string.signing_owner_key_created))
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_CREATE_RESULT, false)
-        }
+
     }
 
-    override fun onOwnerClick(owner: Solidity.Address) {
+    override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {
         findNavController().navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerDetailsFragment(owner.asEthereumAddressString()))
     }
 

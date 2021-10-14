@@ -2,13 +2,18 @@ package io.gnosis.safe.ui.transactions.details
 
 import io.gnosis.data.adapters.dataMoshi
 import io.gnosis.data.backend.GatewayApi
+import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.TransactionDetails
+import io.gnosis.data.models.transaction.TransactionInfo
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.utils.SemVer
+import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -19,6 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.toHexString
 
 
 class ConfirmRejectionViewModelTest {
@@ -106,11 +112,29 @@ class ConfirmRejectionViewModelTest {
 
     @Test
     fun `selectSigningOwner () `() = runBlockingTest {
+        val safeAddress = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!
+        coEvery { safeRepository.getActiveSafe() } returns Safe(safeAddress, "safe_name")
         val testObserver = TestLiveDataObserver<ConfirmationRejectedViewState>()
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
+        val executionInfo = transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
         viewModel.txDetails = transactionDetails
         viewModel.state.observeForever(testObserver)
+
+        val rejectionExecutionInfo = DetailedExecutionInfo.MultisigExecutionDetails(nonce = executionInfo.nonce)
+        val rejectionTxDetails = TransactionDetails(
+            txInfo = TransactionInfo.Custom(to = AddressInfo(safeAddress)),
+            detailedExecutionInfo = rejectionExecutionInfo,
+            safeAppInfo = null
+        )
+        val rejectionTxHash =
+            calculateSafeTxHash(
+                implementationVersion = SemVer(1, 1, 0),
+                chainId = Chain.ID_RINKEBY,
+                safeAddress = safeAddress,
+                transaction = rejectionTxDetails,
+                executionInfo = rejectionExecutionInfo
+            ).toHexString()
 
         viewModel.selectSigningOwner()
 
@@ -123,7 +147,8 @@ class ConfirmRejectionViewModelTest {
                             "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
                             "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
                         ).toTypedArray(),
-                        isConfirmation = false
+                        isConfirmation = false,
+                        safeTxHash = rejectionTxHash
                     )
                 ).toString(), viewAction.toString()
             )

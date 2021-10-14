@@ -16,9 +16,11 @@ import junit.framework.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.InvalidChecksum
-import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.*
 
 class OwnerSeedPhraseViewModelTest {
     @get:Rule
@@ -254,14 +256,20 @@ class OwnerSeedPhraseViewModelTest {
 
     @Test
     fun `validatePrivateKey (good key) should succeed`() {
+
+        val privateKeyString = "0x0000000000000000000000000000000000000000000000000000000000000001".removeHexPrefix()
+        val ownerKeyPair = KeyPair.fromPrivate(privateKeyString.hexAsBigInteger())
+        val ownerAddressString = Solidity.Address(ownerKeyPair.address.asBigInteger()).asEthereumAddressString()
+
         coEvery { credentialsRepository.owner(any()) } returns null
+
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         viewModel.state().observeForever(stateObserver)
 
-        viewModel.validatePrivateKey("0x0000000000000000000000000000000000000000000000000000000000000001")
+        viewModel.validatePrivateKey(privateKeyString)
 
         stateObserver.assertValues(
-            ImportOwnerKeyState.ValidKeySubmitted("0000000000000000000000000000000000000000000000000000000000000001")
+            ImportOwnerKeyState.ValidKeySubmitted(privateKeyString, ownerAddressString)
         )
     }
 

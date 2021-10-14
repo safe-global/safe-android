@@ -10,6 +10,7 @@ import io.mockk.*
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 class OwnerEnterNameViewModelTest {
@@ -52,7 +53,7 @@ class OwnerEnterNameViewModelTest {
 
         testObserver.assertValues(
             OwnerEnterNameState(None),
-            OwnerEnterNameState(NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true)))
+            OwnerEnterNameState(NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.IMPORTED.name, ownerAddress.asEthereumAddressString())))
         )
 
         coVerifySequence {

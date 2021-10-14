@@ -26,6 +26,7 @@ import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsFragment
+import io.gnosis.safe.utils.setToCurrent
 import io.gnosis.safe.utils.showConfirmDialog
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -153,17 +154,11 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
             binding.input.hideSoftKeyboard()
         } else if (!selectedOwner.isNullOrBlank()) {
             findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
-                selectedOwner
-            )
+            findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, selectedOwner)
         } else {
             // passcode for export
             findNavController().popBackStack(R.id.enterPasscodeFragment, true)
-            findNavController().currentBackStackEntry?.savedStateHandle?.set(
-                OwnerDetailsFragment.RESULT_PASSCODE_UNLOCKED,
-                true
-            )
+            findNavController().setToCurrent(OwnerDetailsFragment.RESULT_PASSCODE_UNLOCKED, true)
             binding.input.hideSoftKeyboard()
         }
     }

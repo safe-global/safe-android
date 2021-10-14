@@ -37,7 +37,7 @@ class CredentialsRepository(
 
     suspend fun ownerCount(ownerType: Owner.Type? = null): Int {
         return when {
-            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED -> {
+            ownerType == Owner.Type.IMPORTED || ownerType == Owner.Type.GENERATED ||ownerType == Owner.Type.LEDGER_NANO_X -> {
                 ownerDao.ownerCountForType(OwnerTypeConverter().toValue(ownerType))
             }
             else -> {
@@ -84,6 +84,20 @@ class CredentialsRepository(
             type = Owner.Type.GENERATED,
             privateKey = encryptedKey,
             seedPhrase = encryptedSeedPhrase
+        )
+        ownerDao.save(owner)
+    }
+
+    suspend fun saveLedgerOwner(
+        derivationPathWithIndex: String,
+        address: Solidity.Address,
+        name: String? = null
+    ) {
+        val owner = Owner(
+            address = address,
+            name = name,
+            type = Owner.Type.LEDGER_NANO_X,
+            keyDerivationPath = derivationPathWithIndex
         )
         ownerDao.save(owner)
     }

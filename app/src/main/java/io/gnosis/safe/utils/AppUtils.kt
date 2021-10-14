@@ -9,6 +9,7 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.navigation.NavController
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.DialogRemoveBinding
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
@@ -86,4 +87,16 @@ fun showConfirmDialog(
     ).apply {
         show()
     }
+}
+
+fun <T>NavController.setToCurrent(key: String, value: T) {
+    currentBackStackEntry?.savedStateHandle?.set(key, value)
+}
+
+fun <T>NavController.setToPrevious(key: String, value: T) {
+    previousBackStackEntry?.savedStateHandle?.set(key, value)
+}
+
+fun <T>NavController.getFromCurrent(key: String): T? {
+    return currentBackStackEntry?.savedStateHandle?.get<T>(key)
 }
