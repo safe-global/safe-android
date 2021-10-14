@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@+id/blockies"
+        app:layout_constraintStart_toEndOf="@+id/blockies_container"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="16dp"
         tools:text="0x12345698892738912731982732913875734897348973498374128973892732837" />
@@ -51,9 +51,6 @@
             android:id="@+id/blockies"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,8 +59,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/circle_dark_grey"
-            app:layout_constraintBottom_toBottomOf="@id/blockies_container"
-            app:layout_constraintEnd_toEndOf="@id/blockies_container"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
             android:id="@+id/key_type"
