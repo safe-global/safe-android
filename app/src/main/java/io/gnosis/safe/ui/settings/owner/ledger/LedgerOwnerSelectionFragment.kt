@@ -102,6 +102,7 @@ class LedgerOwnerSelectionFragment : BaseViewBindingFragment<FragmentLedgerOwner
                             handleError(it.error)
                         }
                         is LoadState.Loading -> {
+                            binding.action.visible(false)
                             binding.emptyPlaceholder.visible(false)
                         }
                         is LoadState.NotLoading -> {
