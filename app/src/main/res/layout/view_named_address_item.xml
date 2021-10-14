@@ -32,6 +32,7 @@
         android:maxLines="1"
         android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"
+        android:layout_marginStart="@dimen/default_small_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/link"
         app:layout_constraintHorizontal_bias="0"
