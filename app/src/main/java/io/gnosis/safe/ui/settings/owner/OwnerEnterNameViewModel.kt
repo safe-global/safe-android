@@ -8,6 +8,7 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.IMPORTED.name, address.asEthereumAddressString()))
                     }
                 )
             }
@@ -57,7 +58,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.GENERATED.name, address.asEthereumAddressString()))
                     }
                 )
             }
@@ -79,7 +80,7 @@ class OwnerEnterNameViewModel
                     if (settingsHandler.usePasscode) {
                         ViewAction.CloseScreen
                     } else {
-                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true))
+                        ViewAction.NavigateTo(OwnerEnterNameFragmentDirections.actionOwnerEnterNameFragmentToCreatePasscodeFragment(true, Owner.Type.LEDGER_NANO_X.name, address.asEthereumAddressString()))
                     }
                 )
             }

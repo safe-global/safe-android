@@ -13,6 +13,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.DialogEnableBiometryBinding
@@ -33,6 +34,8 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     private val navArgs by navArgs<RepeatPasscodeFragmentArgs>()
     private val passcodeArg by lazy { navArgs.passcode }
     private val ownerImported by lazy { navArgs.ownerImported }
+    private val ownerType by lazy { navArgs.ownerType }
+    private val ownerAddress by lazy { navArgs.ownerAddress }
 
     @Inject
     lateinit var viewModel: PasscodeViewModel
@@ -139,6 +142,11 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
     private fun dismissCreatePasscodeFragment() {
         if (ownerImported) {
             findNavController().popBackStack(R.id.ownerAddOptionsFragment, true)
+            if (Owner.Type.valueOf(ownerType!!) == Owner.Type.GENERATED) {
+                findNavController().navigate(R.id.action_to_owner_details, Bundle().apply {
+                    putString("ownerAddress", ownerAddress!!)
+                })
+            }
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
@@ -147,7 +155,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
             binding.input.hideSoftKeyboard()
         }
 
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(
             SafeOverviewBaseFragment.PASSCODE_SET_RESULT,
             true
@@ -166,7 +173,6 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, false)
         findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
 }

@@ -22,7 +22,6 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentOwnerSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.formatEthAddress
 import kotlinx.coroutines.launch
 import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
@@ -35,8 +34,7 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
     override suspend fun chainId(): BigInteger? = null
 
     private val navArgs by navArgs<OwnerSelectionFragmentArgs>()
-    private val privateKey: String? by lazy { navArgs.privateKey }
-    private val seedPhrase: String? by lazy { navArgs.seedPhrase }
+    private val seedPhrase: String by lazy { navArgs.seedPhrase }
 
     @Inject
     lateinit var viewModel: OwnerSelectionViewModel
@@ -82,13 +80,13 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             }
             nextButton.setOnClickListener {
 
-                val (address, key) = viewModel.getOwnerData(privateKey)
+                val (address, key) = viewModel.getOwnerData()
 
                 findNavController().navigate(
                     OwnerSelectionFragmentDirections.actionOwnerSelectionFragmentToOwnerEnterNameFragment(
                         ownerAddress = address,
                         ownerKey = key,
-                        fromSeedPhrase = usingSeedPhrase(),
+                        fromSeedPhrase = true,
                         ownerType = OwnerTypeConverter().toValue(Owner.Type.IMPORTED)
                     )
                 )
@@ -100,30 +98,6 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
             state.viewAction.let { viewAction ->
                 when (viewAction) {
-                    is SingleOwner -> {
-                        lifecycleScope.launch {
-                            with(binding) {
-                                progress.visible(false)
-                                nextButton.isEnabled = true
-
-                                if (viewAction.hasMore) {
-                                    derivedOwners.visible(true)
-                                    singleOwner.visible(false)
-                                    showMoreOwners.visible(viewAction.hasMore)
-                                    showMoreOwners.setOnClickListener {
-                                        viewModel.loadMoreOwners()
-                                    }
-                                } else {
-                                    singleOwner.visible(true)
-                                    singleOwnerAddress.text =
-                                        viewAction.owner.formatEthAddress(context = requireContext(), addMiddleLinebreak = false)
-                                    singleOwnerImage.setAddress(viewAction.owner)
-                                    derivedOwners.visible(false)
-                                }
-
-                            }
-                        }
-                    }
                     is DerivedOwners -> {
                         with(binding) {
                             showMoreOwners.setOnClickListener {
@@ -162,14 +136,8 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
             }
         })
 
-        if (usingSeedPhrase()) {
-            viewModel.loadFirstDerivedOwner(seedPhrase!!)
-        } else {
-            viewModel.loadSingleOwner(privateKey!!)
-        }
+        viewModel.loadFirstDerivedOwner(seedPhrase)
     }
-
-    private fun usingSeedPhrase(): Boolean = seedPhrase != null
 
     override fun onOwnerClicked(ownerIndex: Long) {
         binding.nextButton.isEnabled = true

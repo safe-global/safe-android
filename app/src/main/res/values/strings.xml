@@ -9,8 +9,8 @@
         <item quantity="other">%d days ago</item>
     </plurals>
     <plurals name="tx_list_actions">
-        <item quantity="one" >%d action</item>
-        <item quantity="other" >%d actions</item>
+        <item quantity="one">%d action</item>
+        <item quantity="other">%d actions</item>
     </plurals>
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="safe_loaded">Safe loaded</string>
@@ -186,7 +186,8 @@
     <string name="settings_passcode_create_a_6_digit_passcode">Create a 6-digit passcode</string>
     <string name="settings_passcode_create_a_new_6_digit_passcode">Create a new 6-digit passcode</string>
     <string name="settings_passcode_repeat_the_6_digit_passcode">Repeat the 6-digit passcode</string>
-    <string name="settings_passcode_owner_key_successful_imported">Owner key successful imported</string>
+    <string name="settings_passcode_owner_key_successful_imported">Owner key successfully imported</string>
+    <string name="settings_passcode_owner_key_successful_created">Owner key successfully created</string>
     <string name="settings_passcode_dont_match">Passcodes don’t match</string>
     <string name="settings_passcode_wrong_passcode">Wrong passcode</string>
     <string name="settings_passcode_enter_your_current_passcode">Enter your current passcode</string>
@@ -531,8 +532,13 @@
     <string name="ledger_connect">Connect Ledger Nano X</string>
     <string name="ledger_select_device">Select your device</string>
     <string name="ledger_device_search">Looking for Ledger Nano X devices</string>
-    <string name="ledger_device_not_found">No Ledger Nano X device found. Please make sure your Ledger Nano X is unlocked, Bluetooth and Location Services are enabled (we will not collect any location data) and the Ethereum app is installed and opened.</string>
-    <string name="ledger_no_addresses_loaded">No addresses could be loaded from the Ledger Nano X. Please make sure your Ledger Nano X is unlocked, Bluetooth and Location Services are enabled (we will not collect any location data) and Ethereum app is installed and opened.</string>
+    <string name="ledger_device_not_found">No Ledger Nano X device found</string>
+    <string name="not_found_please_make_sure">Please make sure</string>
+    <string name="not_found_unlocked">Your Ledger Nano X is unlocked</string>
+    <string name="not_found_paired">Your Ledger Nano X has been paired with this device</string>
+    <string name="not_found_bluetooth">Bluetooth and Location Services are enabled (we will not collect any location data)</string>
+    <string name="not_found_ethereum_app_running">The Ethereum app is installed and open</string>
+    <string name="ledger_no_addresses_loaded">No addresses could be loaded from the Ledger Nano X</string>
     <string name="ledger_tab_ledger_live">LEDGER LIVE</string>
     <string name="ledger_tab_ledger">LEDGER</string>
     <string name="error_description_ledger_address_list">Failed to load owner addresses</string>
