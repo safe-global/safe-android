@@ -59,7 +59,7 @@ class TxConfirmationsView @JvmOverloads constructor(
 
             val localOwner = localOwners.find { it.address == confirmationAddress }
             if (localOwner != null) {
-                addNamedAddressItem(chain, localOwner.address, localOwner.name)
+                addNamedAddressItem(chain, localOwner.address, localOwner.name, localOwner.type)
             } else {
                 addAddressItem(chain, confirmationAddress)
             }
@@ -80,7 +80,7 @@ class TxConfirmationsView @JvmOverloads constructor(
 
                     val localOwner = localOwners.find { it.address == executor }
                     if (localOwner != null) {
-                        addNamedAddressItem(chain, localOwner.address, localOwner.name)
+                        addNamedAddressItem(chain, localOwner.address, localOwner.name, localOwner.type)
                     } else {
                         addAddressItem(chain, executor)
                     }
@@ -118,13 +118,13 @@ class TxConfirmationsView @JvmOverloads constructor(
         addView(addressItem)
     }
 
-    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String?) {
+    private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String?, ownerType : Owner.Type? = null) {
         val namedAddressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         namedAddressItem.layoutParams = layoutParams
         namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_selectable_white)
-        namedAddressItem.setAddress(chain, address)
+        namedAddressItem.setAddress(chain, address, ownerType)
         namedAddressItem.name = if (name.isNullOrBlank())
             resources.getString(
                 R.string.settings_app_imported_owner_key_default_name,
