@@ -13,6 +13,7 @@ import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
+import io.gnosis.safe.utils.imageRes16dp
 import io.gnosis.safe.utils.BlockExplorer
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -51,26 +52,17 @@ class AddressItem @JvmOverloads constructor(
                     snackbar(view = root, textId = R.string.copied_success)
                 }
             }
+            ownerType?.let {
+                keyType.setImageResource(ownerType.imageRes16dp())
+            } ?: hideKeyTypeOverlay()
         }
         address = value
-        if (ownerType != null) {
-            when (ownerType) {
-                Owner.Type.IMPORTED -> {
-                    binding.keyType.setImageResource(R.drawable.ic_key_type_imported_16dp)
-                }
-                Owner.Type.GENERATED -> {
-                    binding.keyType.setImageResource(R.drawable.ic_key_type_generated_16dp)
-                }
-                Owner.Type.LEDGER_NANO_X -> {
-                    binding.keyType.setImageResource(R.drawable.ic_key_type_ledger_16dp)
-                }
-            }
-        } else {
-            binding.keyType.visible(false)
-            binding.keyTypeBackground.visible(false)
-        }
-    }
 
+    }
+    private fun hideKeyTypeOverlay() {
+        binding.keyType.visible(false)
+        binding.keyTypeBackground.visible(false)
+    }
     var showSeparator: Boolean = false
         set(value) {
             binding.addressDivider.visible(value)

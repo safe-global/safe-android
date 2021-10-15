@@ -7,6 +7,7 @@ import androidx.viewbinding.ViewBinding
 import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemOwnerLocalBinding
+import io.gnosis.safe.utils.imageRes16dp
 import io.gnosis.safe.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 

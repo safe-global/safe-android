@@ -20,7 +20,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerController.Companion.LEDGER_PATH
-import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
+import io.gnosis.safe.utils.imageRes24dpWhite
 import io.gnosis.safe.utils.formatEthAddress
 import io.gnosis.safe.utils.setToCurrent
 import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
