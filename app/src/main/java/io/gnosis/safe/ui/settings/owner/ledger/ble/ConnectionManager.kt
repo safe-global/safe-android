@@ -418,6 +418,12 @@ object ConnectionManager {
                     }
                     BluetoothGatt.GATT_WRITE_NOT_PERMITTED -> {
                         Timber.e("Write not permitted for $uuid!")
+
+                        //FIXME: define custom operation for GetAddress command
+                        if (pendingOperation is CharacteristicWrite) {
+                            signalEndOfOperation()
+                        }
+
                         throw LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Write not permitted for $uuid!")
 
                     }
@@ -425,11 +431,15 @@ object ConnectionManager {
                         Timber.e("Characteristic write failed for $uuid, error: $status")
                         val error =  LedgerException(LedgerException.ExceptionReason.IO_ERROR, "Characteristic write failed for $uuid, error: $status")
                         listeners.forEach { it.get()?.onCharacteristicWriteError?.invoke(gatt.device, this, error) }
+
+                        //FIXME: define custom operation for GetAddress command
+                        if (pendingOperation is CharacteristicWrite) {
+                            signalEndOfOperation()
+                        }
                     }
                 }
             }
         }
-
 
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
