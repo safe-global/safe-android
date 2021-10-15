@@ -66,10 +66,10 @@ object LedgerWrapper {
 
     fun parseSignMessage(data: ByteArray): String {
         if (data.size < 65) throw LedgerException(LedgerException.ExceptionReason.INVALID_PARAMETER, "invalid data size")
-
-        val v = data[0] + 4
+        
+        val v = data[0] + 4.toByte()
         val r = data.slice(1..32).toByteArray().asBigInteger()
-        val s = data.slice(33..65).toByteArray().asBigInteger()
+        val s = data.slice(33..64).toByteArray().asBigInteger()
 
         return r.toString(16).padStart(64, '0').substring(0, 64) +
                 s.toString(16).padStart(64, '0').substring(0, 64) +
