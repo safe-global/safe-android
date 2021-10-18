@@ -18,7 +18,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerEditNameFragmentArgs
-import io.gnosis.safe.ui.settings.owner.list.imageRes24dpWhite
+import io.gnosis.safe.utils.imageRes24dpWhite
 import io.gnosis.safe.ui.settings.owner.list.stringRes
 import io.gnosis.safe.utils.getFromCurrent
 import io.gnosis.safe.utils.setToCurrent

@@ -6,8 +6,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewNamedAddressItemBinding
+import io.gnosis.safe.utils.imageRes16dp
 import io.gnosis.safe.utils.BlockExplorer
 import io.gnosis.safe.utils.abbreviateEthAddress
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -32,22 +34,30 @@ class NamedAddressItem @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
-    fun setAddress(chain: Chain, value: Solidity.Address?) {
+    fun setAddress(chain: Chain, value: Solidity.Address?, ownerType: Owner.Type? = null) {
         with(binding) {
             blockies.setAddress(value)
             address.text = value?.asEthereumAddressChecksumString()?.abbreviateEthAddress()
-            binding.link.setOnClickListener {
+            link.setOnClickListener {
                 BlockExplorer.forChain(chain)?.showAddress(context, value)
             }
-            binding.root.setOnClickListener {
+            root.setOnClickListener {
                 value?.let {
                     context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }
                 }
             }
+            ownerType?.let {
+                keyType.setImageResource(ownerType.imageRes16dp())
+            } ?: hideKeyTypeOverlay()
         }
         address = value
+    }
+
+    private fun hideKeyTypeOverlay() {
+        binding.keyType.visible(false)
+        binding.keyTypeBackground.visible(false)
     }
 
     var name: String? = null

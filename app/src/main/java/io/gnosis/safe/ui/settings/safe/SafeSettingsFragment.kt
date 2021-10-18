@@ -131,7 +131,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             NamedAddressItem(requireContext()).apply {
                 background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
-                setAddress(chain, owner.value)
+                setAddress(chain, owner.value, localOwner.type)
                 name = if (localOwner.name.isNullOrBlank())
                     context.getString(
                         R.string.settings_app_imported_owner_key_default_name,
@@ -140,6 +140,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 showSeparator = true
             }
         } else {
+
             if (!owner.name.isNullOrBlank()) {
                 // use remote owner name & logo if available
                 NamedAddressItem(requireContext()).apply {

@@ -10,8 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.data.models.Chain
+import io.gnosis.data.models.Owner
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewAddressItemBinding
+import io.gnosis.safe.utils.imageRes16dp
 import io.gnosis.safe.utils.BlockExplorer
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -36,7 +38,7 @@ class AddressItem @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
-    fun setAddress(chain: Chain?, value: Solidity.Address?) {
+    fun setAddress(chain: Chain?, value: Solidity.Address?, ownerType: Owner.Type? = null) {
         with(binding) {
             blockies.setAddress(value)
             address.text = value?.formatOwnerAddress()
@@ -50,10 +52,17 @@ class AddressItem @JvmOverloads constructor(
                     snackbar(view = root, textId = R.string.copied_success)
                 }
             }
+            ownerType?.let {
+                keyType.setImageResource(ownerType.imageRes16dp())
+            } ?: hideKeyTypeOverlay()
         }
         address = value
-    }
 
+    }
+    private fun hideKeyTypeOverlay() {
+        binding.keyType.visible(false)
+        binding.keyTypeBackground.visible(false)
+    }
     var showSeparator: Boolean = false
         set(value) {
             binding.addressDivider.visible(value)
