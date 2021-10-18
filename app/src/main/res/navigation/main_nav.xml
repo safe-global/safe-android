@@ -858,25 +858,23 @@
             app:argType="io.gnosis.data.models.Chain" />
 
         <argument
-            android:name="nonce"
-            app:argType="string" />
-
-        <argument
-            android:name="operation"
-            app:argType="string" />
-
-        <argument
             android:name="hash"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
 
         <argument
-            android:name="safeTxHash"
+            android:name="data"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
 
+        <argument
+            android:name="executionInfo"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        
     </fragment>
 
     <fragment

@@ -6,15 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.transaction.Operation
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.visible
+import javax.inject.Inject
 
 class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDetailsAdvancedBinding>() {
 
@@ -22,10 +25,12 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
     private val navArgs by navArgs<AdvancedTransactionDetailsFragmentArgs>()
     private val chain by lazy { navArgs.chain }
-    private val nonce by lazy { navArgs.nonce }
-    private val operation by lazy { navArgs.operation }
     private val hash by lazy { navArgs.hash }
-    private val safeTxHash by lazy { navArgs.safeTxHash }
+    private val data by lazy { navArgs.data?.let { paramSerializer.deserializeData(it) } }
+    private val executionInfo by lazy { navArgs.executionInfo?.let { paramSerializer.deserializeExecutionInfo(it) } }
+
+    @Inject
+    lateinit var paramSerializer: ParamSerializer
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionDetailsAdvancedBinding =
             FragmentTransactionDetailsAdvancedBinding.inflate(inflater, container, false)
@@ -46,18 +51,23 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
+
+            val nonce = executionInfo?.let { it.nonce.toString() } ?: ""
             if (nonce.isBlank()) {
                 nonceItem.visible(false)
                 nonceSeparator.visible(false)
             } else {
                 nonceItem.value = nonce
             }
+
+            val operation = data?.operation?.displayName() ?: ""
             if (operation.isBlank()) {
                 operationItem.visible(false)
                 operationSeparator.visible(false)
             } else {
                 operationItem.value = operation
             }
+
             if (hash.isNullOrBlank()) {
                 hashItem.visible(false)
                 hashSeparator.visible(false)
@@ -69,6 +79,8 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                     }
                 }
             }
+
+            val safeTxHash = executionInfo?.safeTxHash
             if (safeTxHash.isNullOrBlank()) {
                 safeTxHashItem.visible(false)
                 safeTxHashSeparator.visible(false)
@@ -84,4 +96,9 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     }
 }
 
+private fun Operation.displayName(): String =
+        when (this) {
+            Operation.CALL -> "call"
+            Operation.DELEGATE -> "delegateCall"
+        }
 
