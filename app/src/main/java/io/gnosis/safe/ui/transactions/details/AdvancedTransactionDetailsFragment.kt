@@ -128,10 +128,12 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                     content.addView(
                             requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_gas_token), it.gasToken, null)
                     )
-                    //TODO: parse refundReceiver
-//                content.addView(
-//                        getLabeledAddressItem(getString(R.string.tx_details_advanced_operation_refundReceiver), it.refundReceiver, null)
-//                )
+
+                    it.refundReceiver?.let {
+                        content.addView(
+                                requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_refundReceiver), it.value, null)
+                        )
+                    }
 
                     if (it.confirmations.isNotEmpty()) {
                         content.addView(
