@@ -4,15 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.transaction.Operation
+import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.transactions.details.view.getArrayItem
+import io.gnosis.safe.ui.transactions.details.view.getDataItem
+import io.gnosis.safe.ui.transactions.details.view.getLabeledAddressItem
+import io.gnosis.safe.ui.transactions.details.view.getLabeledValueItem
 import io.gnosis.safe.utils.ParamSerializer
+import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -52,25 +60,9 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 Navigation.findNavController(it).navigateUp()
             }
 
-            val nonce = executionInfo?.let { it.nonce.toString() } ?: ""
-            if (nonce.isBlank()) {
-                nonceItem.visible(false)
-                nonceSeparator.visible(false)
-            } else {
-                nonceItem.value = nonce
-            }
-
-            val operation = data?.operation?.displayName() ?: ""
-            if (operation.isBlank()) {
-                operationItem.visible(false)
-                operationSeparator.visible(false)
-            } else {
-                operationItem.value = operation
-            }
-
             if (hash.isNullOrBlank()) {
                 hashItem.visible(false)
-                hashSeparator.visible(false)
+                chainDataHeader.visible(false)
             } else {
                 hashItem.value = hash
                 hashItem.setOnClickListener {
@@ -80,19 +72,100 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                 }
             }
 
-            val safeTxHash = executionInfo?.safeTxHash
-            if (safeTxHash.isNullOrBlank()) {
-                safeTxHashItem.visible(false)
-                safeTxHashSeparator.visible(false)
+            if (data == null && executionInfo == null) {
+                safeDataHeader.visible(false)
             } else {
-                safeTxHashItem.value = safeTxHash
-                safeTxHashItem.setOnClickListener {
-                    context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, safeTxHashItem.value.toString()) {
-                        snackbar(view = root, textId = R.string.copied_success)
+
+                data?.let {
+                    content.addView(
+                            requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_to), it.to.value, if (it.to.name != null) it.to else null)
+                    )
+                    content.addView(
+                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_value), it.value.toString())
+                    )
+                    content.addView(
+                            requireContext().getDataItem(getString(R.string.tx_details_advanced_data), it.hexData ?: "")
+                    )
+                    content.addView(
+                            requireContext().getLabeledValueItem(
+                                    getString(R.string.tx_details_advanced_operation),
+                                    getString(R.string.tx_details_advanced_operation_value, it.operation.id, it.operation.displayName())
+                            )
+                    )
+                }
+
+                executionInfo?.let {
+
+                    content.addView(
+                            getDivider()
+                    )
+
+                    val safeTxHashItem = requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_hash), it.safeTxHash)
+                    safeTxHashItem.setOnClickListener {
+                        context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, safeTxHashItem.value.toString()) {
+                            snackbar(view = root, textId = R.string.copied_success)
+                        }
+                    }
+                    content.addView(safeTxHashItem)
+
+                    content.addView(
+                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_nonce), it.nonce.toString())
+                    )
+
+                    content.addView(
+                            getDivider()
+                    )
+
+                    content.addView(
+                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_gas), it.safeTxGas.toString())
+                    )
+                    content.addView(
+                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_base_gas), it.baseGas.toString())
+                    )
+                    content.addView(
+                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_gas_price), it.gasPrice.toString())
+                    )
+                    content.addView(
+                            requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_gas_token), it.gasToken, null)
+                    )
+                    //TODO: parse refundReceiver
+//                content.addView(
+//                        getLabeledAddressItem(getString(R.string.tx_details_advanced_operation_refundReceiver), it.refundReceiver, null)
+//                )
+
+                    if (it.confirmations.isNotEmpty()) {
+                        content.addView(
+                                getDivider()
+                        )
+                        content.addView(
+                                requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), it.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
+                        )
                     }
                 }
             }
+
+            content.addView(
+                    getBottomMargin()
+            )
         }
+    }
+
+    private fun getDivider(): View {
+        val item = View(requireContext())
+        val height = resources.getDimension(R.dimen.default_large_margin).toInt()
+        val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        layoutParams.setMargins(0, dpToPx(16), 0, 0)
+        item.layoutParams = layoutParams
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.separator))
+        return item
+    }
+
+    private fun getBottomMargin(): View {
+        val item = View(requireContext())
+        val height = resources.getDimension(R.dimen.default_large_margin).toInt()
+        val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        item.layoutParams = layoutParams
+        return item
     }
 }
 
