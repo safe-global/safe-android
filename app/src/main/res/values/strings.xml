@@ -270,6 +270,23 @@
     <string name="tx_details_action_multisend">Multisend (%1$d actions)</string>
     <string name="tx_details_data">Data</string>
     <string name="tx_details_advanced">Advanced</string>
+    <string name="tx_details_advanced_chain_tx_data">Chain Transaction Data</string>
+    <string name="tx_details_advanced_hash">Transaction hash:</string>
+    <string name="tx_details_advanced_safe_tx_data">Safe Transaction Data</string>
+    <string name="tx_details_advanced_to">To:</string>
+    <string name="tx_details_advanced_value">Value:</string>
+    <string name="tx_details_advanced_data">Data:</string>
+    <string name="tx_details_advanced_operation">Operation:</string>
+    <string name="tx_details_advanced_nonce">Nonce:</string>
+    <string name="tx_details_advanced_safe_tx_hash">safeTxHash:</string>
+    <string name="tx_details_advanced_operation_value">%1$d (%2$s)</string>
+    <string name="tx_details_advanced_safe_tx_gas">safeTxGas:</string>
+    <string name="tx_details_advanced_base_gas">baseGas:</string>
+    <string name="tx_details_advanced_gas_price">gasPrice:</string>
+    <string name="tx_details_advanced_gas_token">gasToken:</string>
+    <string name="tx_details_advanced_refundReceiver">refundReceiver:</string>
+    <string name="tx_details_advanced_signatures">Signatures:</string>
+
     <string name="tx_details_created">Created:</string>
     <string name="tx_details_executed">Executed:</string>
     <string name="tx_details_view_on_block_explorer">View transaction on block explorer</string>
@@ -280,10 +297,6 @@
     <string name="tx_details_creation_no_factory_used">No factory used</string>
     <string name="tx_details_creation_no_implementation_available">Not available</string>
 
-    <string name="tx_details_advanced_nonce">Nonce:</string>
-    <string name="tx_details_advanced_operation">Type of operation:</string>
-    <string name="tx_details_advanced_hash">Transaction hash:</string>
-    <string name="tx_details_advanced_safe_tx_hash">safeTxHash:</string>
     <string name="tx_details_add_owner">Add owner:</string>
     <string name="tx_details_new_mastercopy">New mastercopy:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
