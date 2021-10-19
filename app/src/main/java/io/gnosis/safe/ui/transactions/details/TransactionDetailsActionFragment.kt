@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -14,7 +13,6 @@ import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.transaction.DataDecoded
 import io.gnosis.data.models.transaction.Param
-import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsActionBinding
@@ -24,12 +22,10 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
-import io.gnosis.safe.utils.shortChecksumString
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.removeHexPrefix
 import javax.inject.Inject
 
 class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransactionDetailsActionBinding>() {
@@ -92,12 +88,12 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
 
         address?.let {
             with(binding) {
-                content.addView(getTransferItem(it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
+                content.addView(requireContext().getTransferItem(chain, it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
                 content.addView(getDivider())
             }
         }
         data?.let {
-            binding.content.addView(getDataItem(getString(R.string.tx_details_data), it))
+            binding.content.addView(requireContext().getDataItem(getString(R.string.tx_details_data), it))
         }
 
         decodedDto?.let {
@@ -110,96 +106,25 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 it.parameters?.forEach {
                     when (it) {
                         is Param.Address -> {
-                            content.addView(getLabeledAddressItem("${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
+                            content.addView(requireContext().getLabeledAddressItem(chain, "${it.name}(${it.type}):", it.value, addressInfoIndex?.get(it.value.asEthereumAddressChecksumString())))
                         }
                         is Param.Array -> {
-                            content.addView(getArrayItem("${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
+                            content.addView(requireContext().getArrayItem(chain, "${it.name}(${it.type}):", it.value, it.getItemType(), it.type, addressInfoIndex))
                         }
                         is Param.Bytes -> {
-                            content.addView(getDataItem("${it.name}(${it.type}):", it.value))
+                            content.addView(requireContext().getDataItem("${it.name}(${it.type}):", it.value))
                         }
                         is Param.Value -> {
                             if (it.isBytesValue()) {
-                                content.addView(getDataItem("${it.name}(${it.type}):", it.value as String))
+                                content.addView(requireContext().getDataItem("${it.name}(${it.type}):", it.value as String))
                             } else {
-                                content.addView(getLabeledValueItem("${it.name}(${it.type}):", it.value.toString()))
+                                content.addView(requireContext().getLabeledValueItem("${it.name}(${it.type}):", it.value.toString()))
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun getTransferItem(address: Solidity.Address, amount: String, addressInfo: AddressInfo?): TxTransferActionView {
-        val item = TxTransferActionView(requireContext())
-        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(0, dpToPx(16), 0, -dpToPx(8))
-        item.layoutParams = layoutParams
-        item.setActionInfo(
-            chain,
-            outgoing = true,
-            amount = amount,
-            logoUri = chain.currency.logoUri,
-            address = address,
-            addressName = addressInfo?.name,
-            addressUri = addressInfo?.logoUri
-        )
-        return item
-    }
-
-    private fun getArrayItem(name: String, value: List<Any>, paramType: ParamType, paramTypeValue: String, addressInfoIndex: Map<String, AddressInfo>?): LabeledArrayItem {
-        val item = LabeledArrayItem(requireContext())
-        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(0, 0, 0, 0)
-        item.layoutParams = layoutParams
-        item.label = name
-        item.showArray(chain, value, paramType, paramTypeValue, addressInfoIndex)
-        return item
-    }
-
-    private fun getDataItem(name: String, value: String): TxDataView {
-        val item = TxDataView(requireContext())
-        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(dpToPx(16), dpToPx(16), dpToPx(16), 0)
-        item.layoutParams = layoutParams
-        val size = value.removeHexPrefix().length / 2
-        item.setData(value, size, name)
-        return item
-    }
-
-    private fun getLabeledAddressItem(name: String, value: Solidity.Address, addressInfo: AddressInfo?): View {
-        var item: View
-        if (addressInfo == null) {
-            item = LabeledAddressItem(requireContext())
-            item.label = name
-            item.setAddress(chain, value)
-        } else {
-            item = LabeledNamedAddressItem(requireContext())
-            item.label = name
-            item.setAddress(chain, value)
-            // only old imported owner keys could have empty names
-            item.name = if (addressInfo.name.isNullOrBlank()) {
-                getString(R.string.settings_app_imported_owner_key_default_name, value.shortChecksumString())
-            } else {
-                addressInfo.name
-            }
-            addressInfo.logoUri?.let { item.loadKnownAddressLogo(it, value)  }
-        }
-        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(0, 0, 0, 0)
-        item.layoutParams = layoutParams
-        return item
-    }
-
-    private fun getLabeledValueItem(name: String, value: String): LabeledValueItem {
-        val item = LabeledValueItem(requireContext())
-        val layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        layoutParams.setMargins(0, 0, 0, 0)
-        item.layoutParams = layoutParams
-        item.label = name
-        item.value = value
-        return item
     }
 
     private fun getDivider(): View {
