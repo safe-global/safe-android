@@ -213,7 +213,7 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                                 chain = chain,
                                 hash = txDetails.txHash,
                                 data = paramSerializer.serializeData(txDetails.txData),
-                                executionInfo = paramSerializer.serializeExecutionInfo(txDetails.detailedExecutionInfo as? DetailedExecutionInfo.MultisigExecutionDetails)
+                                executionInfo = paramSerializer.serializeExecutionInfo(txDetails.detailedExecutionInfo)
                         )
                 )
             }
@@ -339,12 +339,12 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
 
                             txDataDecoded.name = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
                             txDataDecoded.setOnClickListener {
-                                txDetails.txData.dataDecoded?.parameters?.getOrNull(0)?.let {
-                                    if (it is Param.Bytes && it.valueDecoded != null) {
+                                txDetails.txData.dataDecoded?.parameters?.getOrNull(0)?.let { param ->
+                                    if (param is Param.Bytes && param.valueDecoded != null) {
                                         findNavController().navigate(
                                                 TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
                                                         chain,
-                                                        paramSerializer.serializeDecodedValues(it.valueDecoded!!),
+                                                        paramSerializer.serializeDecodedValues(param.valueDecoded!!),
                                                         paramSerializer.serializeAddressInfoIndex(txDetails.txData.addressInfoIndex)
                                                 )
                                         )

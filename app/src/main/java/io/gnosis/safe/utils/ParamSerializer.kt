@@ -13,14 +13,14 @@ class ParamSerializer(
     moshi: Moshi
 ) {
     private val dataAdapter: JsonAdapter<TxData>
-    private val executionInfoAdapter: JsonAdapter<DetailedExecutionInfo.MultisigExecutionDetails>
+    private val executionInfoAdapter: JsonAdapter<DetailedExecutionInfo>
     private val decodedDataAdapter: JsonAdapter<DataDecoded>
     private val decodedValuesAdapter: JsonAdapter<List<ValueDecoded>>
     private val addressInfoIndexAdapter: JsonAdapter<Map<String, AddressInfo>>
 
     init {
         dataAdapter = moshi.adapter(TxData::class.java)
-        executionInfoAdapter = moshi.adapter(DetailedExecutionInfo.MultisigExecutionDetails::class.java)
+        executionInfoAdapter = moshi.adapter(DetailedExecutionInfo::class.java)
         decodedDataAdapter = moshi.adapter(DataDecoded::class.java)
         decodedValuesAdapter = moshi.adapter(Types.newParameterizedType(List::class.java, ValueDecoded::class.java))
         addressInfoIndexAdapter = moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, AddressInfo::class.java))
@@ -58,11 +58,11 @@ class ParamSerializer(
         return dataAdapter.fromJson(dataString)
     }
 
-    fun serializeExecutionInfo(executionInfo: DetailedExecutionInfo.MultisigExecutionDetails?): String? {
+    fun serializeExecutionInfo(executionInfo: DetailedExecutionInfo?): String? {
         return executionInfo?.let { executionInfoAdapter.toJson(executionInfo) }
     }
 
-    fun deserializeExecutionInfo(executionInfoString: String): DetailedExecutionInfo.MultisigExecutionDetails? {
+    fun deserializeExecutionInfo(executionInfoString: String): DetailedExecutionInfo? {
         return executionInfoAdapter.fromJson(executionInfoString)
     }
 }

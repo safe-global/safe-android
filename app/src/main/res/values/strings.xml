@@ -273,6 +273,8 @@
     <string name="tx_details_advanced_chain_tx_data">Chain Transaction Data</string>
     <string name="tx_details_advanced_hash">Transaction hash:</string>
     <string name="tx_details_advanced_safe_tx_data">Safe Transaction Data</string>
+    <string name="tx_details_advanced_module_data">Module Data</string>
+    <string name="tx_details_advanced_module">Module:</string>
     <string name="tx_details_advanced_to">To:</string>
     <string name="tx_details_advanced_value">Value:</string>
     <string name="tx_details_advanced_data">Data:</string>

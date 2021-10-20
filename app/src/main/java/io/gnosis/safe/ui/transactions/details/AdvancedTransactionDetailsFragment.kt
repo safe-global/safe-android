@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.Operation
 import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
@@ -96,52 +98,72 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
                 executionInfo?.let {
 
-                    content.addView(
-                            getDivider()
-                    )
+                    when (executionInfo) {
 
-                    val safeTxHashItem = requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_hash), it.safeTxHash)
-                    safeTxHashItem.setOnClickListener {
-                        context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, safeTxHashItem.value.toString()) {
-                            snackbar(view = root, textId = R.string.copied_success)
+                        is DetailedExecutionInfo.ModuleExecutionDetails -> {
+
+                            val info = executionInfo as DetailedExecutionInfo.ModuleExecutionDetails
+
+                            content.addView(
+                                    getModuleDataHeader()
+                            )
+                            content.addView(
+                                    requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_module), info.address.value, if (info.address.name != null) info.address else null)
+                            )
                         }
-                    }
-                    content.addView(safeTxHashItem)
 
-                    content.addView(
-                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_nonce), it.nonce.toString())
-                    )
+                        is DetailedExecutionInfo.MultisigExecutionDetails -> {
 
-                    content.addView(
-                            getDivider()
-                    )
+                            val info = executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
-                    content.addView(
-                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_gas), it.safeTxGas.toString())
-                    )
-                    content.addView(
-                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_base_gas), it.baseGas.toString())
-                    )
-                    content.addView(
-                            requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_gas_price), it.gasPrice.toString())
-                    )
-                    content.addView(
-                            requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_gas_token), it.gasToken, null)
-                    )
+                            content.addView(
+                                    getDivider()
+                            )
 
-                    it.refundReceiver?.let {
-                        content.addView(
-                                requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_refundReceiver), it.value, null)
-                        )
-                    }
+                            val safeTxHashItem = requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_hash), info.safeTxHash)
+                            safeTxHashItem.setOnClickListener {
+                                context?.copyToClipboard(context?.getString(R.string.hash_copied)!!, safeTxHashItem.value.toString()) {
+                                    snackbar(view = root, textId = R.string.copied_success)
+                                }
+                            }
+                            content.addView(safeTxHashItem)
 
-                    if (it.confirmations.isNotEmpty()) {
-                        content.addView(
-                                getDivider()
-                        )
-                        content.addView(
-                                requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), it.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
-                        )
+                            content.addView(
+                                    requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_nonce), info.nonce.toString())
+                            )
+
+                            content.addView(
+                                    getDivider()
+                            )
+
+                            content.addView(
+                                    requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_gas), info.safeTxGas.toString())
+                            )
+                            content.addView(
+                                    requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_base_gas), info.baseGas.toString())
+                            )
+                            content.addView(
+                                    requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_gas_price), info.gasPrice.toString())
+                            )
+                            content.addView(
+                                    requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_gas_token), info.gasToken, null)
+                            )
+
+                            info.refundReceiver?.let {
+                                content.addView(
+                                        requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_refundReceiver), it.value, null)
+                                )
+                            }
+
+                            if (info.confirmations.isNotEmpty()) {
+                                content.addView(
+                                        getDivider()
+                                )
+                                content.addView(
+                                        requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), info.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -150,6 +172,18 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                     getBottomMargin()
             )
         }
+    }
+
+    private fun getModuleDataHeader(): View {
+        val item = TextView(requireContext(), null, 0, R.style.Header)
+        val height = resources.getDimension(R.dimen.header_height).toInt()
+        val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        layoutParams.setMargins(0, dpToPx(16), 0, 0)
+        item.layoutParams = layoutParams
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.background))
+        item.isAllCaps = true
+        item.text = getString(R.string.tx_details_advanced_module_data)
+        return item
     }
 
     private fun getDivider(): View {
