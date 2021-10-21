@@ -46,7 +46,9 @@
     "baseGas": 0,
     "gasPrice": "0",
     "gasToken": "0x0000000000000000000000000000000000000000",
-    "refundReceiver": "0x0000000000000000000000000000000000000000",
+    "refundReceiver": {
+      "value": "0x0000000000000000000000000000000000000000"
+    },
     "safeTxHash": "0x65a2f38ef0f68c30d1d0310521e3853a3b46d4aa4d53b7d1dce3335b7b2b38a0",
     "executor": {
       "value": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd"

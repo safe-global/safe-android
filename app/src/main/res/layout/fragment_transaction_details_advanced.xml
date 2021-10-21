@@ -58,35 +58,18 @@
         android:background="@color/surface_01">
 
         <LinearLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
-                android:id="@+id/nonce_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_margin"
-                app:item_label="@string/tx_details_advanced_nonce" />
-
-            <View
-                android:id="@+id/nonce_separator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
-
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
-                android:id="@+id/operation_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_margin"
-                app:item_label="@string/tx_details_advanced_operation" />
-
-            <View
-                android:id="@+id/operation_separator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
+            <TextView
+                android:id="@+id/chain_data_header"
+                style="@style/Header"
+                android:layout_height="@dimen/header_height"
+                android:text="@string/tx_details_advanced_chain_tx_data"
+                android:textAllCaps="true"
+                android:background="@color/background" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/hash_item"
@@ -95,24 +78,14 @@
                 android:layout_marginBottom="@dimen/default_margin"
                 app:item_label="@string/tx_details_advanced_hash" />
 
-            <View
-                android:id="@+id/hash_separator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
+            <TextView
+                android:id="@+id/safe_data_header"
+                style="@style/Header"
+                android:layout_height="@dimen/header_height"
+                android:text="@string/tx_details_advanced_safe_tx_data"
+                android:textAllCaps="true"
+                android:background="@color/background" />
 
-            <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
-                android:id="@+id/safe_tx_hash_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_margin"
-                app:item_label="@string/tx_details_advanced_safe_tx_hash" />
-
-            <View
-                android:id="@+id/safe_tx_hash_separator"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

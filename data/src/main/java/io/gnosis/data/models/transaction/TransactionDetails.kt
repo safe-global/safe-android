@@ -75,6 +75,8 @@ sealed class DetailedExecutionInfo(
         val confirmations: List<Confirmations> = emptyList(),
         @Json(name = "executor")
         val executor: AddressInfo? = null,
+        @Json(name = "refundReceiver")
+        val refundReceiver: AddressInfo? = null,
         @Json(name = "safeTxGas")
         val safeTxGas: BigInteger = BigInteger.ZERO,
         @Json(name = "baseGas")

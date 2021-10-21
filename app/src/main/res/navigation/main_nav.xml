@@ -853,17 +853,18 @@
         android:label="AdvancedTransactionDetailsFragment"
         tools:layout="@layout/fragment_transaction_details_advanced">
 
+        <action
+            android:id="@+id/action_advancedTransactionDetailsFragment_to_transactionDetailsActionMultisendFragment"
+            app:destination="@id/transactionDetailsActionMultisendFragment" />
+
+        <action
+            android:id="@+id/action_advancedTransactionDetailsFragment_to_transactionDetailsActionFragment"
+            app:destination="@id/transactionDetailsActionFragment"
+            app:popUpTo="@id/advancedTransactionDetailsFragment" />
+
         <argument
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
-
-        <argument
-            android:name="nonce"
-            app:argType="string" />
-
-        <argument
-            android:name="operation"
-            app:argType="string" />
 
         <argument
             android:name="hash"
@@ -872,7 +873,13 @@
             app:nullable="true" />
 
         <argument
-            android:name="safeTxHash"
+            android:name="data"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="executionInfo"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

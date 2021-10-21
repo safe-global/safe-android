@@ -94,7 +94,7 @@ class TxTransferActionView @JvmOverloads constructor(
     private fun addAddressItem(chain: Chain, address: Solidity.Address) {
         val addressItem = AddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
-        layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
+        layoutParams.setMargins(0, 0, 0, 0)
         addressItem.layoutParams = layoutParams
         addressItem.setAddress(chain, address)
         addView(addressItem)
@@ -103,7 +103,7 @@ class TxTransferActionView @JvmOverloads constructor(
     private fun addNamedAddressItem(chain: Chain, address: Solidity.Address, name: String, addressUri: String?) {
         val addressItem = NamedAddressItem(context)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ITEM_HEIGHT))
-        layoutParams.setMargins(0, 0, 0, dpToPx(ADDRESS_BOTTOM_MARGIN))
+        layoutParams.setMargins(0, 0, 0, 0)
         addressItem.layoutParams = layoutParams
         addressItem.setAddress(chain, address)
         addressItem.name = name
@@ -123,9 +123,8 @@ class TxTransferActionView @JvmOverloads constructor(
     }
 
     companion object {
-        private const val ITEM_HEIGHT = 44
+        private const val ITEM_HEIGHT = 68
         private const val DEFAULT_MARGIN = 16
-        private const val ADDRESS_BOTTOM_MARGIN = 8
         private const val ARROW_ICON_PADDING_CORRECTION = 6
     }
 }
