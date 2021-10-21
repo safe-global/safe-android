@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.LinearLayout.LayoutParams
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -21,7 +18,6 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
-import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
@@ -89,7 +85,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
         address?.let {
             with(binding) {
                 content.addView(requireContext().getTransferItem(chain, it, amount ?: "", addressInfoIndex?.get(it.asEthereumAddressChecksumString())))
-                content.addView(getDivider())
+                content.addView(requireContext().getDivider())
             }
         }
         data?.let {
@@ -100,7 +96,7 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
             with(binding) {
 
                 if (it.parameters?.size ?: 0 > 0) {
-                    content.addView(getDivider())
+                    content.addView(requireContext().getDivider())
                 }
 
                 it.parameters?.forEach {
@@ -125,15 +121,5 @@ class TransactionDetailsActionFragment : BaseViewBindingFragment<FragmentTransac
                 }
             }
         }
-    }
-
-    private fun getDivider(): View {
-        val item = View(requireContext())
-        val height = resources.getDimension(R.dimen.item_separator_height).toInt()
-        val layoutParams = LayoutParams(MATCH_PARENT, height)
-        layoutParams.setMargins(0, dpToPx(16), 0, 0)
-        item.layoutParams = layoutParams
-        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.separator))
-        return item
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.transaction.ParamType
@@ -81,5 +82,25 @@ fun Context.getLabeledValueItem(name: String, value: String): LabeledValueItem {
     item.layoutParams = layoutParams
     item.label = name
     item.value = value
+    return item
+}
+
+fun Context.getDivider(): View {
+    val item = View(this)
+    val height = resources.getDimension(R.dimen.item_separator_height).toInt()
+    val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+    layoutParams.setMargins(0, dpToPx(16), 0, 0)
+    item.layoutParams = layoutParams
+    item.setBackgroundColor(ContextCompat.getColor(this, R.color.separator))
+    return item
+}
+
+fun Context.getDividerBig(): View {
+    val item = View(this)
+    val height = resources.getDimension(R.dimen.default_large_margin).toInt()
+    val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+    layoutParams.setMargins(0, dpToPx(16), 0, 0)
+    item.layoutParams = layoutParams
+    item.setBackgroundColor(ContextCompat.getColor(this, R.color.separator))
     return item
 }

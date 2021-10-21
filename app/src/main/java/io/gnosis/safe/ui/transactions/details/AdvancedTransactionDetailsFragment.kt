@@ -8,19 +8,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.transaction.DetailedExecutionInfo
 import io.gnosis.data.models.transaction.Operation
+import io.gnosis.data.models.transaction.Param
 import io.gnosis.data.models.transaction.ParamType
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentTransactionDetailsAdvancedBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.transactions.details.view.getArrayItem
-import io.gnosis.safe.ui.transactions.details.view.getDataItem
-import io.gnosis.safe.ui.transactions.details.view.getLabeledAddressItem
-import io.gnosis.safe.ui.transactions.details.view.getLabeledValueItem
+import io.gnosis.safe.ui.settings.view.SettingItem
+import io.gnosis.safe.ui.transactions.details.view.*
 import io.gnosis.safe.utils.ParamSerializer
 import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
@@ -79,15 +79,69 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
             } else {
 
                 data?.let {
+
                     content.addView(
                             requireContext().getLabeledAddressItem(chain, getString(R.string.tx_details_advanced_to), it.to.value, if (it.to.name != null) it.to else null)
                     )
                     content.addView(
                             requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_value), it.value.toString())
                     )
+
+                    content.addView(
+                            requireContext().getDivider()
+                    )
                     content.addView(
                             requireContext().getDataItem(getString(R.string.tx_details_advanced_data), it.hexData ?: "")
                     )
+                    content.addView(
+                            requireContext().getDivider()
+                    )
+
+                    data!!.dataDecoded?.let { dataDecoded ->
+                        if (dataDecoded.method.toLowerCase() == "multisend") {
+                            val valueDecoded = (dataDecoded.parameters?.get(0) as Param.Bytes).valueDecoded
+                            val decodedDataItemName = getString(R.string.tx_details_action_multisend, valueDecoded?.size ?: 0)
+                            val decodedDataItem = getDecodedDataItem(decodedDataItemName)
+                            decodedDataItem.setOnClickListener {
+                                dataDecoded.parameters?.getOrNull(0)?.let { param ->
+                                    if (param is Param.Bytes && param.valueDecoded != null) {
+                                        findNavController().navigate(
+                                                AdvancedTransactionDetailsFragmentDirections.actionAdvancedTransactionDetailsFragmentToTransactionDetailsActionMultisendFragment(
+                                                        chain,
+                                                        paramSerializer.serializeDecodedValues(param.valueDecoded!!),
+                                                        paramSerializer.serializeAddressInfoIndex(data!!.addressInfoIndex)
+                                                )
+                                        )
+                                    }
+                                }
+                            }
+
+                            content.addView(decodedDataItem)
+                            content.addView(
+                                    requireContext().getDivider()
+                            )
+                        } else {
+                            val decodedDataItemName = getString(R.string.tx_details_action, dataDecoded.method)
+                            val decodedDataItem = getDecodedDataItem(decodedDataItemName)
+                            decodedDataItem.setOnClickListener {
+                                findNavController().navigate(
+                                        AdvancedTransactionDetailsFragmentDirections.actionAdvancedTransactionDetailsFragmentToTransactionDetailsActionFragment(
+                                                chain = chain,
+                                                action = dataDecoded.method,
+                                                data = data!!.hexData ?: "",
+                                                decodedData = paramSerializer.serializeDecodedData(dataDecoded),
+                                                addressInfoIndex = paramSerializer.serializeAddressInfoIndex(data!!.addressInfoIndex)
+                                        )
+                                )
+                            }
+
+                            content.addView(decodedDataItem)
+                            content.addView(
+                                    requireContext().getDivider()
+                            )
+                        }
+                    }
+
                     content.addView(
                             requireContext().getLabeledValueItem(
                                     getString(R.string.tx_details_advanced_operation),
@@ -117,7 +171,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                             val info = executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
                             content.addView(
-                                    getDivider()
+                                    requireContext().getDividerBig()
                             )
 
                             val safeTxHashItem = requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_hash), info.safeTxHash)
@@ -133,7 +187,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                             )
 
                             content.addView(
-                                    getDivider()
+                                    requireContext().getDividerBig()
                             )
 
                             content.addView(
@@ -157,7 +211,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
                             if (info.confirmations.isNotEmpty()) {
                                 content.addView(
-                                        getDivider()
+                                        requireContext().getDividerBig()
                                 )
                                 content.addView(
                                         requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), info.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
@@ -174,6 +228,16 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         }
     }
 
+    private fun getDecodedDataItem(name: String): View {
+        val item = SettingItem(requireContext())
+        val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(60))
+        layoutParams.setMargins(0, 0, 0, -dpToPx(16))
+        item.layoutParams = layoutParams
+        item.openable = true
+        item.name = name
+        return item
+    }
+
     private fun getModuleDataHeader(): View {
         val item = TextView(requireContext(), null, 0, R.style.Header)
         val height = resources.getDimension(R.dimen.header_height).toInt()
@@ -183,16 +247,6 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.background))
         item.isAllCaps = true
         item.text = getString(R.string.tx_details_advanced_module_data)
-        return item
-    }
-
-    private fun getDivider(): View {
-        val item = View(requireContext())
-        val height = resources.getDimension(R.dimen.default_large_margin).toInt()
-        val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-        layoutParams.setMargins(0, dpToPx(16), 0, 0)
-        item.layoutParams = layoutParams
-        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.separator))
         return item
     }
 
