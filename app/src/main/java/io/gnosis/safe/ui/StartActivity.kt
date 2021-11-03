@@ -56,7 +56,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private val handler = Handler(Looper.getMainLooper())
 
-    var comingFromBackground = false
+    var comingFromBackground = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
