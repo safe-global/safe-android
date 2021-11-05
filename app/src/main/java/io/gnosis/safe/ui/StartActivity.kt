@@ -363,8 +363,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToPasscodePrompt() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.enterPasscodeFragment, Bundle().apply {
-            putBoolean("requirePasscodeToOpen", true)
-        }, NavOptions.Builder().setLaunchSingleTop(true).build())
+        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+            if (currentDestination?.id != R.id.enterPasscodeFragment) {
+                navigate(R.id.enterPasscodeFragment, Bundle().apply {
+                    putBoolean("requirePasscodeToOpen", true)
+                })
+            }
+        }
     }
 }
