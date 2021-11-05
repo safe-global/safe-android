@@ -166,7 +166,7 @@ class EnterPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>()
     private fun authenticateWithBiometrics() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (settingsHandler.useBiometrics) {
-                val biometricPrompt: BiometricPrompt = createBiometricPrompt(
+                val biometricPrompt = createBiometricPrompt(
                     fragment = this@EnterPasscodeFragment,
                     authCallback = object : BiometricPrompt.AuthenticationCallback() {
 
