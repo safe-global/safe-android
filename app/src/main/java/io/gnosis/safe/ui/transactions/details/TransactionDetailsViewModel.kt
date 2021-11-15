@@ -142,7 +142,7 @@ class TransactionDetailsViewModel
             if (signedSafeTxHash != null) {
                 // no need to additionally protect device key with a passcode
                 submitConfirmation(txDetails!!, selectedOwnerAddress, signedSafeTxHash)
-            } else if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
+            } else if (!settingsHandler.usePasscode || !settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
                 submitConfirmation(txDetails!!, selectedOwnerAddress)
             }
         }

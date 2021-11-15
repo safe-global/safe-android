@@ -42,7 +42,7 @@ class ConfirmRejectionViewModel
         if (signedSafeTxHash != null) {
             // no need to additionally protect device key with a passcode
             submitRejection(owner, signedSafeTxHash)
-        } else if (!settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
+        } else if (!settingsHandler.usePasscode || !settingsHandler.requirePasscodeForConfirmations || (settingsHandler.requirePasscodeForConfirmations && credentialsRepository.credentialsUnlocked())) {
             submitRejection(owner)
         }
     }
