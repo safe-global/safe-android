@@ -19,8 +19,8 @@ import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
 
 class AboutSafeFragment : BaseViewBindingFragment<FragmentAboutSafeBinding>() {
-    //TODO: add screen id
-    override fun screenId() = ScreenId.SETTINGS_GET_IN_TOUCH
+
+    override fun screenId() = ScreenId.SETTINGS_ABOUT_SAFE
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
