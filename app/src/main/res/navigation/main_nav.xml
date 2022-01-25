@@ -473,6 +473,11 @@
         tools:layout="@layout/fragment_settings">
 
         <action
+            android:id="@+id/action_settingsFragment_to_aboutSafeFragment"
+            app:destination="@id/aboutSafeFragment"
+            app:popUpTo="@id/settingsFragment" />
+
+        <action
             android:id="@+id/action_settingsFragment_to_getInTouchFragment"
             app:destination="@id/getInTouchFragment"
             app:popUpTo="@id/settingsFragment" />
@@ -515,6 +520,12 @@
         android:name="io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameFragment"
         android:label="SafeSettingsEditNameFragment"
         tools:layout="@layout/fragment_settings_safe_edit_name" />
+
+    <fragment
+        android:id="@+id/aboutSafeFragment"
+        android:name="io.gnosis.safe.ui.settings.app.AboutSafeFragment"
+        android:label="AboutSafeFragment"
+        tools:layout="@layout/fragment_about_safe" />
 
     <fragment
         android:id="@+id/getInTouchFragment"

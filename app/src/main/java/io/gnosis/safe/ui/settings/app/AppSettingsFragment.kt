@@ -16,6 +16,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -51,25 +52,21 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             fiat.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
-            terms.setOnClickListener {
-                requireContext().openUrl(getString(R.string.link_terms_of_use))
+            //TODO: set to visible after intercom is integrated
+            intercom.visible(false)
+            intercom.setOnClickListener {
+                //TODO: start intercom conversation
             }
-            privacy.setOnClickListener {
-                requireContext().openUrl(getString(R.string.link_privacy_policy))
-            }
-            licenses.setOnClickListener {
-                requireContext().openUrl(getString(R.string.link_licenses))
-            }
-            getInTouch.setOnClickListener {
+            support.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
-            rateApp.setOnClickListener {
-                openPlayStore()
-            }
-            version.value = BuildConfig.VERSION_NAME
             advanced.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedAppSettingsFragment())
             }
+            aboutSafe.setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAboutSafeFragment())
+            }
+            version.value = BuildConfig.VERSION_NAME
         }
 
         viewModel.signingOwnerCount.observe(viewLifecycleOwner, Observer {
@@ -83,15 +80,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         })
 
         viewModel.loadUserDefaultFiat()
-    }
-
-    private fun openPlayStore() {
-        kotlin.runCatching {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${requireActivity().packageName}")))
-        }
-            .onFailure {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store.apps/details?id=${requireActivity().packageName}")))
-            }
     }
 
     companion object {

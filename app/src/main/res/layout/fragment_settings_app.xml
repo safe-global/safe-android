@@ -20,6 +20,7 @@
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
+                app:setting_image="@drawable/ic_settings_key_24dp"
                 app:setting_name="@string/settings_app_owner_keys"
                 app:setting_openable="true" />
 
@@ -30,6 +31,7 @@
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
+                app:setting_image="@drawable/ic_settings_passcode_24dp"
                 app:setting_name="@string/settings_app_passcode"
                 app:setting_openable="true"
                 android:visibility="visible"/>
@@ -40,6 +42,7 @@
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
+                app:setting_image="@drawable/ic_settings_fiat_24dp"
                 app:setting_name="@string/settings_app_fiat"
                 app:setting_openable="true" />
 
@@ -47,54 +50,60 @@
                 android:id="@+id/appearance"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
+                app:setting_image="@drawable/ic_settings_appearance_24dp"
                 app:setting_name="@string/settings_app_appearance"
                 app:setting_openable="true" />
 
+            <TextView
+                style="@style/Header"
+                android:text="@string/settings_app_header_support"
+                android:layout_height="@dimen/header_height" />
+
             <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/terms"
+                android:id="@+id/intercom"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="32dp"
                 android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_terms_of_use"
+                app:setting_image="@drawable/ic_settings_intercom_24dp"
+                app:setting_name="@string/settings_app_intercom"
                 app:setting_openable="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/privacy"
+                android:id="@+id/support"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_privacy_policy"
+                app:setting_image="@drawable/ic_settings_support_24dp"
+                app:setting_name="@string/settings_app_support"
                 app:setting_openable="true" />
 
-            <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/licenses"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_licenses"
-                app:setting_openable="true" />
+            <TextView
+                style="@style/Header"
+                android:text="@string/settings_app_header_advanced"
+                android:layout_height="@dimen/header_height" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/get_in_touch"
+                android:id="@+id/advanced"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_get_in_touch"
+                app:setting_name="@string/settings_app_advanced"
                 app:setting_openable="true" />
 
+            <TextView
+                style="@style/Header"
+                android:text="@string/settings_app_header_about"
+                android:layout_height="@dimen/header_height" />
+
             <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/rate_app"
+                android:id="@+id/about_safe"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_rate"
+                app:setting_name="@string/settings_app_about"
                 app:setting_openable="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
@@ -102,19 +111,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_non_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
+                android:layout_marginBottom="32dp"
                 android:background="@drawable/background_selectable_white"
                 app:setting_name="@string/settings_app_version"
                 app:setting_openable="false" />
-
-            <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/advanced"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_setting_openable_height"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="32dp"
-                android:background="@drawable/background_selectable_white"
-                app:setting_name="@string/settings_app_advanced"
-                app:setting_openable="true" />
 
         </LinearLayout>
 
