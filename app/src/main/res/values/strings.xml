@@ -165,6 +165,9 @@
     <string name="settings_app_passcode">Passcode</string>
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
+    <string name="settings_app_intercom">Chat with us</string>
+    <string name="settings_app_support">Get Support</string>
+    <string name="settings_app_about">About Gnosis Safe</string>
     <string name="settings_app_auto">Auto</string>
     <string name="settings_app_dark">Dark</string>
     <string name="settings_app_light">Light</string>
@@ -176,6 +179,10 @@
     <string name="settings_app_licenses">Licenses</string>
     <string name="settings_app_get_in_touch">Get in touch</string>
     <string name="settings_app_version">App version</string>
+
+    <string name="settings_app_header_support">SUPPORT &amp; FEEDBACK</string>
+    <string name="settings_app_header_advanced">ADVANCED</string>
+    <string name="settings_app_header_about">ABOUT</string>
 
     <string name="settings_passcode_use_passcode">Use passcode</string>
     <string name="settings_passcode_change_passcode">Change passcode</string>
