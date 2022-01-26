@@ -7,15 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import io.gnosis.safe.BuildConfig
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
-import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.databinding.FragmentAboutSafeBinding
-import io.gnosis.safe.databinding.FragmentGetInTouchBinding
 import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.ui.settings.SettingsFragmentDirections
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import pm.gnosis.svalinn.common.utils.openUrl
 
 class AboutSafeFragment : BaseViewBindingFragment<FragmentAboutSafeBinding>() {
@@ -37,13 +33,13 @@ class AboutSafeFragment : BaseViewBindingFragment<FragmentAboutSafeBinding>() {
                 Navigation.findNavController(it).navigateUp()
             }
             terms.setOnClickListener {
-                requireContext().openUrl(getString(io.gnosis.safe.R.string.link_terms_of_use))
+                requireContext().openUrl(getString(R.string.link_terms_of_use))
             }
             privacy.setOnClickListener {
-                requireContext().openUrl(getString(io.gnosis.safe.R.string.link_privacy_policy))
+                requireContext().openUrl(getString(R.string.link_privacy_policy))
             }
             licenses.setOnClickListener {
-                requireContext().openUrl(getString(io.gnosis.safe.R.string.link_licenses))
+                requireContext().openUrl(getString(R.string.link_licenses))
             }
             rateApp.setOnClickListener {
                 openPlayStore()
