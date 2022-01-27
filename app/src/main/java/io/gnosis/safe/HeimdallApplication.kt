@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.gnosis.safe.BuildConfig.APPLICATION_ID
+import io.gnosis.safe.BuildConfig.INTERCOM_API_KEY
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
 import io.gnosis.safe.di.modules.ApplicationModule
+import io.intercom.android.sdk.Intercom
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
@@ -48,6 +51,8 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
             Timber.e("Could not register LinuxSecureRandom. Using default SecureRandom.")
         }
         Security.insertProviderAt(BouncyCastleProvider(), 1)
+
+        Intercom.initialize(this, INTERCOM_API_KEY, APPLICATION_ID)
     }
 
     private fun activityLifecycleCallbacks() = object : ActivityLifecycleCallbacks {
