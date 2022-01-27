@@ -8,6 +8,7 @@
     <color name="accent">@color/text_emphasis_high</color>
     <color name="window_background">@color/background</color>
     <color name="toolbar_action">@color/text_emphasis_high</color>
+    <color name="pending">#E8663D</color>
 
     <color name="background">@color/white</color>
     <color name="surface_01">@color/white_two</color>

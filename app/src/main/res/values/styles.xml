@@ -11,6 +11,7 @@
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
+        <item name="badgeStyle">@style/BadgeStyle</item>
     </style>
 
     <style name="DayNightThemeBase" parent="AppTheme" />
@@ -20,6 +21,10 @@
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:backgroundTint">@color/text_emphasis_high</item>
         <item name="android:textColor">@color/background</item>
+    </style>
+
+    <style name="BadgeStyle" parent="@style/Widget.MaterialComponents.Badge">
+        <item name="backgroundColor">@color/pending</item>
     </style>
 
     <style name="PrimaryButton">
