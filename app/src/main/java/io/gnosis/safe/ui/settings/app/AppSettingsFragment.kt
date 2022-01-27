@@ -53,7 +53,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             intercom.setOnClickListener {
                 //TODO: start intercom conversation
             }
-            support.setOnClickListener {
+            helpCenter.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
             advanced.setOnClickListener {

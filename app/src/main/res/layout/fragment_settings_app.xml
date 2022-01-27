@@ -71,13 +71,13 @@
                 app:setting_openable="true" />
 
             <io.gnosis.safe.ui.settings.view.SettingItem
-                android:id="@+id/support"
+                android:id="@+id/helpCenter"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:background="@drawable/background_selectable_white"
                 app:setting_image="@drawable/ic_settings_support_24dp"
-                app:setting_name="@string/settings_app_support"
+                app:setting_name="@string/settings_app_help_center"
                 app:setting_openable="true" />
 
             <TextView
