@@ -149,6 +149,10 @@ class Tracker internal constructor(
         logEvent(Event.PASSCODE_SKIPPED, null)
     }
 
+    fun logIntercomChatOpened() {
+        logEvent(Event.INTERCOM_CHAT_OPENED, null)
+    }
+
     private fun logEvent(name: String, attrs: Map<String, Any?>?) {
         try {
             val bundle = Bundle()
@@ -194,6 +198,7 @@ class Tracker internal constructor(
         val PASSCODE_DISABLED = "user_passcode_disabled"
         val PASSCODE_RESET = "user_passcode_reset"
         val PASSCODE_SKIPPED = "user_passcode_skipped"
+        val INTERCOM_CHAT_OPENED = "user_settings_open_intercom"
     }
 
     object Param {
