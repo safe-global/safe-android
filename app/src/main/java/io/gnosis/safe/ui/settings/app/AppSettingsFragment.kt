@@ -48,7 +48,6 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             fiat.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
-            intercom.settingImage = R.drawable.ic_settings_intercom_notification_24dp
             intercom.setOnClickListener {
                 viewModel.openIntercomMessenger()
             }
