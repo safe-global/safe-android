@@ -13,7 +13,6 @@ import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import io.intercom.android.sdk.Intercom
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -51,7 +50,7 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             }
             intercom.settingImage = R.drawable.ic_settings_intercom_notification_24dp
             intercom.setOnClickListener {
-                Intercom.client().displayMessenger()
+                viewModel.openIntercomMessenger()
             }
             helpCenter.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
