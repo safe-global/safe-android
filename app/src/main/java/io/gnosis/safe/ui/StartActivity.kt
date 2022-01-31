@@ -11,6 +11,7 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -47,6 +48,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
 
+    private lateinit var navController: NavController
+
     private val binding by lazy {
         ActivityStartBinding.inflate(layoutInflater)
     }
@@ -63,10 +66,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        navController = Navigation.findNavController(this@StartActivity, R.id.nav_host)
+
         viewComponent().inject(this)
 
         toolbarBinding.safeSelection.setOnClickListener {
-            Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
+            navController.navigate(R.id.safeSelectionDialog)
         }
         setupNav()
 
@@ -88,7 +93,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun setupPasscode() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+        navController.navigate(R.id.createPasscodeFragment, Bundle().apply {
             putBoolean("ownerImported", false)
         })
         settingsHandler.askForPasscodeSetupOnFirstLaunch = false
@@ -114,11 +119,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         setSafeData(it)
 
                         if (txId == null) {
-                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
+                            navController.navigate(R.id.transactionsFragment, Bundle().apply {
                                 putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                             })
                         } else {
-                            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                            with(navController) {
                                 navigate(R.id.transactionsFragment, Bundle().apply {
                                     putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
                                 })
@@ -168,7 +173,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun setupNav() {
-        val navController = Navigation.findNavController(this, R.id.nav_host)
         with(binding) {
             navBar.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -310,7 +314,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun askToUpdate() {
-        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+        with(navController) {
             if (currentDestination?.id != R.id.updatesFragment) {
                 navigate(R.id.updatesFragment, Bundle().apply {
                     putString(
@@ -327,7 +331,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToShareSafeDialog() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
+        navController.navigate(R.id.shareSafeDialog)
     }
 
     // Intercom UnreadConversationCountListener
@@ -368,7 +372,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToPasscodePrompt() {
-        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+        with(navController) {
             if (currentDestination?.id != R.id.enterPasscodeFragment) {
                 navigate(R.id.enterPasscodeFragment, Bundle().apply {
                     putBoolean("requirePasscodeToOpen", true)
