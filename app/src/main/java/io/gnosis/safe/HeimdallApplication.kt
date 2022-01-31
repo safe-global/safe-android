@@ -52,6 +52,10 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         }
         Security.insertProviderAt(BouncyCastleProvider(), 1)
 
+        setupIntercom()
+    }
+
+    private fun setupIntercom() {
         Intercom.initialize(this, INTERCOM_API_KEY, INTERCOM_APP_ID)
         Intercom.client().registerUnidentifiedUser()
         Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE)
