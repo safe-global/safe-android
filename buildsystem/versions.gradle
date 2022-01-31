@@ -50,6 +50,7 @@ ext {
             play_core_ktx                   : '1.8.1',
             work                            : '2.6.0',
             unstoppabledomains              : '1.13.2',
+            intercom                        : '10.6.0',
 
             // Test dependencies
             espresso                        : '3.1.1',

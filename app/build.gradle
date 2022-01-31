@@ -17,8 +17,11 @@ android {
         versionName getKey("APP_VERSION_NAME", "3.2.1")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // API keys
+        // Infura API key
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
+        // Intercom
+        buildConfigField javaTypes.STRING, "INTERCOM_APP_ID", asString(getKey("INTERCOM_APP_ID", ""))
+        buildConfigField javaTypes.STRING, "INTERCOM_API_KEY", asString(getKey("INTERCOM_API_KEY", ""))
         // Services
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
         // Blockchain settings
@@ -242,6 +245,8 @@ dependencies {
 
     implementation "androidx.biometric:biometric:$versions.androidx_biometrics"
 
+    // Intercom
+    implementation "io.intercom.android:intercom-sdk:$versions.intercom"
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {

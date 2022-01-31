@@ -11,7 +11,7 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -31,6 +31,8 @@ import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -38,13 +40,15 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener, UnreadConversationCountListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
 
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
+
+    private lateinit var navController: NavController
 
     private val binding by lazy {
         ActivityStartBinding.inflate(layoutInflater)
@@ -62,20 +66,34 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        navController = Navigation.findNavController(this@StartActivity, R.id.nav_host)
+
         viewComponent().inject(this)
 
         toolbarBinding.safeSelection.setOnClickListener {
-            Navigation.findNavController(this, R.id.nav_host).navigate(R.id.safeSelectionDialog)
+            navController.navigate(R.id.safeSelectionDialog)
         }
         setupNav()
 
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
+
+        onCountUpdate(Intercom.client().unreadConversationCount)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Intercom.client().addUnreadConversationCountListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Intercom.client().removeUnreadConversationCountListener(this)
     }
 
     private fun setupPasscode() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.createPasscodeFragment, Bundle().apply {
+        navController.navigate(R.id.createPasscodeFragment, Bundle().apply {
             putBoolean("ownerImported", false)
         })
         settingsHandler.askForPasscodeSetupOnFirstLaunch = false
@@ -85,7 +103,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         super.onNewIntent(intent)
         handleIntent(intent)
     }
-
 
     private fun handleIntent(intent: Intent?) {
         intent?.let {
@@ -102,11 +119,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         setSafeData(it)
 
                         if (txId == null) {
-                            Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.transactionsFragment, Bundle().apply {
+                            navController.navigate(R.id.transactionsFragment, Bundle().apply {
                                 putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
                             })
                         } else {
-                            with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+                            with(navController) {
                                 navigate(R.id.transactionsFragment, Bundle().apply {
                                     putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
                                 })
@@ -156,7 +173,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun setupNav() {
-        val navController = Navigation.findNavController(this, R.id.nav_host)
         with(binding) {
             navBar.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -298,7 +314,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun askToUpdate() {
-        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+        with(navController) {
             if (currentDestination?.id != R.id.updatesFragment) {
                 navigate(R.id.updatesFragment, Bundle().apply {
                     putString(
@@ -315,30 +331,23 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToShareSafeDialog() {
-        Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
+        navController.navigate(R.id.shareSafeDialog)
     }
 
-    override fun screenId() = null
-
-    companion object {
-        const val EXTRA_CHAIN_ID = "extra.string.chain_id"
-        const val EXTRA_SAFE = "extra.string.safe"
-        const val EXTRA_TX_ID = "extra.string.tx_id"
-
-        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
-            Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_CHAIN_ID, chainId)
-                putExtra(EXTRA_SAFE, safeAddress)
-                putExtra(EXTRA_TX_ID, txId)
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
+    // Intercom UnreadConversationCountListener
+    override fun onCountUpdate(count: Int) {
+        if (count > 0) {
+            binding.navBar.getOrCreateBadge(R.id.settingsFragment)
+        } else {
+            binding.navBar.removeBadge(R.id.settingsFragment)
+        }
     }
 
     /*
-     * appInForeground() is triggered when the whole app is resumed from background not only one activity.
-     * As it happens when we return from the QR code activity. We want to lock the screen when the app
-     * is resumed from background but not when the user returns from the QR code scanner activity.
-     */
+       * appInForeground() is triggered when the whole app is resumed from background not only one activity.
+       * As it happens when we return from the QR code activity. We want to lock the screen when the app
+       * is resumed from background but not when the user returns from the QR code scanner activity.
+       */
     override fun appInForeground() {
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
@@ -363,12 +372,28 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun navigateToPasscodePrompt() {
-        with(Navigation.findNavController(this@StartActivity, R.id.nav_host)) {
+        with(navController) {
             if (currentDestination?.id != R.id.enterPasscodeFragment) {
                 navigate(R.id.enterPasscodeFragment, Bundle().apply {
                     putBoolean("requirePasscodeToOpen", true)
                 })
             }
         }
+    }
+
+    override fun screenId() = null
+
+    companion object {
+        const val EXTRA_CHAIN_ID = "extra.string.chain_id"
+        const val EXTRA_SAFE = "extra.string.safe"
+        const val EXTRA_TX_ID = "extra.string.tx_id"
+
+        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
+            Intent(context, StartActivity::class.java).apply {
+                putExtra(EXTRA_CHAIN_ID, chainId)
+                putExtra(EXTRA_SAFE, safeAddress)
+                putExtra(EXTRA_TX_ID, txId)
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
     }
 }

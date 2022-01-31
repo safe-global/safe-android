@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.gnosis.safe.BuildConfig
+import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSettingsAppBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.SettingsFragmentDirections
-import pm.gnosis.svalinn.common.utils.visible
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -48,12 +48,10 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
             fiat.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAppFiatFragment())
             }
-            //TODO: set to visible after intercom is integrated
-            intercom.visible(false)
             intercom.setOnClickListener {
-                //TODO: start intercom conversation
+                viewModel.openIntercomMessenger()
             }
-            support.setOnClickListener {
+            helpCenter.setOnClickListener {
                 findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToGetInTouchFragment())
             }
             advanced.setOnClickListener {
@@ -68,14 +66,23 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         viewModel.signingOwnerCount.observe(viewLifecycleOwner, Observer {
             binding.ownerKeys.value = it.toString()
         })
-
         viewModel.loadSigningOwner()
 
         viewModel.defaultFiat.observe(viewLifecycleOwner, Observer {
             binding.fiat.value = it
         })
-
         viewModel.loadUserDefaultFiat()
+
+        viewModel.intercomCount.observe(viewLifecycleOwner, {
+            updateIntercomIcon(it)
+        })
+        viewModel.loadIntercomCount()
+    }
+
+    private fun updateIntercomIcon(count: Int) {
+        with(binding) {
+            intercom.settingImage = if (count > 0) R.drawable.ic_settings_intercom_notification_24dp else R.drawable.ic_settings_intercom_24dp
+        }
     }
 
     companion object {

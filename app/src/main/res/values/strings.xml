@@ -166,7 +166,6 @@
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
     <string name="settings_app_intercom">Chat with us</string>
-    <string name="settings_app_support">Get Support</string>
     <string name="settings_app_about">About Gnosis Safe</string>
     <string name="settings_app_auto">Auto</string>
     <string name="settings_app_dark">Dark</string>
@@ -177,7 +176,7 @@
     <string name="settings_app_terms_of_use">Terms of use</string>
     <string name="settings_app_privacy_policy">Privacy policy</string>
     <string name="settings_app_licenses">Licenses</string>
-    <string name="settings_app_get_in_touch">Get in touch</string>
+    <string name="settings_app_help_center">Help Center</string>
     <string name="settings_app_version">App version</string>
 
     <string name="settings_app_header_support">SUPPORT &amp; FEEDBACK</string>
@@ -233,7 +232,7 @@
     <string name="screenshots">SCREENSHOTS</string>
     <string name="enable_screenshots">Enable screenshots</string>
     <string name="enable_screenshots_description">Enabling screenshots allows external apps to record the content of your screen. We highly recommend leaving this option disabled.</string>
-    <string name="get_in_touch_title">Get in touch</string>
+    <string name="get_in_touch_title">Help Center</string>
     <string name="get_in_touch_email">E-mail</string>
     <string name="get_in_touch_discord">Discord</string>
 

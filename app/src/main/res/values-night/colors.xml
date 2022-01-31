@@ -9,6 +9,7 @@
     <color name="accent">@color/white_two</color>
     <color name="window_background">@color/background</color>
     <color name="toolbar_action">@color/white_two</color>
+    <color name="pending">#FF8042</color>
 
     <color name="background">@color/black_five</color>
     <color name="surface_01">@color/black_four</color>
