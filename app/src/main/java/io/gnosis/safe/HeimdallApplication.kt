@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import io.gnosis.safe.BuildConfig.APPLICATION_ID
 import io.gnosis.safe.BuildConfig.INTERCOM_API_KEY
+import io.gnosis.safe.BuildConfig.INTERCOM_APP_ID
 import io.gnosis.safe.di.ComponentProvider
 import io.gnosis.safe.di.components.ApplicationComponent
 import io.gnosis.safe.di.components.DaggerApplicationComponent
@@ -52,7 +52,9 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         }
         Security.insertProviderAt(BouncyCastleProvider(), 1)
 
-        Intercom.initialize(this, INTERCOM_API_KEY, APPLICATION_ID)
+        Intercom.initialize(this, INTERCOM_API_KEY, INTERCOM_APP_ID)
+        Intercom.client().registerUnidentifiedUser()
+        Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE)
     }
 
     private fun activityLifecycleCallbacks() = object : ActivityLifecycleCallbacks {

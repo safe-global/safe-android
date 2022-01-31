@@ -19,7 +19,8 @@ android {
 
         // Infura API key
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
-        // Intercom API key
+        // Intercom
+        buildConfigField javaTypes.STRING, "INTERCOM_APP_ID", asString(getKey("INTERCOM_APP_ID", ""))
         buildConfigField javaTypes.STRING, "INTERCOM_API_KEY", asString(getKey("INTERCOM_API_KEY", ""))
         // Services
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))

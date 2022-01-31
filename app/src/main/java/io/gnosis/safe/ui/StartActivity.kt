@@ -11,7 +11,6 @@ import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -31,6 +30,8 @@ import io.gnosis.safe.ui.updates.UpdatesFragment
 import io.gnosis.safe.utils.abbreviateEthAddress
 import io.gnosis.safe.utils.dpToPx
 import io.gnosis.safe.utils.toColor
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.svalinn.common.utils.visible
@@ -38,7 +39,7 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener, UnreadConversationCountListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -72,6 +73,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         handleIntent(intent)
 
         (application as? HeimdallApplication)?.registerForAppState(this)
+
+        onCountUpdate(Intercom.client().unreadConversationCount)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Intercom.client().addUnreadConversationCountListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Intercom.client().removeUnreadConversationCountListener(this)
     }
 
     private fun setupPasscode() {
@@ -85,7 +98,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         super.onNewIntent(intent)
         handleIntent(intent)
     }
-
 
     private fun handleIntent(intent: Intent?) {
         intent?.let {
@@ -318,27 +330,20 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         Navigation.findNavController(this@StartActivity, R.id.nav_host).navigate(R.id.shareSafeDialog)
     }
 
-    override fun screenId() = null
-
-    companion object {
-        const val EXTRA_CHAIN_ID = "extra.string.chain_id"
-        const val EXTRA_SAFE = "extra.string.safe"
-        const val EXTRA_TX_ID = "extra.string.tx_id"
-
-        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
-            Intent(context, StartActivity::class.java).apply {
-                putExtra(EXTRA_CHAIN_ID, chainId)
-                putExtra(EXTRA_SAFE, safeAddress)
-                putExtra(EXTRA_TX_ID, txId)
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
+    // Intercom UnreadConversationCountListener
+    override fun onCountUpdate(count: Int) {
+        if (count > 0) {
+            binding.navBar.getOrCreateBadge(R.id.settingsFragment)
+        } else {
+            binding.navBar.removeBadge(R.id.settingsFragment)
+        }
     }
 
     /*
-     * appInForeground() is triggered when the whole app is resumed from background not only one activity.
-     * As it happens when we return from the QR code activity. We want to lock the screen when the app
-     * is resumed from background but not when the user returns from the QR code scanner activity.
-     */
+       * appInForeground() is triggered when the whole app is resumed from background not only one activity.
+       * As it happens when we return from the QR code activity. We want to lock the screen when the app
+       * is resumed from background but not when the user returns from the QR code scanner activity.
+       */
     override fun appInForeground() {
         if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && comingFromBackground) {
             askForPasscode()
@@ -370,5 +375,21 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 })
             }
         }
+    }
+
+    override fun screenId() = null
+
+    companion object {
+        const val EXTRA_CHAIN_ID = "extra.string.chain_id"
+        const val EXTRA_SAFE = "extra.string.safe"
+        const val EXTRA_TX_ID = "extra.string.tx_id"
+
+        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
+            Intent(context, StartActivity::class.java).apply {
+                putExtra(EXTRA_CHAIN_ID, chainId)
+                putExtra(EXTRA_SAFE, safeAddress)
+                putExtra(EXTRA_TX_ID, txId)
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
     }
 }
