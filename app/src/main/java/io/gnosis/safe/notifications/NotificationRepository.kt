@@ -32,6 +32,15 @@ class NotificationRepository(
     private val notificationManager: NotificationManager
 ) {
 
+    //FIXME: workaround to check for unhandled intercom pushes
+    var intercomPushReceived: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_INTERCOM_PUSH_RECEIVED, false)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_INTERCOM_PUSH_RECEIVED, value)
+            }
+        }
+
     //FIXME: workaround for versioning validation on notification service
     private val appVersion: String = BuildConfig.VERSION_NAME
         .replace("(\\d*)\\.(\\d*)\\.(\\d*)(.*)".toRegex()) {
@@ -241,5 +250,6 @@ class NotificationRepository(
 
     companion object {
         private const val KEY_DEVICE_UUID = "prefs.string.device_uuid"
+        private const val KEY_INTERCOM_PUSH_RECEIVED = "prefs.boolean.intercom_push_received"
     }
 }

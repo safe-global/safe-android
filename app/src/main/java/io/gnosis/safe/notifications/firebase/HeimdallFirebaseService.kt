@@ -6,6 +6,7 @@ import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.workers.WorkRepository
+import io.intercom.android.sdk.push.IntercomPushClient
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,17 +19,28 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     @Inject
     lateinit var workRepository: WorkRepository
 
+    @Inject
+    lateinit var intercomPushClient: IntercomPushClient
+
     override fun onCreate() {
         super.onCreate()
         HeimdallApplication[this].inject(this)
     }
 
-    override fun onMessageReceived(message: RemoteMessage) {
-        // No data received
-        if (message.data.isEmpty()) return
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        val message = remoteMessage.data
+            // No data received
+        if (message.isEmpty()) return
+
         runBlocking {
             try {
-                notificationRepo.handlePushNotification(PushNotification.fromMap(message.data))
+                if (intercomPushClient.isIntercomPush(message)) {
+                    //FIXME: workaround to check for unhandled intercom pushes
+                    notificationRepo.intercomPushReceived = true
+                    intercomPushClient.handlePush(application, message)
+                } else {
+                    notificationRepo.handlePushNotification(PushNotification.fromMap(message))
+                }
             } catch (e: IllegalArgumentException) {
                 Timber.e(e)
             }
@@ -39,5 +51,6 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.d("Firebase token: $token")
         workRepository.registerForPushNotifications(token)
+        intercomPushClient.sendTokenToIntercom(application, token)
     }
 }
