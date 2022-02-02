@@ -23,6 +23,7 @@ import io.gnosis.safe.HeimdallApplication
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ActivityStartBinding
 import io.gnosis.safe.databinding.ToolbarSafeOverviewBinding
+import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.SafeOverviewNavigationHandler
 import io.gnosis.safe.ui.base.activity.BaseActivity
 import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
@@ -48,6 +49,9 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     @Inject
     lateinit var credentialsRepository: CredentialsRepository
 
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
     private lateinit var navController: NavController
 
     private val binding by lazy {
@@ -61,6 +65,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,29 +148,46 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     }
                 }
             } ?: run {
-                if (!settingsHandler.showUpdateInfo) {
-                    settingsHandler.appStartCount++
-                }
-                // do not start rate flow and update screen together
-                when {
-                    settingsHandler.showUpdateInfo -> {
+
+                if (notificationRepository.intercomPushReceived) {
+
+                    if (settingsHandler.showUpdateInfo) {
                         askToUpdate()
-                        if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && !settingsHandler.updateDeprecated) {
-                            askForPasscode()
-                        }
                     }
-                    settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
-                        if (settingsHandler.usePasscode) {
-                            settingsHandler.askForPasscodeSetupOnFirstLaunch = false
-                            settingsHandler.requirePasscodeToOpen = false
-                            settingsHandler.requirePasscodeForConfirmations = true
-                            askForPasscode()
-                        } else {
-                            setupPasscode()
-                        }
-                    }
-                    else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
+                    if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
                         askForPasscode()
+                        comingFromBackground = false
+                    } else {
+                        handleIntercom()
+                    }
+
+                } else {
+
+                    if (!settingsHandler.showUpdateInfo) {
+                        settingsHandler.appStartCount++
+                    }
+
+                    // do not start rate flow and update screen together
+                    when {
+                        settingsHandler.showUpdateInfo -> {
+                            askToUpdate()
+                            if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode && !settingsHandler.updateDeprecated) {
+                                askForPasscode()
+                            }
+                        }
+                        settingsHandler.askForPasscodeSetupOnFirstLaunch -> {
+                            if (settingsHandler.usePasscode) {
+                                settingsHandler.askForPasscodeSetupOnFirstLaunch = false
+                                settingsHandler.requirePasscodeToOpen = false
+                                settingsHandler.requirePasscodeForConfirmations = true
+                                askForPasscode()
+                            } else {
+                                setupPasscode()
+                            }
+                        }
+                        else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
+                            askForPasscode()
+                        }
                     }
                 }
             }
@@ -176,9 +198,17 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         with(binding) {
             navBar.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
-                if (settingsHandler.appStartCount >= 3 && (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment)) {
-                    startRateFlow()
+
+                if (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment) {
+                    if (settingsHandler.appStartCount >= 3) {
+                        startRateFlow()
+                    }
                 }
+
+                if (destination.id != R.id.enterPasscodeFragment) {
+                    handleIntercom()
+                }
+
                 if (isFullscreen(destination.id)) {
                     toolbar.visible(false)
                     navBar.visible(false)
@@ -332,6 +362,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun navigateToShareSafeDialog() {
         navController.navigate(R.id.shareSafeDialog)
+    }
+
+    private fun handleIntercom() {
+        if (notificationRepository.intercomPushReceived) {
+            Intercom.client().handlePushMessage()
+            notificationRepository.intercomPushReceived = false
+        }
     }
 
     // Intercom UnreadConversationCountListener
