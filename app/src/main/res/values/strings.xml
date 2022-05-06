@@ -568,5 +568,9 @@
     <string name="ledger_sign_reject">Reject Transaction</string>
     <string name="ledger_sign_verify">Verify the transaction hash below on your Ledger Nano X and confirm by pressing both buttons simultaneously.</string>
     <string name="ledger_sign_cancel">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="review">Review</string>
+    <string name="from_safe_label">From safe:</string>
 
 </resources>

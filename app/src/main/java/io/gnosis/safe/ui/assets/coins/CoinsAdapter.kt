@@ -1,10 +1,14 @@
 package io.gnosis.safe.ui.assets.coins
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import io.gnosis.data.models.Chain
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ItemBannerBinding
 import io.gnosis.safe.databinding.ItemCoinBalanceBinding
@@ -12,7 +16,10 @@ import io.gnosis.safe.databinding.ItemCoinTotalBinding
 import io.gnosis.safe.ui.assets.coins.CoinsViewData.Banner
 import io.gnosis.safe.ui.assets.coins.CoinsViewData.TotalBalance
 import io.gnosis.safe.ui.assets.coins.CoinsViewData.CoinBalance
+import io.gnosis.safe.ui.settings.owner.list.OwnerListFragmentDirections
+import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
 import io.gnosis.safe.utils.loadTokenLogo
+import timber.log.Timber.i
 import java.lang.ref.WeakReference
 
 class CoinsAdapter(
@@ -106,8 +113,21 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
             symbol.text = coinBalance.symbol
             balance.text = coinBalance.balance
             balanceUsd.text = coinBalance.balanceFiat
+            coinContainer.setOnClickListener(View.OnClickListener {
+                // TODO Navigate to: Enter recipient address and amount
+                i("Send ${symbol.text} funds...")
+
+                //findNavController(this.).navigate(OwnerListFragmentDirections.actionOwnerListFragmentToOwnerAddOptionsFragment())
+
+                navigateToTxDetails(logoImage)
+            })
         }
+
     }
+}
+
+private fun navigateToTxDetails(view: View, chain: Chain, id: String) {
+    Navigation.findNavController(view).navigate(TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(chain, id))
 }
 
 class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : BaseCoinsViewHolder(viewBinding) {
