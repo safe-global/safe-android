@@ -13,10 +13,7 @@ import io.gnosis.data.repositories.EnsInvalidError
 import io.gnosis.data.repositories.EnsResolutionError
 import io.gnosis.data.repositories.EnsReverseRecordNotSetError
 import io.gnosis.safe.helpers.Offline
-import io.gnosis.safe.ui.safe.add.InvalidName
-import io.gnosis.safe.ui.safe.add.SafeNotFound
-import io.gnosis.safe.ui.safe.add.SafeNotSupported
-import io.gnosis.safe.ui.safe.add.UsedSafeAddress
+import io.gnosis.safe.ui.safe.add.*
 import io.gnosis.safe.ui.settings.owner.InvalidPrivateKey
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.settings.owner.KeyAlreadyImported
@@ -93,6 +90,8 @@ sealed class Error(
 
     object Error1113 : Error(1112, 400, R.string.error_network_request_reason, R.string.error_network_request_fix)
 
+    object Error1114: Error(1114, null, R.string.error_client_address_not_matching_network_reason, R.string.error_client_address_not_matching_network_fix)
+
     object Error6357 : Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
     object Error6358 : Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
 
@@ -129,6 +128,7 @@ fun Throwable.toError(): Error =
         // Common client errors
         this is UsedSafeAddress -> Error.Error1101
         this is InvalidAddressException -> Error.Error1102
+        this is AddressPrefixMismatch -> Error.Error1114
         this is InvalidSeedPhrase -> Error.Error1103
         this is InvalidPrivateKey -> Error.Error1103
         this is KeyAlreadyImported -> Error.Error1111

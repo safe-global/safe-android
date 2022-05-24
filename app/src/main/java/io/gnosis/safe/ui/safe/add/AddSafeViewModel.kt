@@ -56,6 +56,8 @@ object SafeNotSupported : Throwable()
 object SafeNotFound : Throwable()
 object InvalidSafeAddress : Throwable()
 object UsedSafeAddress : Throwable()
+//FIXME: implement proper support for EIP-3770 addresses
+object AddressPrefixMismatch: Throwable()
 
 data class ShowValidSafe(
     val safe: Safe

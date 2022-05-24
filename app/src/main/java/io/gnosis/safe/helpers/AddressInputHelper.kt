@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.gnosis.data.models.Chain
+import io.gnosis.safe.ui.safe.add.AddressPrefixMismatch
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.Tracker
@@ -73,20 +74,47 @@ class AddressInputHelper(
                     dismiss()
                 }
                 bottomSheetAddressInputPasteTouch.setOnClickListener {
-                    val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim()
-                    (input?.toString()?.let {
-                        //FIXME: implement proper support for EIP-3770 addresses
-                        parseEthereumAddress(if (it.contains(":")) it.split(":")[1] else it)
-                    }
-                        ?: run {
+
+                    val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim().toString()
+
+                    var prefix = ""
+
+                    val address =
+                        input?.let {
+                            //FIXME: implement proper support for EIP-3770 addresses
+                            if (it.contains(":")) {
+                                prefix = it.split(":")[0]
+                                parseEthereumAddress(it.split(":")[1])
+                            } else {
+                                parseEthereumAddress(it)
+                            }
+                        }
+
+                    when {
+
+                        address == null -> {
                             fragment.context?.let {
                                 handleError(
                                     InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)),
-                                    input.toString()
+                                    input
                                 )
                             } ?: Timber.e(InvalidAddressException(), "Fragment lost context.")
-                            null
-                        })?.let { addressCallback(it) }
+                        }
+
+                        prefix.isNotEmpty() && selectedChain.shortName != prefix -> {
+                            fragment.context?.let {
+                                handleError(
+                                    AddressPrefixMismatch,
+                                    input
+                                )
+                            } ?: Timber.e(InvalidAddressException(), "Fragment lost context.")
+                        }
+
+                        else -> {
+                            addressCallback(address)
+                        }
+                    }
+
                     dismiss()
                 }
             }
