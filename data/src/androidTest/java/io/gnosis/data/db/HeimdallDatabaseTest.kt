@@ -7,9 +7,7 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
-import io.gnosis.data.models.Owner
-import io.gnosis.data.models.OwnerTypeConverter
-import io.gnosis.data.models.Safe
+import io.gnosis.data.models.*
 import io.gnosis.data.test.BuildConfig
 import org.junit.Assert
 import org.junit.Assert.assertTrue
@@ -48,7 +46,8 @@ class HeimdallDatabaseTest {
             HeimdallDatabase.MIGRATION_2_3,
             HeimdallDatabase.MIGRATION_3_4,
             HeimdallDatabase.MIGRATION_4_5,
-            HeimdallDatabase.MIGRATION_5_6
+            HeimdallDatabase.MIGRATION_5_6,
+            HeimdallDatabase.MIGRATION_6_7,
         )
 
         // Open latest version of the database. Room will validate the schema
@@ -190,6 +189,95 @@ class HeimdallDatabaseTest {
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_ADDRESS)), safe.address.asEthereumAddressString())
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_LOCAL_NAME)), safe.localName)
                 Assert.assertEquals(getString(getColumnIndex(Safe.COL_CHAIN_ID)), bigIntegerConverter.toHexString(safe.chainId))
+            }
+
+            close()
+        }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate5To6() {
+        val owner = Owner(Solidity.Address(BigInteger.ONE), "owner", Owner.Type.IMPORTED)
+        val seed = "seed phrase"
+        val key = "private key"
+
+        helper.createDatabase(TEST_DB, 5).apply {
+
+            val rowId = insert(
+                Owner.TABLE_NAME, OnConflictStrategy.REPLACE,
+                ContentValues().apply {
+                    put(Owner.COL_ADDRESS, addressConverter.toHexString(owner.address))
+                    put(Owner.COL_NAME, owner.name)
+                    put(Owner.COL_TYPE, ownerTypeConverter.toValue(owner.type))
+                    put(Owner.COL_SEED_PHRASE, seed)
+                    put(Owner.COL_PRIVATE_KEY, key)
+                })
+
+            assertTrue(rowId >= 0)
+
+            close()
+        }
+
+        helper.runMigrationsAndValidate(TEST_DB, 6, true, HeimdallDatabase.MIGRATION_5_6).apply {
+
+            with(query("SELECT * FROM ${Owner.TABLE_NAME}")) {
+                Assert.assertEquals(1, count)
+                moveToFirst()
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_ADDRESS)), owner.address.asEthereumAddressString())
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_NAME)), owner.name)
+                Assert.assertEquals(getInt(getColumnIndex(Owner.COL_TYPE)), ownerTypeConverter.toValue(owner.type))
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_SEED_PHRASE)), seed)
+                Assert.assertEquals(getString(getColumnIndex(Owner.COL_PRIVATE_KEY)), key)
+            }
+
+            close()
+        }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate6To7() {
+        val chain = Chain(
+            Chain.ID_MAINNET,
+            "Mainnet",
+            "eth",
+            "",
+            "",
+            "",
+            RpcAuthentication.API_KEY_PATH,
+            "",
+            "",
+            null
+        )
+
+        helper.createDatabase(TEST_DB, 6).apply {
+
+            val rowId = insert(
+                Chain.TABLE_NAME, OnConflictStrategy.REPLACE,
+                ContentValues().apply {
+                    put(Chain.COL_CHAIN_ID, bigIntegerConverter.toHexString(chain.chainId))
+                    put(Chain.COL_CHAIN_NAME, chain.name)
+                    put(Chain.COL_TEXT_COLOR, "")
+                    put(Chain.COL_BACKGROUND_COLOR, "")
+                    put(Chain.COL_RPC_URI, "")
+                    put(Chain.COL_RPC_AUTHENTICATION, 0)
+                    put(Chain.COL_BLOCK_EXPLORER_TEMPLATE_ADDRESS, "")
+                    put(Chain.COL_BLOCK_EXPLORER_TEMPLATE_TX_HASH, "")
+                })
+
+            assertTrue(rowId >= 0)
+
+            close()
+        }
+
+        helper.runMigrationsAndValidate(TEST_DB, 7, true, HeimdallDatabase.MIGRATION_6_7).apply {
+
+            with(query("SELECT * FROM ${Chain.TABLE_NAME}")) {
+                Assert.assertEquals(1, count)
+                moveToFirst()
+                Assert.assertEquals(getString(getColumnIndex(Chain.COL_CHAIN_ID)), bigIntegerConverter.toHexString(chain.chainId))
+                Assert.assertEquals(getString(getColumnIndex(Chain.COL_CHAIN_NAME)), chain.name)
             }
 
             close()

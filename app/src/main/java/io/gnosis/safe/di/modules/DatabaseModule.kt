@@ -10,6 +10,7 @@ import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_2_3
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_3_4
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_4_5
 import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_5_6
+import io.gnosis.data.db.HeimdallDatabase.Companion.MIGRATION_6_7
 import io.gnosis.data.db.daos.ChainDao
 import io.gnosis.data.db.daos.OwnerDao
 import io.gnosis.data.db.daos.SafeDao
@@ -23,7 +24,14 @@ class DatabaseModule {
     @Singleton
     fun provideSafeDatabase(@ApplicationContext context: Context): HeimdallDatabase =
         Room.databaseBuilder(context, HeimdallDatabase::class.java, HeimdallDatabase.DB_NAME)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+            .addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+                MIGRATION_6_7
+            )
             .build()
 
     @Provides
