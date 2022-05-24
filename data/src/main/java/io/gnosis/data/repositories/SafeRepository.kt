@@ -143,7 +143,7 @@ class SafeRepository(
         }
 
         fun isSupportedVersion(version: SemVer?): Boolean {
-            return version != null && version >= SemVer(1, 0, 0) && version <= SemVer(1, 3, 0)
+            return version != null && version >= SemVer(1, 0, 0)
         }
 
         const val METHOD_SET_FALLBACK_HANDLER = "setFallbackHandler"
