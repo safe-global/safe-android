@@ -10,6 +10,7 @@ import java.math.BigInteger
 data class ChainInfo(
     @Json(name = "chainId") @field:DecimalNumber val chainId: BigInteger,
     @Json(name = "chainName") val chainName: String,
+    @Json(name = "shortName") val shortName: String,
     @Json(name = "ensRegistryAddress") val ensRegistryAddress: String?,
     @Json(name = "rpcUri") val rpcUri: RpcUri,
     @Json(name = "blockExplorerUriTemplate") val blockExplorerTemplate: BlockExplorerTemplate,
@@ -19,7 +20,7 @@ data class ChainInfo(
 ) {
 
     fun toChain(): Chain {
-        return Chain(chainId, chainName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerTemplate.address, blockExplorerTemplate.txHash, ensRegistryAddress).apply {
+        return Chain(chainId, chainName, shortName, theme.textColor, theme.backgroundColor, rpcUri.value, rpcUri.authentication, blockExplorerTemplate.address, blockExplorerTemplate.txHash, ensRegistryAddress).apply {
             currency = nativeCurrency.toCurrency(chainId)
         }
     }

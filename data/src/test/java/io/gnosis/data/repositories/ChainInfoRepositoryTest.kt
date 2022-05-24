@@ -23,20 +23,38 @@ class ChainInfoRepositoryTest {
     private val chainInfoRepository = ChainInfoRepository(chainDao, gatewayApi)
 
     private val rinkebyChainInfo = ChainInfo(
-        Chain.ID_RINKEBY, "Rinkeby", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
-        NativeCurrency("", "", 18, ""), "",
+        Chain.ID_RINKEBY,
+        "Rinkeby",
+        "rin",
+        null,
+        RpcUri(RpcAuthentication.API_KEY_PATH, ""),
+        BlockExplorerTemplate("", ""),
+        NativeCurrency("", "", 18, ""),
+        "",
         ChainTheme("", "")
     )
     private val pagedResult: List<ChainInfo> = listOf(
         ChainInfo(
-            Chain.ID_MAINNET, "Mainnet", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
-            NativeCurrency("", "", 18, ""), "",
+            Chain.ID_MAINNET,
+            "Mainnet",
+            "eth",
+            null,
+            RpcUri(RpcAuthentication.API_KEY_PATH, ""),
+            BlockExplorerTemplate("", ""),
+            NativeCurrency("", "", 18, ""),
+            "",
             ChainTheme("", "")
         ),
         rinkebyChainInfo,
         ChainInfo(
-            BigInteger.valueOf(137), "Matic", null, RpcUri(RpcAuthentication.API_KEY_PATH, ""), BlockExplorerTemplate("", ""),
-            NativeCurrency("", "", 18, ""), "",
+            BigInteger.valueOf(137),
+            "Matic",
+            "matic",
+            null,
+            RpcUri(RpcAuthentication.API_KEY_PATH, ""),
+            BlockExplorerTemplate("", ""),
+            NativeCurrency("", "", 18, ""),
+            "",
             ChainTheme("", "")
         )
     )
@@ -63,6 +81,21 @@ class ChainInfoRepositoryTest {
 
         chainInfoRepository.updateChainInfo(pagedResult, safes)
 
-        coVerify(exactly = 1) { chainDao.save(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null)) }
+        coVerify(exactly = 1) {
+            chainDao.save(
+                Chain(
+                    Chain.ID_RINKEBY,
+                    "Rinkeby",
+                    "rin",
+                    "",
+                    "",
+                    "",
+                    RpcAuthentication.API_KEY_PATH,
+                    "",
+                    "",
+                    null
+                )
+            )
+        }
     }
 }

@@ -15,6 +15,9 @@ data class Chain(
     @ColumnInfo(name = COL_CHAIN_NAME)
     val name: String,
 
+    @ColumnInfo(name = COL_CHAIN_SHORT_NAME)
+    val shortName: String,
+
     @ColumnInfo(name = COL_TEXT_COLOR)
     val textColor: String,
 
@@ -93,6 +96,7 @@ data class Chain(
         const val TABLE_NAME = "chains"
 
         const val COL_CHAIN_NAME = "chain_name"
+        const val COL_CHAIN_SHORT_NAME = "chain_short_name"
         const val COL_CHAIN_ID = "chain_id"
         const val COL_BACKGROUND_COLOR = "background_color"
         const val COL_RPC_URI = "rpc_uri"
@@ -108,6 +112,7 @@ data class Chain(
         val DEFAULT_CHAIN =  Chain(
             BuildConfig.CHAIN_ID.toBigInteger(),
             BuildConfig.BLOCKCHAIN_NAME,
+            BuildConfig.BLOCKCHAIN_SHORT_NAME,
             BuildConfig.CHAIN_TEXT_COLOR,
             BuildConfig.CHAIN_BACKGROUND_COLOR,
             BuildConfig.BLOCKCHAIN_EXPLORER_URL,

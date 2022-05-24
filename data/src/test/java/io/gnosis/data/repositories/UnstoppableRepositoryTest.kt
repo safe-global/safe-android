@@ -48,7 +48,10 @@ class UnstoppableRepositoryTest {
     fun `resolve - (domain) should fail`() = runBlocking {
         coEvery {
             resolutionLib.getAddress(FAIL_DOMAIN, "eth")
-        } throws NamingServiceException(NSExceptionCode.UnregisteredDomain, NSExceptionParams("d", FAIL_DOMAIN))
+        } throws NamingServiceException(
+            NSExceptionCode.UnregisteredDomain,
+            NSExceptionParams("d", FAIL_DOMAIN)
+        )
 
         try {
             repository.resolve(FAIL_DOMAIN, Chain.ID_RINKEBY)
@@ -61,7 +64,20 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (1) should succeed for Mainnet`() {
 
-        val result = repository.canResolve(Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null))
+        val result = repository.canResolve(
+            Chain(
+                Chain.ID_MAINNET,
+                "Mainnet",
+                "eth",
+                "",
+                "",
+                "",
+                RpcAuthentication.API_KEY_PATH,
+                "",
+                "",
+                null
+            )
+        )
 
         assertTrue(result)
     }
@@ -70,7 +86,20 @@ class UnstoppableRepositoryTest {
     fun `canResolve - (4) should succeed for Rinkeby`() {
         repository = UnstoppableDomainsRepository()
 
-        val result = repository.canResolve(Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null))
+        val result = repository.canResolve(
+            Chain(
+                Chain.ID_RINKEBY,
+                "Rinkeby",
+                "rin",
+                "",
+                "",
+                "",
+                RpcAuthentication.API_KEY_PATH,
+                "",
+                "",
+                null
+            )
+        )
 
         assertTrue(result)
     }
@@ -78,13 +107,27 @@ class UnstoppableRepositoryTest {
     @Test
     fun `canResolve - (17) should fail for unsupported_chain`() {
 
-        val result = repository.canResolve(Chain(BigInteger.valueOf(17), "Unknown", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null))
+        val result = repository.canResolve(
+            Chain(
+                BigInteger.valueOf(17),
+                "Unknown",
+                "",
+                "",
+                "",
+                "",
+                RpcAuthentication.API_KEY_PATH,
+                "",
+                "",
+                null
+            )
+        )
 
         assertFalse(result)
     }
 
     companion object {
-        private val SUCCESS_ADDR = "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
+        private val SUCCESS_ADDR =
+            "0x1C8b9B78e3085866521FE206fa4c1a67F49f153A".asEthereumAddress()!!
         private const val SUCCESS_DOMAIN = "udtestdev-creek.crypto"
         private const val FAIL_DOMAIN = "brad.crypto"
 
