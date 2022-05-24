@@ -42,8 +42,30 @@ class AddSafeNameViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
 
     private lateinit var viewModel: AddSafeNameViewModel
-    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null)
-    private val rinkeby = Chain(Chain.ID_RINKEBY, "Rinkeby", "", "", "", RpcAuthentication.API_KEY_PATH,"", "", null)
+    private val mainnet = Chain(
+        Chain.ID_MAINNET,
+        "Mainnet",
+        "",
+        "",
+        "",
+        "",
+        RpcAuthentication.API_KEY_PATH,
+        "",
+        "",
+        null
+    )
+    private val rinkeby = Chain(
+        Chain.ID_RINKEBY,
+        "Rinkeby",
+        "",
+        "",
+        "",
+        "",
+        RpcAuthentication.API_KEY_PATH,
+        "",
+        "",
+        null
+    )
 
     @Before
     fun setup() {
