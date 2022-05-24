@@ -74,10 +74,16 @@ class AddressInputHelper(
                 }
                 bottomSheetAddressInputPasteTouch.setOnClickListener {
                     val input = clipboard.primaryClip?.getItemAt(0)?.text?.trim()
-                    (input?.let { parseEthereumAddress(it.toString()) }
+                    (input?.toString()?.let {
+                        //FIXME: implement proper support for EIP-3770 addresses
+                        parseEthereumAddress(if (it.contains(":")) it.split(":")[1] else it)
+                    }
                         ?: run {
                             fragment.context?.let {
-                                handleError(InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)), input.toString())
+                                handleError(
+                                    InvalidAddressException(fragment.getString(R.string.invalid_ethereum_address)),
+                                    input.toString()
+                                )
                             } ?: Timber.e(InvalidAddressException(), "Fragment lost context.")
                             null
                         })?.let { addressCallback(it) }
