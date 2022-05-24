@@ -31,7 +31,18 @@ class AddSafeViewModelTest {
     private val ensRepository = mockk<EnsRepository>()
     private val safeRepository = mockk<SafeRepository>()
 
-    private val mainnet = Chain(Chain.ID_MAINNET, "Mainnet", "", "", "", RpcAuthentication.API_KEY_PATH, "", "", null)
+    private val mainnet = Chain(
+        Chain.ID_MAINNET,
+        "Mainnet",
+        "",
+        "",
+        "",
+        "",
+        RpcAuthentication.API_KEY_PATH,
+        "",
+        "",
+        null
+    )
 
     private lateinit var viewModel: AddSafeViewModel
 

@@ -120,6 +120,8 @@
     <string name="error_client_ens_resolution_reason">address not found</string>
     <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
+    <string name="error_client_address_not_matching_network_reason">This address is not matching the selected network</string>
+    <string name="error_client_address_not_matching_network_fix">Please use a different address or switch network</string>
 
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>

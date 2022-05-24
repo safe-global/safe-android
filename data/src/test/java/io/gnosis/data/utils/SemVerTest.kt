@@ -18,6 +18,20 @@ class SemVerTest {
     }
 
     @Test
+    fun `parse (versionString with build metadata) should return SemVer`() {
+        val version1 = SemVer.parse("1.3.0+L2")
+        assertNotNull(version1)
+        assertEquals("L2", version1.buildMetadata)
+
+        val version2 = SemVer.parse("2.15.0-255-internal+L3", true)
+        assertNotEquals(SemVer(2, 15, 0, "255-internal", "L3"), version2)
+        assertEquals(SemVer(2, 15, 0), version2)
+
+        val version3 = SemVer.parse("2.15.0-255-internal+L3")
+        assertEquals(SemVer(2, 15, 0, "255-internal", "L3"), version3)
+    }
+
+    @Test
     fun `parse (versionString, ignoreExtensions) should return SemVer`() {
         val version1 = SemVer.parse("2.15.0", true)
         assertEquals(SemVer(2, 15, 0), version1)
