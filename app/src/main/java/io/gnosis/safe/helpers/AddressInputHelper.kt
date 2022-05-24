@@ -127,12 +127,31 @@ class AddressInputHelper(
     fun handleResult(requestCode: Int, resultCode: Int, data: Intent?) {
         @Suppress("MoveLambdaOutsideParentheses")
         if (!handleQrCodeActivityResult(requestCode, resultCode, data, {
-                addressCallback(
-                    //FIXME: implement proper support for EIP-3770 addresses
-                    parseEthereumAddress(if (it.contains(":")) it.split(":")[1] else it) ?: run {
+                //FIXME: implement proper support for EIP-3770 addresses
+                var prefix = ""
+
+                val address =
+                    if (it.contains(":")) {
+                        prefix = it.split(":")[0]
+                        parseEthereumAddress(it.split(":")[1])
+                    } else {
+                        parseEthereumAddress(it)
+                    }
+
+                when {
+
+                    address == null -> {
                         handleError(InvalidAddressException(it), it)
-                        return@handleQrCodeActivityResult
-                    })
+                    }
+
+                    prefix.isNotEmpty() && selectedChain.shortName != prefix -> {
+                        handleError(AddressPrefixMismatch, it)
+                    }
+
+                    else -> {
+                        addressCallback(address)
+                    }
+                }
             })) {
             @Suppress("MoveLambdaOutsideParentheses")
             handleAddressBookResult(requestCode, resultCode, data, {
