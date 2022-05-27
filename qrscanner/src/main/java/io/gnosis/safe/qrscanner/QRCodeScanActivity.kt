@@ -62,8 +62,17 @@ class QRCodeScanActivity : AppCompatActivity() {
         }
     }
 
-    private fun isEthereumAddress(result: String): Boolean =
-        (result.asEthereumAddress() ?: ERC67Parser.parse(result)?.address) != null
+    private fun isEthereumAddress(result: String): Boolean {
+        val address =
+            //FIXME: implement proper support for EIP-3770 addresses
+            if (result.contains(":")) {
+                result.split(":")[1].asEthereumAddress() ?: ERC67Parser.parse(result)?.address
+            } else {
+                result.asEthereumAddress()
+            }
+
+        return address != null
+    }
 
     companion object {
         const val RESULT_EXTRA = "extra.string.scan_result"
