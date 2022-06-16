@@ -12,7 +12,7 @@ echo "INTERCOM_APP_ID=$INTERCOM_APP_ID" > project_keys
 ./gradlew assembleRelease
 
 # -------- Upload to github ----------
-REPO="https://api.github.com/repos/gnosis/safe-android"
+REPO="https://api.github.com/repos/safe-global/safe-android"
 TAGS="$REPO/releases/tags/$BUILDKITE_BRANCH"
 AUTH="Authorization: token $GITHUB_API_KEY"
 WGET_ARGS="--content-disposition --auth-no-challenge --no-cookie"
@@ -29,7 +29,7 @@ eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:al
 echo "Uploading assets..." >&2
 
 # Construct url
-ASSET="https://uploads.github.com/repos/gnosis/safe-android/releases/$id/assets"
+ASSET="https://uploads.github.com/repos/safe-global/safe-android/releases/$id/assets"
 
 curl --data-binary @"app/build/outputs/apk/release/gnosis-safe-${APP_VERSION_CODE}-release.apk" -H "$AUTH" -H "Content-Type: application/octet-stream" $ASSET?name=gnosis-safe-${APP_VERSION_CODE}-release.apk
 
