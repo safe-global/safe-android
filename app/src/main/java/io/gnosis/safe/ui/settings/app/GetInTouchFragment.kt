@@ -95,6 +95,7 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
                 putExtra(Intent.EXTRA_TEXT, feedback)
             }
+            Intent.FLAG_ACTIVITY_NEW_TASK
             kotlin.runCatching {
                 startActivity(intent)
             }

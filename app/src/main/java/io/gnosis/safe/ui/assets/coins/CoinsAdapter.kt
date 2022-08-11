@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.assets.coins.CoinsViewData.CoinBalance
 import io.gnosis.safe.ui.settings.owner.list.OwnerListFragmentDirections
 import io.gnosis.safe.ui.transactions.TransactionsFragmentDirections
 import io.gnosis.safe.utils.loadTokenLogo
+import okhttp3.Interceptor
 import timber.log.Timber.i
 import java.lang.ref.WeakReference
 
