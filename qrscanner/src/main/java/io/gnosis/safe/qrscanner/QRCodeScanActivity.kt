@@ -8,7 +8,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.screen_scan.*
+import io.gnosis.safe.qrscanner.databinding.ScreenScanBinding
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
 
@@ -18,6 +18,7 @@ import pm.gnosis.utils.asEthereumAddress
 class QRCodeScanActivity : AppCompatActivity() {
 
     private lateinit var videographer: Videographer
+    private lateinit var binding: ScreenScanBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +26,10 @@ class QRCodeScanActivity : AppCompatActivity() {
         videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.screen_scan)
 
+        binding = ScreenScanBinding.inflate(layoutInflater)
+
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
-            scan_description.text = it
+            binding.scanDescription.text = it
         }
     }
 
@@ -35,7 +38,7 @@ class QRCodeScanActivity : AppCompatActivity() {
         if (!isPermissionGranted(Manifest.permission.CAMERA)) {
             requestPermissions(CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)
         } else {
-            videographer.open(scan_view_finder)
+            videographer.open(binding.scanViewFinder)
         }
     }
 
@@ -57,7 +60,7 @@ class QRCodeScanActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle(R.string.qr_error_title)
                 .setMessage(R.string.qr_error_message)
-                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(scan_view_finder) }
+                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(binding.scanViewFinder) }
                 .create().show()
         }
     }

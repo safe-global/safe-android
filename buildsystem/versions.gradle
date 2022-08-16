@@ -61,6 +61,6 @@ ext {
             robolectric                     : '4.6.1',
 
             // Build time dependencies
-            desugar_jdk_libs                : '1.0.9'
+            desugar_jdk_libs                : '1.1.5'
     ]
 }
