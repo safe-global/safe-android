@@ -1,9 +1,9 @@
-# Gnosis Safe Android App 
+# Safe Android App 
 [![codecov](https://codecov.io/gh/gnosis/safe-android/branch/master/graph/badge.svg)](https://codecov.io/gh/gnosis/safe-android)
 
 ## Goal
-The Gnosis Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
-Transactions are secured by on-chain multi-factor-authentication. This is achieved by using the [Gnosis Safe smart contracts](https://github.com/gnosis/safe-contracts). They are the successor of the broadly trusted [Gnosis Multisig Wallet smart contracts](https://github.com/gnosis/MultiSigWallet)).
+The Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
+Transactions are secured by on-chain multi-factor-authentication. This is achieved by using the [Safe smart contracts](https://github.com/gnosis/safe-contracts). They are the successor of the broadly trusted [Gnosis Multisig Wallet smart contracts](https://github.com/gnosis/MultiSigWallet)).
 
 ## Setup
 
@@ -16,7 +16,7 @@ INFURA_API_KEY=<YOUR_PROJECT_ID>
 Replace `<YOUR_PROJECT_ID>` with the `project id` that you get from Infura. You can find this `project id` at `Projects -> Settings -> Keys -> PROJECT ID` on the Infura Website.
 
 ### Firebase
-The Gnosis Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
+The Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
 To get this file, you need to create a Firebase project at <https://console.firebase.google.com/> and add at least one Android application.
 If you didn't change the applicationId in `app/build.gradle` you need to create an app with the package name `io.gnosis.safe.debug` to be able to build a debug app. You can find the latest `google-services.json` file in the `Project Settings` -> `General`
 

@@ -541,7 +541,7 @@
     <string name="app">App</string>
 
 
-    <string name="biometric_prompt_info_title">Gnosis Safe</string>
+    <string name="biometric_prompt_info_title">Safe</string>
     <string name="biometric_prompt_info_subtitle_login">Use biometrics to login</string>
     <string name="biometric_prompt_info_subtitle_sign">Use biometrics to sign</string>
     <string name="biometric_prompt_info_use_app_password">Use passcode</string>
