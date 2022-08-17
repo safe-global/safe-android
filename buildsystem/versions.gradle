@@ -6,7 +6,7 @@ ext {
             firebase_crashlytics_gradle      : '2.3.0',
             google_services                  : '4.3.3',
             kotlin                           : '1.4.32',
-            jacoco                           : '0.8.5',
+            jacoco                           : '0.8.8',
 
             // Runtime dependencies
             androidx_app_compat             : '1.1.0',
@@ -24,7 +24,7 @@ ext {
             billing                         : '1.0',
             bivrost                         : '0.8.0',
             bouncycastle                    : '1.61',
-            dagger                          : '2.17',
+            dagger                          : '2.38.1',
             firebase_bom                    : '26.8.0',
             floating_action_button          : '1.6.4',
             geth                            : '1.7.1',
