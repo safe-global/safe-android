@@ -14,15 +14,15 @@
     </plurals>
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="safe_loaded">Safe loaded</string>
-    <string name="load_gnosis_safe_start">Get started by loading your Gnosis Safe</string>
-    <string name="load_gnosis_safe">Load Gnosis Safe</string>
+    <string name="load_gnosis_safe_start">Get started by loading your Safe</string>
+    <string name="load_gnosis_safe">Load Safe</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
     <string name="enter_safe_address">Enter Safe address</string>
     <string name="enter_name">Enter name</string>
     <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
     <string name="next">Next</string>
-    <string name="add_safe_label_top">Enter your Gnosis Safe address.</string>
+    <string name="add_safe_label_top">Enter your Safe address.</string>
 
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
     <string name="add_safe_label_link">https://gnosis-safe.io</string>
@@ -168,7 +168,7 @@
     <string name="settings_app_fiat">Fiat currency</string>
     <string name="settings_app_appearance">Appearance</string>
     <string name="settings_app_intercom">Chat with us</string>
-    <string name="settings_app_about">About Gnosis Safe</string>
+    <string name="settings_app_about">About Safe</string>
     <string name="settings_app_auto">Auto</string>
     <string name="settings_app_dark">Dark</string>
     <string name="settings_app_light">Light</string>
@@ -361,8 +361,8 @@
     <string name="safe_settings_guard">Guard</string>
     <string name="safe_settings_nonce">Nonce</string>
     <string name="safe_settings_modules">Addresses of enabled modules</string>
-    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Gnosis Safe?</string>
-    <string name="safe_settings_guard_help">What is a guard and how does it relate to the Gnosis Safe?</string>
+    <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Safe?</string>
+    <string name="safe_settings_guard_help">What is a guard and how does it relate to the Safe?</string>
 
     <string name="safe_settings_edit_name_title">Edit Safe name</string>
 
@@ -380,7 +380,7 @@
     <string name="signing_owner_import_existing_title">Import existing owner key</string>
     <string name="signing_owner_import_existing_desc">Import an existing key or seed phrase</string>
     <string name="signing_owner_create_new_title">Create new owner key</string>
-    <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Gnosis Safe</string>
+    <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Safe</string>
     <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
     <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
 
@@ -501,7 +501,7 @@
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
-    <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Gnosis Safe, you can create a key and add it as an owner of your Safe. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
+    <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Safe, you can create a key and add it as an owner of your Safe. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
     <string name="generate_owner_key_intro_private_key_title">How secure is that?</string>
     <string name="generate_owner_key_intro_private_key_desc">The owner key and the seed phrase are securely stored.</string>
     <string name="generate_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
