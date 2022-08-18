@@ -8,9 +8,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import io.gnosis.safe.qrscanner.databinding.ScreenScanBinding
+//import io.gnosis.safe.qrscanner.databinding.ScreenScanBinding
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import kotlinx.android.synthetic.main.screen_scan.*
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -18,18 +19,15 @@ import pm.gnosis.utils.asEthereumAddress
 class QRCodeScanActivity : AppCompatActivity() {
 
     private lateinit var videographer: Videographer
-    private lateinit var binding: ScreenScanBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.e("onCreate()")
         videographer = Videographer(this, QRCodeDecoder())
         videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.screen_scan)
-
-        binding = ScreenScanBinding.inflate(layoutInflater)
-
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
-            binding.scanDescription.text = it
+            scan_description.text = it
         }
     }
 
@@ -38,7 +36,7 @@ class QRCodeScanActivity : AppCompatActivity() {
         if (!isPermissionGranted(Manifest.permission.CAMERA)) {
             requestPermissions(CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)
         } else {
-            videographer.open(binding.scanViewFinder)
+            videographer.open(scan_view_finder)
         }
     }
 
@@ -60,7 +58,7 @@ class QRCodeScanActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle(R.string.qr_error_title)
                 .setMessage(R.string.qr_error_message)
-                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(binding.scanViewFinder) }
+                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(scan_view_finder) }
                 .create().show()
         }
     }
