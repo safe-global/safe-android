@@ -22,7 +22,6 @@ class QRCodeScanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.e("onCreate()")
         videographer = Videographer(this, QRCodeDecoder())
         videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.screen_scan)
