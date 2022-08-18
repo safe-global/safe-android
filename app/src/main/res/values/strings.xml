@@ -20,7 +20,7 @@
     <string name="tab_title_collectibles">COLLECTIBLES</string>
     <string name="enter_safe_address">Enter Safe address</string>
     <string name="enter_name">Enter name</string>
-    <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
+    <string name="enter_safe_name_description">Choose a name for the Safe. The name is only stored locally and will not be shared with us or any third parties.</string>
     <string name="next">Next</string>
     <string name="add_safe_label_top">Enter your Safe address.</string>
 
@@ -225,7 +225,7 @@
 
     <string name="tracking">TRACKING</string>
     <string name="tracking_share_usage_data">Share Usage Data</string>
-    <string name="tracking_enable_description">By sharing usage data with Gnosis, you are helping us improve the app with anonymized app usage data</string>
+    <string name="tracking_enable_description">By sharing usage data, you are helping us improve the app with anonymized app usage data</string>
     <string name="tracking_text">\nWhat Data is shared?</string>
 
     <string name="debug">DEBUG</string>
@@ -413,7 +413,7 @@
     <string name="signing_owner_list_error_loading_data">Could not load more owner addresses</string>
 
     <string name="signing_owner_name_title">Enter key name</string>
-    <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with Gnosis or any third parties.</string>
+    <string name="signing_owner_name_description">Choose a name for the owner key. The name is only stored locally and will not be shared with us or any third parties.</string>
 
     <string name="signing_owner_name_edit_title">Edit owner name</string>
     <string name="signing_owner_name_edit_remove">Remove owner key</string>
