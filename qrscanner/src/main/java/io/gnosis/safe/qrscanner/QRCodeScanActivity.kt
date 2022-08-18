@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-//import io.gnosis.safe.qrscanner.databinding.ScreenScanBinding
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
 import kotlinx.android.synthetic.main.screen_scan.*
