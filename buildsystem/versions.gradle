@@ -48,7 +48,7 @@ ext {
             zxing                           : '3.3.1',
             play_core                       : '1.9.1',
             play_core_ktx                   : '1.8.1',
-            work                            : '2.6.0',
+            work                            : '2.7.1',
             unstoppabledomains              : '1.13.2',
             intercom                        : '10.6.0',
 
