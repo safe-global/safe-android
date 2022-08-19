@@ -52,7 +52,6 @@
         android:singleLine="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="@+id/address_logo"
-        app:layout_constraintEnd_toStartOf="@+id/action"
         app:layout_constraintStart_toEndOf="@+id/address_logo"
         app:layout_constraintTop_toTopOf="@+id/address_logo"
         tools:text="@string/tx_list_rejection" />
