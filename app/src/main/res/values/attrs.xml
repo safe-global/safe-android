@@ -46,4 +46,10 @@
         <attr name="seed_number" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="WhatsNewItem">
+        <attr name="whatsnew_icon" format="reference" />
+        <attr name="whatsnew_title" format="string" />
+        <attr name="whatsnew_description" format="string" />
+    </declare-styleable>
+
 </resources>
