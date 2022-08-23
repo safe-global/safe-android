@@ -8,9 +8,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.screen_scan.*
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import kotlinx.android.synthetic.main.screen_scan.*
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -24,7 +24,6 @@ class QRCodeScanActivity : AppCompatActivity() {
         videographer = Videographer(this, QRCodeDecoder())
         videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.screen_scan)
-
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
             scan_description.text = it
         }

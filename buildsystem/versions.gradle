@@ -1,12 +1,12 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools                    : '4.0.1',
+            android_tools                    : '7.2.2',
             firebase_app_distribution_gradle : '2.0.0',
             firebase_crashlytics_gradle      : '2.3.0',
             google_services                  : '4.3.3',
             kotlin                           : '1.4.32',
-            jacoco                           : '0.8.5',
+            jacoco                           : '0.8.8',
 
             // Runtime dependencies
             androidx_app_compat             : '1.1.0',
@@ -24,7 +24,7 @@ ext {
             billing                         : '1.0',
             bivrost                         : '0.8.0',
             bouncycastle                    : '1.61',
-            dagger                          : '2.17',
+            dagger                          : '2.38.1',
             firebase_bom                    : '26.8.0',
             floating_action_button          : '1.6.4',
             geth                            : '1.7.1',
@@ -48,7 +48,7 @@ ext {
             zxing                           : '3.3.1',
             play_core                       : '1.9.1',
             play_core_ktx                   : '1.8.1',
-            work                            : '2.6.0',
+            work                            : '2.7.1',
             unstoppabledomains              : '1.13.2',
             intercom                        : '10.6.0',
 
@@ -61,6 +61,6 @@ ext {
             robolectric                     : '4.6.1',
 
             // Build time dependencies
-            desugar_jdk_libs                : '1.0.9'
+            desugar_jdk_libs                : '1.1.5'
     ]
 }

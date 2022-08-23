@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">@color/teal_two</color>
+    <color name="future_primary">@color/safe_black</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
     <color name="secondary">@color/orangish</color>
@@ -75,6 +76,7 @@
     <color name="tomato_15">#f0d6d6</color>
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
+    <color name="neon_green">#12FF80</color>
     <color name="shamrock">#00a95f</color>
     <color name="teal">#029f7f</color>
     <color name="teal_two">#008c73</color>
@@ -86,6 +88,7 @@
     <color name="black_three_dimmed">#272727</color>
     <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121212</color>
+    <color name="safe_black">#121312</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="black_six">#3b2c2c</color>
