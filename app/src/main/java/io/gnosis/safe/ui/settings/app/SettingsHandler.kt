@@ -200,7 +200,24 @@ class SettingsHandler @Inject constructor(
             }
         }
 
+    var showWhatsNew: Boolean
+        get() = preferencesManager.prefs.getBoolean(KEY_SHOW_WHATS_NEW, true)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putBoolean(KEY_SHOW_WHATS_NEW, value)
+            }
+        }
+
+    var currentVersion: Long
+        get() = preferencesManager.prefs.getLong(KEY_CURRENT_VERSION, -1)
+        set(value) {
+            preferencesManager.prefs.edit {
+                putLong(KEY_CURRENT_VERSION, value)
+            }
+        }
+
     companion object {
+        internal const val KEY_CURRENT_VERSION = "prefs.integer.current_version"
         internal const val KEY_NIGHT_MODE = "prefs.string.appearance.night_mode"
         internal const val KEY_ALLOW_SCREENSHOTS = "prefs.boolean.allow_screenshots"
         internal const val KEY_ALLOW_TRACKING = "prefs.boolean.allow_tracking"
@@ -215,6 +232,7 @@ class SettingsHandler @Inject constructor(
         internal const val KEY_REQUIRE_PASSCODE_TO_EXPORT_KEYS = "prefs.boolean.require_passcode_to_export_keys"
         internal const val KEY_SHOW_PASSCODE_BANNER = "prefs.boolean.show_passcode_banner"
         internal const val KEY_ASK_FOR_PASSCODE_SETUP_ON_FIRST_LAUNCH = "prefs.boolean.ask_for_passcode_setup_on_first_launch"
+        internal const val KEY_SHOW_WHATS_NEW = "prefs.boolean.show_whats_new"
 
         internal const val KEY_UPDATE_SHOWN_FOR_VERSION = "prefs.integer.update_shown_for_version"
         internal const val KEY_FIREBASE_NEWEST_VERSION = "newestVersion"

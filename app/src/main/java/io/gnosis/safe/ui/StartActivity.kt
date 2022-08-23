@@ -363,7 +363,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun showWhatsNewIfNeeded() {
-        navController.navigate(R.id.whatsNewDialog)
+        if (settingsHandler.showWhatsNew) {
+            navController.navigate(R.id.whatsNewDialog)
+            settingsHandler.showWhatsNew = false
+        }
     }
 
     private fun navigateToShareSafeDialog() {

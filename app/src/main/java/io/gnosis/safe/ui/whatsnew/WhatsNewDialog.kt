@@ -14,7 +14,7 @@ import io.gnosis.safe.ui.base.fragment.BaseBottomSheetDialogFragment
 
 class WhatsNewDialog : BaseBottomSheetDialogFragment<DialogWhatsNewBinding>() {
 
-    override fun screenId() = ScreenId.LEDGER_SIGN
+    override fun screenId(): ScreenId? = null
 
     override fun inject(viewComponent: ViewComponent) {
         viewComponent.inject(this)
