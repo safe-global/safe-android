@@ -46,6 +46,7 @@ import io.gnosis.safe.ui.transactions.TransactionListFragment
 import io.gnosis.safe.ui.transactions.TransactionsFragment
 import io.gnosis.safe.ui.transactions.details.*
 import io.gnosis.safe.ui.updates.UpdatesFragment
+import io.gnosis.safe.ui.whatsnew.WhatsNewDialog
 
 @ForView
 @Component(
@@ -176,4 +177,6 @@ interface ViewComponent {
     fun inject(dialog: ShareSafeDialog)
 
     fun inject(dialog: LedgerSignDialog)
+
+    fun inject(dialog: WhatsNewDialog)
 }
