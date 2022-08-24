@@ -1,5 +1,6 @@
 package io.gnosis.safe.notifications
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.app.NotificationManager
 import android.content.Context
@@ -227,14 +228,24 @@ class NotificationManager(
         return enabled
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun txDetailsIntent(safe: Safe, safeTxHash: String): PendingIntent {
         val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString(), safeTxHash)
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun txListIntent(safe: Safe): PendingIntent {
         val intent = StartActivity.createIntent(context, safe.chainId, safe.address.asEthereumAddressString())
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
     }
 
     companion object {

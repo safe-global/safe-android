@@ -112,7 +112,6 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_margin"
-                app:layout_constraintEnd_toStartOf="@id/default_owner_address"
                 app:layout_constraintStart_toEndOf="@+id/default_owner_number"
                 app:layout_constraintTop_toBottomOf="@+id/default_owner_label" />
 

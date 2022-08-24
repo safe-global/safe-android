@@ -17,3 +17,8 @@ dependencies {
 
     implementation "com.google.zxing:core:$versions.zxing"
 }
+android {
+     buildFeatures {
+         viewBinding true
+     }
+}

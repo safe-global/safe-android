@@ -38,12 +38,10 @@ def setupKotlinReporting() {
         dependsOn testDebugUnitTest
         dependsOn createDebugCoverageReport
         reports {
-            csv.enabled false
-            xml.enabled true
-            html {
-                enabled true
-                destination file("${buildDir}/coverage-report")
-            }
+            csv.getRequired().set(false)
+            xml.getRequired().set(true)
+            html.getRequired().set(true)
+            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
         }
     }
 }
@@ -63,12 +61,10 @@ def setupAndroidReporting() {
             ]
     ) {
         reports {
-            csv.enabled false
-            xml.enabled true
-            html {
-                enabled true
-                destination file("${buildDir}/coverage-report")
-            }
+            csv.getRequired().set(false)
+            xml.getRequired().set(true)
+            html.getRequired().set(true)
+            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
         }
         // Change as needed
         def testCoverageFileFilter = [
@@ -96,15 +92,15 @@ def setupAndroidReporting() {
                 excludes: testCoverageFileFilter
         )
         def mainSrc = "$projectDir/src/main/java"
-        sourceDirectories.from = files([mainSrc])
-        classDirectories.from = files([debugTree])
-        executionData.from = fileTree(
+        sourceDirectories.setFrom(files([mainSrc]))
+        classDirectories.setFrom(files([debugTree]))
+        executionData(fileTree(
                 dir: project.buildDir,
                 includes: [
                         'jacoco/testDebugUnitTest.exec',
                         'outputs/code-coverage/connected/*coverage.ec'
                 ]
-        )
+        ))
     }
 }
 
@@ -131,12 +127,9 @@ def setupAndroidCoverageVerification(threshold) {
                 dir: "$buildDir/tmp/kotlin-classes/debug",
                 excludes: jacocoThresholdFileFilter
         )
-        sourceDirectories.from = files(coverageSourceDirs)
-        classDirectories.from = files([debugTree])
-        executionData.from = fileTree(
-                dir: project.buildDir,
-                includes: ['jacoco/testDebugUnitTest.exec']
-        )
+        sourceDirectories.setFrom(files(coverageSourceDirs))
+        classDirectories.setFrom(files([debugTree]))
+        executionData(fileTree(dir: project.buildDir, includes: ['jacoco/${unitTestTask}.exec']))
     }
 }
 
