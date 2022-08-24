@@ -24,6 +24,12 @@
         app:destination="@id/createPasscodeFragment" />
 
     <dialog
+        android:id="@+id/whatsNewDialog"
+        android:name="io.gnosis.safe.ui.whatsnew.WhatsNewDialog"
+        android:label="WhatsNewDialog"
+        tools:layout="@layout/dialog_whats_new" />
+
+    <dialog
         android:id="@+id/safeSelectionDialog"
         android:name="io.gnosis.safe.ui.safe.selection.SafeSelectionDialog"
         android:label="SafeSelectionDialog"

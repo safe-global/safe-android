@@ -21,6 +21,8 @@
     <color name="text_emphasis_medium">@color/dark_grey</color>
     <color name="text_emphasis_low">@color/medium_grey</color>
 
+    <color name="label_tertiary">#B2BBC0</color>
+
     <color name="outline">@color/white_smoke</color>
     <color name="illustration_background">@color/whitesmoke_two</color>
     <color name="logo_background">@android:color/transparent</color>

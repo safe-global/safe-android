@@ -22,6 +22,8 @@
     <color name="text_emphasis_medium">@color/blue_grey</color>
     <color name="text_emphasis_low">@color/slate_grey</color>
 
+    <color name="label_tertiary">#B2B5B2</color>
+
     <color name="outline">@color/charcoal_grey</color>
     <color name="illustration_background">@color/dark_grey_two</color>
     <color name="logo_background">@color/white_two</color>

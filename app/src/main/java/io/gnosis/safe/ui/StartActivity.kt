@@ -85,6 +85,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         (application as? HeimdallApplication)?.registerForAppState(this)
 
         onCountUpdate(Intercom.client().unreadConversationCount)
+
+        showWhatsNewIfNeeded()
     }
 
     override fun onResume() {
@@ -357,6 +359,13 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     )
                 })
             }
+        }
+    }
+
+    private fun showWhatsNewIfNeeded() {
+        if (settingsHandler.showWhatsNew) {
+            navController.navigate(R.id.whatsNewDialog)
+            settingsHandler.showWhatsNew = false
         }
     }
 

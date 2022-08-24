@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.splash
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
@@ -11,6 +12,7 @@ import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.StartActivity
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.terms.TermsChecker
 import io.gnosis.safe.workers.WorkRepository
 import javax.inject.Inject
@@ -20,10 +22,11 @@ class SplashViewModel
 constructor(
     private val notificationRepository: NotificationRepository,
     private val safeRepository: SafeRepository,
-    private val tracker: Tracker,
-    private val termsChecker: TermsChecker,
     private val credentialsRepository: CredentialsRepository,
     private val workRepository: WorkRepository,
+    private val tracker: Tracker,
+    private val termsChecker: TermsChecker,
+    private val settingsHandler: SettingsHandler,
     appDispatchers: AppDispatchers,
     @ApplicationContext private val appContext: Context
 ) : BaseStateViewModel<SplashViewModel.TermsAgreed>(appDispatchers) {
@@ -31,6 +34,18 @@ constructor(
     override fun initialState(): TermsAgreed = TermsAgreed(null)
 
     suspend fun onAppStart() {
+
+        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            appContext.packageManager.getPackageInfo(appContext.packageName, 0).longVersionCode
+        } else {
+            appContext.packageManager.getPackageInfo(appContext.packageName, 0).versionCode.toLong()
+        }
+        val appUpdated = settingsHandler.currentVersion < currentVersion
+
+        if (appUpdated) {
+            settingsHandler.showWhatsNew = true
+            settingsHandler.currentVersion = currentVersion
+        }
 
         workRepository.registerForPushNotifications()
         workRepository.updateChainInfo()

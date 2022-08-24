@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_large_margin"
+        android:text="@string/whatsnew_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/default_large_margin"
+        android:layout_marginBottom="@dimen/default_large_margin"
+        app:layout_constraintBottom_toTopOf="@id/continue_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:whatsnew_title="@string/whatsnew_links_title"
+                app:whatsnew_description="@string/whatsnew_links_description"
+                app:whatsnew_icon="@drawable/ic_whatsnew_links" />
+
+            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:whatsnew_title="@string/whatsnew_delegate_calls_title"
+                app:whatsnew_description="@string/whatsnew_delegate_calls_description"
+                app:whatsnew_icon="@drawable/ic_whatsnew_delegate_calls" />
+
+            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:whatsnew_title="@string/whatsnew_edit_owners_title"
+                app:whatsnew_description="@string/whatsnew_edit_owners_description"
+                app:whatsnew_icon="@drawable/ic_whatsnew_edit_owners" />
+
+            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:whatsnew_title="@string/whatsnew_join_safe_title"
+                app:whatsnew_description="@string/whatsnew_join_safe_decription"
+                app:whatsnew_icon="@drawable/ic_whatsnew_join_safe" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <Button
+        android:id="@+id/continue_button"
+        style="@style/PrimaryButton"
+        app:backgroundTint="@color/primary"
+        android:layout_width="0dp"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_large_margin"
+        android:text="Let's go"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
