@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:fitsSystemWindows="true"
-    android:background="@color/background">
+    android:background="@color/background_primary">
 
     <ImageView
         android:id="@+id/gnosis_safe_logo"

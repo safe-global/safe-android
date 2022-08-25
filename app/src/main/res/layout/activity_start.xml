@@ -50,7 +50,7 @@
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_bar_height"
-        android:background="@color/surface_08"
+        android:background="@color/background_secondary"
         app:itemIconTint="@drawable/bottom_nav_item"
         app:itemRippleColor="@color/medium_grey"
         app:itemTextColor="@drawable/bottom_nav_item"

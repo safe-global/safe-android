@@ -26,7 +26,7 @@ object CustomAlertDialogBuilder {
         cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
         @ColorRes confirmColor: Int = R.color.primary,
         @ColorRes cancelColor: Int = R.color.primary,
-        @ColorRes background: Int = R.color.surface_08,
+        @ColorRes background: Int = R.color.background_secondary,
         dismissCallback: DialogInterface.OnDismissListener? = null
     ): AlertDialog {
         val binding = LayoutAlertDialogTitleBinding.inflate(LayoutInflater.from(context))

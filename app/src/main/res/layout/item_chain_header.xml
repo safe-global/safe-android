@@ -37,7 +37,7 @@
                     android:right="1dp"
                     android:top="1dp" />
 
-                <solid android:color="@color/background" />
+                <solid android:color="@color/background_primary" />
 
             </shape>
 

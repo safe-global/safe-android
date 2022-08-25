@@ -69,7 +69,7 @@
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_chain_tx_data"
                 android:textAllCaps="true"
-                android:background="@color/background" />
+                android:background="@color/background_primary" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/hash_item"
@@ -84,7 +84,7 @@
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_safe_tx_data"
                 android:textAllCaps="true"
-                android:background="@color/background" />
+                android:background="@color/background_primary" />
 
         </LinearLayout>
 

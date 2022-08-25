@@ -8,14 +8,14 @@
     <color name="secondary">@color/pale_red</color>
     <color name="error">@color/coral</color>
     <color name="accent">@color/white_two</color>
-    <color name="window_background">@color/background</color>
+    <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/white_two</color>
     <color name="pending">#FF8042</color>
 
-    <color name="background">@color/black_five</color>
+    <color name="background_primary">@color/black</color>
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
-    <color name="surface_08">@color/black_two</color>
+    <color name="background_secondary">@color/light_black</color>
     <color name="separator">@color/black_five</color>
 
     <color name="text_emphasis_high">@color/white_two</color>

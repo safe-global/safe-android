@@ -20,7 +20,7 @@
 
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:backgroundTint">@color/text_emphasis_high</item>
-        <item name="android:textColor">@color/background</item>
+        <item name="android:textColor">@color/background_primary</item>
     </style>
 
     <style name="BadgeStyle" parent="@style/Widget.MaterialComponents.Badge">
@@ -211,7 +211,7 @@
     </style>
 
     <style name="TabLayout" parent="Widget.Design.TabLayout">
-        <item name="android:background">@color/background</item>
+        <item name="android:background">@color/background_primary</item>
         <item name="tabIndicatorColor">@color/primary</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabMode">fixed</item>

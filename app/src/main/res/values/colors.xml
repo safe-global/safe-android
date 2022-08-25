@@ -7,13 +7,13 @@
     <color name="secondary">@color/orangish</color>
     <color name="error">@color/tomato</color>
     <color name="accent">@color/text_emphasis_high</color>
-    <color name="window_background">@color/background</color>
+    <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/text_emphasis_high</color>
     <color name="pending">#E8663D</color>
 
-    <color name="background">@color/white</color>
+    <color name="background_primary">@color/white</color>
     <color name="surface_01">@color/white_two</color>
-    <color name="surface_08">@color/white_two</color>
+    <color name="background_secondary">@color/white</color>
     <color name="surface_04">@color/white_two</color>
     <color name="separator">@color/white</color>
 
@@ -57,7 +57,7 @@
     <color name="text_grey_background">#f4f4f9</color>
 
     <!-- New Design colors -->
-    <color name="white">#f7f5f5</color>
+    <color name="white">#000000</color>
     <color name="whitesmoke_two">#f0efee</color>
     <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
@@ -90,8 +90,9 @@
     <color name="black_three">#272727</color>
     <color name="black_three_dimmed">#272727</color>
     <color name="black_four">#1e1e1e</color>
-    <color name="black_five">#121212</color>
+    <color name="black_five">#121312</color>
     <color name="safe_black">#121312</color>
+    <color name="light_black">#1C1C1E</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="black_six">#3b2c2c</color>
