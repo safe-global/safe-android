@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/teal_two</color>
+    <color name="primary">@color/black</color>
     <color name="future_primary">@color/safe_black</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
@@ -29,13 +29,13 @@
 
     <!-- color names -->
     <color name="white_two">#ffffff</color>
-    <color name="black">#000000</color>
+    <color name="black">#121312</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
 
-    <color name="button_primary_disabled">#80008c73</color>
-    <color name="button_primary_pressed">@color/hold_two</color>
-    <color name="button_confirm_disabled">#80008c73</color>
+    <color name="button_primary_disabled">@color/stone</color>
+    <color name="button_primary_pressed">@color/slate</color>
+    <color name="button_confirm_disabled">@color/button_primary_disabled</color>
     <color name="button_confirm_pressed">@color/hold_two</color>
     <color name="button_reject_disabled">#80f02525</color>
     <color name="button_reject_pressed">@color/tomato_two</color>
@@ -73,7 +73,7 @@
     <color name="coral">#ff453a</color>
     <color name="orangish">#ff8042</color>
     <color name="pale_red">#e8663d</color>
-    <color name="green">#79b722</color>
+    <color name="green">#12ff80</color>
     <color name="pale_grey_three">#f4f5f9</color>
     <color name="tomato_15">#f0d6d6</color>
     <color name="pale_grey_four">#e3e5ec</color>
@@ -84,6 +84,7 @@
     <color name="teal_two">#008c73</color>
     <color name="navy">#001428</color>
     <color name="slate_grey">#626269</color>
+    <color name="slate">#303033</color>
     <color name="blue_grey">#8d8d93</color>
     <color name="black_two">#2d2d2d</color>
     <color name="black_three">#272727</color>
@@ -94,9 +95,12 @@
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="black_six">#3b2c2c</color>
+    <color name="graphite">#636669</color>
+    <color name="stone">#DDDEE0</color>
     <color name="light_pink">#ffe6ea</color>
     <color name="hold">#008c73</color>
     <color name="hold_two">#005546</color>
+    <color name="dark_green">#00B460</color>
     <color name="dark_aquamarine">#007661</color>
 
     <color name="word_recovery_phrase">@color/primary</color>
