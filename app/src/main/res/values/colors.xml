@@ -57,7 +57,7 @@
     <color name="text_grey_background">#f4f4f9</color>
 
     <!-- New Design colors -->
-    <color name="white">#000000</color>
+    <color name="white">#FFFFFF</color>
     <color name="whitesmoke_two">#f0efee</color>
     <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
