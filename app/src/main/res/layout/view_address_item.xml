@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/dm_sans_medium"
         android:maxLines="2"
         android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"

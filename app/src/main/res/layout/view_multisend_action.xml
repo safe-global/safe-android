@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:ellipsize="middle"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/dm_sans_medium"
         android:singleLine="true"
         android:textColor="@color/text_emphasis_low"
         android:textSize="16sp"

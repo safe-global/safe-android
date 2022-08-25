@@ -35,7 +35,7 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:textColor">@drawable/button_primary_text</item>
         <item name="android:textSize">16sp</item>
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:textStyle">bold</item>
         <item name="textAllCaps">false</item>
     </style>
@@ -55,7 +55,7 @@
         <item name="android:textColor">@color/text_button_color</item>
         <item name="android:foreground">@drawable/background_selectable</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/dm_sans_regular</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textStyle">bold</item>
@@ -69,14 +69,14 @@
     </style>
 
     <style name="TextTitle" parent="Text">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="TextTitleSection" parent="Text">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
@@ -84,7 +84,7 @@
     </style>
 
     <style name="TextDark" parent="Text">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
@@ -92,23 +92,23 @@
     </style>
 
     <style name="TextDarkRegular" parent="TextDark">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
     </style>
 
     <style name="TextDark.Bold" parent="TextDark">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextLink" parent="Text">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
     </style>
 
     <style name="TextMedium" parent="Text">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_medium</item>
         <item name="android:textSize">14sp</item>
@@ -116,11 +116,11 @@
     </style>
 
     <style name="TextMediumRegular" parent="TextMedium">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
     </style>
 
     <style name="TextLight" parent="Text">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:textSize">14sp</item>
@@ -132,7 +132,7 @@
     </style>
 
     <style name="TextAction" parent="Text">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:textSize">17sp</item>
@@ -145,7 +145,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/dm_sans_regular</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:letterSpacing">0.04</item>
@@ -158,12 +158,12 @@
         <item name="android:paddingStart">@dimen/default_margin</item>
         <item name="android:paddingEnd">@dimen/default_margin</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/dm_sans_regular</item>
         <item name="android:textColor">@color/text_emphasis_medium</item>
     </style>
 
     <style name="ChainRibbon">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">@color/white_two</item>
@@ -186,25 +186,25 @@
     </style>
 
     <style name="ToolbarTitle">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
         <item name="android:textColor">@color/text_emphasis_high</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="ToolbarSubtitle">
-        <item name="fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:lineSpacingExtra">6sp</item>
         <item name="android:textColor">@color/text_emphasis_low</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
-
+    
     <style name="ToolbarButton">
         <item name="android:textColor">@color/text_button_color</item>
         <item name="android:foreground">@drawable/background_selectable</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/dm_sans_medium</item>
         <item name="android:textSize">14sp</item>
         <item name="android:letterSpacing">0.09</item>
         <item name="android:lineSpacingExtra">2sp</item>
@@ -224,7 +224,7 @@
     </style>
 
     <style name="TabText" parent="TextAppearance.Design.Tab">
-        <item name="fontFamily">sans-serif</item>
+        <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:textColor">@drawable/tab_item_text</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">13sp</item>
