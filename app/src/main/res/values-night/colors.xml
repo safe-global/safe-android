@@ -27,6 +27,8 @@
 
     <!-- Error -->
     <color name="error">@color/red</color>
+    <color name="error_pressed">@color/dark_red</color>
+    <color name="error_background">@color/bg_red_dark</color>
 
     <color name="reject_disabled">@color/error_background</color>
     <color name="reject_pressed">@color/error_pressed</color>
