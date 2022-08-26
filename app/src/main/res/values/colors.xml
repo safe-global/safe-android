@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/black</color>
     <color name="future_primary">@color/safe_black</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
-    <color name="error">@color/red</color>
     <color name="accent">@color/label_primary</color>
     <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/label_primary</color>
@@ -22,7 +20,6 @@
     <color name="label_secondary">@color/slate</color>
     <color name="label_tertiary">@color/metal</color>
 
-
     <color name="outline">@color/white_smoke</color>
     <color name="illustration_background">@color/whitesmoke_two</color>
     <color name="logo_background">@android:color/transparent</color>
@@ -33,13 +30,20 @@
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
 
-    <color name="button_primary_disabled">@color/stone</color>
-    <color name="button_primary_pressed">@color/slate</color>
-    <color name="button_confirm_disabled">@color/button_primary_disabled</color>
-    <color name="button_confirm_pressed">@color/hold_two</color>
-    <!-- like error -->
-    <color name="button_reject_disabled">@color/bg_red</color>
-    <color name="button_reject_pressed">@color/dark_red</color>
+    <!-- Foundation -->
+    <color name="primary">@color/black</color>
+    <color name="primary_pressed">@color/slate</color>
+    <color name="primary_disabled">@color/stone</color>
+
+    <color name="confirm_pressed">@color/primary_pressed</color>
+    <color name="confirm_disabled">@color/primary_disabled</color>
+
+    <color name="reject_pressed">@color/error_pressed</color>
+    <color name="reject_disabled">@color/error_background</color>
+
+    <color name="error">@color/red</color>
+    <color name="error_pressed">@color/dark_red</color>
+    <color name="error_background">@color/bg_red</color>
 
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
@@ -57,12 +61,22 @@
 
     <color name="text_grey_background">#f4f4f9</color>
 
-    <color name="success">@color/system_green</color>
 
     <!-- future use? -->
     <color name="info">@color/blue</color>
     <color name="info_pressed">@color/dark_blue</color>
     <color name="info_background">@color/bg_blue</color>
+
+    <color name="word_recovery_phrase">@color/primary</color>
+    <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
+    <color name="word_recovery_phrase_picker">#b24a4a4a</color>
+    <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
+    <color name="address_boundaries">@color/label_primary</color>
+    <color name="link">@color/primary</color>
+    <color name="divider">@color/pale_grey_four</color>
+
+    <color name="success">@color/system_green</color>
+    <color name="rejection">@color/bg_red</color>
 
     <!-- New Design colors -->
     <color name="white">#FFFFFF</color>
@@ -119,13 +133,5 @@
     <color name="blue">#5FDDFF</color>
     <color name="dark_blue">#52BFDC</color>
     <color name="bg_blue">#EFFCFF</color>
-    <color name="word_recovery_phrase">@color/primary</color>
-    <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
-    <color name="word_recovery_phrase_picker">#b24a4a4a</color>
-    <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
-    <color name="address_boundaries">@color/label_primary</color>
-    <color name="link">@color/primary</color>
-    <color name="divider">@color/pale_grey_four</color>
-    <color name="rejection">@color/bg_red</color>
 
 </resources>

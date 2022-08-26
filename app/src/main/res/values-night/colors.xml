@@ -26,15 +26,17 @@
     <color name="illustration_background">@color/dark_grey_two</color>
     <color name="logo_background">@color/white_two</color>
 
-    <color name="rejection">@color/bg_red_dark</color>
 
-    <color name="button_primary_disabled">@color/graphite</color>
-    <color name="button_primary_pressed">@color/dark_green</color>
-    <color name="button_confirm_disabled">@color/button_primary_disabled</color>
-    <color name="button_confirm_pressed">@color/dark_green</color>
-    <color name="button_reject_disabled">@color/bg_red_dark</color>
-    <color name="button_reject_pressed">@color/cherry_red</color>
+    <color name="primary_disabled">@color/graphite</color>
+    <color name="primary_pressed">@color/dark_green</color>
+
+    <color name="confirm_disabled">@color/primary_disabled</color>
+    <color name="confirm_pressed">@color/primary_pressed</color>
+
+    <color name="reject_disabled">@color/error_background</color>
+    <color name="reject_pressed">@color/error_pressed</color>
 
     <color name="success">@color/system_green</color>
+    <color name="rejection">@color/bg_red_dark</color>
 
 </resources>
