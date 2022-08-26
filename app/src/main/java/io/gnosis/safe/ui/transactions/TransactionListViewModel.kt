@@ -451,7 +451,7 @@ class TransactionListViewModel
             TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,
-            TransactionStatus.PENDING -> R.color.secondary
+            TransactionStatus.PENDING -> R.color.warning
             else -> R.color.error
         }
     }
