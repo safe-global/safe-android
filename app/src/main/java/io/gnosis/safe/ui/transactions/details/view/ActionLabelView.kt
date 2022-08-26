@@ -17,7 +17,7 @@ class ActionLabelView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxLabelBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setLabel(label: String, @ColorRes color : Int = R.color.text_emphasis_high) {
+    fun setLabel(label: String, @ColorRes color : Int = R.color.label_primary) {
         binding.label.text = label
         binding.label.setTextColor(ContextCompat.getColor(context, color))
     }

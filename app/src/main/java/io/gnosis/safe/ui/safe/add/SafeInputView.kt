@@ -56,11 +56,11 @@ class SafeInputView @JvmOverloads constructor(
                     blockies.setAddress(null)
                     blockies.visible(false)
                     if (input.isBlank()) {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.text_emphasis_low, context.theme))
+                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.label_tertiary, context.theme))
                         address.text = context.getString(R.string.enter_safe_address)
 
                     } else {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.text_emphasis_high, context.theme))
+                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.label_primary, context.theme))
                         address.text = input
                     }
                 }

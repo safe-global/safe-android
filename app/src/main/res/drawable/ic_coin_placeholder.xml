@@ -9,11 +9,11 @@
         android:fillType="nonZero"
         android:pathData="M14,14m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
     <path
-        android:fillColor="@color/text_emphasis_low"
+        android:fillColor="@color/label_tertiary"
         android:fillType="evenOdd"
         android:pathData="M16.998,7c-3.865,0 -7,3.134 -7,7s3.135,7 7,7c3.866,0 7,-3.134 7,-7s-3.134,-7 -7,-7m0,2c2.758,0 5,2.242 5,5s-2.242,5 -5,5c-2.757,0 -5,-2.242 -5,-5s2.243,-5 5,-5" />
     <path
-        android:fillColor="@color/text_emphasis_low"
+        android:fillColor="@color/label_tertiary"
         android:fillType="nonZero"
         android:pathData="M8.804,7.358C5.96,8.295 4,10.955 4,13.996c0,3.04 1.96,5.701 4.804,6.638 0.525,0.173 1.09,-0.113 1.263,-0.637 0.173,-0.525 -0.113,-1.09 -0.637,-1.263C7.399,18.066 6,16.166 6,13.996c0,-2.17 1.399,-4.07 3.43,-4.738 0.524,-0.173 0.81,-0.738 0.637,-1.263 -0.173,-0.524 -0.738,-0.81 -1.263,-0.637z" />
 </vector>

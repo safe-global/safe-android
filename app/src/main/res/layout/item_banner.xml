@@ -29,7 +29,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_cross_16dp"
-                app:tint="@color/text_emphasis_low" />
+                app:tint="@color/label_tertiary" />
 
             <TextView
                 android:id="@+id/banner_title"
@@ -44,7 +44,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/text_emphasis_low" />
+                app:tint="@color/label_tertiary" />
 
             <TextView
                 android:id="@+id/banner_text"

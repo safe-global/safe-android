@@ -154,7 +154,7 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.text_emphasis_high,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.label_primary,
             alpha = alpha(txStatus),
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
@@ -180,10 +180,10 @@ class TransactionListViewModel
             dateTime = timestamp,
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.text_emphasis_high,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.label_primary,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
@@ -238,7 +238,7 @@ class TransactionListViewModel
             method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
@@ -300,7 +300,7 @@ class TransactionListViewModel
             dateTime = timestamp,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
@@ -350,7 +350,7 @@ class TransactionListViewModel
             dateTime = timestamp,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.text_emphasis_low,
+            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
@@ -448,7 +448,7 @@ class TransactionListViewModel
     private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
             TransactionStatus.SUCCESS -> R.color.primary
-            TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
+            TransactionStatus.CANCELLED -> R.color.label_secondary
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,
             TransactionStatus.PENDING -> R.color.warning

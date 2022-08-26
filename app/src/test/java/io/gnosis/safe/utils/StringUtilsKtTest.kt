@@ -250,7 +250,7 @@ class StringUtilsKtTest {
 
         val foregroundColorSpansMiddle = spannable.getSpans<ForegroundColorSpan>(start = prefixLength, end = spannable.length - suffixLength)
         assertEquals(foregroundColorSpansMiddle.size, 1)
-        assertEquals(applicationContext.getColorCompat(R.color.text_emphasis_low), foregroundColorSpansMiddle[0].foregroundColor)
+        assertEquals(applicationContext.getColorCompat(R.color.label_tertiary), foregroundColorSpansMiddle[0].foregroundColor)
 
         val spans = spannable.getSpans<Any>()
         assertEquals(5, spans.size)

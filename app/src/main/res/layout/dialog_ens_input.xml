@@ -79,11 +79,11 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="28dp"
         android:hint="@string/address_input_ens"
-        android:textColorHint="@color/text_emphasis_low"
+        android:textColorHint="@color/label_tertiary"
         app:boxStrokeColor="@color/outline_box"
         app:errorIconDrawable="@null"
         app:errorTextColor="@color/error"
-        app:hintTextColor="@color/text_emphasis_low"
+        app:hintTextColor="@color/label_tertiary"
         app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
 
         <EditText
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="textUri"
-            android:textColor="@color/text_emphasis_high"
+            android:textColor="@color/label_primary"
             android:textCursorDrawable="@drawable/cursor_drawable" />
 
     </com.google.android.material.textfield.TextInputLayout>

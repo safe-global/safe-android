@@ -71,7 +71,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/dm_sans_medium"
                 android:maxLines="2"
-                android:textColor="@color/text_emphasis_low"
+                android:textColor="@color/label_tertiary"
                 android:textSize="16sp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"

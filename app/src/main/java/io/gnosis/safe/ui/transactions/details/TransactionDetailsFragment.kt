@@ -424,9 +424,9 @@ class TransactionDetailsFragment : BaseViewBindingFragment<FragmentTransactionDe
                 TransactionStatus.AWAITING_CONFIRMATIONS -> R.color.warning
                 TransactionStatus.AWAITING_EXECUTION -> R.color.warning
                 TransactionStatus.SUCCESS -> R.color.primary
-                TransactionStatus.CANCELLED -> R.color.text_emphasis_medium
+                TransactionStatus.CANCELLED -> R.color.label_secondary
                 TransactionStatus.FAILED -> R.color.error
-                TransactionStatus.PENDING -> R.color.text_emphasis_medium
+                TransactionStatus.PENDING -> R.color.label_secondary
             }
 
     @StringRes

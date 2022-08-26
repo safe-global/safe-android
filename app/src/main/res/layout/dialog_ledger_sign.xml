@@ -57,7 +57,7 @@
         android:fontFamily="@font/dm_sans_medium"
         android:gravity="center"
         android:maxLines="2"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

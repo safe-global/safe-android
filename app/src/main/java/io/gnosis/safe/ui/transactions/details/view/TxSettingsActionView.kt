@@ -33,7 +33,7 @@ class TxSettingsActionView @JvmOverloads constructor(
 
             when (actionInfoItem) {
                 is ActionInfoItem.Value -> {
-                    addStringItem(actionInfoItem.value, R.color.text_emphasis_medium, DEFAULT_MARGIN)
+                    addStringItem(actionInfoItem.value, R.color.label_secondary, DEFAULT_MARGIN)
                 }
                 is ActionInfoItem.Address -> {
                     addAddressItem(chain, actionInfoItem.address)
@@ -45,7 +45,7 @@ class TxSettingsActionView @JvmOverloads constructor(
         }
     }
 
-    private fun addStringItem(text: String, color: Int = R.color.text_emphasis_high, marginBottom: Int = 0) {
+    private fun addStringItem(text: String, color: Int = R.color.label_primary, marginBottom: Int = 0) {
         val actionLabel = ActionLabelView(context)
         val layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, 0, 0, dpToPx(marginBottom))

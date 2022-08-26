@@ -108,7 +108,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:lines="3"
-                android:textColor="@color/text_emphasis_low"
+                android:textColor="@color/label_tertiary"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@id/safe_ens_name"
                 app:layout_constraintEnd_toStartOf="@id/link"
@@ -149,7 +149,7 @@
                 app:layout_constraintTop_toBottomOf="@id/safe_ens_name"
                 app:layout_goneMarginTop="16dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
-                tools:src="@color/text_emphasis_medium" />
+                tools:src="@color/label_secondary" />
 
             <ImageView
                 android:id="@+id/safe_qr_code_outline"

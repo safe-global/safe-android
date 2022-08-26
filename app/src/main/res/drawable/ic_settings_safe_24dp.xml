@@ -5,14 +5,14 @@
     android:viewportHeight="24">
   <path
       android:pathData="M20,4c1.054,0 1.918,0.816 1.995,1.85L22,6v12c0,1.054 -0.816,1.918 -1.85,1.994l-0.153,0.005c0,0.518 -0.385,0.94 -0.883,0.998l-0.117,0.007c-0.512,0 -0.935,-0.386 -0.993,-0.884L17.997,20L5.998,20c0,0.518 -0.386,0.94 -0.883,0.998l-0.117,0.007c-0.553,0 -1,-0.447 -1,-1 -1.053,-0.005 -1.916,-0.821 -1.992,-1.855L2,17.999L2,6c0,-1.053 0.817,-1.917 1.851,-1.994L4.001,4h16zM20,6L4,6v12h16L20,6z"
-      android:fillColor="@color/text_emphasis_low"
+      android:fillColor="@color/label_tertiary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M14.997,8c-2.209,0 -4,1.792 -4,4 0,2.21 1.791,4 4,4 2.21,0 4,-1.79 4,-4 0,-2.208 -1.79,-4 -4,-4m0,2c1.103,0 2,0.897 2,2 0,1.104 -0.897,2 -2,2s-2,-0.896 -2,-2c0,-1.103 0.897,-2 2,-2"
-      android:fillColor="@color/text_emphasis_low"
+      android:fillColor="@color/label_tertiary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M6.998,8c0.513,0 0.936,0.386 0.994,0.883L7.998,9v6c0,0.552 -0.447,1 -1,1 -0.513,0 -0.935,-0.386 -0.993,-0.884L5.998,15V9c0,-0.552 0.448,-1 1,-1z"
-      android:fillColor="@color/text_emphasis_low"
+      android:fillColor="@color/label_tertiary"
       android:fillType="nonZero"/>
 </vector>

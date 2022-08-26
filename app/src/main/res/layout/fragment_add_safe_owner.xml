@@ -100,7 +100,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:lines="3"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/safe_link"
         app:layout_constraintStart_toStartOf="parent"

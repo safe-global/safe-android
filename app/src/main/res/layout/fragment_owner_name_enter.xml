@@ -147,8 +147,8 @@
         android:layout_marginRight="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_margin"
         app:boxStrokeColor="@color/outline_box"
-        app:hintTextColor="@color/text_emphasis_low"
-        android:textColor="@color/text_emphasis_high"
+        app:hintTextColor="@color/label_tertiary"
+        android:textColor="@color/label_primary"
         android:hint="@string/enter_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -162,7 +162,7 @@
             android:maxLines="1"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="@color/text_emphasis_high"
+            android:textColor="@color/label_primary"
             android:textSize="16sp"
             tools:text="Local name" />
 

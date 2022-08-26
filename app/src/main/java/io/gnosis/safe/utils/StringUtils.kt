@@ -68,7 +68,7 @@ fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 6, s
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         setSpan(
-            ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_low)),
+            ForegroundColorSpan(context.getColorCompat(R.color.label_tertiary)),
             prefixLength,
             length - suffixLength,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

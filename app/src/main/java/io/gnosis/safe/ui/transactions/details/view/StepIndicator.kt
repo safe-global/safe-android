@@ -26,7 +26,7 @@ class StepIndicator @JvmOverloads constructor(
         edgesPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         edgesPaint.style = Paint.Style.FILL_AND_STROKE
         edgesPaint.strokeWidth = dpToPx(2).toFloat()
-        edgesPaint.color = context.getColorCompat(R.color.text_emphasis_low)
+        edgesPaint.color = context.getColorCompat(R.color.label_tertiary)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -93,7 +93,7 @@ class RejectionStep @JvmOverloads constructor(
             stepIcon.setImageResource(a.getResourceId(R.styleable.StepIndicator_step_icon, -1))
             stepLabel.text = a.getString(R.styleable.StepIndicator_step_text)
             val isActiveStep = a.getBoolean(R.styleable.StepIndicator_step_active, true)
-            stepLabel.setTextColor(context.getColorCompat(if (isActiveStep) R.color.text_emphasis_high else R.color.text_emphasis_low))
+            stepLabel.setTextColor(context.getColorCompat(if (isActiveStep) R.color.label_primary else R.color.label_tertiary))
         }
     }
 }

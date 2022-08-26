@@ -124,7 +124,7 @@
             <TextView
                 android:id="@+id/no_implementation_item"
                 style="@style/TextDark"
-                android:textColor="@color/text_emphasis_medium"
+                android:textColor="@color/label_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -155,7 +155,7 @@
             <TextView
                 android:id="@+id/no_factory_item"
                 style="@style/TextDark"
-                android:textColor="@color/text_emphasis_medium"
+                android:textColor="@color/label_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"

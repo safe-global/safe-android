@@ -5,10 +5,12 @@
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
     <color name="error">@color/red</color>
-    <color name="accent">@color/text_emphasis_high</color>
+    <color name="accent">@color/label_primary</color>
     <color name="window_background">@color/background_primary</color>
-    <color name="toolbar_action">@color/text_emphasis_high</color>
+    <color name="toolbar_action">@color/label_primary</color>
     <color name="warning">@color/orange</color>
+    <color name="warning_pressed">@color/dark_orange</color>
+    <color name="warning_background">@color/bg_orange</color>
 
     <color name="background_primary">@color/white</color>
     <color name="surface_01">@color/white_two</color>
@@ -16,11 +18,10 @@
     <color name="surface_04">@color/white_two</color>
     <color name="separator">@color/white</color>
 
-    <color name="text_emphasis_high">@color/navy</color>
-    <color name="text_emphasis_medium">@color/dark_grey</color>
-    <color name="text_emphasis_low">@color/medium_grey</color>
+    <color name="label_primary">@color/black</color>
+    <color name="label_secondary">@color/slate</color>
+    <color name="label_tertiary">@color/metal</color>
 
-    <color name="label_tertiary">#B2BBC0</color>
 
     <color name="outline">@color/white_smoke</color>
     <color name="illustration_background">@color/whitesmoke_two</color>
@@ -56,6 +57,13 @@
 
     <color name="text_grey_background">#f4f4f9</color>
 
+    <color name="success">@color/system_green</color>
+
+    <!-- future use? -->
+    <color name="info">@color/blue</color>
+    <color name="info_pressed">@color/dark_blue</color>
+    <color name="info_background">@color/bg_blue</color>
+
     <!-- New Design colors -->
     <color name="white">#FFFFFF</color>
     <color name="whitesmoke_two">#f0efee</color>
@@ -73,6 +81,8 @@
     <color name="cherry_red">#e52325</color>
     <color name="coral">#ff453a</color>
     <color name="orange">#FF8061</color>
+    <color name="dark_orange">#CD674E</color>
+    <color name="bg_orange">#FFF2E3</color>
     <color name="pale_red">#e8663d</color>
     <color name="green">#12ff80</color>
     <color name="pale_grey_three">#f4f5f9</color>
@@ -86,6 +96,7 @@
     <color name="navy">#001428</color>
     <color name="slate_grey">#626269</color>
     <color name="slate">#303033</color>
+    <color name="metal">#A1A3A7</color>
     <color name="blue_grey">#8d8d93</color>
     <color name="black_two">#2d2d2d</color>
     <color name="black_three">#272727</color>
@@ -104,19 +115,17 @@
     <color name="hold_two">#005546</color>
     <color name="dark_green">#00B460</color>
     <color name="dark_aquamarine">#007661</color>
-
+    <color name="system_green">#00B460</color>
+    <color name="blue">#5FDDFF</color>
+    <color name="dark_blue">#52BFDC</color>
+    <color name="bg_blue">#EFFCFF</color>
     <color name="word_recovery_phrase">@color/primary</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
-
-    <color name="address_boundaries">@color/text_emphasis_high</color>
-
+    <color name="address_boundaries">@color/label_primary</color>
     <color name="link">@color/primary</color>
-
-    <color name="blue">#001e3b</color>
     <color name="divider">@color/pale_grey_four</color>
-
     <color name="rejection">@color/bg_red</color>
 
 </resources>

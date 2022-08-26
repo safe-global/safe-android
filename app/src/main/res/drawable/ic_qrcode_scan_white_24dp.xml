@@ -5,26 +5,26 @@
     android:viewportHeight="24">
   <path
       android:pathData="M4,2h5c1.105,0 2,0.895 2,2v5c0,1.105 -0.895,2 -2,2L4,11c-1.105,0 -2,-0.895 -2,-2L2,4c0,-1.105 0.895,-2 2,-2zM4,4v5h5L9,4L4,4zM4,13h5c1.105,0 2,0.895 2,2v5c0,1.105 -0.895,2 -2,2L4,22c-1.105,0 -2,-0.895 -2,-2v-5c0,-1.105 0.895,-2 2,-2zM4,15v5h5v-5L4,15zM15,2h5c1.105,0 2,0.895 2,2v5c0,1.105 -0.895,2 -2,2h-5c-1.105,0 -2,-0.895 -2,-2L13,4c0,-1.105 0.895,-2 2,-2zM15,4v5h5L20,4h-5z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="nonZero"/>
   <path
       android:pathData="M15.5,13L13.5,13A0.5,0.5 0,0 0,13 13.5L13,15.5A0.5,0.5 0,0 0,13.5 16L15.5,16A0.5,0.5 0,0 0,16 15.5L16,13.5A0.5,0.5 0,0 0,15.5 13z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M21.5,13L19.5,13A0.5,0.5 0,0 0,19 13.5L19,15.5A0.5,0.5 0,0 0,19.5 16L21.5,16A0.5,0.5 0,0 0,22 15.5L22,13.5A0.5,0.5 0,0 0,21.5 13z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M18.5,16L16.5,16A0.5,0.5 0,0 0,16 16.5L16,18.5A0.5,0.5 0,0 0,16.5 19L18.5,19A0.5,0.5 0,0 0,19 18.5L19,16.5A0.5,0.5 0,0 0,18.5 16z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M21.5,19L19.5,19A0.5,0.5 0,0 0,19 19.5L19,21.5A0.5,0.5 0,0 0,19.5 22L21.5,22A0.5,0.5 0,0 0,22 21.5L22,19.5A0.5,0.5 0,0 0,21.5 19z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M15.5,19L13.5,19A0.5,0.5 0,0 0,13 19.5L13,21.5A0.5,0.5 0,0 0,13.5 22L15.5,22A0.5,0.5 0,0 0,16 21.5L16,19.5A0.5,0.5 0,0 0,15.5 19z"
-      android:fillColor="@color/text_emphasis_medium"
+      android:fillColor="@color/label_secondary"
       android:fillType="evenOdd"/>
 </vector>

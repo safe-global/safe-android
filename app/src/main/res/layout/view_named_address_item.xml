@@ -30,7 +30,7 @@
         android:ellipsize="end"
         android:fontFamily="@font/dm_sans_medium"
         android:maxLines="1"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         android:layout_marginStart="@dimen/default_small_margin"
         app:layout_constraintBottom_toBottomOf="parent"

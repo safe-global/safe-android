@@ -120,7 +120,7 @@
         app:layout_constraintTop_toBottomOf="@+id/owner_address"
 
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
-        tools:src="@color/text_emphasis_medium" />
+        tools:src="@color/label_secondary" />
 
     <ImageView
         android:id="@+id/owner_qr_code_outline"

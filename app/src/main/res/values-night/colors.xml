@@ -5,12 +5,12 @@
     <color name="future_primary">@color/neon_green</color>
     <color name="on_primary">@color/black</color>
     <color name="primary_dark">@color/hold_two</color>
-    <color name="warning">@color/pale_red</color>
+    <color name="warning">@color/orange</color>
+    <color name="warning_pressed">@color/dark_orange</color>
     <color name="error">@color/coral</color>
     <color name="accent">@color/white_two</color>
     <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/white_two</color>
-    <color name="pending">#FF8042</color>
 
     <color name="background_primary">@color/black</color>
     <color name="surface_01">@color/black_four</color>
@@ -18,11 +18,9 @@
     <color name="background_secondary">@color/light_black</color>
     <color name="separator">@color/black_five</color>
 
-    <color name="text_emphasis_high">@color/white_two</color>
-    <color name="text_emphasis_medium">@color/blue_grey</color>
-    <color name="text_emphasis_low">@color/slate_grey</color>
-
-    <color name="label_tertiary">#B2B5B2</color>
+    <color name="label_primary">@color/white_two</color>
+    <color name="label_secondary">@color/blue_grey</color>
+    <color name="label_tertiary">@color/slate_grey</color>
 
     <color name="outline">@color/charcoal_grey</color>
     <color name="illustration_background">@color/dark_grey_two</color>
@@ -36,5 +34,7 @@
     <color name="button_confirm_pressed">@color/dark_green</color>
     <color name="button_reject_disabled">@color/bg_red_dark</color>
     <color name="button_reject_pressed">@color/cherry_red</color>
+
+    <color name="success">@color/system_green</color>
 
 </resources>
