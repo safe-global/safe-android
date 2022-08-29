@@ -572,13 +572,6 @@
     <string name="ledger_sign_cancel">Cancel</string>
 
     <string name="whatsnew_title">What\'s new</string>
-    <string name="whatsnew_links_title">Open Links in App</string>
-    <string name="whatsnew_links_description">Now you can open links to assets or transactions, or transaction details of a safe in the mobile app</string>
-    <string name="whatsnew_delegate_calls_title">Review Delegate Calls</string>
-    <string name="whatsnew_delegate_calls_description">Bring attention to potentially dangerous transactions marked with warning of «unexpected delegate calls» in transaction details</string>
-    <string name="whatsnew_edit_owners_title">Edit Safe Owners</string>
-    <string name="whatsnew_edit_owners_description">After creating new owner key request to join the selected Safe by sharing a link with one of the owners</string>
-    <string name="whatsnew_join_safe_title">Request to join a Safe</string>
-    <string name="whatsnew_join_safe_decription">After creating new owner key request to join the selected Safe by sharing a link with one of the owners</string>
-
+    <string name="whatsnew_item1_title">We have changed!</string>
+    <string name="whatsnew_item1_description">Gnosis Safe rebranded to Safe. Following a successful spin-off vote from Gnosis in GIP-29, we are rebranding to Safe. Now and over the coming time, you will see a new look and a better visual experience to your ever secure Gnosis Safe that you love.</string>
 </resources>
