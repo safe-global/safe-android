@@ -13,6 +13,8 @@
     <color name="surface_01">@color/white_two</color>
     <color name="background_secondary">@color/white</color>
     <color name="surface_04">@color/white_two</color>
+    <color name="background_green">@color/light_green</color>
+    <color name="background_green_light">@color/bg_green</color>
 
     <!-- Components -->
     <color name="border">@color/stone</color>
@@ -44,6 +46,7 @@
     <color name="info_background">@color/bg_blue</color>
 
     <!-- misc -->
+    <color name="icon">@color/metal</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
     <color name="accent">@color/label_primary</color>
@@ -55,26 +58,15 @@
     <color name="logo_background">@android:color/transparent</color>
 
     <color name="pressed_shade">#33000000</color>
-    <color name="gnosis_blue">#10b3d4</color>
-    <color name="gnosis_blue_shade">#0083a3</color>
-    <color name="gnosis_dark_blue_alpha_50">#7f001428</color>
-    <color name="gnosis_dark_blue_alpha_70">#b2001428</color>
 
     <color name="secondary_button">#c8ced4</color>
     <color name="secondary_button_disabled">#e8eaec</color>
     <color name="secondary_button_pressed">#aaadb1</color>
 
-    <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
 
     <color name="enabled_input">@color/primary</color>
 
-    <color name="text_grey_background">#f4f4f9</color>
-    <color name="word_recovery_phrase">@color/primary</color>
-    <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
-    <color name="word_recovery_phrase_picker">#b24a4a4a</color>
-    <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
     <color name="address_boundaries">@color/label_primary</color>
-    <color name="link">@color/primary</color>
 
     <color name="success">@color/system_green</color>
     <color name="rejection">@color/bg_red</color>
@@ -82,46 +74,31 @@
     <!-- color names -->
     <color name="white_two">#ffffff</color>
     <color name="black">#121312</color>
-    <color name="white_alpha_70">#b3ffffff</color>
-    <color name="black_alpha_70">#b3000000</color>
     <color name="white">#FFFFFF</color>
     <color name="whitesmoke_two">#f0efee</color>
-    <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
     <color name="dark_grey">#5d6d74</color>
-    <color name="dark_grey_disabled">#965d6d74</color>
 1   <color name="white_smoke">#e8e7e6</color>
     <color name="red">#FF5F72</color>
-    <color name="tomato_two">#c31717</color>
     <color name="dark_red">#AC2C3B</color>
-    <color name="cherry_red">#e52325</color>
-    <color name="coral">#ff453a</color>
+
     <color name="orange">#FF8061</color>
     <color name="dark_orange">#CD674E</color>
     <color name="bg_orange">#FFF2E3</color>
     <color name="bg_orange_dark">#2F2318</color>
-    <color name="pale_red">#e8663d</color>
     <color name="green">#12ff80</color>
-    <color name="pale_grey_three">#f4f5f9</color>
-    <color name="tomato_15">#f0d6d6</color>
+    <color name="light_green">#B0FFC9</color>
+    <color name="bg_green">#EFFFF4</color>
+
     <color name="pale_grey_four">#e3e5ec</color>
-    <color name="dusk">#4a5579</color>
-    <color name="neon_green">#12FF80</color>
-    <color name="shamrock">#00a95f</color>
-    <color name="teal">#029f7f</color>
     <color name="teal_two">#008c73</color>
-    <color name="navy">#001428</color>
-    <color name="slate_grey">#626269</color>
+
     <color name="slate">#303033</color>
     <color name="metal">#A1A3A7</color>
-    <color name="blue_grey">#8d8d93</color>
-    <color name="black_two">#2d2d2d</color>
     <color name="black_three">#272727</color>
-    <color name="black_three_dimmed">#272727</color>
     <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121312</color>
-    <color name="safe_black">#121312</color>
     <color name="light_black">#1C1C1E</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
@@ -129,10 +106,8 @@
     <color name="stone">#DDDEE0</color>
     <color name="bg_red">#FFE6EA</color>
     <color name="bg_red_dark">#262020</color>
-    <color name="hold">#008c73</color>
     <color name="hold_two">#005546</color>
     <color name="dark_green">#00B460</color>
-    <color name="dark_aquamarine">#007661</color>
     <color name="system_green">#00B460</color>
     <color name="blue">#5FDDFF</color>
     <color name="dark_blue">#52BFDC</color>

@@ -13,6 +13,8 @@
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
     <color name="background_secondary">@color/light_black</color>
+    <color name="background_green">@color/light_green</color>
+    <color name="background_green_light">@color/graphite</color>
 
     <!-- Components -->
     <color name="border">@color/graphite</color>
@@ -44,6 +46,7 @@
     <color name="info_background">@color/bg_blue_dark</color>
 
     <!-- misc -->
+    <color name="icon">@color/stone</color>
     <color name="on_primary">@color/black</color>
     <color name="primary_dark">@color/hold_two</color>
 

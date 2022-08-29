@@ -236,16 +236,6 @@
         <item name="singleLine">true</item>
     </style>
 
-    <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/label_primary</item>
-        <item name="android:textColorHint">@color/light_text</item>
-        <item name="android:background">@drawable/background_input</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingTop">4dp</item>
-    </style>
-
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/background_bottom_sheet_rounded</item>
     </style>
