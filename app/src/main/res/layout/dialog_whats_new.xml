@@ -24,8 +24,10 @@
         android:layout_marginBottom="@dimen/default_large_margin"
         app:layout_constraintBottom_toTopOf="@id/continue_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title">
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,30 +37,9 @@
             <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:whatsnew_title="@string/whatsnew_links_title"
-                app:whatsnew_description="@string/whatsnew_links_description"
-                app:whatsnew_icon="@drawable/ic_whatsnew_links" />
-
-            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:whatsnew_title="@string/whatsnew_delegate_calls_title"
-                app:whatsnew_description="@string/whatsnew_delegate_calls_description"
-                app:whatsnew_icon="@drawable/ic_whatsnew_delegate_calls" />
-
-            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:whatsnew_title="@string/whatsnew_edit_owners_title"
-                app:whatsnew_description="@string/whatsnew_edit_owners_description"
-                app:whatsnew_icon="@drawable/ic_whatsnew_edit_owners" />
-
-            <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:whatsnew_title="@string/whatsnew_join_safe_title"
-                app:whatsnew_description="@string/whatsnew_join_safe_decription"
-                app:whatsnew_icon="@drawable/ic_whatsnew_join_safe" />
+                app:whatsnew_description="@string/whatsnew_item1_description"
+                app:whatsnew_icon="@drawable/ic_safe_new"
+                app:whatsnew_title="@string/whatsnew_item1_title" />
 
         </LinearLayout>
 
