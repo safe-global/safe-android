@@ -572,6 +572,6 @@
     <string name="ledger_sign_cancel">Cancel</string>
 
     <string name="whatsnew_title">What\'s new</string>
-    <string name="whatsnew_item1_title">We have changed!</string>
+    <string name="whatsnew_item1_title">Meet the new Safe!</string>
     <string name="whatsnew_item1_description">Gnosis Safe rebranded to Safe. Following a successful spin-off vote from Gnosis in GIP-29, we are rebranding to Safe.\n\nNow and over the coming time, you will see a new look and a better visual experience to your ever secure Gnosis Safe that you love.</string>
 </resources>
