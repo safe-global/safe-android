@@ -2,6 +2,7 @@ package io.gnosis.safe.ui.whatsnew.view
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.text.Html
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +41,7 @@ class WhatsNewItem @JvmOverloads constructor(
         with(binding) {
             itemImage.setImageResource(a.getResourceId(R.styleable.WhatsNewItem_whatsnew_icon, -1))
             itemTitle.text = a.getString(R.styleable.WhatsNewItem_whatsnew_title)
-            itemDescription.text = a.getString(R.styleable.WhatsNewItem_whatsnew_description)
+            itemDescription.text = Html.fromHtml(a.getString(R.styleable.WhatsNewItem_whatsnew_description))
         }
     }
 }
