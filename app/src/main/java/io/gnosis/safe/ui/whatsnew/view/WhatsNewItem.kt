@@ -46,25 +46,29 @@ class WhatsNewItem @JvmOverloads constructor(
             itemTitle.text = a.getString(R.styleable.WhatsNewItem_whatsnew_title)
 
             val description = a.getString(R.styleable.WhatsNewItem_whatsnew_description)
-            if (description?.startsWith("Gnosis Safe rebranded to Safe") == true) {
-                val span = SpannableStringBuilder(description).apply {
-                    setSpan(
-                        ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
-                        0,
-                        11,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    setSpan(
-                        ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
-                        25,
-                        29,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
-                itemDescription.text = span
-            } else {
-                itemDescription.text = description
+            itemDescription.text = highlightGnosis(description, context)
+
+        }
+    }
+
+    private fun highlightGnosis(description: String?, context: Context): SpannableStringBuilder {
+        return if (description?.startsWith("Gnosis Safe rebranded to Safe") == true) {
+             SpannableStringBuilder(description).apply {
+                setSpan(
+                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    0,
+                    11,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                setSpan(
+                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    25,
+                    29,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
             }
+        } else {
+            SpannableStringBuilder(description)
         }
     }
 }
