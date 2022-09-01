@@ -183,7 +183,7 @@ class NotificationManager(
         priority: Int = NotificationCompat.PRIORITY_HIGH
     ) =
         NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_app_24dp)
+            .setSmallIcon(R.drawable.ic_logo24dp)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
