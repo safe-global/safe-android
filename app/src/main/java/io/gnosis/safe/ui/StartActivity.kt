@@ -42,7 +42,8 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener, UnreadConversationCountListener {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener,
+    UnreadConversationCountListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -156,6 +157,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
                         askForPasscode()
                         comingFromBackground = false
+                    } else {
+                        if (settingsHandler.showWhatsNew) {
+                            showWhatsNew()
+                            settingsHandler.showWhatsNew = false
+                        }
                     }
                 }
             } ?: run {
@@ -198,6 +204,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         }
                         else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
                             askForPasscode()
+                        } else {
+                            if (settingsHandler.showWhatsNew) {
+                                showWhatsNew()
+                                settingsHandler.showWhatsNew = false
+                            }
                         }
                     }
                 }
@@ -283,7 +294,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
             adjustSafeNameWidth()
 
-            safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeAddress.text =
+                safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
             safeAddress.setOnClickListener {
                 navigateToShareSafeDialog()
             }
@@ -296,7 +308,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             chainRibbon.visible(true)
             safe.chain.let {
                 chainRibbon.text = it.name
-                chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
+                chainRibbon.setTextColor(
+                    it.textColor.toColor(
+                        applicationContext,
+                        R.color.white
+                    )
+                )
                 chainRibbon.setBackgroundColor(
                     it.backgroundColor.toColor(
                         applicationContext,
@@ -310,7 +327,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private fun adjustSafeNameWidth() {
         with(toolbarBinding) {
             val bounds = Rect()
-            safeName.paint.getTextBounds(safeName.text.toString(), 0, safeName.text.length, bounds)
+            safeName.paint.getTextBounds(
+                safeName.text.toString(),
+                0,
+                safeName.text.length,
+                bounds
+            )
             val safeNameLength = bounds.right - bounds.left
 
             // wait till views are measured
