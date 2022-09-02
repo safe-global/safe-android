@@ -10,6 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -41,7 +42,8 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener, UnreadConversationCountListener {
+class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateListener,
+    UnreadConversationCountListener {
 
     @Inject
     lateinit var safeRepository: SafeRepository
@@ -85,8 +87,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         (application as? HeimdallApplication)?.registerForAppState(this)
 
         onCountUpdate(Intercom.client().unreadConversationCount)
-
-        showWhatsNewIfNeeded()
     }
 
     override fun onResume() {
@@ -113,7 +113,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
     private fun handleIntent(intent: Intent?) {
         intent?.let {
-            val chainId = it.getSerializableExtra(EXTRA_CHAIN_ID)?.let { it as BigInteger } ?: BigInteger.ZERO
+            val chainId =
+                it.getSerializableExtra(EXTRA_CHAIN_ID)?.let { it as BigInteger } ?: BigInteger.ZERO
             val safeAddress = it.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
             val txId = it.getStringExtra(EXTRA_TX_ID)
 
@@ -127,15 +128,24 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
                         if (txId == null) {
                             navController.navigate(R.id.transactionsFragment, Bundle().apply {
-                                putInt("activeTab", TxPagerAdapter.Tabs.HISTORY.ordinal) // open history tab
+                                putInt(
+                                    "activeTab",
+                                    TxPagerAdapter.Tabs.HISTORY.ordinal
+                                ) // open history tab
                             })
                         } else {
                             with(navController) {
                                 navigate(R.id.transactionsFragment, Bundle().apply {
-                                    putInt("activeTab", TxPagerAdapter.Tabs.QUEUE.ordinal) // open queued tab
+                                    putInt(
+                                        "activeTab",
+                                        TxPagerAdapter.Tabs.QUEUE.ordinal
+                                    ) // open queued tab
                                 })
                                 navigate(
-                                    TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(it.chain, txId)
+                                    TransactionsFragmentDirections.actionTransactionsFragmentToTransactionDetailsFragment(
+                                        it.chain,
+                                        txId
+                                    )
                                 )
                             }
                         }
@@ -147,6 +157,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     if (settingsHandler.usePasscode && settingsHandler.requirePasscodeToOpen && comingFromBackground) {
                         askForPasscode()
                         comingFromBackground = false
+                    } else {
+                        if (settingsHandler.showWhatsNew) {
+                            showWhatsNew()
+                            settingsHandler.showWhatsNew = false
+                        }
                     }
                 }
             } ?: run {
@@ -189,6 +204,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         }
                         else -> if (settingsHandler.requirePasscodeToOpen && settingsHandler.usePasscode) {
                             askForPasscode()
+                        } else {
+                            if (settingsHandler.showWhatsNew) {
+                                showWhatsNew()
+                                settingsHandler.showWhatsNew = false
+                            }
                         }
                     }
                 }
@@ -202,7 +222,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             navController.addOnDestinationChangedListener { _, destination, _ ->
 
                 if (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment) {
-                    if (settingsHandler.appStartCount >= 3) {
+                    if (settingsHandler.showWhatsNew) {
+                        if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                            showWhatsNew()
+                            settingsHandler.showWhatsNew = false
+                        }
+                    } else if (settingsHandler.appStartCount >= 3) {
                         startRateFlow()
                     }
                 }
@@ -269,7 +294,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
 
             adjustSafeNameWidth()
 
-            safeAddress.text = safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
+            safeAddress.text =
+                safe.address.asEthereumAddressChecksumString().abbreviateEthAddress()
             safeAddress.setOnClickListener {
                 navigateToShareSafeDialog()
             }
@@ -282,8 +308,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             chainRibbon.visible(true)
             safe.chain.let {
                 chainRibbon.text = it.name
-                chainRibbon.setTextColor(it.textColor.toColor(applicationContext, R.color.white))
-                chainRibbon.setBackgroundColor(it.backgroundColor.toColor(applicationContext, R.color.primary))
+                chainRibbon.setTextColor(
+                    it.textColor.toColor(
+                        applicationContext,
+                        R.color.white
+                    )
+                )
+                chainRibbon.setBackgroundColor(
+                    it.backgroundColor.toColor(
+                        applicationContext,
+                        R.color.primary
+                    )
+                )
             }
         }
     }
@@ -291,12 +327,18 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private fun adjustSafeNameWidth() {
         with(toolbarBinding) {
             val bounds = Rect()
-            safeName.paint.getTextBounds(safeName.text.toString(), 0, safeName.text.length, bounds)
+            safeName.paint.getTextBounds(
+                safeName.text.toString(),
+                0,
+                safeName.text.length,
+                bounds
+            )
             val safeNameLength = bounds.right - bounds.left
 
             // wait till views are measured
             safeName.post {
-                val readOnlySpace = readOnly.measuredWidth + readOnly.marginLeft + readOnly.marginRight
+                val readOnlySpace =
+                    readOnly.measuredWidth + readOnly.marginLeft + readOnly.marginRight
                 if (safeNameLength > safeAddress.measuredWidth - readOnlySpace) {
                     safeName.width = safeAddress.measuredWidth - readOnlySpace
                     safeName.ellipsize = TextUtils.TruncateAt.END
@@ -317,7 +359,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     val safeInfo = safeRepository.getSafeInfo(it)
                     val safeOwners = safeInfo.owners.map { it.value }.toSet()
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
-                    toolbarBinding.readOnly.visible(safeOwners.intersect(localOwners).isEmpty(), View.INVISIBLE)
+                    toolbarBinding.readOnly.visible(
+                        safeOwners.intersect(localOwners).isEmpty(),
+                        View.INVISIBLE
+                    )
                     safeRepository.saveSafe(activeSafe.copy(version = safeInfo.version))
                 }
             }.onFailure {
@@ -362,11 +407,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
     }
 
-    private fun showWhatsNewIfNeeded() {
-        if (settingsHandler.showWhatsNew) {
-            navController.navigate(R.id.whatsNewDialog)
-            settingsHandler.showWhatsNew = false
-        }
+    private fun showWhatsNew() {
+        navController.navigate(R.id.whatsNewDialog)
     }
 
     private fun navigateToShareSafeDialog() {
@@ -434,7 +476,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         const val EXTRA_SAFE = "extra.string.safe"
         const val EXTRA_TX_ID = "extra.string.tx_id"
 
-        fun createIntent(context: Context, chainId: BigInteger, safeAddress: String, txId: String? = null) =
+        fun createIntent(
+            context: Context,
+            chainId: BigInteger,
+            safeAddress: String,
+            txId: String? = null
+        ) =
             Intent(context, StartActivity::class.java).apply {
                 putExtra(EXTRA_CHAIN_ID, chainId)
                 putExtra(EXTRA_SAFE, safeAddress)
