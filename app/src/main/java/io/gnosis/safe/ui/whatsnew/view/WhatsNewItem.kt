@@ -2,11 +2,15 @@ package io.gnosis.safe.ui.whatsnew.view
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.R
 import io.gnosis.safe.databinding.ViewWhatsNewItemBinding
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import timber.log.Timber
 
 class WhatsNewItem @JvmOverloads constructor(
@@ -40,7 +44,31 @@ class WhatsNewItem @JvmOverloads constructor(
         with(binding) {
             itemImage.setImageResource(a.getResourceId(R.styleable.WhatsNewItem_whatsnew_icon, -1))
             itemTitle.text = a.getString(R.styleable.WhatsNewItem_whatsnew_title)
-            itemDescription.text = a.getString(R.styleable.WhatsNewItem_whatsnew_description)
+
+            val description = a.getString(R.styleable.WhatsNewItem_whatsnew_description)
+            itemDescription.text = highlightGnosis(description, context)
+
+        }
+    }
+
+    private fun highlightGnosis(description: String?, context: Context): SpannableStringBuilder {
+        return if (description?.startsWith("Gnosis Safe rebranded to Safe") == true) {
+             SpannableStringBuilder(description).apply {
+                setSpan(
+                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    0,
+                    11,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                setSpan(
+                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    25,
+                    29,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+        } else {
+            SpannableStringBuilder(description)
         }
     }
 }
