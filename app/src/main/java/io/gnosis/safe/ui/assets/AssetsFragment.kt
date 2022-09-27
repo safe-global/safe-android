@@ -90,7 +90,6 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
     }
 
     override fun screenId() = null
-
 }
 
 class AssetsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
