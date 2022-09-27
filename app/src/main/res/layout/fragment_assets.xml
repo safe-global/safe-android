@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,7 +10,154 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/surface_01">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/total_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/total_balance_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/coins_total_balance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/total_balance_value"
+                style="@style/TextTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/total_balance_label"
+                tools:text="10,679.25 USD" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/send_button"
+                style="@style/PrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="24dp"
+                android:drawableLeft="@drawable/ic_arrow_red_10dp"
+                android:drawableTint="@color/white"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="32dp"
+                android:text="@string/coins_send"
+                android:textSize="14dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/receive_button"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/total_balance_value">
+
+                <aapt:attr name="android:background">
+
+                    <selector>
+
+                        <item android:state_enabled="false">
+                            <shape>
+                                <solid android:color="@color/button_primary_disabled" />
+                                <corners android:radius="8dp" />
+                            </shape>
+                        </item>
+
+                        <item android:state_enabled="true">
+                            <ripple android:color="@color/pressed_shade">
+                                <item>
+                                    <shape>
+                                        <solid android:color="@color/primary" />
+                                        <corners android:radius="8dp" />
+                                    </shape>
+                                </item>
+                            </ripple>
+                        </item>
+
+                        <item android:state_pressed="true">
+                            <shape>
+                                <solid android:color="@color/button_primary_pressed" />
+                                <corners android:radius="8dp" />
+                            </shape>
+                        </item>
+
+                    </selector>
+
+                </aapt:attr>
+
+            </androidx.appcompat.widget.AppCompatButton>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/receive_button"
+                style="@style/PrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:drawableLeft="@drawable/ic_arrow_green_10dp"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="24dp"
+                android:text="@string/coins_receive"
+                android:textSize="14dp"
+                android:textColor="@color/primary"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/send_button"
+                app:layout_constraintTop_toBottomOf="@+id/total_balance_value">
+
+                <aapt:attr name="android:background">
+
+                    <selector>
+
+                        <item android:state_enabled="false">
+                            <shape android:shape="rectangle">
+                                <stroke android:width="2dp" android:color="@color/button_primary_disabled" />
+                                <solid android:color="@color/surface_01" />
+                                <corners android:radius="8dp" />
+                            </shape>
+                        </item>
+
+                        <item android:state_enabled="true">
+                            <ripple android:color="@color/background">
+                                <item>
+                                    <shape android:shape="rectangle">
+                                        <stroke android:width="2dp" android:color="@color/primary" />
+                                        <solid android:color="@color/surface_01" />
+                                        <corners android:radius="8dp" />
+                                    </shape>
+                                </item>
+                            </ripple>
+                        </item>
+
+                        <item android:state_pressed="true">
+                            <shape android:shape="rectangle">
+                                <stroke android:width="2dp" android:color="@color/button_primary_pressed" />
+                                <solid android:color="@color/surface_01" />
+                                <corners android:radius="8dp" />
+                            </shape>
+                        </item>
+
+                    </selector>
+
+                </aapt:attr>
+
+            </androidx.appcompat.widget.AppCompatButton>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/balances_tab_bar"

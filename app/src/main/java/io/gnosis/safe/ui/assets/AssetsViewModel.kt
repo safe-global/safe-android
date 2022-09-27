@@ -23,6 +23,14 @@ class AssetsViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateTotalBalance(balance: String) {
+        safeLaunch {
+            updateState {
+                SafeBalancesState.TotalBalance(balance, null)
+            }
+        }
+    }
 }
 
 sealed class SafeBalancesState : BaseStateViewModel.State {
@@ -35,4 +43,9 @@ sealed class SafeBalancesState : BaseStateViewModel.State {
         val safe: Safe?,
         override var viewAction: BaseStateViewModel.ViewAction?
     ) : SafeBalancesState()
+
+    data class TotalBalance(
+        val totalBalance: String,
+        override var viewAction: BaseStateViewModel.ViewAction?
+    ) :  SafeBalancesState()
 }
