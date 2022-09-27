@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -60,7 +61,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }
 
             receiveButton.setOnClickListener {
-
+                navigateToShareSafeDialog()
             }
         }
 
@@ -82,6 +83,10 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
+    }
+
+    private fun navigateToShareSafeDialog() {
+        findNavController().navigate(R.id.shareSafeDialog)
     }
 
     override fun screenId() = null
