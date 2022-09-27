@@ -155,7 +155,6 @@
 
             </androidx.appcompat.widget.AppCompatButton>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.tabs.TabLayout
