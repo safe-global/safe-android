@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "3.3.1")
+        versionName getKey("APP_VERSION_NAME", "3.4.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Infura API key
@@ -38,7 +38,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
-        project.ext.set("archivesBaseName", String.format("gnosis-safe-%s", defaultConfig.versionCode))
+        project.archivesBaseName = String.format("safe-%s", defaultConfig.versionCode)
 
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
 
