@@ -9,9 +9,10 @@
     <color name="confirm_disabled">@color/primary_disabled</color>
 
     <!-- Backgrounds -->
-    <color name="background_primary">@color/white</color>
+    <color name="background_primary">@color/grey</color>
     <color name="surface_01">@color/white_two</color>
     <color name="background_secondary">@color/white</color>
+    <color name="background_tertiary">@color/dark_grey</color>
     <color name="surface_04">@color/white_two</color>
     <color name="background_green">@color/light_green</color>
     <color name="background_green_light">@color/bg_green</color>
@@ -54,7 +55,6 @@
     <color name="toolbar_action">@color/label_primary</color>
 
     <color name="outline">@color/white_smoke</color>
-    <color name="illustration_background">@color/whitesmoke_two</color>
     <color name="logo_background">@android:color/transparent</color>
 
     <color name="pressed_shade">#33000000</color>
@@ -75,10 +75,11 @@
     <color name="white_two">#ffffff</color>
     <color name="black">#121312</color>
     <color name="white">#FFFFFF</color>
+    <color name="grey">#F4F4F4</color>
     <color name="whitesmoke_two">#f0efee</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
-    <color name="dark_grey">#5d6d74</color>
+    <color name="dark_grey">#f0efee</color>
 1   <color name="white_smoke">#e8e7e6</color>
     <color name="red">#FF5F72</color>
     <color name="dark_red">#AC2C3B</color>
@@ -103,7 +104,7 @@
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="graphite">#636669</color>
-    <color name="stone">#DDDEE0</color>
+    <color name="stone">#DCDEE0</color>
     <color name="bg_red">#FFE6EA</color>
     <color name="bg_red_dark">#262020</color>
     <color name="hold_two">#005546</color>

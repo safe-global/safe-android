@@ -80,6 +80,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
         app:strokeWidth="0.01dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/background_tertiary" />
 
 </merge>

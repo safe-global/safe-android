@@ -20,7 +20,7 @@
         app:srcCompat="@drawable/ic_native_logo"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
         app:strokeWidth="0.01dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/background_tertiary" />
 
     <TextView
         android:id="@+id/amount_title"

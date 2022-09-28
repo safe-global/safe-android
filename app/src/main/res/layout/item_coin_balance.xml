@@ -21,7 +21,7 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
         tools:src="@drawable/ic_native_logo"
         app:strokeWidth="0.1dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/background_tertiary" />
 
     <TextView
         android:id="@+id/symbol"
