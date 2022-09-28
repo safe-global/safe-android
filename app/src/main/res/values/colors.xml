@@ -19,7 +19,7 @@
 
     <!-- Components -->
     <color name="border">@color/stone</color>
-    <color name="border_focused">@color/black</color>
+    <color name="border_selected">@color/black</color>
     <color name="border_disabled">@color/</color>
     <color name="separator">@color/white</color>
     <color name="divider">@color/pale_grey_four</color>
@@ -102,7 +102,7 @@
     <color name="black_three">#272727</color>
     <color name="black_four">#1e1e1e</color>
     <color name="black_five">#121312</color>
-    <color name="light_black">#1C1C1E</color>
+    <color name="light_black">#1C1C1C</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
     <color name="stone">#DCDEE0</color>
