@@ -51,7 +51,6 @@
     <color name="icon">@color/metal</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
-    <color name="accent">@color/label_primary</color>
     <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/label_primary</color>
 
@@ -60,16 +59,8 @@
 
     <color name="pressed_shade">#33000000</color>
 
-    <color name="secondary_button">#c8ced4</color>
-    <color name="secondary_button_disabled">#e8eaec</color>
-    <color name="secondary_button_pressed">#aaadb1</color>
-
-
-    <color name="enabled_input">@color/primary</color>
-
     <color name="address_boundaries">@color/label_primary</color>
-
-    <color name="success">@color/system_green</color>
+    <color name="enabled_input">@color/primary</color>
     <color name="rejection">@color/bg_red</color>
 
     <!-- color names -->
@@ -77,7 +68,6 @@
     <color name="black">#121312</color>
     <color name="white">#FFFFFF</color>
     <color name="grey">#F4F4F4</color>
-    <color name="whitesmoke_two">#f0efee</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
     <color name="dark_grey">#EEEFF0</color>
@@ -104,13 +94,11 @@
     <color name="black_five">#121312</color>
     <color name="light_black">#1C1C1C</color>
     <color name="charcoal_grey">#3a3a3c</color>
-    <color name="dark_grey_two">#2c2c2e</color>
     <color name="stone">#DCDEE0</color>
     <color name="bg_red">#FFE6EA</color>
     <color name="bg_red_dark">#262020</color>
     <color name="hold_two">#005546</color>
     <color name="dark_green">#00B460</color>
-    <color name="system_green">#00B460</color>
     <color name="blue">#5FDDFF</color>
     <color name="dark_blue">#52BFDC</color>
     <color name="bg_blue">#EFFCFF</color>

@@ -52,14 +52,12 @@
     <color name="on_primary">@color/black</color>
     <color name="primary_dark">@color/hold_two</color>
 
-    <color name="accent">@color/white_two</color>
     <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/white_two</color>
 
     <color name="outline">@color/charcoal_grey</color>
     <color name="logo_background">@color/white_two</color>
 
-    <color name="success">@color/system_green</color>
     <color name="rejection">@color/bg_red_dark</color>
 
 </resources>
