@@ -13,12 +13,14 @@
     <color name="surface_01">@color/black_four</color>
     <color name="surface_04">@color/black_three</color>
     <color name="background_secondary">@color/light_black</color>
+    <color name="background_tertiary">@color/graphite</color>
     <color name="background_green">@color/light_green</color>
     <color name="background_green_light">@color/graphite</color>
 
     <!-- Components -->
     <color name="border">@color/graphite</color>
     <color name="border_focused">@color/green</color>
+    <color name="border_disabled">@color/graphite</color>
     <color name="separator">@color/black_five</color> <!-- TODO | Same as divider? -->
     <color name="divider">@color/graphite</color>
 

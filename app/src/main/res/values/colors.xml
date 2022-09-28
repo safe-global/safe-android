@@ -20,6 +20,7 @@
     <!-- Components -->
     <color name="border">@color/stone</color>
     <color name="border_focused">@color/black</color>
+    <color name="border_disabled">@color/</color>
     <color name="separator">@color/white</color>
     <color name="divider">@color/pale_grey_four</color>
 
@@ -95,7 +96,8 @@
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="teal_two">#008c73</color>
 
-    <color name="slate">#303033</color>
+    <color name="graphite">#303033</color>
+    <color name="slate">#636669</color>
     <color name="metal">#A1A3A7</color>
     <color name="black_three">#272727</color>
     <color name="black_four">#1e1e1e</color>
@@ -103,7 +105,6 @@
     <color name="light_black">#1C1C1E</color>
     <color name="charcoal_grey">#3a3a3c</color>
     <color name="dark_grey_two">#2c2c2e</color>
-    <color name="graphite">#636669</color>
     <color name="stone">#DCDEE0</color>
     <color name="bg_red">#FFE6EA</color>
     <color name="bg_red_dark">#262020</color>
