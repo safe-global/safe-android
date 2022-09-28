@@ -20,7 +20,7 @@
     <!-- Components -->
     <color name="border">@color/stone</color>
     <color name="border_selected">@color/black</color>
-    <color name="border_disabled">#EEEFF0</color>
+    <color name="border_disabled">@color/dark_grey</color>
     <color name="separator">@color/white</color>
     <color name="divider">@color/pale_grey_four</color>
 
@@ -80,7 +80,7 @@
     <color name="whitesmoke_two">#f0efee</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
-    <color name="dark_grey">#f0efee</color>
+    <color name="dark_grey">#EEEFF0</color>
 1   <color name="white_smoke">#e8e7e6</color>
     <color name="red">#FF5F72</color>
     <color name="dark_red">#AC2C3B</color>
