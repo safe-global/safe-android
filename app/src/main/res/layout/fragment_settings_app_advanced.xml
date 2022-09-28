@@ -118,7 +118,7 @@
                 android:layout_height="60dp"
                 android:paddingTop="@dimen/default_margin"
                 android:paddingBottom="@dimen/default_margin"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
                 app:setting_name="@string/tracking_share_usage_data" />
@@ -146,7 +146,7 @@
                 android:layout_height="60dp"
                 android:paddingTop="@dimen/default_margin"
                 android:paddingBottom="@dimen/default_margin"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 app:setting_openable="false"
                 app:setting_has_switch="true"
                 app:setting_name="@string/enable_screenshots" />

@@ -73,7 +73,7 @@
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
@@ -86,7 +86,7 @@
                 android:id="@+id/info_private_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
@@ -98,7 +98,7 @@
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"

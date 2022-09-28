@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01"
+    android:background="@color/background_secondary"
     android:orientation="vertical" >
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -17,7 +17,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/surface_01">
+            android:background="@color/background_secondary">
 
             <LinearLayout
                 android:layout_width="match_parent"

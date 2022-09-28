@@ -124,7 +124,7 @@ class RepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     input.setText("")
                     digits.forEach {
                         it.background =
-                            ContextCompat.getDrawable(requireContext(), R.color.surface_01)
+                            ContextCompat.getDrawable(requireContext(), R.color.background_secondary)
                     }
                 }
             })

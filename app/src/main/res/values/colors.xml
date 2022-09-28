@@ -10,10 +10,9 @@
 
     <!-- Backgrounds -->
     <color name="background_primary">@color/grey</color>
-    <color name="surface_01">@color/white_two</color>
+    <color name="surface_04">@color/white</color>
     <color name="background_secondary">@color/white</color>
     <color name="background_tertiary">@color/dark_grey</color>
-    <color name="surface_04">@color/white_two</color>
     <color name="background_green">@color/light_green</color>
     <color name="background_green_light">@color/bg_green</color>
 

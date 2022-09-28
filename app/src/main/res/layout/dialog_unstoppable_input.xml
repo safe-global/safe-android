@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -129,7 +129,7 @@
     <TextView
         android:id="@+id/dialog_unstoppable_input_address"
         style="@style/TextLight"
-        android:background="@color/surface_01"
+        android:background="@color/background_secondary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"

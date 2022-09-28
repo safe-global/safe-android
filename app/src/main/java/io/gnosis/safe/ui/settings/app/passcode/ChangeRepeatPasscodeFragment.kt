@@ -89,7 +89,7 @@ class ChangeRepeatPasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBin
                 } else {
                     errorMessage.visible(true)
                     input.setText("")
-                    digits.forEach { it.background = ContextCompat.getDrawable(requireContext(), R.color.surface_01) }
+                    digits.forEach { it.background = ContextCompat.getDrawable(requireContext(), R.color.background_secondary) }
                 }
             })
 
