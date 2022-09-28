@@ -20,7 +20,7 @@
     <!-- Components -->
     <color name="border">@color/stone</color>
     <color name="border_selected">@color/black</color>
-    <color name="border_disabled">@color/</color>
+    <color name="border_disabled">#EEEFF0</color>
     <color name="separator">@color/white</color>
     <color name="divider">@color/pale_grey_four</color>
 
