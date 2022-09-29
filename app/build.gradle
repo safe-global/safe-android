@@ -115,11 +115,6 @@ android {
     }
 
     sourceSets {
-        main {
-            res {
-                srcDirs 'src/main/res', 'src/main/res/font'
-            }
-        }
         main.java.srcDirs += 'src/main/kotlin'
         androidTest.assets.srcDirs +=
                 files("$projectDir/schemas".toString())
