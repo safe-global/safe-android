@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_secondary">
+    android:background="@color/background_primary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -57,40 +57,48 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
+            android:orientation="vertical"
+            android:background="@color/background_secondary"
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/separator"/>
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/auto"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_auto"
                 app:setting_openable="false"
                 app:setting_checked="true" />
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/separator"/>
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/light"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_light"
                 app:setting_openable="false"
                 />
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_separator_height"
+                android:background="@color/separator"/>
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/dark"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_dark"
                 app:setting_openable="false" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_separator_height"
-                android:background="@color/separator"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

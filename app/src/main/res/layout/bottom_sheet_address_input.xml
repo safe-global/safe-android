@@ -24,7 +24,7 @@
         android:id="@+id/bottom_sheet_address_input_paste_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_title"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -56,7 +56,7 @@
         android:id="@+id/bottom_sheet_address_input_qr_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
 
     <ImageView
@@ -87,7 +87,7 @@
         android:id="@+id/bottom_sheet_address_input_ens_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
 
     <ImageView
@@ -120,7 +120,7 @@
         android:id="@+id/bottom_sheet_address_input_unstoppabledomains_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
 
 

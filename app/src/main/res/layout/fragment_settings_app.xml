@@ -12,14 +12,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/separator"
+            >
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/owner_keys"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_key_24dp"
                 app:setting_name="@string/settings_app_owner_keys"
                 app:setting_openable="true" />
@@ -30,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_passcode_24dp"
                 app:setting_name="@string/settings_app_passcode"
                 app:setting_openable="true"
@@ -41,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_fiat_24dp"
                 app:setting_name="@string/settings_app_fiat"
                 app:setting_openable="true" />
@@ -51,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_appearance_24dp"
                 app:setting_name="@string/settings_app_appearance"
                 app:setting_openable="true" />
@@ -65,7 +67,7 @@
                 android:id="@+id/intercom"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_intercom_24dp"
                 app:setting_name="@string/settings_app_intercom"
                 app:setting_openable="true" />
@@ -75,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_settings_support_24dp"
                 app:setting_name="@string/settings_app_help_center"
                 app:setting_openable="true" />
@@ -89,7 +91,7 @@
                 android:id="@+id/advanced"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_advanced"
                 app:setting_openable="true" />
 
@@ -102,7 +104,7 @@
                 android:id="@+id/about_safe"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_about"
                 app:setting_openable="true" />
 
@@ -112,7 +114,7 @@
                 android:layout_height="@dimen/item_setting_non_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:layout_marginBottom="32dp"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_version"
                 app:setting_openable="false" />
 

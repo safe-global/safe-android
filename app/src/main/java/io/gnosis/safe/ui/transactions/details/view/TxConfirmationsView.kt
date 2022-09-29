@@ -123,7 +123,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         namedAddressItem.layoutParams = layoutParams
-        namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_selectable_white)
+        namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_secondary_selectable)
         namedAddressItem.setAddress(chain, address, ownerType)
         namedAddressItem.name = if (name.isNullOrBlank())
             resources.getString(

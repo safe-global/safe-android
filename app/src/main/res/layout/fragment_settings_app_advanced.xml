@@ -164,7 +164,7 @@
 
             <LinearLayout
                 android:id="@+id/debug_container"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

@@ -57,7 +57,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_email_24dp"
                 app:setting_name="@string/get_in_touch_email"
                 app:setting_openable="true" />
@@ -71,7 +71,7 @@
                 android:id="@+id/discord"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_discord_24dp"
                 app:setting_name="@string/get_in_touch_discord"
                 app:setting_openable="true" />
@@ -85,7 +85,7 @@
                 android:id="@+id/twitter"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_twitter_24dp"
                 app:setting_name="@string/get_in_touch_twitter"
                 app:setting_openable="true" />
@@ -99,7 +99,7 @@
                 android:id="@+id/help_center"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_help_center_24dp"
                 app:setting_name="@string/get_in_touch_help_center"
                 app:setting_openable="true" />
@@ -113,7 +113,7 @@
                 android:id="@+id/feature_suggestion"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_image="@drawable/ic_feature_suggestion_24dp"
                 app:setting_name="@string/get_in_touch_feature_suggestion"
                 app:setting_openable="true" />

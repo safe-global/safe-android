@@ -56,7 +56,7 @@
                 android:id="@+id/terms"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_terms_of_use"
                 app:setting_openable="true" />
 
@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_privacy_policy"
                 app:setting_openable="true" />
 
@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_licenses"
                 app:setting_openable="true" />
 
@@ -84,7 +84,7 @@
                 android:layout_height="@dimen/item_setting_openable_height"
                 android:layout_marginTop="@dimen/item_setting_margin"
                 android:layout_marginBottom="32dp"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/settings_app_rate"
                 app:setting_openable="true" />
 

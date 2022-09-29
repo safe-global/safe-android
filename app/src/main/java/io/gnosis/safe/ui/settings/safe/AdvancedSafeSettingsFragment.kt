@@ -136,7 +136,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
     private fun safeParameterView(chain: Chain, addressInfo: AddressInfo?, @StringRes unknownString: Int): View  =
         when {
             addressInfo == null || addressInfo.value.value == BigInteger.ZERO -> SettingItem(requireContext()).apply {
-                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                 layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, dpToPx(60))
                 openable = false
                 name = getString(R.string.safe_settings_not_set)
@@ -146,7 +146,7 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
 
     private fun labeledAddress(chain: Chain, address: Solidity.Address, label: String, logoUri: String? = null): NamedAddressItem {
         return NamedAddressItem(requireContext()).apply {
-            background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+            background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             setAddress(chain, address)
             this.name = label

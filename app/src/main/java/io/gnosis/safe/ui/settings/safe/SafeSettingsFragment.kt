@@ -129,7 +129,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         return if (localOwner != null) {
             // use local owner name & identicon
             NamedAddressItem(requireContext()).apply {
-                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                 setAddress(chain, owner.value, localOwner.type)
                 name = if (localOwner.name.isNullOrBlank())
@@ -144,7 +144,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             if (!owner.name.isNullOrBlank()) {
                 // use remote owner name & logo if available
                 NamedAddressItem(requireContext()).apply {
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
@@ -154,7 +154,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 }
             } else {
                 AddressItem(requireContext()).apply {
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)

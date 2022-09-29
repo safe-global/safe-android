@@ -54,7 +54,7 @@
                     android:id="@+id/local_name"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_name="SOME NAME"
                     app:setting_openable="true" />
 
@@ -71,7 +71,7 @@
                     android:id="@+id/threshold"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_name="2 out of 3"
                     app:setting_openable="false" />
 
@@ -103,7 +103,7 @@
                     android:id="@+id/master_copy"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_openable="false" />
 
                 <View
@@ -126,7 +126,7 @@
                     android:id="@+id/ens_name"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_name="@string/safe_settings_not_set"
                     app:setting_openable="false" />
 
@@ -138,7 +138,7 @@
                     android:id="@+id/advanced"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_name="Advanced"
                     app:setting_openable="true" />
 

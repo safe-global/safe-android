@@ -163,6 +163,7 @@
         <item name="android:textColor">@color/label_tertiary</item>
         <item name="android:letterSpacing">0.04</item>
         <item name="android:lineSpacingExtra">2sp</item>
+        <item name="android:background">@color/background_primary</item>
     </style>
 
     <style name="Helptext">

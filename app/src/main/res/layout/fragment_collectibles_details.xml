@@ -120,7 +120,7 @@
                 android:id="@+id/collectible_contract"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:show_named_address_separator="true"
                 />
 

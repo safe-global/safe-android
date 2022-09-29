@@ -133,7 +133,7 @@
                     android:id="@+id/nonce"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:setting_openable="false" />
 
                 <TextView
