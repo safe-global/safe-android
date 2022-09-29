@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.gnosis.safe.R
@@ -14,6 +16,7 @@ import io.gnosis.safe.databinding.FragmentCoinsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
+import io.gnosis.safe.ui.assets.AssetsViewModel
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -29,6 +32,8 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
     @Inject
     lateinit var viewModel: CoinsViewModel
 
+    lateinit var assetsViewModel: AssetsViewModel
+
     @Inject
     lateinit var adapter: CoinsAdapter
 
@@ -43,6 +48,9 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        assetsViewModel = ViewModelProvider(requireParentFragment().requireParentFragment()).get(AssetsViewModel::class.java)
+
         with(binding) {
             coins.adapter = adapter
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
@@ -63,6 +71,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                             }
                             is UpdateBalances -> {
                                 binding.contentNoData.root.visibility = View.GONE
+                                assetsViewModel.updateTotalBalance(action.newTotalBalance.totalFiat)
                                 adapter.updateData(action.newBalances)
                             }
                             is DismissOwnerBanner -> {
