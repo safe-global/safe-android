@@ -3,7 +3,7 @@
     <!-- Share Safe Dialog -->
     <style name="DayNightDialog" parent="BaseDialog">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:colorBackgroundFloating">@color/surface_04</item>
+        <item name="android:colorBackgroundFloating">@color/background_secondary</item>
     </style>
 
     <!-- AddressInputHelper BottomSheetDialog -->

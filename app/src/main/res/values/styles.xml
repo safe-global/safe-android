@@ -6,8 +6,8 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/primary</item>
         <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:statusBarColor">@color/surface_04</item>
-        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:statusBarColor">@color/background_secondary</item>
+        <item name="android:navigationBarColor">@color/background_secondary</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
@@ -186,14 +186,14 @@
 
     <style name="SafeOverviewToolbar">
         <item name="theme">?attr/actionBarTheme</item>
-        <item name="android:background">@color/surface_04</item>
+        <item name="android:background">@color/background_secondary</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">72dp</item>
     </style>
 
     <style name="Toolbar">
         <item name="theme">?attr/actionBarTheme</item>
-        <item name="android:background">@color/surface_04</item>
+        <item name="android:background">@color/background_secondary</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
     </style>
@@ -257,16 +257,16 @@
     <style name="BaseDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">true</item>
-        <item name="android:statusBarColor">@color/surface_04</item>
-        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:statusBarColor">@color/background_secondary</item>
+        <item name="android:navigationBarColor">@color/background_secondary</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
     </style>
     <style name="DayNightDialog" parent="BaseDialog"/>
 
     <!-- EnsInputDialog -->
     <style name="BaseFullScreenDialog" parent="Theme.MaterialComponents.DayNight">
-        <item name="android:statusBarColor">@color/surface_04</item>
-        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:statusBarColor">@color/background_secondary</item>
+        <item name="android:navigationBarColor">@color/background_secondary</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
@@ -280,8 +280,8 @@
     </style>
 
     <style name="DayNightBottomSheetDialogTheme" parent="BaseBottomSheetDialog">
-        <item name="android:statusBarColor">@color/surface_04</item>
-        <item name="android:navigationBarColor">@color/surface_04</item>
+        <item name="android:statusBarColor">@color/background_secondary</item>
+        <item name="android:navigationBarColor">@color/background_secondary</item>
     </style>
     <style name="ShapeAppearanceOverlay.App.CornerSize9Percent" parent="">
         <item name="cornerSize">9%</item>

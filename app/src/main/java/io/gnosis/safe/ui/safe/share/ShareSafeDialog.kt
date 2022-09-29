@@ -53,7 +53,7 @@ class ShareSafeDialog : BaseViewBindingDialogFragment<DialogShareSafeBinding>() 
             )
             if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) {
                 it.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                it.statusBarColor = requireContext().getColorCompat(R.color.surface_04)
+                it.statusBarColor = requireContext().getColorCompat(R.color.background_secondary)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     it.insetsController?.setSystemBarsAppearance(0, APPEARANCE_LIGHT_STATUS_BARS)
                 } else {

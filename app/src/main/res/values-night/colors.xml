@@ -10,7 +10,6 @@
 
     <!-- Backgrounds -->
     <color name="background_primary">@color/black</color>
-    <color name="surface_04">@color/black_three</color>
     <color name="background_secondary">@color/light_black</color>
     <color name="background_tertiary">@color/slate</color>
     <color name="background_green">@color/light_green</color>
