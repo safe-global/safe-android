@@ -19,7 +19,7 @@
     <color name="border">@color/stone</color>
     <color name="border_selected">@color/black</color>
     <color name="border_disabled">@color/dark_grey</color>
-    <color name="separator">@color/white</color>
+    <color name="separator">@color/stone</color>
     <color name="divider">@color/pale_grey_four</color>
 
     <!-- Labels -->
