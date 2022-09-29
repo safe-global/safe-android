@@ -21,6 +21,7 @@
     <color name="border_disabled">@color/graphite</color>
     <color name="separator">@color/graphite</color>
     <color name="divider">@color/graphite</color>
+    <color name="link">@color/green</color>
 
     <!-- Labels -->
     <color name="label_primary">@color/white</color>
