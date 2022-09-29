@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -37,7 +38,9 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
+
             pager = AssetsPagerAdapter(this@AssetsFragment)
             balancesContent.adapter = pager
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
@@ -52,6 +55,14 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
                     }
                 }
             }.attach()
+
+            sendButton.setOnClickListener {
+
+            }
+
+            receiveButton.setOnClickListener {
+                navigateToShareSafeDialog()
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner, Observer { state ->
@@ -59,8 +70,12 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
                 is SafeBalancesState.ActiveSafe -> {
                     val noActiveSafe = state.safe == null
                     pager.noActiveSafe = noActiveSafe
+                    binding.totalBalance.visible(!noActiveSafe, View.GONE)
                     binding.balancesTabBar.visible(!noActiveSafe, View.INVISIBLE)
                     handleActiveSafe(state.safe)
+                }
+                is SafeBalancesState.TotalBalance -> {
+                    binding.totalBalanceValue.text = state.totalBalance
                 }
             }
         })
@@ -70,8 +85,11 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
         navHandler?.setSafeData(safe)
     }
 
-    override fun screenId() = null
+    private fun navigateToShareSafeDialog() {
+        findNavController().navigate(R.id.shareSafeDialog)
+    }
 
+    override fun screenId() = null
 }
 
 class AssetsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {

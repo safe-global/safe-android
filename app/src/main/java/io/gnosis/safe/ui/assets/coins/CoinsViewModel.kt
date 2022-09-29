@@ -54,14 +54,26 @@ class CoinsViewModel
                     settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE
                     else -> Banner.Type.NONE
                 }
+                val totalBalance = getTotalBalanceViewData(balanceInfo)
                 val balances = getBalanceViewData(balanceInfo, banner)
-                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balances)) }
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalBalance, balances)) }
             }
         }
     }
 
     fun isLoading(): Boolean {
         return (state.value as CoinsState).loading
+    }
+
+    suspend fun getTotalBalanceViewData(coinBalanceData: CoinBalances): CoinsViewData.TotalBalance {
+        val userCurrencyCode = settingsHandler.userDefaultFiat
+
+        return CoinsViewData.TotalBalance(
+            balanceFormatter.fiatBalanceWithCurrency(
+                coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP),
+                userCurrencyCode
+            )
+        )
     }
 
     suspend fun getBalanceViewData(coinBalanceData: CoinBalances, banner: Banner.Type): List<CoinsViewData> {
@@ -76,14 +88,6 @@ class CoinsViewModel
                 result.add(Banner(Banner.Type.PASSCODE))
             }
         }
-
-        val totalBalance = CoinsViewData.TotalBalance(
-            balanceFormatter.fiatBalanceWithCurrency(
-                coinBalanceData.fiatTotal.setScale(2, RoundingMode.HALF_UP),
-                userCurrencyCode
-            )
-        )
-        result.add(totalBalance)
 
         coinBalanceData.items.forEach {
             result.add(
@@ -142,6 +146,7 @@ data class CoinsState(
 ) : BaseStateViewModel.State
 
 data class UpdateBalances(
+    val newTotalBalance: CoinsViewData.TotalBalance,
     val newBalances: List<CoinsViewData>
 ) : BaseStateViewModel.ViewAction
 

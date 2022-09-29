@@ -120,13 +120,15 @@ class CoinsViewModelTest {
         coEvery { settingsHandler.showPasscodeBanner } returns false
         coEvery { credentialsRepository.ownerCount() } returns 0
 
+        val coinBalanceData = CoinBalances(BigDecimal.ZERO, balances)
+        val totalViewData = viewModel.getTotalBalanceViewData(coinBalanceData)
         val balancesViewData = viewModel.getBalanceViewData(CoinBalances(BigDecimal.ZERO, balances), Banner.Type.NONE)
 
         viewModel.load()
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(balancesViewData))
+            CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalViewData, balancesViewData))
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
