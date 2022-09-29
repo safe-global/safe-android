@@ -151,6 +151,9 @@
     <string name="error_unknown_reason">an error occurred</string>
     <string name="error_unknown_fix">Please try again later</string>
     <string name="coins_total">Total</string>
+    <string name="coins_total_balance">Total balance</string>
+    <string name="coins_send">Send</string>
+    <string name="coins_receive">Receive</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
