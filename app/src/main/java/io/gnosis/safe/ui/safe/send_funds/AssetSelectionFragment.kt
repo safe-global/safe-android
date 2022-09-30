@@ -16,7 +16,7 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
     private val navArgs by navArgs<AssetSelectionFragmentArgs>()
     private val selectedChain by lazy { navArgs.chain }
 
-    override fun screenId() = ScreenId.SAFE_ADD_ADDRESS
+    override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER_SELECT
 
     override suspend fun chainId() = selectedChain.chainId
 
