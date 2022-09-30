@@ -72,6 +72,22 @@
             android:id="@+id/action_assetsFragment_to_collectiblesDetailsFragment"
             app:destination="@id/collectiblesDetailsFragment" />
 
+        <action
+            android:id="@+id/action_assetsFragment_to_assetSelectionFragment"
+            app:destination="@+id/assetSelectionFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/assetSelectionFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.AssetSelectionFragment"
+        android:label="AssetSelectionFragment"
+        tools:layout="@layout/fragment_asset_selection">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
     </fragment>
 
     <fragment
