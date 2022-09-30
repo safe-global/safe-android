@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.send_funds.AssetSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
@@ -117,6 +118,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesAssetsViewModel(provider: ViewModelProvider) = provider[AssetsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAssetSelectionViewModel(provider: ViewModelProvider) = provider[AssetSelectionViewModel::class.java]
 
     @Provides
     @ForView
