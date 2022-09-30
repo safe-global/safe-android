@@ -154,6 +154,7 @@
     <string name="coins_total_balance">Total balance</string>
     <string name="coins_send">Send</string>
     <string name="coins_receive">Receive</string>
+    <string name="coins_asset_select">Select an asset</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
