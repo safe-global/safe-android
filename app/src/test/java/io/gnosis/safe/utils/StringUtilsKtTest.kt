@@ -108,7 +108,7 @@ class StringUtilsKtTest {
         textView.setLink(url = "url", urlText = "urlText", prefix = "prefix", underline = true)
 
         verify { textView.text = null }
-        verify { any<TextView>().appendLink("url", "urlText", null, R.color.primary, "prefix", true) }
+        verify { any<TextView>().appendLink("url", "urlText", null, R.color.link, "prefix", true) }
     }
 
     @Test
@@ -120,7 +120,7 @@ class StringUtilsKtTest {
         textView.setLink(url = "url", urlText = "urlText")
 
         verify { textView.text = null }
-        verify { any<TextView>().appendLink("url", "urlText", null, R.color.primary, "", false) }
+        verify { any<TextView>().appendLink("url", "urlText", null, R.color.link, "", false) }
     }
 
     @Test
