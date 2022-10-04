@@ -115,7 +115,7 @@
 
     <style name="TextLink" parent="Text">
         <item name="fontFamily">@font/dm_sans_medium</item>
-        <item name="android:textColor">@color/primary</item>
+        <item name="android:textColor">@color/link</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
     </style>
