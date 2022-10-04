@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -40,13 +46,16 @@
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/toolbar_shadow"
+    <SearchView
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        app:layout_constraintVertical_chainStyle="packed" />
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search"
+        android:background="@drawable/background_input_asset"
+        android:queryBackground="@null"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
     <TextView
         android:id="@+id/chain_ribbon"
@@ -55,6 +64,9 @@
         android:layout_height="@dimen/chain_ribbon_size"
         tools:text="Mainnet"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"/>
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@id/search_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
