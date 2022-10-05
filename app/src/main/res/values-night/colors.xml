@@ -27,6 +27,7 @@
     <color name="label_primary">@color/white</color>
     <color name="label_secondary">@color/stone</color>
     <color name="label_tertiary">@color/slate</color>
+    <color name="label_primary_reverse">@color/black</color>
 
     <!-- Error -->
     <color name="error">@color/red</color>

@@ -10,7 +10,7 @@
         <ripple android:color="@color/pressed_shade">
             <item>
                 <shape>
-                    <solid android:color="@color/error" />
+                    <solid android:color="@color/error_background" />
                     <corners android:radius="@dimen/primary_button_radius" />
                 </shape>
             </item>
