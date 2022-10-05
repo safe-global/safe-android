@@ -114,15 +114,18 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners)) }
+            safeInfo?.owners?.dropLast(1)?.forEach { owner -> ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners)) }
+            ownersContainer.addView(safeInfo?.owners?.last()?.let { ownerView(safe!!.chain, it, localOwners, false) })
+
             masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
+            //masterCopy.showSeparator = false
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
     }
 
-    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>): View {
+    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>, separate: Boolean = true): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 
@@ -137,10 +140,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         R.string.settings_app_imported_owner_key_default_name,
                         localOwner.address.shortChecksumString()
                     ) else localOwner.name
-                showSeparator = true
+                if (separate) showSeparator = true
             }
         } else {
-
             if (!owner.name.isNullOrBlank()) {
                 // use remote owner name & logo if available
                 NamedAddressItem(requireContext()).apply {
@@ -149,7 +151,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
                     name = owner.name
-                    showSeparator = true
+                    if (separate) showSeparator = true
                     loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
@@ -158,7 +160,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
-                    showSeparator = true
+                    if (separate) showSeparator = true
                 }
             }
         }
