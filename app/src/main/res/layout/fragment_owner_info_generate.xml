@@ -73,32 +73,31 @@
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
                 app:info_icon="@drawable/ic_seed_phrase"
                 app:info_title="@string/generate_owner_key_intro_seed_phrase_title"
                 app:info_text="@string/generate_owner_key_intro_seed_phrase_desc"
-                app:cardCornerRadius="8dp"/>
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/background_secondary"/>
 
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
                 android:id="@+id/info_private_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
                 app:info_icon="@drawable/ic_private_key"
                 app:info_title="@string/generate_owner_key_intro_private_key_title"
                 app:info_text="@string/generate_owner_key_intro_private_key_desc"
-                app:cardCornerRadius="8dp"/>
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/background_secondary"/>
 
             <io.gnosis.safe.ui.settings.owner.intro.InfoItemView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_secondary"
                 android:layout_marginTop="@dimen/default_margin"
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin"
@@ -106,7 +105,8 @@
                 app:info_icon="@drawable/ic_wallets"
                 app:info_title="@string/generate_owner_key_intro_export_title"
                 app:info_text="@string/generate_owner_key_intro_export_desc"
-                app:cardCornerRadius="8dp"/>
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/background_secondary"/>
 
         </LinearLayout>
 
