@@ -154,7 +154,7 @@ class TransactionListViewModel
             dateTimeText = timestamp.formatBackendTimeOfDay(),
             txTypeIcon = if (txInfo.incoming()) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.primary else R.color.label_primary,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && txInfo.incoming()) R.color.success else R.color.label_primary,
             alpha = alpha(txStatus),
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
@@ -180,7 +180,7 @@ class TransactionListViewModel
             dateTime = timestamp,
             txTypeIcon = if (incoming) R.drawable.ic_arrow_green_10dp else R.drawable.ic_arrow_red_10dp,
             direction = if (txInfo.incoming()) R.string.tx_list_receive else R.string.tx_list_send,
-            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.primary else R.color.label_primary,
+            amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.success else R.color.label_primary,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
             confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
