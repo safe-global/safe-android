@@ -447,7 +447,7 @@ class TransactionListViewModel
 
     private fun statusTextColor(status: TransactionStatus): Int {
         return when (status) {
-            TransactionStatus.SUCCESS -> R.color.primary
+            TransactionStatus.SUCCESS -> R.color.success
             TransactionStatus.CANCELLED -> R.color.label_secondary
             TransactionStatus.AWAITING_EXECUTION,
             TransactionStatus.AWAITING_CONFIRMATIONS,

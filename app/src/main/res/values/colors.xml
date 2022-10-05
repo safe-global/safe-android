@@ -61,6 +61,7 @@
     <color name="address_boundaries">@color/label_primary</color>
     <color name="enabled_input">@color/primary</color>
     <color name="rejection">@color/bg_red</color>
+    <color name="success">@color/dark_green</color>
 
     <!-- color names -->
     <color name="white_two">#ffffff</color>
