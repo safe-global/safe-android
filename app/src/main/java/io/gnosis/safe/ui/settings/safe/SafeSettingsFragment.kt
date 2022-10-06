@@ -119,7 +119,6 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
 
             masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
-            //masterCopy.showSeparator = false
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
             mainContainer.visible(true)
         }
@@ -140,7 +139,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         R.string.settings_app_imported_owner_key_default_name,
                         localOwner.address.shortChecksumString()
                     ) else localOwner.name
-                if (separate) showSeparator = true
+                showSeparator = separate
             }
         } else {
             if (!owner.name.isNullOrBlank()) {
@@ -151,7 +150,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
                     name = owner.name
-                    if (separate) showSeparator = true
+                    showSeparator = separate
                     loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
@@ -160,7 +159,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
-                    if (separate) showSeparator = true
+                    showSeparator = separate
                 }
             }
         }
