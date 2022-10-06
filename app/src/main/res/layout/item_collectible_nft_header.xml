@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
-        android:background="@color/background"
+        android:background="@color/background_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView

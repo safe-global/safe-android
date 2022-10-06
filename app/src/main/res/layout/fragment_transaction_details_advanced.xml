@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_04">
+        android:background="@color/background_secondary">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="@color/surface_01">
+        android:background="@color/background_secondary">
 
         <LinearLayout
             android:id="@+id/content"
@@ -69,7 +69,7 @@
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_chain_tx_data"
                 android:textAllCaps="true"
-                android:background="@color/background" />
+                android:background="@color/background_primary" />
 
             <io.gnosis.safe.ui.transactions.details.view.LabeledValueItem
                 android:id="@+id/hash_item"
@@ -84,7 +84,7 @@
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_safe_tx_data"
                 android:textAllCaps="true"
-                android:background="@color/background" />
+                android:background="@color/background_primary" />
 
         </LinearLayout>
 

@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_04">
+        android:background="@color/background_secondary">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -47,7 +47,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/background_primary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -59,7 +59,7 @@
                 android:id="@+id/item_import_existing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 app:setting_name="@string/signing_owner_import_existing_title"
                 app:setting_description="@string/signing_owner_import_existing_desc"
                 app:setting_openable="true"
@@ -74,7 +74,7 @@
                 android:id="@+id/item_create_new"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 app:setting_name="@string/signing_owner_create_new_title"
                 app:setting_description="@string/signing_owner_create_new_desc"
                 app:setting_openable="true"
@@ -89,7 +89,7 @@
                 android:id="@+id/item_connect_ledger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/surface_01"
+                android:background="@color/background_secondary"
                 app:setting_name="@string/signing_owner_connect_ledger_title"
                 app:setting_description="@string/signing_owner_connect_ledger_desc"
                 app:setting_openable="true"

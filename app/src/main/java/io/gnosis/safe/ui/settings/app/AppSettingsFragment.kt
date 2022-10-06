@@ -73,9 +73,9 @@ class AppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppBinding>(
         })
         viewModel.loadUserDefaultFiat()
 
-        viewModel.intercomCount.observe(viewLifecycleOwner, {
+        viewModel.intercomCount.observe(viewLifecycleOwner) {
             updateIntercomIcon(it)
-        })
+        }
         viewModel.loadIntercomCount()
     }
 

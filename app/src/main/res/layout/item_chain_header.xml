@@ -4,7 +4,7 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/surface_01"
+    android:background="@color/background_secondary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -37,7 +37,7 @@
                     android:right="1dp"
                     android:top="1dp" />
 
-                <solid android:color="@color/background" />
+                <solid android:color="@color/background_primary" />
 
             </shape>
 

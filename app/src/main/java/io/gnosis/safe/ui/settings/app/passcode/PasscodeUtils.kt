@@ -28,7 +28,7 @@ fun onSixDigitsHandler(
         text?.let {
             if (text.length < 6) {
                 digits.forEach {
-                    it.background = ContextCompat.getDrawable(context, R.color.surface_01)
+                    it.background = ContextCompat.getDrawable(context, R.color.background_secondary)
                 }
                 (1..text.length).forEach { i ->
                     digits[i - 1].background = ContextCompat.getDrawable(context, R.drawable.ic_circle_passcode_filled_20dp)

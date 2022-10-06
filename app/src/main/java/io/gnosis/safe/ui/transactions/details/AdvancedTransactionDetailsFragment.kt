@@ -244,7 +244,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         layoutParams.setMargins(0, dpToPx(16), 0, 0)
         item.layoutParams = layoutParams
-        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.background))
+        item.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.background_primary))
         item.isAllCaps = true
         item.text = getString(R.string.tx_details_advanced_module_data)
         return item

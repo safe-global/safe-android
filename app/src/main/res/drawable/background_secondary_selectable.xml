@@ -12,7 +12,7 @@
     </item>
     <item android:state_pressed="false">
         <shape>
-            <solid android:color="@color/surface_01" />
+            <solid android:color="@color/background_secondary" />
         </shape>
     </item>
 </selector>

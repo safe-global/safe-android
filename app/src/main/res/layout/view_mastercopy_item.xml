@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/dm_sans_medium"
         android:paddingHorizontal="6dp"
         android:textColor="@color/error"
         android:textSize="16sp"
@@ -44,9 +44,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/dm_sans_medium"
         android:maxLines="1"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/link"
@@ -80,6 +80,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
         app:strokeWidth="0.01dp"
-        app:strokeColor="@color/illustration_background" />
+        app:strokeColor="@color/background_tertiary" />
 
 </merge>

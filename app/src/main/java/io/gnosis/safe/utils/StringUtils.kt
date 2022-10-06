@@ -68,7 +68,7 @@ fun Solidity.Address.formatEthAddress(context: Context, prefixLength: Int = 6, s
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         setSpan(
-            ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_low)),
+            ForegroundColorSpan(context.getColorCompat(R.color.label_tertiary)),
             prefixLength,
             length - suffixLength,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -124,7 +124,7 @@ fun TextView.appendLink(
     url: String,
     urlText: String,
     @DrawableRes linkIcon: Int? = null,
-    @ColorRes textColor: Int = R.color.primary,
+    @ColorRes textColor: Int = R.color.link,
     prefix: String = "",
     underline: Boolean = false
 ) {
@@ -158,7 +158,7 @@ fun TextView.setLink(
     url: String,
     urlText: String,
     @DrawableRes linkIcon: Int? = null,
-    @ColorRes textColor: Int = R.color.primary,
+    @ColorRes textColor: Int = R.color.link,
     prefix: String = "",
     underline: Boolean = false
 ) {

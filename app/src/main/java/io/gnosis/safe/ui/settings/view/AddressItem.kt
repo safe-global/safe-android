@@ -72,13 +72,13 @@ class AddressItem @JvmOverloads constructor(
     private fun Solidity.Address.formatOwnerAddress(prefixLength: Int = 6, suffixLength: Int = 4): Spannable =
         SpannableStringBuilder(this.asEthereumAddressChecksumString()).apply {
             setSpan(
-                ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                ForegroundColorSpan(context.getColorCompat(R.color.label_primary)),
                 0,
                 prefixLength,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(
-                ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                ForegroundColorSpan(context.getColorCompat(R.color.label_primary)),
                 length - suffixLength,
                 length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

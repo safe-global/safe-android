@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/background">
+    tools:background="@color/background_primary">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/surface_01">
+        android:background="@color/background_secondary">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/total_balance"
@@ -69,7 +69,7 @@
 
                         <item android:state_enabled="false">
                             <shape>
-                                <solid android:color="@color/button_primary_disabled" />
+                                <solid android:color="@color/primary_disabled" />
                                 <corners android:radius="8dp" />
                             </shape>
                         </item>
@@ -87,7 +87,7 @@
 
                         <item android:state_pressed="true">
                             <shape>
-                                <solid android:color="@color/button_primary_pressed" />
+                                <solid android:color="@color/primary_pressed" />
                                 <corners android:radius="8dp" />
                             </shape>
                         </item>
@@ -123,18 +123,18 @@
 
                         <item android:state_enabled="false">
                             <shape android:shape="rectangle">
-                                <stroke android:width="2dp" android:color="@color/button_primary_disabled" />
-                                <solid android:color="@color/surface_01" />
+                                <stroke android:width="2dp" android:color="@color/primary_disabled" />
+                                <solid android:color="@color/background_secondary" />
                                 <corners android:radius="8dp" />
                             </shape>
                         </item>
 
                         <item android:state_enabled="true">
-                            <ripple android:color="@color/background">
+                            <ripple android:color="@color/background_primary">
                                 <item>
                                     <shape android:shape="rectangle">
                                         <stroke android:width="2dp" android:color="@color/primary" />
-                                        <solid android:color="@color/surface_01" />
+                                        <solid android:color="@color/background_secondary" />
                                         <corners android:radius="8dp" />
                                     </shape>
                                 </item>
@@ -143,8 +143,8 @@
 
                         <item android:state_pressed="true">
                             <shape android:shape="rectangle">
-                                <stroke android:width="2dp" android:color="@color/button_primary_pressed" />
-                                <solid android:color="@color/surface_01" />
+                                <stroke android:width="2dp" android:color="@color/primary_pressed" />
+                                <solid android:color="@color/background_secondary" />
                                 <corners android:radius="8dp" />
                             </shape>
                         </item>

@@ -8,13 +8,13 @@
       android:strokeAlpha="0.5"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/text_emphasis_low"
+      android:strokeColor="@color/label_tertiary"
       android:fillType="evenOdd"
       android:fillAlpha="0.5"/>
   <path
       android:pathData="M12,19.003c-0.267,0 -0.522,-0.105 -0.709,-0.293L7.292,14.706c-0.39,-0.39 -0.39,-1.024 0.001,-1.415 0.391,-0.389 1.024,-0.39 1.415,0.001L12,16.588l7.296,-7.295c0.391,-0.39 1.023,-0.39 1.414,0 0.391,0.391 0.391,1.023 0,1.414L12.706,18.71c-0.187,0.188 -0.44,0.293 -0.707,0.293"
       android:strokeAlpha="0.5"
-      android:fillColor="@color/text_emphasis_low"
+      android:fillColor="@color/label_tertiary"
       android:fillType="evenOdd"
       android:fillAlpha="0.5"/>
 </vector>

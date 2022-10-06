@@ -55,13 +55,13 @@ class WhatsNewItem @JvmOverloads constructor(
         return if (description?.startsWith("Gnosis Safe rebranded to Safe") == true) {
              SpannableStringBuilder(description).apply {
                 setSpan(
-                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    ForegroundColorSpan(context.getColorCompat(R.color.label_primary)),
                     0,
                     11,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 setSpan(
-                    ForegroundColorSpan(context.getColorCompat(R.color.text_emphasis_high)),
+                    ForegroundColorSpan(context.getColorCompat(R.color.label_primary)),
                     25,
                     29,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

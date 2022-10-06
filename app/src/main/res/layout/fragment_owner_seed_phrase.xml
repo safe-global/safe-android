@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -96,8 +96,8 @@
                 app:boxStrokeColor="@color/outline_box"
                 app:errorIconDrawable="@null"
                 app:errorTextColor="@color/error"
-                android:textColorHint="@color/text_emphasis_low"
-                app:hintTextColor="@color/text_emphasis_low">
+                android:textColorHint="@color/label_tertiary"
+                app:hintTextColor="@color/label_tertiary">
 
                 <EditText
                     android:id="@+id/seed_phrase_text"
@@ -109,7 +109,7 @@
                     android:gravity="top"
                     android:lines="3"
                     android:scrollHorizontally="false"
-                    android:textColor="@color/text_emphasis_high"
+                    android:textColor="@color/label_primary"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
             </com.google.android.material.textfield.TextInputLayout>

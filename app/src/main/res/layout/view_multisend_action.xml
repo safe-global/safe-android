@@ -35,9 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:ellipsize="middle"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/dm_sans_medium"
         android:singleLine="true"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintStart_toEndOf="@+id/address_image"
@@ -106,7 +106,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="16dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
-        app:strokeColor="@color/illustration_background"
+        app:strokeColor="@color/background_tertiary"
         app:strokeWidth="0.01dp" />
 
 </merge>

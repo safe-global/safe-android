@@ -18,7 +18,7 @@ class AmountView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTxAmountBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setAmount(formattedAmount: String, logoUri: String = "local::native_currency", @ColorRes color: Int = R.color.text_emphasis_high) {
+    fun setAmount(formattedAmount: String, logoUri: String = "local::native_currency", @ColorRes color: Int = R.color.label_primary) {
         binding.amountTitle.text = formattedAmount
         binding.logo.loadTokenLogo(icon = logoUri)
         binding.amountTitle.setTextColor(context.getColorCompat(color))

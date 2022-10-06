@@ -1,40 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">@color/teal</color>
-    <color name="future_primary">@color/neon_green</color>
+    <!-- Foundation -->
+    <color name="primary">@color/green</color>
+    <color name="primary_pressed">@color/dark_green</color>
+    <color name="primary_disabled">@color/slate</color>
+    <color name="confirm_disabled">@color/primary_disabled</color>
+    <color name="confirm_pressed">@color/primary_pressed</color>
+
+    <!-- Backgrounds -->
+    <color name="background_primary">@color/black</color>
+    <color name="background_secondary">@color/light_black</color>
+    <color name="background_tertiary">@color/slate</color>
+    <color name="background_green">@color/light_green</color>
+    <color name="background_green_light">@color/graphite</color>
+
+    <!-- Components -->
+    <color name="border">@color/graphite</color>
+    <color name="border_selected">@color/green</color>
+    <color name="border_disabled">@color/graphite</color>
+    <color name="separator">@color/graphite</color>
+    <color name="divider">@color/graphite</color>
+    <color name="link">@color/green</color>
+
+    <!-- Labels -->
+    <color name="label_primary">@color/white</color>
+    <color name="label_secondary">@color/stone</color>
+    <color name="label_tertiary">@color/slate</color>
+    <color name="label_primary_reverse">@color/black</color>
+
+    <!-- Error -->
+    <color name="error">@color/red</color>
+    <color name="error_pressed">@color/dark_red</color>
+    <color name="error_background">@color/bg_red_dark</color>
+
+    <color name="reject_disabled">@color/error_background</color>
+    <color name="reject_pressed">@color/error_pressed</color>
+
+    <!-- Warning -->
+    <color name="warning">@color/orange</color>
+    <color name="warning_pressed">@color/dark_orange</color>
+    <color name="warning_background">@color/bg_orange_dark</color>
+
+    <!-- Info (new) -->
+    <color name="info">@color/blue</color>
+    <color name="info_pressed">@color/dark_blue</color>
+    <color name="info_background">@color/bg_blue_dark</color>
+
+    <!-- misc -->
+    <color name="icon">@color/slate</color>
     <color name="on_primary">@color/black</color>
     <color name="primary_dark">@color/hold_two</color>
-    <color name="secondary">@color/pale_red</color>
-    <color name="error">@color/coral</color>
-    <color name="accent">@color/white_two</color>
-    <color name="window_background">@color/background</color>
+
+    <color name="window_background">@color/background_primary</color>
     <color name="toolbar_action">@color/white_two</color>
-    <color name="pending">#FF8042</color>
-
-    <color name="background">@color/black_five</color>
-    <color name="surface_01">@color/black_four</color>
-    <color name="surface_04">@color/black_three</color>
-    <color name="surface_08">@color/black_two</color>
-    <color name="separator">@color/black_five</color>
-
-    <color name="text_emphasis_high">@color/white_two</color>
-    <color name="text_emphasis_medium">@color/blue_grey</color>
-    <color name="text_emphasis_low">@color/slate_grey</color>
-
-    <color name="label_tertiary">#B2B5B2</color>
 
     <color name="outline">@color/charcoal_grey</color>
-    <color name="illustration_background">@color/dark_grey_two</color>
     <color name="logo_background">@color/white_two</color>
 
-    <color name="rejection">@color/black_six</color>
-
-    <color name="button_primary_disabled">#80029f7f</color>
-    <color name="button_primary_pressed">@color/dark_aquamarine</color>
-    <color name="button_confirm_disabled">#80029f7f</color>
-    <color name="button_confirm_pressed">@color/dark_aquamarine</color>
-    <color name="button_reject_disabled">#80ff453a</color>
-    <color name="button_reject_pressed">@color/cherry_red</color>
+    <color name="rejection">@color/bg_red_dark</color>
 
 </resources>

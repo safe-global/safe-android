@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background">
+        android:background="@color/background_primary">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -53,7 +53,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/surface_01"
+            android:background="@color/background_secondary"
             android:visibility="visible">
 
             <LinearLayout

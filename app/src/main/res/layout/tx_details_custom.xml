@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <io.gnosis.safe.ui.transactions.details.view.TxTransferActionView
         android:id="@+id/tx_action"

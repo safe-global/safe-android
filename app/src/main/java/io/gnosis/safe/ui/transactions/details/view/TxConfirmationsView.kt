@@ -123,7 +123,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(ADDRESS_ITEM_HEIGHT))
         layoutParams.setMargins(dpToPx(ADDRESS_ITEM_MARGIN_LEFT), 0, 0, dpToPx(MARGIN_VERTICAL))
         namedAddressItem.layoutParams = layoutParams
-        namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_selectable_white)
+        namedAddressItem.background = ContextCompat.getDrawable(context, R.drawable.background_secondary_selectable)
         namedAddressItem.setAddress(chain, address, ownerType)
         namedAddressItem.name = if (name.isNullOrBlank())
             resources.getString(
@@ -227,7 +227,7 @@ class TxConfirmationsView @JvmOverloads constructor(
                     Type.CANCELLED -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_canceled_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_cancelled)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.label_secondary))
                     }
                     Type.FAILED -> {
                         stepIcon.setImageResource(R.drawable.ic_circle_cross_red_16dp)
@@ -237,12 +237,12 @@ class TxConfirmationsView @JvmOverloads constructor(
                     Type.EXECUTE_WAITING -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_waiting_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_waiting, missingConfirmations)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_medium))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.label_secondary))
                     }
                     Type.EXECUTE_READY -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_execute_ready_16dp)
                         stepTitle.text = resources.getString(R.string.tx_confirmations_execute_ready)
-                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.text_emphasis_high))
+                        stepTitle.setTextColor(ContextCompat.getColor(context, R.color.label_primary))
                     }
                     Type.EXECUTE_DONE -> {
                         stepIcon.setImageResource(R.drawable.ic_tx_confirmations_done_16dp)
@@ -267,7 +267,7 @@ class TxConfirmationsView @JvmOverloads constructor(
         private const val EXECUTION_DESCRIPTION_ITEM_MARGIN_VERTICAL = -10
         private const val MARGIN_VERTICAL = 16
         private const val LINE_WIDTH = 2
-        private const val LINE_COLOR = R.color.text_emphasis_low
+        private const val LINE_COLOR = R.color.label_tertiary
     }
 }
 

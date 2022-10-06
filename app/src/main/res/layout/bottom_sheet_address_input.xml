@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface_01"
+    android:background="@color/background_secondary"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -24,7 +24,7 @@
         android:id="@+id/bottom_sheet_address_input_paste_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_title"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -36,7 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_title"
         app:srcCompat="@drawable/ic_content_paste_white_24dp"
-        app:tint="@color/text_emphasis_medium" />
+        app:tint="@color/label_secondary" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_paste"
@@ -56,7 +56,7 @@
         android:id="@+id/bottom_sheet_address_input_qr_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste" />
 
     <ImageView
@@ -67,7 +67,7 @@
         android:src="@drawable/ic_qrcode_scan_white_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_paste"
-        app:tint="@color/text_emphasis_medium" />
+        app:tint="@color/label_secondary" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_qr"
@@ -87,7 +87,7 @@
         android:id="@+id/bottom_sheet_address_input_ens_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_qr" />
 
     <ImageView
@@ -98,7 +98,7 @@
         android:src="@drawable/ic_ens_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_qr"
-        app:tint="@color/text_emphasis_medium" />
+        app:tint="@color/label_secondary" />
 
 
     <TextView
@@ -120,7 +120,7 @@
         android:id="@+id/bottom_sheet_address_input_unstoppabledomains_touch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toBottomOf="@id/bottom_sheet_address_input_ens" />
 
 
@@ -132,7 +132,7 @@
         android:src="@drawable/ic_unstoppable_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_address_input_ens"
-        app:tint="@color/text_emphasis_medium" />
+        app:tint="@color/label_secondary" />
 
     <TextView
         android:id="@+id/bottom_sheet_address_input_unstoppabledomains"

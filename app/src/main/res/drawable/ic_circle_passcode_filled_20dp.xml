@@ -6,5 +6,5 @@
     android:shape="oval"
     android:viewportHeight="24.0"
     android:viewportWidth="24.0">
-    <solid android:color="@color/text_emphasis_high" />
+    <solid android:color="@color/label_primary" />
 </shape>

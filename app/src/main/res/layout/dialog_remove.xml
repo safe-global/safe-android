@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface_08">
+    android:background="@color/background_secondary">
 
     <TextView
         android:id="@+id/message"
@@ -18,6 +18,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/surface_08"
-        android:textColor="@color/text_emphasis_high"/>
+        android:background="@color/background_secondary"
+        android:textColor="@color/label_primary"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

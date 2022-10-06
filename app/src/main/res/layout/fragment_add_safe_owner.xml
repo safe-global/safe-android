@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background_primary">
 
     <LinearLayout
         android:id="@+id/toolbar_layout"
@@ -100,7 +100,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:lines="3"
-        android:textColor="@color/text_emphasis_low"
+        android:textColor="@color/label_tertiary"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/safe_link"
         app:layout_constraintStart_toStartOf="parent"

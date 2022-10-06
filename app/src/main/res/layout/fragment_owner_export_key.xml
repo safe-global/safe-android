@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/surface_04"
+    android:background="@color/background_secondary"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toBottomOf="@id/value"
         app:layout_goneMarginTop="16dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
-        tools:src="@color/text_emphasis_medium" />
+        tools:src="@color/label_secondary" />
 
     <ImageView
         android:id="@+id/qr_code_outline"

@@ -6,7 +6,7 @@
 
     <path
         android:pathData="M12,2C6.477,2 2,6.478 2,12c0,5.523 4.477,10 10,10 5.522,0 10,-4.477 10,-10 0,-5.522 -4.478,-10 -10,-10m0,2c4.411,0 8,3.588 8,8s-3.589,8 -8,8c-4.41,0 -8,-3.588 -8,-8s3.59,-8 8,-8"
-        android:fillColor="@color/text_emphasis_high"
+        android:fillColor="@color/label_primary"
         android:fillType="evenOdd"/>
 
 </vector>

@@ -98,7 +98,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/status_title_container"
         app:srcCompat="@drawable/ic_arrow_green_10dp"
-        app:strokeColor="@color/illustration_background"
+        app:strokeColor="@color/background_tertiary"
         app:strokeWidth="0.01dp" />
 
 </merge>

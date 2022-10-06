@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_01">
+    android:background="@color/background_secondary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_04">
+        android:background="@color/background_secondary">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -120,7 +120,7 @@
                 android:id="@+id/collectible_contract"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:show_named_address_separator="true"
                 />
 

@@ -149,7 +149,7 @@ class LabeledArrayItem @JvmOverloads constructor(
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParams.setMargins(0, dpToPx(6), 0, 0)
         valueItem.layoutParams = layoutParams
-        valueItem.setTextColor(context.getColorCompat(R.color.text_emphasis_low))
+        valueItem.setTextColor(context.getColorCompat(R.color.label_tertiary))
         valueItem.setText(R.string.empty)
         container.addView(valueItem)
     }

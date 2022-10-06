@@ -110,7 +110,7 @@ class CollectibleItemViewHolder(private val viewBinding: ItemCollectibleCollecti
 fun ImageView.setCollectiblePlaceholder() {
     scaleType = ImageView.ScaleType.CENTER
     setImageResource(R.drawable.ic_collectible_placeholder)
-    setBackgroundColor(context.getColorCompat(R.color.illustration_background))
+    setBackgroundColor(context.getColorCompat(R.color.background_tertiary))
 }
 
 fun ImageView.setCollectibleBitmap(bitmap: Bitmap?) {

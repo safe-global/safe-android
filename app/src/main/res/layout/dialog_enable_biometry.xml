@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface_08">
+    android:background="@color/background_secondary">
 
     <ImageView
         android:id="@+id/fingerprint"
@@ -21,11 +21,11 @@
         style="@style/TextLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/surface_08"
+        android:background="@color/background_secondary"
         android:paddingHorizontal="24dp"
         android:paddingTop="21dp"
         android:text="@string/settings_passcode_enable_biometry"
-        android:textColor="@color/text_emphasis_high"
+        android:textColor="@color/label_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

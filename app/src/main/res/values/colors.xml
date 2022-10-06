@@ -1,116 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/teal_two</color>
-    <color name="future_primary">@color/safe_black</color>
+    <!-- Foundation -->
+    <color name="primary">@color/black</color>
+    <color name="primary_pressed">@color/slate</color>
+    <color name="primary_disabled">@color/stone</color>
+
+    <color name="confirm_pressed">@color/primary_pressed</color>
+    <color name="confirm_disabled">@color/primary_disabled</color>
+
+    <!-- Backgrounds -->
+    <color name="background_primary">@color/grey</color>
+    <color name="background_secondary">@color/white</color>
+    <color name="background_tertiary">@color/dark_grey</color>
+    <color name="background_green">@color/light_green</color>
+    <color name="background_green_light">@color/bg_green</color>
+
+    <!-- Components -->
+    <color name="border">@color/stone</color>
+    <color name="border_selected">@color/black</color>
+    <color name="border_disabled">@color/dark_grey</color>
+    <color name="separator">@color/stone</color>
+    <color name="divider">@color/pale_grey_four</color>
+    <color name="link">@color/metal</color>
+
+    <!-- Labels -->
+    <color name="label_primary">@color/black</color>
+    <color name="label_secondary">@color/slate</color>
+    <color name="label_tertiary">@color/metal</color>
+    <color name="label_primary_reverse">@color/white</color>
+
+    <!-- Error -->
+    <color name="error">@color/red</color>
+    <color name="error_pressed">@color/dark_red</color>
+    <color name="error_background">@color/bg_red</color>
+
+    <color name="reject_pressed">@color/error_pressed</color>
+    <color name="reject_disabled">@color/error_background</color>
+
+    <!-- Warning -->
+    <color name="warning">@color/orange</color>
+    <color name="warning_pressed">@color/dark_orange</color>
+    <color name="warning_background">@color/bg_orange</color>
+
+    <!-- Info (new) -->
+    <color name="info">@color/blue</color>
+    <color name="info_pressed">@color/dark_blue</color>
+    <color name="info_background">@color/bg_blue</color>
+
+    <!-- misc -->
+    <color name="icon">@color/metal</color>
     <color name="on_primary">@color/white_two</color>
     <color name="primary_dark">@color/teal_two</color>
-    <color name="secondary">@color/orangish</color>
-    <color name="error">@color/tomato</color>
-    <color name="accent">@color/text_emphasis_high</color>
-    <color name="window_background">@color/background</color>
-    <color name="toolbar_action">@color/text_emphasis_high</color>
-    <color name="pending">#E8663D</color>
-
-    <color name="background">@color/white</color>
-    <color name="surface_01">@color/white_two</color>
-    <color name="surface_08">@color/white_two</color>
-    <color name="surface_04">@color/white_two</color>
-    <color name="separator">@color/white</color>
-
-    <color name="text_emphasis_high">@color/navy</color>
-    <color name="text_emphasis_medium">@color/dark_grey</color>
-    <color name="text_emphasis_low">@color/medium_grey</color>
-
-    <color name="label_tertiary">#B2BBC0</color>
+    <color name="window_background">@color/background_primary</color>
+    <color name="toolbar_action">@color/label_primary</color>
 
     <color name="outline">@color/white_smoke</color>
-    <color name="illustration_background">@color/whitesmoke_two</color>
     <color name="logo_background">@android:color/transparent</color>
+
+    <color name="pressed_shade">#33000000</color>
+
+    <color name="address_boundaries">@color/label_primary</color>
+    <color name="enabled_input">@color/primary</color>
+    <color name="rejection">@color/bg_red</color>
+    <color name="success">@color/dark_green</color>
 
     <!-- color names -->
     <color name="white_two">#ffffff</color>
-    <color name="black">#000000</color>
-    <color name="white_alpha_70">#b3ffffff</color>
-    <color name="black_alpha_70">#b3000000</color>
-
-    <color name="button_primary_disabled">#80008c73</color>
-    <color name="button_primary_pressed">@color/hold_two</color>
-    <color name="button_confirm_disabled">#80008c73</color>
-    <color name="button_confirm_pressed">@color/hold_two</color>
-    <color name="button_reject_disabled">#80f02525</color>
-    <color name="button_reject_pressed">@color/tomato_two</color>
-
-    <color name="pressed_shade">#33000000</color>
-    <color name="gnosis_blue">#10b3d4</color>
-    <color name="gnosis_blue_shade">#0083a3</color>
-    <color name="gnosis_dark_blue_alpha_50">#7f001428</color>
-    <color name="gnosis_dark_blue_alpha_70">#b2001428</color>
-
-    <color name="secondary_button">#c8ced4</color>
-    <color name="secondary_button_disabled">#e8eaec</color>
-    <color name="secondary_button_pressed">#aaadb1</color>
-
-    <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
-
-    <color name="enabled_input">@color/primary</color>
-
-    <color name="text_grey_background">#f4f4f9</color>
-
-    <!-- New Design colors -->
-    <color name="white">#f7f5f5</color>
-    <color name="whitesmoke_two">#f0efee</color>
-    <color name="pale_grey">#e4e8f1</color>
+    <color name="black">#121312</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#F4F4F4</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
-    <color name="dark_grey">#5d6d74</color>
-    <color name="dark_grey_disabled">#965d6d74</color>
-    <color name="pale_grey_two">#f4f4f9</color>
-    <color name="battleship_grey_light">#64707f</color>
-    <color name="white_smoke">#e8e7e6</color>
-    <color name="tomato">#f02525</color>
-    <color name="tomato_two">#c31717</color>
-    <color name="cherry_red">#e52325</color>
-    <color name="coral">#ff453a</color>
-    <color name="orangish">#ff8042</color>
-    <color name="pale_red">#e8663d</color>
-    <color name="green">#79b722</color>
-    <color name="pale_grey_three">#f4f5f9</color>
-    <color name="tomato_15">#f0d6d6</color>
+    <color name="dark_grey">#EEEFF0</color>
+1   <color name="white_smoke">#e8e7e6</color>
+    <color name="red">#FF5F72</color>
+    <color name="dark_red">#AC2C3B</color>
+
+    <color name="orange">#FF8061</color>
+    <color name="dark_orange">#CD674E</color>
+    <color name="bg_orange">#FFF2E3</color>
+    <color name="bg_orange_dark">#2F2318</color>
+    <color name="green">#12ff80</color>
+    <color name="light_green">#B0FFC9</color>
+    <color name="bg_green">#EFFFF4</color>
+
     <color name="pale_grey_four">#e3e5ec</color>
-    <color name="dusk">#4a5579</color>
-    <color name="neon_green">#12FF80</color>
-    <color name="shamrock">#00a95f</color>
-    <color name="teal">#029f7f</color>
     <color name="teal_two">#008c73</color>
-    <color name="navy">#001428</color>
-    <color name="slate_grey">#626269</color>
-    <color name="blue_grey">#8d8d93</color>
-    <color name="black_two">#2d2d2d</color>
+
+    <color name="graphite">#303033</color>
+    <color name="slate">#636669</color>
+    <color name="metal">#A1A3A7</color>
     <color name="black_three">#272727</color>
-    <color name="black_three_dimmed">#272727</color>
     <color name="black_four">#1e1e1e</color>
-    <color name="black_five">#121212</color>
-    <color name="safe_black">#121312</color>
+    <color name="black_five">#121312</color>
+    <color name="light_black">#1C1C1C</color>
     <color name="charcoal_grey">#3a3a3c</color>
-    <color name="dark_grey_two">#2c2c2e</color>
-    <color name="black_six">#3b2c2c</color>
-    <color name="light_pink">#ffe6ea</color>
-    <color name="hold">#008c73</color>
+    <color name="stone">#DCDEE0</color>
+    <color name="bg_red">#FFE6EA</color>
+    <color name="bg_red_dark">#262020</color>
     <color name="hold_two">#005546</color>
-    <color name="dark_aquamarine">#007661</color>
-
-    <color name="word_recovery_phrase">@color/primary</color>
-    <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
-    <color name="word_recovery_phrase_picker">#b24a4a4a</color>
-    <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
-
-    <color name="address_boundaries">@color/text_emphasis_high</color>
-
-    <color name="link">@color/primary</color>
-
-    <color name="blue">#001e3b</color>
-    <color name="divider">@color/pale_grey_four</color>
-
-    <color name="rejection">@color/light_pink</color>
+    <color name="dark_green">#00B460</color>
+    <color name="blue">#5FDDFF</color>
+    <color name="dark_blue">#52BFDC</color>
+    <color name="bg_blue">#EFFCFF</color>
+    <color name="bg_blue_dark">#19252C</color>
 
 </resources>

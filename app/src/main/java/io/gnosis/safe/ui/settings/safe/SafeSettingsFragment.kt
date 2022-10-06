@@ -114,7 +114,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.forEach { owner -> ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners)) }
+            safeInfo?.owners?.forEach() { owner ->
+                ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners, owner !== safeInfo.owners.last()))
+            }
             masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
@@ -122,14 +124,14 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>): View {
+    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>, showTrailingSeparator: Boolean): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 
         return if (localOwner != null) {
             // use local owner name & identicon
             NamedAddressItem(requireContext()).apply {
-                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                 setAddress(chain, owner.value, localOwner.type)
                 name = if (localOwner.name.isNullOrBlank())
@@ -137,28 +139,27 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         R.string.settings_app_imported_owner_key_default_name,
                         localOwner.address.shortChecksumString()
                     ) else localOwner.name
-                showSeparator = true
+                showSeparator = showTrailingSeparator
             }
         } else {
-
             if (!owner.name.isNullOrBlank()) {
                 // use remote owner name & logo if available
                 NamedAddressItem(requireContext()).apply {
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
                     name = owner.name
-                    showSeparator = true
+                    showSeparator = showTrailingSeparator
                     loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
                 AddressItem(requireContext()).apply {
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_selectable_white)
+                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_secondary_selectable)
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
-                    showSeparator = true
+                    showSeparator = showTrailingSeparator
                 }
             }
         }

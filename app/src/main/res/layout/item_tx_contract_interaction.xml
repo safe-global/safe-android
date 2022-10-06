@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface_01"
+    android:background="@color/background_secondary"
     android:minHeight="@dimen/item_tx_s_height">
 
     <ImageView
@@ -134,7 +134,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
-        app:strokeColor="@color/illustration_background"
+        app:strokeColor="@color/background_tertiary"
         app:strokeWidth="0.01dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

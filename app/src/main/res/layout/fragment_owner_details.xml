@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background_primary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_04">
+        android:background="@color/background_secondary">
 
         <LinearLayout
             android:id="@+id/toolbar_layout"
@@ -83,7 +83,7 @@
                 android:id="@+id/owner_name"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@drawable/background_selectable_white"
+                android:background="@drawable/background_secondary_selectable"
                 app:setting_name="@string/signing_owner_details_owner_name"
                 app:setting_openable="true" />
 
@@ -100,13 +100,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/default_margin"
-    android:background="@drawable/background_selectable_white" >
+    android:background="@drawable/background_secondary_selectable" >
 
     <io.gnosis.safe.ui.settings.view.AddressItem
         android:id="@+id/owner_address"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_address"
-        android:background="@drawable/background_selectable_white"
+        android:background="@drawable/background_secondary_selectable"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -120,7 +120,7 @@
         app:layout_constraintTop_toBottomOf="@+id/owner_address"
 
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize9Percent"
-        tools:src="@color/text_emphasis_medium" />
+        tools:src="@color/label_secondary" />
 
     <ImageView
         android:id="@+id/owner_qr_code_outline"
@@ -148,7 +148,7 @@
                 android:id="@+id/owner_type_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_selectable_white" >
+                android:background="@drawable/background_secondary_selectable" >
 
                 <ImageView
                     android:id="@+id/key_type_background"
@@ -179,7 +179,7 @@
                     android:layout_marginBottom="@dimen/default_margin"
                     android:layout_marginEnd="@dimen/default_margin"
                     android:layout_marginTop="@dimen/default_margin"
-                    android:background="@drawable/background_selectable_white"
+                    android:background="@drawable/background_secondary_selectable"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/key_type_background"
