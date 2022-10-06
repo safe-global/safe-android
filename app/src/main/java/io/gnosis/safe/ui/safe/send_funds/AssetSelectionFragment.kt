@@ -14,9 +14,6 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAssetSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.assets.coins.CoinsAdapter
-import io.gnosis.safe.ui.assets.coins.CoinsState
-import io.gnosis.safe.ui.assets.coins.UpdateBalances
-import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import javax.inject.Inject
@@ -84,6 +81,7 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
 
             when (state) {
                 is AssetSelectionState -> {
+                    binding.refresh.isRefreshing = state.loading
                     state.viewAction?.let { action ->
                         when (action) {
                             is UpdateAssetSelection -> {
@@ -95,6 +93,13 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
 
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isLoading()) {
+            viewModel.load()
         }
     }
 }

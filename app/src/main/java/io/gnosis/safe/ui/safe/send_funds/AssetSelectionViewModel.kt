@@ -21,29 +21,32 @@ class AssetSelectionViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<AssetSelectionState>(appDispatchers) {
 
-    override fun initialState(): AssetSelectionState = AssetSelectionState(loading = false, refreshing = false, viewAction = null)
+    override fun initialState(): AssetSelectionState = AssetSelectionState(loading = false, viewAction = null)
 
-    fun load() {
+    fun load(filterTerm: String = "") {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             val userDefaultFiat = settingsHandler.userDefaultFiat
             if (safe != null) {
                 updateState {
                     AssetSelectionState(
-                        loading = !refreshing,
-                        refreshing = refreshing,
+                        loading = true,
                         viewAction = null
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
                 val balances = getBalanceViewData(balanceInfo)
-                updateState { AssetSelectionState(loading = false, refreshing = false, viewAction = UpdateAssetSelection(null, balances)) }
+                updateState { AssetSelectionState(loading = false, viewAction = UpdateAssetSelection(null, balances)) }
             }
         }
     }
 
     fun selectAssetForTransfer(assetData: CoinsViewData.CoinBalance) {
         //TODO: select asset
+    }
+
+    fun isLoading(): Boolean {
+        return (state.value as AssetSelectionState).loading
     }
 
     suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
@@ -70,7 +73,6 @@ class AssetSelectionViewModel
 
 data class AssetSelectionState(
     val loading: Boolean,
-    val refreshing: Boolean,
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
