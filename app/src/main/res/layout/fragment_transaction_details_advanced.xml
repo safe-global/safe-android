@@ -65,7 +65,7 @@
 
             <TextView
                 android:id="@+id/chain_data_header"
-                style="@style/Header"
+                style="@style/Overline2"
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_chain_tx_data"
                 android:textAllCaps="true"
@@ -80,7 +80,7 @@
 
             <TextView
                 android:id="@+id/safe_data_header"
-                style="@style/Header"
+                style="@style/Overline2"
                 android:layout_height="@dimen/header_height"
                 android:text="@string/tx_details_advanced_safe_tx_data"
                 android:textAllCaps="true"

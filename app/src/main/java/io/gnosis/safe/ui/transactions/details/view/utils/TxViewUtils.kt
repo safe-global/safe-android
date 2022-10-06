@@ -94,13 +94,3 @@ fun Context.getDivider(): View {
     item.setBackgroundColor(ContextCompat.getColor(this, R.color.separator))
     return item
 }
-
-fun Context.getDividerBig(): View {
-    val item = View(this)
-    val height = resources.getDimension(R.dimen.default_large_margin).toInt()
-    val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-    layoutParams.setMargins(0, dpToPx(16), 0, 0)
-    item.layoutParams = layoutParams
-    item.setBackgroundColor(ContextCompat.getColor(this, R.color.separator))
-    return item
-}

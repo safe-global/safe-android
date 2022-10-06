@@ -60,7 +60,7 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:text="@string/settings_passcode_lock_method"
                 android:layout_height="@dimen/header_height" />
 
@@ -96,7 +96,7 @@
 
             <TextView
                 android:id="@+id/use_passcode_for"
-                style="@style/Header"
+                style="@style/Overline2"
                 android:text="@string/settings_passcode_use_passcode_for"
                 android:layout_height="@dimen/header_height" />
 

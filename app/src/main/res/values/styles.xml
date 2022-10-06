@@ -151,19 +151,19 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="Header">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/header_height</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">@font/dm_sans_regular</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/label_tertiary</item>
-        <item name="android:letterSpacing">0.04</item>
-        <item name="android:lineSpacingExtra">2sp</item>
-        <item name="android:background">@color/background_primary</item>
-    </style>
+<!--    <style name="Header">-->
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">@dimen/header_height</item>-->
+<!--        <item name="android:gravity">center_vertical</item>-->
+<!--        <item name="android:paddingLeft">16dp</item>-->
+<!--        <item name="android:textSize">13sp</item>-->
+<!--        <item name="android:fontFamily">@font/dm_sans_regular</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+<!--        <item name="android:textColor">@color/label_tertiary</item>-->
+<!--        <item name="android:letterSpacing">0.04</item>-->
+<!--        <item name="android:lineSpacingExtra">2sp</item>-->
+<!--        <item name="android:background">@color/background_primary</item>-->
+<!--    </style>-->
 
     <style name="Helptext">
         <item name="android:paddingTop">@dimen/default_small_margin</item>

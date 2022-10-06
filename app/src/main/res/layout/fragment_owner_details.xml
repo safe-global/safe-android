@@ -70,12 +70,12 @@
             android:orientation="vertical">
 
         <TextView
-            style="@style/Header"
+            style="@style/Overline2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/header_height"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:background="@color/separator"
+            android:background="@color/background_primary"
             android:text="@string/signing_owner_details_owner_name"
             android:textAllCaps="true" />
 
@@ -88,11 +88,11 @@
                 app:setting_openable="true" />
 
             <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/header_height"
                 android:gravity="center_vertical"
-                android:background="@color/separator"
+                android:background="@color/background_primary"
                 android:paddingHorizontal="16dp"
                 android:text="@string/signing_owner_details_owner_address"
                 android:textAllCaps="true" />
@@ -135,12 +135,12 @@
 </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/header_height"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:background="@color/separator"
+                android:background="@color/background_primary"
                 android:text="@string/signing_owner_details_owner_type"
                 android:textAllCaps="true" />
 
