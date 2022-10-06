@@ -124,7 +124,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
         }
     }
 
-    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>, separate: Boolean = true): View {
+    private fun ownerView(chain: Chain, owner: AddressInfo, localOwners: List<Owner>, showTrailingSeparator: Boolean): View {
 
         val localOwner = localOwners.find { it.address == owner.value }
 
@@ -139,7 +139,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         R.string.settings_app_imported_owner_key_default_name,
                         localOwner.address.shortChecksumString()
                     ) else localOwner.name
-                showSeparator = separate
+                showSeparator = showTrailingSeparator
             }
         } else {
             if (!owner.name.isNullOrBlank()) {
@@ -150,7 +150,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
                     name = owner.name
-                    showSeparator = separate
+                    showSeparator = showTrailingSeparator
                     loadKnownAddressLogo(owner.logoUri, owner.value)
                 }
             } else {
@@ -159,7 +159,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                     layoutParams =
                         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimension(R.dimen.item_address).toInt())
                     setAddress(chain, owner.value)
-                    showSeparator = separate
+                    showSeparator = showTrailingSeparator
                 }
             }
         }
