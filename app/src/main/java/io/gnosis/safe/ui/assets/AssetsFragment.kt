@@ -28,8 +28,6 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
     private lateinit var pager: AssetsPagerAdapter
 
-    private var activeSafe: Safe? = null
-
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -58,7 +56,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }.attach()
 
             sendButton.setOnClickListener {
-                activeSafe?.let {
+                viewModel.activeSafe?.let {
                     findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAssetSelectionFragment(it.chain))
                 }
             }
@@ -71,7 +69,6 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SafeBalancesState.ActiveSafe -> {
-                    activeSafe = state.safe
                     val noActiveSafe = state.safe == null
                     pager.noActiveSafe = noActiveSafe
                     binding.totalBalance.visible(!noActiveSafe, View.GONE)
