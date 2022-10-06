@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -14,8 +15,10 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAssetSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.assets.coins.CoinsAdapter
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
+import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
 class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBinding>() {
@@ -63,6 +66,19 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
                 )
             )
 
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.load(newText ?: "")
+                    return true
+                }
+            })
+
             coins.adapter = adapter
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(
@@ -74,7 +90,7 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
             coins.addItemDecoration(dividerItemDecoration)
             coins.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            refresh.setOnRefreshListener { viewModel.load() }
+            refresh.setOnRefreshListener { viewModel.load(searchView.query.toString()) }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -85,12 +101,17 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
                     state.viewAction?.let { action ->
                         when (action) {
                             is UpdateAssetSelection -> {
-                                binding.contentNoData.visibility = View.GONE
+                                binding.coins.visible(true)
+                                binding.contentNoData.visible(false)
                                 adapter.updateData(action.balances)
                             }
+                            is ShowEmptyState -> {
+                                binding.coins.visible(false)
+                                binding.contentNoData.visible(true)
+                            }
+                            else -> {}
                         }
                     }
-
                 }
             }
         }

@@ -1,6 +1,6 @@
 package io.gnosis.safe.ui.safe.send_funds
 
-import io.gnosis.data.models.assets.CoinBalances
+import io.gnosis.data.models.assets.Balance
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
@@ -21,9 +21,11 @@ class AssetSelectionViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<AssetSelectionState>(appDispatchers) {
 
-    override fun initialState(): AssetSelectionState = AssetSelectionState(loading = false, viewAction = null)
+    override fun initialState(): AssetSelectionState =
+        AssetSelectionState(loading = false, viewAction = null)
 
     fun load(filterTerm: String = "") {
+        val term = filterTerm.toLowerCase()
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             val userDefaultFiat = settingsHandler.userDefaultFiat
@@ -34,9 +36,35 @@ class AssetSelectionViewModel
                         viewAction = null
                     )
                 }
-                val balanceInfo = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
-                val balances = getBalanceViewData(balanceInfo)
-                updateState { AssetSelectionState(loading = false, viewAction = UpdateAssetSelection(null, balances)) }
+                val balances = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
+                    .items
+                    .filter {
+                        if (filterTerm.isNotBlank()) {
+                            with(it.tokenInfo) {
+                                symbol.toLowerCase().contains(term) ||
+                                        name.toLowerCase().contains(term)
+                            }
+                        } else {
+                            true
+                        }
+                    }
+
+                if (balances.isNotEmpty()) {
+                    val balancesViewData = getBalanceViewData(balances)
+                    updateState {
+                        AssetSelectionState(
+                            loading = false,
+                            viewAction = UpdateAssetSelection(null, balancesViewData)
+                        )
+                    }
+                } else {
+                    updateState {
+                        AssetSelectionState(
+                            loading = false,
+                            viewAction = ViewAction.ShowEmptyState
+                        )
+                    }
+                }
             }
         }
     }
@@ -49,11 +77,11 @@ class AssetSelectionViewModel
         return (state.value as AssetSelectionState).loading
     }
 
-    suspend fun getBalanceViewData(coinBalanceData: CoinBalances): List<CoinsViewData> {
+    suspend fun getBalanceViewData(balances: List<Balance>): List<CoinsViewData> {
         val userCurrencyCode = settingsHandler.userDefaultFiat
         val result = mutableListOf<CoinsViewData>()
 
-        coinBalanceData.items.forEach {
+        balances.forEach {
             result.add(
                 CoinsViewData.CoinBalance(
                     it.tokenInfo.symbol,
@@ -79,4 +107,4 @@ data class AssetSelectionState(
 data class UpdateAssetSelection(
     val selectedAsset: CoinsViewData.CoinBalance?,
     val balances: List<CoinsViewData>,
-) :BaseStateViewModel.ViewAction
+) : BaseStateViewModel.ViewAction
