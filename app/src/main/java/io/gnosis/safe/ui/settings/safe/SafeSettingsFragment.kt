@@ -114,9 +114,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
             localName.name = safe?.localName
             threshold.name = getString(R.string.safe_settings_confirmations_required, safeInfo?.threshold, safeInfo?.owners?.size)
             ownersContainer.removeAllViews()
-            safeInfo?.owners?.dropLast(1)?.forEach { owner -> ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners)) }
-            ownersContainer.addView(safeInfo?.owners?.last()?.let { ownerView(safe!!.chain, it, localOwners, false) })
-
+            safeInfo?.owners?.forEach() { owner ->
+                ownersContainer.addView(ownerView(safe!!.chain, owner, localOwners, owner !== safeInfo.owners.last()))
+            }
             masterCopy.setAddress(safe?.chain, safeInfo?.implementation?.value, safeInfo?.version)
             masterCopy.loadKnownAddressLogo(safeInfo?.implementation?.logoUri, safeInfo?.implementation?.value)
             ensName.name = ensNameValue?.takeUnless { it.isBlank() } ?: getString(R.string.safe_settings_not_set_reverse_record)
