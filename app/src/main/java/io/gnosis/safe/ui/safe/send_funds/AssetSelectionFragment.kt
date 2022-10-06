@@ -16,8 +16,10 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAssetSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsAdapter
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowEmptyState
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.passcode.hideSoftKeyboard
 import io.gnosis.safe.utils.debounce
@@ -125,6 +127,17 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
                             is ShowEmptyState -> {
                                 binding.coins.visible(false)
                                 binding.contentNoData.visible(true)
+                            }
+                            is ShowError -> {
+                                binding.refresh.isRefreshing = false
+                                if (adapter.itemCount == 0) {
+                                    binding.contentNoData.visible(true)
+                                }
+                                val error = action.error.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(action.error)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins))
                             }
                             else -> {}
                         }
