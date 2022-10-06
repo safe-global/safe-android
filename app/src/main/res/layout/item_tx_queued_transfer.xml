@@ -41,7 +41,7 @@
 
     <TextView
         android:id="@+id/action"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -54,7 +54,7 @@
 
     <TextView
         android:id="@+id/amount"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

@@ -137,7 +137,7 @@
 
                 <TextView
                     android:id="@+id/remove"
-                    style="@style/TextDark"
+                    style="@style/Body1"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:background="@drawable/background_selectable"

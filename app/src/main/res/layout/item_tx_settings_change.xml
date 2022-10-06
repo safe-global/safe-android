@@ -51,7 +51,7 @@
 
     <TextView
         android:id="@+id/setting_name"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

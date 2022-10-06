@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/owner_number"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"

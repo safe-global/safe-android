@@ -32,7 +32,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_title"
-        style="@style/TextDark.Bold"
+        style="@style/Subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/default_margin"
@@ -45,7 +45,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet_text"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_small_margin"
@@ -58,7 +58,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet_text"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_small_margin"

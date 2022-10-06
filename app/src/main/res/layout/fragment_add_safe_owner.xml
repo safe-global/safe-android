@@ -50,7 +50,7 @@
 
     <TextView
         android:id="@+id/loaded"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="116dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_margin"
@@ -75,7 +75,7 @@
 
     <TextView
         android:id="@+id/safe_name"
-        style="@style/TextDark.Bold"
+        style="@style/Subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_margin"
@@ -121,7 +121,7 @@
 
     <TextView
         android:id="@+id/read_only_description"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/default_margin"

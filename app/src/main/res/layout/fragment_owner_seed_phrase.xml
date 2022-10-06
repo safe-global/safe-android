@@ -77,7 +77,7 @@
 
             <TextView
                 android:id="@+id/enter_seed_phrase_description"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
@@ -101,7 +101,7 @@
 
                 <EditText
                     android:id="@+id/seed_phrase_text"
-                    style="@style/TextDark"
+                    style="@style/Body1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:imeOptions="actionDone"

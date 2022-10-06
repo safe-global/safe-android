@@ -179,7 +179,7 @@
 
                 <TextView
                     android:id="@+id/crash_the_app"
-                    style="@style/TextDark"
+                    style="@style/Body1"
                     android:text="@string/crash_the_app"
                     android:gravity="center_vertical"
                     android:layout_height="60dp"

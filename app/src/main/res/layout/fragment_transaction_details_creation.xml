@@ -89,7 +89,7 @@
 
             <TextView
                 android:id="@+id/creator_item_title"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -109,7 +109,7 @@
 
             <TextView
                 android:id="@+id/implementation_title"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -123,7 +123,7 @@
 
             <TextView
                 android:id="@+id/no_implementation_item"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:textColor="@color/label_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
 
             <TextView
                 android:id="@+id/factory_title"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -154,7 +154,7 @@
 
             <TextView
                 android:id="@+id/no_factory_item"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:textColor="@color/label_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

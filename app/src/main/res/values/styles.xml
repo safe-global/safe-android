@@ -27,19 +27,6 @@
         <item name="backgroundColor">@color/warning</item>
     </style>
 
-    <style name="FuturePrimaryButton">
-        <item name="android:layout_height">@dimen/primary_button_height</item>
-        <item name="android:background">@drawable/button_primary</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
-        <item name="fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
-        <item name="textAllCaps">false</item>
-    </style>
-
     <style name="PrimaryButton">
         <item name="android:layout_height">@dimen/primary_button_height</item>
         <item name="android:background">@drawable/button_primary</item>
@@ -81,7 +68,14 @@
         -->
     </style>
 
-    <style name="TextTitle" parent="Text">
+    <style name="H5Headline" parent="Text">
+        <item name="fontFamily">@font/dm_sans_regular</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/label_primary</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+
+    <style name="H6Headline" parent="Text">
         <item name="fontFamily">@font/dm_sans_regular</item>
         <item name="android:lineSpacingExtra">4sp</item>
         <item name="android:textColor">@color/label_primary</item>
@@ -96,21 +90,26 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextDark" parent="Text">
+    <style name="Body1" parent="Text">
         <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:lineSpacingExtra">@dimen/default_line_spacing</item>
-        <item name="android:textColor">@color/label_primary</item>
+        <item name="android:textColor">@color/label_secondary</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextDarkRegular" parent="TextDark">
+    <style name="Body2" parent="Body1">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextDarkRegular" parent="Body1">
         <item name="fontFamily">@font/dm_sans_regular</item>
     </style>
 
-    <style name="TextDark.Bold" parent="TextDark">
-        <item name="fontFamily">@font/dm_sans_regular</item>
-        <item name="android:textStyle">bold</item>
+    <style name="Subtitle" parent="Body1">
+        <item name="fontFamily">@font/dm_sans_medium</item>
+        <item name="android:textColor">@color/label_primary</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="TextLink" parent="Text">
@@ -234,20 +233,33 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
         <item name="tabSelectedTextColor">@color/primary</item>
-        <item name="tabTextAppearance">@style/TabText</item>
+        <item name="tabTextAppearance">@style/Overline</item>
     </style>
 
-    <style name="TabText" parent="TextAppearance.Design.Tab">
-        <item name="fontFamily">@font/dm_sans_regular</item>
+    <style name="Overline" parent="TextAppearance.Design.Tab">
+        <item name="fontFamily">@font/dm_sans_medium</item>
         <item name="android:textColor">@drawable/tab_item_text</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.04</item>
         <item name="android:lineSpacingExtra">3sp</item>
         <item name="android:ellipsize">middle</item>
         <item name="android:gravity">start</item>
         <item name="singleLine">true</item>
+    </style>
+
+    <style name="Overline2">
+        <item name="android:fontFamily">@font/dm_sans_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/label_tertiary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/header_height</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+        <item name="android:background">@color/background_primary</item>
     </style>
 
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
