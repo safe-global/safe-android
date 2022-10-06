@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,7 +20,9 @@ import io.gnosis.safe.ui.assets.coins.CoinsAdapter
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowEmptyState
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.app.passcode.hideSoftKeyboard
+import io.gnosis.safe.utils.debounce
 import io.gnosis.safe.utils.toColor
+import kotlinx.coroutines.Job
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
 
@@ -37,6 +40,8 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
 
     @Inject
     lateinit var adapter: CoinsAdapter
+
+    lateinit var onFilterTermChanged: (String) -> Job?
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -68,15 +73,17 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
                 )
             )
 
+            onFilterTermChanged = debounce(1000, lifecycleScope, viewModel::load)
+            var job: Job? = null
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
-
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.load(newText ?: "")
+                    job?.cancel()
+                    job = onFilterTermChanged(newText ?: "")
                     return true
                 }
             })
