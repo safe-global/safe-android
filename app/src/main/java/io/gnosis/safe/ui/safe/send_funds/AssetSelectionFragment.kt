@@ -10,13 +10,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentAssetSelectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.assets.coins.CoinsAdapter
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowEmptyState
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.settings.app.passcode.hideSoftKeyboard
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
@@ -90,6 +92,14 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
             coins.addItemDecoration(dividerItemDecoration)
             coins.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+            coins.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    clearSearchEditFocus()
+                }
+            })
+
             refresh.setOnRefreshListener { viewModel.load(searchView.query.toString()) }
         }
 
@@ -122,5 +132,10 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
         if (!viewModel.isLoading()) {
             viewModel.load()
         }
+    }
+
+    private fun clearSearchEditFocus() {
+        binding.searchView.clearFocus()
+        binding.searchView.hideSoftKeyboard()
     }
 }
