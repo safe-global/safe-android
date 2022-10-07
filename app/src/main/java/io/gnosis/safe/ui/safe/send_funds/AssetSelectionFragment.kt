@@ -27,6 +27,7 @@ import io.gnosis.safe.utils.toColor
 import kotlinx.coroutines.Job
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
+import javax.inject.Named
 
 class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBinding>() {
 
@@ -41,6 +42,7 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
     lateinit var viewModel: AssetSelectionViewModel
 
     @Inject
+    @Named("assetSelection")
     lateinit var adapter: CoinsAdapter
 
     lateinit var onFilterTermChanged: (String) -> Job?
@@ -138,6 +140,9 @@ class AssetSelectionFragment : BaseViewBindingFragment<FragmentAssetSelectionBin
                                     tracker.logException(action.error)
                                 }
                                 errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins))
+                            }
+                            is NavigateTo -> {
+                                findNavController().navigate(action.navDirections)
                             }
                             else -> {}
                         }

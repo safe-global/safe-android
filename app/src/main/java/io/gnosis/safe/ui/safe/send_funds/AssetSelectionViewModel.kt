@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.safe.send_funds
 import io.gnosis.data.models.assets.Balance
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.safe.ui.assets.coins.CoinsAdapter
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -19,7 +20,7 @@ class AssetSelectionViewModel
     private val settingsHandler: SettingsHandler,
     private val balanceFormatter: BalanceFormatter,
     appDispatchers: AppDispatchers
-) : BaseStateViewModel<AssetSelectionState>(appDispatchers) {
+) : BaseStateViewModel<AssetSelectionState>(appDispatchers), CoinsAdapter.AssetOnClickListener {
 
     override fun initialState(): AssetSelectionState =
         AssetSelectionState(loading = false, viewAction = null)
@@ -69,10 +70,6 @@ class AssetSelectionViewModel
         }
     }
 
-    fun selectAssetForTransfer(assetData: CoinsViewData.CoinBalance) {
-        //TODO: select asset
-    }
-
     fun isLoading(): Boolean {
         return (state.value as AssetSelectionState).loading
     }
@@ -96,6 +93,18 @@ class AssetSelectionViewModel
         }
 
         return result
+    }
+
+    override fun onAssetClicked(asset: CoinsViewData.CoinBalance) {
+        safeLaunch {
+            updateState {
+                //TODO: pass selected asset and proceed with the flow
+                AssetSelectionState(
+                    loading = false,
+                    viewAction = ViewAction.None//ViewAction.NavigateTo
+                )
+            }
+        }
     }
 }
 

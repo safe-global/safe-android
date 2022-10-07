@@ -47,6 +47,7 @@ import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.updates.UpdatesViewModel
 import java.lang.ref.WeakReference
+import javax.inject.Named
 
 @Module
 class ViewModule(
@@ -80,8 +81,15 @@ class ViewModule(
 
     @Provides
     @ForView
+    @Named("coins")
     fun providesCoinsAdapter(coinsViewModel: CoinsViewModel) =
-        CoinsAdapter(WeakReference(coinsViewModel))
+        CoinsAdapter(WeakReference(coinsViewModel), null)
+
+    @Provides
+    @ForView
+    @Named("assetSelection")
+    fun providesAssetSelectionCoinsAdapter(assetSelectionViewModel: AssetSelectionViewModel) =
+        CoinsAdapter(null, WeakReference(assetSelectionViewModel))
 
     @Provides
     @ForView
