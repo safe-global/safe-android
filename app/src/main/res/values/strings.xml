@@ -349,6 +349,11 @@
     <string name="tx_status_failed">Failed</string>
     <string name="tx_status_success">Success</string>
 
+    <string name="tx_submitted">Your transaction is submitted!</string>
+    <string name="tx_submitted_desc">It normally takes some time for a transaction to be executed.</string>
+    <string name="tx_submitted_view_details">View details</string>
+    <string name="tx_submitted_done">Done</string>
+
     <string name="safe_settings_ens_name">ENS name</string>
     <string name="safe_settings_contract_version">Safe version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
