@@ -97,11 +97,12 @@ class AssetSelectionViewModel
 
     override fun onAssetClicked(asset: CoinsViewData.CoinBalance) {
         safeLaunch {
+            val safe = safeRepository.getActiveSafe()!!
             updateState {
                 //TODO: pass selected asset and proceed with the flow
                 AssetSelectionState(
                     loading = false,
-                    viewAction = ViewAction.None//ViewAction.NavigateTo
+                    viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSuccessFragment(safe.chain, ""))
                 )
             }
         }

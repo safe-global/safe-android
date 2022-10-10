@@ -88,6 +88,27 @@
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
+        <!--TODO: remove -->
+        <action
+            android:id="@+id/action_assetSelectionFragment_to_successFragment"
+            app:destination="@id/successFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/successFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.SuccessFragment"
+        android:label="SuccessFragment"
+        tools:layout="@layout/fragment_success">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="txId"
+            app:argType="string" />
+
     </fragment>
 
     <fragment
@@ -717,6 +738,7 @@
         <argument
             android:name="txId"
             app:argType="string" />
+
     </fragment>
 
     <fragment
