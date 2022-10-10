@@ -16,7 +16,8 @@ import io.gnosis.safe.utils.loadTokenLogo
 import java.lang.ref.WeakReference
 
 class CoinsAdapter(
-    private val bannerListener: WeakReference<OwnerBannerListener>
+    private val bannerListener: WeakReference<OwnerBannerListener>?,
+    private val assetOnClickListener: WeakReference<AssetOnClickListener>?
 ) : RecyclerView.Adapter<BaseCoinsViewHolder>() {
 
     private val items = mutableListOf<CoinsViewData>()
@@ -47,7 +48,7 @@ class CoinsAdapter(
             }
             is CoinBalanceViewHolder -> {
                 val balance = items[position] as CoinBalance
-                holder.bind(balance)
+                holder.bind(balance, assetOnClickListener)
             }
         }
     }
@@ -91,6 +92,10 @@ class CoinsAdapter(
         fun onBannerDismissed(type: Banner.Type)
         fun onBannerActionTriggered(type: Banner.Type)
     }
+
+    interface AssetOnClickListener {
+        fun onAssetClicked(asset: CoinBalance)
+    }
 }
 
 abstract class BaseCoinsViewHolder(
@@ -100,12 +105,17 @@ abstract class BaseCoinsViewHolder(
 
 class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(coinBalance: CoinBalance) {
+    fun bind(coinBalance: CoinBalance, assetOnClickListener: WeakReference<CoinsAdapter.AssetOnClickListener>? = null) {
         with(viewBinding) {
             logoImage.loadTokenLogo(icon = coinBalance.logoUri)
             symbol.text = coinBalance.symbol
             balance.text = coinBalance.balance
             balanceUsd.text = coinBalance.balanceFiat
+            assetOnClickListener?.let {
+                root.setOnClickListener {
+                    assetOnClickListener?.get()?.onAssetClicked(coinBalance)
+                }
+            }
         }
     }
 }
@@ -121,7 +131,7 @@ class TotalBalanceViewHolder(private val viewBinding: ItemCoinTotalBinding) : Ba
 
 class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsViewHolder(viewBinding) {
 
-    fun bind(type: Banner.Type, bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>) {
+    fun bind(type: Banner.Type, bannerListener: WeakReference<CoinsAdapter.OwnerBannerListener>?) {
         val context = viewBinding.root.context
         with(viewBinding) {
             when(type) {
@@ -136,18 +146,19 @@ class BannerViewHolder(private val viewBinding: ItemBannerBinding) : BaseCoinsVi
                     bannerAction.text = context.getString(R.string.banner_passcode_action)
                 }
             }
-
-            bannerClose.setOnClickListener {
-                bannerListener.get()?.onBannerDismissed(type)
-            }
-            bannerAction.setOnClickListener {
-                bannerListener.get()?.onBannerActionTriggered(type)
-                when(type) {
-                    Banner.Type.ADD_OWNER_KEY -> {
-                        Navigation.findNavController(it).navigate(R.id.action_to_add_owner)
-                    }
-                    Banner.Type.PASSCODE -> {
-                        Navigation.findNavController(it).navigate(R.id.action_to_passcode_setup)
+            bannerListener?.let {
+                bannerClose.setOnClickListener {
+                    bannerListener.get()?.onBannerDismissed(type)
+                }
+                bannerAction.setOnClickListener {
+                    bannerListener.get()?.onBannerActionTriggered(type)
+                    when(type) {
+                        Banner.Type.ADD_OWNER_KEY -> {
+                            Navigation.findNavController(it).navigate(R.id.action_to_add_owner)
+                        }
+                        Banner.Type.PASSCODE -> {
+                            Navigation.findNavController(it).navigate(R.id.action_to_passcode_setup)
+                        }
                     }
                 }
             }
