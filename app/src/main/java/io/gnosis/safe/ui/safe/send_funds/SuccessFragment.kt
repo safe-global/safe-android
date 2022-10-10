@@ -45,8 +45,6 @@ class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
             })
         with(binding) {
             description.text = getString(R.string.tx_submitted_desc, amount, token)
-            //FIXME: success animation last frame should display final image (frame 88 at the moment)
-            lottieSuccess.setMaxFrame(88)
             viewDetailsButton.setOnClickListener {
                 findNavController().popBackStack(R.id.assetsFragment, false)
                 with(findNavController()) {
