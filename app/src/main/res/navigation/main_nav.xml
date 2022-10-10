@@ -109,6 +109,14 @@
             android:name="txId"
             app:argType="string" />
 
+        <argument
+            android:name="amount"
+            app:argType="string" />
+
+        <argument
+            android:name="token"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

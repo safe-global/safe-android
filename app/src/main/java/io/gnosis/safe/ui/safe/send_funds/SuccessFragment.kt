@@ -20,6 +20,8 @@ class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
     private val navArgs by navArgs<SuccessFragmentArgs>()
     private val chain by lazy { navArgs.chain }
     private val txId by lazy { navArgs.txId }
+    private val amount by lazy { navArgs.amount }
+    private val token by lazy { navArgs.token }
 
     override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER_SUCCESS
 
@@ -42,6 +44,7 @@ class SuccessFragment : BaseViewBindingFragment<FragmentSuccessBinding>() {
                 override fun handleOnBackPressed() {}
             })
         with(binding) {
+            description.text = getString(R.string.tx_submitted_desc, amount, token)
             //FIXME: success animation last frame should display final image (frame 88 at the moment)
             lottieSuccess.setMaxFrame(88)
             viewDetailsButton.setOnClickListener {
