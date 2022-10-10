@@ -51,6 +51,7 @@ ext {
             work                            : '2.7.1',
             unstoppabledomains              : '1.13.2',
             intercom                        : '10.6.0',
+            lottie                          : '5.2.0',
 
             // Test dependencies
             espresso                        : '3.1.1',
