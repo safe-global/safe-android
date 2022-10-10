@@ -12,12 +12,16 @@ class AssetsViewModel @Inject constructor(
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SafeBalancesState>(appDispatchers) {
 
+    var activeSafe: Safe? = null
+        private set
+
     override fun initialState(): SafeBalancesState = SafeBalancesState.SafeLoading(null)
 
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
                 updateState {
+                    activeSafe = safe
                     SafeBalancesState.ActiveSafe(safe, null)
                 }
             }
@@ -47,5 +51,5 @@ sealed class SafeBalancesState : BaseStateViewModel.State {
     data class TotalBalance(
         val totalBalance: String,
         override var viewAction: BaseStateViewModel.ViewAction?
-    ) :  SafeBalancesState()
+    ) : SafeBalancesState()
 }

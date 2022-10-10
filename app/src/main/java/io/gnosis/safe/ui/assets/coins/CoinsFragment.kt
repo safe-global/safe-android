@@ -23,6 +23,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.BalanceFormatter
 import pm.gnosis.svalinn.common.utils.visible
 import javax.inject.Inject
+import javax.inject.Named
 
 class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
 
@@ -35,6 +36,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
     lateinit var assetsViewModel: AssetsViewModel
 
     @Inject
+    @Named("coins")
     lateinit var adapter: CoinsAdapter
 
     override fun screenId() = ScreenId.ASSETS_COINS
