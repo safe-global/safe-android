@@ -11,6 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentEditAdvancedParamsBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.toColor
 
 class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedParamsBinding>() {
@@ -44,6 +45,11 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
                     requireContext(),
                     R.color.primary
                 )
+            )
+            configHowtoLink.appendLink(
+                urlText = resources.getString(R.string.tx_advanced_params_config_howto),
+                url = resources.getString(R.string.tx_advanced_params_config_howto_link),
+                linkIcon = R.drawable.ic_external_link_green_16dp
             )
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
