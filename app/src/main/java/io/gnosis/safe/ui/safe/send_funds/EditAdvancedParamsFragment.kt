@@ -20,6 +20,7 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
     private val navArgs by navArgs<EditAdvancedParamsFragmentArgs>()
     private val selectedChain by lazy { navArgs.chain }
     private val safeNonce by lazy { navArgs.safeNonce }
+    // should be nil for contracts of v1.3.0 and higher
     private val safeTxGas by lazy { navArgs.safeTxGas }
 
     override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER_ADVANCED_PARAMS
