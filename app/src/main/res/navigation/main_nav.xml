@@ -92,6 +92,21 @@
         <action
             android:id="@+id/action_assetSelectionFragment_to_successFragment"
             app:destination="@id/successFragment" />
+        <action
+            android:id="@+id/action_assetSelectionFragment_to_editAdvancedParamsFragment"
+            app:destination="@id/editAdvancedParamsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editAdvancedParamsFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment"
+        android:label="EditAdavancedParamsFragment"
+        tools:layout="@layout/fragment_edit_advanced_params">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
     </fragment>
 
