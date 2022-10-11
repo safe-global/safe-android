@@ -66,6 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
 
         <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
+            style="@style/TextDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tx_safe_nonce"
@@ -96,6 +97,7 @@
 
         <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
             android:id="@+id/safe_tx_gas_info"
+            style="@style/TextDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tx_safe_tx_gas"
