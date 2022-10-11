@@ -52,4 +52,9 @@
         <attr name="whatsnew_description" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="InfoLabelView">
+        <attr name="info_label_icon" format="reference" />
+        <attr name="info_label_text" format="string" />
+    </declare-styleable>
+
 </resources>

@@ -25,9 +25,6 @@ class AddressHelper
         addressView.post {
             imageView?.setAddress(address)
             addressView.text = displayAddress
-            addressView.setOnClickListener {
-                AddressTooltip(addressView.context, fullAddress).showAsDropDown(addressView)
-            }
         }
     }
 }
