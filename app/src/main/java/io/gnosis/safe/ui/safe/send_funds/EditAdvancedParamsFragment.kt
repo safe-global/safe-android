@@ -13,11 +13,14 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.toColor
+import pm.gnosis.svalinn.common.utils.visible
 
 class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedParamsBinding>() {
 
     private val navArgs by navArgs<EditAdvancedParamsFragmentArgs>()
     private val selectedChain by lazy { navArgs.chain }
+    private val safeNonce by lazy { navArgs.safeNonce }
+    private val safeTxGas by lazy { navArgs.safeTxGas }
 
     override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER_ADVANCED_PARAMS
 
@@ -46,6 +49,11 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
                     R.color.primary
                 )
             )
+            nonceValue.setText(safeNonce)
+            safeTxGas?.let {
+                txGasInfo.visible(true)
+                txGasLayout.visible(true)
+            }
             configHowtoLink.appendLink(
                 urlText = resources.getString(R.string.tx_advanced_params_config_howto),
                 url = resources.getString(R.string.tx_advanced_params_config_howto_link),

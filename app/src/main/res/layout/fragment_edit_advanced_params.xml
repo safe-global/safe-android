@@ -73,7 +73,7 @@
             app:info_label_text="@string/tx_safe_nonce_desc" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/safe_nonce_layout"
+            android:id="@+id/nonce_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
             <EditText
-                android:id="@+id/safe_nonce_value"
+                android:id="@+id/nonce_value"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
@@ -96,16 +96,18 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
-            android:id="@+id/safe_tx_gas_info"
+            android:id="@+id/tx_gas_info"
             style="@style/TextDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tx_safe_tx_gas"
             app:info_label_text="@string/tx_safe_tx_gas_desc"
-            android:layout_marginTop="@dimen/default_margin" />
+            android:layout_marginTop="@dimen/default_margin"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/safe_tx_gas_layout"
+            android:id="@+id/tx_gas_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,10 +116,12 @@
             app:errorIconDrawable="@null"
             app:errorTextColor="@color/error"
             app:hintTextColor="@color/label_tertiary"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <EditText
-                android:id="@+id/safe_tx_gas_value"
+                android:id="@+id/tx_gas_value"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
@@ -126,12 +130,6 @@
                 android:textCursorDrawable="@drawable/cursor_drawable" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/safe_tx_gas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="safe_tx_gas_info,safe_tx_gas_layout,safe_tx_gas_value" />
 
         <TextView
             android:id="@+id/config_howto_link"

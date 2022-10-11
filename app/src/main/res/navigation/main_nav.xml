@@ -108,6 +108,16 @@
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
+        <argument
+            android:name="safeNonce"
+            app:argType="string" />
+
+        <argument
+            android:name="safeTxGas"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
     </fragment>
 
     <fragment
