@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -57,7 +56,9 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }.attach()
 
             sendButton.setOnClickListener {
-
+                viewModel.activeSafe?.let {
+                    findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAssetSelectionFragment(it.chain))
+                }
             }
 
             receiveButton.setOnClickListener {
@@ -65,7 +66,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }
         }
 
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SafeBalancesState.ActiveSafe -> {
                     val noActiveSafe = state.safe == null
@@ -78,7 +79,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
                     binding.totalBalanceValue.text = state.totalBalance
                 }
             }
-        })
+        }
     }
 
     override fun handleActiveSafe(safe: Safe?) {

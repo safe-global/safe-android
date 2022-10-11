@@ -59,6 +59,7 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <service

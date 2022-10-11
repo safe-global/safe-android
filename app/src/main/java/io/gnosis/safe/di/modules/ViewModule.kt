@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionAdapter
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.send_funds.AssetSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
@@ -46,6 +47,7 @@ import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.updates.UpdatesViewModel
 import java.lang.ref.WeakReference
+import javax.inject.Named
 
 @Module
 class ViewModule(
@@ -79,8 +81,15 @@ class ViewModule(
 
     @Provides
     @ForView
+    @Named("coins")
     fun providesCoinsAdapter(coinsViewModel: CoinsViewModel) =
-        CoinsAdapter(WeakReference(coinsViewModel))
+        CoinsAdapter(WeakReference(coinsViewModel), null)
+
+    @Provides
+    @ForView
+    @Named("assetSelection")
+    fun providesAssetSelectionCoinsAdapter(assetSelectionViewModel: AssetSelectionViewModel) =
+        CoinsAdapter(null, WeakReference(assetSelectionViewModel))
 
     @Provides
     @ForView
@@ -117,6 +126,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesAssetsViewModel(provider: ViewModelProvider) = provider[AssetsViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesAssetSelectionViewModel(provider: ViewModelProvider) = provider[AssetSelectionViewModel::class.java]
 
     @Provides
     @ForView

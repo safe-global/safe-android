@@ -15,6 +15,7 @@ import io.gnosis.safe.ui.dialogs.UnstoppableInputViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
+import io.gnosis.safe.ui.safe.send_funds.AssetSelectionViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
@@ -90,6 +91,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AssetsViewModel::class)
     abstract fun providesAssetsViewModel(viewModel: AssetsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AssetSelectionViewModel::class)
+    abstract fun providesAssetSelectionViewModel(viewModel: AssetSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap
