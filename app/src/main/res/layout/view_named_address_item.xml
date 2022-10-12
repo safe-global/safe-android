@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/name"
-        style="@style/TextDark.Bold"
+        style="@style/Subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_margin"

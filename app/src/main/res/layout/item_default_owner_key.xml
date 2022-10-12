@@ -66,7 +66,7 @@
 
             <TextView
                 android:id="@+id/default_owner_number"
-                style="@style/TextDark"
+                style="@style/Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -80,7 +80,7 @@
 
             <TextView
                 android:id="@+id/default_owner_label"
-                style="@style/TextDark.Bold"
+                style="@style/Subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
@@ -104,7 +104,7 @@
     </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/derived_keys_explanation"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"

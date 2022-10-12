@@ -38,7 +38,7 @@
 
     <TextView
         android:id="@+id/number"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:text="12"

@@ -59,7 +59,7 @@
                 app:setting_openable="true" />
 
             <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:text="@string/settings_app_header_support"
                 android:layout_height="@dimen/header_height" />
 
@@ -83,7 +83,7 @@
                 app:setting_openable="true" />
 
             <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:text="@string/settings_app_header_advanced"
                 android:layout_height="@dimen/header_height" />
 
@@ -96,7 +96,7 @@
                 app:setting_openable="true" />
 
             <TextView
-                style="@style/Header"
+                style="@style/Overline2"
                 android:text="@string/settings_app_header_about"
                 android:layout_height="@dimen/header_height" />
 

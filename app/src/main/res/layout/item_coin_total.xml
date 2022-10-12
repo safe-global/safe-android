@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/total_label"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/total_balance"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

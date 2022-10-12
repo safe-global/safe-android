@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
@@ -25,7 +25,7 @@
 
     <TextView
         android:id="@+id/value"
-        style="@style/TextDark"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"

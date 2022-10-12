@@ -144,9 +144,9 @@ class TxConfirmationsView @JvmOverloads constructor(
         )
         item.layoutParams = layoutParams
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            item.setTextAppearance(R.style.TextDark_Bold)
+            item.setTextAppearance(R.style.Body1)
         } else {
-            item.setTextAppearance(context, R.style.TextDark_Bold)
+            item.setTextAppearance(context, R.style.Body1)
         }
         item.text = resources.getString(R.string.tx_confirmations_execute_ready_description)
         addView(item)

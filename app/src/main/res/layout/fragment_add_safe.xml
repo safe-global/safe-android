@@ -70,7 +70,7 @@
 
     <TextView
         android:id="@+id/add_safe_label_top"
-        style="@style/TextDark.Bold"
+        style="@style/Subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"

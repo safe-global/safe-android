@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/get_started_text"
-        style="@style/TextTitle"
+        style="@style/H6Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

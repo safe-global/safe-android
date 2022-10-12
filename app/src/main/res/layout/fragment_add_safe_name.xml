@@ -99,7 +99,7 @@
 
     <TextView
         android:id="@+id/add_safe_name_description"
-        style="@style/TextDark.Bold"
+        style="@style/Subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

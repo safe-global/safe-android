@@ -78,7 +78,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/Header"
+                    style="@style/Overline2"
                     android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_fallback_handler"
                     android:textAllCaps="true"
@@ -101,7 +101,7 @@
 
                 <TextView
                     android:id="@+id/guard_header"
-                    style="@style/Header"
+                    style="@style/Overline2"
                     android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_guard"
                     android:textAllCaps="true"
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    style="@style/Header"
+                    style="@style/Overline2"
                     android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_nonce"
                     android:textAllCaps="true"
@@ -138,7 +138,7 @@
 
                 <TextView
                     android:id="@+id/module_label"
-                    style="@style/Header"
+                    style="@style/Overline2"
                     android:layout_height="@dimen/header_height"
                     android:text="@string/safe_settings_modules"
                     android:textAllCaps="true"

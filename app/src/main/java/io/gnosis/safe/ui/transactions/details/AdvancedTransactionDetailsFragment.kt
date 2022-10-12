@@ -171,7 +171,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                             val info = executionInfo as DetailedExecutionInfo.MultisigExecutionDetails
 
                             content.addView(
-                                    requireContext().getDividerBig()
+                                    requireContext().getDivider()
                             )
 
                             val safeTxHashItem = requireContext().getLabeledValueItem(getString(R.string.tx_details_advanced_safe_tx_hash), info.safeTxHash)
@@ -187,7 +187,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
                             )
 
                             content.addView(
-                                    requireContext().getDividerBig()
+                                    requireContext().getDivider()
                             )
 
                             content.addView(
@@ -211,7 +211,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
 
                             if (info.confirmations.isNotEmpty()) {
                                 content.addView(
-                                        requireContext().getDividerBig()
+                                        requireContext().getDivider()
                                 )
                                 content.addView(
                                         requireContext().getArrayItem(chain, getString(R.string.tx_details_advanced_signatures), info.confirmations.map { it.signature }, ParamType.BYTES, "bytes", null)
@@ -239,7 +239,7 @@ class AdvancedTransactionDetailsFragment : BaseViewBindingFragment<FragmentTrans
     }
 
     private fun getModuleDataHeader(): View {
-        val item = TextView(requireContext(), null, 0, R.style.Header)
+        val item = TextView(requireContext(), null, 0, R.style.Overline2)
         val height = resources.getDimension(R.dimen.header_height).toInt()
         val layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
         layoutParams.setMargins(0, dpToPx(16), 0, 0)
