@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -80,7 +82,13 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
                 Navigation.findNavController(it).navigateUp()
             }
             saveButton.setOnClickListener {
-
+                setFragmentResult(
+                    REQUEST_EDIT_ADVANCED_PARAMS,
+                    bundleOf(
+                        RESULT_SAFE_TX_NONCE to binding.nonceValue.text.toString(),
+                        RESULT_SAFE_TX_GAS to safeTxGas?.let { binding.txGasValue.text.toString() }
+                    )
+                )
             }
         }
     }
@@ -137,5 +145,11 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
         }
 
         binding.saveButton.isEnabled = canBeSaved
+    }
+
+    companion object {
+        const val REQUEST_EDIT_ADVANCED_PARAMS = "request_edit_advanced_params"
+        const val RESULT_SAFE_TX_NONCE = "result_safe_tx_nonce"
+        const val RESULT_SAFE_TX_GAS = "result_safe_tx_gas"
     }
 }
