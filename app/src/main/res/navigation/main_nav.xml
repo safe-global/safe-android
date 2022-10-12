@@ -113,7 +113,17 @@
             app:argType="string" />
 
         <argument
+            android:name="minSafeNonce"
+            app:argType="string" />
+
+        <argument
             android:name="safeTxGas"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="proposedSafeTxGas"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

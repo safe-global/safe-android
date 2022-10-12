@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
 
         <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
-            style="@style/TextDark"
+            style="@style/Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tx_safe_nonce"
@@ -89,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
-                android:inputType="numberDecimal"
+                android:inputType="number"
                 android:textColor="@color/label_primary"
                 android:textCursorDrawable="@drawable/cursor_drawable" />
 
@@ -97,7 +97,7 @@
 
         <io.gnosis.safe.ui.safe.send_funds.view.InfoLabelView
             android:id="@+id/tx_gas_info"
-            style="@style/TextDark"
+            style="@style/Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tx_safe_tx_gas"
@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:imeOptions="actionDone"
-                android:inputType="numberDecimal"
+                android:inputType="number"
                 android:textColor="@color/label_primary"
                 android:textCursorDrawable="@drawable/cursor_drawable" />
 
