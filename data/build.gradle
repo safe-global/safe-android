@@ -32,7 +32,6 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField ("String", "TRANSACTION_SERVICE_URL", '"https://safe-transaction.staging.gnosisdev.com/api/"')
             buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.5afe.dev/"')
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
@@ -44,7 +43,6 @@ android {
         }
 
         profile {
-            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
@@ -56,7 +54,6 @@ android {
         }
 
         unsafe {
-            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
@@ -68,7 +65,6 @@ android {
         }
 
         internal {
-            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
@@ -81,7 +77,6 @@ android {
         }
 
         release {
-            buildConfigField javaTypes.STRING, "TRANSACTION_SERVICE_URL", asString(getKey("TRANSACTION_SERVICE_URL", "https://safe-transaction.gnosis.io/api/"))
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.gnosis.io/"))
         }
     }
