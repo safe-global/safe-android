@@ -29,9 +29,7 @@ android {
         buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                 "new ${javaTypes.MAP}()" +
                         "{{" +
-                        "put(\"*.staging.gnosisdev.com\", \"sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=,sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
-                        "put(\"*.rinkeby.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
-                        "put(\"*.mainnet.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
+                        "put(\"*.staging.5afe.dev\", \"sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=,sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
                         "put(\"*.gnosis.io\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
                         "}}")
 
