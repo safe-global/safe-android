@@ -46,16 +46,6 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 value = RPC_ENDPOINT
                 setOnLongClickListener { copyUrlToClipboard().let { true } }
             }
-            with(txService) {
-                value = Uri.parse(TX_SERVICE_ENDPOINT).let {
-                    Uri.Builder()
-                        .scheme(it.scheme)
-                        .encodedAuthority(it.authority)
-                        .build()
-                        .toString()
-                }
-                setOnLongClickListener { copyUrlToClipboard().let { true } }
-            }
             with(clientGatewayService) {
                 value = Uri.parse(CLIENT_GATEWAY_SERVICE_ENDPOINT).let {
                     Uri.Builder()
@@ -116,7 +106,6 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
 
         // TODO: Add constants to respective repositories
         const val RPC_ENDPOINT = BuildConfig.BLOCKCHAIN_NET_URL
-        const val TX_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.TRANSACTION_SERVICE_URL
         const val CLIENT_GATEWAY_SERVICE_ENDPOINT = io.gnosis.data.BuildConfig.CLIENT_GATEWAY_URL
     }
 }
