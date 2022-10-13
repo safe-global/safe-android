@@ -11,6 +11,7 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSendAssetBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
+import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
@@ -20,6 +21,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
     private val navArgs by navArgs<SendAssetFragmentArgs>()
     private val selectedChain by lazy { navArgs.chain }
+    private val selectedAsset by lazy { navArgs.selectedAsset as CoinsViewData.CoinBalance }
 
     override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER
 
@@ -52,7 +54,9 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
+            title.text = getString(R.string.coins_asset_send, selectedAsset.symbol)
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
@@ -73,6 +77,10 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             recepientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) {
+
         }
     }
 

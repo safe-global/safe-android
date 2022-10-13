@@ -12,6 +12,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
 import kotlinx.coroutines.flow.collect
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import java.math.RoundingMode
 import javax.inject.Inject
 
@@ -92,8 +93,10 @@ class CoinsViewModel
         coinBalanceData.items.forEach {
             result.add(
                 CoinsViewData.CoinBalance(
+                    it.tokenInfo.address.asEthereumAddressChecksumString(),
                     it.tokenInfo.symbol,
                     it.tokenInfo.logoUri,
+                    it.balance.convertAmount(it.tokenInfo.decimals),
                     balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
                     balanceFormatter.fiatBalanceWithCurrency(
                         it.fiatBalance.setScale(2, RoundingMode.HALF_UP),

@@ -112,6 +112,10 @@
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
+        <argument
+            android:name="selectedAsset"
+            app:argType="io.gnosis.safe.ui.assets.coins.CoinsViewData" />
+
     </fragment>
 
     <fragment
