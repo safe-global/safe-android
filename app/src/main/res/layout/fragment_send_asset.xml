@@ -61,7 +61,7 @@
             android:layout_height="wrap_content" />
 
         <io.gnosis.safe.ui.safe.add.SafeInputView
-            android:id="@+id/add_safe_address_input_layout"
+            android:id="@+id/recepient_address_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
