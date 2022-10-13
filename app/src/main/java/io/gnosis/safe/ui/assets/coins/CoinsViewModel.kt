@@ -57,7 +57,16 @@ class CoinsViewModel
                 }
                 val totalBalance = getTotalBalanceViewData(balanceInfo)
                 val balances = getBalanceViewData(balanceInfo, banner)
-                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalBalance, balances)) }
+
+                //TODO: [Send funds toggle] remove balancesWithFiat; use balances in update state
+                val balancesWithTotal = mutableListOf<CoinsViewData>()
+                balancesWithTotal.addAll(balances)
+                if (balancesWithTotal[0] is Banner) {
+                    balancesWithTotal.add(1, totalBalance)
+                } else {
+                    balancesWithTotal.add(0, totalBalance)
+                }
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalBalance, balancesWithTotal)) }
             }
         }
     }
