@@ -88,6 +88,10 @@
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
+        <action
+            android:id="@+id/action_assetSelectionFragment_to_sendAssetFragment"
+            app:destination="@id/sendAssetFragment" />
+
         <!--TODO: remove -->
         <action
             android:id="@+id/action_assetSelectionFragment_to_successFragment"
@@ -95,6 +99,18 @@
         <action
             android:id="@+id/action_assetSelectionFragment_to_editAdvancedParamsFragment"
             app:destination="@id/editAdvancedParamsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/sendAssetFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.SendAssetFragment"
+        android:label="SendAssetFragment"
+        tools:layout="@layout/fragment_send_asset">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
     </fragment>
 

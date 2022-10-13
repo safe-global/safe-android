@@ -103,7 +103,8 @@ class AssetSelectionViewModel
                 AssetSelectionState(
                     loading = false,
                     //viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSuccessFragment(safe.chain, "", "22", "SAFE"))
-                    viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToEditAdvancedParamsFragment(safe.chain, "5", "1"))
+                   // viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToEditAdvancedParamsFragment(safe.chain, "5", "1"))
+                    viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSendAssetFragment(safe.chain))
                 )
             }
             updateState {

@@ -156,6 +156,7 @@
     <string name="coins_receive">Receive</string>
     <string name="coins_asset_select">Select an asset</string>
     <string name="coins_asset_not_found">No assets found.</string>
+    <string name="coins_asset_send">Send %1$s</string>
     <string name="coins_asset_edit_params">Edit advanced parameters</string>
 
     <string name="usd_balance">$ %1$s</string>
