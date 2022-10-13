@@ -69,6 +69,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                     R.color.primary
                 )
             )
+            recepientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recepientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
