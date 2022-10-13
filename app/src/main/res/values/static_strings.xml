@@ -16,4 +16,5 @@
     <string name="owner_key_intro_private_key_url">https://help.gnosis-safe.io/en/articles/4866738-how-are-private-keys-stored-on-gnosis-safe-mobile</string>
     <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
     <string name="tx_details_rejection_payment_reason_link">https://help.gnosis-safe.io/en/articles/4738501-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
+    <string name="tx_advanced_params_config_howto_link">https://help.gnosis-safe.io/en/articles/4738445-advanced-transaction-parameters</string>
 </resources>

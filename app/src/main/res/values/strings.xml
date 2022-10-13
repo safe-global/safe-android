@@ -156,6 +156,7 @@
     <string name="coins_receive">Receive</string>
     <string name="coins_asset_select">Select an asset</string>
     <string name="coins_asset_not_found">No assets found.</string>
+    <string name="coins_asset_edit_params">Edit advanced parameters</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
@@ -348,6 +349,18 @@
     <string name="tx_status_cancelled">Cancelled</string>
     <string name="tx_status_failed">Failed</string>
     <string name="tx_status_success">Success</string>
+
+    <string name="tx_safe_nonce">Safe nonce</string>
+    <string name="tx_safe_nonce_desc">Safe nonce determines an order in which transactions are executed.</string>
+    <string name="tx_safe_nonce_error_executed">Transaction with this nonce is already executed</string>
+    <plurals name="tx_safe_nonce_error_offset">
+        <item quantity="one">%d transaction will need to be created and executed before this transaction"</item>
+        <item quantity="other">%d transactions will need to be created and executed before this transaction</item>
+    </plurals>
+    <string name="tx_safe_tx_gas">SafeTxGas</string>
+    <string name="tx_safe_tx_gas_desc">SafeTxGas specifies the gas that should be used for the Safe transaction.</string>
+    <string name="tx_safe_tx_gas_error_insufficient">Transaction may fail due to insufficient safeTxGas</string>
+    <string name="tx_advanced_params_config_howto">How do I configure these details manually?</string>
 
     <string name="tx_submitted">Your transaction is queued!</string>
     <string name="tx_submitted_desc">Your request to send %1$s %2$s is submitted and needs to be confirmed by other owners.</string>

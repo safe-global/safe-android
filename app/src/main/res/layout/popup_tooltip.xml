@@ -12,7 +12,7 @@
 
         <shape>
 
-            <solid android:color="@color/blue" />
+            <solid android:color="@color/primary" />
 
             <corners android:radius="6dp" />
 
@@ -26,13 +26,13 @@
     </aapt:attr>
 
     <TextView
-        android:id="@+id/address"
+        android:id="@+id/tooltip_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
         android:lineSpacingExtra="3sp"
-        android:textColor="@color/white_two"
+        android:textColor="@color/label_primary_reverse"
         android:textSize="13sp"
-        tools:text="0xf12a3d9f938e13cd947ec05abc7fe734df8d3910" />
+        tools:text="SafeTxGas specifies the gas that should be used for the Safe transaction. " />
 
 </FrameLayout>
