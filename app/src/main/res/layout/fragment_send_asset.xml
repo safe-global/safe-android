@@ -57,6 +57,7 @@
         app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
 
         <io.gnosis.safe.ui.settings.view.NamedAddressItem
+            android:id="@+id/sender_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

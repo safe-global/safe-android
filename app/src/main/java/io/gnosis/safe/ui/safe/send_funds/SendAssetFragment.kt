@@ -12,6 +12,7 @@ import io.gnosis.safe.databinding.FragmentSendAssetBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
@@ -73,14 +74,26 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                     R.color.primary
                 )
             )
+            senderItem.showLink = false
             recepientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recepientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
         }
 
-        viewModel.state.observe(viewLifecycleOwner) {
-
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is SendAssetState -> {
+                    state.viewAction?.let { action ->
+                        when (action) {
+                            is UpdateActiveSafe -> {
+                                binding.senderItem.name = action.newSafe!!.localName
+                                binding.senderItem.setAddress(selectedChain, action.newSafe.address)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
