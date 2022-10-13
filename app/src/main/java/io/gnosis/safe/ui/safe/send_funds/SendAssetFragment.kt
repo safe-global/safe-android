@@ -21,12 +21,12 @@ import javax.inject.Inject
 class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
     private val navArgs by navArgs<SendAssetFragmentArgs>()
-    private val selectedChain by lazy { navArgs.chain }
+    private val chain by lazy { navArgs.chain }
     private val selectedAsset by lazy { navArgs.selectedAsset as CoinsViewData.CoinBalance }
 
     override fun screenId() = ScreenId.ASSETS_COINS_TRANSFER
 
-    override suspend fun chainId() = selectedChain.chainId
+    override suspend fun chainId() = chain.chainId
 
     @Inject
     lateinit var viewModel: SendAssetViewModel
@@ -35,11 +35,11 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         AddressInputHelper(
             fragment = this,
             tracker = tracker,
-            selectedChain = selectedChain,
+            selectedChain = chain,
             addressCallback = ::updateAddress,
             errorCallback = ::handleError,
-            enableUD = viewModel.enableUD(selectedChain),
-            enableENS = viewModel.enableENS(selectedChain)
+            enableUD = viewModel.enableUD(chain),
+            enableENS = viewModel.enableENS(chain)
         )
     }
 
@@ -61,15 +61,15 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             backButton.setOnClickListener {
                 Navigation.findNavController(it).navigateUp()
             }
-            chainRibbon.text = selectedChain.name
+            chainRibbon.text = chain.name
             chainRibbon.setTextColor(
-                selectedChain.textColor.toColor(
+                chain.textColor.toColor(
                     requireContext(),
                     R.color.white
                 )
             )
             chainRibbon.setBackgroundColor(
-                selectedChain.backgroundColor.toColor(
+                chain.backgroundColor.toColor(
                     requireContext(),
                     R.color.primary
                 )
@@ -78,6 +78,10 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             recepientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recepientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
+            }
+            balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
+            sendMax.setOnClickListener {
+
             }
         }
 
@@ -88,7 +92,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                         when (action) {
                             is UpdateActiveSafe -> {
                                 binding.senderItem.name = action.newSafe!!.localName
-                                binding.senderItem.setAddress(selectedChain, action.newSafe.address)
+                                binding.senderItem.setAddress(chain, action.newSafe.address)
                             }
                         }
                     }
