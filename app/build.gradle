@@ -30,7 +30,6 @@ android {
                 "new ${javaTypes.MAP}()" +
                         "{{" +
                         "put(\"*.staging.5afe.dev\", \"sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=,sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
-                        "put(\"*.safe.global\", \"sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=\");" +
                         "}}")
 
         vectorDrawables.useSupportLibrary = true
