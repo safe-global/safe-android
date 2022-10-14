@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.widget.doOnTextChanged
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -94,6 +93,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
             assetSendAmount.doOnTextChanged { text, _, _, _ ->
                 amountInput = nullOnThrow { BigDecimal(text.toString()) }
+                reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
             }
             sendMax.setOnClickListener {
                 amountInput = selectedAsset.balance
@@ -130,8 +130,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
     private fun updateAddress(address: Solidity.Address) {
         recipientInput = address.asEthereumAddressString()
         with(binding) {
-            //TODO: check if review button can be enabled
-            reviewButton.isEnabled = false
+            reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
             recipientAddressInputLayout.setNewAddress(address)
         }
     }
@@ -141,8 +140,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             if (recipientAddressInputLayout.address == null) {
                 recipientAddressInputLayout.setNewAddress(address)
             }
-            //TODO: check if review button can be enabled
-            reviewButton.isEnabled = true
+            reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
         }
     }
 

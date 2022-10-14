@@ -9,6 +9,9 @@ import io.gnosis.safe.ui.assets.SafeBalancesState
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
+import pm.gnosis.utils.asEthereumAddress
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 class SendAssetViewModel
@@ -34,6 +37,11 @@ class SendAssetViewModel
                 }
             }
         }
+    }
+
+    fun validateInputs(recipientInput: String?, amountInput: BigDecimal?): Boolean {
+        val address = recipientInput?.asEthereumAddress()
+        return address != null && amountInput != null
     }
 
     fun enableUD(chain: Chain): Boolean {
