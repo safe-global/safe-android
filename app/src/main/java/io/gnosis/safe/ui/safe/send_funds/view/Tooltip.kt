@@ -1,4 +1,4 @@
-package io.gnosis.safe.helpers
+package io.gnosis.safe.ui.safe.send_funds.view
 
 import android.content.Context
 import android.graphics.Color
@@ -8,24 +8,20 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import io.gnosis.safe.R
-import io.gnosis.safe.utils.formatEthAddressBold
 
-class AddressTooltip(
+class Tooltip(
     val context: Context,
-    address: String
+    text: String
 ) : PopupWindow(context) {
 
     init {
         setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isOutsideTouchable = true
         isFocusable = false
-
-        contentView = LayoutInflater.from(context).inflate(R.layout.popup_address_tooltip, null)
-
-        contentView.findViewById<TextView>(R.id.address).text = address.formatEthAddressBold()
+        contentView = LayoutInflater.from(context).inflate(R.layout.popup_tooltip, null)
+        contentView.findViewById<TextView>(R.id.tooltip_text).text = text
         height = ViewGroup.LayoutParams.WRAP_CONTENT
         width = ViewGroup.LayoutParams.WRAP_CONTENT
-
         contentView.setOnClickListener {
             dismiss()
         }
