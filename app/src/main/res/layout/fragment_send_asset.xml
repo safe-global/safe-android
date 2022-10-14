@@ -109,6 +109,12 @@
 
         </LinearLayout>
 
+        <io.gnosis.safe.ui.safe.send_funds.view.AssetAmountInputView
+            android:id="@+id/asset_send_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_small_margin"/>
+
     </LinearLayout>
 
     <Button

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -20,6 +21,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
@@ -85,6 +87,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 addressInputHelper.showDialog()
             }
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
+            assetSendAmount.setAssetLogo(selectedAsset.logoUri)
             sendMax.setOnClickListener {
 
             }
@@ -104,6 +107,16 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     private fun updateAddress(address: Solidity.Address) {
