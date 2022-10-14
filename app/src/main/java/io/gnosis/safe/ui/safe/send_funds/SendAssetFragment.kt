@@ -20,6 +20,7 @@ import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
@@ -49,6 +50,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
     }
 
     private var recipientInput: String? = null
+    private var amountInput: BigDecimal? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -89,7 +91,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
             sendMax.setOnClickListener {
-
+                amountInput = selectedAsset.balance
+                assetSendAmount.setAmount(selectedAsset.balance)
             }
         }
 

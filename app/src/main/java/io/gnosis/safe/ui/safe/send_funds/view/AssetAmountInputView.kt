@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import io.gnosis.safe.databinding.ViewAssetAmountInputBinding
 import io.gnosis.safe.utils.loadTokenLogo
+import java.math.BigDecimal
 
 class AssetAmountInputView@JvmOverloads constructor(
     context: Context,
@@ -17,5 +18,9 @@ class AssetAmountInputView@JvmOverloads constructor(
 
     fun setAssetLogo(logoUri: String?) {
         binding.assetLogo.loadTokenLogo(icon = logoUri)
+    }
+
+    fun setAmount(amount: BigDecimal) {
+        binding.amount.setText(amount.stripTrailingZeros().toPlainString())
     }
 }
