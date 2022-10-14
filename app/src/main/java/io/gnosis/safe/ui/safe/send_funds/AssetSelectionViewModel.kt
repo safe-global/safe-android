@@ -105,8 +105,6 @@ class AssetSelectionViewModel
                 //TODO: pass selected asset and proceed with the flow
                 AssetSelectionState(
                     loading = false,
-                    //viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSuccessFragment(safe.chain, "", "22", "SAFE"))
-                   // viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToEditAdvancedParamsFragment(safe.chain, "5", "1"))
                     viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSendAssetFragment(safe.chain, asset))
                 )
             }
