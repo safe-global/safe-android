@@ -11,11 +11,14 @@ import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSendAssetBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
@@ -42,6 +45,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             enableENS = viewModel.enableENS(chain)
         )
     }
+
+    private var recipientInput: String? = null
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -75,8 +80,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 )
             )
             senderItem.showLink = false
-            recepientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
-            recepientAddressInputLayout.setOnClickListener {
+            recipientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
+            recipientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
             }
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
@@ -102,14 +107,40 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
     }
 
     private fun updateAddress(address: Solidity.Address) {
-
+        recipientInput = address.asEthereumAddressString()
+        with(binding) {
+            //TODO: check if review button can be enabled
+            reviewButton.isEnabled = false
+            recipientAddressInputLayout.setNewAddress(address)
+        }
     }
 
     private fun handleValid(address: Solidity.Address) {
-
+        with(binding) {
+            if (recipientAddressInputLayout.address == null) {
+                recipientAddressInputLayout.setNewAddress(address)
+            }
+            //TODO: check if review button can be enabled
+            reviewButton.isEnabled = true
+        }
     }
 
     private fun handleError(throwable: Throwable, input: String? = null) {
+        Timber.e(throwable)
+        input?.let {
+            recipientInput = it
+        }
+        with(binding) {
+            reviewButton.isEnabled = false
 
+            val error = throwable.toError()
+            if (error.trackingRequired) {
+                tracker.logException(throwable)
+            }
+
+            val errorMsg = error.message(requireContext(), R.string.error_description_safe_address)
+
+            recipientAddressInputLayout.setError(errorMsg, recipientInput)
+        }
     }
 }
