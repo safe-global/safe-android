@@ -25,6 +25,13 @@ class SafeInputView @JvmOverloads constructor(
     var address: Solidity.Address? = null
         private set
 
+    var hint: String = context.getString(R.string.enter_safe_address)
+        set(value) {
+            binding.address.text = value
+            field = value
+        }
+
+
     fun setNewAddress(newAddress: Solidity.Address) {
 
         address = newAddress
@@ -34,7 +41,13 @@ class SafeInputView @JvmOverloads constructor(
             blockies.setAddress(newAddress)
             blockies.visible(true)
             address.text = newAddress.formatEthAddress(context, addMiddleLinebreak = false)
-            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.outline, context.theme))
+            mainContainer.backgroundTintList = ColorStateList.valueOf(
+                ResourcesCompat.getColor(
+                    resources,
+                    R.color.outline,
+                    context.theme
+                )
+            )
         }
     }
 
@@ -56,17 +69,35 @@ class SafeInputView @JvmOverloads constructor(
                     blockies.setAddress(null)
                     blockies.visible(false)
                     if (input.isBlank()) {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.label_tertiary, context.theme))
-                        address.text = context.getString(R.string.enter_safe_address)
+                        address.setTextColor(
+                            ResourcesCompat.getColor(
+                                resources,
+                                R.color.label_tertiary,
+                                context.theme
+                            )
+                        )
+                        address.text = hint
 
                     } else {
-                        address.setTextColor(ResourcesCompat.getColor(resources, R.color.label_primary, context.theme))
+                        address.setTextColor(
+                            ResourcesCompat.getColor(
+                                resources,
+                                R.color.label_primary,
+                                context.theme
+                            )
+                        )
                         address.text = input
                     }
                 }
             }
 
-            mainContainer.backgroundTintList = ColorStateList.valueOf(ResourcesCompat.getColor(resources, R.color.error, context.theme))
+            mainContainer.backgroundTintList = ColorStateList.valueOf(
+                ResourcesCompat.getColor(
+                    resources,
+                    R.color.error,
+                    context.theme
+                )
+            )
         }
     }
 

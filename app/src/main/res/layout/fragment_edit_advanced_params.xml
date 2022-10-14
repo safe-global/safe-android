@@ -35,7 +35,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="@string/coins_asset_edit_params" />
+            android:text="@string/coins_asset_send_edit_params" />
 
         <TextView
             android:id="@+id/save_button"

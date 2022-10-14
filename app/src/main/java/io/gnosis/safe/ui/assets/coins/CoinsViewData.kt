@@ -1,13 +1,18 @@
 package io.gnosis.safe.ui.assets.coins
 
+import java.io.Serializable
+import java.math.BigDecimal
 
-sealed class CoinsViewData {
+
+sealed class CoinsViewData : Serializable {
 
     data class CoinBalance(
+        val address: String,
         val symbol: String,
         val logoUri: String?,
-        val balance: String,
-        val balanceFiat: String
+        val balance: BigDecimal,
+        val balanceFormatted: String,
+        val balanceFiatFormatted: String
     ) : CoinsViewData()
 
     data class TotalBalance(
