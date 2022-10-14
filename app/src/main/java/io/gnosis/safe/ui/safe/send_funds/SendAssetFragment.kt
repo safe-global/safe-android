@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.widget.doOnTextChanged
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
@@ -19,6 +20,7 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -90,6 +92,9 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             }
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
+            assetSendAmount.doOnTextChanged { text, _, _, _ ->
+                amountInput = nullOnThrow { BigDecimal(text.toString()) }
+            }
             sendMax.setOnClickListener {
                 amountInput = selectedAsset.balance
                 assetSendAmount.setAmount(selectedAsset.balance)
