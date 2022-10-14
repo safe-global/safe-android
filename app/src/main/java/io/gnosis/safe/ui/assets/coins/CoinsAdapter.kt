@@ -109,8 +109,8 @@ class CoinBalanceViewHolder(private val viewBinding: ItemCoinBalanceBinding) : B
         with(viewBinding) {
             logoImage.loadTokenLogo(icon = coinBalance.logoUri)
             symbol.text = coinBalance.symbol
-            balance.text = coinBalance.balance
-            balanceUsd.text = coinBalance.balanceFiat
+            balance.text = coinBalance.balanceFormatted
+            balanceUsd.text = coinBalance.balanceFiatFormatted
             assetOnClickListener?.let {
                 root.setOnClickListener {
                     assetOnClickListener?.get()?.onAssetClicked(coinBalance)

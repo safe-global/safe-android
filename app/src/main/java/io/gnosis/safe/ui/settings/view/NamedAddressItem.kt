@@ -25,7 +25,12 @@ class NamedAddressItem @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val binding by lazy { ViewNamedAddressItemBinding.inflate(LayoutInflater.from(context), this) }
+    private val binding by lazy {
+        ViewNamedAddressItemBinding.inflate(
+            LayoutInflater.from(context),
+            this
+        )
+    }
 
     init {
         readAttributesAndSetupFields(context, attrs)
@@ -33,6 +38,12 @@ class NamedAddressItem @JvmOverloads constructor(
 
     var address: Solidity.Address? = null
         private set
+
+    var showLink: Boolean = true
+        set(value) {
+            binding.link.visible(value)
+            field = value
+        }
 
     fun setAddress(chain: Chain, value: Solidity.Address?, ownerType: Owner.Type? = null) {
         with(binding) {
@@ -43,7 +54,10 @@ class NamedAddressItem @JvmOverloads constructor(
             }
             root.setOnClickListener {
                 value?.let {
-                    context.copyToClipboard(context.getString(R.string.address_copied), value.asEthereumAddressChecksumString()) {
+                    context.copyToClipboard(
+                        context.getString(R.string.address_copied),
+                        value.asEthereumAddressChecksumString()
+                    ) {
                         snackbar(view = root, textId = R.string.copied_success)
                     }
                 }
@@ -90,7 +104,12 @@ class NamedAddressItem @JvmOverloads constructor(
         }
 
     private fun applyAttributes(context: Context, a: TypedArray) {
-        binding.namedAddressItemSeparator.visible(a.getBoolean(R.styleable.NamedAddressItem_show_named_address_separator, false))
+        binding.namedAddressItemSeparator.visible(
+            a.getBoolean(
+                R.styleable.NamedAddressItem_show_named_address_separator,
+                false
+            )
+        )
     }
 
     fun loadKnownAddressLogo(addressUri: String?, address: Solidity.Address?) {

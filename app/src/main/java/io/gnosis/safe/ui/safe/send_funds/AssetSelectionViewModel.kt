@@ -10,6 +10,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.utils.BalanceFormatter
 import io.gnosis.safe.utils.convertAmount
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import java.math.RoundingMode
 import javax.inject.Inject
 
@@ -81,8 +82,10 @@ class AssetSelectionViewModel
         balances.forEach {
             result.add(
                 CoinsViewData.CoinBalance(
+                    it.tokenInfo.address.asEthereumAddressChecksumString(),
                     it.tokenInfo.symbol,
                     it.tokenInfo.logoUri,
+                    it.balance.convertAmount(it.tokenInfo.decimals),
                     balanceFormatter.shortAmount(it.balance.convertAmount(it.tokenInfo.decimals)),
                     balanceFormatter.fiatBalanceWithCurrency(
                         it.fiatBalance.setScale(2, RoundingMode.HALF_UP),
@@ -102,8 +105,7 @@ class AssetSelectionViewModel
                 //TODO: pass selected asset and proceed with the flow
                 AssetSelectionState(
                     loading = false,
-                    //viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSuccessFragment(safe.chain, "", "22", "SAFE"))
-                    viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToEditAdvancedParamsFragment(safe.chain, "5", "1"))
+                    viewAction = ViewAction.NavigateTo(AssetSelectionFragmentDirections.actionAssetSelectionFragmentToSendAssetFragment(safe.chain, asset))
                 )
             }
             updateState {

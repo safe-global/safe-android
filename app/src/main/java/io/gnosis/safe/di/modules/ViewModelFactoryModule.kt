@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.send_funds.AssetSelectionViewModel
+import io.gnosis.safe.ui.safe.send_funds.SendAssetViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
 import io.gnosis.safe.ui.settings.app.AppSettingsViewModel
@@ -27,8 +28,8 @@ import io.gnosis.safe.ui.settings.owner.OwnerEnterNameViewModel
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseViewModel
 import io.gnosis.safe.ui.settings.owner.details.OwnerDetailsViewModel
 import io.gnosis.safe.ui.settings.owner.intro.OwnerGenerateViewModel
-import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListViewModel
+import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerSignViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
@@ -96,6 +97,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AssetSelectionViewModel::class)
     abstract fun providesAssetSelectionViewModel(viewModel: AssetSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SendAssetViewModel::class)
+    abstract fun providesSendAssetViewModel(viewModel: SendAssetViewModel): ViewModel
 
     @Binds
     @IntoMap

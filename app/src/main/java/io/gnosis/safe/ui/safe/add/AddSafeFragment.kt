@@ -79,13 +79,13 @@ class AddSafeFragment : BaseViewBindingFragment<FragmentAddSafeBinding>() {
             }
         }
 
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (val action = state.viewAction) {
                 is ShowValidSafe -> handleValid(action.safe.address)
                 is BaseStateViewModel.ViewAction.Loading -> binding.progress.visible(action.isLoading)
                 is BaseStateViewModel.ViewAction.ShowError -> handleError(action.error)
             }
-        })
+        }
     }
 
     override fun onStop() {
