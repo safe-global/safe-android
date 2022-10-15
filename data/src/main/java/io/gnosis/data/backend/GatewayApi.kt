@@ -6,10 +6,8 @@ import io.gnosis.data.models.Page
 import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
-import io.gnosis.data.models.transaction.MultisigTransactionRequest
-import io.gnosis.data.models.transaction.TransactionConfirmationRequest
-import io.gnosis.data.models.transaction.TransactionDetails
-import io.gnosis.data.models.transaction.TxListEntry
+import io.gnosis.data.models.transaction.*
+import pm.gnosis.model.Solidity
 import retrofit2.http.*
 import java.math.BigInteger
 import java.util.*
@@ -83,6 +81,13 @@ interface GatewayApi {
 
     @GET
     suspend fun loadChainInfoPage(@Url pageLink: String): Page<ChainInfo>
+
+    @POST("/v2/chains/{chainId}/safes/{address}/multisig-transactions/estimations")
+    suspend fun estimateTransaction(
+        @Path("chainId") chainId: BigInteger,
+        @Path("address") address: String,
+        @Body transactionEstimationRequest: TransactionEstimationRequest
+    ): TransactionEstimation
 
     companion object {
         const val BASE_URL = BuildConfig.CLIENT_GATEWAY_URL

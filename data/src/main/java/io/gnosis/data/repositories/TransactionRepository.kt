@@ -32,6 +32,27 @@ class TransactionRepository(
     suspend fun submitConfirmation(safeTxHash: String, signedSafeTxHash: String, chainId: BigInteger): TransactionDetails =
         gatewayApi.submitConfirmation(safeTxHash = safeTxHash, txConfirmationRequest = TransactionConfirmationRequest(signedSafeTxHash), chainId = chainId)
 
+    suspend fun estimateTransaction(
+        chainId: BigInteger,
+        safeAddress: Solidity.Address,
+        to: Solidity.Address,
+        value: BigInteger = BigInteger.ZERO,
+        data: String = "",
+        operation: Operation = Operation.CALL,
+    ): TransactionEstimation {
+        return gatewayApi.estimateTransaction(
+            chainId,
+            safeAddress.asEthereumAddressChecksumString(),
+            TransactionEstimationRequest(
+                to,
+                value,
+                data,
+                operation,
+                chainId
+            )
+        )
+    }
+
     suspend fun proposeTransaction(
         chainId: BigInteger,
         safeAddress: Solidity.Address,
