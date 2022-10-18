@@ -14,6 +14,7 @@
     <color name="background_tertiary">@color/dark_grey</color>
     <color name="background_green">@color/light_green</color>
     <color name="background_green_light">@color/bg_green</color>
+    <color name="background_illustration">@color/grey</color>
 
     <!-- Components -->
     <color name="border">@color/stone</color>
