@@ -294,7 +294,7 @@ class TransactionListViewModelTest {
                 confirmations = 0,
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
-                confirmationsTextColor = R.color.label_tertiary,
+                confirmationsTextColor = R.color.icon,
                 threshold = 2
             ),
             transactionViews[0]
@@ -312,7 +312,7 @@ class TransactionListViewModelTest {
                 txTypeIcon = R.drawable.ic_arrow_green_10dp,
                 direction = R.string.tx_list_receive,
                 threshold = 2,
-                confirmationsTextColor = R.color.primary,
+                confirmationsTextColor = R.color.success,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
                 confirmations = 2
@@ -500,7 +500,7 @@ class TransactionListViewModelTest {
                 methodName = "multiSend",
                 nonce = "1",
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
-                confirmationsTextColor = R.color.primary,
+                confirmationsTextColor = R.color.success,
                 threshold = 2,
                 confirmations = 2,
                 addressInfo = AddressInfoData.Default,
@@ -518,7 +518,7 @@ class TransactionListViewModelTest {
                 dateTime = Date(0),
                 methodName = "multiSend",
                 threshold = 2,
-                confirmationsTextColor = R.color.label_tertiary,
+                confirmationsTextColor = R.color.icon,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 confirmations = 0,
@@ -666,7 +666,7 @@ class TransactionListViewModelTest {
                 dateTime = Date(0),
                 confirmations = 2,
                 threshold = 2,
-                confirmationsTextColor = R.color.primary,
+                confirmationsTextColor = R.color.success,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
                 method = "changeMasterCopy"
@@ -684,7 +684,7 @@ class TransactionListViewModelTest {
                 method = "removeOwner",
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.label_tertiary,
+                confirmationsTextColor = R.color.icon,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1"
             ),
@@ -700,7 +700,7 @@ class TransactionListViewModelTest {
                 dateTime = Date(0),
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.label_tertiary,
+                confirmationsTextColor = R.color.icon,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 method = "setFallbackHandler"
@@ -717,7 +717,7 @@ class TransactionListViewModelTest {
                 dateTime = Date(0),
                 confirmations = 0,
                 threshold = 2,
-                confirmationsTextColor = R.color.label_tertiary,
+                confirmationsTextColor = R.color.icon,
                 confirmationsIcon = R.drawable.ic_confirmations_grey_16dp,
                 nonce = "1",
                 method = "disableModule"
@@ -734,7 +734,7 @@ class TransactionListViewModelTest {
                 dateTime = Date(0),
                 confirmations = 2,
                 threshold = 2,
-                confirmationsTextColor = R.color.primary,
+                confirmationsTextColor = R.color.success,
                 confirmationsIcon = R.drawable.ic_confirmations_green_16dp,
                 nonce = "1",
                 method = "enableModule"

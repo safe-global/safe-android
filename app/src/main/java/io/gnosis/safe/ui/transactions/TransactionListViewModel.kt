@@ -183,7 +183,7 @@ class TransactionListViewModel
             amountColor = if (txInfo.transferInfo.value() > BigInteger.ZERO && incoming) R.color.success else R.color.label_primary,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
@@ -238,7 +238,7 @@ class TransactionListViewModel
             method = txInfo.dataDecoded.method,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString().orEmpty()
         )
@@ -300,7 +300,7 @@ class TransactionListViewModel
             dateTime = timestamp,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: "",
             methodName = txInfo.methodName,
@@ -350,7 +350,7 @@ class TransactionListViewModel
             dateTime = timestamp,
             confirmations = executionInfo?.confirmationsSubmitted ?: 0,
             threshold = threshold,
-            confirmationsTextColor = if (thresholdMet) R.color.primary else R.color.label_tertiary,
+            confirmationsTextColor = if (thresholdMet) R.color.success else R.color.icon,
             confirmationsIcon = if (thresholdMet) R.drawable.ic_confirmations_green_16dp else R.drawable.ic_confirmations_grey_16dp,
             nonce = if (isConflict) "" else executionInfo?.nonce?.toString() ?: ""
         )
