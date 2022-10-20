@@ -69,7 +69,7 @@
 
                 <TextView
                     android:id="@+id/select_chain_title"
-                    style="@style/Subtitle"
+                    style="@style/Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
