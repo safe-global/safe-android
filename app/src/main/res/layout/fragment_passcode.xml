@@ -178,7 +178,7 @@
 
             <TextView
                 android:id="@+id/help_text"
-                style="@style/TextMedium"
+                style="@style/Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/default_margin"
@@ -186,7 +186,6 @@
                 android:layout_marginTop="12dp"
                 android:gravity="center_horizontal"
                 android:text="@string/settings_passcode_will_be_needed_to_sign"
-                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/error_message" />

@@ -109,7 +109,6 @@
                     android:gravity="top"
                     android:lines="3"
                     android:scrollHorizontally="false"
-                    android:textColor="@color/label_primary"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
             </com.google.android.material.textfield.TextInputLayout>
