@@ -124,7 +124,7 @@
 
     <TextView
         android:id="@+id/owner_name_description"
-        style="@style/Subtitle"
+        style="@style/Body1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

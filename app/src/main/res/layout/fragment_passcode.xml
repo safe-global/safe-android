@@ -178,7 +178,7 @@
 
             <TextView
                 android:id="@+id/help_text"
-                style="@style/TextMedium"
+                style="@style/Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/default_margin"

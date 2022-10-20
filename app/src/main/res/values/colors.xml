@@ -22,7 +22,7 @@
     <color name="border_disabled">@color/dark_grey</color>
     <color name="separator">@color/stone</color>
     <color name="divider">@color/pale_grey_four</color>
-    <color name="link">@color/metal</color>
+    <color name="link">@color/black_five</color>
 
     <!-- Labels -->
     <color name="label_primary">@color/black</color>
