@@ -601,10 +601,6 @@
     <string name="ledger_sign_cancel">Cancel</string>
 
     <string name="whatsnew_title">What\'s new</string>
-    <string name="whatsnew_rebrand_title">Meet the new Safe!</string>
-    <string name="whatsnew_rebrand_description">Gnosis Safe rebranded to Safe. Following a successful spin-off vote from Gnosis in GIP-29, we are rebranding to Safe.\n\nNow and over the coming time, you will see a new look and a better visual experience to your ever secure Gnosis Safe that you love.</string>
-    <string name="whatsnew_intercom_title"> Intercom chat support</string>
-    <string name="whatsnew_intercom_description">Have a trouble or want to leave feedback? Drop us a message directly in the Intercom chat.</string>
-    <string name="whatsnew_send_funds_title">Asset transfers have arrived!</string>
-    <string name="whatsnew_send_funds_description">Now you can send assets from your Safe on Android from the Assets screen. This will create a new transaction which needs to be signed and executed by other owners.</string>
+    <string name="whatsnew_rebrand_title">New look!</string>
+    <string name="whatsnew_rebrand_description">Safe is following up with a new look. We have updated the color palette in the app, including dark mode.</string>
 </resources>

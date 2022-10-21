@@ -408,8 +408,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun showWhatsNew() {
-        // Enable when send funds is ready
-        //navController.navigate(R.id.whatsNewDialog)
+        navController.navigate(R.id.whatsNewDialog)
     }
 
     private fun navigateToShareSafeDialog() {

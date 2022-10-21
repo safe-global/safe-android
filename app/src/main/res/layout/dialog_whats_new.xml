@@ -37,9 +37,9 @@
             <io.gnosis.safe.ui.whatsnew.view.WhatsNewItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:whatsnew_description="@string/whatsnew_send_funds_description"
-                app:whatsnew_icon="@drawable/ic_whatsnew_send_funds"
-                app:whatsnew_title="@string/whatsnew_send_funds_title" />
+                app:whatsnew_description="@string/whatsnew_rebrand_description"
+                app:whatsnew_icon="@drawable/ic_safe_new"
+                app:whatsnew_title="@string/whatsnew_rebrand_title" />
 
         </LinearLayout>
 
