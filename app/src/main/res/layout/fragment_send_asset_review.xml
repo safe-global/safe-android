@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_secondary">
+
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        style="@style/Toolbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="0"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/ToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/coins_asset_send"
+            tools:text="Send ETH" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/chain_ribbon"
+        style="@style/ChainRibbon"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/chain_ribbon_size"
+        tools:text="Mainnet"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_small_margin"
+        app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
+
+        <io.gnosis.safe.ui.safe.send_funds.view.TransferAmountView
+            android:id="@+id/transfer_amount"
+            android:layout_width="match_parent"
+            android:layout_height="56dp" />
+
+        <LinearLayout
+            android:id="@+id/transfer_addresses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <io.gnosis.safe.ui.settings.view.NamedAddressItem
+            android:id="@+id/sender_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_separator_height"
+            android:background="@color/separator" />
+
+        <io.gnosis.safe.ui.settings.view.SettingItem
+            android:id="@+id/review_advanced"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_setting_openable_height"
+            android:background="@drawable/background_secondary_selectable"
+            app:setting_name="@string/coins_asset_send_review_advanced"
+            app:setting_openable="true" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_separator_height"
+            android:background="@color/separator" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/review_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:text="@string/coins_asset_send_review_hint"
+        app:layout_constraintBottom_toTopOf="@id/confirm_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/confirm_button"
+        style="@style/PrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginBottom="24dp"
+        android:text="@string/coins_asset_send_confirm"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
