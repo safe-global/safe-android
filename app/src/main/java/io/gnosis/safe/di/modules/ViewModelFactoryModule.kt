@@ -16,6 +16,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeNameViewModel
 import io.gnosis.safe.ui.safe.add.AddSafeViewModel
 import io.gnosis.safe.ui.safe.selection.SafeSelectionViewModel
 import io.gnosis.safe.ui.safe.send_funds.AssetSelectionViewModel
+import io.gnosis.safe.ui.safe.send_funds.SendAssetReviewViewModel
 import io.gnosis.safe.ui.safe.send_funds.SendAssetViewModel
 import io.gnosis.safe.ui.safe.share.ShareSafeViewModel
 import io.gnosis.safe.ui.settings.SettingsViewModel
@@ -102,6 +103,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SendAssetViewModel::class)
     abstract fun providesSendAssetViewModel(viewModel: SendAssetViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SendAssetReviewViewModel::class)
+    abstract fun providesSendAssetReviewViewModel(viewModel: SendAssetReviewViewModel): ViewModel
 
     @Binds
     @IntoMap
