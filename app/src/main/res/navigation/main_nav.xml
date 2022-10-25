@@ -108,6 +108,38 @@
             android:name="selectedAsset"
             app:argType="io.gnosis.safe.ui.assets.coins.CoinsViewData" />
 
+        <action
+            android:id="@+id/action_sendAssetFragment_to_sendAssetReviewFragment"
+            app:destination="@id/sendAssetReviewFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/sendAssetReviewFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.SendAssetReviewFragment"
+        android:label="SendAssetReviewFragment"
+        tools:layout="@layout/fragment_send_asset_review">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="selectedAsset"
+            app:argType="io.gnosis.safe.ui.assets.coins.CoinsViewData" />
+
+        <argument
+            android:name="fromAddress"
+            app:argType="string" />
+
+        <argument
+            android:name="toAddress"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_sendAssetReviewFragment_to_editAdvancedParamsFragment"
+            app:destination="@id/editAdvancedParamsFragment" />
+
     </fragment>
 
     <fragment
