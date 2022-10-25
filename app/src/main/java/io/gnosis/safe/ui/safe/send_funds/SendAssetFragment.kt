@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
@@ -98,6 +99,9 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             sendMax.setOnClickListener {
                 amountInput = selectedAsset.balance
                 assetSendAmount.setAmount(selectedAsset.balance)
+            }
+            reviewButton.setOnClickListener {
+                viewModel.onReviewButtonClicked(chain, selectedAsset, recipientInput!!, amountInput!!)
             }
         }
 

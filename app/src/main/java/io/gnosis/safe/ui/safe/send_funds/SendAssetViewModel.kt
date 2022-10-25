@@ -6,10 +6,12 @@ import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.ui.assets.SafeBalancesState
+import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.flow.collect
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -31,10 +33,32 @@ class SendAssetViewModel
     init {
         safeLaunch {
             safeRepository.activeSafeFlow().collect { safe ->
+                activeSafe = safe
                 updateState {
-                    activeSafe = safe
                     SendAssetState(viewAction = ViewAction.UpdateActiveSafe(activeSafe))
                 }
+            }
+        }
+    }
+
+    fun onReviewButtonClicked(
+        chain: Chain,
+        asset: CoinsViewData.CoinBalance,
+        toAddress: String,
+        amount: BigDecimal
+    ) {
+        safeLaunch {
+            updateState {
+                SendAssetState(
+                    viewAction = ViewAction.NavigateTo(
+                        SendAssetFragmentDirections.actionSendAssetFragmentToSendAssetReviewFragment(
+                            chain,
+                            asset,
+                            activeSafe!!.address.asEthereumAddressString(),
+                            toAddress
+                        )
+                    )
+                )
             }
         }
     }
