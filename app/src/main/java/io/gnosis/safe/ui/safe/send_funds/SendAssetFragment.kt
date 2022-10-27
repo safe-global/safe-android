@@ -191,11 +191,10 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             amountInput != null -> {
                 binding.assetSendAmount.setError(null)
             }
+        }
 
-            addressInput == null -> {
-                canBeReviewed = false
-            }
-
+        if (addressInput == null) {
+            canBeReviewed = false
         }
 
         binding.reviewButton.isEnabled = canBeReviewed
