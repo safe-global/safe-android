@@ -79,7 +79,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             fromAddressItem.setAddress(chain, fromAddress)
             toAddressItem.setAddress(chain, toAddress)
             reviewAdvanced.setOnClickListener {
-                if (confirmButton.isEnabled) viewModel.onAdvancedEdit()
+                if (confirmButton.isEnabled) viewModel.onAdvancedParamsEdit()
             }
         }
 
@@ -109,6 +109,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
         setFragmentResultListener(REQUEST_EDIT_ADVANCED_PARAMS) { requestKey, bundle ->
             val safeTxNonce = bundle.getString(RESULT_SAFE_TX_NONCE)
             val safeTxGas = bundle.getString(RESULT_SAFE_TX_GAS)
+            viewModel.updateAdvancedParams(safeTxNonce, safeTxGas)
         }
 
         viewModel.loadTxEstimationData(

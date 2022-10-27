@@ -60,7 +60,7 @@ class SendAssetReviewViewModel
         }
     }
 
-    fun onAdvancedEdit() {
+    fun onAdvancedParamsEdit() {
         safeLaunch {
             updateState {
                 SendAssetReviewState(
@@ -80,6 +80,15 @@ class SendAssetReviewViewModel
                     viewAction = ViewAction.None
                 )
             }
+        }
+    }
+
+    fun updateAdvancedParams(nonce: String?, txGas: String?) {
+        nonce?.let {
+            safeNonce = BigInteger(it)
+        }
+        txGas?.let {
+            safeTxGas = BigInteger(it)
         }
     }
 }
