@@ -158,8 +158,6 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
 
         var canBeReviewed = true
 
-        val addressInput = recipientInput?.asEthereumAddress()
-
         when {
 
             amountInput == null -> {
@@ -193,6 +191,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             }
         }
 
+        val addressInput = recipientInput?.asEthereumAddress()
         if (addressInput == null) {
             canBeReviewed = false
         }
