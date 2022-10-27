@@ -15,7 +15,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
@@ -24,6 +24,8 @@ import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
 import java.math.BigDecimal
+import java.text.DecimalFormatSymbols
+import java.util.*
 import javax.inject.Inject
 
 
@@ -52,6 +54,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         )
     }
 
+    private val decimalSeparator = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator
     private var recipientInput: String? = null
     private var amountInput: BigDecimal? = null
 
@@ -101,8 +104,14 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
             assetSendAmount.doOnTextChanged { text, _, _, _ ->
-                amountInput = nullOnThrow { BigDecimal(text.toString()) }
-                validateInputs()
+                val textString = text.toString()
+                if (textString.startsWith("0") && textString.length > 1 && textString[1] != decimalSeparator) {
+                    assetSendAmount.setAmount(BigDecimal.ZERO)
+                    validateInputs()
+                } else {
+                    amountInput = nullOnThrow { BigDecimal(text.toString()) }
+                    validateInputs()
+                }
             }
             sendMax.setOnClickListener {
                 amountInput = selectedAsset.balance

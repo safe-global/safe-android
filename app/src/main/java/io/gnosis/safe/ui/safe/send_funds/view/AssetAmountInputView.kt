@@ -24,6 +24,7 @@ class AssetAmountInputView @JvmOverloads constructor(
 
     fun setAmount(amount: BigDecimal) {
         binding.amount.setText(amount.stripTrailingZeros().toPlainString())
+        binding.amount.setSelection(binding.amount.text.length)
     }
 
     fun setError(error: String?) {
