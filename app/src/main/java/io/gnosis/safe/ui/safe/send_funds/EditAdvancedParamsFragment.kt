@@ -89,8 +89,10 @@ class EditAdvancedParamsFragment : BaseViewBindingFragment<FragmentEditAdvancedP
                         RESULT_SAFE_TX_GAS to safeTxGas?.let { binding.txGasValue.text.toString() }
                     )
                 )
+                Navigation.findNavController(it).navigateUp()
             }
         }
+        validateInputs()
     }
 
     private fun validateInputs() {

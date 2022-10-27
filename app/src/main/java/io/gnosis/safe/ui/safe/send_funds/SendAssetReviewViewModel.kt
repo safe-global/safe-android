@@ -47,9 +47,11 @@ class SendAssetReviewViewModel
                 to,
                 value
             )
-            safeNonce = txEstimation.currentNonce
             minSafeNonce = txEstimation.currentNonce
-            if (SemVer.parse(activeSafe.version!!) < SemVer(1, 3, 0)) {
+            if (safeNonce == null) {
+                safeNonce = txEstimation.recommendedNonce
+            }
+            if (SemVer.parse(activeSafe.version!!, ignoreExtensions = true) < SemVer(1, 3, 0)) {
                 proposedSafeTxGas = txEstimation.safeTxGas
                 if (safeTxGas == null) {
                     safeTxGas = proposedSafeTxGas
@@ -66,7 +68,9 @@ class SendAssetReviewViewModel
                         SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToEditAdvancedParamsFragment(
                             activeSafe.chain,
                             safeNonce.toString(),
-                            minSafeNonce.toString()
+                            minSafeNonce.toString(),
+                            safeTxGas.toString(),
+                            proposedSafeTxGas.toString()
                         )
                     )
                 )

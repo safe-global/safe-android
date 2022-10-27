@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentSendAssetReviewBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
+import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -17,6 +20,10 @@ import io.gnosis.safe.utils.toColor
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigDecimal
 import javax.inject.Inject
+import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.REQUEST_EDIT_ADVANCED_PARAMS
+import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_GAS
+import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_NONCE
+
 
 class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewBinding>() {
 
@@ -81,21 +88,28 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                 is SendAssetReviewState -> {
                     state.viewAction?.let { action ->
                         when(action) {
-                            is Loading -> {
-
+                            is ShowError -> {
+                                val error = action.error.toError()
+                                if (error.trackingRequired) {
+                                    tracker.logException(action.error)
+                                }
+                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins_send))
                             }
                             is NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
                             }
+                            else -> {}
                         }
                     }
                 }
             }
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
+        setFragmentResultListener(REQUEST_EDIT_ADVANCED_PARAMS) { requestKey, bundle ->
+            val safeTxNonce = bundle.getString(RESULT_SAFE_TX_NONCE)
+            val safeTxGas = bundle.getString(RESULT_SAFE_TX_GAS)
+        }
+
         viewModel.loadTxEstimationData(
             chain.chainId,
             fromAddress,

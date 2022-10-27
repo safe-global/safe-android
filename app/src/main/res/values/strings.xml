@@ -70,6 +70,7 @@
     <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
     <string name="error_description_ens_name">Can\'t use this name</string>
     <string name="error_description_assets_coins">Failed to load balances</string>
+    <string name="error_description_assets_coins_send">Failed to create transaction</string>
     <string name="error_description_assets_collectibles">Failed to load collectibles</string>
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>

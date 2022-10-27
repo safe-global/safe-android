@@ -19,6 +19,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
@@ -93,6 +94,9 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             recipientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recipientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
+            }
+            recipientInput?.asEthereumAddress()?.let {
+                updateAddress(it)
             }
             balanceValue.text = "${selectedAsset.balanceFormatted} ${selectedAsset.symbol}"
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
