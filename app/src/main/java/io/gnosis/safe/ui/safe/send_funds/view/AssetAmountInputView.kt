@@ -26,6 +26,10 @@ class AssetAmountInputView @JvmOverloads constructor(
         binding.amount.setText(amount.stripTrailingZeros().toPlainString())
     }
 
+    fun setError(error: String?) {
+        binding.amountLayout.error = error
+    }
+
     fun doOnTextChanged(
         action: (
             text: CharSequence?,

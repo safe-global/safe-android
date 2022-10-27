@@ -81,6 +81,9 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             reviewAdvanced.setOnClickListener {
                 if (confirmButton.isEnabled) viewModel.onAdvancedParamsEdit()
             }
+            confirmButton.setOnClickListener {
+                viewModel.onConfirm()
+            }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

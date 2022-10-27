@@ -8,7 +8,6 @@ import io.gnosis.data.repositories.UnstoppableDomainsRepository
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -59,11 +58,6 @@ class SendAssetViewModel
                 )
             }
         }
-    }
-
-    fun validateInputs(recipientInput: String?, amountInput: BigDecimal?): Boolean {
-        val address = recipientInput?.asEthereumAddress()
-        return address != null && amountInput != null
     }
 
     fun enableUD(chain: Chain): Boolean {

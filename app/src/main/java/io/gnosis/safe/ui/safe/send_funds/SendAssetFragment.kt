@@ -102,14 +102,19 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             assetSendAmount.setAssetLogo(selectedAsset.logoUri)
             assetSendAmount.doOnTextChanged { text, _, _, _ ->
                 amountInput = nullOnThrow { BigDecimal(text.toString()) }
-                reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
+                validateInputs()
             }
             sendMax.setOnClickListener {
                 amountInput = selectedAsset.balance
                 assetSendAmount.setAmount(selectedAsset.balance)
             }
             reviewButton.setOnClickListener {
-                viewModel.onReviewButtonClicked(chain, selectedAsset, recipientInput!!, amountInput!!)
+                viewModel.onReviewButtonClicked(
+                    chain,
+                    selectedAsset,
+                    recipientInput!!,
+                    amountInput!!
+                )
             }
         }
 
@@ -138,10 +143,59 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
+    private fun validateInputs() {
+
+        binding.reviewButton.isEnabled = false
+
+        var canBeReviewed = true
+
+        val addressInput = recipientInput?.asEthereumAddress()
+
+        when {
+
+            amountInput == null -> {
+                canBeReviewed = false
+                binding.assetSendAmount.setError(null)
+            }
+
+            amountInput!! <= BigDecimal.ZERO -> {
+                canBeReviewed = false
+                binding.assetSendAmount.setError(getString(R.string.coins_asset_send_error_amount_zero))
+            }
+
+            amountInput!! > selectedAsset.balance -> {
+                canBeReviewed = false
+                binding.assetSendAmount.setError(getString(R.string.coins_asset_send_error_amount_too_big))
+            }
+
+            amountInput!!.toPlainString().split(".")
+                .getOrNull(1)?.length ?: 0 > selectedAsset.decimals -> {
+                canBeReviewed = false
+                binding.assetSendAmount.setError(
+                    getString(
+                        R.string.coins_asset_send_error_amount_decimals,
+                        selectedAsset.decimals
+                    )
+                )
+            }
+
+            amountInput != null -> {
+                binding.assetSendAmount.setError(null)
+            }
+
+            addressInput == null -> {
+                canBeReviewed = false
+            }
+
+        }
+
+        binding.reviewButton.isEnabled = canBeReviewed
+    }
+
     private fun updateAddress(address: Solidity.Address) {
         recipientInput = address.asEthereumAddressString()
         with(binding) {
-            reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
+            validateInputs()
             recipientAddressInputLayout.setNewAddress(address)
         }
     }
@@ -151,7 +205,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
             if (recipientAddressInputLayout.address == null) {
                 recipientAddressInputLayout.setNewAddress(address)
             }
-            reviewButton.isEnabled = viewModel.validateInputs(recipientInput, amountInput)
+            validateInputs()
         }
     }
 

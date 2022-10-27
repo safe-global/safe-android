@@ -91,6 +91,10 @@ class SendAssetReviewViewModel
             safeTxGas = BigInteger(it)
         }
     }
+
+    fun onConfirm() {
+        //TODO: proceed with creating transaction
+    }
 }
 
 data class SendAssetReviewState(

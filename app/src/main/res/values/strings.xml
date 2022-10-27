@@ -169,6 +169,9 @@
     <string name="coins_asset_send_review_advanced">Advanced parameters</string>
     <string name="coins_asset_send_confirm">Confirm</string>
     <string name="coins_asset_send_edit_params">Edit advanced parameters</string>
+    <string name="coins_asset_send_error_amount_zero">Amount should be greater than 0</string>
+    <string name="coins_asset_send_error_amount_too_big">Insufficient funds</string>
+    <string name="coins_asset_send_error_amount_decimals">Should be 1 to %1$d decimals</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
