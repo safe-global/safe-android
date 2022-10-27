@@ -79,7 +79,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             fromAddressItem.setAddress(chain, fromAddress)
             toAddressItem.setAddress(chain, toAddress)
             reviewAdvanced.setOnClickListener {
-                viewModel.onAdvancedEdit()
+                if (confirmButton.isEnabled) viewModel.onAdvancedEdit()
             }
         }
 
@@ -89,6 +89,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                     state.viewAction?.let { action ->
                         when(action) {
                             is ShowError -> {
+                                binding.confirmButton.isEnabled = false
                                 val error = action.error.toError()
                                 if (error.trackingRequired) {
                                     tracker.logException(action.error)
