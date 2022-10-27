@@ -15,10 +15,10 @@ class TransferAmountView @JvmOverloads constructor(
 
     private val binding by lazy { ViewTransferAmountBinding.inflate(LayoutInflater.from(context), this) }
 
-    fun setAmount(amountFormatted: String, logoUri: String = "local::native_currency") {
+    fun setAmount(amountDecimal: String, symbol: String, logoUri: String?) {
         with(binding) {
             logo.loadTokenLogo(icon = logoUri)
-            amount.text = amountFormatted
+            amount.text = "$amountDecimal $symbol"
         }
     }
 }

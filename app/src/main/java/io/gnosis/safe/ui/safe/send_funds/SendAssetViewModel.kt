@@ -5,15 +5,12 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.UnstoppableDomainsRepository
-import io.gnosis.safe.ui.assets.SafeBalancesState
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import kotlinx.coroutines.flow.collect
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigDecimal
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SendAssetViewModel
@@ -24,7 +21,7 @@ class SendAssetViewModel
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SendAssetState>(appDispatchers) {
 
-    var activeSafe: Safe? = null
+    lateinit var activeSafe: Safe
         private set
 
     override fun initialState(): SendAssetState =
@@ -32,12 +29,7 @@ class SendAssetViewModel
 
     init {
         safeLaunch {
-            safeRepository.activeSafeFlow().collect { safe ->
-                activeSafe = safe
-                updateState {
-                    SendAssetState(viewAction = ViewAction.UpdateActiveSafe(activeSafe))
-                }
-            }
+            activeSafe = safeRepository.getActiveSafe()!!
         }
     }
 
@@ -55,9 +47,15 @@ class SendAssetViewModel
                             chain,
                             asset,
                             activeSafe!!.address.asEthereumAddressString(),
-                            toAddress
+                            toAddress,
+                            amount.toString()
                         )
                     )
+                )
+            }
+            updateState {
+                SendAssetState(
+                    viewAction = ViewAction.None
                 )
             }
         }

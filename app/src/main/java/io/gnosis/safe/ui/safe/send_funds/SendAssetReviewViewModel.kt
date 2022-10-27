@@ -1,6 +1,9 @@
 package io.gnosis.safe.ui.safe.send_funds
 
+import io.gnosis.data.models.Safe
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TransactionRepository
+import io.gnosis.data.utils.SemVer
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import pm.gnosis.model.Solidity
@@ -10,11 +13,26 @@ import javax.inject.Inject
 class SendAssetReviewViewModel
 @Inject constructor(
     private val transactionRepository: TransactionRepository,
+    private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<SendAssetReviewState>(appDispatchers) {
 
+    lateinit var activeSafe: Safe
+        private set
+
+    private var safeNonce: BigInteger? = null
+    private var minSafeNonce: BigInteger? = null
+    private var safeTxGas: BigInteger? = null
+    private var proposedSafeTxGas: BigInteger? = null
+
     override fun initialState(): SendAssetReviewState =
         SendAssetReviewState(viewAction = null)
+
+    init {
+        safeLaunch {
+            activeSafe = safeRepository.getActiveSafe()!!
+        }
+    }
 
     fun loadTxEstimationData(
         chainId: BigInteger,
@@ -23,12 +41,41 @@ class SendAssetReviewViewModel
         value: BigInteger
     ) {
         safeLaunch {
-            transactionRepository.estimateTransaction(
+            val txEstimation = transactionRepository.estimateTransaction(
                 chainId,
                 from,
                 to,
                 value
             )
+            safeNonce = txEstimation.currentNonce
+            minSafeNonce = txEstimation.currentNonce
+            if (SemVer.parse(activeSafe.version!!) < SemVer(1, 3, 0)) {
+                proposedSafeTxGas = txEstimation.safeTxGas
+                if (safeTxGas == null) {
+                    safeTxGas = proposedSafeTxGas
+                }
+            }
+        }
+    }
+
+    fun onAdvancedEdit() {
+        safeLaunch {
+            updateState {
+                SendAssetReviewState(
+                    viewAction = ViewAction.NavigateTo(
+                        SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToEditAdvancedParamsFragment(
+                            activeSafe.chain,
+                            safeNonce.toString(),
+                            minSafeNonce.toString()
+                        )
+                    )
+                )
+            }
+            updateState {
+                SendAssetReviewState(
+                    viewAction = ViewAction.None
+                )
+            }
         }
     }
 }

@@ -53,29 +53,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/default_small_margin"
         app:layout_constraintTop_toBottomOf="@id/chain_ribbon">
+
+        <TextView
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/coins_asset_send_amount" />
 
         <io.gnosis.safe.ui.safe.send_funds.view.TransferAmountView
             android:id="@+id/transfer_amount"
             android:layout_width="match_parent"
             android:layout_height="56dp" />
 
-        <LinearLayout
-            android:id="@+id/transfer_addresses"
-            android:layout_width="match_parent"
+        <TextView
+            style="@style/Body1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_small_margin"
+            android:text="@string/coins_asset_send_from" />
 
         <io.gnosis.safe.ui.settings.view.NamedAddressItem
-            android:id="@+id/sender_item"
+            android:id="@+id/from_address_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:text="@string/coins_asset_send_to" />
+
+        <io.gnosis.safe.ui.settings.view.NamedAddressItem
+            android:id="@+id/to_address_item_known"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <io.gnosis.safe.ui.settings.view.AddressItem
+            android:id="@+id/to_address_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_separator_height"
-            android:background="@color/separator" />
+            android:background="@color/separator"
+            android:layout_marginTop="36dp" />
 
         <io.gnosis.safe.ui.settings.view.SettingItem
             android:id="@+id/review_advanced"

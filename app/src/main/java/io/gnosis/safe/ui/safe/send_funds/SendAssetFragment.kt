@@ -15,7 +15,7 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.helpers.AddressInputHelper
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.UpdateActiveSafe
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
@@ -58,6 +58,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         component.inject(this)
     }
 
+    override fun viewModelProvider() = this
+
     override fun inflateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -86,6 +88,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 )
             )
             senderItem.showLink = false
+            senderItem.name = viewModel.activeSafe.localName
+            senderItem.setAddress(chain, viewModel.activeSafe.address)
             recipientAddressInputLayout.hint = getString(R.string.coins_asset_send_recepient)
             recipientAddressInputLayout.setOnClickListener {
                 addressInputHelper.showDialog()
@@ -110,9 +114,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 is SendAssetState -> {
                     state.viewAction?.let { action ->
                         when (action) {
-                            is UpdateActiveSafe -> {
-                                binding.senderItem.name = action.newSafe!!.localName
-                                binding.senderItem.setAddress(chain, action.newSafe.address)
+                            is NavigateTo -> {
+                                findNavController().navigate(action.navDirections)
                             }
                         }
                     }
