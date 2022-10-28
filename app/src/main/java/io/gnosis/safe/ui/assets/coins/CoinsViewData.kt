@@ -8,6 +8,7 @@ sealed class CoinsViewData : Serializable {
 
     data class CoinBalance(
         val address: String,
+        val decimals: Int,
         val symbol: String,
         val logoUri: String?,
         val balance: BigDecimal,

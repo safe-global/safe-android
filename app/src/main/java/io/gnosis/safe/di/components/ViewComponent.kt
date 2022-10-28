@@ -14,10 +14,7 @@ import io.gnosis.safe.ui.safe.add.AddSafeFragment
 import io.gnosis.safe.ui.safe.add.AddSafeNameFragment
 import io.gnosis.safe.ui.safe.add.AddSafeOwnerFragment
 import io.gnosis.safe.ui.safe.selection.SafeSelectionDialog
-import io.gnosis.safe.ui.safe.send_funds.AssetSelectionFragment
-import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment
-import io.gnosis.safe.ui.safe.send_funds.SendAssetFragment
-import io.gnosis.safe.ui.safe.send_funds.SuccessFragment
+import io.gnosis.safe.ui.safe.send_funds.*
 import io.gnosis.safe.ui.safe.share.ShareSafeDialog
 import io.gnosis.safe.ui.settings.SettingsFragment
 import io.gnosis.safe.ui.settings.app.*
@@ -138,6 +135,8 @@ interface ViewComponent {
     fun inject(fragment: AssetSelectionFragment)
 
     fun inject(fragment: SendAssetFragment)
+
+    fun inject(fragment: SendAssetReviewFragment)
 
     fun inject(fragment: EditAdvancedParamsFragment)
 

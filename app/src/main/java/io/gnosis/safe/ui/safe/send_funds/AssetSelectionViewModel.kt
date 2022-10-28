@@ -83,6 +83,7 @@ class AssetSelectionViewModel
             result.add(
                 CoinsViewData.CoinBalance(
                     it.tokenInfo.address.asEthereumAddressChecksumString(),
+                    it.tokenInfo.decimals,
                     it.tokenInfo.symbol,
                     it.tokenInfo.logoUri,
                     it.balance.convertAmount(it.tokenInfo.decimals),

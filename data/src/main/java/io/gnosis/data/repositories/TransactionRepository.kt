@@ -38,7 +38,7 @@ class TransactionRepository(
         to: Solidity.Address,
         value: BigInteger = BigInteger.ZERO,
         data: String = "",
-        operation: Operation = Operation.CALL,
+        operation: Operation = Operation.DELEGATE,
     ): TransactionEstimation {
         return gatewayApi.estimateTransaction(
             chainId,

@@ -13,8 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/separator"
-            >
+            android:background="@color/separator">
 
             <io.gnosis.safe.ui.settings.view.SettingItem
                 android:id="@+id/owner_keys"
