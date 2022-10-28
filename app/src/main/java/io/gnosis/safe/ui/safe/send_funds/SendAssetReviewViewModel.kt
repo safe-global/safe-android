@@ -69,24 +69,26 @@ class SendAssetReviewViewModel
     }
 
     fun onAdvancedParamsEdit() {
-        safeLaunch {
-            updateState {
-                SendAssetReviewState(
-                    viewAction = ViewAction.NavigateTo(
-                        SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToEditAdvancedParamsFragment(
-                            activeSafe.chain,
-                            safeNonce.toString(),
-                            minSafeNonce.toString(),
-                            safeTxGas?.toString(),
-                            proposedSafeTxGas?.toString()
+        safeNonce?.let {
+            safeLaunch {
+                updateState {
+                    SendAssetReviewState(
+                        viewAction = ViewAction.NavigateTo(
+                            SendAssetReviewFragmentDirections.actionSendAssetReviewFragmentToEditAdvancedParamsFragment(
+                                activeSafe.chain,
+                                safeNonce.toString(),
+                                minSafeNonce.toString(),
+                                safeTxGas?.toString(),
+                                proposedSafeTxGas?.toString()
+                            )
                         )
                     )
-                )
-            }
-            updateState {
-                SendAssetReviewState(
-                    viewAction = ViewAction.None
-                )
+                }
+                updateState {
+                    SendAssetReviewState(
+                        viewAction = ViewAction.None
+                    )
+                }
             }
         }
     }
@@ -109,4 +111,4 @@ data class SendAssetReviewState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
 
-object EstimationDataLoaded: BaseStateViewModel.ViewAction
+object EstimationDataLoaded : BaseStateViewModel.ViewAction
