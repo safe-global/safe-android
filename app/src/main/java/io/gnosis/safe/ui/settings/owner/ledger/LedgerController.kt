@@ -178,7 +178,10 @@ class LedgerController(val context: Context) {
         if (!bluetoothAdapter.isEnabled) {
             promptEnableBluetooth(fragment)
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        || !context.hasPermission(Manifest.permission.BLUETOOTH_SCAN)
+                        || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))) {
                 missingLocationPermissionHandler.invoke()
             } else {
                 if (isScanning) {
@@ -318,7 +321,7 @@ class LedgerController(val context: Context) {
     }
 
     fun requestLocationPermission(fragment: Fragment) {
-        fragment.requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION_PERMISSION)
+        fragment.requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), REQUEST_CODE_LOCATION_PERMISSION)
     }
 
     fun handleResult(
