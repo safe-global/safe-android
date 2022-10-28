@@ -41,6 +41,11 @@ class SendAssetReviewViewModel
         value: BigInteger
     ) {
         safeLaunch {
+            if (safeNonce != null) {
+                updateState {
+                    SendAssetReviewState(EstimationDataLoaded)
+                }
+            }
             val txEstimation = transactionRepository.estimateTransaction(
                 chainId,
                 from,
