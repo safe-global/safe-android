@@ -142,6 +142,7 @@
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginBottom="24dp"
         android:text="@string/coins_asset_send_confirm"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

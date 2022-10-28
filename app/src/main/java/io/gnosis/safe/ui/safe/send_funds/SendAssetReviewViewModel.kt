@@ -57,6 +57,9 @@ class SendAssetReviewViewModel
                     safeTxGas = proposedSafeTxGas
                 }
             }
+            updateState {
+                SendAssetReviewState(EstimationDataLoaded)
+            }
         }
     }
 
@@ -69,8 +72,8 @@ class SendAssetReviewViewModel
                             activeSafe.chain,
                             safeNonce.toString(),
                             minSafeNonce.toString(),
-                            safeTxGas.toString(),
-                            proposedSafeTxGas.toString()
+                            safeTxGas?.toString(),
+                            proposedSafeTxGas?.toString()
                         )
                     )
                 )
@@ -100,3 +103,5 @@ class SendAssetReviewViewModel
 data class SendAssetReviewState(
     override var viewAction: BaseStateViewModel.ViewAction?
 ) : BaseStateViewModel.State
+
+object EstimationDataLoaded: BaseStateViewModel.ViewAction

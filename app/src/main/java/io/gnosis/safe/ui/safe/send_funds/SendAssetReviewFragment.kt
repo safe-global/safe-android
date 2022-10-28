@@ -91,6 +91,9 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                 is SendAssetReviewState -> {
                     state.viewAction?.let { action ->
                         when(action) {
+                            is EstimationDataLoaded -> {
+                                binding.confirmButton.isEnabled = true
+                            }
                             is ShowError -> {
                                 binding.confirmButton.isEnabled = false
                                 val error = action.error.toError()
