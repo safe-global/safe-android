@@ -49,7 +49,6 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
-
                 val banner = when {
                     settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() == 0 -> Banner.Type.ADD_OWNER_KEY
                     settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE
@@ -57,16 +56,7 @@ class CoinsViewModel
                 }
                 val totalBalance = getTotalBalanceViewData(balanceInfo)
                 val balances = getBalanceViewData(balanceInfo, banner)
-
-                //TODO: [Send funds toggle] remove balancesWithFiat; use balances in update state
-                val balancesWithTotal = mutableListOf<CoinsViewData>()
-                balancesWithTotal.addAll(balances)
-                if (balancesWithTotal[0] is Banner) {
-                    balancesWithTotal.add(1, totalBalance)
-                } else {
-                    balancesWithTotal.add(0, totalBalance)
-                }
-                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalBalance, balancesWithTotal)) }
+                updateState { CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalBalance, balances)) }
             }
         }
     }

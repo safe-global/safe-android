@@ -64,9 +64,6 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             receiveButton.setOnClickListener {
                 navigateToShareSafeDialog()
             }
-
-            //TODO: [Send funds toggle] remove
-            totalBalance.visible(false, View.GONE)
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -74,8 +71,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
                 is SafeBalancesState.ActiveSafe -> {
                     val noActiveSafe = state.safe == null
                     pager.noActiveSafe = noActiveSafe
-                    //TODO: [Send funds toggle] uncomment
-                    //binding.totalBalance.visible(!noActiveSafe, View.GONE)
+                    binding.totalBalance.visible(!noActiveSafe, View.GONE)
                     binding.balancesTabBar.visible(!noActiveSafe, View.INVISIBLE)
                     handleActiveSafe(state.safe)
                 }
