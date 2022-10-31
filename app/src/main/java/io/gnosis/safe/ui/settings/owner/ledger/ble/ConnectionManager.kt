@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import io.gnosis.safe.ui.settings.owner.ledger.transport.LedgerException
+import pm.gnosis.utils.toHex
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -105,7 +106,7 @@ object ConnectionManager {
             }
         }
         if (device.isConnected()) {
-            Timber.d("EnqueueOperation($payload)")
+            Timber.d("EnqueueOperation(${payload.toHex()})")
             enqueueOperation(CharacteristicWrite(device, characteristic.uuid, writeType, payload))
         } else {
             Timber.e("Not connected to ${device.address}, cannot perform characteristic write")
@@ -345,6 +346,7 @@ object ConnectionManager {
             } else {
                 Timber.e("onConnectionStateChange: status $status encountered for $deviceAddress!")
                 if (pendingOperation is Connect) {
+                    Timber.w("onConnectionStateChange: Connect failed. -> signalEndOfOperation()")
                     signalEndOfOperation()
                 }
                 teardownConnection(gatt.device)
