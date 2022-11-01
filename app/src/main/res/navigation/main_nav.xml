@@ -76,7 +76,17 @@
             android:id="@+id/action_assetsFragment_to_assetSelectionFragment"
             app:destination="@+id/assetSelectionFragment" />
 
+        <action
+            android:id="@+id/action_assetsFragment_to_addOwnerFirstFragment"
+            app:destination="@+id/addOwnerFirstFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/addOwnerFirstFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.AddOwnerFirstFragment"
+        android:label="AddOwnerFirstFragment"
+        tools:layout="@layout/fragment_add_owner_first" />
 
     <fragment
         android:id="@+id/assetSelectionFragment"
