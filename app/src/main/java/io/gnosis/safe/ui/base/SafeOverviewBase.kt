@@ -33,7 +33,6 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         }
         if (ownerCreated()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_created))
-            navHandler?.checkSafeReadOnly()
             resetOwnerCreated()
         }
         if (rejectionConfirmed()) {
