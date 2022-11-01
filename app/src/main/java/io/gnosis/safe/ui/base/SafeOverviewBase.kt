@@ -28,10 +28,12 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         super.onResume()
         if (ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
+            navHandler?.checkSafeReadOnly()
             resetOwnerImported()
         }
         if (ownerCreated()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_created))
+            navHandler?.checkSafeReadOnly()
             resetOwnerCreated()
         }
         if (rejectionConfirmed()) {
@@ -55,12 +57,10 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
     abstract fun handleActiveSafe(safe: Safe?)
 
     private fun ownerImported(): Boolean {
-        navHandler?.checkSafeReadOnly()
         return findNavController().getFromCurrent<Boolean>(OWNER_IMPORT_RESULT) == true
     }
 
     private fun ownerCreated(): Boolean {
-        navHandler?.checkSafeReadOnly()
         return findNavController().getFromCurrent<Boolean>(OWNER_CREATE_RESULT) == true
     }
 
