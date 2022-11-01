@@ -142,6 +142,8 @@ interface ViewComponent {
 
     fun inject(fragment: SuccessFragment)
 
+    fun inject(fragment: AddOwnerFirstFragment)
+
     fun inject(fragment: CoinsFragment)
 
     fun inject(fragment: CollectiblesFragment)

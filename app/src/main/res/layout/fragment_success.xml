@@ -48,7 +48,6 @@
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintVertical_chainStyle="packed" />
 
-
     <Button
         android:id="@+id/view_details_button"
         style="@style/PrimaryButton"
