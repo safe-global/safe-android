@@ -97,6 +97,11 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        navHandler?.checkSafeReadOnly()
+    }
+
     override fun handleActiveSafe(safe: Safe?) {
         navHandler?.setSafeData(safe)
     }

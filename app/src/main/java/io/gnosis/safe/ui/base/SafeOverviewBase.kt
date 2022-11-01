@@ -28,12 +28,10 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
         super.onResume()
         if (ownerImported()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_imported))
-            navHandler?.checkSafeReadOnly()
             resetOwnerImported()
         }
         if (ownerCreated()) {
             snackbar(requireView(), getString(R.string.signing_owner_key_created))
-            navHandler?.checkSafeReadOnly()
             resetOwnerCreated()
         }
         if (rejectionConfirmed()) {
