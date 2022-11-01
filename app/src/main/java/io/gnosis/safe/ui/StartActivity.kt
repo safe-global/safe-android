@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.Lifecycle
@@ -261,6 +262,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             setSafe(safe)
             checkReadOnly()
         }
+    }
+
+    override fun isSafeReadOnly(): Boolean {
+        return toolbarBinding.readOnly.isVisible
     }
 
     private fun setNoSafe() {
