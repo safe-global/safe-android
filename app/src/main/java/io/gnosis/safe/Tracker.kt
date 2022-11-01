@@ -245,6 +245,7 @@ enum class ScreenId(val value: String) {
     ASSETS_COINS_TRANSFER_REVIEW("screen_review_asset_transfer"),
     ASSETS_COINS_TRANSFER_ADVANCED_PARAMS("screen_asset_transfer_advanced_params"),
     ASSETS_COINS_TRANSFER_SUCCESS("screen_asset_transfer_success"),
+    ASSETS_COINS_TRANSFER_ADD_OWNER("screen_add_owner_to_send_assets"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
     OWNER_ADD_OPTIONS("screen_owner_options"),
