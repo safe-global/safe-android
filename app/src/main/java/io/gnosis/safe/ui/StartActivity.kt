@@ -268,6 +268,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         return toolbarBinding.readOnly.isVisible
     }
 
+    override fun checkSafeReadOnly() {
+        checkReadOnly()
+    }
+
     private fun setNoSafe() {
         with(toolbarBinding) {
             safeImage.setOnClickListener(null)

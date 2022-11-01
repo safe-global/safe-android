@@ -55,10 +55,12 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
     abstract fun handleActiveSafe(safe: Safe?)
 
     private fun ownerImported(): Boolean {
+        navHandler?.checkSafeReadOnly()
         return findNavController().getFromCurrent<Boolean>(OWNER_IMPORT_RESULT) == true
     }
 
     private fun ownerCreated(): Boolean {
+        navHandler?.checkSafeReadOnly()
         return findNavController().getFromCurrent<Boolean>(OWNER_CREATE_RESULT) == true
     }
 
@@ -118,4 +120,5 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
 interface SafeOverviewNavigationHandler {
     fun setSafeData(safe: Safe?)
     fun isSafeReadOnly(): Boolean
+    fun checkSafeReadOnly()
 }
