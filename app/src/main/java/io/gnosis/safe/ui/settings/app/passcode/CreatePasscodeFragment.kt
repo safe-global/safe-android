@@ -106,10 +106,11 @@ class CreatePasscodeFragment : BaseViewBindingFragment<FragmentPasscodeBinding>(
                     putString("ownerAddress", ownerAddress!!)
                 })
             } else {
-                findNavController().setToCurrent(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, true)
+                findNavController().setToCurrent(SafeOverviewBaseFragment.OWNER_IMPORT_RESULT, true)
             }
         } else {
             findNavController().popBackStack(R.id.createPasscodeFragment, true)
         }
+        findNavController().setToCurrent(SafeOverviewBaseFragment.PASSCODE_SET_RESULT, false)
     }
 }
