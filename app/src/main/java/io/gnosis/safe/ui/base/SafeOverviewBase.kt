@@ -119,6 +119,5 @@ abstract class SafeOverviewBaseFragment<T> : BaseViewBindingFragment<T>() where 
 
 interface SafeOverviewNavigationHandler {
     fun setSafeData(safe: Safe?)
-    fun isSafeReadOnly(): Boolean
     fun checkSafeReadOnly()
 }

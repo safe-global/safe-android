@@ -64,7 +64,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
 
             sendButton.setOnClickListener {
                 viewModel.activeSafe?.let {
-                    if (navHandler?.isSafeReadOnly() ?: true) {
+                    if (it.readOnly) {
                         findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAddOwnerFirstFragment())
                     } else {
                         findNavController().navigate(
