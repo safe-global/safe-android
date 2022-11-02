@@ -71,7 +71,14 @@ class SafeRepository(
     suspend fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
             putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
-            putString(ACTIVE_SAFE_SIGNING_OWNERS, if (safe.signingOwners.isEmpty()) null else safe.signingOwners.joinToString(";"))
+            putString(
+                ACTIVE_SAFE_SIGNING_OWNERS,
+                if (safe.signingOwners.isEmpty()) {
+                    null
+                } else {
+                    safe.signingOwners.joinToString(";") { it.asEthereumAddressString() }
+                }
+            )
         }
     }
 
@@ -89,7 +96,16 @@ class SafeRepository(
 
     suspend fun setActiveSafeSigningOwners(owners: List<Solidity.Address>) {
         preferencesManager.prefs.edit {
-            putString(ACTIVE_SAFE_SIGNING_OWNERS, if(owners.isEmpty()) null else owners.joinToString(";"))
+            putString(
+                ACTIVE_SAFE_SIGNING_OWNERS,
+                if(owners.isEmpty()) {
+                    null
+                } else {
+                    owners.joinToString(";") {
+                        it.asEthereumAddressString()
+                    }
+                }
+            )
         }
     }
 
