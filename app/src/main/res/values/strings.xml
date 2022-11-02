@@ -155,6 +155,8 @@
     <string name="coins_total_balance">Total balance</string>
     <string name="coins_send">Send</string>
     <string name="coins_receive">Receive</string>
+    <string name="coins_asset_send_add_owner_title">Add owner key first</string>
+    <string name="coins_asset_send_add_owner_desc">To start sending funds import at least one owner key. Keys are used to confirm transactions.</string>
     <string name="coins_asset_select">Select an asset</string>
     <string name="coins_asset_not_found">No assets found.</string>
     <string name="coins_asset_send">Send %1$s</string>

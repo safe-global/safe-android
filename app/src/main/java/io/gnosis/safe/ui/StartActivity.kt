@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.Lifecycle
@@ -37,6 +38,7 @@ import io.intercom.android.sdk.Intercom
 import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -263,6 +265,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
     }
 
+    override fun checkSafeReadOnly() {
+        checkReadOnly()
+    }
+
     private fun setNoSafe() {
         with(toolbarBinding) {
             safeImage.setOnClickListener(null)
@@ -359,10 +365,12 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     val safeInfo = safeRepository.getSafeInfo(it)
                     val safeOwners = safeInfo.owners.map { it.value }.toSet()
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
+                    val signingOwners = safeOwners.intersect(localOwners)
                     toolbarBinding.readOnly.visible(
-                        safeOwners.intersect(localOwners).isEmpty(),
+                        signingOwners.isEmpty(),
                         View.INVISIBLE
                     )
+                    safeRepository.setActiveSafeSigningOwners(signingOwners.map { Solidity.Address(it.value) })
                     safeRepository.saveSafe(activeSafe.copy(version = safeInfo.version))
                 }
             }.onFailure {

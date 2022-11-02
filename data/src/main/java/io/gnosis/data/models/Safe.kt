@@ -29,6 +29,12 @@ data class Safe(
     @Ignore
     var chain: Chain = Chain.DEFAULT_CHAIN
 
+    @Ignore
+    var signingOwners: List<Solidity.Address> = listOf()
+
+    val readOnly: Boolean
+        get() = signingOwners.isEmpty()
+
     companion object {
         const val TABLE_NAME = "safes"
 
