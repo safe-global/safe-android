@@ -76,14 +76,14 @@ class SafeRepository(
                 if (safe.signingOwners.isEmpty()) {
                     null
                 } else {
-                    safe.signingOwners.joinToString(";") { it.asEthereumAddressString() }
+                    safe.signingOwners.joinToString(SEPARATOR) { it.asEthereumAddressString() }
                 }
             )
         }
     }
 
     suspend fun getActiveSafe(): Safe? {
-        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
+        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(SEPARATOR)
         val address = activeSafeData?.get(0)?.asEthereumAddress()
         val safe = address?.let {
             val chainId = nullOnThrow { activeSafeData[2].toBigInteger() }
@@ -101,7 +101,7 @@ class SafeRepository(
                 if(owners.isEmpty()) {
                     null
                 } else {
-                    owners.joinToString(";") {
+                    owners.joinToString(SEPARATOR) {
                         it.asEthereumAddressString()
                     }
                 }
@@ -112,7 +112,7 @@ class SafeRepository(
     suspend fun getActiveSafeSigningOwners(): List<Solidity.Address> {
         return preferencesManager.prefs
                 .getString(ACTIVE_SAFE_SIGNING_OWNERS, null)
-                ?.split(";")
+                ?.split(SEPARATOR)
                 ?.map { it.asEthereumAddress()!! } ?: listOf()
     }
 
@@ -168,6 +168,8 @@ class SafeRepository(
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
         private const val ACTIVE_SAFE_SIGNING_OWNERS = "prefs.string.active_safe_signing_owners"
+
+        private const val SEPARATOR = ";"
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
