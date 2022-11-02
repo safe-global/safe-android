@@ -33,7 +33,7 @@ class SafeRepository(
 
     fun activeSafeFlow() =
         keyFlow
-            .filter { it == ACTIVE_SAFE }
+            .filter { it == ACTIVE_SAFE || it == ACTIVE_SAFE_SIGNING_OWNERS }
             .onStart { emit(ACTIVE_SAFE) }
             .map { getActiveSafe() }
             .conflate()
