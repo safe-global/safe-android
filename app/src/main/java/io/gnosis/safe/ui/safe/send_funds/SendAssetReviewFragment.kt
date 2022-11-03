@@ -61,7 +61,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
         with(binding) {
             title.text = getString(R.string.coins_asset_send, selectedAsset.symbol)
             backButton.setOnClickListener {
-               findNavController().navigateUp()
+                findNavController().navigateUp()
             }
             chainRibbon.text = chain.name
             chainRibbon.setTextColor(
@@ -84,15 +84,16 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                 if (confirmButton.isEnabled) viewModel.onAdvancedParamsEdit()
             }
             confirmButton.setOnClickListener {
+                confirmButton.isEnabled = false
                 viewModel.onConfirm()
             }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            when(state) {
+            when (state) {
                 is SendAssetReviewState -> {
                     state.viewAction?.let { action ->
-                        when(action) {
+                        when (action) {
                             is EstimationDataLoaded -> {
                                 binding.confirmButton.isEnabled = true
                             }
@@ -102,7 +103,13 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                                 if (error.trackingRequired) {
                                     tracker.logException(action.error)
                                 }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins_send))
+                                errorSnackbar(
+                                    requireView(),
+                                    error.message(
+                                        requireContext(),
+                                        R.string.error_description_assets_coins_send
+                                    )
+                                )
                             }
                             is NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
@@ -120,35 +127,41 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             viewModel.updateAdvancedParams(safeTxNonce, safeTxGas)
         }
 
-        viewModel.loadTxEstimationData(
-            chain.chainId,
-            fromAddress,
-            toAddress,
-            amount,
-            selectedAsset
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
         if (ownerSelected() != null) {
             viewModel.initiateTransfer(ownerSelected()!!, ownerSigned())
             resetOwnerData()
+        } else {
+            viewModel.loadTxEstimationData(
+                chain.chainId,
+                fromAddress,
+                toAddress,
+                amount,
+                selectedAsset
+            )
         }
     }
 
     private fun ownerSelected(): Solidity.Address? {
         return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
-            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT
+        )
             ?.asEthereumAddress()
     }
 
     private fun ownerSigned(): String? {
-        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT)
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT
+        )
     }
 
     private fun resetOwnerData() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, null)
-        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT, null)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            null
+        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+            null
+        )
     }
 }
