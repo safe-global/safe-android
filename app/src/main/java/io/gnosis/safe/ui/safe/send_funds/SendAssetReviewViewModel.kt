@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.safe.send_funds
 
+import io.gnosis.contracts.ERC20Contract
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.transaction.*
@@ -11,7 +12,8 @@ import io.gnosis.data.utils.calculateSafeTxHash
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.transactions.details.*
+import io.gnosis.safe.ui.transactions.details.MissingOwnerCredential
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -34,14 +36,16 @@ class SendAssetReviewViewModel
 
     private lateinit var fromAddress: Solidity.Address
     private lateinit var toAddress: Solidity.Address
-    private lateinit var transferValue: BigInteger
+    private lateinit var transferAmount: BigInteger
     private lateinit var transferAddress: Solidity.Address
     private lateinit var safeTxHash: String
+    private lateinit var data: String
     private lateinit var txExecutionInfo: DetailedExecutionInfo.MultisigExecutionDetails
 
     private lateinit var amountString: String
     private lateinit var selectedAsset: CoinsViewData.CoinBalance
 
+    private var transferValue = BigInteger.ZERO
     private var safeNonce: BigInteger? = null
     private var minSafeNonce: BigInteger? = null
     private var safeTxGas: BigInteger? = null
@@ -67,7 +71,7 @@ class SendAssetReviewViewModel
         selectedAsset = asset
         fromAddress = from
         toAddress = to
-        transferValue =
+        transferAmount =
             BigDecimal(amount).times(BigDecimal.TEN.pow(selectedAsset.decimals)).toBigInteger()
         safeLaunch {
             if (safeNonce != null) {
@@ -79,7 +83,7 @@ class SendAssetReviewViewModel
                 chainId,
                 from,
                 to,
-                transferValue
+                transferAmount
             )
             minSafeNonce = txEstimation.currentNonce
             if (safeNonce == null) {
@@ -144,50 +148,54 @@ class SendAssetReviewViewModel
                 safeTxGas = safeTxGas ?: BigInteger.ZERO
             )
 
-            val txDetails = if (selectedAsset.address.asEthereumAddress() == Solidity.Address(BigInteger.ZERO)) {
-                transferAddress = toAddress
-                TransactionDetails(
-                    txInfo = TransactionInfo.Custom(
-                        to = AddressInfo(toAddress),
-                        value = transferValue
-                    ),
-                    txData = TxData(
-                        "0x",
-                        null,
-                        AddressInfo(toAddress),
-                        transferValue,
-                        Operation.CALL
-                    ),
-                    detailedExecutionInfo = txExecutionInfo,
-                    safeAppInfo = null
-                )
-            } else {
-                transferAddress = selectedAsset.address.asEthereumAddress()!!
-                TransactionDetails(
-                    txInfo = TransactionInfo.Transfer(
-                        AddressInfo(fromAddress),
-                        AddressInfo(toAddress),
-                        TransferInfo.Erc20Transfer(
-                            selectedAsset.address.asEthereumAddress()!!,
-                            null,
-                            null,
-                            null,
-                            null,
-                            transferValue
+            val txDetails =
+                if (selectedAsset.address.asEthereumAddress() == Solidity.Address(BigInteger.ZERO)) {
+                    transferAddress = toAddress
+                    transferValue = transferAmount
+                    data = "0x"
+                    TransactionDetails(
+                        txInfo = TransactionInfo.Custom(
+                            to = AddressInfo(toAddress),
+                            value = transferAmount
                         ),
-                        TransactionDirection.OUTGOING
-                    ),
-                    txData = TxData(
-                        null,
-                        null,
-                        AddressInfo(toAddress),
-                        transferValue,
-                        Operation.CALL
-                    ),
-                    detailedExecutionInfo = txExecutionInfo,
-                    safeAppInfo = null
-                )
-            }
+                        txData = TxData(
+                            data,
+                            null,
+                            AddressInfo(toAddress),
+                            transferAmount,
+                            Operation.CALL
+                        ),
+                        detailedExecutionInfo = txExecutionInfo,
+                        safeAppInfo = null
+                    )
+                } else {
+                    transferAddress = selectedAsset.address.asEthereumAddress()!!
+                    data = ERC20Contract.Transfer.encode(toAddress, Solidity.UInt256(transferAmount))
+                    TransactionDetails(
+                        txInfo = TransactionInfo.Transfer(
+                            AddressInfo(fromAddress),
+                            AddressInfo(toAddress),
+                            TransferInfo.Erc20Transfer(
+                                selectedAsset.address.asEthereumAddress()!!,
+                                null,
+                                null,
+                                null,
+                                null,
+                                transferAmount
+                            ),
+                            TransactionDirection.OUTGOING
+                        ),
+                        txData = TxData(
+                            data,
+                            null,
+                            AddressInfo(toAddress),
+                            BigInteger.ZERO,
+                            Operation.CALL
+                        ),
+                        detailedExecutionInfo = txExecutionInfo,
+                        safeAppInfo = null
+                    )
+                }
 
             safeTxHash =
                 calculateSafeTxHash(
@@ -224,6 +232,7 @@ class SendAssetReviewViewModel
                     safeAddress = activeSafe.address,
                     toAddress = transferAddress,
                     value = transferValue,
+                    data = data,
                     nonce = txExecutionInfo.nonce,
                     signature = signedSafeTxHash ?: credentialsRepository.signWithOwner(
                         selectedOwner,
@@ -231,10 +240,10 @@ class SendAssetReviewViewModel
                     ),
                     safeTxGas = txExecutionInfo.safeTxGas.toLong(),
                     safeTxHash = safeTxHash,
-                    sender = selectedOwner.address//fromAddress
+                    sender = selectedOwner.address
                 )
             }.onSuccess {
-                //tracker.logTransactionRejected(activeSafe.chainId)
+                //tracker.log success
                 updateState {
                     SendAssetReviewState(
                         ViewAction.NavigateTo(

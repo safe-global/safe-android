@@ -65,7 +65,7 @@ class TransactionRepository(
         baseGas: Long = 0,
         gasPrice: Long = 0,
         gasToken: Solidity.Address = "0x00".asEthereumAddress()!!,
-        refundReceiver: Solidity.Address? = null,
+        refundReceiver: Solidity.Address = Solidity.Address(BigInteger.ZERO),
         safeTxHash: String,
         sender: Solidity.Address,
         signature: String,

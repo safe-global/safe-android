@@ -87,7 +87,7 @@ android {
 }
 
 dependencies {
-    implementation project(":contracts")
+    api project(":contracts")
 
     api "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
