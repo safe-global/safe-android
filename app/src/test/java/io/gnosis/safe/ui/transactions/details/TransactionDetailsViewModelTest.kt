@@ -333,7 +333,7 @@ class TransactionDetailsViewModelTest {
                             "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
                             "0xf2cea96575d6b10f51d9af3b10e3e4e5738aa6bd"
                         ).toTypedArray(),
-                        isConfirmation = true,
+                        signingMode = SigningMode.CONFIRMATION,
                         safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
                     )
                 ).toString(), viewAction.toString()
