@@ -14,15 +14,17 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.toColor
-import pm.gnosis.utils.asEthereumAddress
-import java.math.BigDecimal
-import javax.inject.Inject
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.REQUEST_EDIT_ADVANCED_PARAMS
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_GAS
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_NONCE
+import io.gnosis.safe.utils.toColor
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 
 class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewBinding>() {
@@ -122,7 +124,31 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             chain.chainId,
             fromAddress,
             toAddress,
-            BigDecimal(amount).times(BigDecimal.TEN.pow(selectedAsset.decimals)).toBigInteger()
+            amount,
+            selectedAsset
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (ownerSelected() != null) {
+            viewModel.initiateTransfer(ownerSelected()!!, ownerSigned())
+            resetOwnerData()
+        }
+    }
+
+    private fun ownerSelected(): Solidity.Address? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT)
+            ?.asEthereumAddress()
+    }
+
+    private fun ownerSigned(): String? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT)
+    }
+
+    private fun resetOwnerData() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SELECTED_RESULT, null)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(SafeOverviewBaseFragment.OWNER_SIGNED_RESULT, null)
     }
 }
