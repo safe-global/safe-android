@@ -163,6 +163,7 @@ object ConnectionManager {
 
     fun requestMtu(device: BluetoothDevice, mtu: Int) {
         if (device.isConnected()) {
+            Timber.d("EnqueueOperation(${MtuRequest(device, mtu.coerceIn(GATT_MIN_MTU_SIZE, GATT_MAX_MTU_SIZE))})")
             enqueueOperation(MtuRequest(device, mtu.coerceIn(GATT_MIN_MTU_SIZE, GATT_MAX_MTU_SIZE)))
         } else {
             Timber.e("Not connected to ${device.address}, cannot request MTU update!")
@@ -203,6 +204,7 @@ object ConnectionManager {
             Timber.v("Operation queue empty, returning")
             return
         }
+        Timber.i("doNextOperation() operation: $operation")
         pendingOperation = operation
 
         // Handle Connect separately from other operations that require device to be connected
@@ -331,7 +333,7 @@ object ConnectionManager {
 
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             val deviceAddress = gatt.device.address
-
+            Timber.i("onConnectionStateChange: status: $status newState: $newState from $deviceAddress (success: ${status == BluetoothGatt.GATT_SUCCESS})")
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     Timber.w("onConnectionStateChange: connected to $deviceAddress")
@@ -340,11 +342,11 @@ object ConnectionManager {
                         gatt.discoverServices()
                     }
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    Timber.e("onConnectionStateChange: disconnected from $deviceAddress")
+                    Timber.e("onConnectionStateChange: disconnected from $deviceAddress (success: ${status == BluetoothGatt.GATT_SUCCESS})")
                     teardownConnection(gatt.device)
                 }
             } else {
-                Timber.e("onConnectionStateChange: status $status encountered for $deviceAddress!")
+                Timber.e("onConnectionStateChange: status $status encountered for $deviceAddress! (success: ${status == BluetoothGatt.GATT_SUCCESS})")
                 if (pendingOperation is Connect) {
                     Timber.w("onConnectionStateChange: Connect failed. -> signalEndOfOperation()")
                     signalEndOfOperation()
@@ -372,7 +374,7 @@ object ConnectionManager {
         }
 
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
-            Timber.w("ATT MTU changed to $mtu, success: ${status == BluetoothGatt.GATT_SUCCESS}")
+            Timber.w("onMtuChanged(): ATT MTU changed to $mtu, success: ${status == BluetoothGatt.GATT_SUCCESS}")
             listeners.forEach { it.get()?.onMtuChanged?.invoke(gatt.device, mtu) }
 
             if (pendingOperation is MtuRequest) {

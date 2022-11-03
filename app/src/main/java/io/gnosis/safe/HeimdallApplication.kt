@@ -38,7 +38,7 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         super.onCreate()
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks())
         if (BuildConfig.DEBUG) {
-            Timber.plant(DebugTree())
+            Timber.plant(LineNumberDebugTree())
         } else {
             Timber.plant(ExceptionReportingTree())
         }
@@ -105,7 +105,6 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
                 // We have no more active activities, so we are inactive
                 inactive()
             }
-
         }
     }
 
@@ -142,5 +141,11 @@ private class ExceptionReportingTree : Timber.Tree() {
 
     companion object {
         private const val CRASHLYTICS_KEY_LOCALE = "locale"
+    }
+}
+
+class LineNumberDebugTree : Timber.DebugTree() {
+    override fun createStackElementTag(element: StackTraceElement): String? {
+        return "(${element.fileName}:${element.lineNumber})"
     }
 }

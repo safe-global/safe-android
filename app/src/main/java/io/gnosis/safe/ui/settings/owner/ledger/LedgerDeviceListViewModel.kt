@@ -76,6 +76,10 @@ class LedgerDeviceListViewModel
         ledgerController.requestLocationPermission(fragment)
     }
 
+    fun requestBLEPermission(fragment: Fragment) {
+        ledgerController.requestBLEPermission(fragment)
+    }
+
     fun scanForDevices(fragment: Fragment, missingLocationPermissionHandler: () -> Unit) {
         safeLaunch {
             updateState {

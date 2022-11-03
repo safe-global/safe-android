@@ -163,6 +163,10 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         viewModel.requestLocationPermission(this)
     }
 
+    private fun requestMissingBLEPermission() {
+        viewModel.requestBLEPermission(this)
+    }
+
     private fun handleMissingLocationPermission() {
         viewModel.scanError()
     }
@@ -185,7 +189,8 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         viewModel.handlePermissionResult(
             this,
             ::handleMissingLocationPermission,
-            ::requestMissingLocationPermission,
+            //::requestMissingLocationPermission, // android < 12
+            ::requestMissingBLEPermission, // Android >= 12
             requestCode,
             permissions,
             grantResults

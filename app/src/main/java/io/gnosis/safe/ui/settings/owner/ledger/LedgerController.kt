@@ -173,15 +173,21 @@ class LedgerController(val context: Context) {
 
     private var isScanning = false
 
-
     fun startBleScan(fragment: Fragment, missingLocationPermissionHandler: () -> Unit) {
         if (!bluetoothAdapter.isEnabled) {
             promptEnableBluetooth(fragment)
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
                 && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        || !context.hasPermission(Manifest.permission.BLUETOOTH_SCAN)
-                        || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))) {
+
+                        )
+            ) {
+                missingLocationPermissionHandler.invoke()
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN)
+                        || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                        )
+            ) {
                 missingLocationPermissionHandler.invoke()
             } else {
                 if (isScanning) {
@@ -321,7 +327,17 @@ class LedgerController(val context: Context) {
     }
 
     fun requestLocationPermission(fragment: Fragment) {
-        fragment.requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), REQUEST_CODE_LOCATION_PERMISSION)
+        fragment.requestPermissions(
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+            REQUEST_CODE_LOCATION_PERMISSION
+        )
+    }
+
+    fun requestBLEPermission(fragment: Fragment) {
+        fragment.requestPermissions(
+            arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+            REQUEST_CODE_BLE_PERMISSION
+        )
     }
 
     fun handleResult(
@@ -359,6 +375,13 @@ class LedgerController(val context: Context) {
                     startBleScan(fragment, missingLocationPermissionHandler)
                 }
             }
+            REQUEST_CODE_BLE_PERMISSION -> {
+                if (grantResults.firstOrNull() == PackageManager.PERMISSION_DENIED) {
+                    deniedLocationPermissionHandler.invoke()
+                } else {
+                    startBleScan(fragment, missingLocationPermissionHandler)
+                }
+            }
         }
     }
 
@@ -373,6 +396,7 @@ class LedgerController(val context: Context) {
         val LEDGER_SERVICE_DATA_UUID = UUID.fromString("13d63400-2c97-0004-0000-4c6564676572")
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 1
         private const val REQUEST_CODE_LOCATION_PERMISSION = 2
+        private const val REQUEST_CODE_BLE_PERMISSION = 3
     }
 }
 
