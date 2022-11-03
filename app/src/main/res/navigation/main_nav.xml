@@ -154,6 +154,14 @@
             android:id="@+id/action_sendAssetReviewFragment_to_editAdvancedParamsFragment"
             app:destination="@id/editAdvancedParamsFragment" />
 
+        <action
+            android:id="@+id/action_sendAssetReviewFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment" />
+
+        <action
+            android:id="@+id/action_sendAssetReviewFragment_to_successFragment"
+            app:destination="@id/successFragment" />
+
     </fragment>
 
     <fragment
@@ -803,9 +811,8 @@
             app:nullable="true" />
 
         <argument
-            android:name="isConfirmation"
-            android:defaultValue="true"
-            app:argType="boolean" />
+            android:name="signingMode"
+            app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
 
         <argument
             android:name="safeTxHash"
