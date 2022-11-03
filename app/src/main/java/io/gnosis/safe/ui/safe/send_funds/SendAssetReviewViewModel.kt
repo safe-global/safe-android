@@ -243,7 +243,6 @@ class SendAssetReviewViewModel
                     sender = selectedOwner.address
                 )
             }.onSuccess {
-                //tracker.log success
                 updateState {
                     SendAssetReviewState(
                         ViewAction.NavigateTo(
