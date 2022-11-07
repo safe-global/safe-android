@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import io.gnosis.data.models.AddressInfo
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.SafeInfo
@@ -24,10 +25,12 @@ import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.ui.safe.send_funds.AssetSelectionFragmentArgs
 import io.gnosis.safe.ui.settings.view.NamedAddressItem
 import io.gnosis.safe.ui.settings.view.SettingItem
 import io.gnosis.safe.utils.appendLink
 import io.gnosis.safe.utils.dpToPx
+import io.gnosis.safe.utils.toColor
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -36,7 +39,12 @@ import javax.inject.Inject
 
 class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeAdvancedBinding>() {
 
+    private val navArgs by navArgs<AssetSelectionFragmentArgs>()
+    private val chain by lazy { navArgs.chain }
+
     override fun screenId() = ScreenId.SETTINGS_SAFE_ADVANCED
+
+    override suspend fun chainId() = chain.chainId
 
     @Inject
     lateinit var viewModel: AdvancedSafeSettingsViewModel
@@ -64,6 +72,19 @@ class AdvancedSafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSaf
             refresh.setOnRefreshListener {
                 viewModel.load()
             }
+            chainRibbon.text = chain.name
+            chainRibbon.setTextColor(
+                chain.textColor.toColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            chainRibbon.setBackgroundColor(
+                chain.backgroundColor.toColor(
+                    requireContext(),
+                    R.color.primary
+                )
+            )
         }
         viewModel.load()
     }

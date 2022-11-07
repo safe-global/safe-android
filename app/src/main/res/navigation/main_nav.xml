@@ -1119,7 +1119,13 @@
         android:id="@+id/advancedSafeSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
-        tools:layout="@layout/fragment_settings_safe_advanced" />
+        tools:layout="@layout/fragment_settings_safe_advanced">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/ledgerDeviceListFragment"

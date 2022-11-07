@@ -12,6 +12,7 @@ import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
+import io.gnosis.safe.ui.settings.SettingsFragmentDirections
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -90,6 +91,32 @@ class SafeSettingsViewModel @Inject constructor(
                     notificationRepository.unregisterSafe(safe.chainId, safe.address)
                     notificationManager.deleteNotificationChannelGroup(safe)
                 }
+            }
+        }
+    }
+
+    fun openAdvancedSettings() {
+        safeLaunch {
+            val safe = safeRepository.getActiveSafe()!!
+            updateState {
+                SafeSettingsState(
+                    safe,
+                    null,
+                    null,
+                    listOf(),
+                    ViewAction.NavigateTo(
+                        SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment(safe.chain)
+                    )
+                )
+            }
+            updateState {
+                SafeSettingsState(
+                    null,
+                    null,
+                    null,
+                    listOf(),
+                    ViewAction.None
+                )
             }
         }
     }
