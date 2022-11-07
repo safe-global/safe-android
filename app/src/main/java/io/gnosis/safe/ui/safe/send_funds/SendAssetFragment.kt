@@ -118,7 +118,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                 amountInput = selectedAsset.balance
                 assetSendAmount.setAmount(selectedAsset.balance)
             }
-            reviewButton.setOnClickListener {
+            val onReviewClickListner = View.OnClickListener {
                 viewModel.onReviewButtonClicked(
                     chain,
                     selectedAsset,
@@ -126,6 +126,8 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
                     amountInput!!
                 )
             }
+            reviewButton.setOnClickListener(onReviewClickListner)
+            nextButton.setOnClickListener(onReviewClickListner)
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -156,6 +158,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
     private fun validateInputs() {
 
         binding.reviewButton.isEnabled = false
+        binding.nextButton.isEnabled = false
 
         var canBeReviewed = true
 
@@ -198,6 +201,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         }
 
         binding.reviewButton.isEnabled = canBeReviewed
+        binding.nextButton.isEnabled = canBeReviewed
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -229,6 +233,7 @@ class SendAssetFragment : BaseViewBindingFragment<FragmentSendAssetBinding>() {
         }
         with(binding) {
             reviewButton.isEnabled = false
+            nextButton.isEnabled = false
 
             val error = throwable.toError()
             if (error.trackingRequired) {
