@@ -70,6 +70,7 @@ class ConfirmRejectionViewModelTest {
                 any(),
                 any(),
                 any(),
+                any(),
                 any()
             )
         } just Runs
@@ -84,6 +85,7 @@ class ConfirmRejectionViewModelTest {
         }
         coVerify(exactly = 1) {
             transactionRepository.proposeTransaction(
+                any(),
                 any(),
                 any(),
                 any(),
@@ -147,7 +149,7 @@ class ConfirmRejectionViewModelTest {
                             "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
                             "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
                         ).toTypedArray(),
-                        isConfirmation = false,
+                        signingMode = SigningMode.REJECTION,
                         safeTxHash = rejectionTxHash
                     )
                 ).toString(), viewAction.toString()

@@ -167,7 +167,7 @@ class TransactionDetailsViewModel
                                 missingSigners = missingSigners.map {
                                     it.value.asEthereumAddressString()
                                 }.toTypedArray(),
-                                isConfirmation = true,
+                                signingMode = SigningMode.CONFIRMATION,
                                 safeTxHash = executionInfo.safeTxHash
                             )
                         )
@@ -271,4 +271,3 @@ object MismatchingSafeTxHash : Throwable()
 object MissingOwnerCredential : Throwable()
 object MissingCorrectExecutionDetailsException : Throwable()
 object WrongPasscode : Throwable()
-

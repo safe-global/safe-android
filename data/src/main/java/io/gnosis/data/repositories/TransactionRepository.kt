@@ -56,6 +56,7 @@ class TransactionRepository(
     suspend fun proposeTransaction(
         chainId: BigInteger,
         safeAddress: Solidity.Address,
+        toAddress: Solidity.Address,
         value: BigInteger = BigInteger.ZERO,
         data: String? = null,
         nonce: BigInteger,
@@ -64,7 +65,7 @@ class TransactionRepository(
         baseGas: Long = 0,
         gasPrice: Long = 0,
         gasToken: Solidity.Address = "0x00".asEthereumAddress()!!,
-        refundReceiver: Solidity.Address? = null,
+        refundReceiver: Solidity.Address = Solidity.Address(BigInteger.ZERO),
         safeTxHash: String,
         sender: Solidity.Address,
         signature: String,
@@ -74,7 +75,7 @@ class TransactionRepository(
             chainId  = chainId,
             safeAddress = safeAddress.asEthereumAddressChecksumString(),
             multisigTransactionRequest = MultisigTransactionRequest(
-                to = safeAddress,
+                to = toAddress,
                 value = value.toString(),
                 data = data,
                 nonce = nonce.toString(),

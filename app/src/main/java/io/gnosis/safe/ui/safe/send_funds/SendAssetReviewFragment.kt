@@ -14,15 +14,17 @@ import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
 import io.gnosis.safe.ui.assets.coins.CoinsViewData
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.utils.toColor
-import pm.gnosis.utils.asEthereumAddress
-import java.math.BigDecimal
-import javax.inject.Inject
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.REQUEST_EDIT_ADVANCED_PARAMS
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_GAS
 import io.gnosis.safe.ui.safe.send_funds.EditAdvancedParamsFragment.Companion.RESULT_SAFE_TX_NONCE
+import io.gnosis.safe.utils.toColor
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 
 class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewBinding>() {
@@ -59,7 +61,7 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
         with(binding) {
             title.text = getString(R.string.coins_asset_send, selectedAsset.symbol)
             backButton.setOnClickListener {
-               findNavController().navigateUp()
+                findNavController().navigateUp()
             }
             chainRibbon.text = chain.name
             chainRibbon.setTextColor(
@@ -82,15 +84,16 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                 if (confirmButton.isEnabled) viewModel.onAdvancedParamsEdit()
             }
             confirmButton.setOnClickListener {
+                confirmButton.isEnabled = false
                 viewModel.onConfirm()
             }
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            when(state) {
+            when (state) {
                 is SendAssetReviewState -> {
                     state.viewAction?.let { action ->
-                        when(action) {
+                        when (action) {
                             is EstimationDataLoaded -> {
                                 binding.confirmButton.isEnabled = true
                             }
@@ -100,7 +103,13 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
                                 if (error.trackingRequired) {
                                     tracker.logException(action.error)
                                 }
-                                errorSnackbar(requireView(), error.message(requireContext(), R.string.error_description_assets_coins_send))
+                                errorSnackbar(
+                                    requireView(),
+                                    error.message(
+                                        requireContext(),
+                                        R.string.error_description_assets_coins_send
+                                    )
+                                )
                             }
                             is NavigateTo -> {
                                 findNavController().navigate(action.navDirections)
@@ -118,11 +127,41 @@ class SendAssetReviewFragment : BaseViewBindingFragment<FragmentSendAssetReviewB
             viewModel.updateAdvancedParams(safeTxNonce, safeTxGas)
         }
 
-        viewModel.loadTxEstimationData(
-            chain.chainId,
-            fromAddress,
-            toAddress,
-            BigDecimal(amount).times(BigDecimal.TEN.pow(selectedAsset.decimals)).toBigInteger()
+        if (ownerSelected() != null) {
+            viewModel.initiateTransfer(ownerSelected()!!, ownerSigned())
+            resetOwnerData()
+        } else {
+            viewModel.loadTxEstimationData(
+                chain.chainId,
+                fromAddress,
+                toAddress,
+                amount,
+                selectedAsset
+            )
+        }
+    }
+
+    private fun ownerSelected(): Solidity.Address? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT
+        )
+            ?.asEthereumAddress()
+    }
+
+    private fun ownerSigned(): String? {
+        return findNavController().currentBackStackEntry?.savedStateHandle?.get<String>(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT
+        )
+    }
+
+    private fun resetOwnerData() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            null
+        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+            null
         )
     }
 }

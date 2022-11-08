@@ -10,6 +10,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -69,7 +70,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -93,7 +94,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -113,7 +114,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, false)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.REJECTION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
