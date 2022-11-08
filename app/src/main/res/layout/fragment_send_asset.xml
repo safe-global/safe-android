@@ -38,6 +38,16 @@
             android:text="@string/coins_asset_send"
             tools:text="Send ETH" />
 
+        <TextView
+            android:id="@+id/next_button"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:enabled="false"
+            android:layout_marginEnd="24dp"
+            android:text="@string/coins_asset_send_review" />
+
     </LinearLayout>
 
     <TextView
