@@ -63,6 +63,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }.attach()
 
             sendButton.setOnClickListener {
+                tracker.logTransferSendClicked()
                 viewModel.activeSafe?.let {
                     if (it.readOnly) {
                         findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAddOwnerFirstFragment())
@@ -77,6 +78,7 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             }
 
             receiveButton.setOnClickListener {
+                tracker.logTransferReceiveClicked()
                 navigateToShareSafeDialog()
             }
         }

@@ -36,6 +36,7 @@ class AddOwnerFirstFragment : BaseViewBindingFragment<FragmentAddOwnerFirstBindi
                 findNavController().navigateUp()
             }
             addOwnerButton.setOnClickListener {
+                tracker.logTransferAddOwnerClicked()
                 findNavController().navigateUp()
                 findNavController().navigate(R.id.action_to_add_owner)
             }
