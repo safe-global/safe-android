@@ -277,6 +277,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeName.visible(false)
             readOnly.visible(false, View.INVISIBLE)
             safeAddress.text = getString(R.string.no_safes_loaded)
+            safeAddress.setOnClickListener(null)
             safeSelection.visible(false)
         }
 
