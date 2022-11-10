@@ -70,6 +70,18 @@ class Tracker internal constructor(
         )
     }
 
+    fun logTransferReceiveClicked() {
+        logEvent(Event.TRANSFER_RECEIVE_CLICKED, null)
+    }
+
+    fun logTransferSendClicked() {
+        logEvent(Event.TRANSFER_SEND_CLICKED, null)
+    }
+
+    fun logTransferAddOwnerClicked() {
+        logEvent(Event.TRANSFER_ADD_OWNER_CLICKED, null)
+    }
+
     fun logKeyGenerated() {
         logEvent(Event.KEY_GENERATED, null)
     }
@@ -180,6 +192,9 @@ class Tracker internal constructor(
     object Event {
         val SAFE_ADDED = "user_safe_added"
         val SAFE_REMOVED = "user_safe_removed"
+        val TRANSFER_RECEIVE_CLICKED = "user_select_receive_asset"
+        val TRANSFER_SEND_CLICKED = "user_select_send_asset"
+        val TRANSFER_ADD_OWNER_CLICKED = "user_select_add_owner_to_send_assets"
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
         val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
@@ -240,12 +255,12 @@ enum class ScreenId(val value: String) {
     CHAIN_LIST("screen_chain_list"),
     ASSETS_NO_SAFE("screen_assets_no_safe"),
     ASSETS_COINS("screen_assets_coins"),
-    ASSETS_COINS_TRANSFER_SELECT("screen_assets_coins_transfer_select"),
+    ASSETS_COINS_TRANSFER_SELECT("screen_select_asset"),
     ASSETS_COINS_TRANSFER("screen_asset_transfer"),
     ASSETS_COINS_TRANSFER_REVIEW("screen_review_asset_transfer"),
     ASSETS_COINS_TRANSFER_ADVANCED_PARAMS("screen_asset_transfer_advanced_params"),
     ASSETS_COINS_TRANSFER_SUCCESS("screen_asset_transfer_success"),
-    ASSETS_COINS_TRANSFER_ADD_OWNER("screen_add_owner_to_send_assets"),
+    ASSETS_COINS_TRANSFER_ADD_OWNER("screen_add_owner_to_send_funds"),
     ASSETS_COLLECTIBLES("screen_assets_collectibles"),
     ASSETS_COLLECTIBLES_DETAILS("screen_assets_collectibles_details"),
     OWNER_ADD_OPTIONS("screen_owner_options"),
