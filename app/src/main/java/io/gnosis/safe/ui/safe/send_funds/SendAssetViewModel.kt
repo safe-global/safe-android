@@ -47,7 +47,7 @@ class SendAssetViewModel
                             asset,
                             activeSafe!!.address.asEthereumAddressString(),
                             toAddress,
-                            amount.toString()
+                            amount.toPlainString()
                         )
                     )
                 )
