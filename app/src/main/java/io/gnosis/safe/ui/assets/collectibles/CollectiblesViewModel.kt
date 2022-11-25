@@ -37,12 +37,14 @@ class CollectiblesViewModel
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             if (safe != null) {
-                updateState {
-                    CollectiblesState(
-                        loading = !refreshing,
-                        refreshing = refreshing,
-                        viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
-                    )
+                if (!refreshing) {
+                    updateState {
+                        CollectiblesState(
+                            loading = !refreshing,
+                            refreshing = refreshing,
+                            viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
+                        )
+                    }
                 }
                 getCollectibles(safe).collectLatest {
                     updateState {
