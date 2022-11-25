@@ -7,7 +7,6 @@ import io.gnosis.data.models.SafeInfo
 import io.gnosis.data.models.assets.CoinBalances
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.models.transaction.*
-import pm.gnosis.model.Solidity
 import retrofit2.http.*
 import java.math.BigInteger
 import java.util.*
@@ -50,11 +49,14 @@ interface GatewayApi {
         @Body multisigTransactionRequest: MultisigTransactionRequest
     )
 
-    @GET("/v1/chains/{chainId}/safes/{safeAddress}/collectibles")
+    @GET("/v2/chains/{chainId}/safes/{safeAddress}/collectibles")
     suspend fun loadCollectibles(
         @Path("chainId") chainId: BigInteger,
         @Path("safeAddress") safeAddress: String
-    ): List<Collectible>
+    ): Page<Collectible>
+
+    @GET
+    suspend fun loadCollectiblesPage(@Url pageLink: String): Page<Collectible>
 
     @GET("/v1/chains/{chainId}/safes/{address}/transactions/history")
     suspend fun loadTransactionsHistory(
