@@ -16,7 +16,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.parseToBigInteger
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -31,7 +30,6 @@ class TokenRepositoryTest {
 
     private val moshi = dataMoshi
     private val balancesAdapter = moshi.adapter(CoinBalances::class.java)
-    private val collectiblesAdapter = moshi.adapter<List<Collectible>>(Types.newParameterizedType(List::class.java, Collectible::class.java))
 
     @Test
     fun `loadBalancesOf (transactionApi failure) should throw`() = runBlocking {
@@ -123,51 +121,6 @@ class TokenRepositoryTest {
 
         assertEquals("474804615".parseToBigInteger(), balances.items[2].balance)
         assertEquals("4.021".toBigDecimal(), balances.items[2].fiatBalance)
-    }
-
-    @Test
-    fun `loadCollectiblesOf (address) should return grouped list of collectibles`() = runBlocking {
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "Name", CHAIN_ID)
-        val jsonString: String = readResource("load_collectibles.json")
-        val collectibleDtos = collectiblesAdapter.fromJson(jsonString)!!
-
-        coEvery { gatewayApi.loadCollectibles(safeAddress = any(), chainId = CHAIN_ID) } returns collectibleDtos
-
-        val collectibles = tokenRepository.loadCollectiblesOf(safe)
-
-        assertEquals(7, collectibles.size)
-
-        assertEquals("Copernicus.20200210.212404", collectibles[0].tokenName)
-        assertEquals(null, collectibles[0].name)
-        assertEquals("0x7667A25a327ee97EEc7d5d69F846659238F3c078".asEthereumAddress(), collectibles[0].address)
-
-        assertEquals("CryptoKitties", collectibles[1].tokenName)
-        assertEquals("Aqua Leopard | 1264", collectibles[1].name)
-        assertEquals("0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF".asEthereumAddress(), collectibles[1].address)
-
-        assertEquals("CryptoKitties", collectibles[2].tokenName)
-        assertEquals("Kitty #1126", collectibles[2].name)
-        assertEquals("0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF".asEthereumAddress(), collectibles[2].address)
-
-        assertEquals("Ethereum Name Service", collectibles[3].tokenName)
-        assertEquals("safe1.eth", collectibles[3].name)
-        assertEquals("0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85".asEthereumAddress(), collectibles[3].address)
-
-        assertEquals("ProjectP", collectibles[4].tokenName)
-        assertEquals(null, collectibles[4].name)
-        assertEquals("0xFFadE30f03a17581362171982F95657C1306a68f".asEthereumAddress(), collectibles[4].address)
-
-        assertEquals("SpecialToken", collectibles[5].tokenName)
-        assertEquals("Luxury Home", collectibles[5].name)
-        assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[5].address)
-
-        assertEquals("SpecialToken", collectibles[6].tokenName)
-        assertEquals("", collectibles[6].name)
-        assertEquals("0xc885a55113De4DE859be93ee4A0B955fD7145947".asEthereumAddress(), collectibles[6].address)
-
-        coVerify {
-            gatewayApi.loadCollectibles(safeAddress = safe.address.asEthereumAddressChecksumString(), chainId = CHAIN_ID)
-        }
     }
 
     private fun buildBalance(index: Long) =

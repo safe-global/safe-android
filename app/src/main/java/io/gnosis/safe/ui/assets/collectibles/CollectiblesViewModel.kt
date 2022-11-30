@@ -1,18 +1,25 @@
 package io.gnosis.safe.ui.assets.collectibles
 
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TokenRepository
+import io.gnosis.safe.ui.assets.collectibles.paging.CollectiblePagingProvider
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.adapter.Adapter
+import io.gnosis.safe.ui.transactions.NoSafeSelected
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import pm.gnosis.model.Solidity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CollectiblesViewModel
 @Inject constructor(
-    private val tokenRepository: TokenRepository,
+    private val collectiblesPager: CollectiblePagingProvider,
     private val safeRepository: SafeRepository,
     appDispatchers: AppDispatchers
 ) : BaseStateViewModel<CollectiblesState>(appDispatchers) {
@@ -23,27 +30,33 @@ class CollectiblesViewModel
         }
     }
 
-    override fun initialState(): CollectiblesState = CollectiblesState(loading = false, refreshing = false, viewAction = null)
+    override fun initialState(): CollectiblesState =
+        CollectiblesState(loading = false, refreshing = false, viewAction = null)
 
     fun load(refreshing: Boolean = false) {
         safeLaunch {
             val safe = safeRepository.getActiveSafe()
             if (safe != null) {
-                updateState {
-                    CollectiblesState(
-                        loading = !refreshing,
-                        refreshing = refreshing,
-                        viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
-                    )
+                if (!refreshing) {
+                    updateState {
+                        CollectiblesState(
+                            loading = !refreshing,
+                            refreshing = refreshing,
+                            viewAction = if (refreshing) null else ViewAction.UpdateActiveSafe(safe)
+                        )
+                    }
                 }
-                val collectibles = getCollectibles(safe)
-                updateState {
-                    CollectiblesState(
-                        loading = false,
-                        refreshing = false,
-                        viewAction = if (collectibles.isEmpty()) ViewAction.ShowEmptyState else UpdateCollectibles(Adapter.Data(null, collectibles))
-                    )
+                getCollectibles(safe).collectLatest {
+                    updateState {
+                        CollectiblesState(
+                            loading = false,
+                            refreshing = false,
+                            viewAction = UpdateCollectibles(it)
+                        )
+                    }
                 }
+            } else {
+                updateState(forceViewAction = true) { CollectiblesState(loading = false, refreshing = false, viewAction = NoSafeSelected) }
             }
         }
     }
@@ -52,32 +65,38 @@ class CollectiblesViewModel
         return (state.value as CollectiblesState).loading
     }
 
-    private suspend fun getCollectibles(safe: Safe): List<CollectibleViewData> {
+    private suspend fun getCollectibles(safe: Safe): Flow<PagingData<CollectibleViewData>> {
+        val collectibleItems: Flow<PagingData<CollectibleViewData>> =
+            collectiblesPager.getCollectiblesStream(safe)
+                .map { pagingData ->
+                    pagingData
+                        .map {
+                            CollectibleViewData.CollectibleItem(it, safe.chain)
+                        }
+                        .insertSeparators { before, after ->
+                            when {
+                                // the end of the list
+                                after == null -> null
+                                // first element
+                                before == null ->
+                                    CollectibleViewData.NftHeader(
+                                        after.collectible.tokenName,
+                                        after.collectible.logoUri,
+                                        true
+                                    )
+                                before.collectible.address != after.collectible.address ->
+                                    CollectibleViewData.NftHeader(
+                                        after.collectible.tokenName,
+                                        after.collectible.logoUri,
+                                        false
+                                    )
+                                else -> null
+                            }
+                        }
+                }
+                .cachedIn(viewModelScope)
 
-        val collectiblesViewData = mutableListOf<CollectibleViewData>()
-        val collectibles = tokenRepository.loadCollectiblesOf(safe)
-
-        var currentNft: Solidity.Address? = null
-
-        collectibles.forEach {
-
-            if (currentNft != it.address) {
-                collectiblesViewData.add(
-                    CollectibleViewData.NftHeader(
-                        it.tokenName,
-                        it.logoUri,
-                        collectiblesViewData.isEmpty()
-                    )
-                )
-                currentNft = it.address
-            }
-
-            collectiblesViewData.add(
-                CollectibleViewData.CollectibleItem(it, safe.chain)
-            )
-        }
-
-        return collectiblesViewData
+        return collectibleItems
     }
 }
 
@@ -88,5 +107,5 @@ data class CollectiblesState(
 ) : BaseStateViewModel.State
 
 data class UpdateCollectibles(
-    val collectibles: Adapter.Data<CollectibleViewData>
+    val collectibles: PagingData<CollectibleViewData>
 ) : BaseStateViewModel.ViewAction
