@@ -1,7 +1,7 @@
 package io.gnosis.safe.notifications
 
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
@@ -181,12 +181,8 @@ class NotificationRepository(
 
     private suspend fun resetFirebaseToken() {
         kotlin.runCatching {
-            with(FirebaseInstanceId.getInstance()) {
-                deleteInstanceId()
-                getCloudMessagingToken()?.let { token ->
-                    deleteToken(token, INSTANCE_ID_SCOPE)
-                }
-            }
+            FirebaseInstallations.getInstance().delete()
+            FirebaseMessaging.getInstance().deleteToken()
         }
     }
 
@@ -200,18 +196,18 @@ class NotificationRepository(
     }
 
     private suspend fun getCloudMessagingToken() = suspendCoroutine<String?> { cont ->
-        FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Timber.e(task.exception)
-                    cont.resumeWithException(task.exception!!)
-                } else {
-                    // Get new Instance ID token
-                    val token = task.result?.token
-                    Timber.d("Firebase token: $token")
-                    cont.resume(token)
-                }
+
+        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.e(task.exception)
+                cont.resumeWithException(task.exception!!)
+            } else {
+                // Get new Instance ID token
+                val token = task.result
+                Timber.d("Firebase token: $token")
+                cont.resume(token)
             }
+        }
     }
 
     private fun generateUUID(): String {

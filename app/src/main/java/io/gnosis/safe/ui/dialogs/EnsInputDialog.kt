@@ -62,7 +62,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             backButton.setOnClickListener { dismiss() }
-            confirmButton.setOnClickListener { onClick.offer(Unit) }
+            confirmButton.setOnClickListener { onClick.trySend(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
             chainRibbon.text = selectedChain.name
             chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
@@ -91,7 +91,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.confirmButton.isEnabled = true
                     binding.successViews.visible(true)
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = false
-                    onNewAddress.offer(address)
+                    onNewAddress.trySend(address)
                     addressHelper.populateAddressInfo(
                         binding.dialogEnsInputAddress,
                         binding.dialogEnsInputAddressImage,
@@ -111,7 +111,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
 
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = true
 
-                    onNewAddress.offer(null)
+                    onNewAddress.trySend(null)
                 }
         }
     }
