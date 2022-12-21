@@ -35,11 +35,11 @@ subprojects {
     afterEvaluate { project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 32
+                compileSdkVersion 33
 
                 defaultConfig {
                     minSdkVersion 21
-                    targetSdkVersion 32
+                    targetSdkVersion 33
                 }
                 lintOptions {
                     abortOnError false

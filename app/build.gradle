@@ -168,7 +168,7 @@ dependencies {
     implementation "androidx.multidex:multidex:$versions.multidex"
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle_extensions"
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.androidx_navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.androidx_navigation"
@@ -215,7 +215,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
-
 
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:$versions.firebase_bom")

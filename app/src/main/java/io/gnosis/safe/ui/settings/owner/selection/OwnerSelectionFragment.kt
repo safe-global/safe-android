@@ -109,16 +109,16 @@ class OwnerSelectionFragment : BaseViewBindingFragment<FragmentOwnerSelectionBin
                                 visualFeedback.duration = 100
                                 visualFeedback.setListener(object : Animator.AnimatorListener {
 
-                                    override fun onAnimationRepeat(animation: Animator?) {}
+                                    override fun onAnimationRepeat(animation: Animator) {}
 
-                                    override fun onAnimationEnd(animation: Animator?) {
+                                    override fun onAnimationEnd(animation: Animator) {
                                         adapter.notifyDataSetChanged()
                                         showMoreOwners.alpha = 1.0f
                                     }
 
-                                    override fun onAnimationCancel(animation: Animator?) {}
+                                    override fun onAnimationCancel(animation: Animator) {}
 
-                                    override fun onAnimationStart(animation: Animator?) {}
+                                    override fun onAnimationStart(animation: Animator) {}
                                 })
                                 visualFeedback.start()
                                 showMoreOwners.text = getString(R.string.signing_owner_selection_more)
