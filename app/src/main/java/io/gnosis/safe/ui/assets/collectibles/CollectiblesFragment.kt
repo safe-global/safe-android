@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentCollectiblesBinding
@@ -33,6 +34,8 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
     private val adapter by lazy { CollectibleViewDataListAdapter(CollectiblesViewHolderFactory()) }
 
     override fun screenId() = ScreenId.ASSETS_COLLECTIBLES
+
+    private var reload: Boolean = true
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -76,6 +79,15 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
                 }
             }
         }
+
+        binding.collectibles.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    val firstVisibleItem = (binding.collectibles.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    reload = firstVisibleItem <= 1
+                }
+            }
+        })
 
         with(binding.collectibles) {
             adapter = this@CollectiblesFragment.adapter.withLoadStateHeaderAndFooter(
@@ -128,7 +140,7 @@ class CollectiblesFragment : BaseViewBindingFragment<FragmentCollectiblesBinding
 
     override fun onResume() {
         super.onResume()
-        if (!viewModel.isLoading()) {
+        if (!viewModel.isLoading() && reload) {
             viewModel.load(true)
         }
     }
