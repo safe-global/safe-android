@@ -417,7 +417,8 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     }
 
     private fun showWhatsNew() {
-        navController.navigate(R.id.whatsNewDialog)
+        //TODO: uncomment if whats new screen should be shown
+        //navController.navigate(R.id.whatsNewDialog)
     }
 
     private fun navigateToShareSafeDialog() {
