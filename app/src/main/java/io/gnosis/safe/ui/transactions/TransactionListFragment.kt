@@ -68,7 +68,6 @@ class TransactionListFragment : BaseViewBindingFragment<FragmentTransactionListB
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentTransactionListBinding =
         FragmentTransactionListBinding.inflate(inflater, container, false)
 
-    @ExperimentalPagingApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

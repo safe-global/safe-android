@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package io.gnosis.safe.ui.transactions
 
 import android.content.res.Resources
@@ -137,7 +139,6 @@ class TransferViewHolder(private val viewBinding: ItemTxTransferBinding) :
 class TransferQueuedViewHolder(private val viewBinding: ItemTxQueuedTransferBinding) :
     BaseTransactionViewHolder<TransactionView.TransferQueued>(viewBinding) {
 
-    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.TransferQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -192,7 +193,6 @@ class SettingsChangeViewHolder(private val viewBinding: ItemTxSettingsChangeBind
 class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettingsChangeBinding) :
     BaseTransactionViewHolder<TransactionView.SettingsChangeQueued>(viewBinding) {
 
-    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.SettingsChangeQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -218,7 +218,6 @@ class SettingsChangeQueuedViewHolder(private val viewBinding: ItemTxQueuedSettin
 class ContractInteractionQueuedViewHolder(private val viewBinding: ItemTxQueuedContractInteractionBinding) :
     BaseTransactionViewHolder<TransactionView.CustomTransactionQueued>(viewBinding) {
 
-    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.CustomTransactionQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme
@@ -328,7 +327,6 @@ private fun Resources.getAction(methodName: String?, actionCount: Int?): String?
 class RejectionQueuedViewHolder(private val viewBinding: ItemTxQueuedRejectionBinding) :
     BaseTransactionViewHolder<TransactionView.RejectionTransactionQueued>(viewBinding) {
 
-    @ExperimentalTime
     override fun bind(viewTransfer: TransactionView.RejectionTransactionQueued, payloads: List<Any>) {
         val resources = viewBinding.root.context.resources
         val theme = viewBinding.root.context.theme

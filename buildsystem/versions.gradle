@@ -5,7 +5,7 @@ ext {
             android_tools                    : '7.2.2',
             firebase_crashlytics_gradle      : '2.3.0',
             google_services                  : '4.3.3',
-            kotlin                           : '1.4.32',
+            kotlin                           : '1.6.0',
             jacoco                           : '0.8.8',
 
             // Runtime dependencies
@@ -25,7 +25,7 @@ ext {
             bivrost                         : '0.8.0',
             bouncycastle                    : '1.61',
             dagger                          : '2.38.1',
-            firebase_bom                    : '26.8.0',
+            firebase_bom                    : '31.1.1',
             floating_action_button          : '1.6.4',
             geth                            : '1.7.1',
             kethereum                       : '0.79.5',
@@ -34,7 +34,7 @@ ext {
             leak_canary                     : '2.4',
             material                        : '1.1.0',
             material_progressbar            : '1.4.2',
-            moshi                           : '1.9.3',
+            moshi                           : '1.13.0',
             multidex                        : '2.0.1',
             okhttp                          : '4.9.0',
             okio                            : '2.4.1',

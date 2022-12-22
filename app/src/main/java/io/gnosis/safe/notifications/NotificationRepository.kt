@@ -1,6 +1,7 @@
 package io.gnosis.safe.notifications
 
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessaging.INSTANCE_ID_SCOPE
 import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
@@ -11,6 +12,7 @@ import io.gnosis.safe.Error
 import io.gnosis.safe.notifications.models.PushNotification
 import io.gnosis.safe.notifications.models.Registration
 import io.gnosis.safe.toError
+import io.intercom.android.sdk.state.InboxState
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -181,11 +183,8 @@ class NotificationRepository(
 
     private suspend fun resetFirebaseToken() {
         kotlin.runCatching {
-            with(FirebaseInstanceId.getInstance()) {
-                deleteInstanceId()
-                getCloudMessagingToken()?.let { token ->
-                    deleteToken(token, INSTANCE_ID_SCOPE)
-                }
+            with(FirebaseMessaging.getInstance()) {
+                deleteToken()
             }
         }
     }
@@ -200,14 +199,14 @@ class NotificationRepository(
     }
 
     private suspend fun getCloudMessagingToken() = suspendCoroutine<String?> { cont ->
-        FirebaseInstanceId.getInstance().instanceId
+        FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Timber.e(task.exception)
                     cont.resumeWithException(task.exception!!)
                 } else {
                     // Get new Instance ID token
-                    val token = task.result?.token
+                    val token = task.result
                     Timber.d("Firebase token: $token")
                     cont.resume(token)
                 }

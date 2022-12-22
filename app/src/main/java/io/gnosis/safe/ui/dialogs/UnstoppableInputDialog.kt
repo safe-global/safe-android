@@ -62,7 +62,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             backButton.setOnClickListener { dismiss() }
-            confirmButton.setOnClickListener { onClick.offer(Unit) }
+            confirmButton.setOnClickListener { onClick.trySend(Unit).isSuccess }
             dialogUnstoppableInputDomain.showKeyboardForView()
             chainRibbon.text = selectedChain.name
             chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
@@ -92,7 +92,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
                         confirmButton.isEnabled = true
                         successViews.visible(true)
                         dialogUnstoppableDomainLayout.isErrorEnabled = false
-                        onNewAddress.offer(address)
+                        onNewAddress.trySend(address).isSuccess
                         addressHelper.populateAddressInfo(
                             dialogUnstoppableInputAddress,
                             dialogEnsInputAddressImage,
@@ -119,7 +119,7 @@ class UnstoppableInputDialog : BaseViewBindingDialogFragment<DialogUnstoppableIn
 
                         dialogUnstoppableDomainLayout.isErrorEnabled = true
 
-                        onNewAddress.offer(null)
+                        onNewAddress.trySend(null).isSuccess
                     }
                 }
         }
