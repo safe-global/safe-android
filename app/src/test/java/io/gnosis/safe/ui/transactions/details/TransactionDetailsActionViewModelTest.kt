@@ -30,8 +30,7 @@ class TransactionDetailsActionViewModelTest {
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
 
-    private val viewModel =
-        TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
+    private lateinit var viewModel: TransactionDetailsActionViewModel
 
 
     @Test
@@ -52,6 +51,7 @@ class TransactionDetailsActionViewModelTest {
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel = TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
@@ -91,6 +91,7 @@ class TransactionDetailsActionViewModelTest {
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel = TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
@@ -133,6 +134,7 @@ class TransactionDetailsActionViewModelTest {
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel = TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
