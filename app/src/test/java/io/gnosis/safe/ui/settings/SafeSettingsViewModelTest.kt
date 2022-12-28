@@ -7,7 +7,10 @@ import io.gnosis.data.models.VersionState
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.*
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
