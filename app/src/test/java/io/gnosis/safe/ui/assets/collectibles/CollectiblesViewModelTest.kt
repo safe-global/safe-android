@@ -22,7 +22,7 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class CollectiblesViewModelTest {
-    
+
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
