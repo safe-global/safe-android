@@ -34,4 +34,4 @@ echo "Execute UI tests"
 ./gradlew jacocoTestReport --stacktrace
 
 echo Generating report form coverage result
-bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'
+bash <(curl -s https://codecov.io/bash) -f '*report.xml'

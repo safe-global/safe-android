@@ -41,7 +41,7 @@ def setupKotlinReporting() {
             csv.getRequired().set(false)
             xml.getRequired().set(true)
             html.getRequired().set(true)
-            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
+            html.getOutputLocation().set(file("${buildDir}/reports/coverage"))
         }
     }
 }
@@ -64,7 +64,7 @@ def setupAndroidReporting() {
             csv.getRequired().set(false)
             xml.getRequired().set(true)
             html.getRequired().set(true)
-            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
+            html.getOutputLocation().set(file("${buildDir}/reports/coverage"))
         }
         // Change as needed
         def testCoverageFileFilter = [
