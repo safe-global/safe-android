@@ -17,7 +17,8 @@ import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.viewdata.toTransactionDetailsViewData
 import io.mockk.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -37,34 +38,57 @@ class TransactionDetailsViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel =
-        TransactionDetailsViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+    private lateinit var viewModel: TransactionDetailsViewModel
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     @Test
-    fun `loadDetails (transactionRepository failure) should emit error`() = runBlockingTest {
-        val throwable = Throwable()
-        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+    fun `loadDetails (transactionRepository failure) should emit error`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val throwable = Throwable()
+            val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
 
-        coEvery { transactionRepository.getTransactionDetails(any(), any()) } throws throwable
-        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
+            coEvery { transactionRepository.getTransactionDetails(any(), any()) } throws throwable
+            coEvery { safeRepository.getActiveSafe() } returns Safe(
+                someAddress,
+                "safe_name",
+                CHAIN_ID
+            )
 
-        viewModel.loadDetails("tx_details_id")
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
 
-        with(viewModel.state.test().values()) {
-            assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(throwable))
+            viewModel.loadDetails("tx_details_id")
+
+            with(viewModel.state.test().values()) {
+                assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(throwable))
+            }
+            coVerify(exactly = 1) {
+                transactionRepository.getTransactionDetails(
+                    CHAIN_ID,
+                    "tx_details_id"
+                )
+            }
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails(CHAIN_ID, "tx_details_id") }
-    }
 
     @Test
-    fun `loadDetails (successful) should emit txDetails`() = runBlockingTest {
+    fun `loadDetails (successful) should emit txDetails`() = runTest(UnconfinedTestDispatcher()) {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
 
-        coEvery { transactionRepository.getTransactionDetails(any(), any()) } returns transactionDetails
+        coEvery {
+            transactionRepository.getTransactionDetails(
+                any(),
+                any()
+            )
+        } returns transactionDetails
         coEvery { safeRepository.getSafes() } returns emptyList()
         coEvery { credentialsRepository.owners() } returns listOf()
         coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name", CHAIN_ID)
@@ -76,274 +100,459 @@ class TransactionDetailsViewModelTest {
                 hasOwnerKey = false
             )
 
+        viewModel = TransactionDetailsViewModel(
+            transactionRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            tracker,
+            appDispatchers
+        )
+
         viewModel.loadDetails("tx_details_id")
 
         with(viewModel.state.test().values()) {
-            assertEquals(UpdateDetails(txDetails = expectedTransactionInfoViewData), this[0].viewAction)
+            assertEquals(
+                UpdateDetails(txDetails = expectedTransactionInfoViewData),
+                this[0].viewAction
+            )
         }
-        coVerify(exactly = 1) { transactionRepository.getTransactionDetails(CHAIN_ID, "tx_details_id") }
+        coVerify(exactly = 1) {
+            transactionRepository.getTransactionDetails(
+                CHAIN_ID,
+                "tx_details_id"
+            )
+        }
     }
 
     @Test
-    fun `isAwaitingOwnerConfirmation (wrong status) should return false`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_EXECUTION)
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
+    fun `isAwaitingOwnerConfirmation (wrong status) should return false`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+                .copy(txStatus = TransactionStatus.AWAITING_EXECUTION)
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
 
-        val actual = viewModel.isAwaitingOwnerConfirmation(
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-            transactionDetails.txStatus,
-            listOf()
-        )
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
 
-        assertEquals(false, actual)
-    }
+            val actual = viewModel.isAwaitingOwnerConfirmation(
+                transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
+                transactionDetails.txStatus,
+                listOf()
+            )
 
-    @Test
-    fun `isAwaitingOwnerConfirmation (no owner credential) should return false`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        coEvery { credentialsRepository.ownerCount() } returns 0
-
-        val actual = viewModel.isAwaitingOwnerConfirmation(
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-            transactionDetails.txStatus,
-            listOf()
-        )
-
-        assertEquals(false, actual)
-    }
+            assertEquals(false, actual)
+        }
 
     @Test
-    fun `isAwaitingOwnerConfirmation (owner is not signer) should return false`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x1".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns owners
+    fun `isAwaitingOwnerConfirmation (no owner credential) should return false`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+                .copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            coEvery { credentialsRepository.ownerCount() } returns 0
 
-        val actual = viewModel.isAwaitingOwnerConfirmation(
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-            transactionDetails.txStatus,
-            owners
-        )
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
 
-        assertEquals(false, actual)
-    }
+            val actual = viewModel.isAwaitingOwnerConfirmation(
+                transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
+                transactionDetails.txStatus,
+                listOf()
+            )
 
-    @Test
-    fun `isAwaitingOwnerConfirmation (owner is signer but has already signed) should return false`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns owners
-
-        val actual = viewModel.isAwaitingOwnerConfirmation(
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-            transactionDetails.txStatus,
-            owners
-        )
-
-        assertEquals(false, actual)
-    }
+            assertEquals(false, actual)
+        }
 
     @Test
-    fun `isAwaitingOwnerConfirmation (successful) should return false`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json").copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val owners = listOf(Owner("0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns owners
+    fun `isAwaitingOwnerConfirmation (owner is not signer) should return false`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+                .copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val owners = listOf(Owner("0x1".asEthereumAddress()!!, null, Owner.Type.IMPORTED, null))
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns owners
 
-        val actual = viewModel.isAwaitingOwnerConfirmation(
-            transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
-            transactionDetails.txStatus,
-            owners
-        )
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
 
-        assertEquals(true, actual)
-    }
+            val actual = viewModel.isAwaitingOwnerConfirmation(
+                transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
+                transactionDetails.txStatus,
+                owners
+            )
+
+            assertEquals(false, actual)
+        }
 
     @Test
-    fun `submitConfirmation (invalid safeTxHash) emits error MismatchingSafeTxHash`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val corruptedTransactionDetails = transactionDetails.copy(
-            detailedExecutionInfo = (transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).copy(
-                nonce = BigInteger.valueOf(
-                    -1
+    fun `isAwaitingOwnerConfirmation (owner is signer but has already signed) should return false`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+                .copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val owners = listOf(
+                Owner(
+                    "0x65F8236309e5A99Ff0d129d04E486EBCE20DC7B0".asEthereumAddress()!!,
+                    null,
+                    Owner.Type.IMPORTED,
+                    null
                 )
             )
-        )
-        coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
-        viewModel.txDetails = corruptedTransactionDetails
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns owners
 
-        viewModel.submitConfirmation(corruptedTransactionDetails, "0x00".asEthereumAddress()!!)
-
-        with(viewModel.state.test().values()) {
-            assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MismatchingSafeTxHash))
-        }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
-    }
-
-    @Test
-    fun `submitConfirmation (no owner credentials) emits error MissingOwnerCredentials`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        coEvery { safeRepository.getActiveSafe() } returns Safe("0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!, "safe_name")
-        coEvery { credentialsRepository.ownerCount() } returns 0
-        coEvery { credentialsRepository.owners() } returns listOf()
-        viewModel.txDetails = transactionDetails
-
-        viewModel.submitConfirmation(transactionDetails, "0x00".asEthereumAddress()!!)
-
-        with(viewModel.state.test().values()) {
-            assertEquals(this[0].viewAction, BaseStateViewModel.ViewAction.ShowError(MissingOwnerCredential))
-        }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
-        coVerify(exactly = 1) { credentialsRepository.ownerCount() }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
-    }
-
-    @Test
-    fun `submitConfirmation (transactionRepository Failure, sign) emits error`() = runBlockingTest {
-        val throwable = Throwable()
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
-        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
-        coEvery { credentialsRepository.signWithOwner(any(), any()) } throws throwable
-        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns listOf(owner)
-        coEvery { credentialsRepository.owner(someAddress) } returns owner
-        viewModel.txDetails = transactionDetails
-
-        viewModel.submitConfirmation(transactionDetails, someAddress)
-
-        with(viewModel.state.test().values()) {
-            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
-            assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
-        }
-        coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
-        coVerify(exactly = 1) {
-            credentialsRepository.signWithOwner(
-                owner,
-                "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
             )
-        }
-        coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
-    }
 
-
-    @Test
-    fun `submitConfirmation (transactionRepository Failure, gateway) emits error`() = runBlockingTest {
-        val throwable = Throwable()
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val ownerAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
-        coEvery { safeRepository.getActiveSafe() } returns Safe(ownerAddress, "safe_name")
-        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
-        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } throws throwable
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns listOf(owner)
-        coEvery { credentialsRepository.owner(ownerAddress) } returns owner
-        viewModel.txDetails = transactionDetails
-
-        viewModel.submitConfirmation(transactionDetails, ownerAddress)
-
-        with(viewModel.state.test().values()) {
-            assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
-            assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
-        }
-        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
-        coVerify(exactly = 1) {
-            credentialsRepository.signWithOwner(
-                owner,
-                "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+            val actual = viewModel.isAwaitingOwnerConfirmation(
+                transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
+                transactionDetails.txStatus,
+                owners
             )
+
+            assertEquals(false, actual)
         }
-        coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 1) { credentialsRepository.owner(ownerAddress) }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
-    }
 
     @Test
-    fun `submitConfirmation (successful) emits ConfirmationSubmitted`() = runBlockingTest {
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
-        val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
-        coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
-        coEvery { safeRepository.getSafes() } returns emptyList()
-        coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
-        coEvery { transactionRepository.submitConfirmation(any(), any(), any()) } returns transactionDetails
-        coEvery { credentialsRepository.ownerCount() } returns 1
-        coEvery { credentialsRepository.owners() } returns listOf(owner)
-        coEvery { credentialsRepository.owner(someAddress) } returns owner
-        coEvery { tracker.logTransactionConfirmed(any()) } just Runs
-        viewModel.txDetails = transactionDetails
+    fun `isAwaitingOwnerConfirmation (successful) should return false`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+                .copy(txStatus = TransactionStatus.AWAITING_CONFIRMATIONS)
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val owners = listOf(
+                Owner(
+                    "0x8bc9Ab35a2A8b20ad8c23410C61db69F2e5d8164".asEthereumAddress()!!,
+                    null,
+                    Owner.Type.IMPORTED,
+                    null
+                )
+            )
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns owners
 
-        viewModel.submitConfirmation(transactionDetails, someAddress)
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
 
-        with(viewModel.state.test().values()) {
-            assertEquals(
-                ConfirmationSubmitted(
-                    txDetails = transactionDetails.toTransactionDetailsViewData(
-                        safes = emptyList(),
-                        canSign = false,
-                        hasOwnerKey = false,
-                        owners = listOf(owner)
+            val actual = viewModel.isAwaitingOwnerConfirmation(
+                transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails,
+                transactionDetails.txStatus,
+                owners
+            )
+
+            assertEquals(true, actual)
+        }
+
+    @Test
+    fun `submitConfirmation (invalid safeTxHash) emits error MismatchingSafeTxHash`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val corruptedTransactionDetails = transactionDetails.copy(
+                detailedExecutionInfo = (transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails).copy(
+                    nonce = BigInteger.valueOf(
+                        -1
                     )
-                ), this[0].viewAction
+                )
             )
-        }
-        coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
-        coVerify(exactly = 1) {
-            credentialsRepository.signWithOwner(
-                owner,
-                "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+            coEvery { safeRepository.getActiveSafe() } returns Safe(
+                "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+                "safe_name"
             )
+
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
+
+            viewModel.txDetails = corruptedTransactionDetails
+
+            viewModel.submitConfirmation(corruptedTransactionDetails, "0x00".asEthereumAddress()!!)
+
+            with(viewModel.state.test().values()) {
+                assertEquals(
+                    this[0].viewAction,
+                    BaseStateViewModel.ViewAction.ShowError(MismatchingSafeTxHash)
+                )
+            }
+            coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
         }
-        coVerify(exactly = 1) { credentialsRepository.owners() }
-        coVerify(exactly = 1) { safeRepository.getActiveSafe() }
-        coVerify(exactly = 1) { tracker.logTransactionConfirmed(any()) }
-    }
+
+    @Test
+    fun `submitConfirmation (no owner credentials) emits error MissingOwnerCredentials`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            coEvery { safeRepository.getActiveSafe() } returns Safe(
+                "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!,
+                "safe_name"
+            )
+            coEvery { credentialsRepository.ownerCount() } returns 0
+            coEvery { credentialsRepository.owners() } returns listOf()
+
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
+
+            viewModel.txDetails = transactionDetails
+
+            viewModel.submitConfirmation(transactionDetails, "0x00".asEthereumAddress()!!)
+
+            with(viewModel.state.test().values()) {
+                assertEquals(
+                    this[0].viewAction,
+                    BaseStateViewModel.ViewAction.ShowError(MissingOwnerCredential)
+                )
+            }
+            coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
+            coVerify(exactly = 1) { credentialsRepository.ownerCount() }
+            coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        }
+
+    @Test
+    fun `submitConfirmation (transactionRepository Failure, sign) emits error`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val throwable = Throwable()
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+            val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
+            coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
+            coEvery { credentialsRepository.signWithOwner(any(), any()) } throws throwable
+            coEvery {
+                transactionRepository.submitConfirmation(
+                    any(),
+                    any(),
+                    any()
+                )
+            } throws throwable
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns listOf(owner)
+            coEvery { credentialsRepository.owner(someAddress) } returns owner
+
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
+
+            viewModel.txDetails = transactionDetails
+
+            viewModel.submitConfirmation(transactionDetails, someAddress)
+
+            with(viewModel.state.test().values()) {
+                assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
+                assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
+            }
+            coVerify(exactly = 0) { transactionRepository.submitConfirmation(any(), any(), any()) }
+            coVerify(exactly = 1) {
+                credentialsRepository.signWithOwner(
+                    owner,
+                    "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+                )
+            }
+            coVerify(exactly = 1) { credentialsRepository.owners() }
+            coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+        }
 
 
     @Test
-    fun `startConfirmationFlow should emit NavigateTo with SigningOwnerSelectionFragment`() = runBlockingTest {
-        val testObserver = TestLiveDataObserver<TransactionDetailsViewState>()
-        val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
-        val transactionDetails = toTransactionDetails(transactionDetailsDto)
-        viewModel.txDetails = transactionDetails
-        viewModel.state.observeForever(testObserver)
+    fun `submitConfirmation (transactionRepository Failure, gateway) emits error`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val throwable = Throwable()
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val ownerAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+            val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
+            coEvery { safeRepository.getActiveSafe() } returns Safe(ownerAddress, "safe_name")
+            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+            coEvery {
+                transactionRepository.submitConfirmation(
+                    any(),
+                    any(),
+                    any()
+                )
+            } throws throwable
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns listOf(owner)
+            coEvery { credentialsRepository.owner(ownerAddress) } returns owner
 
-        viewModel.startConfirmationFlow()
-
-        testObserver.assertValueCount(3)
-        with(testObserver.values()[1]) {
-            assertEquals(
-                BaseStateViewModel.ViewAction.NavigateTo(
-                    TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
-                        missingSigners = listOf(
-                            "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
-                            "0xf2cea96575d6b10f51d9af3b10e3e4e5738aa6bd"
-                        ).toTypedArray(),
-                        signingMode = SigningMode.CONFIRMATION,
-                        safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
-                    )
-                ).toString(), viewAction.toString()
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
             )
+
+            viewModel.txDetails = transactionDetails
+
+            viewModel.submitConfirmation(transactionDetails, ownerAddress)
+
+            with(viewModel.state.test().values()) {
+                assertTrue(this[0].viewAction is BaseStateViewModel.ViewAction.ShowError)
+                assertTrue((this[0].viewAction as BaseStateViewModel.ViewAction.ShowError).error is TxConfirmationFailed)
+            }
+            coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
+            coVerify(exactly = 1) {
+                credentialsRepository.signWithOwner(
+                    owner,
+                    "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+                )
+            }
+            coVerify(exactly = 1) { credentialsRepository.owners() }
+            coVerify(exactly = 1) { credentialsRepository.owner(ownerAddress) }
+            coVerify(exactly = 1) { safeRepository.getActiveSafe() }
         }
-    }
+
+    @Test
+    fun `submitConfirmation (successful) emits ConfirmationSubmitted`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+            val someAddress = "0x1230B3d59858296A31053C1b8562Ecf89A2f888b".asEthereumAddress()!!
+            val owner = Owner(someAddress, null, Owner.Type.IMPORTED, null)
+            coEvery { safeRepository.getActiveSafe() } returns Safe(someAddress, "safe_name")
+            coEvery { safeRepository.getSafes() } returns emptyList()
+            coEvery { credentialsRepository.signWithOwner(any(), any()) } returns ""
+            coEvery {
+                transactionRepository.submitConfirmation(
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns transactionDetails
+            coEvery { credentialsRepository.ownerCount() } returns 1
+            coEvery { credentialsRepository.owners() } returns listOf(owner)
+            coEvery { credentialsRepository.owner(someAddress) } returns owner
+            coEvery { tracker.logTransactionConfirmed(any()) } just Runs
+
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
+
+            viewModel.txDetails = transactionDetails
+
+            viewModel.submitConfirmation(transactionDetails, someAddress)
+
+            with(viewModel.state.test().values()) {
+                assertEquals(
+                    ConfirmationSubmitted(
+                        txDetails = transactionDetails.toTransactionDetailsViewData(
+                            safes = emptyList(),
+                            canSign = false,
+                            hasOwnerKey = false,
+                            owners = listOf(owner)
+                        )
+                    ), this[0].viewAction
+                )
+            }
+            coVerify(exactly = 1) { transactionRepository.submitConfirmation(any(), any(), any()) }
+            coVerify(exactly = 1) {
+                credentialsRepository.signWithOwner(
+                    owner,
+                    "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67".hexToByteArray()
+                )
+            }
+            coVerify(exactly = 1) { credentialsRepository.owners() }
+            coVerify(exactly = 1) { safeRepository.getActiveSafe() }
+            coVerify(exactly = 1) { tracker.logTransactionConfirmed(any()) }
+        }
+
+    @Test
+    fun `startConfirmationFlow should emit NavigateTo with SigningOwnerSelectionFragment`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val testObserver = TestLiveDataObserver<TransactionDetailsViewState>()
+            val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
+            val transactionDetails = toTransactionDetails(transactionDetailsDto)
+
+            viewModel = TransactionDetailsViewModel(
+                transactionRepository,
+                safeRepository,
+                credentialsRepository,
+                settingsHandler,
+                tracker,
+                appDispatchers
+            )
+            viewModel.txDetails = transactionDetails
+            viewModel.state.observeForever(testObserver)
+
+            viewModel.startConfirmationFlow()
+
+            testObserver.assertValueCount(3)
+            with(testObserver.values()[1]) {
+                assertEquals(
+                    BaseStateViewModel.ViewAction.NavigateTo(
+                        TransactionDetailsFragmentDirections.actionTransactionDetailsFragmentToSigningOwnerSelectionFragment(
+                            missingSigners = listOf(
+                                "0x8bc9ab35a2a8b20ad8c23410c61db69f2e5d8164",
+                                "0xf2cea96575d6b10f51d9af3b10e3e4e5738aa6bd"
+                            ).toTypedArray(),
+                            signingMode = SigningMode.CONFIRMATION,
+                            safeTxHash = "0xb3bb5fe5221dd17b3fe68388c115c73db01a1528cf351f9de4ec85f7f8182a67"
+                        )
+                    ).toString(), viewAction.toString()
+                )
+            }
+        }
 
     private suspend fun toTransactionDetails(transactionDetailsDto: TransactionDetails): TransactionDetails {
         val mockGatewayApi = mockk<GatewayApi>().apply {
-            coEvery { loadTransactionDetails(transactionId = any(), chainId = any()) } returns transactionDetailsDto
+            coEvery {
+                loadTransactionDetails(
+                    transactionId = any(),
+                    chainId = any()
+                )
+            } returns transactionDetailsDto
         }
         return TransactionRepository(mockGatewayApi).getTransactionDetails(Chain.ID_MAINNET, "txId")
     }
