@@ -41,7 +41,7 @@ def setupKotlinReporting() {
             csv.getRequired().set(false)
             xml.getRequired().set(true)
             html.getRequired().set(true)
-            html.getOutputLocation().set(file("${buildDir}/reports/coverage"))
+            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
         }
     }
 }
@@ -64,7 +64,7 @@ def setupAndroidReporting() {
             csv.getRequired().set(false)
             xml.getRequired().set(true)
             html.getRequired().set(true)
-            html.getOutputLocation().set(file("${buildDir}/reports/coverage"))
+            html.getOutputLocation().set(file("${buildDir}/coverage-report"))
         }
         // Change as needed
         def testCoverageFileFilter = [
@@ -98,7 +98,7 @@ def setupAndroidReporting() {
                 dir: project.buildDir,
                 includes: [
                         'jacoco/testDebugUnitTest.exec',
-                        'outputs/code-coverage/connected/*coverage.ec'
+                        'outputs/code-coverage/*/connected/*/coverage.ec'
                 ]
         ))
     }

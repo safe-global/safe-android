@@ -33,5 +33,7 @@ echo "Execute Coverage verification"
 echo "Execute UI tests"
 ./gradlew jacocoTestReport --stacktrace
 
+#TODO: adjust coverage report upload
+# see https://docs.codecov.com/docs/about-the-codecov-bash-uploader
 echo Generating report form coverage result
-bash <(curl -s https://codecov.io/bash) -f '*report.xml'
+bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'
