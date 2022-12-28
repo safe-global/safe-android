@@ -13,7 +13,8 @@ import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -21,10 +22,7 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class CollectiblesViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
+    
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
@@ -59,7 +57,7 @@ class CollectiblesViewModelTest {
     }
 
     @Test
-    fun `load - should emit collectibles view data list`() = runBlockingTest {
+    fun `load - should emit collectibles view data list`() = runTest(UnconfinedTestDispatcher()) {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val chain = Chain.DEFAULT_CHAIN
         val collectibles = buildCollectibleList()
