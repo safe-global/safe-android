@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Help Center Articles
+    url: https://help.gnosis-safe.io/en/
+    about: Help center articles for the most common questions.

@@ -1,0 +1,60 @@
+name: Bug Report Form
+description: Create a report to help us improve
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: to-reproduce
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior':'
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+      id: screenshots
+      attributes:
+        label: Screenshots
+        description: If applicable, add screenshots to help explain your problem.
+  - type: dropdown
+    id: environment
+    attributes:
+      label: What environment are you seeing the problem on?
+      multiple: true
+      options:
+        - Staging
+        - Production
+    validations:
+      required: true
+  - type: input
+      id: smartphone
+      attributes:
+        label: Smartphone information
+        description: please complete the following information':'
+        value: |
+          - Device: [e.g. Pixel 7]
+          - Android Version: [e.g. Android 13]
+          - App Version [e.g. 3.2.0]
+      validations:
+        required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
