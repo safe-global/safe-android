@@ -5,8 +5,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
 import io.gnosis.data.models.*
 import io.gnosis.data.test.BuildConfig
 import org.junit.Assert
