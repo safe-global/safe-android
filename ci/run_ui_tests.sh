@@ -2,7 +2,6 @@
 # fail if any commands fails
 set -e
 
-
 # Setup fake google service json
 cp ci/google-services.json.sample app/google-services.json
 
@@ -33,7 +32,6 @@ echo "Execute Coverage verification"
 echo "Execute UI tests"
 ./gradlew jacocoTestReport --stacktrace
 
-#TODO: adjust coverage report upload
-# see https://docs.codecov.com/docs/about-the-codecov-bash-uploader
+# https://docs.codecov.com/docs/about-the-codecov-bash-uploader
 echo Generating report form coverage result
 bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'

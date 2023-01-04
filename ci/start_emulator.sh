@@ -5,7 +5,13 @@ adb -e emu kill || true
 # fail if any commands fails
 set -e
 
-cd $ANDROID_HOME
+echo "Setup env variables"
+EMULATOR=`which emulator`
+echo "Emulator: $EMULATOR"
+EMULATOR_PATH=`dirname $EMULATOR`
+echo "Emulator Path: $EMULATOR_PATH"
+
+cd $EMULATOR_PATH
 
 echo "Start emulator"
-emulator/emulator @Safe33 -wipe-data -no-window -noaudio -no-snapshot-load -verbose &
+emulator @`emulator -list-avds | head -1` -wipe-data -no-window -noaudio -no-snapshot-load -verbose &
