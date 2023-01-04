@@ -196,7 +196,7 @@ class NotificationRepository(
     }
 
     private suspend fun getCloudMessagingToken() = suspendCoroutine<String?> { cont ->
-        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Timber.e(task.exception)
                 cont.resumeWithException(task.exception!!)
