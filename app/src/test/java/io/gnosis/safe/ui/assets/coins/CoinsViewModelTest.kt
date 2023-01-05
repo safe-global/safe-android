@@ -8,7 +8,10 @@ import io.gnosis.data.models.assets.TokenType
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.safe.*
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.ui.assets.coins.CoinsViewData.Banner
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
@@ -18,7 +21,8 @@ import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -26,9 +30,6 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 class CoinsViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
@@ -53,7 +54,15 @@ class CoinsViewModelTest {
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(safe1, safe10)
         coEvery { settingsHandler.userDefaultFiat } returns "USD"
 
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, credentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
+        viewModel = CoinsViewModel(
+            tokenRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
@@ -66,7 +75,15 @@ class CoinsViewModelTest {
 
     @Test
     fun `load (tokenRepository failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, credentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
+        viewModel = CoinsViewModel(
+            tokenRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
@@ -78,7 +95,11 @@ class CoinsViewModelTest {
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = true, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
+            CoinsState(
+                loading = true,
+                refreshing = false,
+                viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable)
+            )
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
@@ -89,7 +110,15 @@ class CoinsViewModelTest {
 
     @Test
     fun `load (active safe failure) should emit throwable`() {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, credentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
+        viewModel = CoinsViewModel(
+            tokenRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val throwable = Throwable()
         coEvery { safeRepository.getActiveSafe() } throws throwable
@@ -98,7 +127,11 @@ class CoinsViewModelTest {
 
         viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = false, refreshing = false, viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable))
+            CoinsState(
+                loading = false,
+                refreshing = false,
+                viewAction = BaseStateViewModel.ViewAction.ShowError(error = throwable)
+            )
         )
         coVerifySequence {
             safeRepository.activeSafeFlow()
@@ -108,30 +141,72 @@ class CoinsViewModelTest {
     }
 
     @Test
-    fun `load - should emit balance list`() = runBlocking {
-        viewModel = CoinsViewModel(tokenRepository, safeRepository, credentialsRepository, settingsHandler, balanceFormatter, tracker, appDispatchers)
-        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+    fun `load - should emit balance list`() = runTest(UnconfinedTestDispatcher()) {
+
         val balances = listOf(buildBalance(0), buildBalance(1), buildBalance(2))
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe1")
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { tokenRepository.loadBalanceOf(any(), any()) } returns CoinBalances(BigDecimal.ZERO, balances)
+        coEvery { safeRepository.activeSafeFlow() } returns flow {
+            emit(safe)
+        }
+        coEvery {
+            tokenRepository.loadBalanceOf(
+                any(),
+                any()
+            )
+        } returns CoinBalances(BigDecimal.ZERO, balances)
         coEvery { settingsHandler.userDefaultFiat } returns "USD"
         coEvery { settingsHandler.showOwnerBanner } returns false
         coEvery { settingsHandler.showPasscodeBanner } returns false
         coEvery { credentialsRepository.ownerCount() } returns 0
 
+        val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
+
+        viewModel = CoinsViewModel(
+            tokenRepository,
+            safeRepository,
+            credentialsRepository,
+            settingsHandler,
+            balanceFormatter,
+            tracker,
+            appDispatchers
+        )
+
         val coinBalanceData = CoinBalances(BigDecimal.ZERO, balances)
         val totalViewData = viewModel.getTotalBalanceViewData(coinBalanceData)
-        val balancesViewData = viewModel.getBalanceViewData(CoinBalances(BigDecimal.ZERO, balances), Banner.Type.NONE)
+        val balancesViewData = viewModel.getBalanceViewData(
+            CoinBalances(BigDecimal.ZERO, balances),
+            Banner.Type.NONE
+        )
+
+        viewModel.state.observeForever(stateObserver)
 
         viewModel.load()
 
-        viewModel.state.observeForever(stateObserver)
         stateObserver.assertValues(
-            CoinsState(loading = false, refreshing = false, viewAction = UpdateBalances(totalViewData, balancesViewData))
+            CoinsState(
+                loading = false,
+                refreshing = false,
+                viewAction = UpdateBalances(totalViewData, balancesViewData)
+            ),
+            CoinsState(
+                loading = true,
+                refreshing = false,
+                viewAction = BaseStateViewModel.ViewAction.UpdateActiveSafe(safe)
+            ),
+            CoinsState(
+                loading = false,
+                refreshing = false,
+                viewAction = UpdateBalances(totalViewData, balancesViewData)
+            )
         )
+
         coVerifySequence {
+            // view model init
             safeRepository.activeSafeFlow()
+            safeRepository.getActiveSafe()
+            tokenRepository.loadBalanceOf(safe, "USD")
+            // load
             safeRepository.getActiveSafe()
             tokenRepository.loadBalanceOf(safe, "USD")
         }

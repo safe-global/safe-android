@@ -154,7 +154,7 @@ class LedgerController(val context: Context) {
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 Timber.d("$callbackType, result: ${result.device.address}/${result.device.name}")
-                offer(result)
+                trySend(result)
             }
         }
         awaitClose { stopBleScan() }

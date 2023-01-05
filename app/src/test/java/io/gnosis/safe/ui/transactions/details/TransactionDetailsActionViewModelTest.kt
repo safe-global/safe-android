@@ -5,7 +5,6 @@ import io.gnosis.data.models.Owner
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -20,18 +19,14 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class TransactionDetailsActionViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
+    
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
 
-    private val viewModel =
-        TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
+    private lateinit var viewModel: TransactionDetailsActionViewModel
 
 
     @Test
@@ -43,22 +38,39 @@ class TransactionDetailsActionViewModelTest {
 
         val addressInfoIndex = mapOf<String, AddressInfo>()
         val extendexAddressInfoIndex = mapOf(
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.address, safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.address, safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.address, owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe1.address,
+                safe1.localName,
+                null
+            ),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe2.address,
+                safe2.localName,
+                null
+            ),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfo(
+                owner1.address,
+                owner1.name!!,
+                null
+            )
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel =
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
 
         testObserver.assertValues(
             ActionDetailsState(null, BaseStateViewModel.ViewAction.Loading(true)),
-            ActionDetailsState(extendexAddressInfoIndex, BaseStateViewModel.ViewAction.Loading(false))
+            ActionDetailsState(
+                extendexAddressInfoIndex,
+                BaseStateViewModel.ViewAction.Loading(false)
+            )
         )
 
         coVerifySequence {
@@ -82,22 +94,39 @@ class TransactionDetailsActionViewModelTest {
         )
         val extendexAddressInfoIndex = mapOf(
             knownAddress.asEthereumAddressChecksumString() to knownAddressInfo,
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.address, safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.address, safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.address, owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe1.address,
+                safe1.localName,
+                null
+            ),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe2.address,
+                safe2.localName,
+                null
+            ),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfo(
+                owner1.address,
+                owner1.name!!,
+                null
+            )
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel =
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
 
         testObserver.assertValues(
             ActionDetailsState(null, BaseStateViewModel.ViewAction.Loading(true)),
-            ActionDetailsState(extendexAddressInfoIndex, BaseStateViewModel.ViewAction.Loading(false))
+            ActionDetailsState(
+                extendexAddressInfoIndex,
+                BaseStateViewModel.ViewAction.Loading(false)
+            )
         )
 
         coVerifySequence {
@@ -113,7 +142,7 @@ class TransactionDetailsActionViewModelTest {
         val knownAddressInfo1 = AddressInfo(knownAddress1, "known address 1", null)
 
         val knownAddress2 = Solidity.Address(BigInteger.TEN)
-        val knownAddressInfo2 = AddressInfo(knownAddress2,"known address 2", null)
+        val knownAddressInfo2 = AddressInfo(knownAddress2, "known address 2", null)
 
         val safe1 = Safe(Solidity.Address(BigInteger.ZERO), "safe1")
         val safe2 = Safe(Solidity.Address(BigInteger.ONE), "safe2")
@@ -124,22 +153,39 @@ class TransactionDetailsActionViewModelTest {
             knownAddress2.asEthereumAddressChecksumString() to knownAddressInfo2
         )
         val extendexAddressInfoIndex = mapOf(
-            safe1.address.asEthereumAddressChecksumString() to AddressInfo(safe1.address, safe1.localName, null),
-            safe2.address.asEthereumAddressChecksumString() to AddressInfo(safe2.address, safe2.localName, null),
-            owner1.address.asEthereumAddressChecksumString() to AddressInfo(owner1.address, owner1.name!!, null)
+            safe1.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe1.address,
+                safe1.localName,
+                null
+            ),
+            safe2.address.asEthereumAddressChecksumString() to AddressInfo(
+                safe2.address,
+                safe2.localName,
+                null
+            ),
+            owner1.address.asEthereumAddressChecksumString() to AddressInfo(
+                owner1.address,
+                owner1.name!!,
+                null
+            )
         )
 
         coEvery { safeRepository.getSafes() } returns listOf(safe1, safe2)
         coEvery { credentialsRepository.owners() } returns listOf(owner1)
 
         val testObserver = TestLiveDataObserver<ActionDetailsState>()
+        viewModel =
+            TransactionDetailsActionViewModel(safeRepository, credentialsRepository, appDispatchers)
         viewModel.state.observeForever(testObserver)
 
         viewModel.extendAddressInfoIndexWithLocalData(addressInfoIndex)
 
         testObserver.assertValues(
             ActionDetailsState(null, BaseStateViewModel.ViewAction.Loading(true)),
-            ActionDetailsState(extendexAddressInfoIndex, BaseStateViewModel.ViewAction.Loading(false))
+            ActionDetailsState(
+                extendexAddressInfoIndex,
+                BaseStateViewModel.ViewAction.Loading(false)
+            )
         )
 
         coVerifySequence {

@@ -18,7 +18,8 @@ import io.gnosis.safe.*
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.mockk.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -28,6 +29,7 @@ import pm.gnosis.utils.toHexString
 
 
 class ConfirmRejectionViewModelTest {
+
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
@@ -37,13 +39,12 @@ class ConfirmRejectionViewModelTest {
     private val settingsHandler = mockk<SettingsHandler>()
     private val tracker = mockk<Tracker>()
 
-    private val viewModel =
-        ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+    private lateinit var viewModel: ConfirmRejectionViewModel
 
     private val adapter = dataMoshi.adapter(TransactionDetails::class.java)
 
     @Test
-    fun `submitRejection (successful) emits RejectionSubmitted`() = runBlockingTest {
+    fun `submitRejection (successful) emits RejectionSubmitted`() = runTest(UnconfinedTestDispatcher()) {
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val owner = Owner(
@@ -76,6 +77,9 @@ class ConfirmRejectionViewModelTest {
         } just Runs
         coEvery { credentialsRepository.owner(owner.address) } returns owner
         coEvery { tracker.logTransactionRejected(any()) } just Runs
+
+        viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+
         viewModel.txDetails = transactionDetails
 
         viewModel.submitRejection(owner.address)
@@ -113,13 +117,16 @@ class ConfirmRejectionViewModelTest {
     }
 
     @Test
-    fun `selectSigningOwner () `() = runBlockingTest {
+    fun `selectSigningOwner () `() = runTest(UnconfinedTestDispatcher()) {
         val safeAddress = "0x938bae50a210b80EA233112800Cd5Bc2e7644300".asEthereumAddress()!!
         coEvery { safeRepository.getActiveSafe() } returns Safe(safeAddress, "safe_name")
         val testObserver = TestLiveDataObserver<ConfirmationRejectedViewState>()
         val transactionDetailsDto = adapter.readJsonFrom("tx_details_transfer.json")
         val transactionDetails = toTransactionDetails(transactionDetailsDto)
         val executionInfo = transactionDetails.detailedExecutionInfo as DetailedExecutionInfo.MultisigExecutionDetails
+
+        viewModel = ConfirmRejectionViewModel(transactionRepository, safeRepository, credentialsRepository, settingsHandler, tracker, appDispatchers)
+
         viewModel.txDetails = transactionDetails
         viewModel.state.observeForever(testObserver)
 

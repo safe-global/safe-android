@@ -38,8 +38,6 @@ import java.math.BigInteger
 import java.util.*
 
 class TransactionListViewModelTest {
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()

@@ -1,6 +1,6 @@
 package io.gnosis.safe
 
 import io.gnosis.safe.ui.base.AppDispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
-val appDispatchers = AppDispatchers(TestCoroutineDispatcher(), TestCoroutineDispatcher())
+val appDispatchers = AppDispatchers(UnconfinedTestDispatcher(), UnconfinedTestDispatcher())

@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.transactions
 
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -15,9 +14,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class TransactionsViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()

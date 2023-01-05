@@ -2,6 +2,7 @@ package io.gnosis.safe
 
 import androidx.paging.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 suspend fun <T : Any> PagingData<T>.collectData(): List<T> {
     val differCallback = object : DifferCallback {
@@ -10,7 +11,7 @@ suspend fun <T : Any> PagingData<T>.collectData(): List<T> {
         override fun onRemoved(position: Int, count: Int) {}
     }
     val items = mutableListOf<T>()
-    val pagingDataDiffer = object : PagingDataDiffer<T>(differCallback, TestCoroutineDispatcher()) {
+    val pagingDataDiffer = object : PagingDataDiffer<T>(differCallback, UnconfinedTestDispatcher()) {
         override suspend fun presentNewList(
             previousList: NullPaddedList<T>,
             newList: NullPaddedList<T>,
