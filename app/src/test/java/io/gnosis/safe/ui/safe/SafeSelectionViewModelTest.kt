@@ -5,7 +5,6 @@ import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.ChainInfoRepository
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -25,9 +24,6 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class SafeSelectionViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()

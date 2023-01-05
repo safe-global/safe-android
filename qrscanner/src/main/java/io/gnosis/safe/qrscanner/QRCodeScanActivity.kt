@@ -5,12 +5,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.TextureView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
-import kotlinx.android.synthetic.main.screen_scan.*
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -25,7 +26,7 @@ class QRCodeScanActivity : AppCompatActivity() {
         videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.screen_scan)
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
-            scan_description.text = it
+            findViewById<TextView>(R.id.scan_description).text = it
         }
     }
 
@@ -34,7 +35,9 @@ class QRCodeScanActivity : AppCompatActivity() {
         if (!isPermissionGranted(Manifest.permission.CAMERA)) {
             requestPermissions(CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)
         } else {
-            videographer.open(scan_view_finder)
+            videographer.open(
+                findViewById<TextureView>(R.id.scan_view_finder)
+            )
         }
     }
 
@@ -43,8 +46,16 @@ class QRCodeScanActivity : AppCompatActivity() {
         if (videographer.isOpen) videographer.close()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        handlePermissionsResultRequest(requestCode, CAMERA_REQUEST_CODE, grantResults, onPermissionDenied = { finish() })
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        handlePermissionsResultRequest(
+            requestCode,
+            CAMERA_REQUEST_CODE,
+            grantResults,
+            onPermissionDenied = { finish() })
     }
 
     private fun finishWithResult(value: String) {
@@ -56,7 +67,11 @@ class QRCodeScanActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle(R.string.qr_error_title)
                 .setMessage(R.string.qr_error_message)
-                .setNegativeButton(R.string.qr_retry_button) { _, _ -> videographer.open(scan_view_finder) }
+                .setNegativeButton(R.string.qr_retry_button) { _, _ ->
+                    videographer.open(
+                        findViewById(R.id.scan_view_finder)
+                    )
+                }
                 .create().show()
         }
     }
@@ -82,11 +97,15 @@ class QRCodeScanActivity : AppCompatActivity() {
             activity.startActivityForResult(createIntent(activity, description), REQUEST_CODE)
 
         fun startForResult(fragment: Fragment, description: String? = null) =
-            fragment.startActivityForResult(createIntent(fragment.requireContext(), description), REQUEST_CODE)
+            fragment.startActivityForResult(
+                createIntent(fragment.requireContext(), description),
+                REQUEST_CODE
+            )
 
-        fun createIntent(context: Context?, description: String? = null) = Intent(context, QRCodeScanActivity::class.java).apply {
-            description?.let { putExtra(DESCRIPTION_EXTRA, it) }
-        }
+        fun createIntent(context: Context?, description: String? = null) =
+            Intent(context, QRCodeScanActivity::class.java).apply {
+                description?.let { putExtra(DESCRIPTION_EXTRA, it) }
+            }
 
         fun handleResult(
             requestCode: Int,
