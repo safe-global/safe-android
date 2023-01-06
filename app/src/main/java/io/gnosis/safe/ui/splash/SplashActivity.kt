@@ -1,7 +1,10 @@
 package io.gnosis.safe.ui.splash
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
@@ -19,12 +22,17 @@ class SplashActivity : BaseActivity() {
 
     private val binding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
     private val termsBottomSheetDialog = TermsBottomSheetDialog()
+    private lateinit var pushNotificationPermissionLauncher: ActivityResultLauncher<String>
 
     override fun screenId() = ScreenId.LAUNCH
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        pushNotificationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
 
         viewComponent().inject(this)
 
@@ -46,10 +54,14 @@ class SplashActivity : BaseActivity() {
                         }
                     }
                     if (!termsBottomSheetDialog.isAdded) {
-                        termsBottomSheetDialog.show(supportFragmentManager, TermsBottomSheetDialog::class.simpleName)
+                        termsBottomSheetDialog.show(
+                            supportFragmentManager,
+                            TermsBottomSheetDialog::class.simpleName
+                        )
                     }
                 }
                 is SplashViewModel.ShowButton -> {
+                    requestPushPermission()
                     binding.continueButton.visible(true)
                     binding.continueButton.setOnClickListener {
                         viewModel.onStartClicked()
@@ -66,6 +78,12 @@ class SplashActivity : BaseActivity() {
 
         lifecycleScope.launch {
             viewModel.onAppStart()
+        }
+    }
+
+    private fun requestPushPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
