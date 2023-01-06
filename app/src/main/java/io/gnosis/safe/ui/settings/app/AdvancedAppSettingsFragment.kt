@@ -68,7 +68,7 @@ class AdvancedAppSettingsFragment : BaseViewBindingFragment<FragmentSettingsAppA
                 }
             }
             trackingHelpText.appendLink(
-                url = getString(R.string.link_tracking_link),
+                url = getString(R.string.link_privacy_policy),
                 urlText = getString(R.string.tracking_text),
                 underline = true,
                 linkIcon = R.drawable.ic_external_link_green_16dp

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Safe</string>
-    <string name="link_privacy_policy">https://safe.gnosis.io/privacy</string>
-    <string name="link_terms_of_use">https://safe.gnosis.io/terms</string>
-    <string name="link_licenses">https://gnosis-safe.io/licenses/</string>
-    <string name="link_help_center"> https://help.gnosis-safe.io</string>
+    <string name="link_privacy_policy">https://safe.global/privacy</string>
+    <string name="link_terms_of_use">https://safe.global/terms</string>
+    <string name="link_licenses">https://safe.global/licenses</string>
+    <string name="link_help_center">https://help.gnosis-safe.io</string>
     <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
-    <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
     <string name="id_twitter">Safe</string>
     <string name="id_discord">TaNjuFzS6X</string>
     <string name="email_feedback" translatable="false">support@safe.global</string>
