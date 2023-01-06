@@ -9,7 +9,7 @@ ext {
             jacoco                           : '0.8.8',
 
             // Runtime dependencies
-            androidx_app_compat             : '1.1.0',
+            androidx_app_compat             : '1.5.1',
             androidx_card_view              : '1.0.0',
             androidx_constraint_layout      : '2.1.0',
             androidx_lifecycle              : '2.4.1',

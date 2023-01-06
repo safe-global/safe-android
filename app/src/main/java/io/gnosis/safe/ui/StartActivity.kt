@@ -3,12 +3,14 @@ package io.gnosis.safe.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.View
-import androidx.core.view.isVisible
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.Lifecycle
@@ -66,14 +68,19 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         ToolbarSafeOverviewBinding.bind(binding.toolbarContainer.root)
     }
 
+    private lateinit var pushNotificationPermissionLauncher: ActivityResultLauncher<String>
+
     private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = true
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        pushNotificationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
 
         navController = Navigation.findNavController(this@StartActivity, R.id.nav_host)
 
@@ -161,8 +168,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         comingFromBackground = false
                     } else {
                         if (settingsHandler.showWhatsNew) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     }
                 }
@@ -208,8 +214,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             askForPasscode()
                         } else {
                             if (settingsHandler.showWhatsNew) {
-                                showWhatsNew()
-                                settingsHandler.showWhatsNew = false
+                                onAppUpdated()
                             }
                         }
                     }
@@ -226,8 +231,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 if (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment) {
                     if (settingsHandler.showWhatsNew) {
                         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     } else if (settingsHandler.appStartCount >= 3) {
                         startRateFlow()
@@ -371,7 +375,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         signingOwners.isEmpty(),
                         View.INVISIBLE
                     )
-                    safeRepository.setActiveSafeSigningOwners(signingOwners.map { Solidity.Address(it.value) })
+                    safeRepository.setActiveSafeSigningOwners(signingOwners.map {
+                        Solidity.Address(
+                            it.value
+                        )
+                    })
                     safeRepository.saveSafe(activeSafe.copy(version = safeInfo.version))
                 }
             }.onFailure {
@@ -416,9 +424,21 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
     }
 
+    private fun onAppUpdated() {
+        showWhatsNew()
+        settingsHandler.showWhatsNew = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPushPermission()
+        }
+    }
+
     private fun showWhatsNew() {
         //TODO: uncomment if whats new screen should be shown
         //navController.navigate(R.id.whatsNewDialog)
+    }
+
+    private fun requestPushPermission() {
+        pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private fun navigateToShareSafeDialog() {

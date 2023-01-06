@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.splash
 
 import android.os.Bundle
 import android.os.Handler
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.ActivitySplashBinding
@@ -29,7 +28,7 @@ class SplashActivity : BaseActivity() {
 
         viewComponent().inject(this)
 
-        viewModel.state.observe(this, Observer {
+        viewModel.state.observe(this) {
             when (val viewAction = it.viewAction) {
                 is ViewAction.StartActivity -> {
                     startActivity(viewAction.intent)
@@ -57,7 +56,7 @@ class SplashActivity : BaseActivity() {
                     }
                 }
             }
-        })
+        }
 
         Handler().postDelayed(
             {
