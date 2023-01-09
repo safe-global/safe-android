@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import androidx.lifecycle.Lifecycle
@@ -69,7 +68,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = true
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,8 +159,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         comingFromBackground = false
                     } else {
                         if (settingsHandler.showWhatsNew) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     }
                 }
@@ -208,8 +205,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             askForPasscode()
                         } else {
                             if (settingsHandler.showWhatsNew) {
-                                showWhatsNew()
-                                settingsHandler.showWhatsNew = false
+                                onAppUpdated()
                             }
                         }
                     }
@@ -226,8 +222,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 if (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment) {
                     if (settingsHandler.showWhatsNew) {
                         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     } else if (settingsHandler.appStartCount >= 3) {
                         startRateFlow()
@@ -371,7 +366,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         signingOwners.isEmpty(),
                         View.INVISIBLE
                     )
-                    safeRepository.setActiveSafeSigningOwners(signingOwners.map { Solidity.Address(it.value) })
+                    safeRepository.setActiveSafeSigningOwners(signingOwners.map {
+                        Solidity.Address(
+                            it.value
+                        )
+                    })
                     safeRepository.saveSafe(activeSafe.copy(version = safeInfo.version))
                 }
             }.onFailure {
@@ -414,6 +413,11 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 })
             }
         }
+    }
+
+    private fun onAppUpdated() {
+        showWhatsNew()
+        settingsHandler.showWhatsNew = false
     }
 
     private fun showWhatsNew() {
