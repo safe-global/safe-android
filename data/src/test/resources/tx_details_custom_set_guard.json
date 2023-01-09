@@ -47,7 +47,7 @@
     "refundReceiver": {
       "value": "0x0000000000000000000000000000000000000000"
     },
-    "safeTxHash": "0x6d94352e54bbea51ac4e641403047b6f9e01237145107471884227fbc3ceebea",
+    "safeTxHash": "0x526bf84745628376e8b6fda76c815ba55f074cc398ab58edbca651167648ffaf",
     "executor": {
       "value": "0xF2CeA96575d6b10f51d9aF3b10e3e4E5738aa6bd"
     },

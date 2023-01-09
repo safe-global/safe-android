@@ -45,4 +45,5 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/slogan" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
