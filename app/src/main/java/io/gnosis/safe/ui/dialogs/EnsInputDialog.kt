@@ -138,7 +138,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             binding.successViews.visible(false)
             binding.dialogEnsInputUrlLayout.isErrorEnabled = false
             if (text.toString().isNotEmpty()) {
-                if (text.toString().startsWith(" ")) {
+                if (text.toString().startsWith(" ") || text.toString().endsWith(" ")) {
                     binding.dialogEnsInputUrl.setText(text.toString().trim())
                 } else {
                     binding.dialogEnsInputProgress.visible(true)
