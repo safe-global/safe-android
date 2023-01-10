@@ -61,7 +61,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
             coins.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             refresh.setOnRefreshListener { viewModel.load(true) }
         }
-        viewModel.state.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is CoinsState -> {
                     binding.progress.visible(state.loading)
@@ -97,7 +97,7 @@ class CoinsFragment : BaseViewBindingFragment<FragmentCoinsBinding>() {
                     }
                 }
             }
-        })
+        }
     }
 
     override fun onResume() {

@@ -22,9 +22,9 @@ android {
         buildConfigField javaTypes.STRING, "INTERCOM_APP_ID", asString(getKey("INTERCOM_APP_ID", ""))
         buildConfigField javaTypes.STRING, "INTERCOM_API_KEY", asString(getKey("INTERCOM_API_KEY", ""))
         // Services
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.infura.io/v3/"))
         // Blockchain settings
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Rinkeby"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Goerli"))
         // Certificates
         buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                 "new ${javaTypes.MAP}()" +
