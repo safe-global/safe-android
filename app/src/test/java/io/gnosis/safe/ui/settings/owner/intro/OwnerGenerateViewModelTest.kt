@@ -1,6 +1,5 @@
 package io.gnosis.safe.ui.settings.owner.intro
 
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.R
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.utils.MnemonicKeyAndAddressDerivator
@@ -13,9 +12,6 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 class OwnerGenerateViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()

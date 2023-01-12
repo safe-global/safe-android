@@ -55,18 +55,31 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
         component.inject(this)
     }
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogEnsInputBinding =
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): DialogEnsInputBinding =
         DialogEnsInputBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             backButton.setOnClickListener { dismiss() }
-            confirmButton.setOnClickListener { onClick.offer(Unit) }
+            confirmButton.setOnClickListener { onClick.trySend(Unit) }
             dialogEnsInputUrl.showKeyboardForView()
             chainRibbon.text = selectedChain.name
-            chainRibbon.setTextColor(selectedChain.textColor.toColor(requireContext(), R.color.white))
-            chainRibbon.setBackgroundColor(selectedChain.backgroundColor.toColor(requireContext(), R.color.primary))
+            chainRibbon.setTextColor(
+                selectedChain.textColor.toColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            chainRibbon.setBackgroundColor(
+                selectedChain.backgroundColor.toColor(
+                    requireContext(),
+                    R.color.primary
+                )
+            )
         }
     }
 
@@ -91,7 +104,7 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     binding.confirmButton.isEnabled = true
                     binding.successViews.visible(true)
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = false
-                    onNewAddress.offer(address)
+                    onNewAddress.trySend(address)
                     addressHelper.populateAddressInfo(
                         binding.dialogEnsInputAddress,
                         binding.dialogEnsInputAddressImage,
@@ -107,11 +120,12 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
                     if (error.trackingRequired) {
                         tracker.logException(it)
                     }
-                    binding.dialogEnsInputUrlLayout.error = error.message(requireContext(), R.string.error_description_ens_name)
+                    binding.dialogEnsInputUrlLayout.error =
+                        error.message(requireContext(), R.string.error_description_ens_name)
 
                     binding.dialogEnsInputUrlLayout.isErrorEnabled = true
 
-                    onNewAddress.offer(null)
+                    onNewAddress.trySend(null)
                 }
         }
     }
@@ -124,8 +138,12 @@ class EnsInputDialog : BaseViewBindingDialogFragment<DialogEnsInputBinding>() {
             binding.successViews.visible(false)
             binding.dialogEnsInputUrlLayout.isErrorEnabled = false
             if (text.toString().isNotEmpty()) {
-                binding.dialogEnsInputProgress.visible(true)
-                job = onUrlChanged(text.toString())
+                if (text.toString().startsWith(" ")) {
+                    binding.dialogEnsInputUrl.setText(text.toString().trim())
+                } else {
+                    binding.dialogEnsInputProgress.visible(true)
+                    job = onUrlChanged(text.toString())
+                }
             } else {
                 binding.dialogEnsInputProgress.visible(false)
                 job?.cancel("Empty ENS name")

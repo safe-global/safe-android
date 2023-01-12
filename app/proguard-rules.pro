@@ -73,6 +73,9 @@
 -keep @interface pm.gnosis.heimdall.data.adapters.DecimalNumber
 -keep @interface pm.gnosis.heimdall.data.adapters.BigDecimalNumber
 
+-keep interface pm.gnosis.ethereum.rpc.models.** { *; }
+-keep class pm.gnosis.ethereum.rpc.models.** { *; }
+
 -keep interface io.gnosis.data.models.** { *; }
 -keep class io.gnosis.data.models.** { *; }
 

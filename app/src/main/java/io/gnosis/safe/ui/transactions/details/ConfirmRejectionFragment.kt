@@ -14,8 +14,7 @@ import io.gnosis.safe.databinding.FragmentConfirmRejectionBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.toError
-import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.NavigateTo
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment.Companion.REJECTION_CONFIRMATION_RESULT
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
@@ -81,12 +80,15 @@ class ConfirmRejectionFragment : BaseViewBindingFragment<FragmentConfirmRejectio
                     )
                     findNavController().currentBackStackEntry?.savedStateHandle?.set(REJECTION_CONFIRMATION_RESULT, true)
                 }
-                is BaseStateViewModel.ViewAction.Loading -> {
+                is Loading -> {
                     if (!viewAction.isLoading) {
                         binding.confirmRejection.isEnabled = true
                     }
                 }
-                is BaseStateViewModel.ViewAction.ShowError -> {
+                is None -> {
+                    binding.confirmRejection.isEnabled = true
+                }
+                is ShowError -> {
                     binding.confirmRejection.isEnabled = true
 
                     viewAction.error.let {

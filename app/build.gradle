@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "io.gnosis.safe"
         versionCode getInt("APP_VERSION_CODE", 703)
-        versionName getKey("APP_VERSION_NAME", "3.6.0")
+        versionName getKey("APP_VERSION_NAME", "3.6.1")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Infura API key
@@ -22,9 +22,9 @@ android {
         buildConfigField javaTypes.STRING, "INTERCOM_APP_ID", asString(getKey("INTERCOM_APP_ID", ""))
         buildConfigField javaTypes.STRING, "INTERCOM_API_KEY", asString(getKey("INTERCOM_API_KEY", ""))
         // Services
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.infura.io/v3/"))
         // Blockchain settings
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Rinkeby"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NAME", asString(getKey("BLOCKCHAIN_NAME", "Goerli"))
         // Certificates
         buildConfigField javaTypes.MAP, "SSL_PINS", getKey("SSL_PINS",
                 "new ${javaTypes.MAP}()" +
@@ -168,7 +168,7 @@ dependencies {
     implementation "androidx.multidex:multidex:$versions.multidex"
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx_lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidx_lifecycle_extensions"
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$versions.androidx_navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$versions.androidx_navigation"
@@ -216,7 +216,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
 
-
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:$versions.firebase_bom")
     implementation 'com.google.firebase:firebase-config-ktx'
@@ -241,10 +240,6 @@ dependencies {
     implementation "io.intercom.android:intercom-sdk:$versions.intercom"
 
     implementation "com.airbnb.android:lottie:$versions.lottie"
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all {
-    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"]
 }
 
 task printVersion {

@@ -46,6 +46,7 @@ class ParamAdapter {
             is Param.Value -> {
                 writer.value(param.value as String)
             }
+            else -> {}
         }
 
         writer.endObject()

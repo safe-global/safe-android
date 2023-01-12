@@ -20,9 +20,6 @@ import java.math.BigInteger
 class OwnerDetailsViewModelTest {
 
     @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
-    @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
     private val safeRepository = mockk<SafeRepository>()

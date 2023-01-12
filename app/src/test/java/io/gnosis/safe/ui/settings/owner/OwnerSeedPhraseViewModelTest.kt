@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.settings.owner
 
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -23,8 +22,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.*
 
 class OwnerSeedPhraseViewModelTest {
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
