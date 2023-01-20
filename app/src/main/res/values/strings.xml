@@ -25,7 +25,7 @@
     <string name="add_safe_label_top">Enter your Safe address.</string>
 
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
-    <string name="add_safe_label_link">https://gnosis-safe.io</string>
+    <string name="add_safe_label_link">https://safe.global</string>
     <string name="back">Back</string>
 
     <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe to confirm transactions?</string>
