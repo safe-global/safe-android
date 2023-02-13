@@ -173,22 +173,19 @@ class LedgerController(val context: Context) {
 
     private var isScanning = false
 
-    fun startBleScan(fragment: Fragment, missingLocationPermissionHandler: () -> Unit) {
+    fun startBleScan(fragment: Fragment, missingPermissionHandler: () -> Unit) {
         if (!bluetoothAdapter.isEnabled) {
             promptEnableBluetooth(fragment)
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-
-                        )
-            ) {
-                missingLocationPermissionHandler.invoke()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
+            ) { // Version between 23 (incl.) and 31 (excl.)
+                missingPermissionHandler.invoke()
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN)
-                        || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
-                        )
-            ) {
-                missingLocationPermissionHandler.invoke()
+                && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN) || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))
+            ) { // Version above 31 (incl.)
+                missingPermissionHandler.invoke()
             } else {
                 if (isScanning) {
                     stopBleScan()
@@ -328,7 +325,7 @@ class LedgerController(val context: Context) {
 
     fun requestLocationPermission(fragment: Fragment) {
         fragment.requestPermissions(
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             REQUEST_CODE_LOCATION_PERMISSION
         )
     }
