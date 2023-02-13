@@ -54,7 +54,7 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 }
             }
             advanced.setOnClickListener {
-                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAdvancedSafeSettingsFragment())
+                viewModel.openAdvancedSettings()
             }
             refresh.setOnRefreshListener { viewModel.reload() }
         }
@@ -72,6 +72,9 @@ class SafeSettingsFragment : BaseViewBindingFragment<FragmentSettingsSafeBinding
                 is UpdateActiveSafe -> {
                     hideContent()
                     didLoadOnce = false
+                }
+                is NavigateTo -> {
+                    findNavController().navigate(viewAction.navDirections)
                 }
                 is ShowError -> {
                     hideLoading()

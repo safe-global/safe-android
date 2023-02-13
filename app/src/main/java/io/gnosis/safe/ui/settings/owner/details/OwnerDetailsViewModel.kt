@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.Tracker
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 class OwnerDetailsViewModel
 @Inject constructor(
+    private val safeRepository: SafeRepository,
     private val credentialsRepository: CredentialsRepository,
     private val notificationRepository: NotificationRepository,
     private val settingsHandler: SettingsHandler,
@@ -93,6 +95,14 @@ class OwnerDetailsViewModel
                 Owner.Type.GENERATED -> tracker.setNumKeysGenerated(credentialsRepository.ownerCount(owner.type))
                 Owner.Type.LEDGER_NANO_X -> tracker.setNumKeysLedger(credentialsRepository.ownerCount(owner.type))
             }
+
+            val activeSafe = safeRepository.getActiveSafe()
+            activeSafe?.let {
+                if (it.signingOwners.contains(address)) {
+                    safeRepository.setActiveSafeSigningOwners(it.signingOwners.filter { it != address })
+                }
+            }
+
             updateState { OwnerDetailsState(ViewAction.CloseScreen) }
         }
     }

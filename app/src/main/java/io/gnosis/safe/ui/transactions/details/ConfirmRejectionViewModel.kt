@@ -99,6 +99,7 @@ class ConfirmRejectionViewModel
                 transactionRepository.proposeTransaction(
                     chainId = safe.chainId,
                     safeAddress = safe.address,
+                    toAddress = safe.address,
                     nonce = rejectionExecutionInfo.nonce,
                     signature = signedSafeTxHash ?: credentialsRepository.signWithOwner(selectedOwner, safeTxHash.hexToByteArray()),
                     safeTxGas = rejectionExecutionInfo.safeTxGas.toLong(),
@@ -180,7 +181,7 @@ class ConfirmRejectionViewModel
                                 missingSigners = missingSigners.map {
                                     it.value.asEthereumAddressString()
                                 }.toTypedArray(),
-                                isConfirmation = false,
+                                signingMode = SigningMode.REJECTION,
                                 safeTxHash = rejectionTxHash
                             )
                         )

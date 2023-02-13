@@ -32,7 +32,10 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
         component.inject(this)
     }
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAssetsBinding =
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentAssetsBinding =
         FragmentAssetsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,23 +48,37 @@ class AssetsFragment : SafeOverviewBaseFragment<FragmentAssetsBinding>() {
             TabLayoutMediator(balancesTabBar, balancesContent, true) { tab, position ->
                 when (AssetsPagerAdapter.Tabs.values()[position]) {
                     AssetsPagerAdapter.Tabs.COINS -> {
-                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
+                        tab.icon =
+                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_coins_24dp)
                         tab.text = getString(R.string.tab_title_coins)
                     }
                     AssetsPagerAdapter.Tabs.COLLECTIBLES -> {
-                        tab.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_collectibles_24dp)
+                        tab.icon = ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_collectibles_24dp
+                        )
                         tab.text = getString(R.string.tab_title_collectibles)
                     }
                 }
             }.attach()
 
             sendButton.setOnClickListener {
+                tracker.logTransferSendClicked()
                 viewModel.activeSafe?.let {
-                    findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAssetSelectionFragment(it.chain))
+                    if (it.readOnly) {
+                        findNavController().navigate(AssetsFragmentDirections.actionAssetsFragmentToAddOwnerFirstFragment())
+                    } else {
+                        findNavController().navigate(
+                            AssetsFragmentDirections.actionAssetsFragmentToAssetSelectionFragment(
+                                it.chain
+                            )
+                        )
+                    }
                 }
             }
 
             receiveButton.setOnClickListener {
+                tracker.logTransferReceiveClicked()
                 navigateToShareSafeDialog()
             }
         }

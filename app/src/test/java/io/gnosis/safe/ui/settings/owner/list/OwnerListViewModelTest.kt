@@ -2,7 +2,6 @@ package io.gnosis.safe.ui.settings.owner.list
 
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
-import io.gnosis.safe.MainCoroutineScopeRule
 import io.gnosis.safe.TestLifecycleRule
 import io.gnosis.safe.TestLiveDataObserver
 import io.gnosis.safe.appDispatchers
@@ -10,6 +9,7 @@ import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.*
 import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -21,9 +21,6 @@ import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 class OwnerListViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
@@ -69,7 +66,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -93,7 +90,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, true)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -113,7 +110,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, false)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.REJECTION)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),

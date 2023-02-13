@@ -33,46 +33,46 @@ android {
 
         debug {
             buildConfigField ("String", "CLIENT_GATEWAY_URL", '"https://safe-client.staging.5afe.dev/"')
-            buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
+            buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
-            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("rin"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
+            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Goerli"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("gor"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.etherscan.io/"))
         }
 
         profile {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
-            buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
+            buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
-            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("rin"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
+            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Goerli"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("gor"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.etherscan.io/"))
         }
 
         unsafe {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
             buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
-            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("rin"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
+            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Goerli"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("gor"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.etherscan.io/"))
         }
 
         internal {
             buildConfigField javaTypes.STRING, "CLIENT_GATEWAY_URL", asString(getKey("CLIENT_GATEWAY_URL", "https://safe-client.staging.5afe.dev/"))
-            buildConfigField (javaTypes.INT, "CHAIN_ID", "4")
+            buildConfigField (javaTypes.INT, "CHAIN_ID", "5")
             buildConfigField (javaTypes.STRING, "CHAIN_TEXT_COLOR", asString("#ffffff"))
-            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#E8673C"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Rinkeby"))
-            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("rin"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io/v3/"))
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.etherscan.io/"))
+            buildConfigField (javaTypes.STRING, "CHAIN_BACKGROUND_COLOR", asString("#4D99EB"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_NAME", asString("Goerli"))
+            buildConfigField (javaTypes.STRING, "BLOCKCHAIN_SHORT_NAME", asString("gor"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://guerli.infura.io/v3/"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_EXPLORER_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://goerli.etherscan.io/"))
 
         }
 
@@ -87,7 +87,7 @@ android {
 }
 
 dependencies {
-    implementation project(":contracts")
+    api project(":contracts")
 
     api "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 

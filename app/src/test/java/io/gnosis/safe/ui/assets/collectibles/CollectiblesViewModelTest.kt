@@ -1,20 +1,21 @@
 package io.gnosis.safe.ui.assets.collectibles
 
+import androidx.paging.PagingData
 import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Safe
 import io.gnosis.data.models.assets.Collectible
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.data.repositories.TokenRepository
-import io.gnosis.safe.MainCoroutineScopeRule
-import io.gnosis.safe.TestLifecycleRule
-import io.gnosis.safe.TestLiveDataObserver
-import io.gnosis.safe.appDispatchers
+import io.gnosis.safe.*
+import io.gnosis.safe.ui.assets.collectibles.paging.CollectiblePagingProvider
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import io.gnosis.safe.ui.base.adapter.Adapter
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.model.Solidity
@@ -23,14 +24,11 @@ import java.math.BigInteger
 class CollectiblesViewModelTest {
 
     @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
-    @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
     private lateinit var viewModel: CollectiblesViewModel
 
-    private val tokenRepository = mockk<TokenRepository>()
+    private val collectiblesPager = mockk<CollectiblePagingProvider>()
     private val safeRepository = mockk<SafeRepository>()
 
     @Test
@@ -43,19 +41,23 @@ class CollectiblesViewModelTest {
         }
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(safe1, safe10)
 
-        viewModel = CollectiblesViewModel(tokenRepository, safeRepository, appDispatchers)
+        coEvery { collectiblesPager.getCollectiblesStream(any()) } returns flow {
+            emit(PagingData.empty<Collectible>())
+        }
+
+        viewModel = CollectiblesViewModel(collectiblesPager, safeRepository, appDispatchers)
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe1)
+            collectiblesPager.getCollectiblesStream(safe1)
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe10)
+            collectiblesPager.getCollectiblesStream(safe10)
         }
     }
 
     @Test
-    fun `load - should emit collectibles view data list`() {
+    fun `load - should emit collectibles view data list`() = runTest(UnconfinedTestDispatcher()) {
         val stateObserver = TestLiveDataObserver<BaseStateViewModel.State>()
         val chain = Chain.DEFAULT_CHAIN
         val collectibles = buildCollectibleList()
@@ -66,7 +68,8 @@ class CollectiblesViewModelTest {
             emit(safe)
         }
         coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { tokenRepository.loadCollectiblesOf(any()) } returns collectibles
+
+        coEvery { collectiblesPager.getCollectiblesStream(any()) } returns flowOf(PagingData.from(collectibles))
 
         val collectiblesViewData: List<CollectibleViewData> = listOf(
             CollectibleViewData.NftHeader(
@@ -93,16 +96,20 @@ class CollectiblesViewModelTest {
             )
         )
 
-        viewModel = CollectiblesViewModel(tokenRepository, safeRepository, appDispatchers)
+        viewModel = CollectiblesViewModel(collectiblesPager, safeRepository, appDispatchers)
 
         viewModel.state.observeForever(stateObserver)
-        stateObserver.assertValues(
-            CollectiblesState(loading = false, refreshing = false, viewAction = UpdateCollectibles(Adapter.Data(null, collectiblesViewData)))
-        )
+
+        stateObserver.assertValueAt(0) {
+            it is CollectiblesState && !it.loading && !it.refreshing && it.viewAction is UpdateCollectibles
+        }
+        val actualViewData = (stateObserver.values()[0].viewAction as UpdateCollectibles).collectibles.collectData()
+        assertEquals(collectiblesViewData, actualViewData)
+
         coVerifySequence {
             safeRepository.activeSafeFlow()
             safeRepository.getActiveSafe()
-            tokenRepository.loadCollectiblesOf(safe)
+            collectiblesPager.getCollectiblesStream(safe)
         }
     }
 

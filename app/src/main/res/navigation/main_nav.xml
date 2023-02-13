@@ -76,7 +76,17 @@
             android:id="@+id/action_assetsFragment_to_assetSelectionFragment"
             app:destination="@+id/assetSelectionFragment" />
 
+        <action
+            android:id="@+id/action_assetsFragment_to_addOwnerFirstFragment"
+            app:destination="@+id/addOwnerFirstFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/addOwnerFirstFragment"
+        android:name="io.gnosis.safe.ui.safe.send_funds.AddOwnerFirstFragment"
+        android:label="AddOwnerFirstFragment"
+        tools:layout="@layout/fragment_add_owner_first" />
 
     <fragment
         android:id="@+id/assetSelectionFragment"
@@ -143,6 +153,14 @@
         <action
             android:id="@+id/action_sendAssetReviewFragment_to_editAdvancedParamsFragment"
             app:destination="@id/editAdvancedParamsFragment" />
+
+        <action
+            android:id="@+id/action_sendAssetReviewFragment_to_signingOwnerSelectionFragment"
+            app:destination="@id/signingOwnerSelectionFragment" />
+
+        <action
+            android:id="@+id/action_sendAssetReviewFragment_to_successFragment"
+            app:destination="@id/successFragment" />
 
     </fragment>
 
@@ -793,9 +811,8 @@
             app:nullable="true" />
 
         <argument
-            android:name="isConfirmation"
-            android:defaultValue="true"
-            app:argType="boolean" />
+            android:name="signingMode"
+            app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
 
         <argument
             android:name="safeTxHash"
@@ -1109,7 +1126,13 @@
         android:id="@+id/advancedSafeSettingsFragment"
         android:name="io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsFragment"
         android:label="AdvancedSafeSettingsFragment"
-        tools:layout="@layout/fragment_settings_safe_advanced" />
+        tools:layout="@layout/fragment_settings_safe_advanced">
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/ledgerDeviceListFragment"

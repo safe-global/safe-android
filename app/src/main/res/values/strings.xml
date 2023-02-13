@@ -25,7 +25,7 @@
     <string name="add_safe_label_top">Enter your Safe address.</string>
 
     <string name="add_safe_label_bottom">Don\'t have a Safe? Create one first at</string>
-    <string name="add_safe_label_link">https://gnosis-safe.io</string>
+    <string name="add_safe_label_link">https://safe.global</string>
     <string name="back">Back</string>
 
     <string name="add_safe_owner_read_only_notice">%1$s is read-only. Would you like to add owner key for this Safe to confirm transactions?</string>
@@ -155,6 +155,9 @@
     <string name="coins_total_balance">Total balance</string>
     <string name="coins_send">Send</string>
     <string name="coins_receive">Receive</string>
+    <string name="coins_asset_send_add_owner_title">Add owner key first</string>
+    <string name="coins_asset_send_add_owner_desc">To start sending funds import at least one owner key. Keys are used to confirm transactions.</string>
+    <string name="coins_asset_send_select_owner">An owner key will be used to confirm this transaction.</string>
     <string name="coins_asset_select">Select an asset</string>
     <string name="coins_asset_not_found">No assets found.</string>
     <string name="coins_asset_send">Send %1$s</string>
@@ -610,10 +613,13 @@
     <string name="ledger_sign_cancel">Cancel</string>
 
     <string name="whatsnew_title">What\'s new</string>
-    <string name="whatsnew_rebrand_title">Meet the new Safe!</string>
-    <string name="whatsnew_rebrand_description">Gnosis Safe rebranded to Safe. Following a successful spin-off vote from Gnosis in GIP-29, we are rebranding to Safe.\n\nNow and over the coming time, you will see a new look and a better visual experience to your ever secure Gnosis Safe that you love.</string>
+    <string name="whatsnew_spinoff_title">Meet the new Safe!</string>
+    <string name="whatsnew_spinoff_description">Gnosis Safe rebranded to Safe. Following a successful spin-off vote from Gnosis in GIP-29, we are rebranding to Safe.\n\nNow and over the coming time, you will see a new look and a better visual experience to your ever secure Gnosis Safe that you love.</string>
+    <string name="whatsnew_rebrand_title">New look!</string>
+    <string name="whatsnew_rebrand_description">Safe is following up with a new look. We have updated the color palette in the app, including dark mode.</string>
     <string name="whatsnew_intercom_title"> Intercom chat support</string>
     <string name="whatsnew_intercom_description">Have a trouble or want to leave feedback? Drop us a message directly in the Intercom chat.</string>
     <string name="whatsnew_send_funds_title">Asset transfers have arrived!</string>
     <string name="whatsnew_send_funds_description">Now you can send assets from your Safe on Android from the Assets screen. This will create a new transaction which needs to be signed and executed by other owners.</string>
+
 </resources>

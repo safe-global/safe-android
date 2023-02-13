@@ -33,7 +33,7 @@ class SafeRepository(
 
     fun activeSafeFlow() =
         keyFlow
-            .filter { it == ACTIVE_SAFE }
+            .filter { it == ACTIVE_SAFE || it == ACTIVE_SAFE_SIGNING_OWNERS }
             .onStart { emit(ACTIVE_SAFE) }
             .map { getActiveSafe() }
             .conflate()
@@ -64,23 +64,56 @@ class SafeRepository(
     suspend fun clearActiveSafe() {
         preferencesManager.prefs.edit {
             remove(ACTIVE_SAFE)
+            remove(ACTIVE_SAFE_SIGNING_OWNERS)
         }
     }
 
     suspend fun setActiveSafe(safe: Safe) {
         preferencesManager.prefs.edit {
             putString(ACTIVE_SAFE, "${safe.address.asEthereumAddressString()};${safe.localName};${safe.chainId}")
+            putString(
+                ACTIVE_SAFE_SIGNING_OWNERS,
+                if (safe.signingOwners.isEmpty()) {
+                    null
+                } else {
+                    safe.signingOwners.joinToString(SEPARATOR) { it.asEthereumAddressString() }
+                }
+            )
         }
     }
 
     suspend fun getActiveSafe(): Safe? {
-        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(";")
+        val activeSafeData = preferencesManager.prefs.getString(ACTIVE_SAFE, null)?.split(SEPARATOR)
         val address = activeSafeData?.get(0)?.asEthereumAddress()
-        return address?.let {
+        val safe = address?.let {
             val chainId = nullOnThrow { activeSafeData[2].toBigInteger() }
             // safes from old version won't have chain id saved
             if (chainId != null) getSafeBy(it, chainId) else getSafeBy(it)
         }
+        safe?.signingOwners = getActiveSafeSigningOwners()
+        return safe
+    }
+
+    suspend fun setActiveSafeSigningOwners(owners: List<Solidity.Address>) {
+        preferencesManager.prefs.edit {
+            putString(
+                ACTIVE_SAFE_SIGNING_OWNERS,
+                if(owners.isEmpty()) {
+                    null
+                } else {
+                    owners.joinToString(SEPARATOR) {
+                        it.asEthereumAddressString()
+                    }
+                }
+            )
+        }
+    }
+
+    suspend fun getActiveSafeSigningOwners(): List<Solidity.Address> {
+        return preferencesManager.prefs
+                .getString(ACTIVE_SAFE_SIGNING_OWNERS, null)
+                ?.split(SEPARATOR)
+                ?.map { it.asEthereumAddress()!! } ?: listOf()
     }
 
     suspend fun getSafeBy(address: Solidity.Address): Safe? {
@@ -134,6 +167,9 @@ class SafeRepository(
     companion object {
 
         private const val ACTIVE_SAFE = "prefs.string.active_safe"
+        private const val ACTIVE_SAFE_SIGNING_OWNERS = "prefs.string.active_safe_signing_owners"
+
+        private const val SEPARATOR = ";"
 
         val DEFAULT_FALLBACK_HANDLER = BuildConfig.DEFAULT_FALLBACK_HANDLER.asEthereumAddress()!!
 
@@ -154,7 +190,6 @@ class SafeRepository(
         const val METHOD_CHANGE_MASTER_COPY = "changeMasterCopy"
         const val METHOD_ENABLE_MODULE = "enableModule"
         const val METHOD_DISABLE_MODULE = "disableModule"
-
     }
 }
 

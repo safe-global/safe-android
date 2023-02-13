@@ -4,7 +4,6 @@ import io.gnosis.data.models.Safe
 import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class AssetsViewModel @Inject constructor(
@@ -32,6 +31,9 @@ class AssetsViewModel @Inject constructor(
         safeLaunch {
             updateState {
                 SafeBalancesState.TotalBalance(balance, null)
+            }
+            updateState {
+                SafeBalancesState.ActiveSafe(activeSafe, null)
             }
         }
     }

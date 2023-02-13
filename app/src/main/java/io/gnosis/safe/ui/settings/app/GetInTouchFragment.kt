@@ -65,7 +65,7 @@ class GetInTouchFragment : BaseViewBindingFragment<FragmentGetInTouchBinding>() 
     }
 
     private fun openDiscord() {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/${getString(R.string.id_discord)}")))
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.link_discord))))
     }
 
     private fun openTwitter() {

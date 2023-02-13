@@ -98,7 +98,7 @@ def setupAndroidReporting() {
                 dir: project.buildDir,
                 includes: [
                         'jacoco/testDebugUnitTest.exec',
-                        'outputs/code-coverage/connected/*coverage.ec'
+                        'outputs/code-coverage/*/connected/*/coverage.ec'
                 ]
         ))
     }

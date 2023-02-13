@@ -18,11 +18,11 @@
             style="@style/Toolbar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:layout_constraintBottom_toTopOf="@id/safe_name_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="packed">
 
             <ImageButton
@@ -47,6 +47,14 @@
                 android:text="@string/settings_app_advanced" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/chain_ribbon"
+            style="@style/ChainRibbon"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/chain_ribbon_size"
+            android:visibility="visible"
+            tools:text="Mainnet" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

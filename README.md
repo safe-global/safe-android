@@ -3,7 +3,7 @@
 
 ## Goal
 The Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
-Transactions are secured by on-chain multi-factor-authentication. This is achieved by using the [Safe smart contracts](https://github.com/gnosis/safe-contracts). They are the successor of the broadly trusted [Gnosis Multisig Wallet smart contracts](https://github.com/gnosis/MultiSigWallet)).
+Transactions are secured by on-chain multi-factor-authentication. This is achieved by using the [Safe smart contracts](https://github.com/safe-global/safe-contracts). They are the successor of the broadly trusted [Gnosis Multisig Wallet smart contracts](https://github.com/gnosis/MultiSigWallet)).
 
 ## Setup
 

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Safe</string>
-    <string name="link_privacy_policy">https://safe.gnosis.io/privacy</string>
-    <string name="link_terms_of_use">https://safe.gnosis.io/terms</string>
-    <string name="link_licenses">https://gnosis-safe.io/licenses/</string>
-    <string name="link_help_center"> https://help.gnosis-safe.io</string>
+    <string name="link_privacy_policy">https://safe.global/privacy</string>
+    <string name="link_terms_of_use">https://safe.global/terms</string>
+    <string name="link_licenses">https://safe.global/licenses</string>
+    <string name="link_help_center">https://help.safe.global</string>
+    <string name="link_discord">https://chat.safe.global</string>
     <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
-    <string name="link_tracking_link">https://gnosis-safe.io/privacy/</string>
     <string name="id_twitter">Safe</string>
     <string name="id_discord">TaNjuFzS6X</string>
     <string name="email_feedback" translatable="false">support@safe.global</string>
     <string name="empty_string" translatable="false" />
-    <string name="safe_settings_fallback_handler_help_url">https://help.gnosis-safe.io/en/articles/4738352-what-is-a-fallback-handler-and-how-does-it-relate-to-the-gnosis-safe</string>
-    <string name="safe_settings_guard_help_url">https://help.gnosis-safe.io/en/articles/5324092-what-is-a-transaction-guard</string>
-    <string name="owner_key_intro_private_key_url">https://help.gnosis-safe.io/en/articles/4866738-how-are-private-keys-stored-on-gnosis-safe-mobile</string>
-    <string name="tx_list_conflict_header_link">https://help.gnosis-safe.io/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
-    <string name="tx_details_rejection_payment_reason_link">https://help.gnosis-safe.io/en/articles/4738501-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
-    <string name="tx_advanced_params_config_howto_link">https://help.gnosis-safe.io/en/articles/4738445-advanced-transaction-parameters</string>
+    <string name="safe_settings_fallback_handler_help_url">https://help.safe.global/en/articles/4738352-what-is-a-fallback-handler-and-how-does-it-relate-to-the-gnosis-safe</string>
+    <string name="safe_settings_guard_help_url">https://help.safe.global/en/articles/5324092-what-is-a-transaction-guard</string>
+    <string name="owner_key_intro_private_key_url">https://help.safe.global/en/articles/4866738-how-are-private-keys-stored-on-gnosis-safe-mobile</string>
+    <string name="tx_list_conflict_header_link">https://help.safe.global/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
+    <string name="tx_details_rejection_payment_reason_link">https://help.safe.global/en/articles/4738501-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
+    <string name="tx_advanced_params_config_howto_link">https://help.safe.global/en/articles/4738445-advanced-transaction-parameters</string>
 </resources>

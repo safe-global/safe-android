@@ -7,7 +7,10 @@ import io.gnosis.data.models.VersionState
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.repositories.EnsRepository
 import io.gnosis.data.repositories.SafeRepository
-import io.gnosis.safe.*
+import io.gnosis.safe.TestLifecycleRule
+import io.gnosis.safe.TestLiveDataObserver
+import io.gnosis.safe.Tracker
+import io.gnosis.safe.appDispatchers
 import io.gnosis.safe.notifications.NotificationManager
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -19,7 +22,8 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -29,9 +33,6 @@ import timber.log.Timber
 import java.math.BigInteger
 
 class SafeSettingsViewModelTest {
-
-    @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
 
     @get:Rule
     val instantExecutorRule = TestLifecycleRule()
@@ -50,7 +51,7 @@ class SafeSettingsViewModelTest {
     private lateinit var safeSettingsViewModel: SafeSettingsViewModel
 
     @Test
-    fun `init - (no active safe) should emit loading`() = runBlockingTest {
+    fun `init - (no active safe) should emit loading`() = runTest(UnconfinedTestDispatcher()) {
         coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
@@ -77,7 +78,7 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `init - (activeSafe change) should load new data`() = runBlockingTest {
+    fun `init - (activeSafe change) should load new data`() = runTest(UnconfinedTestDispatcher()) {
         val safe1 = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safe2 = Safe(Solidity.Address(BigInteger.TEN), "safe")
         val safeInfo1 = SafeInfo(
@@ -109,7 +110,10 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getSafeInfo(any()) } returnsMany listOf(safeInfo1, safeInfo2)
         coEvery { safeRepository.activeSafeFlow() } returns flowOf(safe1, safe2)
         coEvery { credentialsRepository.owners() } returns emptyList()
-        coEvery { ensRepository.reverseResolve(any(), any()) } returnsMany listOf(ensName1, ensName2)
+        coEvery { ensRepository.reverseResolve(any(), any()) } returnsMany listOf(
+            ensName1,
+            ensName2
+        )
         val testObserver = TestLiveDataObserver<SafeSettingsState>()
 
         safeSettingsViewModel =
@@ -141,42 +145,45 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `reload - (activeSafe null) should emit not loading`() = runBlockingTest {
-        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
-        coEvery { safeRepository.getActiveSafe() } returns null
-        coEvery { credentialsRepository.owners() } returns emptyList()
-        val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel =
-            SafeSettingsViewModel(
-                safeRepository,
-                ensRepository,
-                credentialsRepository,
-                notificationRepository,
-                notificationManager,
-                tracker,
-                appDispatchers
-            )
+    fun `reload - (activeSafe null) should emit not loading`() =
+        runTest(UnconfinedTestDispatcher()) {
+            coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+            coEvery { safeRepository.getActiveSafe() } returns null
+            coEvery { credentialsRepository.owners() } returns emptyList()
+            val testObserver = TestLiveDataObserver<SafeSettingsState>()
+            safeSettingsViewModel =
+                SafeSettingsViewModel(
+                    safeRepository,
+                    ensRepository,
+                    credentialsRepository,
+                    notificationRepository,
+                    notificationManager,
+                    tracker,
+                    appDispatchers
+                )
 
-        safeSettingsViewModel.reload()
-        safeSettingsViewModel.state.observeForever(testObserver)
+            safeSettingsViewModel.reload()
+            safeSettingsViewModel.state.observeForever(testObserver)
 
-        testObserver.assertValueCount(1)
-        with(testObserver.values()[0]) {
-            assertEquals(null, ensName)
-            assertEquals(null, safeInfo)
-            assertEquals(null, safe)
-            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+            testObserver.assertValueCount(1)
+            with(testObserver.values()[0]) {
+                assertEquals(null, ensName)
+                assertEquals(null, safeInfo)
+                assertEquals(null, safe)
+                assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+            }
+            coVerifySequence {
+                safeRepository.activeSafeFlow()
+                safeRepository.getActiveSafe()
+                safeRepository.getSafeInfo(any()) wasNot Called
+                ensRepository wasNot Called
+            }
         }
-        coVerifySequence {
-            safeRepository.activeSafeFlow()
-            safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(any()) wasNot Called
-            ensRepository wasNot Called
-        }
-    }
 
     @Test
-    fun `reload - (activeSafe available, everything works) should emit everything`() = runBlockingTest {
+    fun `reload - (activeSafe available, everything works) should emit everything`() = runTest(
+        UnconfinedTestDispatcher()
+    ) {
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
         val safeInfo = SafeInfo(
             AddressInfo(safe.address),
@@ -227,60 +234,65 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `reload - (activeSafe available, ensFailure) should emit safe data with null name`() = runBlockingTest {
-        val throwable = Throwable()
-        val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
-        val safeInfo = SafeInfo(
-            AddressInfo(safe.address),
-            BigInteger.TEN,
-            2,
-            emptyList(),
-            AddressInfo(Solidity.Address(BigInteger.ONE)),
-            emptyList(),
-            null,
-            null,
-            "1.1.1",
-            VersionState.OUTDATED
-        )
-        coEvery { safeRepository.getActiveSafe() } returns safe
-        coEvery { credentialsRepository.owners() } returns emptyList()
-        coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
-        coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
-        coEvery { ensRepository.reverseResolve(any(), any()) } throws throwable
-        mockkStatic(Timber::class)
-        val testObserver = TestLiveDataObserver<SafeSettingsState>()
-        safeSettingsViewModel =
-            SafeSettingsViewModel(
-                safeRepository,
-                ensRepository,
-                credentialsRepository,
-                notificationRepository,
-                notificationManager,
-                tracker,
-                appDispatchers
+    fun `reload - (activeSafe available, ensFailure) should emit safe data with null name`() =
+        runTest(
+            UnconfinedTestDispatcher()
+        ) {
+            val throwable = Throwable()
+            val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
+            val safeInfo = SafeInfo(
+                AddressInfo(safe.address),
+                BigInteger.TEN,
+                2,
+                emptyList(),
+                AddressInfo(Solidity.Address(BigInteger.ONE)),
+                emptyList(),
+                null,
+                null,
+                "1.1.1",
+                VersionState.OUTDATED
             )
+            coEvery { safeRepository.getActiveSafe() } returns safe
+            coEvery { credentialsRepository.owners() } returns emptyList()
+            coEvery { safeRepository.getSafeInfo(any()) } returns safeInfo
+            coEvery { safeRepository.activeSafeFlow() } returns emptyFlow()
+            coEvery { ensRepository.reverseResolve(any(), any()) } throws throwable
+            mockkStatic(Timber::class)
+            val testObserver = TestLiveDataObserver<SafeSettingsState>()
+            safeSettingsViewModel =
+                SafeSettingsViewModel(
+                    safeRepository,
+                    ensRepository,
+                    credentialsRepository,
+                    notificationRepository,
+                    notificationManager,
+                    tracker,
+                    appDispatchers
+                )
 
-        safeSettingsViewModel.reload()
-        safeSettingsViewModel.state.observeForever(testObserver)
+            safeSettingsViewModel.reload()
+            safeSettingsViewModel.state.observeForever(testObserver)
 
-        testObserver.assertValueCount(1)
-        with(testObserver.values()[0]) {
-            assertEquals(null, this.ensName)
-            assertEquals(safeInfo, this.safeInfo)
-            assertEquals(safe, this.safe)
-            assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+            testObserver.assertValueCount(1)
+            with(testObserver.values()[0]) {
+                assertEquals(null, this.ensName)
+                assertEquals(safeInfo, this.safeInfo)
+                assertEquals(safe, this.safe)
+                assertEquals(BaseStateViewModel.ViewAction.Loading(false), viewAction)
+            }
+            coVerifySequence {
+                safeRepository.activeSafeFlow()
+                safeRepository.getActiveSafe()
+                safeRepository.getSafeInfo(safe)
+                ensRepository.reverseResolve(safe.address, safe.chain)
+                Timber.e(throwable)
+            }
         }
-        coVerifySequence {
-            safeRepository.activeSafeFlow()
-            safeRepository.getActiveSafe()
-            safeRepository.getSafeInfo(safe)
-            ensRepository.reverseResolve(safe.address, safe.chain)
-            Timber.e(throwable)
-        }
-    }
 
     @Test
-    fun `reload - (activeSafe available, safeInfo failure) should emit ShowError`() = runBlockingTest {
+    fun `reload - (activeSafe available, safeInfo failure) should emit ShowError`() = runTest(
+        UnconfinedTestDispatcher()
+    ) {
         val throwable = Throwable()
         val safe = Safe(Solidity.Address(BigInteger.ONE), "safe")
         coEvery { safeRepository.getActiveSafe() } returns safe
@@ -317,7 +329,9 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `removeSafe (one safe) - should remove safe and clear active safe`() = runBlockingTest {
+    fun `removeSafe (one safe) - should remove safe and clear active safe`() = runTest(
+        UnconfinedTestDispatcher()
+    ) {
         coEvery { safeRepository.getActiveSafe() } returnsMany listOf(SAFE_1, null)
         coEvery { safeRepository.activeSafeFlow() } returns flow {
             emit(SAFE_1)
@@ -328,6 +342,18 @@ class SafeSettingsViewModelTest {
         coEvery { safeRepository.getSafes() } returns listOf()
         coEvery { safeRepository.getSafeCount() } returns 0
         coEvery { safeRepository.removeSafe(SAFE_1) } just Runs
+        coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
+            AddressInfo(SAFE_1.address),
+            BigInteger.ONE,
+            2,
+            emptyList(),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            emptyList(),
+            AddressInfo(Solidity.Address(BigInteger.ONE)),
+            null,
+            "1.1.1",
+            VersionState.OUTDATED
+        )
         coEvery { credentialsRepository.owners() } returns emptyList()
         coEvery { notificationRepository.unregisterSafe(any(), any()) } just Runs
         coEvery { tracker.logSafeRemoved(any()) } just Runs
@@ -360,6 +386,7 @@ class SafeSettingsViewModelTest {
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
+            safeRepository.getSafeInfo(SAFE_1)
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)
             safeRepository.getSafes()
@@ -372,7 +399,9 @@ class SafeSettingsViewModelTest {
     }
 
     @Test
-    fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runBlockingTest {
+    fun `removeSafe (two or more safes) - should remove safe and select next safe`() = runTest(
+        UnconfinedTestDispatcher()
+    ) {
         coEvery { safeRepository.getSafeInfo(any()) } returns SafeInfo(
             AddressInfo(SAFE_1.address),
             BigInteger.ONE,
@@ -425,6 +454,7 @@ class SafeSettingsViewModelTest {
 
         coVerifySequence {
             safeRepository.activeSafeFlow()
+            safeRepository.getSafeInfo(SAFE_1)
             safeRepository.getSafeInfo(SAFE_2)
             safeRepository.getActiveSafe()
             safeRepository.removeSafe(SAFE_1)

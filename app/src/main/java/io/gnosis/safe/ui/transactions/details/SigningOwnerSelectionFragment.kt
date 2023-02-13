@@ -34,7 +34,7 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
     override fun screenId() = ScreenId.OWNER_LIST
     private val navArgs by navArgs<SigningOwnerSelectionFragmentArgs>()
     private val missingSigners by lazy { navArgs.missingSigners }
-    private val isConfirmation by lazy { navArgs.isConfirmation }
+    private val signingMode by lazy { navArgs.signingMode }
     private val safeTxHash by lazy { navArgs.safeTxHash }
 
     lateinit var adapter: OwnerListAdapter
@@ -66,9 +66,19 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
             backButton.setOnClickListener {
                 findNavController().navigateUp()
             }
-            if (!isConfirmation) {
-                description.setText(R.string.signing_owner_selection_list_rejection_description)
+
+            when(signingMode) {
+                SigningMode.CONFIRMATION -> {
+
+                }
+                SigningMode.REJECTION -> {
+                    description.setText(R.string.signing_owner_selection_list_rejection_description)
+                }
+                SigningMode.INITIATE_TRANSFER -> {
+                    description.setText(R.string.coins_asset_send_select_owner)
+                }
             }
+
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
             owners.addItemDecoration(dividerItemDecoration)
@@ -120,13 +130,12 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
                         }
                     }
                 }
-
             }
         })
     }
 
     override fun onOwnerClick(owner: Solidity.Address, type: Owner.Type) {
-        viewModel.selectKeyForSigning(owner, type, isConfirmation, safeTxHash)
+        viewModel.selectKeyForSigning(owner, type, signingMode, safeTxHash)
     }
 
     private fun showList() {
@@ -142,4 +151,10 @@ class SigningOwnerSelectionFragment : BaseViewBindingFragment<FragmentSigningOwn
             emptyPlaceholder.visible(true)
         }
     }
+}
+
+enum class SigningMode {
+    CONFIRMATION,
+    REJECTION,
+    INITIATE_TRANSFER
 }

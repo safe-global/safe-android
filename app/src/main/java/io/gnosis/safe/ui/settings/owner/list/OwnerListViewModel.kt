@@ -8,6 +8,7 @@ import io.gnosis.safe.ui.settings.app.SettingsHandler
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListFragment
 import io.gnosis.safe.ui.transactions.details.ConfirmConfirmation
 import io.gnosis.safe.ui.transactions.details.ConfirmRejection
+import io.gnosis.safe.ui.transactions.details.SigningMode
 import io.gnosis.safe.ui.transactions.details.SigningOwnerSelectionFragmentDirections
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
@@ -44,7 +45,8 @@ class OwnerListViewModel
         }
     }
 
-    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, isConfirmation: Boolean, safeTxHash: String? = null) {
+    fun selectKeyForSigning(owner: Solidity.Address, type: Owner.Type, signingMode: SigningMode, safeTxHash: String? = null) {
+        val isConfirmation = signingMode == SigningMode.CONFIRMATION || signingMode == SigningMode.INITIATE_TRANSFER
         safeLaunch {
             when(type) {
                 Owner.Type.LEDGER_NANO_X -> {

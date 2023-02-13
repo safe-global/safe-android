@@ -2,7 +2,6 @@
 # fail if any commands fails
 set -e
 
-
 # Setup fake google service json
 cp ci/google-services.json.sample app/google-services.json
 
@@ -30,8 +29,10 @@ adb shell am start -n io.gnosis.safe.debug/io.gnosis.safe.ui.splash.SplashActivi
 echo "Execute Coverage verification"
 ./gradlew jacocoTestCoverageVerification --stacktrace
 
-echo "Execute UI tests"
-./gradlew jacocoTestReport --stacktrace
-
-echo Generating report form coverage result
-bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'
+#TODO: fix and enable test report
+#echo "Execute UI tests"
+#./gradlew jacocoTestReport --stacktrace
+#
+## https://docs.codecov.com/docs/about-the-codecov-bash-uploader
+#echo Generating report form coverage result
+#bash <(curl -s https://codecov.io/bash) -f '*TestReport.xml'

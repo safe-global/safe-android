@@ -16,9 +16,6 @@ import java.math.BigInteger
 class OwnerEnterNameViewModelTest {
 
     @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
-    @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
     private val credentialsRepository = mockk<CredentialsRepository>()

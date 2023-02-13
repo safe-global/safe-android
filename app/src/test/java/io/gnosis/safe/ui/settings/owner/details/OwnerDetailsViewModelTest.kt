@@ -3,6 +3,7 @@ package io.gnosis.safe.ui.settings.owner.details
 import android.graphics.Bitmap
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
+import io.gnosis.data.repositories.SafeRepository
 import io.gnosis.safe.*
 import io.gnosis.safe.notifications.NotificationRepository
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.CloseScreen
@@ -19,11 +20,9 @@ import java.math.BigInteger
 class OwnerDetailsViewModelTest {
 
     @get:Rule
-    val coroutineScope = MainCoroutineScopeRule()
-
-    @get:Rule
     val instantExecutorRule = TestLifecycleRule()
 
+    private val safeRepository = mockk<SafeRepository>()
     private val credentialsRepository = mockk<CredentialsRepository>()
     private val notificationRepository = mockk<NotificationRepository>()
     private val settingsHandler = mockk<SettingsHandler>()
@@ -42,7 +41,7 @@ class OwnerDetailsViewModelTest {
         coEvery { credentialsRepository.owner(ownerAddress) } returns Owner(ownerAddress, "owner1", Owner.Type.IMPORTED)
         coEvery { qrCodeGenerator.generateQrCode(any(), any(), any(), any()) } returns qrCode
 
-        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
+        viewModel = OwnerDetailsViewModel(safeRepository, credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerDetailsState>()
         viewModel.state.observeForever(testObserver)
 
@@ -65,6 +64,7 @@ class OwnerDetailsViewModelTest {
         val ownerAddress = Solidity.Address(BigInteger.ZERO)
         val owner = Owner(ownerAddress, null, Owner.Type.IMPORTED, null)
 
+        coEvery { safeRepository.getActiveSafe() } returns null
         coEvery { credentialsRepository.owner(any()) } returns owner
         coEvery { credentialsRepository.removeOwner(owner) } just Runs
         coEvery { notificationRepository.unregisterOwners() } just Runs
@@ -72,7 +72,7 @@ class OwnerDetailsViewModelTest {
         coEvery { credentialsRepository.ownerCount(Owner.Type.IMPORTED) } returns 0
         coEvery { tracker.setNumKeysImported(any()) } just Runs
 
-        viewModel = OwnerDetailsViewModel(credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
+        viewModel = OwnerDetailsViewModel(safeRepository, credentialsRepository, notificationRepository, settingsHandler, tracker, qrCodeGenerator, appDispatchers)
         val testObserver = TestLiveDataObserver<OwnerDetailsState>()
         viewModel.state.observeForever(testObserver)
 

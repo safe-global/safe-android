@@ -49,7 +49,6 @@ class CoinsViewModel
                     )
                 }
                 val balanceInfo = tokenRepository.loadBalanceOf(safe, userDefaultFiat)
-
                 val banner = when {
                     settingsHandler.showOwnerBanner && credentialsRepository.ownerCount() == 0 -> Banner.Type.ADD_OWNER_KEY
                     settingsHandler.showPasscodeBanner && credentialsRepository.ownerCount() > 0 -> Banner.Type.PASSCODE

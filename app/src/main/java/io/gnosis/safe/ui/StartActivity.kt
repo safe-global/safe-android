@@ -37,6 +37,7 @@ import io.intercom.android.sdk.Intercom
 import io.intercom.android.sdk.UnreadConversationCountListener
 import kotlinx.coroutines.launch
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -67,7 +68,6 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
     private val handler = Handler(Looper.getMainLooper())
 
     var comingFromBackground = true
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,8 +159,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                         comingFromBackground = false
                     } else {
                         if (settingsHandler.showWhatsNew) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     }
                 }
@@ -206,8 +205,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                             askForPasscode()
                         } else {
                             if (settingsHandler.showWhatsNew) {
-                                showWhatsNew()
-                                settingsHandler.showWhatsNew = false
+                                onAppUpdated()
                             }
                         }
                     }
@@ -224,8 +222,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                 if (destination.id == R.id.assetsFragment || destination.id == R.id.settingsFragment || destination.id == R.id.transactionsFragment) {
                     if (settingsHandler.showWhatsNew) {
                         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                            showWhatsNew()
-                            settingsHandler.showWhatsNew = false
+                            onAppUpdated()
                         }
                     } else if (settingsHandler.appStartCount >= 3) {
                         startRateFlow()
@@ -263,6 +260,10 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
     }
 
+    override fun checkSafeReadOnly() {
+        checkReadOnly()
+    }
+
     private fun setNoSafe() {
         with(toolbarBinding) {
             safeImage.setOnClickListener(null)
@@ -271,6 +272,7 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
             safeName.visible(false)
             readOnly.visible(false, View.INVISIBLE)
             safeAddress.text = getString(R.string.no_safes_loaded)
+            safeAddress.setOnClickListener(null)
             safeSelection.visible(false)
         }
 
@@ -359,10 +361,16 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
                     val safeInfo = safeRepository.getSafeInfo(it)
                     val safeOwners = safeInfo.owners.map { it.value }.toSet()
                     val localOwners = credentialsRepository.owners().map { it.address }.toSet()
+                    val signingOwners = safeOwners.intersect(localOwners)
                     toolbarBinding.readOnly.visible(
-                        safeOwners.intersect(localOwners).isEmpty(),
+                        signingOwners.isEmpty(),
                         View.INVISIBLE
                     )
+                    safeRepository.setActiveSafeSigningOwners(signingOwners.map {
+                        Solidity.Address(
+                            it.value
+                        )
+                    })
                     safeRepository.saveSafe(activeSafe.copy(version = safeInfo.version))
                 }
             }.onFailure {
@@ -407,8 +415,14 @@ class StartActivity : BaseActivity(), SafeOverviewNavigationHandler, AppStateLis
         }
     }
 
+    private fun onAppUpdated() {
+        showWhatsNew()
+        settingsHandler.showWhatsNew = false
+    }
+
     private fun showWhatsNew() {
-        navController.navigate(R.id.whatsNewDialog)
+        //TODO: uncomment if whats new screen should be shown
+        //navController.navigate(R.id.whatsNewDialog)
     }
 
     private fun navigateToShareSafeDialog() {

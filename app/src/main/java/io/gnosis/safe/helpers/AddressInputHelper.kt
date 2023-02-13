@@ -90,6 +90,8 @@ class AddressInputHelper(
                             }
                         }
 
+                    if (prefix == "ethereum") prefix = ""
+
                     when {
 
                         address == null -> {
@@ -137,6 +139,8 @@ class AddressInputHelper(
                     } else {
                         parseEthereumAddress(it)
                     }
+
+                if (prefix == "ethereum") prefix = ""
 
                 when {
 
