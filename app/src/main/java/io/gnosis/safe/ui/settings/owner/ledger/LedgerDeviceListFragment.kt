@@ -1,7 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.ledger
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +48,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     @Inject
     lateinit var viewModel: LedgerDeviceListViewModel
 
-
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -73,11 +71,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                 onBackNavigation()
             }
             refresh.setOnRefreshListener {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                    viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingLocationPermission)
-                } else {
-                    viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingBLEPermission)
-                }
+                viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingBLEPermission)
             }
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
@@ -138,11 +132,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
             }
         })
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            viewModel.scanForDevices(this, ::requestMissingLocationPermission)
-        } else {
-            viewModel.scanForDevices(this, ::requestMissingBLEPermission)
-        }
+        viewModel.scanForDevices(this, ::requestMissingBLEPermission)
     }
 
     private fun onBackNavigation() {
@@ -168,12 +158,8 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         binding.emptyPlaceholder.visible(true)
     }
 
-    private fun requestMissingLocationPermission() {
-        viewModel.requestLocationPermission(this)
-    }
-
     private fun requestMissingBLEPermission() {
-        viewModel.requestBLEPermission(this)
+        viewModel.requestPermissionForBLE(this)
     }
 
     private fun handleMissingPermission() {
@@ -186,11 +172,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            viewModel.handleResult(this, ::handleBluetoothDisabled, ::requestMissingLocationPermission, requestCode, resultCode, data)
-        } else {
-            viewModel.handleResult(this, ::handleBluetoothDisabled, ::requestMissingBLEPermission, requestCode, resultCode, data)
-        }
+        viewModel.handleResult(this, ::handleBluetoothDisabled, ::requestMissingBLEPermission, requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(
@@ -199,27 +181,14 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            viewModel.handlePermissionResult(
-                this,
-                ::handleMissingPermission,
-                ::requestMissingLocationPermission,
-                requestCode,
-                permissions,
-                grantResults
-            )
-        } else {
-            viewModel.handlePermissionResult(
-                this,
-                ::handleMissingPermission,
-                ::requestMissingBLEPermission,
-                requestCode,
-                permissions,
-                grantResults
-            )
-        }
-
+        viewModel.handlePermissionResult(
+            this,
+            ::handleMissingPermission,
+            ::requestMissingBLEPermission,
+            requestCode,
+            permissions,
+            grantResults
+        )
     }
 
     override fun onDeviceClick(position: Int) {
