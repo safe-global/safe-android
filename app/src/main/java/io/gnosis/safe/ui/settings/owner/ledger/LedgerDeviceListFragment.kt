@@ -48,7 +48,6 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
     @Inject
     lateinit var viewModel: LedgerDeviceListViewModel
 
-
     override fun inject(component: ViewComponent) {
         component.inject(this)
     }
@@ -72,7 +71,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
                 onBackNavigation()
             }
             refresh.setOnRefreshListener {
-                viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingLocationPermission)
+                viewModel.scanForDevices(this@LedgerDeviceListFragment, ::requestMissingBLEPermission)
             }
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             dividerItemDecoration.setDrawable(AppCompatResources.getDrawable(requireContext(), R.drawable.divider)!!)
@@ -133,7 +132,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
             }
         })
 
-        viewModel.scanForDevices(this, ::requestMissingLocationPermission)
+        viewModel.scanForDevices(this, ::requestMissingBLEPermission)
     }
 
     private fun onBackNavigation() {
@@ -159,11 +158,11 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         binding.emptyPlaceholder.visible(true)
     }
 
-    private fun requestMissingLocationPermission() {
-        viewModel.requestLocationPermission(this)
+    private fun requestMissingBLEPermission() {
+        viewModel.requestPermissionForBLE(this)
     }
 
-    private fun handleMissingLocationPermission() {
+    private fun handleMissingPermission() {
         viewModel.scanError()
     }
 
@@ -173,7 +172,7 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        viewModel.handleResult(this, ::handleBluetoothDisabled, ::requestMissingLocationPermission, requestCode, resultCode, data)
+        viewModel.handleResult(this, ::handleBluetoothDisabled, ::requestMissingBLEPermission, requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(
@@ -184,8 +183,8 @@ class LedgerDeviceListFragment : BaseViewBindingFragment<FragmentLedgerDeviceLis
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         viewModel.handlePermissionResult(
             this,
-            ::handleMissingLocationPermission,
-            ::requestMissingLocationPermission,
+            ::handleMissingPermission,
+            ::requestMissingBLEPermission,
             requestCode,
             permissions,
             grantResults

@@ -9,8 +9,6 @@ import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.withTimeout
-import okhttp3.internal.wait
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -72,8 +70,8 @@ class LedgerDeviceListViewModel
         )
     }
 
-    fun requestLocationPermission(fragment: Fragment) {
-        ledgerController.requestLocationPermission(fragment)
+    fun requestPermissionForBLE(fragment: Fragment) {
+        ledgerController.requestPermissionForBLE(fragment)
     }
 
     fun scanForDevices(fragment: Fragment, missingLocationPermissionHandler: () -> Unit) {
