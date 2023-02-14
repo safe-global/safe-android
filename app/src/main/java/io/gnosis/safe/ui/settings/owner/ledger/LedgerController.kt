@@ -177,14 +177,7 @@ class LedgerController(val context: Context) {
         if (!bluetoothAdapter.isEnabled) {
             promptEnableBluetooth(fragment)
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
-            ) {
-                missingPermissionHandler.invoke()
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN) || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))
-            ) {
+            if (locationPermissionMissing() || blePermissionMissing()) {
                 missingPermissionHandler.invoke()
             } else {
                 if (isScanning) {
@@ -195,6 +188,13 @@ class LedgerController(val context: Context) {
             }
         }
     }
+
+    fun locationPermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
+
+    fun blePermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN) || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))
 
     fun stopBleScan() {
         bleScanner.stopScan(scanCallback)
