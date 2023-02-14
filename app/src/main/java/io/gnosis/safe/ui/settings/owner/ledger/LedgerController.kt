@@ -189,11 +189,11 @@ class LedgerController(val context: Context) {
         }
     }
 
-    fun locationPermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+    private fun locationPermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
                 && (!context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION))
 
-    fun blePermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    private fun blePermissionMissing() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             && (!context.hasPermission(Manifest.permission.BLUETOOTH_SCAN) || !context.hasPermission(Manifest.permission.BLUETOOTH_CONNECT))
 
     fun stopBleScan() {
