@@ -21,10 +21,9 @@ git push -u origin release
 
 **AFTER PRODUCT OWNER APPROVAL**
 
-- [ ] Create a Tag on the release branch with the release version using the `vX.Y.Z` format
-- [ ] Push the tag to Github
 - [ ] Draft new release in Github at: https://github.com/safe-global/safe-android/releases/
-  - [ ] Select tag from list by clicking "Choose a tag"
+  - [ ] Click "Choose a tag", enter the new version and select "+ Create new tag: vX.Y.Z on publish"
+  - [ ] Select `release` as target Branch
   - [ ] Add title using `Version X.Y.Z` format
   - [ ] Add release notes from Product Owner to description
   - [ ] Publish release
