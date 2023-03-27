@@ -284,6 +284,9 @@
             android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoLedgerFragment"
             app:destination="@id/ownerInfoLedgerFragment" />
 
+        <action
+            android:id="@+id/action_ownerAddOptionsFragment_to_ownerInfoKeystoneFragment"
+            app:destination="@id/ownerInfoKeystoneFragment" />
     </fragment>
 
     <fragment
@@ -308,6 +311,13 @@
             android:id="@+id/action_ownerInfoLedgerFragment_to_ledgerDeviceListFragment"
             app:destination="@id/ledgerDeviceListFragment" />
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/ownerInfoKeystoneFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoKeystoneFragment"
+        android:label="OwnerInfoKeystoneFragment"
+        tools:layout="@layout/fragment_owner_info_keystone">
     </fragment>
 
     <fragment

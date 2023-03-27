@@ -289,6 +289,7 @@ enum class ScreenId(val value: String) {
     OWNER_INFO("screen_owner_info"),
     OWNER_GENERATE_INFO("screen_owner_generate_info"),
     OWNER_LEDGER_INFO("screen_owner_ledger_nano_x_info"),
+    OWNER_KEYSTONE_INFO("screen_owner_keystone_info"),
     OWNER_ENTER_SEED("screen_owner_enter_seed"),
     OWNER_ENTER_NAME("screen_owner_enter_name"),
     OWNER_EDIT_NAME("screen_owner_edit_name"),

@@ -459,6 +459,8 @@
     <string name="signing_owner_create_new_desc">Create a new key that you can use as owner of your Safe Account</string>
     <string name="signing_owner_connect_ledger_title">Connect Ledger Nano X</string>
     <string name="signing_owner_connect_ledger_desc">Add a key from your hardware wallet</string>
+    <string name="signing_owner_connect_keystone_title">Connect Keystone</string>
+    <string name="signing_owner_connect_keystone_desc">Connect your key via QR code</string>
 
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
@@ -574,6 +576,14 @@
     <string name="import_owner_key_ledger_pair_your_ledger_device_desc">Please make sure your Ledger Nano X is unlocked, Bluetooth is enabled and Ethereum app is installed and opened.</string>
     <string name="import_owner_key_ledger_how_secure_is_that_title">How secure is that?</string>
     <string name="import_owner_key_ledger_how_secure_is_that_desc">Your key will remain on your Ledger wallet. We do not store it in the app.</string>
+
+    <string name="import_owner_key_keystone_title">Connect Keystone</string>
+    <string name="import_owner_key_keystone_how_does_it_work_title">How does it work?</string>
+    <string name="import_owner_key_keystone_how_does_it_work_desc">Connect your Keystone device and select a key. If it is an owner of your Safe you can sign transactions.</string>
+    <string name="import_owner_key_keystone_secured_qr_codes_title">Secured QR codes</string>
+    <string name="import_owner_key_keystone_secured_qr_codes_desc">Sign anywhere without USB cables or unstable bluetooth via secured and verifiable QR codes.</string>
+    <string name="import_owner_key_keystone_how_secure_is_that_title">How secure is that?</string>
+    <string name="import_owner_key_keystone_how_secure_is_that_desc">Your key will remain on your Keystone wallet. We do not store it in the app.</string>
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
