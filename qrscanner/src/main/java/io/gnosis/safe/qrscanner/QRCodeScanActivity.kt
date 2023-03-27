@@ -59,33 +59,9 @@ class QRCodeScanActivity : AppCompatActivity() {
     }
 
     private fun finishWithResult(value: String) {
-        if (isEthereumAddress(value)) {
-            val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
-            setResult(Activity.RESULT_OK, result)
-            finish()
-        } else {
-            AlertDialog.Builder(this)
-                .setTitle(R.string.qr_error_title)
-                .setMessage(R.string.qr_error_message)
-                .setNegativeButton(R.string.qr_retry_button) { _, _ ->
-                    videographer.open(
-                        findViewById(R.id.scan_view_finder)
-                    )
-                }
-                .create().show()
-        }
-    }
-
-    private fun isEthereumAddress(result: String): Boolean {
-        val address =
-            //FIXME: implement proper support for EIP-3770 addresses
-            if (result.contains(":")) {
-                result.split(":")[1].asEthereumAddress() ?: ERC67Parser.parse(result)?.address
-            } else {
-                result.asEthereumAddress()
-            }
-
-        return address != null
+        val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
+        setResult(Activity.RESULT_OK, result)
+        finish()
     }
 
     companion object {
