@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">Safe</string>
     <string name="link_privacy_policy">https://app.safe.global/privacy</string>
     <string name="link_terms_of_use">https://app.safe.global/terms</string>
-    <string name="link_licenses">https://safe.global/licenses</string>
+    <string name="link_licenses">https://app.safe.global/licenses</string>
     <string name="link_help_center">https://help.safe.global</string>
     <string name="link_discord">https://chat.safe.global</string>
     <string name="link_feature_suggestion"> https://safe.cnflx.io/</string>
