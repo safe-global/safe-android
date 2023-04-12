@@ -318,6 +318,32 @@
         android:name="io.gnosis.safe.ui.settings.owner.intro.OwnerInfoKeystoneFragment"
         android:label="OwnerInfoKeystoneFragment"
         tools:layout="@layout/fragment_owner_info_keystone">
+
+        <action
+            android:id="@+id/action_ownerInfoKeystoneFragment_to_keystoneOwnerSelectionFragment"
+            app:destination="@id/keystoneOwnerSelectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/keystoneOwnerSelectionFragment"
+        android:name="io.gnosis.safe.ui.settings.owner.selection.KeystoneOwnerSelectionFragment"
+        android:label="KeystoneOwnerSelectionFragment"
+        tools:layout="@layout/fragment_keystone_owner_selection">
+
+        <argument
+            android:name="hdKey"
+            app:argType="com.keystone.module.HDKey"
+            app:nullable="true" />
+
+        <argument
+            android:name="multiHDKeys"
+            app:argType="com.keystone.module.MultiHDKeys"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_keystoneOwnerSelectionFragment_to_ownerEnterNameFragment"
+            app:destination="@id/ownerEnterNameFragment" />
+
     </fragment>
 
     <fragment

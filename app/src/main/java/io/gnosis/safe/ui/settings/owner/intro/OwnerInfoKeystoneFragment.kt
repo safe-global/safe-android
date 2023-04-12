@@ -13,6 +13,7 @@ import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragmentDirections
 import io.gnosis.safe.utils.handleQrCodeActivityResult
+import com.keystone.sdk.KeystoneSDK
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
     companion object {
@@ -44,8 +45,30 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data, {
-            if (it.startsWith(UR_PREFIX_OF_HDKEY) || it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
-                print(it)
+            val keystoneSDK = KeystoneSDK()
+
+            if (it.startsWith(UR_PREFIX_OF_HDKEY)) {
+                keystoneSDK.decodeQR(it)?.cbor?.let { cbor ->
+                    val hdKey = keystoneSDK.parseExtendedPublicKey(cbor)
+
+                    findNavController().navigate(
+                        OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
+                            hdKey,
+                            null
+                        )
+                    )
+                }
+            } else if (it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
+                keystoneSDK.decodeQR(it)?.cbor?.let { cbor ->
+                    val multiHDKeys = keystoneSDK.parseMultiPublicKeys(cbor)
+
+                    findNavController().navigate(
+                        OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
+                            null,
+                            multiHDKeys
+                        )
+                    )
+                }
             }
         })
     }

@@ -3,12 +3,12 @@ package io.gnosis.safe.ui.settings.owner.selection
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import io.gnosis.safe.utils.MnemonicAddressDerivator
+import io.gnosis.safe.utils.AddressPagingSource
 import kotlinx.coroutines.flow.Flow
 import pm.gnosis.model.Solidity
 
 class DerivedOwnerPagingProvider(
-    private val derivator: MnemonicAddressDerivator
+    private val derivator: AddressPagingSource
 ) {
 
     fun getOwnersStream(): Flow<PagingData<Solidity.Address>> {

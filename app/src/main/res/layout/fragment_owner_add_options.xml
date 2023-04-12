@@ -108,7 +108,7 @@
                 app:setting_name="@string/signing_owner_connect_keystone_title"
                 app:setting_description="@string/signing_owner_connect_keystone_desc"
                 app:setting_openable="true"
-                app:setting_image="@drawable/ic_key_type_keystone" />
+                app:setting_image="@drawable/ic_key_type_keystone_24dp" />
 
             <View
                 android:layout_width="match_parent"

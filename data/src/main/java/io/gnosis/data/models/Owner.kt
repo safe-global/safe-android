@@ -38,13 +38,15 @@ data class Owner(
         // add types here
         IMPORTED(0),
         GENERATED(1),
-        LEDGER_NANO_X(2);
+        LEDGER_NANO_X(2),
+        KEYSTONE(3);
 
         companion object {
             fun get(value: Int) = when (value) {
                 0 -> IMPORTED
                 1 -> GENERATED
                 2 -> LEDGER_NANO_X
+                3 -> KEYSTONE
                 else -> IMPORTED
             }
         }

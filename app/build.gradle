@@ -240,6 +240,9 @@ dependencies {
     implementation "io.intercom.android:intercom-sdk:$versions.intercom"
 
     implementation "com.airbnb.android:lottie:$versions.lottie"
+
+    // Keystone
+    implementation "com.github.KeystoneHQ:keystone-sdk-android:$versions.keystone"
 }
 
 task printVersion {

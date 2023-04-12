@@ -8,10 +8,13 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import java.math.BigInteger
 
-interface MnemonicAddressDerivator {
+interface AddressPagingSource {
+    fun addressesForPage(start: Long, pageSize: Int): List<Solidity.Address>
+}
+
+interface MnemonicAddressDerivator: AddressPagingSource {
     fun initialize(mnemonic: String)
     fun addressesForRange(range: LongRange): List<Solidity.Address>
-    fun addressesForPage(start: Long, pageSize: Int): List<Solidity.Address>
 }
 
 interface MnemonicKeyDerivator {

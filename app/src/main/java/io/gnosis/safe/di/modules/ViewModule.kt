@@ -37,6 +37,7 @@ import io.gnosis.safe.ui.settings.owner.ledger.LedgerDeviceListViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.ledger.LedgerSignViewModel
 import io.gnosis.safe.ui.settings.owner.list.OwnerListViewModel
+import io.gnosis.safe.ui.settings.owner.selection.KeystoneOwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.owner.selection.OwnerSelectionViewModel
 import io.gnosis.safe.ui.settings.safe.AdvancedSafeSettingsViewModel
 import io.gnosis.safe.ui.settings.safe.SafeSettingsEditNameViewModel
@@ -153,6 +154,10 @@ class ViewModule(
     @Provides
     @ForView
     fun providesLedgerOwnerSelectionViewModel(provider: ViewModelProvider) = provider[LedgerOwnerSelectionViewModel::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeystoneOwnerSelectionViewModel(provider: ViewModelProvider) = provider[KeystoneOwnerSelectionViewModel::class.java]
 
     @Provides
     @ForView
