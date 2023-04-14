@@ -23,3 +23,15 @@
 
 - Derive public keys from HD Key
 - Render keys in selection key list
+
+## Week 3 (10/04 - 14/04)
+
+### Done
+
+- Import owner key for `standard` and `ledger.legacy` type
+
+### To-do for next week
+
+- Support scan dynamic QR code
+- Import owner key for `ledger.live` type
+- Add API in [keystone-sdk-android](https://github.com/KeystoneHQ/keystone-sdk-android) library to generate unsigned UR code for transaction
