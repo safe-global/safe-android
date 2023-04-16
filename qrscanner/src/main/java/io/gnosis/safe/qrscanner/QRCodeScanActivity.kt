@@ -7,11 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.TextureView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
-import pm.gnosis.utils.asEthereumAddress
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -59,9 +56,15 @@ class QRCodeScanActivity : AppCompatActivity() {
     }
 
     private fun finishWithResult(value: String) {
-        val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
-        setResult(Activity.RESULT_OK, result)
-        finish()
+        if (validator?.invoke(value) != false) {
+            val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
+            setResult(Activity.RESULT_OK, result)
+            finish()
+        } else {
+            videographer.open(
+                findViewById<TextureView>(R.id.scan_view_finder)
+            )
+        }
     }
 
     companion object {
@@ -69,14 +72,22 @@ class QRCodeScanActivity : AppCompatActivity() {
         const val REQUEST_CODE = 0
         const val DESCRIPTION_EXTRA = "extra.string.description"
 
+        private var validator: ((String) -> Boolean)? = null
+
         fun startForResult(activity: Activity, description: String? = null) =
             activity.startActivityForResult(createIntent(activity, description), REQUEST_CODE)
 
-        fun startForResult(fragment: Fragment, description: String? = null) =
+        fun startForResult(
+            fragment: Fragment,
+            description: String? = null,
+            scannedValueValidator: ((String) -> Boolean)? = null
+        ) {
+            validator = scannedValueValidator
             fragment.startActivityForResult(
                 createIntent(fragment.requireContext(), description),
                 REQUEST_CODE
             )
+        }
 
         fun createIntent(context: Context?, description: String? = null) =
             Intent(context, QRCodeScanActivity::class.java).apply {

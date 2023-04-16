@@ -584,6 +584,7 @@
     <string name="import_owner_key_keystone_secured_qr_codes_desc">Sign anywhere without USB cables or unstable bluetooth via secured and verifiable QR codes.</string>
     <string name="import_owner_key_keystone_how_secure_is_that_title">How secure is that?</string>
     <string name="import_owner_key_keystone_how_secure_is_that_desc">Your key will remain on your Keystone wallet. We do not store it in the app.</string>
+    <string name="import_owner_key_keystone_scanner_description">Scan your Keystone wallet QR code to connect.</string>
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>

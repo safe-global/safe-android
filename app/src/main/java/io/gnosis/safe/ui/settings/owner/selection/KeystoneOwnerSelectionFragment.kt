@@ -38,6 +38,8 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
     private val navArgs by navArgs<KeystoneOwnerSelectionFragmentArgs>()
     private val hdKey: HDKey? by lazy { navArgs.hdKey }
     private val multiHDKeys: MultiHDKeys? by lazy { navArgs.multiHDKeys }
+    private val maxPages: Int
+        get() = if (multiHDKeys != null) 1 else DerivedOwnerPagingProvider.MAX_PAGES
 
     @Inject
     lateinit var viewModel: KeystoneOwnerSelectionViewModel
@@ -72,7 +74,7 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
                     binding.nextButton.isEnabled =
                         adapter.itemCount > 0 && adapter.getSelectedOwnerIndex() == 0L && adapter.peek(0)?.disabled == false
                     binding.progress.visible(false)
-                    binding.showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                    binding.showMoreOwners.visible(adapter.pagesVisible < maxPages)
                 }
             }
         }
@@ -125,7 +127,7 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
                                 })
                                 visualFeedback.start()
                                 showMoreOwners.text = getString(R.string.signing_owner_selection_more)
-                                showMoreOwners.visible(adapter.pagesVisible < MAX_PAGES)
+                                showMoreOwners.visible(adapter.pagesVisible < maxPages)
                             }
                         }
                         lifecycleScope.launch {
@@ -148,9 +150,5 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
     override fun onOwnerClicked(ownerIndex: Long) {
         binding.nextButton.isEnabled = true
         viewModel.setOwnerIndex(ownerIndex)
-    }
-
-    companion object {
-        private const val MAX_PAGES = DerivedOwnerPagingProvider.MAX_PAGES
     }
 }

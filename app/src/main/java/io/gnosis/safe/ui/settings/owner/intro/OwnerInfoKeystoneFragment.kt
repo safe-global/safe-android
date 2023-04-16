@@ -14,8 +14,13 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragmentDirections
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import com.keystone.sdk.KeystoneSDK
+import io.gnosis.safe.R
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
+
+    private val keystoneSDK = KeystoneSDK()
+    private var cbor: String? = null
+
     companion object {
         const val UR_PREFIX_OF_HDKEY = "UR:CRYPTO-HDKEY"
         const val UR_PREFIX_OF_ACCOUNT = "UR:CRYPTO-ACCOUNT"
@@ -35,7 +40,11 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
             nextButton.setOnClickListener {
-                QRCodeScanActivity.startForResult(this@OwnerInfoKeystoneFragment)
+                QRCodeScanActivity.startForResult(
+                    this@OwnerInfoKeystoneFragment,
+                    getString(R.string.import_owner_key_keystone_scanner_description),
+                    ::validator
+                )
                 tracker.logScreen(ScreenId.SCANNER, null)
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
@@ -45,10 +54,9 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data, {
-            val keystoneSDK = KeystoneSDK()
 
             if (it.startsWith(UR_PREFIX_OF_HDKEY)) {
-                keystoneSDK.decodeQR(it)?.cbor?.let { cbor ->
+                this.cbor?.let { cbor ->
                     val hdKey = keystoneSDK.parseExtendedPublicKey(cbor)
 
                     findNavController().navigate(
@@ -59,7 +67,7 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
                     )
                 }
             } else if (it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
-                keystoneSDK.decodeQR(it)?.cbor?.let { cbor ->
+                this.cbor?.let { cbor ->
                     val multiHDKeys = keystoneSDK.parseMultiPublicKeys(cbor)
 
                     findNavController().navigate(
@@ -71,5 +79,16 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
                 }
             }
         })
+    }
+
+    private fun validator(scannedValue: String): Boolean {
+        return if (scannedValue.startsWith(UR_PREFIX_OF_HDKEY) || scannedValue.startsWith(UR_PREFIX_OF_ACCOUNT)) {
+            keystoneSDK.decodeQR(scannedValue)?.cbor?.let {
+                this.cbor = it
+                true
+            } ?: false
+        } else {
+            false
+        }
     }
 }
