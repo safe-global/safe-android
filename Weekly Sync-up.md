@@ -35,3 +35,14 @@
 - Support scan dynamic QR code
 - Import owner key for `ledger.live` type
 - Add API in [keystone-sdk-android](https://github.com/KeystoneHQ/keystone-sdk-android) library to generate unsigned UR code for transaction
+
+## Week 4 (17/04 - 21/04)
+
+### Done
+
+- Finish importing owner key completely
+
+### To-do for next week
+
+- Continue on [keystone-sdk-android](https://github.com/KeystoneHQ/keystone-sdk-android) library to generate unsigned UR code for transaction
+- Show unsigned UR code when request signature

@@ -33,6 +33,10 @@ class Tracker internal constructor(
         firebaseAnalytics.setUserProperty(Param.NUM_KEYS_LEDGER, numKeysLedger.toString())
     }
 
+    fun setNumKeysKeystone(numKeysKeystone: Int) {
+        firebaseAnalytics.setUserProperty(Param.NUM_KEYS_KEYSTONE, numKeysKeystone.toString())
+    }
+
     fun setPushInfo(enabled: Boolean) {
         firebaseAnalytics.setUserProperty(Param.PUSH_INFO, if (enabled) ParamValues.PUSH_ENABLED else ParamValues.PUSH_DISABLED)
     }
@@ -97,6 +101,10 @@ class Tracker internal constructor(
 
     fun logLedgerKeyImported() {
         logEvent(Event.KEY_IMPORTED_LEDGER, null)
+    }
+
+    fun logKeystoneKeyImported() {
+        logEvent(Event.KEY_IMPORTED_KEYSTONE, null)
     }
 
     fun logKeyDeleted() {
@@ -207,6 +215,7 @@ class Tracker internal constructor(
         val KEY_GENERATED = "user_key_generated"
         val KEY_IMPORTED = "user_key_imported"
         val KEY_IMPORTED_LEDGER = "user_ledger_nano_x_key_imported"
+        val KEY_IMPORTED_KEYSTONE = "user_keystone_key_imported"
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
@@ -236,6 +245,7 @@ class Tracker internal constructor(
         val NUM_KEYS_GENERATED = "num_keys_generated"
         val NUM_KEYS_IMPORTED = "num_keys_imported"
         val NUM_KEYS_LEDGER = "num_keys_ledger_nano_x"
+        val NUM_KEYS_KEYSTONE = "num_keys_keystone"
         val KEY_IMPORT_TYPE = "import_type"
         val PASSCODE_IS_SET = "passcode_is_set"
         val TX_EXEC_FIELDS = "fields"

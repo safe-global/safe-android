@@ -85,14 +85,16 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
             }
             nextButton.setOnClickListener {
 
-                val (address, key) = viewModel.getOwnerData()
+                val (address, path, sourceFingerprint) = viewModel.getOwnerData()
 
                 findNavController().navigate(
                     KeystoneOwnerSelectionFragmentDirections.actionKeystoneOwnerSelectionFragmentToOwnerEnterNameFragment(
                         ownerAddress = address,
-                        ownerKey = key,
+                        ownerKey = "",
                         fromSeedPhrase = false,
-                        ownerType = OwnerTypeConverter().toValue(Owner.Type.KEYSTONE)
+                        ownerType = OwnerTypeConverter().toValue(Owner.Type.KEYSTONE),
+                        derivationPathWithIndex = path,
+                        sourceFingerprint = sourceFingerprint
                     )
                 )
             }

@@ -5,6 +5,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.keystone.module.HDKey
 import com.keystone.module.MultiHDKeys
+import com.keystone.module.Note
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
@@ -16,7 +17,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexStringToByteArray
-import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 
 class KeystoneOwnerSelectionViewModel
@@ -28,10 +28,12 @@ class KeystoneOwnerSelectionViewModel
 
     private var ownerIndex: Long = 0
     private var multiHDKeys: MultiHDKeys? = null
+    private var hdKey: HDKey? = null
 
     override fun initialState() = OwnerSelectionState(ViewAction.Loading(true))
 
     fun loadFirstDerivedOwner(hdKey: HDKey) {
+        this.hdKey = hdKey
         derivator.initialize(hdKey)
         loadMoreOwners()
     }
@@ -77,14 +79,22 @@ class KeystoneOwnerSelectionViewModel
         ownerIndex = index
     }
 
-    fun getOwnerData(): Pair<String, String> {
+    fun getOwnerData(): Triple<String, String, String> {
         multiHDKeys?.let {
             val hdKey = it.hdKeys[ownerIndex.toInt()]
-            return hdKey.toAddress().asEthereumAddressString() to hdKey.key
+            return Triple(hdKey.toAddress().asEthereumAddressString(), derivationPath(ownerIndex), hdKey.sourceFingerprint)
         } ?: run {
-            val key = derivator.keyForIndex(ownerIndex)
             val address = derivator.addressesForPage(ownerIndex, 1)[0]
-            return address.asEthereumAddressString() to key.toHexString()
+            return Triple(address.asEthereumAddressString(), derivationPath(ownerIndex), hdKey!!.sourceFingerprint)
+        }
+    }
+
+    private fun derivationPath(index: Long): String {
+        hdKey?.let {
+            val path = if (it.note == Note.LEDGER_LEGACY.value) "$index" else "0/$index"
+            return "m/44'/60'/0'/$path"
+        } ?: run {
+            return "m/44'/60'/$index'/0/0"
         }
     }
 }

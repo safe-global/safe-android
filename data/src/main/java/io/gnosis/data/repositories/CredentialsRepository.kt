@@ -102,6 +102,22 @@ class CredentialsRepository(
         ownerDao.save(owner)
     }
 
+    suspend fun saveKeystoneOwner(
+        address: Solidity.Address,
+        name: String? = null,
+        path: String,
+        sourceFingerprint: String
+    ) {
+        val owner = Owner(
+            address = address,
+            name = name,
+            type = Owner.Type.KEYSTONE,
+            keyDerivationPath = path,
+            sourceFingerprint = sourceFingerprint
+        )
+        ownerDao.save(owner)
+    }
+
     suspend fun saveOwner(owner: Owner) {
         ownerDao.save(owner)
     }

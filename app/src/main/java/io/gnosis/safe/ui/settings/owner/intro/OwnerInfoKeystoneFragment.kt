@@ -14,12 +14,13 @@ import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragmentDirections
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import com.keystone.sdk.KeystoneSDK
+import com.sparrowwallet.hummingbird.UR
 import io.gnosis.safe.R
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
 
     private val keystoneSDK = KeystoneSDK()
-    private var cbor: String? = null
+    private var ur: UR? = null
 
     companion object {
         const val UR_PREFIX_OF_HDKEY = "UR:CRYPTO-HDKEY"
@@ -56,8 +57,8 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
         handleQrCodeActivityResult(requestCode, resultCode, data, {
 
             if (it.startsWith(UR_PREFIX_OF_HDKEY)) {
-                this.cbor?.let { cbor ->
-                    val hdKey = keystoneSDK.parseExtendedPublicKey(cbor)
+                this.ur?.let { ur ->
+                    val hdKey = keystoneSDK.parseExtendedPublicKey(ur)
 
                     findNavController().navigate(
                         OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
@@ -67,8 +68,8 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
                     )
                 }
             } else if (it.startsWith(UR_PREFIX_OF_ACCOUNT)) {
-                this.cbor?.let { cbor ->
-                    val multiHDKeys = keystoneSDK.parseMultiPublicKeys(cbor)
+                this.ur?.let { ur ->
+                    val multiHDKeys = keystoneSDK.parseMultiPublicKeys(ur)
 
                     findNavController().navigate(
                         OwnerInfoKeystoneFragmentDirections.actionOwnerInfoKeystoneFragmentToKeystoneOwnerSelectionFragment(
@@ -83,8 +84,8 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
 
     private fun validator(scannedValue: String): Boolean {
         return if (scannedValue.startsWith(UR_PREFIX_OF_HDKEY) || scannedValue.startsWith(UR_PREFIX_OF_ACCOUNT)) {
-            keystoneSDK.decodeQR(scannedValue)?.cbor?.let {
-                this.cbor = it
+            keystoneSDK.decodeQR(scannedValue)?.let {
+                this.ur = it
                 true
             } ?: false
         } else {

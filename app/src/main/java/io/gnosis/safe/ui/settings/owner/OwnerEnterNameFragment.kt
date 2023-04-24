@@ -47,6 +47,7 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
     private val ownerSeedPhrase by lazy { navArgs.ownerSeedPhrase }
     private val ownerType: Owner.Type by lazy { OwnerTypeConverter().toType(navArgs.ownerType) }
     private val derivationPathWithIndex: String? by lazy { navArgs.derivationPathWithIndex }
+    private val sourceFingerprint: String? by lazy { navArgs.sourceFingerprint }
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -86,6 +87,12 @@ class OwnerEnterNameFragment : BaseViewBindingFragment<FragmentOwnerNameEnterBin
                     }
                     derivationPathWithIndex?.let {
                         ownerNameEntry.setText(generateDefaultNameFromDerivationPath(it))
+                    }
+                }
+                Owner.Type.KEYSTONE -> {
+                    nextButton.text = getString(R.string.signing_owner_import)
+                    nextButton.setOnClickListener {
+                        viewModel.importKeystone(ownerAddress, ownerNameEntry.text.toString(), derivationPathWithIndex!!, sourceFingerprint!!)
                     }
                 }
             }
