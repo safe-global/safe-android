@@ -175,6 +175,7 @@
     <string name="coins_asset_send_error_amount_zero">Amount should be greater than 0</string>
     <string name="coins_asset_send_error_amount_too_big">Insufficient funds</string>
     <string name="coins_asset_send_error_amount_decimals">Should be 1 to %1$d decimals</string>
+    <string name="coins_asset_get_signature">Get signature</string>
 
     <string name="usd_balance">$ %1$s</string>
     <string name="coming_soon">Coming soon</string>
@@ -499,6 +500,9 @@
     <string name="signing_owner_selection_list_title">Select owner keys</string>
     <string name="signing_owner_selection_list_confirmation_description">You are about to confirm this transaction. This happens off-chain. Please select which owner key to use.</string>
     <string name="signing_owner_selection_list_rejection_description">You are about to create an on-chain rejection transaction. Please select which owner key to use</string>
+    <string name="signing_owner_request_signature">Request Signature</string>
+    <string name="signing_owner_request_signature_headline">Scan this QR code with your Keystone wallet</string>
+    <string name="signing_owner_request_signature_description">Sign the transaction with your wallet, then click on Get signature.</string>
 
     <string name="signing_owner_list_add">Add</string>
     <string name="signing_owner_list_title">Owner keys</string>

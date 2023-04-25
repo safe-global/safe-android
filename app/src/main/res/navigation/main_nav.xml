@@ -861,6 +861,11 @@
             app:destination="@id/ledgerDeviceListFragment"
             app:popUpTo="@id/signingOwnerSelectionFragment" />
 
+        <action
+            android:id="@+id/action_signingOwnerSelectionFragment_to_keystoneRequestSignatureFragment"
+            app:destination="@id/keystoneRequestSignatureFragment"
+            app:popUpTo="@id/signingOwnerSelectionFragment" />
+
         <argument
             android:name="missingSigners"
             app:argType="string[]"
@@ -869,6 +874,34 @@
         <argument
             android:name="signingMode"
             app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
+
+        <argument
+            android:name="safeTxHash"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/keystoneRequestSignatureFragment"
+        android:name="io.gnosis.safe.ui.transactions.details.KeystoneRequestSignatureFragment"
+        android:label="KeystoneRequestSignatureFragment"
+        tools:layout="@layout/fragment_keystone_request_signature">
+
+        <argument
+            android:name="owner"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="chain"
+            app:argType="io.gnosis.data.models.Chain" />
 
         <argument
             android:name="safeTxHash"

@@ -150,6 +150,7 @@ class TransactionDetailsViewModel
 
     fun startConfirmationFlow() {
         safeLaunch {
+            val safe = safeRepository.getActiveSafe()!!
             val executionInfo = txDetails?.detailedExecutionInfo
             if (executionInfo is DetailedExecutionInfo.MultisigExecutionDetails) {
                 val allPossibleSigners = executionInfo.signers
@@ -168,6 +169,7 @@ class TransactionDetailsViewModel
                                     it.value.asEthereumAddressString()
                                 }.toTypedArray(),
                                 signingMode = SigningMode.CONFIRMATION,
+                                chain = safe.chain,
                                 safeTxHash = executionInfo.safeTxHash
                             )
                         )

@@ -352,5 +352,7 @@ enum class ScreenId(val value: String) {
     UPDATE_DEPRECATED_SOON("screen_update_deprecated_soon"),
     UPDATE_NEW_VERSION("screen_update_new_version"),
     LEDGER_DEVICE_LIST("screen_ledger_nano_x_device"),
-    LEDGER_SIGN("screen_ledger_nano_x_sign")
+    LEDGER_SIGN("screen_ledger_nano_x_sign"),
+    KEYSTONE_OWNER_SELECTION("keystone_owner_selection"),
+    KEYSTONE_REQUEST_SIGNATURE("keystone_request_signature")
 }

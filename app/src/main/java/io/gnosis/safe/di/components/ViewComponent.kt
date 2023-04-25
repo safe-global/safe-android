@@ -198,6 +198,8 @@ interface ViewComponent {
 
     fun inject(fragment: LedgerDeviceListFragment)
 
+    fun inject(fragment: KeystoneRequestSignatureFragment)
+
     // Dialogs
     fun inject(dialog: EnsInputDialog)
 

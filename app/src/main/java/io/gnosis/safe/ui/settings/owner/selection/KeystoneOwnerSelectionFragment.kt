@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneOwnerSelectionBinding>(), DerivedOwnerListAdapter.OnOwnerItemClickedListener {
 
-    override fun screenId() = ScreenId.OWNER_SELECT_ACCOUNT
+    override fun screenId() = ScreenId.KEYSTONE_OWNER_SELECTION
 
     override suspend fun chainId(): BigInteger? = null
 

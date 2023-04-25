@@ -216,6 +216,7 @@ class SendAssetReviewViewModel
                                 it.asEthereumAddressString()
                             }.toTypedArray(),
                             signingMode = SigningMode.INITIATE_TRANSFER,
+                            chain = activeSafe.chain,
                             safeTxHash = safeTxHash
                         )
                     )
