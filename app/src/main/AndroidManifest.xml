@@ -31,6 +31,10 @@
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
 
+    <meta-data
+        android:name="io.intercom.android.sdk.server.region"
+        android:value="@integer/intercom_server_region_eu" />
+
     <application
         android:name="io.gnosis.safe.HeimdallApplication"
         android:allowBackup="false"

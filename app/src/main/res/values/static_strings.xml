@@ -11,10 +11,10 @@
     <string name="id_discord">TaNjuFzS6X</string>
     <string name="email_feedback" translatable="false">support@safe.global</string>
     <string name="empty_string" translatable="false" />
-    <string name="safe_settings_fallback_handler_help_url">https://help.safe.global/en/articles/4738352-what-is-a-fallback-handler-and-how-does-it-relate-to-the-gnosis-safe</string>
-    <string name="safe_settings_guard_help_url">https://help.safe.global/en/articles/5324092-what-is-a-transaction-guard</string>
-    <string name="owner_key_intro_private_key_url">https://help.safe.global/en/articles/4866738-how-are-private-keys-stored-on-gnosis-safe-mobile</string>
-    <string name="tx_list_conflict_header_link">https://help.safe.global/en/articles/4730252-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
-    <string name="tx_details_rejection_payment_reason_link">https://help.safe.global/en/articles/4738501-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
-    <string name="tx_advanced_params_config_howto_link">https://help.safe.global/en/articles/4738445-advanced-transaction-parameters</string>
+    <string name="safe_settings_fallback_handler_help_url">https://help.safe.global/en/articles/40838-what-is-a-fallback-handler-and-how-does-it-relate-to-safe</string>
+    <string name="safe_settings_guard_help_url">https://help.safe.global/en/articles/40809-what-is-a-transaction-guard</string>
+    <string name="owner_key_intro_private_key_url">https://help.safe.global/en/articles/40829-how-signer-keys-are-stored</string>
+    <string name="tx_list_conflict_header_link">https://help.safe.global/en/articles/40839-why-are-transactions-with-the-same-nonce-conflicting-with-each-other</string>
+    <string name="tx_details_rejection_payment_reason_link">https://help.safe.global/en/articles/40836-why-do-i-need-to-pay-for-cancelling-a-transaction</string>
+    <string name="tx_advanced_params_config_howto_link">https://help.safe.global/en/articles/40837-advanced-transaction-parameters</string>
 </resources>
