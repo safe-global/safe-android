@@ -31,10 +31,6 @@
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
 
-    <meta-data
-        android:name="io.intercom.android.sdk.server.region"
-        android:value="@integer/intercom_server_region_eu" />
-
     <application
         android:name="io.gnosis.safe.HeimdallApplication"
         android:allowBackup="false"
@@ -44,6 +40,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/DayNightTheme"
+        tools:replace="android:supportsRtl"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data
@@ -91,6 +88,9 @@
                 tools:node="remove" />
         </provider>
 
+        <meta-data
+            android:name="io.intercom.android.sdk.server.region"
+            android:value="@integer/intercom_server_region_eu" />
     </application>
 
 </manifest>
