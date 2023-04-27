@@ -42,6 +42,7 @@ import io.gnosis.safe.ui.splash.SplashViewModel
 import io.gnosis.safe.ui.transactions.TransactionListViewModel
 import io.gnosis.safe.ui.transactions.TransactionsViewModel
 import io.gnosis.safe.ui.transactions.details.ConfirmRejectionViewModel
+import io.gnosis.safe.ui.transactions.details.KeystoneSignViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsActionViewModel
 import io.gnosis.safe.ui.transactions.details.TransactionDetailsViewModel
 import io.gnosis.safe.ui.transactions.execution.TxEditFeeViewModel
@@ -130,6 +131,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(KeystoneOwnerSelectionViewModel::class)
     abstract fun providesKeystoneOwnerSelectionViewModel(viewModel: KeystoneOwnerSelectionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(KeystoneSignViewModel::class)
+    abstract fun providesKeystoneSignViewModel(viewModel: KeystoneSignViewModel): ViewModel
 
     @Binds
     @IntoMap

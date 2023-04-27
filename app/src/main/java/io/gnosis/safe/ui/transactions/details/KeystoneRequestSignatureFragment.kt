@@ -6,12 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.keystone.sdk.KeystoneEthereumSDK
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentKeystoneRequestSignatureBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.toColor
+import pm.gnosis.utils.asEthereumAddress
+import javax.inject.Inject
 
 class KeystoneRequestSignatureFragment: BaseViewBindingFragment<FragmentKeystoneRequestSignatureBinding>() {
     private val navArgs by navArgs<KeystoneRequestSignatureFragmentArgs>()
@@ -20,6 +24,9 @@ class KeystoneRequestSignatureFragment: BaseViewBindingFragment<FragmentKeystone
     private val safeTxHash by lazy { navArgs.safeTxHash }
 
     override fun screenId() = ScreenId.KEYSTONE_REQUEST_SIGNATURE
+
+    @Inject
+    lateinit var viewModel: KeystoneSignViewModel
 
     override fun inject(component: ViewComponent) {
         component.inject(this)
@@ -33,7 +40,7 @@ class KeystoneRequestSignatureFragment: BaseViewBindingFragment<FragmentKeystone
 
         with(binding) {
             backButton.setOnClickListener {
-                findNavController().navigateUp()
+                onBackNavigation()
             }
 
             chainRibbon.text = chain.name
@@ -50,5 +57,35 @@ class KeystoneRequestSignatureFragment: BaseViewBindingFragment<FragmentKeystone
                 )
             )
         }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            state.viewAction?.let { action ->
+                when (action) {
+                    is Loading -> {
+
+                    }
+
+                    is UnsignedUrReady -> {
+                        with(binding) {
+                            ownerQrCode.setImageBitmap(action.qrCode)
+                        }
+                    }
+                }
+            }
+        }
+
+        owner?.asEthereumAddress()?.let {
+            viewModel.setSignRequestUREncoder(
+                ownerAddress = it,
+                safeTxHash = safeTxHash!!,
+                signType = KeystoneEthereumSDK.DataType.PersonalMessage,
+                chainId = chain.chainId.toInt()
+            )
+        }
+    }
+
+    private fun onBackNavigation() {
+        viewModel.onPause()
+        findNavController().navigateUp()
     }
 }
