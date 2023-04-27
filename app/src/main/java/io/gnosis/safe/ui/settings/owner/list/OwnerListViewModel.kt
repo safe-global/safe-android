@@ -75,6 +75,7 @@ class OwnerListViewModel
                             ViewAction.NavigateTo(
                                 SigningOwnerSelectionFragmentDirections.actionSigningOwnerSelectionFragmentToKeystoneRequestSignatureFragment(
                                     owner.asEthereumAddressString(),
+                                    signingMode,
                                     chain,
                                     safeTxHash
                                 )

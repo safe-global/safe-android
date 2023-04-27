@@ -3,10 +3,12 @@ package io.gnosis.safe.ui.transactions.details
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
 import com.keystone.module.EthSignRequest
 import com.keystone.sdk.KeystoneEthereumSDK
 import com.keystone.sdk.KeystoneSDK
+import com.sparrowwallet.hummingbird.UR
 import com.sparrowwallet.hummingbird.UREncoder
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.ui.base.AppDispatchers
@@ -23,16 +25,25 @@ class KeystoneSignViewModel
     private val credentialsRepository: CredentialsRepository,
     private val qrCodeGenerator: QrCodeGenerator,
     appDispatchers: AppDispatchers
-): BaseStateViewModel<KeystoneSignState>(appDispatchers) {
+) : BaseStateViewModel<KeystoneSignState>(appDispatchers) {
     private val sdk = KeystoneSDK()
     private val mainHandler = Handler(Looper.getMainLooper())
-    private val updateQrCode = object: Runnable {
+    private val handlerThread = HandlerThread("HandlerThread")
+    private lateinit var backgroundHandler: Handler
+    private lateinit var encoder: UREncoder
+    private var ur: UR? = null
+    private var requestId = ""
+
+    private val updateQrCode = object : Runnable {
         override fun run() {
             updateQrCode()
-            mainHandler.postDelayed(this, 500)
+            backgroundHandler.postDelayed(this, 500)
         }
     }
-    private lateinit var encoder: UREncoder
+
+    companion object {
+        const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
+    }
 
     override fun initialState() = KeystoneSignState(ViewAction.Loading(true))
 
@@ -47,8 +58,9 @@ class KeystoneSignViewModel
             owner?.let {
                 val path = owner.keyDerivationPath!!
                 val sourceFingerprint = owner.sourceFingerprint!!
+                requestId = UUID.randomUUID().toString()
                 val ethSignRequest = EthSignRequest(
-                    requestId = UUID.randomUUID().toString(),
+                    requestId = requestId,
                     signData = safeTxHash,
                     dataType = signType,
                     chainId = chainId,
@@ -58,32 +70,60 @@ class KeystoneSignViewModel
                     origin = "safe android"
                 )
                 encoder = sdk.eth.generateSignRequest(ethSignRequest)
-                mainHandler.post(updateQrCode)
+
+                handlerThread.start()
+                backgroundHandler = Handler(handlerThread.looper)
+                backgroundHandler.post(updateQrCode)
             }
         }
     }
 
     private fun updateQrCode() {
-        safeLaunch {
-            updateState {
-                val qrValue = encoder.nextPart()
-                val qrCode = runCatching {
-                    qrCodeGenerator.generateQrCode(
-                        qrValue,
-                        512,
-                        512,
-                        Color.WHITE
-                    )
-                }.onFailure { Timber.e(it) }
-                    .getOrNull()
+        val qrValue = encoder.nextPart()
+        val qrCode = runCatching {
+            qrCodeGenerator.generateQrCode(
+                qrValue,
+                512,
+                512,
+                Color.WHITE
+            )
+        }.onFailure { Timber.e(it) }
+            .getOrNull()
 
-                KeystoneSignState(UnsignedUrReady(qrCode))
+        mainHandler.post {
+            safeLaunch {
+                updateState {
+                    KeystoneSignState(UnsignedUrReady(qrCode))
+                }
             }
         }
     }
 
-    fun onPause() {
-        mainHandler.removeCallbacks(updateQrCode)
+    fun stopUpdatingQrCode() {
+        backgroundHandler.removeCallbacks(updateQrCode)
+        handlerThread.quitSafely()
+    }
+
+    fun validator(scannedValue: String): Boolean {
+        return if (scannedValue.startsWith(UR_PREFIX_OF_SIGNATURE)) {
+            sdk.decodeQR(scannedValue)?.let {
+                this.ur = it
+                true
+            } ?: false
+        } else {
+            false
+        }
+    }
+
+    fun handleQrResult() {
+        this.ur?.let { ur ->
+            val signature = sdk.eth.parseSignature(ur)
+            println(signature.requestId)
+            println(requestId)
+            if (signature.requestId == requestId) {
+                println(signature.signature)
+            }
+        }
     }
 }
 
@@ -93,4 +133,8 @@ data class KeystoneSignState(
 
 data class UnsignedUrReady(
     val qrCode: Bitmap?
-): BaseStateViewModel.ViewAction
+) : BaseStateViewModel.ViewAction
+
+data class KeystoneSignature(
+    val signature: String
+) : BaseStateViewModel.ViewAction

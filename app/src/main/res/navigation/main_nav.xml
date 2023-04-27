@@ -900,6 +900,10 @@
             app:nullable="true" />
 
         <argument
+            android:name="signingMode"
+            app:argType="io.gnosis.safe.ui.transactions.details.SigningMode" />
+
+        <argument
             android:name="chain"
             app:argType="io.gnosis.data.models.Chain" />
 
