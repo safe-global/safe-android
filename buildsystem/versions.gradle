@@ -51,7 +51,7 @@ ext {
             play_core_ktx                   : '1.8.1',
             work                            : '2.7.1',
             unstoppabledomains              : '1.13.2',
-            intercom                        : '14.0.0',
+            intercom                        : '14.2.0',
             lottie                          : '5.2.0',
 
             // Test dependencies
