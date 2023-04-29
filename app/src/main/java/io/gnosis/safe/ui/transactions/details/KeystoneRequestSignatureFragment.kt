@@ -7,17 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.keystone.sdk.KeystoneEthereumSDK
 import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentKeystoneRequestSignatureBinding
 import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
 import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.handleQrCodeActivityResult
 import io.gnosis.safe.utils.toColor
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class KeystoneRequestSignatureFragment :
@@ -87,6 +88,10 @@ class KeystoneRequestSignatureFragment :
                             ownerQrCode.setImageBitmap(action.qrCode)
                         }
                     }
+
+                    is KeystoneSignature -> {
+                        signSuccessfully(action.signature)
+                    }
                 }
             }
         }
@@ -95,7 +100,7 @@ class KeystoneRequestSignatureFragment :
             viewModel.setSignRequestUREncoder(
                 ownerAddress = it,
                 safeTxHash = safeTxHash!!,
-                signType = KeystoneEthereumSDK.DataType.PersonalMessage,
+                signingMode = signingMode,
                 chainId = chain.chainId.toInt()
             )
         }
@@ -111,5 +116,17 @@ class KeystoneRequestSignatureFragment :
         handleQrCodeActivityResult(requestCode, resultCode, data, {
             viewModel.handleQrResult()
         })
+    }
+
+    private fun signSuccessfully(signedSafeTxHash: String? = null) {
+        findNavController().popBackStack(R.id.signingOwnerSelectionFragment, true)
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SELECTED_RESULT,
+            owner!!.asEthereumAddressString()
+        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.set(
+            SafeOverviewBaseFragment.OWNER_SIGNED_RESULT,
+            signedSafeTxHash
+        )
     }
 }
