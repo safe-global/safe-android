@@ -12,6 +12,8 @@ import com.sparrowwallet.hummingbird.UR
 import com.sparrowwallet.hummingbird.UREncoder
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.data.utils.toSignatureString
+import io.gnosis.safe.qrscanner.HasFinished
+import io.gnosis.safe.qrscanner.IsValid
 import io.gnosis.safe.ui.base.AppDispatchers
 import io.gnosis.safe.ui.base.BaseStateViewModel
 import kotlinx.coroutines.Runnable
@@ -107,14 +109,14 @@ class KeystoneSignViewModel
         handlerThread.quitSafely()
     }
 
-    fun validator(scannedValue: String): Boolean {
+    fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
         return if (scannedValue.startsWith(UR_PREFIX_OF_SIGNATURE)) {
             sdk.decodeQR(scannedValue)?.let {
                 this.ur = it
-                true
-            } ?: false
+                Pair(true, true)
+            } ?: Pair(true, false)
         } else {
-            false
+            Pair(false, true)
         }
     }
 

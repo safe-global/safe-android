@@ -16,6 +16,8 @@ import io.gnosis.safe.utils.handleQrCodeActivityResult
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
 import io.gnosis.safe.R
+import io.gnosis.safe.qrscanner.HasFinished
+import io.gnosis.safe.qrscanner.IsValid
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
 
@@ -82,14 +84,14 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
         })
     }
 
-    private fun validator(scannedValue: String): Boolean {
+    private fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
         return if (scannedValue.startsWith(UR_PREFIX_OF_HDKEY) || scannedValue.startsWith(UR_PREFIX_OF_ACCOUNT)) {
             keystoneSDK.decodeQR(scannedValue)?.let {
                 this.ur = it
-                true
-            } ?: false
+                Pair(true, true)
+            } ?: Pair(true, false)
         } else {
-            false
+            Pair(false, true)
         }
     }
 }

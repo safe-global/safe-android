@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.TextureView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
@@ -20,7 +21,7 @@ class QRCodeScanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         videographer = Videographer(this, QRCodeDecoder())
-        videographer.onSuccessfulScan = ::finishWithResult
+        videographer.onSuccessfulScan = ::validateWithResult
         setContentView(R.layout.screen_scan)
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
             findViewById<TextView>(R.id.scan_description).text = it
@@ -55,16 +56,36 @@ class QRCodeScanActivity : AppCompatActivity() {
             onPermissionDenied = { finish() })
     }
 
-    private fun finishWithResult(value: String) {
-        if (validator?.invoke(value) != false) {
-            val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
-            setResult(Activity.RESULT_OK, result)
-            finish()
-        } else {
-            videographer.open(
-                findViewById<TextureView>(R.id.scan_view_finder)
-            )
+    private fun validateWithResult(value: String) {
+        validator?.let {
+            val (isValid, hasFinished) = it(value)
+            @Suppress("KotlinConstantConditions")
+            if (isValid && hasFinished) {
+                finishWithResult(value)
+            } else if (isValid && !hasFinished) {
+                videographer.open(
+                    findViewById<TextureView>(R.id.scan_view_finder)
+                )
+            } else {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.qr_error_title)
+                    .setMessage(R.string.qr_error_message)
+                    .setNegativeButton(R.string.qr_retry_button) { _, _ ->
+                        videographer.open(
+                            findViewById(R.id.scan_view_finder)
+                        )
+                    }
+                    .create().show()
+            }
+        } ?: run {
+            finishWithResult(value)
         }
+    }
+
+    private fun finishWithResult(value: String) {
+        val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
+        setResult(Activity.RESULT_OK, result)
+        finish()
     }
 
     companion object {
@@ -72,7 +93,7 @@ class QRCodeScanActivity : AppCompatActivity() {
         const val REQUEST_CODE = 0
         const val DESCRIPTION_EXTRA = "extra.string.description"
 
-        private var validator: ((String) -> Boolean)? = null
+        private var validator: ((String) -> Pair<IsValid, HasFinished>)? = null
 
         fun startForResult(activity: Activity, description: String? = null) =
             activity.startActivityForResult(createIntent(activity, description), REQUEST_CODE)
@@ -80,7 +101,7 @@ class QRCodeScanActivity : AppCompatActivity() {
         fun startForResult(
             fragment: Fragment,
             description: String? = null,
-            scannedValueValidator: ((String) -> Boolean)? = null
+            scannedValueValidator: ((String) -> Pair<IsValid, HasFinished>)? = null
         ) {
             validator = scannedValueValidator
             fragment.startActivityForResult(
@@ -113,6 +134,9 @@ class QRCodeScanActivity : AppCompatActivity() {
         }
     }
 }
+
+typealias IsValid = Boolean
+typealias HasFinished = Boolean
 
 fun <T> nullOnThrow(func: () -> T): T? = try {
     func.invoke()

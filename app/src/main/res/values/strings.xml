@@ -503,6 +503,7 @@
     <string name="signing_owner_request_signature">Request Signature</string>
     <string name="signing_owner_request_signature_headline">Scan this QR code with your Keystone wallet</string>
     <string name="signing_owner_request_signature_description">Sign the transaction with your wallet, then click on Get signature.</string>
+    <string name="signing_owner_keystone_scanner_description">Scan the QR code on the Keystone wallet to confirm the transaction.</string>
 
     <string name="signing_owner_list_add">Add</string>
     <string name="signing_owner_list_title">Owner keys</string>

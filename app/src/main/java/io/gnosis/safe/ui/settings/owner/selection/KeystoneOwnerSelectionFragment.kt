@@ -135,7 +135,6 @@ class KeystoneOwnerSelectionFragment : BaseViewBindingFragment<FragmentKeystoneO
                         lifecycleScope.launch {
                             adapter.submitData(viewAction.newOwners)
                         }
-
                     }
                 }
             }

@@ -69,7 +69,7 @@ class KeystoneRequestSignatureFragment :
             getSignatureButton.setOnClickListener {
                 QRCodeScanActivity.startForResult(
                     this@KeystoneRequestSignatureFragment,
-                    getString(R.string.import_owner_key_keystone_scanner_description),
+                    getString(R.string.signing_owner_keystone_scanner_description),
                     viewModel::validator
                 )
                 tracker.logScreen(ScreenId.SCANNER, null)
