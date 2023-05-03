@@ -18,7 +18,7 @@ ext {
             androidx_recycler_view          : '1.1.0',
             androidx_swipe_refresh          : '1.1.0-rc01',
             androidx_room                   : '2.4.3',
-            androidx_navigation             : '2.3.0',
+            androidx_navigation             : '2.4.1',
             androidx_fragment               : '1.2.4',
             androidx_paging                 : '3.0.0-alpha05',
             androidx_biometrics             : '1.1.0',
@@ -51,7 +51,7 @@ ext {
             play_core_ktx                   : '1.8.1',
             work                            : '2.7.1',
             unstoppabledomains              : '1.13.2',
-            intercom                        : '10.6.0',
+            intercom                        : '14.2.0',
             lottie                          : '5.2.0',
 
             // Test dependencies
