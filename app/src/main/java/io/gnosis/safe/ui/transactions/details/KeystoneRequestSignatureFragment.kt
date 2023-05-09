@@ -11,8 +11,10 @@ import io.gnosis.safe.R
 import io.gnosis.safe.ScreenId
 import io.gnosis.safe.databinding.FragmentKeystoneRequestSignatureBinding
 import io.gnosis.safe.di.components.ViewComponent
+import io.gnosis.safe.errorSnackbar
 import io.gnosis.safe.qrscanner.QRCodeScanActivity
-import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.Loading
+import io.gnosis.safe.toError
+import io.gnosis.safe.ui.base.BaseStateViewModel.ViewAction.ShowError
 import io.gnosis.safe.ui.base.SafeOverviewBaseFragment
 import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
 import io.gnosis.safe.utils.handleQrCodeActivityResult
@@ -79,18 +81,26 @@ class KeystoneRequestSignatureFragment :
         viewModel.state.observe(viewLifecycleOwner) { state ->
             state.viewAction?.let { action ->
                 when (action) {
-                    is Loading -> {
-
-                    }
-
                     is UnsignedUrReady -> {
                         with(binding) {
                             ownerQrCode.setImageBitmap(action.qrCode)
                         }
                     }
-
                     is KeystoneSignature -> {
                         signSuccessfully(action.signature)
+                    }
+                    is ShowError -> {
+                        val error = action.error.toError()
+                        if (error.trackingRequired) {
+                            tracker.logException(action.error)
+                        }
+                        errorSnackbar(
+                            requireView(),
+                            error.message(
+                                requireContext(),
+                                R.string.error_description_tx_sign
+                            )
+                        )
                     }
                 }
             }

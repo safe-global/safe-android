@@ -75,6 +75,7 @@
     <string name="error_description_tx_list">Failed to load transactions</string>
     <string name="error_description_tx_details">Failed to load transaction details</string>
     <string name="error_description_tx_confirmation">Failed to confirm transaction</string>
+    <string name="error_description_tx_sign">Failed to sign transaction</string>
 
     <string name="error_description_tx_rejection">Failed to reject transaction</string>
     <string name="error_description_seed_phrase">Can\'t use this seed phrase or private key</string>
@@ -123,6 +124,8 @@
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
     <string name="error_client_address_not_matching_network_reason">This address is not matching the selected network</string>
     <string name="error_client_address_not_matching_network_fix">Please use a different address or switch network</string>
+    <string name="error_client_keystone_sign_reason">Can\'t understand received signature</string>
+    <string name="error_client_keystone_sign_fix">Please reach out to the support</string>
 
     <string name="error_client_ens_reverse_record_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_invalid_reason">name contains invalid characters</string>

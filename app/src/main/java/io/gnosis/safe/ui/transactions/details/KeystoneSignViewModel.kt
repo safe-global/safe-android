@@ -52,7 +52,7 @@ class KeystoneSignViewModel
         const val UR_PREFIX_OF_SIGNATURE = "UR:ETH-SIGNATURE"
     }
 
-    override fun initialState() = KeystoneSignState(ViewAction.Loading(true))
+    override fun initialState() = KeystoneSignState(ViewAction.None)
 
     fun setSignRequestUREncoder(
         ownerAddress: Solidity.Address,
@@ -124,19 +124,22 @@ class KeystoneSignViewModel
         this.ur?.let { ur ->
             val signature = sdk.eth.parseSignature(ur)
             if (signature.requestId == ethSignRequest.requestId) {
-                val ecdsaSignature = parseSignature(signature.signature)
                 safeLaunch {
                     updateState {
-                        KeystoneSignState(KeystoneSignature(ecdsaSignature))
+                        parseSignature(signature.signature)?.let {
+                            KeystoneSignState(KeystoneSignature(it))
+                        } ?: KeystoneSignState(ViewAction.ShowError(KeystoneSignFailed()))
                     }
                 }
             }
         }
     }
 
-    private fun parseSignature(signature: String): String {
+    // Same logic with safe-ios:
+    // https://github.com/safe-global/safe-ios/blob/17b4537284be612621e5ee6e9d2f30f116a3753b/Multisig/UI/Settings/OwnerKeyManagement/KeystoneOwnerKey/KeystoneSignFlow.swift#L92
+    private fun parseSignature(signature: String): String? {
         val data = signature.hexToByteArray()
-        if (data.size < 65) throw Exception("invalid data size")
+        if (data.size < 65) return null
 
         val r = data.slice(0..31).toByteArray()
         val s = data.slice(32..63).toByteArray()
@@ -173,6 +176,12 @@ class KeystoneSignViewModel
         return ecdsaSignature.toSignatureString()
     }
 
+    /*
+    For future reference:
+
+    CONFIRMATION, REJECTION, INITIATE_TRANSFER, DELEGATE, SIGNATURE_REQUEST -> PersonalMessage
+    CREATE_SAFE, REVIEW_EXECUTION, SEND_TRANSACTION -> if (isLegacy) Transaction else TypedTransaction
+    */
     private fun SigningMode.toDataType(): KeystoneEthereumSDK.DataType {
         return when (this) {
             SigningMode.CONFIRMATION -> KeystoneEthereumSDK.DataType.PersonalMessage
@@ -181,6 +190,8 @@ class KeystoneSignViewModel
         }
     }
 }
+
+class KeystoneSignFailed : Throwable()
 
 data class KeystoneSignState(
     override var viewAction: BaseStateViewModel.ViewAction?

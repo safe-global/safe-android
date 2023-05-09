@@ -17,6 +17,7 @@ import io.gnosis.safe.ui.safe.add.*
 import io.gnosis.safe.ui.settings.owner.InvalidPrivateKey
 import io.gnosis.safe.ui.settings.owner.InvalidSeedPhrase
 import io.gnosis.safe.ui.settings.owner.KeyAlreadyImported
+import io.gnosis.safe.ui.transactions.details.KeystoneSignFailed
 import io.gnosis.safe.ui.transactions.details.MismatchingSafeTxHash
 import pm.gnosis.utils.HttpCodes
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -92,6 +93,8 @@ sealed class Error(
 
     object Error1114: Error(1114, null, R.string.error_client_address_not_matching_network_reason, R.string.error_client_address_not_matching_network_fix)
 
+    object Error2100: Error(2100, null, R.string.error_client_keystone_sign_reason, R.string.error_client_keystone_sign_fix)
+
     object Error6357 : Error(6357, null, R.string.error_client_UD_invalid_domain_reason, R.string.error_client_UD_invalid_domain_fix)
     object Error6358 : Error(6358, null, R.string.error_client_UD_name_not_registered_reason, R.string.error_client_UD_name_not_registered_fix)
 
@@ -139,6 +142,7 @@ fun Throwable.toError(): Error =
         this is EnsInvalidError -> Error.Error1108
         this is SafeNotFound -> Error.Error1109
         this is InvalidName -> Error.Error1110
+        this is KeystoneSignFailed -> Error.Error2100
 
         // Network-related errors
         this is HttpException -> {
