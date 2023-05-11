@@ -1,5 +1,6 @@
 package io.gnosis.safe.ui.settings.owner.list
 
+import io.gnosis.data.models.Chain
 import io.gnosis.data.models.Owner
 import io.gnosis.data.repositories.CredentialsRepository
 import io.gnosis.safe.TestLifecycleRule
@@ -66,7 +67,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION, Chain.DEFAULT_CHAIN)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -90,7 +91,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.CONFIRMATION, Chain.DEFAULT_CHAIN)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),
@@ -110,7 +111,7 @@ class OwnerListViewModelTest {
         val testObserver = TestLiveDataObserver<OwnerListState>()
         viewModel.state.observeForever(testObserver)
 
-        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.REJECTION)
+        viewModel.selectKeyForSigning(owner.address, Owner.Type.IMPORTED, SigningMode.REJECTION, Chain.DEFAULT_CHAIN)
 
         testObserver.assertValues(
             OwnerListState(Loading(true)),

@@ -137,7 +137,12 @@ class KeystoneSignViewModel
 
     // Same logic with safe-ios:
     // https://github.com/safe-global/safe-ios/blob/17b4537284be612621e5ee6e9d2f30f116a3753b/Multisig/UI/Settings/OwnerKeyManagement/KeystoneOwnerKey/KeystoneSignFlow.swift#L92
-    private fun parseSignature(signature: String): String? {
+    fun parseSignature(
+        signature: String,
+        dataType: KeystoneEthereumSDK.DataType = ethSignRequest.dataType,
+        chainId: Int = ethSignRequest.chainId,
+        signingMode: SigningMode = this.signingMode
+    ): String? {
         val data = signature.hexToByteArray()
         if (data.size < 65) return null
 
@@ -147,17 +152,18 @@ class KeystoneSignViewModel
 
         if (data.size > 65) {
             val vBytes = data.slice(64 until data.size)
-            val vRecovered = vBytes - (ethSignRequest.chainId * 2 + 35).toByte()
-            v = vRecovered.toByteArray().asBigInteger().rem(256.toBigInteger()).toByte()
+            val vInt = vBytes.toByteArray().asBigInteger()
+            val vRecovered = vInt - (chainId * 2 + 35).toBigInteger()
+            v = vRecovered.rem(256.toBigInteger()).toByte()
         } else {
             val vByte = data[64]
             val vInt = vByte.toUInt()
-            val isLegacyTx = ethSignRequest.dataType == KeystoneEthereumSDK.DataType.Transaction
+            val isLegacyTx = dataType == KeystoneEthereumSDK.DataType.Transaction
             v = if (isLegacyTx) {
                 (vInt - 27u).toByte()
             } else {
                 if (vInt >= 35u) {
-                    val vRecovered = vInt - ((ethSignRequest.chainId * 2 + 35).toUInt())
+                    val vRecovered = vInt - ((chainId * 2 + 35).toUInt())
                     vRecovered.rem(256u).toByte()
                 } else {
                     vByte

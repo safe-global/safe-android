@@ -157,6 +157,7 @@ class ConfirmRejectionViewModelTest {
                             "0xbea2f9227230976d2813a2f8b922c22be1de1b23"
                         ).toTypedArray(),
                         signingMode = SigningMode.REJECTION,
+                        chain = Chain.DEFAULT_CHAIN,
                         safeTxHash = rejectionTxHash
                     )
                 ).toString(), viewAction.toString()
