@@ -6,18 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import io.gnosis.safe.ScreenId
-import io.gnosis.safe.databinding.FragmentOwnerInfoKeystoneBinding
-import io.gnosis.safe.di.components.ViewComponent
-import io.gnosis.safe.qrscanner.QRCodeScanActivity
-import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
-import io.gnosis.safe.ui.settings.owner.OwnerSeedPhraseFragmentDirections
-import io.gnosis.safe.utils.handleQrCodeActivityResult
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
 import io.gnosis.safe.R
+import io.gnosis.safe.ScreenId
+import io.gnosis.safe.databinding.FragmentOwnerInfoKeystoneBinding
+import io.gnosis.safe.di.components.ViewComponent
 import io.gnosis.safe.qrscanner.HasFinished
 import io.gnosis.safe.qrscanner.IsValid
+import io.gnosis.safe.qrscanner.QRCodeScanActivity
+import io.gnosis.safe.ui.base.fragment.BaseViewBindingFragment
+import io.gnosis.safe.utils.handleQrCodeActivityResult
 
 class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeystoneBinding>() {
 
@@ -28,6 +27,7 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
         const val UR_PREFIX_OF_HDKEY = "UR:CRYPTO-HDKEY"
         const val UR_PREFIX_OF_ACCOUNT = "UR:CRYPTO-ACCOUNT"
     }
+
     override fun screenId() = ScreenId.OWNER_KEYSTONE_INFO
 
     override fun inject(component: ViewComponent) {
@@ -36,7 +36,10 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
 
     override fun viewModelProvider() = this
 
-    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentOwnerInfoKeystoneBinding =
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentOwnerInfoKeystoneBinding =
         FragmentOwnerInfoKeystoneBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +51,7 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
                     getString(R.string.import_owner_key_keystone_scanner_description),
                     ::validator
                 )
-                tracker.logScreen(ScreenId.SCANNER, null)
+                tracker.logScreen(ScreenId.SCANNER_KEYSTONE, null)
             }
             backButton.setOnClickListener { findNavController().navigateUp() }
         }
@@ -85,7 +88,10 @@ class OwnerInfoKeystoneFragment : BaseViewBindingFragment<FragmentOwnerInfoKeyst
     }
 
     private fun validator(scannedValue: String): Pair<IsValid, HasFinished> {
-        return if (scannedValue.startsWith(UR_PREFIX_OF_HDKEY) || scannedValue.startsWith(UR_PREFIX_OF_ACCOUNT)) {
+        return if (scannedValue.startsWith(UR_PREFIX_OF_HDKEY) || scannedValue.startsWith(
+                UR_PREFIX_OF_ACCOUNT
+            )
+        ) {
             keystoneSDK.decodeQR(scannedValue)?.let {
                 this.ur = it
                 Pair(true, true)

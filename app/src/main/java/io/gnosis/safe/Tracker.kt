@@ -219,8 +219,10 @@ class Tracker internal constructor(
         val KEY_DELETED = "user_key_deleted"
         val TRANSACTION_CONFIRMED = "user_transaction_confirmed"
         val TRANSACTION_CONFIRMED_LEDGER = "user_transaction_confirmed_ledger_nano_x"
+        val TRANSACTION_CONFIRMED_KEYSTONE = "user_transaction_confirmed_keystone"
         val TRANSACTION_REJECTED = "user_transaction_rejected"
         val TRANSACTION_REJECTED_LEDGER = "user_transaction_rejected_ledger_nano_x"
+        val TRANSACTION_REJECTED_KEYSTONE = "user_transaction_rejected_keystone"
         val TRANSACTION_EXEC_EDIT_FEE_FIELDS = "user_edit_exec_tx_fee_fields"
         val TRANSACTION_EXEC_KEY_CHANGE = "user_select_exec_key_change"
         val TRANSACTION_EXEC_FAILED = "user_exec_tx_failed"
@@ -340,6 +342,7 @@ enum class ScreenId(val value: String) {
     SETTINGS_SAFE_EDIT_NAME("screen_settings_safe_edit_name"),
     SETTINGS_SAFE_ADVANCED("screen_settings_safe_advanced"),
     SCANNER("screen_camera"),
+    SCANNER_KEYSTONE("screen_keystone_scan"),
     OWNER_SELECT_ACCOUNT("screen_owner_select_account"),
     OWNER_SELECT_LEDGER_ACCOUNT("screen_owner_ledger_account"),
     PASSCODE_CREATE("screen_passcode_create"),
@@ -353,6 +356,6 @@ enum class ScreenId(val value: String) {
     UPDATE_NEW_VERSION("screen_update_new_version"),
     LEDGER_DEVICE_LIST("screen_ledger_nano_x_device"),
     LEDGER_SIGN("screen_ledger_nano_x_sign"),
-    KEYSTONE_OWNER_SELECTION("keystone_owner_selection"),
-    KEYSTONE_REQUEST_SIGNATURE("keystone_request_signature")
+    KEYSTONE_OWNER_SELECTION("screen_keystone_owner_selection"),
+    KEYSTONE_REQUEST_SIGNATURE("screen_keystone_request_signature")
 }
