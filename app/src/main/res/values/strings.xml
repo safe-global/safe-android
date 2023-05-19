@@ -15,7 +15,7 @@
     <string name="no_safes_loaded">No Safe loaded</string>
     <string name="safe_loaded">Safe loaded</string>
     <string name="load_gnosis_safe_start">Get started by loading your Safe</string>
-    <string name="load_gnosis_safe">Load Safe</string>
+    <string name="load_safe_account">Load Safe Account</string>
     <string name="tab_title_coins">COINS</string>
     <string name="tab_title_collectibles">COLLECTIBLES</string>
     <string name="enter_safe_address">Enter Safe address</string>
@@ -66,7 +66,7 @@
     <string name="error_description_safe_add">Can\'t add safe</string>
     <string name="error_description_safe_address">Can\'t use this address</string>
     <string name="error_description_safe_name">Can\'t use this name</string>
-    <string name="error_description_safe_settings">Failed to load safe settings</string>
+    <string name="error_description_safe_settings">Failed to load safe account settings</string>
     <string name="error_description_safe_settings_advanced">Failed to load advanced safe settings</string>
     <string name="error_description_ens_name">Can\'t use this name</string>
     <string name="error_description_assets_coins">Failed to load balances</string>
