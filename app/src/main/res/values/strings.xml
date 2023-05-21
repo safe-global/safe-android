@@ -40,7 +40,7 @@
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="error_malformed_address">The address is malformed. Please provide an Ethereum address</string>
     <string name="ens_input_title">Input ENS Name</string>
-    <string name="error_invalid_safe">Invalid safe address</string>
+    <string name="error_invalid_safe">Invalid Safe Account address</string>
     <string name="error_invalid_name">Invalid name</string>
     <string name="ok">OK</string>
     <string name="terms_first_bullet">We do not collect demographic data such as age or gender.</string>
@@ -107,17 +107,17 @@
     <string name="error_client_safe_name_invalid_reason">this value is not a valid name</string>
     <string name="error_client_safe_name_invalid_fix">Name should not be empty</string>
     <string name="error_client_safe_not_found_reason">Safe Account not found</string>
-    <string name="error_client_safe_not_found_fix">Please check that the Safe exists on the blockchain</string>
+    <string name="error_client_safe_not_found_fix">Please check that the Safe Account exists on the blockchain</string>
     <string name="error_client_address_invalid_reason">this value is not a valid address</string>
-    <string name="error_client_address_invalid_fix">Please use the checksummed Safe address</string>
+    <string name="error_client_address_invalid_fix">Please use the checksummed Safe Account address</string>
     <string name="error_client_seed_phrase_reason">this is not a valid seed phrase or private key for an Ethereum account</string>
     <string name="error_client_key_already_imported_reason">This key has already been imported</string>
     <string name="error_client_seed_phrase_fix">Please correct the error or use another seed phrase or private key</string>
     <string name="error_client_key_already_imported_fix">Please import a different key</string>
     <string name="error_client_tx_hash_validation_reason">computed safeTxHash of a transaction to confirm does not match server-returned value</string>
     <string name="error_client_tx_hash_validation_fix">Please reload the data or check that your network is secure</string>
-    <string name="error_client_unsupported_implementation_copy_reason">the master copy of your Safe is not supported by this app</string>
-    <string name="error_client_unsupported_implementation_copy_fix">Please change the master copy before adding it or use another Safe</string>
+    <string name="error_client_unsupported_implementation_copy_reason">the base contract of your Safe Account is not supported by this app</string>
+    <string name="error_client_unsupported_implementation_copy_fix">Please change the base contract before adding it or use another Safe Account</string>
     <string name="error_client_ens_resolution_reason">address not found</string>
     <string name="error_client_ens_resolution_fix">Please enter a valid ENS name</string>
     <string name="error_client_ens_reverse_record_reason">reverse record not set</string>
@@ -168,7 +168,7 @@
     <string name="coins_asset_send_amount">Amount</string>
     <string name="coins_asset_send_max">Send max</string>
     <string name="coins_asset_send_review">Review</string>
-    <string name="coins_asset_send_review_hint">You’re about to initiate a Safe transaction. It won’t be submitted to the blockchain yet.</string>
+    <string name="coins_asset_send_review_hint">You’re about to initiate a Safe Account transaction. It won’t be submitted to the blockchain yet.</string>
     <string name="coins_asset_send_review_advanced">Advanced parameters</string>
     <string name="coins_asset_send_confirm">Confirm</string>
     <string name="coins_asset_send_edit_params">Edit advanced parameters</string>
@@ -267,7 +267,7 @@
     <string name="get_in_touch_feature_suggestion">Feature suggestion</string>
     <string name="feedback_subject">Feedback</string>
 
-    <string name="feedback_safe">Safe address: %1$s</string>
+    <string name="feedback_safe">Safe Account address: %1$s</string>
     <string name="feedback_chain">Chain: %1$s (%2$s)</string>
     <string name="feedback_feedback">Feedback:</string>
 
@@ -283,11 +283,11 @@
     <string name="tx_list_queue">QUEUE</string>
     <string name="tx_list_history">HISTORY</string>
     <string name="tx_list_confirmations">%1$d out of %2$d</string>
-    <string name="tx_list_change_mastercopy">Change mastercopy</string>
+    <string name="tx_list_change_mastercopy">Change base contract</string>
     <string name="tx_list_set_fallback_handler">Set fallback handler</string>
     <string name="tx_list_enable_module">Enable module</string>
     <string name="tx_list_disable_module">Disable module</string>
-    <string name="tx_list_creation">Safe created</string>
+    <string name="tx_list_creation">Safe Account created</string>
     <string name="tx_list_receive">Receive</string>
     <string name="tx_list_send">Send</string>
     <string name="tx_list_label_type_next">NEXT TRANSACTION</string>
@@ -326,13 +326,13 @@
     <string name="tx_details_view_on_block_explorer">View transaction on block explorer</string>
     <string name="tx_details_token_name_unknown">Unknown</string>
     <string name="tx_details_creation_creator_address">Creator address</string>
-    <string name="tx_details_creation_implementation_used">Mastercopy used</string>
+    <string name="tx_details_creation_implementation_used">Base contract used</string>
     <string name="tx_details_creation_factory_used">Factory used</string>
     <string name="tx_details_creation_no_factory_used">No factory used</string>
     <string name="tx_details_creation_no_implementation_available">Not available</string>
 
     <string name="tx_details_add_owner">Add owner:</string>
-    <string name="tx_details_new_mastercopy">New mastercopy:</string>
+    <string name="tx_details_new_mastercopy">New base contract:</string>
     <string name="tx_details_change_required_confirmations">Change required confirmations:</string>
     <string name="tx_details_disable_module">Disable module:</string>
     <string name="tx_details_enable_module">Enable module:</string>
@@ -386,10 +386,10 @@
     <string name="tx_submitted_done">Done</string>
 
     <string name="safe_settings_ens_name">ENS name</string>
-    <string name="safe_settings_contract_version">Safe version</string>
+    <string name="safe_settings_contract_version">Safe Account base contract version</string>
     <string name="safe_settings_owner_addresses">Owner Addresses</string>
     <string name="safe_settings_required_confirmations">Required confirmations</string>
-    <string name="safe_settings_safe_name">Safe name</string>
+    <string name="safe_settings_safe_name">Safe Account name</string>
     <string name="safe_settings_dialog_description">Removing a Safe only removes it from this app. It does not delete the Safe from the blockchain. Funds will not get lost.</string>
     <string name="safe_settings_dialog_cancel">Cancel</string>
     <string name="safe_settings_dialog_remove">Remove</string>
@@ -405,7 +405,7 @@
     <string name="safe_settings_fallback_handler_help">What is a fallback handler and how does it relate to the Safe?</string>
     <string name="safe_settings_guard_help">What is a guard and how does it relate to the Safe?</string>
 
-    <string name="safe_settings_edit_name_title">Edit Safe name</string>
+    <string name="safe_settings_edit_name_title">Edit Safe Account name</string>
 
     <string name="tx_confirmations_created">Created</string>
     <string name="tx_confirmations_confirmed">Confirmed</string>
@@ -427,14 +427,14 @@
 
     <string name="signing_owner_dialog_remove">Remove</string>
     <string name="signing_owner_dialog_cancel">Cancel</string>
-    <string name="signing_owner_dialog_description">Removing the owner key only removes it from this app. It doesn’t delete any Safes from this app or from blockchain. For Safes controlled by this owner key, you will no longer be able to sign transactions in this app.</string>
+    <string name="signing_owner_dialog_description">Removing the owner key only removes it from this app. It doesn’t delete any Safe Accounts from this app or from blockchain. For Safe Accounts controlled by this owner key, you will no longer be able to sign transactions in this app.</string>
     <string name="signing_owner_selection_title">Import owner key</string>
     <string name="signing_owner_selection_select_key">Select key</string>
     <string name="signing_owner_selection_description">Derived keys are generated from your seed phrase. Select a key you would like to import.</string>
     <string name="signing_owner_selection_more_derived_keys">Show more derived keys</string>
     <string name="signing_owner_selection_more">Show more</string>
     <string name="signing_owner_key_imported">Owner key successfully imported.</string>
-    <string name="signing_owner_key_created">Owner key successfully created. Add it to a Safe on desktop and then restart the mobile app.</string>
+    <string name="signing_owner_key_created">Owner key successfully created. Add it to a Safe Account on desktop and then restart the mobile app.</string>
     <string name="signing_owner_key_removed">Owner key removed from this app</string>
 
     <string name="signing_owner_save">Save</string>
@@ -542,7 +542,7 @@
 
     <string name="generate_owner_key_title">Create owner key</string>
     <string name="generate_owner_key_intro_seed_phrase_title">How does it work?</string>
-    <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Safe, you can create a key and add it as an owner of your Safe. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
+    <string name="generate_owner_key_intro_seed_phrase_desc">To use this app as an owner in the Safe Account, you can create a key and add it as an owner of your Safe Account. When you tap Next, the app will create a new private key from a new unique seed phrase.</string>
     <string name="generate_owner_key_intro_private_key_title">How secure is that?</string>
     <string name="generate_owner_key_intro_private_key_desc">The owner key and the seed phrase are securely stored.</string>
     <string name="generate_owner_key_intro_private_key_help">How is a private key stored on mobile?</string>
@@ -574,9 +574,9 @@
     <string name="label_read_only">Read-only</string>
 
     <string name="update_update_now">Update now</string>
-    <string name="update_desc_deprecated">Your version of the Safe app is not supported anymore since it is too old. Please update your app.</string>
-    <string name="update_desc_deprecated_soon">Your version of the Safe app will be deprecated soon. Please update your app.</string>
-    <string name="update_desc_new_version">There is an update of the Safe app available.</string>
+    <string name="update_desc_deprecated">Your version of the Safe{Wallet} app is not supported anymore since it is too old. Please update your app.</string>
+    <string name="update_desc_deprecated_soon">Your version of the Safe{Wallet} app will be deprecated soon. Please update your app.</string>
+    <string name="update_desc_new_version">There is an update of the Safe{Wallet} app available.</string>
 
     <string name="separator_hyphen">%1$s - %2$s</string>
     <string name="app">App</string>
